@@ -53,13 +53,13 @@ application {
 }
 
 shadowJar {
-	archiveBaseName.set('CaDoodleUpdater')
+	archiveBaseName.set('CaDoodle-Application')
 	archiveClassifier.set('')
 	archiveVersion.set('')
 }
 jar {
 	manifest {
-		attributes 'Implementation-Title': 'BowlerStudioUpdater',
+		attributes 'Implementation-Title': 'CaDoodle-Application',
 		'Implementation-Version': '0.0.1',
 		'Main-Class': 'com.commonwealthrobotics.Main'
 	}

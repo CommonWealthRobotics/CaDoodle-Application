@@ -3,7 +3,10 @@
  */
 package com.commonwealthrobotics;
 
+import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,14 +15,23 @@ import javafx.stage.Stage;
 public class Main  extends Application {
 
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage newStage) throws Exception {
 		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
-
 		Scene scene = new Scene(root, 600, 523);
-
+		newStage.setScene(scene);
+		newStage.setOnCloseRequest(event -> {
+			Platform.exit();
+			System.exit(0);
+		});
+		FontSizeManager.addListener(fontNum -> {
+			int tmp = fontNum - 10;
+			if (tmp < 12)
+				tmp = 12;
+			root.setStyle("-fx-font-size: " + tmp + "pt");
+			newStage.sizeToScene();
+		});
 		
-		stage.setScene(scene);
-		stage.show();
+		newStage.show();
 	}
 	public static void main(String [] args) {
 		
@@ -27,6 +39,4 @@ public class Main  extends Application {
 	}
 
 }
-
-   
 	
