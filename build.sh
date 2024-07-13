@@ -24,5 +24,5 @@ else
 fi
 
 ./gradlew shadowJar
-$JAVA_HOME/bin/java -jar build/libs/CaDoodle-Application.jar
+#$JAVA_HOME/bin/java -jar build/libs/CaDoodle-Application.jar
 #./gradlew run
