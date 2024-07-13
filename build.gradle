@@ -52,6 +52,14 @@ application {
 	mainClass = 'com.commonwealthrobotics.Main'
 }
 
+tasks.withType(JavaExec) {
+	jvmArgs += ["--add-opens", "java.base/java.io=ALL-UNNAMED"]
+}
+
+test {
+	jvmArgs += ["--add-opens", "java.base/java.io=ALL-UNNAMED"]
+}
+
 shadowJar {
 	archiveBaseName.set('CaDoodle-Application')
 	archiveClassifier.set('')
@@ -62,6 +70,7 @@ jar {
 	manifest {
 		attributes 'Implementation-Title': 'CaDoodle-Application',
 		'Implementation-Version': '0.0.1',
-		'Main-Class': 'com.commonwealthrobotics.Main'
+		'Main-Class': 'com.commonwealthrobotics.Main',
+		'Add-Opens': 'java.base/java.io=ALL-UNNAMED'
 	}
 }

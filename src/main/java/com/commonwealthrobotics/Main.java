@@ -3,11 +3,19 @@
  */
 package com.commonwealthrobotics;
 
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+
+import javax.swing.filechooser.FileSystemView;
+
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.video.OSUtil;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -16,21 +24,56 @@ public class Main  extends Application {
 
 	@Override
 	public void start(Stage newStage) throws Exception {
+		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
+		if (OSUtil.isOSX() || OSUtil.isLinux())
+			if (!relative.endsWith("Documents")) {
+				relative = relative + "/Documents";
+			}
+		if (OSUtil.isWindows()) {
+			if (!relative.endsWith("Documents")) {
+				relative = relative + "\\Documents";
+			}
+		}
+
+		File file = new File(relative + "/bowler-workspace/");
+		file.mkdirs();
+		ScriptingEngine.setWorkspace(file);
 		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
-		Scene scene = new Scene(root, 600, 523);
+		
+		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode().getWidth();
+		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode().getHeight();
+		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+		double scalew = primaryScreenBounds.getWidth();
+		double screenZoom = sw/scalew;
+		double newSize= sw/2256.0*(2*FontSizeManager.systemDefaultFontSize)/screenZoom;
+		if(newSize<FontSizeManager.systemDefaultFontSize)
+			newSize=FontSizeManager.systemDefaultFontSize;
+		FontSizeManager.setFontSize((int)Math.round(newSize));
+		System.out.println("Screen "+sw+"x"+sh);
+		sw=primaryScreenBounds.getWidth();
+		sh=primaryScreenBounds.getHeight();
+		double w ;
+		double h ;
+		w=sw-40;
+		h=sh-40;
+		
+		Scene scene = new Scene(root,  w, h,true);
 		newStage.setScene(scene);
 		newStage.setOnCloseRequest(event -> {
+			System.out.println("CaDoodle Exiting");
 			Platform.exit();
 			System.exit(0);
 		});
+
 		FontSizeManager.addListener(fontNum -> {
 			int tmp = fontNum - 10;
 			if (tmp < 12)
 				tmp = 12;
 			root.setStyle("-fx-font-size: " + tmp + "pt");
-			newStage.sizeToScene();
 		});
-		
 		newStage.show();
 	}
 	public static void main(String [] args) {
