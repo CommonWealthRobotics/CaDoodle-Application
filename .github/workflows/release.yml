@@ -24,7 +24,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          CaDoodle-Application.jar
+          build/libs/CaDoodle-Application.jar
           jvm.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
