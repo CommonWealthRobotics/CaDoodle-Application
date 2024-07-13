@@ -14,6 +14,7 @@ else
 	tar -xvzf $ZIP -C $JAVA_HOME
 	mv $JAVA_HOME/$JVM/* $JAVA_HOME/
 fi
+echo "Java home set to $JAVA_HOME"
 BOWLER=bowler/BowlerStudio.jar
 if test -f $BOWLER; then 
 	echo "Bowler Jar exists"
@@ -23,3 +24,5 @@ else
 fi
 
 ./gradlew shadowJar
+$JAVA_HOME/bin/java -jar build/libs/CaDoodle-Application.jar
+#./gradlew run
