@@ -15,12 +15,16 @@ jobs:
       env:
          VERSION_SEMVER: ${{ steps.vars.outputs.tag }}
       run: bash build.sh
+    - name: Move jar
+      run: |
+        mv build/libs/* .
+        ls -al
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          build/libs/CaDoodle-Application.jar
+          CaDoodle-Application.jar
           jvm.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
