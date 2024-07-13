@@ -32,6 +32,8 @@ dependencies {
 	// This dependency is used internally, and not exposed to consumers on their own compile classpath.
 	implementation 'com.google.guava:guava:31.1-jre'
 	implementation 'com.google.code.gson:gson:2.8.6'
+	implementation fileTree (dir: 'bowler', includes: ['BowlerStudio.jar'])
+	
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
