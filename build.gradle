@@ -56,6 +56,7 @@ shadowJar {
 	archiveBaseName.set('CaDoodle-Application')
 	archiveClassifier.set('')
 	archiveVersion.set('')
+	zip64 true
 }
 jar {
 	manifest {
