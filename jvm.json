@@ -1,0 +1,30 @@
+{
+"Linux-x64":{
+				"url":"https://cdn.azul.com/zulu/bin/"
+			  ,
+			  "type":"tar.gz",
+			  "name":"zulu17.50.19-ca-fx-jdk17.0.11-linux_x64",
+			  "jvmargs":["-Dprism.forceGPU=true"]
+			  },
+"Windows-x64":{
+				"url":"https://cdn.azul.com/zulu/bin/"
+			  ,
+			  "type":"zip",
+			  "name":"zulu17.50.19-ca-fx-jdk17.0.11-win_x64"
+			  },
+"Mac-x64":{
+				"url":"https://cdn.azul.com/zulu/bin/"
+			  ,
+			  "type":"zip",
+			  "name":"zulu17.50.19-ca-fx-jdk17.0.11-macosx_x64",
+			  "jvmargs":["-Dprism.forceGPU=true"]
+			  },
+"Mac-aarch64":{
+				"url":"https://cdn.azul.com/zulu/bin/"
+			  ,
+			  "type":"zip",
+			  "name":"zulu17.50.19-ca-fx-jdk17.0.11-macosx_aarch64",
+			  "jvmargs":["-Dprism.forceGPU=true"]
+			  }			  
+
+}
