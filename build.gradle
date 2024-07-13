@@ -20,6 +20,32 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 
 
+eclipse {
+    classpath {
+        file {
+            whenMerged { classpath ->
+                classpath.entries.findAll { entry -> entry.kind == 'lib' }*.exported = true
+            }
+        }
+    }
+
+    jdt {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        javaRuntimeName = "JavaSE-17"
+    }
+}
+
+eclipse.jdt.file.withProperties { properties ->
+    properties.setProperty('org.eclipse.jdt.core.compiler.problem.forbiddenReference', 'ignore')
+    // Add the --add-opens argument to the VM arguments
+    def vmArgs = properties.getProperty('org.eclipse.jdt.launching.VM_ARGUMENTS', '')
+    vmArgs += ' --add-opens java.base/java.io=ALL-UNNAMED'
+    properties.setProperty('org.eclipse.jdt.launching.VM_ARGUMENTS', vmArgs.trim())
+}
+
+tasks.eclipse.dependsOn(cleanEclipse)
+
 repositories {
 	// Use Maven Central for resolving dependencies.
 	mavenCentral()

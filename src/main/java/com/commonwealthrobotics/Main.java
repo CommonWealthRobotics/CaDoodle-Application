@@ -36,9 +36,10 @@ public class Main  extends Application {
 			}
 		}
 
-		File file = new File(relative + "/bowler-workspace/");
+		File file = new File(relative + "/CaDoodle-workspace/");
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
+		
 		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
 		
 		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
