@@ -11,6 +11,7 @@ buildscript {
 		gradlePluginPortal()
 		mavenCentral()
 	}
+
 }
 
 
@@ -26,21 +27,14 @@ allprojects {
 		mavenCentral()
 		gradlePluginPortal()
 	}
-	afterEvaluate {
-		if (project == rootProject) {
-			sourceCompatibility = JavaVersion.VERSION_17
-			targetCompatibility = JavaVersion.VERSION_17
-		} else {
-			sourceCompatibility = JavaVersion.VERSION_1_8
-			targetCompatibility = JavaVersion.VERSION_1_8
-		}
-	}
+
 }
 
 subprojects { subproject ->
 	subproject.afterEvaluate {
 		if (subproject.plugins.hasPlugin('com.github.johnrengelman.shadow')) {
 			subproject.tasks.matching { it.name == 'shadowJar' }.all {
+				System.out.println("Disabling Shadowjar for "+it)
 				it.enabled = false
 			}
 		}
@@ -57,15 +51,19 @@ if (project == rootProject) {
 repositories {
 	// Use Maven Central for resolving dependencies.
 	mavenCentral()
+	jcenter()
 }
 
+java {
+	modularity.inferModulePath.set(true)
+}
 
 dependencies {
-	implementation project(':BowlerStudio')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:java-bowler')
+	implementation project(':BowlerStudio:libraries:bowler-script-kernel:GithubPasswordManager:GithubPasswordManager')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel')
 	implementation project(':BowlerStudio:libraries:dockfx')
-	implementation project(':BowlerStudio:libraries:bowler-script-kernel:GithubPasswordManager:GithubPasswordManager')
+	implementation project(':BowlerStudio')
 	
 	
 	// Use JUnit Jupiter for testing.
@@ -78,7 +76,21 @@ dependencies {
 		
 }
 
+tasks.withType(Test) {
+	useJUnitPlatform()
+	jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+}
 
+run {
+	jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+}
+tasks.withType(JavaCompile) {
+	options.compilerArgs += [
+		'--add-modules', 'ALL-MODULE-PATH',
+		'--add-exports', 'java.base/sun.nio.ch=ALL-UNNAMED',
+		'--add-exports', 'java.base/sun.security.action=ALL-UNNAMED'
+	]
+}
 tasks.named('test') {
 	// Use JUnit Platform for unit tests.
 	useJUnitPlatform()
@@ -93,11 +105,16 @@ shadowJar {
 	archiveClassifier.set('')
 	archiveVersion.set('')
 	zip64 true
+	mergeServiceFiles()
 }
 jar {
+	jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	manifest {
 		attributes 'Implementation-Title': 'CaDoodle-Application',
 		'Implementation-Version': '0.0.1',
 		'Main-Class': 'com.commonwealthrobotics.Main'
 	}
+}
+tasks.withType(Copy) {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
