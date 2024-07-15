@@ -15,13 +15,6 @@ else
 	mv $JAVA_HOME/$JVM/* $JAVA_HOME/
 fi
 echo "Java home set to $JAVA_HOME"
-BOWLER=bowler/BowlerStudio.jar
-if test -f $BOWLER; then 
-	echo "Bowler Jar exists"
-else
-	mkdir -p bowler/
-	wget https://github.com/CommonWealthRobotics/BowlerStudio/releases/latest/download/BowlerStudio.jar -O $BOWLER
-fi
 
 ./gradlew shadowJar
 #$JAVA_HOME/bin/java -jar build/libs/CaDoodle-Application.jar
