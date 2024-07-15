@@ -16,5 +16,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+      with:
+         submodules: recursive 
     - name: Build
       run: bash build.sh

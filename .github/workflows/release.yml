@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+      with:
+         submodules: recursive 
     - name: Set OAuth Key
       env: # Or as an environment variable
          OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
