@@ -18,6 +18,9 @@ jobs:
          OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
       run: |
          sed -i "s/REPLACE_ME/$OAUTH_SECRET/g" BowlerStudio/src/main/java/com/neuronrobotics/bowlerstudio/NameGetter.java        
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//} 
     - name: Set Release Number Studio
       run: |
          echo $'app.name=CaDoodle' > BowlerStudio/src/main/resources/com/neuronrobotics/bowlerstudio/build.properties 
