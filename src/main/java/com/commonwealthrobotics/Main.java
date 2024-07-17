@@ -23,8 +23,8 @@ import com.neuronrobotics.video.OSUtil;
 
 public class Main   {
 
-	//@Override
-	//public void start(Stage newStage) throws Exception {
+//	@Override
+//	public void start(Stage newStage) throws Exception {
 //		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 //		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
 //		if (OSUtil.isOSX() || OSUtil.isLinux())
@@ -37,9 +37,9 @@ public class Main   {
 //			}
 //		}
 //
-////		File file = new File(relative + "/CaDoodle-workspace/");
-////		file.mkdirs();
-////		ScriptingEngine.setWorkspace(file);
+//		File file = new File(relative + "/CaDoodle-workspace/");
+//		file.mkdirs();
+//		ScriptingEngine.setWorkspace(file);
 //		
 //		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
 //		
@@ -77,7 +77,7 @@ public class Main   {
 //			root.setStyle("-fx-font-size: " + tmp + "pt");
 //		});
 //		newStage.show();
-	//}
+//	}
 	public static void main(String [] args) {
 		try {
 			BowlerStudio.main(args);
