@@ -9,17 +9,19 @@ import java.io.File;
 import javax.swing.filechooser.FileSystemView;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.video.OSUtil;
 
-//import javafx.application.Application;
-//import javafx.application.Platform;
-//import javafx.fxml.FXMLLoader;
-//import javafx.geometry.Rectangle2D;
-//import javafx.scene.Parent;
-//import javafx.scene.Scene;
-//import javafx.stage.Stage;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class Main   {
 
@@ -67,19 +69,13 @@ public class Main   {
 	public static void main(String [] args) {
 		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
-		if (OSUtil.isOSX() || OSUtil.isLinux())
-			if (!relative.endsWith("Documents")) {
-				relative = relative + "/Documents";
-			}
-		if (OSUtil.isWindows()) {
-			if (!relative.endsWith("Documents")) {
-				relative = relative + "\\Documents";
-			}
+		if (!relative.endsWith("Documents")) {
+			relative = relative + DownloadManager.delim()+"Documents";
 		}
-
 		File file = new File(relative + "/CaDoodle-workspace/");
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
+		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		try {
 			BowlerStudio.main(args);
 		} catch (Exception e) {
