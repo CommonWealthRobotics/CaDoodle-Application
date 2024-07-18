@@ -145,9 +145,10 @@ application {
 
 tasks.withType(JavaCompile) {
 	options.compilerArgs += [
-		'--add-modules',
-		'ALL-MODULE-PATH'
-	]
+		'--add-modules', 'ALL-MODULE-PATH',
+        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+        '--add-opens', 'java.base/java.io=ALL-UNNAMED'
+	]+javafxOptions
 }
 tasks.named('test') {
 	// Use JUnit Platform for unit tests.
@@ -176,12 +177,6 @@ tasks.withType(Copy) {
 compileJava {
 	options.compilerArgs += javafxOptions
 }
-task printClasspath {
-	doLast {
-		configurations.compileClasspath.each { println it }
-	}
-}
-
 
 eclipse {
 	classpath {
@@ -190,76 +185,30 @@ eclipse {
 		downloadJavadoc = true
 		file {
 			whenMerged { classpath ->
+				classpath.entries.removeAll { it.kind == "con" && it.path.contains("org.eclipse.jdt.launching.JRE_CONTAINER") }
+                classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.Container("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17/"))
 				classpath.entries.findAll { it.kind == 'con' && it.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
 					it.entryAttributes['module'] = 'true'
-					for(int i=0;i<javafxOptions.size();i++) {
-						if(javafxOptions.get(i).contains("add-opens")) {
-							String prev = it.entryAttributes['add-opens']
-							String opens =( (prev!=null)?(prev+":"):"")+javafxOptions.get(i+1)
-							it.entryAttributes['add-opens'] =opens
-						}
-						if(javafxOptions.get(i).contains("add-exports")) {
-							String prev = it.entryAttributes['add-exports']
-							String opens =( (prev!=null)?(prev+":"):"")+javafxOptions.get(i+1)
-							it.entryAttributes['add-exports'] =opens
-						}
+					def addExports = []
+					def addOpens = []
+					for(int i=0; i<javafxOptions.size(); i++) {
+						if(javafxOptions.get(i).contains("add-opens"))
+							addOpens << javafxOptions.get(i+1)
+						if(javafxOptions.get(i).contains("add-exports"))
+							addExports << javafxOptions.get(i+1)
 					}
+					it.entryAttributes['add-exports'] = addExports.join(':')
+					it.entryAttributes['add-opens'] = addOpens.join(':')
 				}
 			}
 		}
 	}
 	jdt {
-		sourceCompatibility = 17
-		targetCompatibility = 17
-	}
-}
-task checkForOsgiInJdk {
-	doLast {
-		def osgiClass = 'org.osgi.framework.Bundle'
-		try {
-			Class.forName(osgiClass)
-			println "OSGi class $osgiClass found in the JDK"
-		} catch (ClassNotFoundException e) {
-			println "OSGi class $osgiClass not found in the JDK"
-		}
-	}
-}
-task printAllDependencies {
-	doLast {
-		configurations.compileClasspath.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each { dep ->
-			println "Dependency: ${dep.module}"
-			dep.parents.each { parent ->
-				println "   brought in by: ${parent.module}"
-			}
-		}
-	}
-}
-task printOsgiDependencies {
-	println "printOsgiDependencies:"
-	doLast {
-		configurations.compileClasspath.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each { dep ->
-			if (dep.module.toString().contains('osgi')) {
-				println "OSGI dependency: ${dep.module}"
-				dep.parents.each { parent ->
-					println "   brought in by: ${parent.module}"
-				}
-			}
-		}
-	}
-}
-
-task printJarsContainingFileClass {
-	doLast {
-		configurations.compileClasspath.each { File file ->
-			println "\tChecking "+file
-			if (file.name.endsWith(".jar")) {
-				ZipFile zipFile = new ZipFile(file)
-				zipFile.entries().each { entry ->
-					println "\t\t"+entry.name
-					if (entry.name == "ai/djl/Device.class") {
-						println "Found java/io/File.class in: ${file.path}"
-					}
-				}
+		        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+		file {
+			withProperties { properties ->
+				properties.setProperty('org.eclipse.jdt.core.compiler.problem.forbiddenReference', 'ignore')
 			}
 		}
 	}
