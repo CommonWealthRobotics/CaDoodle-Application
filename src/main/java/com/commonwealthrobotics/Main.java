@@ -4,7 +4,7 @@
 package com.commonwealthrobotics;
 
 import java.awt.GraphicsEnvironment;
-//import java.io.File;
+import java.io.File;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -25,21 +25,7 @@ public class Main   {
 
 //	@Override
 //	public void start(Stage newStage) throws Exception {
-//		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
-//		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
-//		if (OSUtil.isOSX() || OSUtil.isLinux())
-//			if (!relative.endsWith("Documents")) {
-//				relative = relative + "/Documents";
-//			}
-//		if (OSUtil.isWindows()) {
-//			if (!relative.endsWith("Documents")) {
-//				relative = relative + "\\Documents";
-//			}
-//		}
-//
-//		File file = new File(relative + "/CaDoodle-workspace/");
-//		file.mkdirs();
-//		ScriptingEngine.setWorkspace(file);
+
 //		
 //		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
 //		
@@ -79,6 +65,21 @@ public class Main   {
 //		newStage.show();
 //	}
 	public static void main(String [] args) {
+		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
+		if (OSUtil.isOSX() || OSUtil.isLinux())
+			if (!relative.endsWith("Documents")) {
+				relative = relative + "/Documents";
+			}
+		if (OSUtil.isWindows()) {
+			if (!relative.endsWith("Documents")) {
+				relative = relative + "\\Documents";
+			}
+		}
+
+		File file = new File(relative + "/CaDoodle-workspace/");
+		file.mkdirs();
+		ScriptingEngine.setWorkspace(file);
 		try {
 			BowlerStudio.main(args);
 		} catch (Exception e) {

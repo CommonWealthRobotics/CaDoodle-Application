@@ -123,22 +123,16 @@ tasks.withType(Test) {
 	jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
 }
 def javafxOptions = [
-	'--add-exports',
-	'javafx.graphics/com.sun.javafx.css=ALL-UNNAMED',
-	'--add-exports',
-	'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
-	'--add-exports',
-	'javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED',
-	'--add-exports',
-	'javafx.base/com.sun.javafx.event=ALL-UNNAMED',
-	'--add-exports',
-	'javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED',
-	'--add-exports',
-	'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
-	'--add-exports',
-	'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
-	'--add-opens',
-	'javafx.graphics/javafx.scene=ALL-UNNAMED'
+    '--add-exports', 'javafx.graphics/com.sun.javafx.css=ALL-UNNAMED',
+    '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
+    '--add-exports', 'javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED',
+    '--add-exports', 'javafx.base/com.sun.javafx.event=ALL-UNNAMED',
+    '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED',
+    '--add-exports', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
+    '--add-exports', 'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+	'--add-opens','javafx.graphics/javafx.scene=ALL-UNNAMED',
+	'--add-opens','java.base/java.io=ALL-UNNAMED',
+	'--add-opens','java.base/java.lang=ALL-UNNAMED'
 ]
 run {
 	jvmArgs = javafxOptions
@@ -199,10 +193,16 @@ eclipse {
 				classpath.entries.findAll { it.kind == 'con' && it.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
 					it.entryAttributes['module'] = 'true'
 					for(int i=0;i<javafxOptions.size();i++) {
-						if(javafxOptions.get(i).contains("add-opens"))
-							it.entryAttributes['add-opens'] +=javafxOptions.get(i+1)+":"
-						if(javafxOptions.get(i).contains("add-exports"))
-							it.entryAttributes['add-exports'] +=javafxOptions.get(i+1)+":"
+						if(javafxOptions.get(i).contains("add-opens")) {
+							String prev = it.entryAttributes['add-opens']
+							String opens =( (prev!=null)?(prev+":"):"")+javafxOptions.get(i+1)
+							it.entryAttributes['add-opens'] =opens
+						}
+						if(javafxOptions.get(i).contains("add-exports")) {
+							String prev = it.entryAttributes['add-exports']
+							String opens =( (prev!=null)?(prev+":"):"")+javafxOptions.get(i+1)
+							it.entryAttributes['add-exports'] =opens
+						}
 					}
 				}
 			}
