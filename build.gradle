@@ -109,6 +109,9 @@ dependencies {
 	implementation 'org.openjfx:javafx-controls:17'
 	implementation 'org.openjfx:javafx-fxml:17'
 	implementation 'org.openjfx:javafx-graphics:17'
+	//  Jaxb moved out of system path in Java 9
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 }
 javafx {
 	version = '17' // or whichever version you're using
