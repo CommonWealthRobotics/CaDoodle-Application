@@ -13,7 +13,6 @@ import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
-import com.neuronrobotics.video.OSUtil;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -23,49 +22,48 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main   {
+public class Main  extends Application {
 
-//	@Override
-//	public void start(Stage newStage) throws Exception {
-
-//		
-//		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
-//		
-//		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-//				.getDisplayMode().getWidth();
-//		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-//				.getDisplayMode().getHeight();
-//		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-//		double scalew = primaryScreenBounds.getWidth();
-//		double screenZoom = sw/scalew;
+	@Override
+	public void start(Stage newStage) throws Exception {
+		
+		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
+		
+		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode().getWidth();
+		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode().getHeight();
+		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+		double scalew = primaryScreenBounds.getWidth();
+		double screenZoom = sw/scalew;
 //		double newSize= sw/2256.0*(2*FontSizeManager.systemDefaultFontSize)/screenZoom;
 //		if(newSize<FontSizeManager.systemDefaultFontSize)
 //			newSize=FontSizeManager.systemDefaultFontSize;
 //		FontSizeManager.setFontSize((int)Math.round(newSize));
-//		System.out.println("Screen "+sw+"x"+sh);
-//		sw=primaryScreenBounds.getWidth();
-//		sh=primaryScreenBounds.getHeight();
-//		double w ;
-//		double h ;
-//		w=sw-40;
-//		h=sh-40;
-//		
-//		Scene scene = new Scene(root,  w, h,true);
-//		newStage.setScene(scene);
-//		newStage.setOnCloseRequest(event -> {
-//			System.out.println("CaDoodle Exiting");
-//			Platform.exit();
-//			System.exit(0);
-//		});
-//
-//		FontSizeManager.addListener(fontNum -> {
-//			int tmp = fontNum - 10;
-//			if (tmp < 12)
-//				tmp = 12;
-//			root.setStyle("-fx-font-size: " + tmp + "pt");
-//		});
-//		newStage.show();
-//	}
+		System.out.println("Screen "+sw+"x"+sh);
+		sw=primaryScreenBounds.getWidth();
+		sh=primaryScreenBounds.getHeight();
+		double w ;
+		double h ;
+		w=sw-40;
+		h=sh-40;
+		
+		Scene scene = new Scene(root,  w, h,true);
+		newStage.setScene(scene);
+		newStage.setOnCloseRequest(event -> {
+			System.out.println("CaDoodle Exiting");
+			Platform.exit();
+			System.exit(0);
+		});
+
+		FontSizeManager.addListener(fontNum -> {
+			int tmp = fontNum - 10;
+			if (tmp < 12)
+				tmp = 12;
+			root.setStyle("-fx-font-size: " + tmp + "pt");
+		});
+		newStage.show();
+	}
 	public static void main(String [] args) {
 		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
@@ -76,13 +74,17 @@ public class Main   {
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+//		new Thread(()->{
+//			launch(args);	
+//		}).start();
+		
 		try {
 			BowlerStudio.main(args);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//launch(args);
+		
 	}
 
 }
