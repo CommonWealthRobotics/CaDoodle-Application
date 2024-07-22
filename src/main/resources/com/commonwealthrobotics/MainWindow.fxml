@@ -16,23 +16,52 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-
-<GridPane prefHeight="577.0" prefWidth="747.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane minHeight="577.0" minWidth="747.0" prefHeight="577.0" prefWidth="747.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <columnConstraints>
       <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints vgrow="NEVER" />
-      <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="43.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="53.0" minHeight="43.0" prefHeight="43.0" vgrow="NEVER" />
       <RowConstraints maxHeight="503.0" minHeight="10.0" prefHeight="488.0" vgrow="ALWAYS" />
    </rowConstraints>
    <children>
-      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.rowIndex="2">
+      <HBox GridPane.halignment="RIGHT" GridPane.rowIndex="2">
          <children>
-            <AnchorPane fx:id="view3d" />
-            <AnchorPane fx:id="control3d" />
+            <AnchorPane HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane fx:id="view3d" minWidth="500.0" />
+                        <AnchorPane fx:id="control3d" />
+                     </children>
+                  </StackPane>
+               </children>
+            </AnchorPane>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+              </rowConstraints>
+               <children>
+                  <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" GridPane.rowIndex="1">
+                     <graphic>
+                        <ImageView fx:id="drawrImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@drawerOpen.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </GridPane>
+            <AnchorPane fx:id="drawerArea" />
          </children>
-      </StackPane>
+      </HBox>
       <GridPane GridPane.rowIndex="1">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -136,10 +165,60 @@
                   <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" text="Export" />
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" />
+            <HBox>
+               <children>
+                  <Button mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@copy.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@paste.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@trash.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" />
+                  <Button mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@back.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@forward.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" />
+               </children>
+            </HBox>
          </children>
       </GridPane>
-      <GridPane>
+      <GridPane minHeight="43.0" prefHeight="43.0">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" />
           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
