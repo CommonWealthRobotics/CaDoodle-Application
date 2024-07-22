@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
@@ -15,20 +17,20 @@
 <?import javafx.scene.layout.StackPane?>
 
 
-<GridPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane prefHeight="577.0" prefWidth="747.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <columnConstraints>
       <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints vgrow="NEVER" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="43.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="503.0" minHeight="10.0" prefHeight="488.0" vgrow="ALWAYS" />
    </rowConstraints>
    <children>
-      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" GridPane.rowIndex="2">
+      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.rowIndex="2">
          <children>
-            <AnchorPane fx:id="view3d" prefHeight="200.0" prefWidth="200.0" />
-            <AnchorPane fx:id="control3d" prefHeight="200.0" prefWidth="200.0" />
+            <AnchorPane fx:id="view3d" />
+            <AnchorPane fx:id="control3d" />
          </children>
       </StackPane>
       <GridPane GridPane.rowIndex="1">
@@ -38,14 +40,100 @@
             <ColumnConstraints hgrow="SOMETIMES" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+          <RowConstraints minHeight="10.0" vgrow="NEVER" />
         </rowConstraints>
          <children>
             <HBox GridPane.columnIndex="2">
                <children>
-                  <Separator orientation="VERTICAL" prefHeight="200.0" />
-                  <Button fx:id="importButton" mnemonicParsing="false" text="Import" />
-                  <Button fx:id="export" mnemonicParsing="false" text="Export" />
+                  <Separator orientation="VERTICAL" prefHeight="40.0" />
+                  <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@litBulb.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Show All " />
+                     </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="40.0" />
+                  <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="image-button">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@litBulb.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                      <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="Hide Notes">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@notes.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="Hide Connectors">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@CoM.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <tooltip>
+                        <Tooltip text="Visibility" />
+                     </tooltip>
+                  </MenuButton>
+                  <Separator orientation="VERTICAL" prefHeight="40.0" />
+                  <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@group.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fx:id="ungroupButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onUngroup" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@ungroup.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="40.0" />
+                  <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fx:id="mirronButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onMirron" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@mirror.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                     <graphic>
+                        <ImageView fx:id="cruseButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onCruse" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@magnet.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="40.0" />
+                  <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="40.0" text="Import" />
+                  <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" text="Export" />
                </children>
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0" />
@@ -65,7 +153,7 @@
                <children>
                   <Button fx:id="home" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="homeButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onHome" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@SourceIcon.png" />
                            </image>
@@ -75,13 +163,16 @@
                         <Tooltip text="Cadoodle Dashboard" />
                      </tooltip>
                   </Button>
-                  <TextField alignment="BOTTOM_LEFT" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" onAction="#setName" text="File Name" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Change name" />
+                     </tooltip>
                   </TextField>
                </children>
             </HBox>
@@ -89,7 +180,7 @@
                <children>
                   <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
                      <graphic>
-                        <ImageView fx:id="modeling" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="modeling" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onModeling" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@SourceIcon.png" />
                            </image>
@@ -101,7 +192,7 @@
                   </Button>
                   <Button fx:id="physics" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
                      <graphic>
-                        <ImageView fx:id="physics" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="physicsButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onPhysics" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@Physics-Creature-Simulation.png" />
                            </image>
