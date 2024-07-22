@@ -1,5 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9.25 18.7089C9.25 18.2894 9.58579 17.9494 10 17.9494H14C14.4142 17.9494 14.75 18.2894 14.75 18.7089C14.75 19.1283 14.4142 19.4684 14 19.4684H10C9.58579 19.4684 9.25 19.1283 9.25 18.7089ZM9.91667 21.2405C9.91667 20.821 10.2525 20.481 10.6667 20.481H13.3333C13.7475 20.481 14.0833 20.821 14.0833 21.2405C14.0833 21.66 13.7475 22 13.3333 22H10.6667C10.2525 22 9.91667 21.66 9.91667 21.2405Z" fill="#1C274C"/>
-<path d="M7.41058 13.8283L8.51463 14.8807C8.82437 15.1759 9 15.5875 9 16.0182C9 16.6653 9.518 17.1899 10.157 17.1899H13.843C14.482 17.1899 15 16.6653 15 16.0182C15 15.5875 15.1756 15.1759 15.4854 14.8807L16.5894 13.8283C18.1306 12.3481 18.9912 10.4034 18.9999 8.3817L19 8.29678C19 4.84243 15.866 2 12 2C8.13401 2 5 4.84243 5 8.29678L5.00007 8.3817C5.00875 10.4034 5.86939 12.3481 7.41058 13.8283Z" fill="#1C274C"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="lightbulb-minimalistic-svgrepo-com.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/darkBulb.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.8275"
+     inkscape:cx="400"
+     inkscape:cy="399.39577"
+     inkscape:window-width="1433"
+     inkscape:window-height="938"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="m 5.19125,2.7519005 c 0,-0.018877 0.015111,-0.034178 0.03375,-0.034178 h 0.18 c 0.018639,0 0.03375,0.0153 0.03375,0.034178 0,0.018873 -0.015111,0.034177 -0.03375,0.034177 h -0.18 c -0.018639,0 -0.03375,-0.015305 -0.03375,-0.034177 z m 0.03,0.113922 c 0,-0.018878 0.015112,-0.034178 0.033751,-0.034178 h 0.119997 c 0.018639,0 0.03375,0.0153 0.03375,0.034178 C 5.4087485,2.8847 5.3936375,2.9 5.3749985,2.9 H 5.2550015 C 5.2363625,2.9 5.2212505,2.8847 5.22125,2.8658225 Z"
+     fill="#1C274C"
+     id="path2"
+     style="fill:#000000;fill-opacity:1;stroke-width:0.045" />
+  <path
+     d="m 5.1084761,2.5322735 0.049682,0.047358 C 5.1720966,2.5929155 5.18,2.6114375 5.18,2.630819 c 0,0.02912 0.02331,0.052727 0.052065,0.052727 h 0.16587 C 5.42669,2.683546 5.45,2.659939 5.45,2.630819 5.45,2.611438 5.4579,2.592916 5.471843,2.579632 L 5.521523,2.532274 C 5.590877,2.4656645 5.629604,2.378153 5.6299955,2.2871765 L 5.63,2.2833551 C 5.63,2.1279094 5.48897,2 5.315,2 5.1410305,2 5,2.1279094 5,2.2833551 l 3.2e-6,0.00382 c 3.906e-4,0.090977 0.039119,0.178488 0.1084729,0.245097 z"
+     fill="#1C274C"
+     id="path4"
+     style="fill:#000000;fill-opacity:1;stroke-width:0.045" />
 </svg>

@@ -1,6 +1,63 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M3.375 1.625C3.78921 1.625 4.125 1.96079 4.125 2.375L4.125 22.375C4.125 22.7892 3.78921 23.125 3.375 23.125C2.96079 23.125 2.625 22.7892 2.625 22.375L2.625 2.375C2.625 1.96079 2.96079 1.625 3.375 1.625Z" fill="#1C274C"/>
-<path d="M7.375 7.875C7.375 6.94038 7.375 6.47308 7.57596 6.125C7.70761 5.89697 7.89697 5.70761 8.125 5.57596C8.47308 5.375 8.94038 5.375 9.875 5.375H18.875C19.8096 5.375 20.2769 5.375 20.625 5.57596C20.853 5.70761 21.0424 5.89697 21.174 6.125C21.375 6.47308 21.375 6.94038 21.375 7.875C21.375 8.80962 21.375 9.27692 21.174 9.625C21.0424 9.85303 20.853 10.0424 20.625 10.174C20.2769 10.375 19.8096 10.375 18.875 10.375L9.875 10.375C8.94038 10.375 8.47308 10.375 8.125 10.174C7.89697 10.0424 7.70761 9.85303 7.57596 9.625C7.375 9.27692 7.375 8.80962 7.375 7.875Z" fill="#1C274C"/>
-<path d="M7.375 16.875C7.375 15.9404 7.375 15.4731 7.57596 15.125C7.70761 14.897 7.89697 14.7076 8.125 14.576C8.47308 14.375 8.94038 14.375 9.875 14.375L15.875 14.375C16.8096 14.375 17.2769 14.375 17.625 14.576C17.853 14.7076 18.0424 14.897 18.174 15.125C18.375 15.4731 18.375 15.9404 18.375 16.875C18.375 17.8096 18.375 18.2769 18.174 18.625C18.0424 18.853 17.853 19.0424 17.625 19.174C17.2769 19.375 16.8096 19.375 15.875 19.375H9.875C8.94038 19.375 8.47308 19.375 8.125 19.174C7.89697 19.0424 7.70761 18.853 7.57596 18.625C7.375 18.2769 7.375 17.8096 7.375 16.875Z" fill="#1C274C"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="align-left-svgrepo-com.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.8275"
+     inkscape:cx="126.88822"
+     inkscape:cy="399.39577"
+     inkscape:window-width="1433"
+     inkscape:window-height="938"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="m 2.6563953,1.625 c 0.017339,0 0.031395,0.014056 0.031395,0.031395 v 0.8372094 c 0,0.017339 -0.014056,0.031395 -0.031395,0.031395 C 2.6390563,2.525 2.625,2.5109433 2.625,2.4936047 V 1.6563953 C 2.625,1.6390563 2.6390563,1.625 2.6563953,1.625 Z"
+     fill="#1C274C"
+     id="path2"
+     style="fill:#00001f;fill-opacity:1;stroke-width:0.0418605"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/allign.png"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96" />
+  <path
+     d="m 2.8238372,1.8866279 c 0,-0.039124 0,-0.058685 0.00841,-0.073256 0.00551,-0.00955 0.013438,-0.017472 0.022983,-0.022983 0.014571,-0.00841 0.034132,-0.00841 0.073256,-0.00841 h 0.3767442 c 0.039123,0 0.058684,0 0.073256,0.00841 0.00954,0.00551 0.017472,0.013438 0.022981,0.022983 0.00841,0.014571 0.00841,0.034132 0.00841,0.073256 0,0.039124 0,0.058685 -0.00841,0.073256 -0.00551,0.00955 -0.013437,0.017473 -0.022981,0.022981 -0.014572,0.00841 -0.034133,0.00841 -0.073256,0.00841 h -0.376742 c -0.039124,0 -0.058685,0 -0.073256,-0.00841 -0.00955,-0.00551 -0.017472,-0.013436 -0.022983,-0.022981 -0.00841,-0.014571 -0.00841,-0.034132 -0.00841,-0.073256 z"
+     fill="#1C274C"
+     id="path4"
+     style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.0418605;stroke-opacity:1"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/allign.png"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96" />
+  <path
+     d="m 2.8238372,2.2633721 c 0,-0.039123 0,-0.058684 0.00841,-0.073256 0.00551,-0.00954 0.013438,-0.017473 0.022983,-0.022981 0.014571,-0.00841 0.034132,-0.00841 0.073256,-0.00841 H 3.179649 c 0.039123,0 0.058684,0 0.073256,0.00841 0.00954,0.00551 0.017473,0.013437 0.022981,0.022981 0.00841,0.014572 0.00841,0.034133 0.00841,0.073256 0,0.039123 0,0.058684 -0.00841,0.073256 -0.00551,0.00954 -0.013437,0.017473 -0.022981,0.022981 -0.014572,0.00841 -0.034133,0.00841 -0.073256,0.00841 H 2.9284884 c -0.039124,0 -0.058685,0 -0.073256,-0.00841 -0.00955,-0.00551 -0.017472,-0.013437 -0.022983,-0.022981 -0.00841,-0.014572 -0.00841,-0.034133 -0.00841,-0.073256 z"
+     fill="#1C274C"
+     id="path6"
+     style="fill:#00001f;fill-opacity:1;stroke-width:0.0418605"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/allign.png"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96" />
 </svg>
