@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="undo-right-round-svgrepo-com.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.8275"
+     inkscape:cx="400"
+     inkscape:cy="399.39577"
+     inkscape:window-width="1433"
+     inkscape:window-height="938"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="m 3.9298713,3.2612997 c 0.015063,-0.015063 0.039482,-0.015063 0.054545,0 l 0.1542859,0.1542859 c 0.015064,0.015063 0.015064,0.039485 0,0.054548 L 3.9844165,3.6244183 c -0.015064,0.015064 -0.039482,0.015064 -0.054545,0 -0.015063,-0.015063 -0.015063,-0.039484 0,-0.054547 l 0.088437,-0.08844 H 3.5457152 c -0.1207138,0 -0.2185722,0.097858 -0.2185722,0.2185717 0,0.1207133 0.097858,0.2185718 0.2185717,0.2185718 h 0.3600005 c 0.021302,0 0.038572,0.01727 0.038572,0.038571 0,0.021302 -0.01727,0.038572 -0.038572,0.038572 H 3.5457147 C 3.3823958,3.9957177 3.25,3.8633198 3.25,3.700003 3.25,3.5366842 3.3823964,3.4042883 3.5457152,3.4042883 H 4.018308 l -0.088437,-0.08844 c -0.015063,-0.015063 -0.015063,-0.039485 3e-7,-0.054549 z"
+     fill="#1c274c"
+     id="path2"
+     style="stroke-width:0.0514286;fill:#000000;fill-opacity:1"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/forward.png"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96" />
+</svg>
