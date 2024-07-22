@@ -1,0 +1,13 @@
+.image-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 2px;
+    -fx-background-insets: 0;
+}
+.image-button:focused {
+    -fx-border-color: #0000FF; /* Blue border when focused */
+}
+
+.image-button:pressed {
+    -fx-background-color: #CCCCCC; /* Light gray background when pressed */
+}

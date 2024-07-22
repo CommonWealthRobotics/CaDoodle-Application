@@ -35,7 +35,7 @@ public class Main  extends Application {
 				.getDisplayMode().getHeight();
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
 		double scalew = primaryScreenBounds.getWidth();
-		double screenZoom = sw/scalew;
+//		double screenZoom = sw/scalew;
 //		double newSize= sw/2256.0*(2*FontSizeManager.systemDefaultFontSize)/screenZoom;
 //		if(newSize<FontSizeManager.systemDefaultFontSize)
 //			newSize=FontSizeManager.systemDefaultFontSize;
@@ -74,16 +74,13 @@ public class Main  extends Application {
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
-//		new Thread(()->{
-//			launch(args);	
-//		}).start();
-		
-		try {
-			BowlerStudio.main(args);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		launch(args);	
+//		try {
+//			BowlerStudio.main(args);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 	}
 
