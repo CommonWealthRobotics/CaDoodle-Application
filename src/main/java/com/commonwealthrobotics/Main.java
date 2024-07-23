@@ -20,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main  extends Application {
@@ -62,6 +63,15 @@ public class Main  extends Application {
 			if (tmp < 12)
 				tmp = 12;
 			root.setStyle("-fx-font-size: " + tmp + "pt");
+		});
+		BowlerStudio.runLater(() -> {
+			try {
+				
+				Image loadAsset = new Image(PsudoSplash.getResource().toString());
+				newStage.getIcons().add(loadAsset);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 		newStage.show();
 	}
