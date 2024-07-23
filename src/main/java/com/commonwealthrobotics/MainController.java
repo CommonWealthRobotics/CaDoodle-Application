@@ -6,6 +6,10 @@ package com.commonwealthrobotics;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
@@ -21,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 
 public class MainController {
 
@@ -118,7 +123,7 @@ public class MainController {
     private Button settingsButton; // Value injected by FXMLLoader
 
     @FXML // fx:id="shapeCatagory"
-    private ComboBox<?> shapeCatagory; // Value injected by FXMLLoader
+    private ComboBox<String> shapeCatagory; // Value injected by FXMLLoader
 
     @FXML // fx:id="shapeConfiguration"
     private TitledPane shapeConfiguration; // Value injected by FXMLLoader
@@ -133,7 +138,7 @@ public class MainController {
     private Button showAllButton; // Value injected by FXMLLoader
 
     @FXML // fx:id="snapGrid"
-    private ComboBox<?> snapGrid; // Value injected by FXMLLoader
+    private ComboBox<String> snapGrid; // Value injected by FXMLLoader
 
     @FXML // fx:id="ungroupButton"
     private ImageView ungroupButton; // Value injected by FXMLLoader
@@ -158,7 +163,8 @@ public class MainController {
 
     @FXML
     void onColorPick(ActionEvent event) {
-
+    	Color value = colorPicker.getValue();
+		System.out.println("Color set to "+value);
     }
 
     @FXML
@@ -208,11 +214,6 @@ public class MainController {
 
     @FXML
     void onHome(MouseEvent event) {
-
-    }
-
-    @FXML
-    void onHomeView(MouseEvent event) {
 
     }
 
@@ -365,7 +366,20 @@ public class MainController {
         assert workplaneButton != null : "fx:id=\"workplaneButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
         assert zoomInButton != null : "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
         assert zoomOutButton != null : "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-
+        BowlerStudio3dEngine engine = new BowlerStudio3dEngine();
+		BowlerStudio.runLater(() -> {
+			engine .getSubScene().setFocusTraversable(false);
+			engine .getSubScene().widthProperty().bind(view3d.widthProperty());
+			engine .getSubScene().heightProperty().bind(view3d.heightProperty());
+		});
+		BowlerStudio.runLater(() -> {
+			view3d.getChildren().add(engine .getSubScene());
+			AnchorPane.setTopAnchor(engine .getSubScene(), 0.0);
+			AnchorPane.setRightAnchor(engine .getSubScene(), 0.0);
+			AnchorPane.setLeftAnchor(engine .getSubScene(), 0.0);
+			AnchorPane.setBottomAnchor(engine .getSubScene(), 0.0);
+		});
+        //view3d
     }
 
 }

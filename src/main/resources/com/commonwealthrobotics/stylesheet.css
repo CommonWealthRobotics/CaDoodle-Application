@@ -1,8 +1,31 @@
+.root {
+    -my-primary-color: #3498db;
+    -my-secondary-color: #2ecc71;
+    
+    -my-background-color:  #E6E6FA;
+    
+
+    -my-button-color:#F0F0FF;
+}
+
+
 .image-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 2px;
     -fx-background-insets: 0;
+}
+.normal-button {
+    -fx-background-color: -my-button-color;
+    -fx-border-width: 2px;
+    -fx-background-insets: 0;
+}
+.normal-button:focused {
+    -fx-border-color: #0000FF; /* Blue border when focused */
+}
+
+.normal-button:pressed {
+    -fx-background-color: #CCCCCC; /* Light gray background when pressed */
 }
 .image-button:focused {
     -fx-border-color: #0000FF; /* Blue border when focused */
@@ -10,4 +33,96 @@
 
 .image-button:pressed {
     -fx-background-color: #CCCCCC; /* Light gray background when pressed */
+}
+
+.scroll-pane {
+    -fx-background-color: -my-background-color;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: -my-background-color;
+}
+
+.scroll-pane .scroll-bar:horizontal,
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: #e0e0e0;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb,
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #909090;
+}
+
+.scroll-pane .increment-button,
+.scroll-pane .decrement-button {
+    -fx-background-color: #c0c0c0;
+}
+
+.scroll-pane .increment-arrow,
+.scroll-pane .decrement-arrow {
+    -fx-background-color: #606060;
+}
+
+.scroll-pane .scroll-bar:horizontal .track,
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #d0d0d0;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: #e0e0e0;
+}
+
+#view3d {
+    -fx-background-color:  radial-gradient(center 50% 50%, radius 70%, #F0E6FF 0%, #E6E6FA 30%, #D8BFD8 100%);
+}
+
+#control3d {
+    -fx-background-color: transparent;
+}
+#drawerArea {
+    -fx-background-color: -my-background-color;
+}
+#drawerGrid{
+    -fx-background-color: -my-background-color;
+}
+
+#totalApplicationBackground{
+    -fx-background-color: -my-background-color;
+}
+#topBar{
+    -fx-background-color:  -my-background-color;
+}
+#controlBar{
+    -fx-background-color: -my-background-color;
+}
+#objectPallet{
+    -fx-background-color: -my-background-color;
+}
+#shapeConfiguration{
+    -fx-background-color: -my-background-color;
+}
+.titled-pane > .title {
+    -fx-background-color:  -my-button-color;
+}
+#configurationGrid{
+    -fx-background-color: -my-background-color;
+}
+
+#anchorPanForConfiguration{
+    -fx-background-color: -my-background-color;
+}
+
+#colorPicker{
+       -fx-background-color: -my-button-color;
+}
+
+#fileNameBox{
+       -fx-background-color: -my-button-color;
+}
+
+#shapeCatagory{
+       -fx-background-color: -my-button-color;
+}
+#snapGrid{
+       -fx-background-color: -my-button-color;
 }

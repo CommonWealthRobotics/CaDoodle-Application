@@ -23,9 +23,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minWidth="200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" minWidth="200.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <GridPane minHeight="575.0" minWidth="747.0" prefHeight="575.0" prefWidth="804.0" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane minHeight="575.0" minWidth="747.0" prefHeight="575.0" prefWidth="804.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
          </columnConstraints>
@@ -42,7 +42,7 @@
                         <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane fx:id="view3d" />
-                              <AnchorPane fx:id="control3d" />
+                              <AnchorPane fx:id="control3d" mouseTransparent="true" />
                               <AnchorPane fx:id="buttonOverlay">
                                  <children>
                                     <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -118,9 +118,9 @@
                                                   <panes>
                                                     <TitledPane fx:id="shapeConfiguration" animated="false" text="Cube">
                                                       <content>
-                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                        <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
-                                                                  <GridPane layoutX="-43.0" layoutY="34.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                  <GridPane fx:id="configurationGrid" layoutX="-43.0" layoutY="34.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                     <columnConstraints>
                                                                       <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -207,7 +207,7 @@
                                                 <AnchorPane fx:id="viewControlCubeHolder" prefHeight="200.0" prefWidth="200.0" />
                                                 <Button fx:id="homeViewButton" mnemonicParsing="false" onAction="#onHomeViewButton" styleClass="image-button" GridPane.rowIndex="1">
                                                    <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" onDragDetected="#onHomeView" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@home.png" />
                                                          </image>
@@ -216,7 +216,7 @@
                                                 </Button>
                                                 <Button fx:id="fitViewButton" mnemonicParsing="false" onAction="#onFitView" styleClass="image-button" GridPane.rowIndex="2">
                                                    <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" onDragDetected="#onFitView" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@fit.png" />
                                                          </image>
@@ -338,7 +338,7 @@
                   </AnchorPane>
                </children>
             </HBox>
-            <GridPane GridPane.rowIndex="1">
+            <GridPane fx:id="controlBar" GridPane.rowIndex="1">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
@@ -506,7 +506,7 @@
                   </HBox>
                </children>
             </GridPane>
-            <GridPane minHeight="43.0" prefHeight="43.0">
+            <GridPane fx:id="topBar" minHeight="43.0" prefHeight="43.0">
               <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
