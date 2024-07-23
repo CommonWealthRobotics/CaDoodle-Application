@@ -36,12 +36,6 @@ public class Main  extends Application {
 		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDisplayMode().getHeight();
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-		double scalew = primaryScreenBounds.getWidth();
-//		double screenZoom = sw/scalew;
-//		double newSize= sw/2256.0*(2*FontSizeManager.systemDefaultFontSize)/screenZoom;
-//		if(newSize<FontSizeManager.systemDefaultFontSize)
-//			newSize=FontSizeManager.systemDefaultFontSize;
-//		FontSizeManager.setFontSize((int)Math.round(newSize));
 		System.out.println("Screen "+sw+"x"+sh);
 		sw=primaryScreenBounds.getWidth();
 		sh=primaryScreenBounds.getHeight();
@@ -77,7 +71,6 @@ public class Main  extends Application {
 	}
 	public static void main(String [] args) {
 		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
-		// https://github.com/CommonWealthRobotics/BowlerStudio/issues/378
 		if (!relative.endsWith("Documents")) {
 			relative = relative + DownloadManager.delim()+"Documents";
 		}
@@ -86,12 +79,6 @@ public class Main  extends Application {
 		ScriptingEngine.setWorkspace(file);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		launch(args);	
-//		try {
-//			BowlerStudio.main(args);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		
 	}
 
