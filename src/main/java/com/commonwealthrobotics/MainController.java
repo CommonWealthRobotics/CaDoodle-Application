@@ -447,7 +447,7 @@ public class MainController {
 	private void setPassthrough(EventType<?> mousePressed) {
 		buttonGrid.addEventHandler(mousePressed, event -> {
             if (event.getTarget() == buttonGrid) {
-            	System.out.println("Got " + mousePressed + " in button Overlay");
+            	//System.out.println("Got " + mousePressed + " in button Overlay");
                 // If the click is on the pane itself (not on any controls), pass it down
             	control3d.fireEvent(event);
             } else {
@@ -459,7 +459,7 @@ public class MainController {
         control3d.addEventHandler(mousePressed, event -> {
             if (event.getTarget() == control3d) {
                 // If the click is on the pane itself (not on any controls), pass it down
-            	System.out.println("Got " + mousePressed + " in 3d Control Overlay");
+            	//System.out.println("Got " + mousePressed + " in 3d Control Overlay");
             	subScene.fireEvent(event);
             } else {
                 // The event interacted with a control in the 3D controls layer, so consume it
