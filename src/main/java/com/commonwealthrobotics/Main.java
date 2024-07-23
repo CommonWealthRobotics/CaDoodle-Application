@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileSystemView;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 
@@ -46,6 +47,9 @@ public class Main  extends Application {
 		
 		Scene scene = new Scene(root,  w, h,true);
 		newStage.setScene(scene);
+		String title=StudioBuildInfo.getAppName()+" v " + StudioBuildInfo.getVersion();
+		if(newStage!=null)
+			newStage.setTitle(title);
 		newStage.setOnCloseRequest(event -> {
 			System.out.println("CaDoodle Exiting");
 			Platform.exit();

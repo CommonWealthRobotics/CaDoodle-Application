@@ -25,7 +25,7 @@
 
 <AnchorPane fx:id="totalApplicationBackground" minWidth="200.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <GridPane minHeight="575.0" minWidth="747.0" prefHeight="575.0" prefWidth="804.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
          </columnConstraints>
@@ -37,9 +37,9 @@
          <children>
             <HBox fx:id="drawerHolder" prefHeight="474.0" prefWidth="739.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                <children>
-                  <AnchorPane HBox.hgrow="ALWAYS">
+                  <AnchorPane HBox.hgrow="SOMETIMES">
                      <children>
-                        <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane fx:id="view3d" />
                               <AnchorPane fx:id="control3d" mouseTransparent="true" />
@@ -144,7 +144,10 @@
                                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                           </rowConstraints>
                                                                            <children>
-                                                                              <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS" />
+                                                                              <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                                                                                 <tooltip>
+                                                                                    <Tooltip text="Set To Solid" />
+                                                                                 </tooltip></ColorPicker>
                                                                               <Button mnemonicParsing="false" styleClass="image-button" GridPane.columnIndex="3">
                                                                                  <graphic>
                                                                                     <ImageView fx:id="holeButton" fitHeight="50.0" fitWidth="50.0" onDragDetected="#onHoleButton" pickOnBounds="true" preserveRatio="true">
@@ -153,6 +156,9 @@
                                                                                        </image>
                                                                                     </ImageView>
                                                                                  </graphic>
+                                                                                 <tooltip>
+                                                                                    <Tooltip text="Set to Hole" />
+                                                                                 </tooltip>
                                                                               </Button>
                                                                            </children>
                                                                         </GridPane>
@@ -251,7 +257,7 @@
                         </StackPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="drawerArea">
+                  <AnchorPane fx:id="drawerArea" HBox.hgrow="NEVER">
                      <children>
                         <GridPane fx:id="drawerGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
