@@ -29,137 +29,149 @@ import javafx.scene.paint.Color;
 
 public class MainController {
 
-    @FXML // ResourceBundle that was given to the FXMLLoader
-    private ResourceBundle resources;
+    @FXML
+    private AnchorPane anchorPanForConfiguration;
 
-    @FXML // URL location of the FXML file that was given to the FXMLLoader
-    private URL location;
+    @FXML
+    private AnchorPane buttonOverlay;
 
-    @FXML // fx:id="buttonOverlay"
-    private AnchorPane buttonOverlay; // Value injected by FXMLLoader
+    @FXML
+    private ColorPicker colorPicker;
 
-    @FXML // fx:id="colorPicker"
-    private ColorPicker colorPicker; // Value injected by FXMLLoader
+    @FXML
+    private GridPane configurationGrid;
 
-    @FXML // fx:id="control3d"
-    private AnchorPane control3d; // Value injected by FXMLLoader
+    @FXML
+    private AnchorPane control3d;
 
-    @FXML // fx:id="cruseButton"
-    private ImageView cruseButton; // Value injected by FXMLLoader
+    @FXML
+    private GridPane controlBar;
 
-    @FXML // fx:id="drawerArea"
-    private AnchorPane drawerArea; // Value injected by FXMLLoader
+    @FXML
+    private ImageView cruseButton;
 
-    @FXML // fx:id="drawerButton"
-    private Button drawerButton; // Value injected by FXMLLoader
+    @FXML
+    private AnchorPane drawerArea;
 
-    @FXML // fx:id="drawerHolder"
-    private HBox drawerHolder; // Value injected by FXMLLoader
+    @FXML
+    private Button drawerButton;
 
-    @FXML // fx:id="drawrImage"
-    private ImageView drawrImage; // Value injected by FXMLLoader
+    @FXML
+    private GridPane drawerGrid;
 
-    @FXML // fx:id="export"
-    private Button export; // Value injected by FXMLLoader
+    @FXML
+    private HBox drawerHolder;
 
-    @FXML // fx:id="fileNameBox"
-    private TextField fileNameBox; // Value injected by FXMLLoader
+    @FXML
+    private ImageView drawrImage;
 
-    @FXML // fx:id="fitViewButton"
-    private Button fitViewButton; // Value injected by FXMLLoader
+    @FXML
+    private Button export;
 
-    @FXML // fx:id="groupButton"
-    private Button groupButton; // Value injected by FXMLLoader
+    @FXML
+    private TextField fileNameBox;
 
-    @FXML // fx:id="hideSHow"
-    private Button hideSHow; // Value injected by FXMLLoader
+    @FXML
+    private Button fitViewButton;
 
-    @FXML // fx:id="holeButton"
-    private ImageView holeButton; // Value injected by FXMLLoader
+    @FXML
+    private Button groupButton;
 
-    @FXML // fx:id="home"
-    private Button home; // Value injected by FXMLLoader
+    @FXML
+    private Button hideSHow;
 
-    @FXML // fx:id="homeButton"
-    private ImageView homeButton; // Value injected by FXMLLoader
+    @FXML
+    private ImageView holeButton;
 
-    @FXML // fx:id="homeViewButton"
-    private Button homeViewButton; // Value injected by FXMLLoader
+    @FXML
+    private Button home;
 
-    @FXML // fx:id="importButton"
-    private Button importButton; // Value injected by FXMLLoader
+    @FXML
+    private ImageView homeButton;
 
-    @FXML // fx:id="lockButton"
-    private Button lockButton; // Value injected by FXMLLoader
+    @FXML
+    private Button homeViewButton;
 
-    @FXML // fx:id="lockUnlockTooltip"
-    private Tooltip lockUnlockTooltip; // Value injected by FXMLLoader
+    @FXML
+    private Button importButton;
 
-    @FXML // fx:id="mirronButton"
-    private ImageView mirronButton; // Value injected by FXMLLoader
+    @FXML
+    private Button lockButton;
 
-    @FXML // fx:id="model"
-    private Button model; // Value injected by FXMLLoader
+    @FXML
+    private Tooltip lockUnlockTooltip;
 
-    @FXML // fx:id="modeling"
-    private ImageView modeling; // Value injected by FXMLLoader
+    @FXML
+    private ImageView mirronButton;
 
-    @FXML // fx:id="notesButton"
-    private Button notesButton; // Value injected by FXMLLoader
+    @FXML
+    private Button model;
 
-    @FXML // fx:id="objectPallet"
-    private GridPane objectPallet; // Value injected by FXMLLoader
+    @FXML
+    private ImageView modeling;
 
-    @FXML // fx:id="physics"
-    private Button physics; // Value injected by FXMLLoader
+    @FXML
+    private Button notesButton;
 
-    @FXML // fx:id="physicsButton"
-    private ImageView physicsButton; // Value injected by FXMLLoader
+    @FXML
+    private GridPane objectPallet;
 
-    @FXML // fx:id="rulerButton"
-    private Button rulerButton; // Value injected by FXMLLoader
+    @FXML
+    private Button physics;
 
-    @FXML // fx:id="settingsButton"
-    private Button settingsButton; // Value injected by FXMLLoader
+    @FXML
+    private ImageView physicsButton;
 
-    @FXML // fx:id="shapeCatagory"
-    private ComboBox<String> shapeCatagory; // Value injected by FXMLLoader
+    @FXML
+    private Button rulerButton;
 
-    @FXML // fx:id="shapeConfiguration"
-    private TitledPane shapeConfiguration; // Value injected by FXMLLoader
+    @FXML
+    private Button settingsButton;
 
-    @FXML // fx:id="shapeConfigurationBox"
-    private Accordion shapeConfigurationBox; // Value injected by FXMLLoader
+    @FXML
+    private ComboBox<?> shapeCatagory;
 
-    @FXML // fx:id="shapeConfigurationHolder"
-    private AnchorPane shapeConfigurationHolder; // Value injected by FXMLLoader
+    @FXML
+    private TitledPane shapeConfiguration;
 
-    @FXML // fx:id="showAllButton"
-    private Button showAllButton; // Value injected by FXMLLoader
+    @FXML
+    private Accordion shapeConfigurationBox;
 
-    @FXML // fx:id="snapGrid"
-    private ComboBox<String> snapGrid; // Value injected by FXMLLoader
+    @FXML
+    private AnchorPane shapeConfigurationHolder;
 
-    @FXML // fx:id="ungroupButton"
-    private ImageView ungroupButton; // Value injected by FXMLLoader
+    @FXML
+    private Button showAllButton;
 
-    @FXML // fx:id="view3d"
-    private AnchorPane view3d; // Value injected by FXMLLoader
+    @FXML
+    private ComboBox<?> snapGrid;
 
-    @FXML // fx:id="viewControlCubeHolder"
-    private AnchorPane viewControlCubeHolder; // Value injected by FXMLLoader
+    @FXML
+    private GridPane topBar;
 
-    @FXML // fx:id="visbilityButton"
-    private MenuButton visbilityButton; // Value injected by FXMLLoader
+    @FXML
+    private AnchorPane totalApplicationBackground;
 
-    @FXML // fx:id="workplaneButton"
-    private Button workplaneButton; // Value injected by FXMLLoader
+    @FXML
+    private ImageView ungroupButton;
 
-    @FXML // fx:id="zoomInButton"
-    private Button zoomInButton; // Value injected by FXMLLoader
+    @FXML
+    private AnchorPane view3d;
 
-    @FXML // fx:id="zoomOutButton"
-    private Button zoomOutButton; // Value injected by FXMLLoader
+    @FXML
+    private AnchorPane viewControlCubeHolder;
+
+    @FXML
+    private MenuButton visbilityButton;
+
+    @FXML
+    private Button workplaneButton;
+
+    @FXML
+    private Button zoomInButton;
+
+    @FXML
+    private Button zoomOutButton;
 
     @FXML
     void onColorPick(ActionEvent event) {
