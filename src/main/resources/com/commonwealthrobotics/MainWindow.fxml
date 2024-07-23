@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -22,230 +23,283 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane minHeight="575.0" minWidth="747.0" prefHeight="575.0" prefWidth="804.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <columnConstraints>
-      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints vgrow="NEVER" />
-      <RowConstraints maxHeight="53.0" minHeight="43.0" prefHeight="43.0" vgrow="NEVER" />
-      <RowConstraints maxHeight="503.0" minHeight="10.0" prefHeight="488.0" vgrow="ALWAYS" />
-   </rowConstraints>
+
+<AnchorPane minWidth="200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox fx:id="drawerHolder" prefHeight="474.0" prefWidth="739.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+      <GridPane minHeight="575.0" minWidth="747.0" prefHeight="575.0" prefWidth="804.0" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints maxHeight="53.0" minHeight="43.0" prefHeight="43.0" vgrow="NEVER" />
+            <RowConstraints minHeight="200.0" prefHeight="488.0" vgrow="ALWAYS" />
+         </rowConstraints>
          <children>
-            <AnchorPane HBox.hgrow="ALWAYS">
+            <HBox fx:id="drawerHolder" prefHeight="474.0" prefWidth="739.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                <children>
-                  <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane HBox.hgrow="ALWAYS">
                      <children>
-                        <AnchorPane fx:id="view3d" />
-                        <AnchorPane fx:id="control3d" />
-                        <AnchorPane fx:id="buttonOverlay">
+                        <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                                  <ColumnConstraints hgrow="NEVER" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                    <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                                    <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                                </rowConstraints>
+                              <AnchorPane fx:id="view3d" />
+                              <AnchorPane fx:id="control3d" />
+                              <AnchorPane fx:id="buttonOverlay">
                                  <children>
-                                    <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                    <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" />
                                           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                        <ColumnConstraints hgrow="NEVER" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" vgrow="NEVER" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                                          <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                       </rowConstraints>
                                        <children>
-                                          <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" GridPane.columnIndex="1">
-                                             <graphic>
-                                                <ImageView fx:id="drawrImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@drawerClose.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </GridPane>
-                                    <VBox GridPane.columnIndex="2" GridPane.rowIndex="4">
-                                       <children>
-                                          <GridPane>
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                                                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" text="Settings" GridPane.columnIndex="1" />
-                                             </children>
-                                          </GridPane>
-                                          <GridPane>
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <HBox GridPane.columnIndex="1">
-                                                   <children>
-                                                      <Label text="Snap Grid" />
-                                                      <ComboBox fx:id="snapGrid" onAction="#setSnapGrid" />
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </GridPane>
-                                       </children>
-                                    </VBox>
-                                    <AnchorPane fx:id="shapeConfigurationHolder" GridPane.columnIndex="2">
-                                       <children>
-                                          <Accordion AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <panes>
-                                              <TitledPane fx:id="shapeConfiguration" animated="false">
-                                                <content>
-                                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                                </content>
-                                              </TitledPane>
-                                            </panes>
-                                          </Accordion>
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </GridPane>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </StackPane>
-               </children>
-            </AnchorPane>
-            <AnchorPane fx:id="drawerArea">
-               <children>
-                  <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="ALWAYS" />
-                    </rowConstraints>
-                     <children>
-                        <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" prefWidth="150.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-                        <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
-                           <children>
-                              <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0">
-                                       <children>
-                                          <GridPane fx:id="objectPallet">
+                                          <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">
                                             <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                             </columnConstraints>
                                             <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
+                                             <children>
+                                                <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" GridPane.columnIndex="1">
+                                                   <graphic>
+                                                      <ImageView fx:id="drawrImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@drawerClose.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
                                           </GridPane>
+                                          <VBox GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                             <children>
+                                                <GridPane>
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                      <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" text="Settings" GridPane.columnIndex="1" />
+                                                   </children>
+                                                </GridPane>
+                                                <GridPane>
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <HBox GridPane.columnIndex="1">
+                                                         <children>
+                                                            <Label text="Snap Grid" />
+                                                            <ComboBox fx:id="snapGrid" onAction="#setSnapGrid" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </GridPane>
+                                             </children>
+                                          </VBox>
+                                          <AnchorPane fx:id="shapeConfigurationHolder" GridPane.columnIndex="2">
+                                             <children>
+                                                <Accordion fx:id="shapeConfigurationBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <panes>
+                                                    <TitledPane fx:id="shapeConfiguration" animated="false" text="Cube">
+                                                      <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <GridPane layoutX="-43.0" layoutY="34.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                    <columnConstraints>
+                                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                                    </columnConstraints>
+                                                                    <rowConstraints>
+                                                                      <RowConstraints minHeight="10.0" vgrow="NEVER" />
+                                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                    </rowConstraints>
+                                                                     <children>
+                                                                        <GridPane GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                                                                          <columnConstraints>
+                                                                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                              <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                                                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                                                          </columnConstraints>
+                                                                          <rowConstraints>
+                                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                          </rowConstraints>
+                                                                           <children>
+                                                                              <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS" />
+                                                                              <Button mnemonicParsing="false" styleClass="image-button" GridPane.columnIndex="3">
+                                                                                 <graphic>
+                                                                                    <ImageView fx:id="holeButton" fitHeight="50.0" fitWidth="50.0" onDragDetected="#onHoleButton" pickOnBounds="true" preserveRatio="true">
+                                                                                       <image>
+                                                                                          <Image url="@holes.png" />
+                                                                                       </image>
+                                                                                    </ImageView>
+                                                                                 </graphic>
+                                                                              </Button>
+                                                                           </children>
+                                                                        </GridPane>
+                                                                        <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
+                                                                        <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button" GridPane.columnIndex="2">
+                                                                           <graphic>
+                                                                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                                                 <image>
+                                                                                    <Image url="@darkBulb.png" />
+                                                                                 </image>
+                                                                              </ImageView>
+                                                                           </graphic>
+                                                                           <tooltip>
+                                                                              <Tooltip text="Hide Object" />
+                                                                           </tooltip>
+                                                                        </Button>
+                                                                        <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="1">
+                                                                           <graphic>
+                                                                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                                                 <image>
+                                                                                    <Image url="@unlock.png" />
+                                                                                 </image>
+                                                                              </ImageView>
+                                                                           </graphic>
+                                                                           <tooltip>
+                                                                              <Tooltip fx:id="lockUnlockTooltip" text="Lock Changes" />
+                                                                           </tooltip>
+                                                                        </Button>
+                                                                     </children>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                      </content>
+                                                    </TitledPane>
+                                                  </panes>
+                                                </Accordion>
+                                             </children>
+                                          </AnchorPane>
                                        </children>
-                                    </AnchorPane>
-                                </content>
-                              </ScrollPane>
+                                    </GridPane>
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
-                        <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWOrkplane" styleClass="image-button">
-                           <graphic>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@sketch.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Workplane" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" styleClass="image-button" GridPane.columnIndex="1">
-                           <graphic>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@ruler.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Ruler" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="notesButton" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" GridPane.columnIndex="2">
-                           <graphic>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@notes.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Notes" />
-                           </tooltip>
-                        </Button>
+                        </StackPane>
                      </children>
-                  </GridPane>
+                  </AnchorPane>
+                  <AnchorPane fx:id="drawerArea">
+                     <children>
+                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" prefWidth="150.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                              <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+                                 <children>
+                                    <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0">
+                                             <children>
+                                                <GridPane fx:id="objectPallet">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                </GridPane>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
+                                 </children>
+                              </AnchorPane>
+                              <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWOrkplane" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@sketch.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Workplane" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" styleClass="image-button" GridPane.columnIndex="1">
+                                 <graphic>
+                                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@ruler.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Ruler" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="notesButton" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" GridPane.columnIndex="2">
+                                 <graphic>
+                                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@notes.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Notes" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
                </children>
-            </AnchorPane>
-         </children>
-      </HBox>
-      <GridPane GridPane.rowIndex="1">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" vgrow="NEVER" />
-        </rowConstraints>
-         <children>
-            <HBox GridPane.columnIndex="2">
+            </HBox>
+            <GridPane GridPane.rowIndex="1">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="NEVER" />
+              </rowConstraints>
                <children>
-                  <Separator orientation="VERTICAL" prefHeight="40.0" />
-                  <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@litBulb.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Show All " />
-                     </tooltip>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefHeight="40.0" />
-                  <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="image-button">
-                    <items>
-                      <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
+                  <HBox GridPane.columnIndex="2">
+                     <children>
+                        <Separator orientation="VERTICAL" prefHeight="40.0" />
+                        <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -253,192 +307,209 @@
                                  </image>
                               </ImageView>
                            </graphic>
-                        </MenuItem>
-                      <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="Hide Notes">
+                           <tooltip>
+                              <Tooltip text="Show All " />
+                           </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="40.0" />
+                        <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="image-button">
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@litBulb.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </MenuItem>
+                            <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="Hide Notes">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@notes.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="Hide Connectors">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@CoM.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </MenuItem>
+                          </items>
+                           <tooltip>
+                              <Tooltip text="Visibility" />
+                           </tooltip>
+                        </MenuButton>
+                        <Separator orientation="VERTICAL" prefHeight="40.0" />
+                        <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@notes.png" />
+                                    <Image url="@group.png" />
                                  </image>
                               </ImageView>
                            </graphic>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="Hide Connectors">
+                        </Button>
+                        <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="ungroupButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onUngroup" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@ungroup.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="40.0" />
+                        <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="mirronButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onMirron" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@mirror.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="cruseButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onCruse" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@magnet.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="40.0" />
+                        <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="40.0" text="Import" />
+                        <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" text="Export" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Button mnemonicParsing="false" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@CoM.png" />
+                                    <Image url="@copy.png" />
                                  </image>
                               </ImageView>
                            </graphic>
-                        </MenuItem>
-                    </items>
-                     <tooltip>
-                        <Tooltip text="Visibility" />
-                     </tooltip>
-                  </MenuButton>
-                  <Separator orientation="VERTICAL" prefHeight="40.0" />
-                  <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@group.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fx:id="ungroupButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onUngroup" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@ungroup.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefHeight="40.0" />
-                  <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fx:id="mirronButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onMirron" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@mirror.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fx:id="cruseButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onCruse" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@magnet.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefHeight="40.0" />
-                  <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="40.0" text="Import" />
-                  <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" text="Export" />
+                        </Button>
+                        <Button mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@paste.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@trash.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" />
+                        <Button mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@back.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@forward.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
-            <HBox>
+            </GridPane>
+            <GridPane minHeight="43.0" prefHeight="43.0">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="NEVER" />
+              </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@copy.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@paste.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@trash.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Separator orientation="VERTICAL" />
-                  <Button mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@back.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@forward.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Separator orientation="VERTICAL" />
+                  <HBox>
+                     <children>
+                        <Button fx:id="home" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="homeButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onHome" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@SourceIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Cadoodle Dashboard" />
+                           </tooltip>
+                        </Button>
+                        <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" onAction="#setName" text="File Name" HBox.hgrow="ALWAYS">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Change name" />
+                           </tooltip>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox GridPane.columnIndex="2">
+                     <children>
+                        <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="modeling" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onModeling" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@SourceIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="3d Design" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="physics" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="physicsButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onPhysics" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Physics-Creature-Simulation.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Physics Sim" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
-         </children>
-      </GridPane>
-      <GridPane minHeight="43.0" prefHeight="43.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" />
-          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-          <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints vgrow="NEVER" />
-        </rowConstraints>
-         <children>
-            <HBox>
-               <children>
-                  <Button fx:id="home" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fx:id="homeButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onHome" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@SourceIcon.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Cadoodle Dashboard" />
-                     </tooltip>
-                  </Button>
-                  <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" onAction="#setName" text="File Name" HBox.hgrow="ALWAYS">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                     <tooltip>
-                        <Tooltip text="Change name" />
-                     </tooltip>
-                  </TextField>
-               </children>
-            </HBox>
-            <HBox GridPane.columnIndex="2">
-               <children>
-                  <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fx:id="modeling" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onModeling" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@SourceIcon.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="3d Design" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="physics" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
-                     <graphic>
-                        <ImageView fx:id="physicsButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onPhysics" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@Physics-Creature-Simulation.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Physics Sim" />
-                     </tooltip>
-                  </Button>
-               </children>
-            </HBox>
+            </GridPane>
          </children>
       </GridPane>
    </children>
-</GridPane>
+</AnchorPane>
