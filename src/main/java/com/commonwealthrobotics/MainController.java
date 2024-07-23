@@ -406,8 +406,13 @@ public class MainController {
 		SubScene subScene = engine.getSubScene();
 		BowlerStudio.runLater(() -> {
 			subScene.setFocusTraversable(false);
-			subScene.widthProperty().bind(view3d.widthProperty());
-			subScene.heightProperty().bind(view3d.heightProperty());
+			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
+	            subScene.setWidth(newValue.doubleValue());
+	        });
+
+			view3d.heightProperty().addListener((observable, oldValue, newValue) -> {
+	            subScene.setHeight(newValue.doubleValue());
+	        });
 			BowlerStudio.runLater(() -> {
 				view3d.getChildren().add(subScene);
 				AnchorPane.setTopAnchor(subScene, 0.0);
