@@ -90,7 +90,7 @@
                                                       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                                    </rowConstraints>
                                                    <children>
-                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" text="Settings" GridPane.columnIndex="1" />
+                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" styleClass="normal-button" text="Settings" GridPane.columnIndex="1" />
                                                    </children>
                                                 </GridPane>
                                                 <GridPane>
@@ -253,7 +253,7 @@
                   </AnchorPane>
                   <AnchorPane fx:id="drawerArea">
                      <children>
-                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane fx:id="drawerGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
@@ -449,8 +449,8 @@
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
-                        <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="40.0" text="Import" />
-                        <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" text="Export" />
+                        <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="40.0" styleClass="normal-button" text="Import" />
+                        <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" styleClass="normal-button" text="Export" />
                      </children>
                   </HBox>
                   <HBox>
