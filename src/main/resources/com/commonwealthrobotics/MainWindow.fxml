@@ -45,7 +45,7 @@
                               <AnchorPane fx:id="control3d" mouseTransparent="true" />
                               <AnchorPane fx:id="buttonOverlay">
                                  <children>
-                                    <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <GridPane fx:id="buttonGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" />
                                           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />

@@ -11,6 +11,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
@@ -24,6 +25,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -40,7 +42,8 @@ public class MainController {
 
 	@FXML
 	private ColorPicker colorPicker;
-
+	@FXML
+	private GridPane buttonGrid;
 	@FXML
 	private GridPane configurationGrid;
 
@@ -175,6 +178,8 @@ public class MainController {
 
 	@FXML
 	private Button zoomOutButton;
+	private SubScene subScene;
+	private BowlerStudio3dEngine engine;
 
 	@FXML
 	void onColorPick(ActionEvent event) {
@@ -410,9 +415,9 @@ public class MainController {
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		BowlerStudio3dEngine engine = new BowlerStudio3dEngine();
+		engine = new BowlerStudio3dEngine();
 		engine.rebuild();
-		SubScene subScene = engine.getSubScene();
+		subScene = engine.getSubScene();
 		BowlerStudio.runLater(() -> {
 			subScene.setFocusTraversable(false);
 			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -431,7 +436,36 @@ public class MainController {
 			});
 
 		});
+		setPassthrough(MouseEvent.MOUSE_PRESSED);
+		setPassthrough(MouseEvent.MOUSE_DRAGGED);
+		setPassthrough(MouseEvent.MOUSE_RELEASED);
+		setPassthrough(MouseEvent.MOUSE_CLICKED);
+		setPassthrough(ScrollEvent.ANY);
 
+	}
+	
+	private void setPassthrough(EventType<?> mousePressed) {
+		buttonGrid.addEventHandler(mousePressed, event -> {
+            if (event.getTarget() == buttonGrid) {
+            	System.out.println("Got " + mousePressed + " in button Overlay");
+                // If the click is on the pane itself (not on any controls), pass it down
+            	control3d.fireEvent(event);
+            } else {
+                // The event interacted with a control in the overlay, so consume it
+                event.consume();
+            }
+        });
+
+        control3d.addEventHandler(mousePressed, event -> {
+            if (event.getTarget() == control3d) {
+                // If the click is on the pane itself (not on any controls), pass it down
+            	System.out.println("Got " + mousePressed + " in 3d Control Overlay");
+            	subScene.fireEvent(event);
+            } else {
+                // The event interacted with a control in the 3D controls layer, so consume it
+                event.consume();
+            }
+        });
 	}
 
 }
