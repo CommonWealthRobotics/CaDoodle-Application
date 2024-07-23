@@ -23,8 +23,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane minWidth="200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" >
+<AnchorPane minWidth="200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane minHeight="575.0" minWidth="747.0" prefHeight="575.0" prefWidth="804.0" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -63,6 +62,7 @@
                                           <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                <ColumnConstraints />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -407,6 +407,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Group" />
+                           </tooltip>
                         </Button>
                         <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
                            <graphic>
@@ -416,6 +419,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Un-Group" />
+                           </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
                         <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
@@ -426,6 +432,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Mirror" />
+                           </tooltip>
                         </Button>
                         <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
                            <graphic>
@@ -435,6 +444,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Cruse" />
+                           </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
                         <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="40.0" text="Import" />
