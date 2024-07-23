@@ -16,4 +16,4 @@ else
 fi
 echo "Java home set to $JAVA_HOME"
 
-./gradlew run
+./gradlew clean run
