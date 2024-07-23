@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg18"
+   sodipodi:docname="code-scan-svgrepo-com.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs22" />
+  <sodipodi:namedview
+     id="namedview20"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.8275"
+     inkscape:cx="400"
+     inkscape:cy="399.39577"
+     inkscape:window-width="1433"
+     inkscape:window-height="938"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg18" />
+  <path
+     d="m 1.9616278,1.3337206 c 0.1064254,0 0.1820372,8.86e-5 0.2393973,0.0078 0.056149,0.00755 0.088504,0.021708 0.112124,0.045328 0.02362,0.023621 0.03778,0.055973 0.045327,0.112128 0.00772,0.057357 0.0078,0.132968 0.0078,0.2393944 0,0.023119 0.018743,0.04186 0.04186,0.04186 0.023119,0 0.04186,-0.018743 0.04186,-0.04186 v -0.00315 c 0,-0.1025734 0,-0.1838178 -0.00855,-0.2474015 -0.0088,-0.065437 -0.027337,-0.1184027 -0.069103,-0.1601717 -0.041771,-0.041769 -0.094739,-0.060305 -0.1601749,-0.069103 -0.063583,-0.00855 -0.1448261,-0.00855 -0.247401,-0.00855 h -0.00315 c -0.023119,0 -0.04186,0.018741 -0.04186,0.04186 0,0.023119 0.018743,0.04186 0.04186,0.04186 z"
+     fill="#1c274c"
+     id="path2"
+     style="stroke-width:0.055814"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fit.png"
+     inkscape:export-xdpi="45"
+     inkscape:export-ydpi="45" />
+  <path
+     d="m 1.7352229,1.2499996 h 0.00315 c 0.023119,0 0.04186,0.018741 0.04186,0.04186 0,0.023119 -0.018743,0.04186 -0.04186,0.04186 -0.1064267,0 -0.1820367,8.87e-5 -0.2393944,0.0078 -0.056153,0.00755 -0.088507,0.021708 -0.1121281,0.045328 -0.023621,0.023621 -0.037779,0.055973 -0.045328,0.1121281 -0.00771,0.057357 -0.0078,0.132968 -0.0078,0.2393944 0,0.023119 -0.018741,0.04186 -0.04186,0.04186 -0.023119,0 -0.04186,-0.018743 -0.04186,-0.04186 v -0.00315 c -1.2e-6,-0.102572 -1.7e-6,-0.1838172 0.00855,-0.2474009 0.0088,-0.065437 0.027335,-0.1184027 0.069103,-0.1601717 0.041769,-0.041769 0.094735,-0.060305 0.1601716,-0.069103 0.063584,-0.00855 0.1448288,-0.00855 0.247401,-0.00855 z"
+     fill="#1c274c"
+     id="path4"
+     style="stroke-width:0.055814"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fit.png"
+     inkscape:export-xdpi="45"
+     inkscape:export-ydpi="45" />
+  <path
+     d="m 2.4081395,1.9197671 c 0.023119,0 0.04186,0.018743 0.04186,0.04186 v 0.00315 c 0,0.1025746 0,0.1838177 -0.00855,0.2474009 -0.0088,0.065436 -0.027337,0.1184041 -0.069103,0.160175 -0.041771,0.041765 -0.094739,0.060301 -0.160175,0.069103 -0.063583,0.00855 -0.144826,0.00855 -0.247401,0.00855 h -0.00315 c -0.023119,0 -0.04186,-0.018743 -0.04186,-0.04186 0,-0.023119 0.018743,-0.04186 0.04186,-0.04186 0.1064254,0 0.1820373,-8.93e-5 0.2393973,-0.0078 0.056149,-0.00755 0.088504,-0.021707 0.112124,-0.045327 0.02362,-0.02362 0.03778,-0.055976 0.045327,-0.1121241 0.00772,-0.05736 0.0078,-0.1329707 0.0078,-0.2393972 0,-0.023119 0.018743,-0.04186 0.04186,-0.04186 z"
+     fill="#1c274c"
+     id="path14"
+     style="stroke-width:0.055814"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fit.png"
+     inkscape:export-xdpi="45"
+     inkscape:export-ydpi="45" />
+  <path
+     d="m 1.3337207,1.9616276 c 0,-0.023119 -0.018741,-0.04186 -0.04186,-0.04186 -0.023119,0 -0.04186,0.018743 -0.04186,0.04186 v 0.00315 c -1.2e-6,0.1025747 -1.7e-6,0.1838178 0.00855,0.247401 0.0088,0.065436 0.027335,0.118404 0.069103,0.1601749 0.041769,0.041765 0.094735,0.060301 0.1601716,0.069103 0.063584,0.00855 0.1448288,0.00855 0.2474015,0.00855 h 0.00315 c 0.023119,0 0.04186,-0.018743 0.04186,-0.04186 0,-0.023119 -0.018743,-0.04186 -0.04186,-0.04186 -0.1064267,0 -0.1820367,-8.94e-5 -0.2393945,-0.0078 -0.056153,-0.00755 -0.088507,-0.021707 -0.112128,-0.045327 -0.023621,-0.02362 -0.037779,-0.055976 -0.045328,-0.112124 -0.00771,-0.05736 -0.0078,-0.1329707 -0.0078,-0.2393973 z"
+     fill="#1c274c"
+     id="path16"
+     style="stroke-width:0.055814"
+     inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fit.png"
+     inkscape:export-xdpi="45"
+     inkscape:export-ydpi="45" />
+</svg>

@@ -26,8 +26,9 @@ public class Main  extends Application {
 
 	@Override
 	public void start(Stage newStage) throws Exception {
-		
-		Parent root = FXMLLoader.load(Main.class.getResource("MainWindow.fxml"));
+		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
+		loader.setController(new MainController());
+		Parent root = loader.load();
 		
 		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDisplayMode().getWidth();
