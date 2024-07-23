@@ -30,6 +30,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.MeshView;
 
 public class MainController {
 
@@ -441,7 +442,9 @@ public class MainController {
 		setPassthrough(MouseEvent.MOUSE_RELEASED);
 		setPassthrough(MouseEvent.MOUSE_CLICKED);
 		setPassthrough(ScrollEvent.ANY);
-
+		ViewCube viewcube= new ViewCube();
+		MeshView viewCubeMesh = viewcube.createTexturedCube();
+		engine.addUserNode(viewCubeMesh);
 	}
 	
 	private void setPassthrough(EventType<?> mousePressed) {

@@ -112,6 +112,12 @@ dependencies {
 	//  Jaxb moved out of system path in Java 9
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+	implementation('org.fxyz3d:fxyz3d:0.6.0') {
+		exclude group: 'eu.mihosoft.vrl.jcsg', module: 'jcsg'
+		//eu.mihosoft.vvecmath:vvecmath
+		exclude group: 'eu.mihosoft.vvecmath', module: 'vvecmath'
+		
+	}
 }
 javafx {
 	version = '17' // or whichever version you're using

@@ -27,12 +27,12 @@
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="700.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints vgrow="NEVER" />
             <RowConstraints maxHeight="53.0" minHeight="43.0" prefHeight="43.0" vgrow="NEVER" />
-            <RowConstraints minHeight="200.0" valignment="TOP" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="300.0" valignment="TOP" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <HBox fx:id="drawerHolder" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
