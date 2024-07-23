@@ -21,6 +21,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -30,6 +31,7 @@ import javafx.scene.paint.Color;
 
 public class MainController {
 
+	private boolean drawerOpen=true;
 	@FXML
 	private AnchorPane anchorPanForConfiguration;
 
@@ -187,7 +189,14 @@ public class MainController {
 
 	@FXML
 	void onDrawer(ActionEvent event) {
-
+		drawerOpen=!drawerOpen;
+		if(drawerOpen) {
+			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
+			drawerHolder.getChildren().add(drawerArea);
+		}else {
+			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+			drawerHolder.getChildren().remove(drawerArea);
+		}
 	}
 
 	@FXML

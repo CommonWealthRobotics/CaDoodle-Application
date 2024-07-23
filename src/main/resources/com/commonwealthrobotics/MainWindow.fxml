@@ -37,7 +37,7 @@
          <children>
             <HBox fx:id="drawerHolder" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                <children>
-                  <AnchorPane HBox.hgrow="NEVER">
+                  <AnchorPane HBox.hgrow="SOMETIMES">
                      <children>
                         <StackPane minHeight="200.0" minWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -257,7 +257,7 @@
                         </StackPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="drawerArea" HBox.hgrow="ALWAYS">
+                  <AnchorPane fx:id="drawerArea" HBox.hgrow="NEVER">
                      <children>
                         <GridPane fx:id="drawerGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
