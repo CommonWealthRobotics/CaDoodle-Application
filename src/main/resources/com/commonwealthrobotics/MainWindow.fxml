@@ -41,7 +41,7 @@
                      <children>
                         <StackPane minHeight="200.0" minWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <AnchorPane fx:id="view3d" prefHeight="1024.0" prefWidth="1024.0" />
+                              <AnchorPane fx:id="view3d" />
                               <AnchorPane fx:id="control3d" mouseTransparent="true" />
                               <AnchorPane fx:id="buttonOverlay">
                                  <children>
