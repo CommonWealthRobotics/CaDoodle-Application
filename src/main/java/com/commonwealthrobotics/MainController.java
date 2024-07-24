@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -353,12 +354,15 @@ public class MainController {
 
 	@FXML
 	void zoomInView(MouseEvent event) {
-
+		System.out.println("Zoom In");
+		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()-20);
 	}
 
 	@FXML
 	void zoomOutViewButton(MouseEvent event) {
+		System.out.println("Zoom Out");
 
+		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()+20);
 	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
@@ -426,6 +430,13 @@ public class MainController {
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		setUpNavigationCube();
+		setUp3dEngine();
+		engine.getFlyingCamera().bind(navigationCube.getFlyingCamera());
+		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
+		onHomeViewButton(null);
+	}
+
+	private void setUp3dEngine() {
 		engine= new BowlerStudio3dEngine();
 		engine.rebuild(true);
 		engine.hideHand();
@@ -449,9 +460,45 @@ public class MainController {
 			});
 
 		});
-		engine.getFlyingCamera().bind(navigationCube.getFlyingCamera());
-		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
-		//onHomeViewButton(null);
+		engine.setControlsMap(new IControlsMap() {
+			
+			@Override
+			public boolean timeToCancel(MouseEvent event) {
+				return false;
+			}
+			
+			@Override
+			public boolean isZoom(ScrollEvent t) {
+				return ScrollEvent.SCROLL == t.getEventType();
+			}
+			
+			@Override
+			public boolean isSlowMove(MouseEvent event) {
+				return false;
+			}
+			
+			@Override
+			public boolean isRotate(MouseEvent me) {
+				boolean shiftDown = me.isShiftDown();
+				boolean primaryButtonDown = me.isPrimaryButtonDown();
+				boolean secondaryButtonDown = me.isSecondaryButtonDown();
+				boolean ctrl = me.isControlDown();
+				if(ctrl && primaryButtonDown)
+					return true;
+				if((!shiftDown)&& secondaryButtonDown)
+					return true;
+				return false ;
+			}
+			
+			@Override
+			public boolean isMove(MouseEvent me) {
+				boolean shiftDown = me.isShiftDown();
+				boolean secondaryButtonDown = me.isSecondaryButtonDown();
+				if((shiftDown)&& secondaryButtonDown)
+					return true;
+				return false ;
+			}
+		});
 	}
 
 	private void setUpNavigationCube() {
