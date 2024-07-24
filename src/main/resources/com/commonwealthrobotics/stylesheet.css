@@ -112,9 +112,7 @@
     -fx-background-color: -my-background-color;
 }
 
-#colorPicker{
-       -fx-background-color: -my-button-color;
-}
+
 
 #fileNameBox{
        -fx-background-color: -my-button-color;

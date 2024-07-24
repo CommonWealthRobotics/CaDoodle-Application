@@ -126,20 +126,21 @@
                                                               </columnConstraints>
                                                               <rowConstraints>
                                                                 <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="87.0" minHeight="10.0" prefHeight="87.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="53.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
                                                               </rowConstraints>
                                                                <children>
-                                                                  <GridPane pickOnBounds="false" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                                                                  <GridPane pickOnBounds="false" prefHeight="68.0" prefWidth="180.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
                                                                     <columnConstraints>
-                                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                                        <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                                        <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                                                     </columnConstraints>
                                                                     <rowConstraints>
                                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                     </rowConstraints>
                                                                      <children>
                                                                         <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
@@ -147,9 +148,9 @@
                                                                               <Tooltip text="Set To Solid" />
                                                                            </tooltip>
                                                                         </ColorPicker>
-                                                                        <Button mnemonicParsing="false" styleClass="image-button" GridPane.columnIndex="3">
+                                                                        <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3">
                                                                            <graphic>
-                                                                              <ImageView fx:id="holeButton" fitHeight="50.0" fitWidth="50.0" onDragDetected="#onHoleButton" pickOnBounds="true" preserveRatio="true">
+                                                                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                                                                  <image>
                                                                                     <Image url="@holes.png" />
                                                                                  </image>
@@ -158,7 +159,20 @@
                                                                            <tooltip>
                                                                               <Tooltip text="Set to Hole" />
                                                                            </tooltip>
+                                                                           <GridPane.margin>
+                                                                              <Insets left="-10.0" />
+                                                                           </GridPane.margin>
                                                                         </Button>
+                                                                        <Label text="Solid" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                                           <GridPane.margin>
+                                                                              <Insets left="10.0" />
+                                                                           </GridPane.margin>
+                                                                        </Label>
+                                                                        <Label text="Hole" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                                           <GridPane.margin>
+                                                                              <Insets left="10.0" />
+                                                                           </GridPane.margin>
+                                                                        </Label>
                                                                      </children>
                                                                   </GridPane>
                                                                   <VBox pickOnBounds="false" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
@@ -198,18 +212,18 @@
                                     </AnchorPane>
                                     <GridPane pickOnBounds="false" GridPane.rowSpan="2147483647">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="75.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints minHeight="75.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="71.0" prefHeight="150.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="44.0" minHeight="23.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="ALWAYS" />
+                                        <RowConstraints minHeight="40.0" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <AnchorPane fx:id="viewControlCubeHolder" prefHeight="200.0" prefWidth="200.0" />
+                                          <AnchorPane fx:id="viewControlCubeHolder" prefHeight="300.0" prefWidth="300.0" />
                                           <Button fx:id="homeViewButton" mnemonicParsing="false" onAction="#onHomeViewButton" styleClass="image-button" GridPane.rowIndex="1">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -414,9 +428,9 @@
                               <Tooltip text="Group" />
                            </tooltip>
                         </Button>
-                        <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="ungroupButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onUngroup" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@ungroup.png" />
                                  </image>
@@ -427,9 +441,9 @@
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
-                        <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirron" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="mirronButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onMirron" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@mirror.png" />
                                  </image>
@@ -439,9 +453,9 @@
                               <Tooltip text="Mirror" />
                            </tooltip>
                         </Button>
-                        <Button graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="cruseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruse" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="cruseButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onCruse" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@magnet.png" />
                                  </image>
@@ -458,7 +472,7 @@
                   </HBox>
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" styleClass="image-button">
+                        <Button mnemonicParsing="false" onAction="#onCopy" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -467,7 +481,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" styleClass="image-button">
+                        <Button mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -476,7 +490,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" styleClass="image-button">
+                        <Button mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -486,7 +500,7 @@
                            </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" />
-                        <Button mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#onUndo" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -495,7 +509,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#onRedo" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -521,9 +535,9 @@
                <children>
                   <HBox>
                      <children>
-                        <Button fx:id="home" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="homeButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onHome" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@SourceIcon.png" />
                                  </image>
@@ -548,9 +562,9 @@
                   </HBox>
                   <HBox GridPane.columnIndex="2">
                      <children>
-                        <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onModeling" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="modeling" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onModeling" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@SourceIcon.png" />
                                  </image>
@@ -560,9 +574,9 @@
                               <Tooltip text="3d Design" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="physics" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" styleClass="image-button">
+                        <Button fx:id="physicsButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onPhysics" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="physicsButton" fitHeight="30.0" fitWidth="30.0" onDragDetected="#onPhysics" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@Physics-Creature-Simulation.png" />
                                  </image>

@@ -14,7 +14,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -44,10 +43,9 @@ import javafx.scene.shape.MeshView;
 
 public class MainController {
 
-	private boolean drawerOpen=true;
+	private boolean drawerOpen = true;
 	@FXML
 	private AnchorPane anchorPanForConfiguration;
-
 
 	@FXML
 	private ColorPicker colorPicker;
@@ -63,7 +61,7 @@ public class MainController {
 	private GridPane controlBar;
 
 	@FXML
-	private ImageView cruseButton;
+	private Button cruseButton;
 
 	@FXML
 	private AnchorPane drawerArea;
@@ -96,13 +94,13 @@ public class MainController {
 	private Button hideSHow;
 
 	@FXML
-	private ImageView holeButton;
+	private Button holeButton;
 
 	@FXML
 	private Button home;
 
 	@FXML
-	private ImageView homeButton;
+	private Button homeButton;
 
 	@FXML
 	private Button homeViewButton;
@@ -117,13 +115,13 @@ public class MainController {
 	private Tooltip lockUnlockTooltip;
 
 	@FXML
-	private ImageView mirronButton;
+	private Button mirronButton;
 
 	@FXML
 	private Button model;
 
 	@FXML
-	private ImageView modeling;
+	private Button modeling;
 
 	@FXML
 	private Button notesButton;
@@ -135,7 +133,7 @@ public class MainController {
 	private Button physics;
 
 	@FXML
-	private ImageView physicsButton;
+	private Button physicsButton;
 
 	@FXML
 	private Button rulerButton;
@@ -168,7 +166,7 @@ public class MainController {
 	private AnchorPane totalApplicationBackground;
 
 	@FXML
-	private ImageView ungroupButton;
+	private Button ungroupButton;
 
 	@FXML
 	private AnchorPane view3d;
@@ -187,31 +185,59 @@ public class MainController {
 
 	@FXML
 	private Button zoomOutButton;
-	
+	@FXML
+	private Button redoButton;
+	@FXML
+	private Button undoButton;
 	/**
 	 * CaDoodle Model Classes
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
-
+    @FXML
+    void onRedo(ActionEvent event) {
+    	System.out.println("On Redo");
+    }
+    @FXML
+    void onUndo(ActionEvent event) {
+    	System.out.println("On Undo");
+    }
+    @FXML
+    void onPaste(ActionEvent event) {
+    	System.out.println("On Paste");
+    }
+    @FXML
+    void onCopy(ActionEvent event) {
+    	System.out.println("On copy");
+    }
+    @FXML
+    void onDelete(ActionEvent event) {
+    	System.out.println("On Delete");
+    }
 	@FXML
 	void onColorPick(ActionEvent event) {
+
 		Color value = colorPicker.getValue();
+		String hexColor = String.format("#%02X%02X%02X", (int) (value.getRed() * 255), (int) (value.getGreen() * 255),
+				(int) (value.getBlue() * 255));
+
+		String style = String.format(" -fx-background-color: %s;", hexColor);
+		colorPicker.setStyle(style);
 		System.out.println("Color set to " + value);
 	}
 
 	@FXML
-	void onCruse(MouseEvent event) {
-
+	void onCruse(ActionEvent event) {
+		System.out.println("On Cruse");
 	}
 
 	@FXML
 	void onDrawer(ActionEvent event) {
-		drawerOpen=!drawerOpen;
-		if(drawerOpen) {
+		drawerOpen = !drawerOpen;
+		if (drawerOpen) {
 			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
 			drawerHolder.getChildren().add(drawerArea);
-		}else {
+		} else {
 			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 			drawerHolder.getChildren().remove(drawerArea);
 		}
@@ -219,149 +245,144 @@ public class MainController {
 
 	@FXML
 	void onExport(ActionEvent event) {
-
+		System.out.println("On Export");
 	}
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(
-				new TransformNR(0,0,0,new RotationNR(0,45,-45)),
-				new TransformNR(),
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(),
 				engine.getFlyingCamera().getDefaultZoomDepth());
 	}
 
 	@FXML
 	void onGroup(ActionEvent event) {
-
+		System.out.println("On Group");
 	}
 
 	@FXML
 	void onHideConnections(ActionEvent event) {
-
+		System.out.println(" on Hide Physics Connections");
 	}
 
 	@FXML
 	void onHideNotes(ActionEvent event) {
-
+		System.out.println("On Hide Notes ");
 	}
 
 	@FXML
 	void onHideShow(ActionEvent event) {
-
+		System.out.println("On Hide Show");
 	}
 
 	@FXML
-	void onHoleButton(MouseEvent event) {
-
+	void onHoleButton(ActionEvent event) {
+		System.out.println("Set to Hole ");
 	}
 
 	@FXML
-	void onHome(MouseEvent event) {
-
+	void onHome(ActionEvent event) {
+		System.out.println("On Home");
 	}
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrentation(
-				new TransformNR(0,0,0,new RotationNR(0,45,-45)),
-				new TransformNR(),
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(),
 				engine.getFlyingCamera().getDefaultZoomDepth());
 	}
 
 	@FXML
 	void onImport(ActionEvent event) {
-
+		System.out.println("On Import");
 	}
 
 	@FXML
 	void onLock(ActionEvent event) {
-
+		System.out.println("On Lock Selected");
 	}
 
 	@FXML
-	void onMirron(MouseEvent event) {
-
+	void onMirron(ActionEvent event) {
+		System.out.println("On Mirron Object");
 	}
 
 	@FXML
-	void onModeling(MouseEvent event) {
-
+	void onModeling(ActionEvent event) {
+		System.out.println("Select Modeling View");
 	}
 
 	@FXML
 	void onNotesClick(ActionEvent event) {
-
+		System.out.println("On Notes");
 	}
 
 	@FXML
-	void onPhysics(MouseEvent event) {
-
+	void onPhysics(ActionEvent event) {
+		System.out.println("On Physics Mode Selected");
 	}
 
 	@FXML
 	void onRuler(ActionEvent event) {
-
+		System.out.println("On Add Ruler");
 	}
 
 	@FXML
 	void onSetCatagory(ActionEvent event) {
-
+		System.out.println("On Set Catagory");
 	}
 
 	@FXML
 	void onSettings(ActionEvent event) {
-
+		System.out.println("On Settings");
 	}
 
 	@FXML
 	void onShowHidden(ActionEvent event) {
-
+		System.out.println("On Show Hidden");
 	}
 
 	@FXML
-	void onUngroup(MouseEvent event) {
-
+	void onUngroup(ActionEvent event) {
+		System.out.println("On Ungroup");
 	}
 
 	@FXML
 	void onVisibility(ActionEvent event) {
-
+		System.out.println("On Visibility Menu");
 	}
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
-
+		System.out.println("On Set Workplane");
 	}
 
 	@FXML
 	void onZoomIn(ActionEvent event) {
 
 		System.out.println("Zoom In");
-		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()+20);
+		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 20);
 	}
 
 	@FXML
 	void onZoomOut(ActionEvent event) {
 		System.out.println("Zoom Out");
 
-		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()-20);
+		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() - 20);
 	}
 
 	@FXML
 	void setName(ActionEvent event) {
-
+		System.out.println("Set Project Name");
 	}
 
 	@FXML
 	void setSnapGrid(ActionEvent event) {
-
+		System.out.println("Set Snap Grid");
 	}
 
 	@FXML
 	void showAll(ActionEvent event) {
-
+		System.out.println("On SHow All");
 	}
-
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
@@ -429,26 +450,33 @@ public class MainController {
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		setUpNavigationCube();
 		setUp3dEngine();
-		engine.getFlyingCamera().bind(navigationCube.getFlyingCamera());
-		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
-		onHomeViewButton(null);
+		setUpColorPicker();
+	}
+
+	private void setUpColorPicker() {
+		colorPicker.setValue(Color.RED);
+		onColorPick(null);
+		colorPicker.setOnMousePressed(event -> {
+			System.out.println("Set to Solid ");
+		});
+		shapeConfiguration.setExpanded(true);
 	}
 
 	private void setUp3dEngine() {
-		engine= new BowlerStudio3dEngine();
+		engine = new BowlerStudio3dEngine();
 		engine.rebuild(true);
 		engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
 			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
 				engine.getSubScene().setWidth(newValue.doubleValue());
-	        });
+			});
 
 			view3d.heightProperty().addListener((observable, oldValue, newValue) -> {
 				engine.getSubScene().setHeight(newValue.doubleValue());
-	        });
+			});
 			BowlerStudio.runLater(() -> {
-				//Add the 3d environment
+				// Add the 3d environment
 				view3d.getChildren().add(engine.getSubScene());
 				// anchor it
 				AnchorPane.setTopAnchor(engine.getSubScene(), 0.0);
@@ -459,48 +487,51 @@ public class MainController {
 
 		});
 		engine.setControlsMap(new IControlsMap() {
-			
+
 			@Override
 			public boolean timeToCancel(MouseEvent event) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isZoom(ScrollEvent t) {
 				return ScrollEvent.SCROLL == t.getEventType();
 			}
-			
+
 			@Override
 			public boolean isSlowMove(MouseEvent event) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isRotate(MouseEvent me) {
 				boolean shiftDown = me.isShiftDown();
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
 				boolean ctrl = me.isControlDown();
-				if(ctrl && primaryButtonDown && (!shiftDown))
+				if (ctrl && primaryButtonDown && (!shiftDown))
 					return true;
-				if((!shiftDown)&& secondaryButtonDown)
+				if ((!shiftDown) && secondaryButtonDown)
 					return true;
-				return false ;
+				return false;
 			}
-			
+
 			@Override
 			public boolean isMove(MouseEvent me) {
 				boolean shiftDown = me.isShiftDown();
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
 				boolean ctrl = me.isControlDown();
-				if((shiftDown)&& secondaryButtonDown)
+				if ((shiftDown) && secondaryButtonDown)
 					return true;
-				if(ctrl && shiftDown && primaryButtonDown)
+				if (ctrl && shiftDown && primaryButtonDown)
 					return true;
-				return false ;
+				return false;
 			}
 		});
+		engine.getFlyingCamera().bind(navigationCube.getFlyingCamera());
+		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
+		onHomeViewButton(null);
 	}
 
 	private void setUpNavigationCube() {
@@ -513,11 +544,11 @@ public class MainController {
 			navigationCube.getSubScene().setFocusTraversable(false);
 			viewControlCubeHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
 				navigationCube.getSubScene().setWidth(newValue.doubleValue());
-	        });
+			});
 
 			viewControlCubeHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
 				navigationCube.getSubScene().setHeight(newValue.doubleValue());
-	        });
+			});
 			BowlerStudio.runLater(() -> {
 				viewControlCubeHolder.getChildren().add(navigationCube.getSubScene());
 				AnchorPane.setTopAnchor(navigationCube.getSubScene(), 0.0);
@@ -527,12 +558,10 @@ public class MainController {
 			});
 
 		});
-		ViewCube viewcube= new ViewCube();
+		ViewCube viewcube = new ViewCube();
 		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
 		navigationCube.addUserNode(viewCubeMesh);
-		
-	}
-	
 
+	}
 
 }
