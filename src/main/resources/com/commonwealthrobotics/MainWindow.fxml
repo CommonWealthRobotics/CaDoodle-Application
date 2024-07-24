@@ -209,7 +209,7 @@
                                         <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <AnchorPane fx:id="viewControlCubeHolder" mouseTransparent="true" prefHeight="200.0" prefWidth="200.0" />
+                                          <AnchorPane fx:id="viewControlCubeHolder" prefHeight="200.0" prefWidth="200.0" />
                                           <Button fx:id="homeViewButton" mnemonicParsing="false" onAction="#onHomeViewButton" styleClass="image-button" GridPane.rowIndex="1">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

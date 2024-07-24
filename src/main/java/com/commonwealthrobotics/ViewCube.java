@@ -1,58 +1,23 @@
 package com.commonwealthrobotics;
 
-import javafx.application.Application;
-import javafx.collections.ObservableFloatArray;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
-import javafx.scene.shape.ObservableFaceArray;
-import javafx.scene.shape.TriangleMesh;
-import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.PerspectiveCamera;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
-import javafx.geometry.HPos;
+import javafx.scene.input.ScrollEvent;
 import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.TriangleMesh;
-
 import org.fxyz3d.shapes.primitives.CuboidMesh;
 import org.fxyz3d.shapes.primitives.TexturedMesh;
 
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
-
-import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Cube;
-import eu.mihosoft.vrl.v3d.Polygon;
-import eu.mihosoft.vrl.v3d.Vertex;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.SubScene;
-import javafx.stage.Stage;
 
 public class ViewCube {
 	private TexturedMesh meshView;
 	private BowlerStudio3dEngine engine;
 	private boolean focusTrig=false;
-	public MeshView createTexturedCube(SubScene scene, BowlerStudio3dEngine engine) {
+	public MeshView createTexturedCube(BowlerStudio3dEngine engine) {
 		this.engine = engine;
 		meshView = new CuboidMesh(100f, 100f, 100f);
 		meshView.setTextureModeImage(MainController.class.getResource("navCube.png").toExternalForm());
@@ -65,6 +30,35 @@ public class ViewCube {
 		meshView.setOnMouseReleased(event -> {
 			if(focusTrig)
 				handleMouseClick(event);
+		});
+		engine.setControlsMap(new IControlsMap() {
+			
+			@Override
+			public boolean timeToCancel(MouseEvent event) {
+				return false;
+			}
+			
+			@Override
+			public boolean isZoom(ScrollEvent e) {
+				return false;
+			}
+			
+			@Override
+			public boolean isSlowMove(MouseEvent event) {
+				return false;
+			}
+			
+			@Override
+			public boolean isRotate(MouseEvent me) {
+				boolean primaryButtonDown = me.isPrimaryButtonDown();
+				boolean secondaryButtonDown = me.isSecondaryButtonDown();
+				return (secondaryButtonDown || (primaryButtonDown )) ;
+			}
+			
+			@Override
+			public boolean isMove(MouseEvent ev) {
+				return false;
+			}
 		});
 		// meshView.setOnMouseClicked(this::handleMouseClick);
 		// meshView.setOnMouseClicked(event -> handleMouseClick(event, meshView));

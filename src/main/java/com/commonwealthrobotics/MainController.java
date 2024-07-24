@@ -9,6 +9,8 @@ import java.util.ResourceBundle;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -184,8 +186,7 @@ public class MainController {
 
 	@FXML
 	private Button zoomOutButton;
-	private SubScene subScene;
-	private BowlerStudio3dEngine engine;
+	private BowlerStudio3dEngine navigationCube;
 
 	@FXML
 	void onColorPick(ActionEvent event) {
@@ -252,7 +253,7 @@ public class MainController {
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-
+		navigationCube.focusOrentation(new TransformNR(0,0,0,new RotationNR(0,45,-45)));
 	}
 
 	@FXML
@@ -419,65 +420,41 @@ public class MainController {
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		engine = new BowlerStudio3dEngine();
-		engine.rebuild();
-		subScene = engine.getSubScene();
+		setUpNavigationCube();
+		
+		
+		
+	}
+
+	private void setUpNavigationCube() {
+		navigationCube = new BowlerStudio3dEngine();
+		navigationCube.rebuild(false);
+		navigationCube.setZoom(-500);
+		navigationCube.setMouseScale(10);
+		onHomeViewButton(null);
 		BowlerStudio.runLater(() -> {
-			subScene.setFocusTraversable(false);
-			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
-	            subScene.setWidth(newValue.doubleValue());
+			navigationCube.getSubScene().setFocusTraversable(false);
+			viewControlCubeHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
+				navigationCube.getSubScene().setWidth(newValue.doubleValue());
 	        });
 
-			view3d.heightProperty().addListener((observable, oldValue, newValue) -> {
-	            subScene.setHeight(newValue.doubleValue());
+			viewControlCubeHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
+				navigationCube.getSubScene().setHeight(newValue.doubleValue());
 	        });
 			BowlerStudio.runLater(() -> {
-				view3d.getChildren().add(subScene);
-				AnchorPane.setTopAnchor(subScene, 0.0);
-				AnchorPane.setRightAnchor(subScene, 0.0);
-				AnchorPane.setLeftAnchor(subScene, 0.0);
-				AnchorPane.setBottomAnchor(subScene, 0.0);
+				viewControlCubeHolder.getChildren().add(navigationCube.getSubScene());
+				AnchorPane.setTopAnchor(navigationCube.getSubScene(), 0.0);
+				AnchorPane.setRightAnchor(navigationCube.getSubScene(), 0.0);
+				AnchorPane.setLeftAnchor(navigationCube.getSubScene(), 0.0);
+				AnchorPane.setBottomAnchor(navigationCube.getSubScene(), 0.0);
 			});
 
 		});
-		//setPassthrough(ScrollEvent.ANY);
-		//setPassthrough(MouseEvent.ANY);
-//		buttonGrid.addEventHandler(MouseEvent.ANY, event -> {
-//            if (event.getTarget() == buttonGrid) 
-//            	System.out.println("Got " + event + " in button Overlay");
-//     
-//        });
-//		buttonGrid.setMouseTransparent(true);
-//		for (Node child : buttonGrid.getChildren()) {
-//		        child.setMouseTransparent(false); // Make chicldren clickable
-//		}
-//		control3d.setMouseTransparent(true);
 		ViewCube viewcube= new ViewCube();
-		MeshView viewCubeMesh = viewcube.createTexturedCube(subScene,engine);
-		engine.addUserNode(viewCubeMesh);
+		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
+		navigationCube.addUserNode(viewCubeMesh);
 	}
 	
-	private void setPassthrough(Pane p, Node next, EventType<MouseEvent>  mousePressed) {
-		p.addEventHandler(mousePressed, event -> {
-            if (event.getTarget() == p) {
-               	System.out.println("Got " + event.getEventType() + " in "+p.getClass()+" passing to "+next.getClass());
-            	// If the click is on the overlay itself (not on any child nodes)
-                // then pass the event to the SubScene
-                Point2D point = next.sceneToLocal(event.getSceneX(), event.getSceneY());
-                Event.fireEvent(next, new MouseEvent(event.getEventType(), point.getX(), point.getY(),
-                        event.getScreenX(), event.getScreenY(), event.getButton(), event.getClickCount(),
-                        event.isShiftDown(), event.isControlDown(), event.isAltDown(), event.isMetaDown(),
-                        event.isPrimaryButtonDown(), event.isMiddleButtonDown(), event.isSecondaryButtonDown(),
-                        event.isSynthesized(), event.isPopupTrigger(), event.isStillSincePress(), null));
-                event.consume(); // Prevent the event from being processed further
-            }
-        });
-	}
-	
-	private void setPassthrough( EventType<MouseEvent>  mousePressed) {
-		setPassthrough(buttonGrid,control3d,mousePressed);
-		setPassthrough(control3d,subScene,mousePressed);
 
-	}
 
 }
