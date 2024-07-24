@@ -186,7 +186,12 @@ public class MainController {
 
 	@FXML
 	private Button zoomOutButton;
+	
+	/**
+	 * CaDoodle Model Classes
+	 */
 	private BowlerStudio3dEngine navigationCube;
+	private BowlerStudio3dEngine engine;
 
 	@FXML
 	void onColorPick(ActionEvent event) {
@@ -421,17 +426,39 @@ public class MainController {
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		setUpNavigationCube();
-		
-		
-		
+		engine= new BowlerStudio3dEngine();
+		engine.rebuild(true);
+		engine.hideHand();
+		BowlerStudio.runLater(() -> {
+			engine.getSubScene().setFocusTraversable(false);
+			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
+				engine.getSubScene().setWidth(newValue.doubleValue());
+	        });
+
+			view3d.heightProperty().addListener((observable, oldValue, newValue) -> {
+				engine.getSubScene().setHeight(newValue.doubleValue());
+	        });
+			BowlerStudio.runLater(() -> {
+				//Add the 3d environment
+				view3d.getChildren().add(engine.getSubScene());
+				// anchor it
+				AnchorPane.setTopAnchor(engine.getSubScene(), 0.0);
+				AnchorPane.setRightAnchor(engine.getSubScene(), 0.0);
+				AnchorPane.setLeftAnchor(engine.getSubScene(), 0.0);
+				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
+			});
+
+		});
+		engine.getFlyingCamera().bind(navigationCube.getFlyingCamera());
+		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
+		//onHomeViewButton(null);
 	}
 
 	private void setUpNavigationCube() {
 		navigationCube = new BowlerStudio3dEngine();
 		navigationCube.rebuild(false);
-		navigationCube.setZoom(-500);
+		navigationCube.setZoom(-400);
 		navigationCube.setMouseScale(10);
-		onHomeViewButton(null);
 		BowlerStudio.runLater(() -> {
 			navigationCube.getSubScene().setFocusTraversable(false);
 			viewControlCubeHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
