@@ -11,8 +11,13 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
+import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -25,10 +30,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.PickResult;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 
@@ -38,8 +45,6 @@ public class MainController {
 	@FXML
 	private AnchorPane anchorPanForConfiguration;
 
-	@FXML
-	private AnchorPane buttonOverlay;
 
 	@FXML
 	private ColorPicker colorPicker;
@@ -352,8 +357,6 @@ public class MainController {
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
-		assert buttonOverlay != null
-				: "fx:id=\"buttonOverlay\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert colorPicker != null : "fx:id=\"colorPicker\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert control3d != null : "fx:id=\"control3d\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert cruseButton != null : "fx:id=\"cruseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
@@ -437,38 +440,44 @@ public class MainController {
 			});
 
 		});
-		setPassthrough(MouseEvent.MOUSE_PRESSED);
-		setPassthrough(MouseEvent.MOUSE_DRAGGED);
-		setPassthrough(MouseEvent.MOUSE_RELEASED);
-		setPassthrough(MouseEvent.MOUSE_CLICKED);
-		setPassthrough(ScrollEvent.ANY);
+		//setPassthrough(ScrollEvent.ANY);
+		//setPassthrough(MouseEvent.ANY);
+//		buttonGrid.addEventHandler(MouseEvent.ANY, event -> {
+//            if (event.getTarget() == buttonGrid) 
+//            	System.out.println("Got " + event + " in button Overlay");
+//     
+//        });
+//		buttonGrid.setMouseTransparent(true);
+//		for (Node child : buttonGrid.getChildren()) {
+//		        child.setMouseTransparent(false); // Make chicldren clickable
+//		}
+//		control3d.setMouseTransparent(true);
 		ViewCube viewcube= new ViewCube();
-		MeshView viewCubeMesh = viewcube.createTexturedCube();
+		MeshView viewCubeMesh = viewcube.createTexturedCube(subScene,engine);
 		engine.addUserNode(viewCubeMesh);
 	}
 	
-	private void setPassthrough(EventType<?> mousePressed) {
-		buttonGrid.addEventHandler(mousePressed, event -> {
-            if (event.getTarget() == buttonGrid) {
-            	//System.out.println("Got " + mousePressed + " in button Overlay");
-                // If the click is on the pane itself (not on any controls), pass it down
-            	control3d.fireEvent(event);
-            } else {
-                // The event interacted with a control in the overlay, so consume it
-                event.consume();
+	private void setPassthrough(Pane p, Node next, EventType<MouseEvent>  mousePressed) {
+		p.addEventHandler(mousePressed, event -> {
+            if (event.getTarget() == p) {
+               	System.out.println("Got " + event.getEventType() + " in "+p.getClass()+" passing to "+next.getClass());
+            	// If the click is on the overlay itself (not on any child nodes)
+                // then pass the event to the SubScene
+                Point2D point = next.sceneToLocal(event.getSceneX(), event.getSceneY());
+                Event.fireEvent(next, new MouseEvent(event.getEventType(), point.getX(), point.getY(),
+                        event.getScreenX(), event.getScreenY(), event.getButton(), event.getClickCount(),
+                        event.isShiftDown(), event.isControlDown(), event.isAltDown(), event.isMetaDown(),
+                        event.isPrimaryButtonDown(), event.isMiddleButtonDown(), event.isSecondaryButtonDown(),
+                        event.isSynthesized(), event.isPopupTrigger(), event.isStillSincePress(), null));
+                event.consume(); // Prevent the event from being processed further
             }
         });
+	}
+	
+	private void setPassthrough( EventType<MouseEvent>  mousePressed) {
+		setPassthrough(buttonGrid,control3d,mousePressed);
+		setPassthrough(control3d,subScene,mousePressed);
 
-        control3d.addEventHandler(mousePressed, event -> {
-            if (event.getTarget() == control3d) {
-                // If the click is on the pane itself (not on any controls), pass it down
-            	//System.out.println("Got " + mousePressed + " in 3d Control Overlay");
-            	subScene.fireEvent(event);
-            } else {
-                // The event interacted with a control in the 3D controls layer, so consume it
-                event.consume();
-            }
-        });
 	}
 
 }

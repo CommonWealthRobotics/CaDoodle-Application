@@ -45,7 +45,7 @@ public class Main  extends Application {
 		w=sw-40;
 		h=sh-40;
 		
-		Scene scene = new Scene(root,  w, h,true);
+		Scene scene = new Scene(root,  w/2, h/2,true);
 		newStage.setScene(scene);
 		String title=StudioBuildInfo.getAppName()+" v " + StudioBuildInfo.getVersion();
 		if(newStage!=null)
