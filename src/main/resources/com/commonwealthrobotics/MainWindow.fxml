@@ -230,7 +230,7 @@
                                           </Button>
                                           <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#onZoomIn" styleClass="image-button" GridPane.rowIndex="3">
                                              <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" onDragDetected="#zoomOutViewButton" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
                                                       <Image url="@zoomIn.png" />
                                                    </image>
@@ -239,7 +239,7 @@
                                           </Button>
                                           <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#onZoomOut" styleClass="image-button" GridPane.rowIndex="4">
                                              <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" onDragDetected="#zoomInView" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
                                                       <Image url="@zoomOut.png" />
                                                    </image>

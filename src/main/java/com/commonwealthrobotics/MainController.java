@@ -224,7 +224,10 @@ public class MainController {
 
 	@FXML
 	void onFitView(ActionEvent event) {
-
+		engine.focusOrentation(
+				new TransformNR(0,0,0,new RotationNR(0,45,-45)),
+				new TransformNR(),
+				engine.getFlyingCamera().getDefaultZoomDepth());
 	}
 
 	@FXML
@@ -259,7 +262,10 @@ public class MainController {
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		navigationCube.focusOrentation(new TransformNR(0,0,0,new RotationNR(0,45,-45)));
+		engine.focusOrentation(
+				new TransformNR(0,0,0,new RotationNR(0,45,-45)),
+				new TransformNR(),
+				engine.getFlyingCamera().getDefaultZoomDepth());
 	}
 
 	@FXML
@@ -330,11 +336,15 @@ public class MainController {
 	@FXML
 	void onZoomIn(ActionEvent event) {
 
+		System.out.println("Zoom In");
+		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()+20);
 	}
 
 	@FXML
 	void onZoomOut(ActionEvent event) {
+		System.out.println("Zoom Out");
 
+		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()-20);
 	}
 
 	@FXML
@@ -352,18 +362,6 @@ public class MainController {
 
 	}
 
-	@FXML
-	void zoomInView(MouseEvent event) {
-		System.out.println("Zoom In");
-		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()-20);
-	}
-
-	@FXML
-	void zoomOutViewButton(MouseEvent event) {
-		System.out.println("Zoom Out");
-
-		engine.setZoom((int)engine.getFlyingCamera().getZoomDepth()+20);
-	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
@@ -483,7 +481,7 @@ public class MainController {
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
 				boolean ctrl = me.isControlDown();
-				if(ctrl && primaryButtonDown)
+				if(ctrl && primaryButtonDown && (!shiftDown))
 					return true;
 				if((!shiftDown)&& secondaryButtonDown)
 					return true;
@@ -493,8 +491,12 @@ public class MainController {
 			@Override
 			public boolean isMove(MouseEvent me) {
 				boolean shiftDown = me.isShiftDown();
+				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
+				boolean ctrl = me.isControlDown();
 				if((shiftDown)&& secondaryButtonDown)
+					return true;
+				if(ctrl && shiftDown && primaryButtonDown)
 					return true;
 				return false ;
 			}
@@ -505,6 +507,7 @@ public class MainController {
 		navigationCube = new BowlerStudio3dEngine();
 		navigationCube.rebuild(false);
 		navigationCube.setZoom(-400);
+		navigationCube.lockZoom();
 		navigationCube.setMouseScale(10);
 		BowlerStudio.runLater(() -> {
 			navigationCube.getSubScene().setFocusTraversable(false);
@@ -527,6 +530,7 @@ public class MainController {
 		ViewCube viewcube= new ViewCube();
 		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
 		navigationCube.addUserNode(viewCubeMesh);
+		
 	}
 	
 
