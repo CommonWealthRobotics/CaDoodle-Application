@@ -5,14 +5,19 @@
 package com.commonwealthrobotics;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.CSG;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -39,10 +44,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 
 public class MainController {
-
+	private ActiveProject ap = new ActiveProject();
+	private CaDoodleFile cadoodle;
+	private List<CSG> onDisplay =new ArrayList<>();
 	private boolean drawerOpen = true;
 	@FXML
 	private AnchorPane anchorPanForConfiguration;
@@ -197,10 +205,14 @@ public class MainController {
     @FXML
     void onRedo(ActionEvent event) {
     	System.out.println("On Redo");
+    	cadoodle.forward();
+		displayCurrent();
     }
     @FXML
     void onUndo(ActionEvent event) {
     	System.out.println("On Undo");
+    	cadoodle.back();
+		displayCurrent();
     }
     @FXML
     void onPaste(ActionEvent event) {
@@ -452,8 +464,50 @@ public class MainController {
 		setUp3dEngine();
 		setUpColorPicker();
 		setupActiveProject();
+		setupFile();
 	}
 
+	private void setupFile() {
+		new Thread(()->{
+			try {
+				cadoodle=ap.loadActive();
+				displayCurrent();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+	
+	private void displayCurrent() {
+		BowlerStudio.runLater(()->{
+			redoButton.setDisable(!cadoodle.isForwardAvailible());
+			undoButton.setDisable(!cadoodle.isBackAvailible());
+
+			for(CSG c:onDisplay) {
+				engine.removeUserNode(c.getMesh());
+			}
+			onDisplay.clear();
+			for(CSG c:(List<CSG>)CaDoodleLoader.process(cadoodle)) {
+				displayCSG(c);
+			}
+			
+		});
+	}
+	private void displayCSG(CSG c) {
+		MeshView mv = c.getMesh();
+		if(c.isHole()) {
+		    // Create a new PhongMaterial
+		    PhongMaterial material = new PhongMaterial();
+		    Color in=c.getColor();
+		    // Set the diffuse color with transparency
+		    material.setDiffuseColor(new Color(in.getRed(), in.getGreen(), in.getBlue(), 0.5));
+		    
+		    // Apply the material to the MeshView
+		    mv.setMaterial(material);
+		}				
+		engine.addUserNode(mv);
+		onDisplay.add(c);
+	}
 	private void setupActiveProject() {
 		fileNameBox.setText(ActiveProject.getNextRandomName());
 	}

@@ -71,14 +71,15 @@ public class ActiveProject {
 		return adjectives[(int) (Math.random()*adjectives.length)]+"_"+creaturesMachines[index];
 	}
 	public void setActiveProject(File f) {
-		ConfigurationDatabase.put("CaDoodle", "acriveFile", f);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
 	}
 	public File getActiveProject() {
 		try {
-			return (File)ConfigurationDatabase.get(
+			ScriptingEngine.pull("https://github.com/madhephaestus/TestRepo.git");
+			return new File(ConfigurationDatabase.get(
 					"CaDoodle", 
-					"acriveFile", 
-					ScriptingEngine.fileFromGit("", ""));
+					"CaDoodleacriveFile", 
+					ScriptingEngine.fileFromGit("https://github.com/madhephaestus/TestRepo.git", "TestRepo.doodle").getAbsolutePath()).toString());
 		} catch (InvalidRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,7 +94,7 @@ public class ActiveProject {
 			e.printStackTrace();
 		}
 		File random = new File(getNextRandomName()+".doodle");
-		ConfigurationDatabase.put("CaDoodle", "acriveFile", random);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", random.getAbsolutePath());
 		return random;
 	}
 	public CaDoodleFile loadActive() throws Exception {
