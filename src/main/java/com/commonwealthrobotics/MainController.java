@@ -472,6 +472,7 @@ public class MainController {
 			try {
 				cadoodle=ap.loadActive();
 				displayCurrent();
+				ap.save(cadoodle);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -490,7 +491,6 @@ public class MainController {
 			for(CSG c:(List<CSG>)CaDoodleLoader.process(cadoodle)) {
 				displayCSG(c);
 			}
-			
 		});
 	}
 	private void displayCSG(CSG c) {
@@ -500,7 +500,7 @@ public class MainController {
 		    PhongMaterial material = new PhongMaterial();
 		    Color in=c.getColor();
 		    // Set the diffuse color with transparency
-		    material.setDiffuseColor(new Color(in.getRed(), in.getGreen(), in.getBlue(), 0.5));
+		    material.setDiffuseColor(new Color(in.getRed(), in.getGreen(), in.getBlue(), 0.25));
 		    
 		    // Apply the material to the MeshView
 		    mv.setMaterial(material);
