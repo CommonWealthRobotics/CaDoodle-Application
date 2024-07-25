@@ -33,7 +33,7 @@ public class ActiveProject {
 		    "Centaur", "Drone", "Sphinx", "Exosuit", "Minotaur",
 		    "Cyclops", "Hologram", "Werewolf", "Nanobot", "Gorgon",
 		    "Replicant", "Banshee", "Hovercraft", "Basilisk", "Jetpack",
-		    "Gargoyle", "Teleporter", "Manticore", "Forcefield", "Harpy",
+		    "Gargoyle", "Teleporter", "Manticore", "Forcefield",
 		    "Submarine", "Cerberus", "Hoverboard", "Siren", "Skycycle",
 		    "Yeti", "Hoverbike", "Sasquatch", "Hyperloop", "Thunderbird",
 		    "Gyrocopter", "Leviathan", "Airship", "Behemoth", "Starship",
@@ -42,10 +42,10 @@ public class ActiveProject {
 		    "Troll", "Bathyscaphe", "Gnome", "Segway", "Leprechaun",
 		    "Hyperpod", "Fairy", "Gyrocar", "Elf", "Ornithopter",
 		    "Wraith", "Hoversuit", "Specter", "Levitator", "Phantom",
-		    "Telekinetic", "Goblin", "Gravicycle", "Dwarf", "Hovertank",
-		    "Ghoul", "Jetbike", "Hobgoblin", "Ekranoplan", "Poltergeist",
-		    "Aerotrain", "Sprite", "Maglev", "Nymph", "Aerosled",
-		    "Djinn", "Cybertooth", "Ifrit", "Warpod", "Elemental",
+		    "Telekinetic", "Goblin", "Gravicycle", "Dwarf",
+		     "Jetbike", "Hobgoblin", "Ekranoplan", 
+		    "Aerotrain", "Sprite", "Maglev",  "Aerosled",
+		     "Cybertooth", "Ifrit", "Warpod", "Elemental",
 		    "Hoversled", "Goliath", "Warpcraft", "Juggernaut", "Vortexer"
 		};
 	private static int index = ((Double) ConfigurationDatabase.get(
@@ -59,6 +59,6 @@ public class ActiveProject {
 		if(index>=creaturesMachines.length)
 			index=0;
 		ConfigurationDatabase.put("CaDoodle", "projectNameIndex", index);
-		return adjectives[(int) (Math.random()*creaturesMachines.length)]+"_"+creaturesMachines[index];
+		return adjectives[(int) (Math.random()*adjectives.length)]+"_"+creaturesMachines[index];
 	}
 }
