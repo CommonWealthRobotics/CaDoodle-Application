@@ -451,8 +451,12 @@ public class MainController {
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
+		setupActiveProject();
 	}
 
+	private void setupActiveProject() {
+		fileNameBox.setText(ActiveProject.getNextRandomName());
+	}
 	private void setUpColorPicker() {
 		colorPicker.setValue(Color.RED);
 		onColorPick(null);
