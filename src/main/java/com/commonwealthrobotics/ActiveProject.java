@@ -1,6 +1,15 @@
 package com.commonwealthrobotics;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
+
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 
 public class ActiveProject {
 	static String[] adjectives = {
@@ -60,5 +69,41 @@ public class ActiveProject {
 			index=0;
 		ConfigurationDatabase.put("CaDoodle", "projectNameIndex", index);
 		return adjectives[(int) (Math.random()*adjectives.length)]+"_"+creaturesMachines[index];
+	}
+	public File getActiveProject() {
+		try {
+			return (File)ConfigurationDatabase.get(
+					"CaDoodle", 
+					"acriveFile", 
+					ScriptingEngine.fileFromGit("", ""));
+		} catch (InvalidRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (GitAPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		File random = new File(getNextRandomName()+".doodle");
+		ConfigurationDatabase.put("CaDoodle", "acriveFile", random);
+		return random;
+	}
+	public CaDoodleFile loadActive() throws Exception {
+		return CaDoodleFile.fromFile(getActiveProject());
+	}
+	public void save(CaDoodleFile cf) {
+		cf.setSelf(getActiveProject());
+		
+		try {
+			cf.save();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
