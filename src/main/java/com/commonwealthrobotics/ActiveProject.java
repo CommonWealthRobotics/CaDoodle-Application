@@ -70,6 +70,9 @@ public class ActiveProject {
 		ConfigurationDatabase.put("CaDoodle", "projectNameIndex", index);
 		return adjectives[(int) (Math.random()*adjectives.length)]+"_"+creaturesMachines[index];
 	}
+	public void setActiveProject(File f) {
+		ConfigurationDatabase.put("CaDoodle", "acriveFile", f);
+	}
 	public File getActiveProject() {
 		try {
 			return (File)ConfigurationDatabase.get(
