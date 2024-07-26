@@ -76,7 +76,9 @@ public class ActiveProject {
 	}
 	public File getActiveProject() {
 		try {
-			ScriptingEngine.pull("https://github.com/madhephaestus/TestRepo.git");
+			if(!ConfigurationDatabase.containsKey("CaDoodle", 
+					"CaDoodleacriveFile"))
+				ScriptingEngine.pull("https://github.com/madhephaestus/TestRepo.git");
 			return new File(ConfigurationDatabase.get(
 					"CaDoodle", 
 					"CaDoodleacriveFile", 

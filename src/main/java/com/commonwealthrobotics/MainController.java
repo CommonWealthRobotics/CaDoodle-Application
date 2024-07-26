@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.fxyz3d.scene.paint.Patterns;
+
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -47,9 +49,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
+import javafx.scene.shape.TriangleMesh;
 
 public class MainController implements ICaDoodleStateUpdate {
+	private static final int ZOOM = -1000;
 	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
 	private List<CSG> onDisplay =new ArrayList<>();
@@ -263,7 +268,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onFitView(ActionEvent event) {
 		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(),
-				engine.getFlyingCamera().getDefaultZoomDepth());
+				ZOOM);
 	}
 
 	@FXML
@@ -299,7 +304,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
 		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(),
-				engine.getFlyingCamera().getDefaultZoomDepth());
+				ZOOM);
 	}
 
 	@FXML
@@ -485,9 +490,9 @@ public class MainController implements ICaDoodleStateUpdate {
 			redoButton.setDisable(!cadoodle.isForwardAvailible());
 			undoButton.setDisable(!cadoodle.isBackAvailible());
 
-			for(CSG c:onDisplay) {
-				engine.removeUserNode(c.getMesh());
-			}
+			//for(CSG c:onDisplay) {
+			engine.clearUserNode();
+			//}
 			onDisplay.clear();
 			for(CSG c:(List<CSG>)CaDoodleLoader.process(cadoodle)) {
 				displayCSG(c);
@@ -495,20 +500,56 @@ public class MainController implements ICaDoodleStateUpdate {
 		});
 	}
 	private void displayCSG(CSG c) {
-		MeshView mv = c.getMesh();
+		MeshView meshView = c.getMesh();
 		if(c.isHole()) {
+	        Image texture = new Image(getClass().getResourceAsStream("holeTexture.png"));
+
+			meshView= new TexturedCSG(c,texture);
+			//addTextureCoordinates(meshView);
 		    // Create a new PhongMaterial
 		    PhongMaterial material = new PhongMaterial();
 		    Color in=c.getColor();
-		    // Set the diffuse color with transparency
-		    material.setDiffuseColor(new Color(in.getRed(), in.getGreen(), in.getBlue(), 0.25));
-		    
+//		    // Set the diffuse color with transparency
+//		    material.setDiffuseColor(new Color(in.getRed(), in.getGreen(), in.getBlue(), 0.25));
+//		    
+	        // Set opacity for semi-transparency
+	        //meshView.setOpacity(0.5); // Adjust this value between 0.0 and 1.0 as needed
+	        //material.setDiffuseColor(new Color(0.1, 0.1, 0.1, 0.25));
+	        // Load the texture
+
+	        // Create a material and set the diffuse map to the texture
+	        material.setDiffuseMap(texture);
+	        material.setDiffuseColor(javafx.scene.paint.Color.WHITE);
+
+
+	        // Apply the material to the meshview
+	        meshView.setMaterial(material);
+
+	        // Set opacity for semi-transparency
+	        meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
+
+	        // Print some debug information
+	        System.out.println("Texture dimensions: " + texture.getWidth() + "x" + texture.getHeight());
+	        TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
+			System.out.println("Mesh faces: " + mesh.getFaces().size() / 6);
+	        System.out.println("Mesh points: " + mesh.getPoints().size() / 3);
+	        System.out.println("Mesh tex coords: " + mesh.getTexCoords().size() / 2);
+	        printSomeTextureCoordinates(mesh);
 		    // Apply the material to the MeshView
-		    mv.setMaterial(material);
+	        meshView.setMaterial(material);
+
 		}				
-		engine.addUserNode(mv);
+		engine.addUserNode(meshView);
 		onDisplay.add(c);
 	}
+	private void printSomeTextureCoordinates(TriangleMesh meshView) {
+	    float[] texCoords = meshView.getTexCoords().toArray(null);
+	    System.out.println("Some texture coordinates:");
+	    for (int i = 0; i < Math.min(20, texCoords.length / 2); i++) {
+	        System.out.printf("(%f, %f)\n", texCoords[i*2], texCoords[i*2 + 1]);
+	    }
+	}
+
 	private void setupActiveProject() {
 		fileNameBox.setText(ActiveProject.getNextRandomName());
 	}
