@@ -519,7 +519,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	        System.out.println("Mesh points: " + mesh.getPoints().size() / 3);
 	        System.out.println("Mesh tex coords: " + mesh.getTexCoords().size() / 2);
 	        printSomeTextureCoordinates(mesh);
-		    // Apply the material to the MeshView
+
 
 		}				
 		engine.addUserNode(meshView);
