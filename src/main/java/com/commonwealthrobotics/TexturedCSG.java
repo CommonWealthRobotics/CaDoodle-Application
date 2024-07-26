@@ -1,4 +1,5 @@
 package com.commonwealthrobotics;
+
 /**
  * CSGMesh.java
  *
@@ -26,7 +27,7 @@ package com.commonwealthrobotics;
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,8 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.DepthTest;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.TriangleMesh;
@@ -54,151 +57,156 @@ import javafx.scene.image.Image;
 
 /**
  *
- * @author José Pereda Llamas
- * Created on 01-may-2015 - 12:20:06
+ * @author José Pereda Llamas Created on 01-may-2015 - 12:20:06
  */
 public class TexturedCSG extends TexturedMesh {
-    
-    private final CSG primitive;
-    private Image textureImage; // Assume this is provided
 
-    public TexturedCSG(CSG primitive, Image texture){
-        this.primitive=primitive;
-        primitive.triangulate();
-        updateMesh();
-        setCullFace(CullFace.BACK);
-        setDrawMode(DrawMode.FILL);
-        setDepthTest(DepthTest.ENABLE);
-        textureImage=texture;
-    }
+	private final CSG primitive;
+	private Image textureImage; // Assume this is provided
 
-    @Override
-    protected final void updateMesh() {
-        setMesh(null);
-        mesh=createCSGMesh();
-        setMesh(mesh);
-    }
-    
+	public TexturedCSG(CSG primitive, Image texture) {
+		this.primitive = primitive;
+		primitive.triangulate();
+		updateMesh();
+		setCullFace(CullFace.BACK);
+		setDrawMode(DrawMode.FILL);
+		setDepthTest(DepthTest.ENABLE);
+		textureImage = texture;
 
-private TriangleMesh createCSGMesh() {
-    List<Vertex> vertices = new ArrayList<>();
-    List<List<Integer>> indices = new ArrayList<>();
-    List<Point2D> texCoords = new ArrayList<>();
-    listVertices.clear();
-    listTextures.clear();
-    listFaces.clear();
+		PhongMaterial material = new PhongMaterial();
+		material.setDiffuseMap(texture);
+		material.setDiffuseColor(javafx.scene.paint.Color.WHITE);
+		// Apply the material to the meshview
+		setMaterial(material);
+	}
 
-    // Process each polygon
-    primitive.getPolygons().forEach(p -> {
-        List<Integer> polyIndices = new ArrayList<>();
+	@Override
+	protected final void updateMesh() {
+		setMesh(null);
+		mesh = createCSGMesh();
+		setMesh(mesh);
+	}
 
-        // Compute polygon normal
-        Vector3d normal = computePolygonNormal(p);
+	private TriangleMesh createCSGMesh() {
+		List<Vertex> vertices = new ArrayList<>();
+		List<List<Integer>> indices = new ArrayList<>();
+		List<Point2D> texCoords = new ArrayList<>();
+		listVertices.clear();
+		listTextures.clear();
+		listFaces.clear();
 
-        // Create transformation matrix
-        Affine transform = createTransform(normal, p.vertices.get(0).pos);
-        
-        // Invert transformation matrix
-        Affine inverseTransform = new Affine(transform);
-        try {
-            inverseTransform.invert();
-        } catch (NonInvertibleTransformException e) {
-            e.printStackTrace();
-            return; // Skip this polygon if the transform can't be inverted
-        }
+		// Process each polygon
+		primitive.getPolygons().forEach(p -> {
+			List<Integer> polyIndices = new ArrayList<>();
 
-        // Calculate bounding box for texture mapping for this specific polygon
-        double minXt = Double.MAX_VALUE, minYt = Double.MAX_VALUE;
-        double maxXt = -Double.MAX_VALUE, maxYt = -Double.MAX_VALUE;
+			// Compute polygon normal
+			Vector3d normal = computePolygonNormal(p);
 
-        // Transform vertices to 2D plane
-        for (Vertex v : p.vertices) {
-            javafx.geometry.Point3D transformed = inverseTransform.deltaTransform(v.pos.x,v.pos.y, v.pos.z) ;
-            minXt = Math.min(minXt, transformed.getX());
-            minYt = Math.min(minYt, transformed.getY());
-            maxXt = Math.max(maxXt, transformed.getX());
-            maxYt = Math.max(maxYt, transformed.getY());
-        }
-        double minX = minXt;
-        double minY = minYt;
-        double maxX = maxXt;
-        double maxY = maxYt;
+			// Create transformation matrix
+			Affine transform = createTransform(normal, p.vertices.get(0).pos);
 
-        // Add vertices and calculate texture coordinates for this polygon
-        p.vertices.forEach(v -> {
-            if (!vertices.contains(v)) {
-                vertices.add(v);
-                listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
+			// Invert transformation matrix
+			Affine inverseTransform = new Affine(transform);
+			try {
+				inverseTransform.invert();
+			} catch (NonInvertibleTransformException e) {
+				e.printStackTrace();
+				return; // Skip this polygon if the transform can't be inverted
+			}
 
-                // Transform vertex to 2D plane
-                //Point3D transformed = inverseTransform.transform(v.pos);
-                javafx.geometry.Point3D transformed = inverseTransform.deltaTransform(v.pos.x, v.pos.y,  v.pos.z);
+			// Calculate bounding box for texture mapping for this specific polygon
+			double minXt = Double.MAX_VALUE, minYt = Double.MAX_VALUE;
+			double maxXt = -Double.MAX_VALUE, maxYt = -Double.MAX_VALUE;
 
-                // Calculate texture coordinates, ensuring they fit within the image bounds
-                float u = (float) ((transformed.getX() - minX) / (maxX - minX));
-                float vf = (float) ((transformed.getY() - minY) / (maxY - minY));
+			// Transform vertices to 2D plane
+			for (Vertex v : p.vertices) {
+				javafx.geometry.Point3D transformed = inverseTransform.deltaTransform(v.pos.x, v.pos.y, v.pos.z);
+				minXt = Math.min(minXt, transformed.getX());
+				minYt = Math.min(minYt, transformed.getY());
+				maxXt = Math.max(maxXt, transformed.getX());
+				maxYt = Math.max(maxYt, transformed.getY());
+			}
+			double minX = minXt;
+			double minY = minYt;
+			double maxX = maxXt;
+			double maxY = maxYt;
 
-                // Clamp coordinates to [0, 1] range
-                u = Math.max(0, Math.min(1, u));
-                vf = Math.max(0, Math.min(1, vf));
+			// Add vertices and calculate texture coordinates for this polygon
+			p.vertices.forEach(v -> {
+				if (!vertices.contains(v)) {
+					vertices.add(v);
+					listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
 
-                texCoords.add(new Point2D(u, vf));
+					// Transform vertex to 2D plane
+					// Point3D transformed = inverseTransform.transform(v.pos);
+					javafx.geometry.Point3D transformed = inverseTransform.deltaTransform(v.pos.x, v.pos.y, v.pos.z);
 
-                polyIndices.add(vertices.size());
-            } else {
-                int index = vertices.indexOf(v);
-                polyIndices.add(index + 1);
-            }
-        });
+					// Calculate texture coordinates, ensuring they fit within the image bounds
+					float u = (float) ((transformed.getX() - minX) / (maxX - minX));
+					float vf = (float) ((transformed.getY() - minY) / (maxY - minY));
 
-        // Add polygon indices to the list
-        indices.add(polyIndices);
-    });
+					// Clamp coordinates to [0, 1] range
+					u = Math.max(0, Math.min(1, u));
+					vf = Math.max(0, Math.min(1, vf));
 
-    // Convert texture coordinates list to float array
-    textureCoords = new float[texCoords.size() * 2];
-    for (int i = 0; i < texCoords.size(); i++) {
-        textureCoords[i * 2] = (float) texCoords.get(i).getX();
-        textureCoords[i * 2 + 1] = (float) texCoords.get(i).getY();
-    }
+					texCoords.add(new Point2D(u, vf));
 
-    // Convert polygons into triangles and create faces
-    indices.forEach(pVerts -> {
-        int index1 = pVerts.get(0);
-        for (int i = 0; i < pVerts.size() - 2; i++) {
-            int index2 = pVerts.get(i + 1);
-            int index3 = pVerts.get(i + 2);
-            listTextures.add(new Face3(index1 - 1, index2 - 1, index3 - 1));
-            listFaces.add(new Face3(index1 - 1, index2 - 1, index3 - 1));
-        }
-    });
+					polyIndices.add(vertices.size());
+				} else {
+					int index = vertices.indexOf(v);
+					polyIndices.add(index + 1);
+				}
+			});
 
-    // Set smoothing groups
-    int[] faceSmoothingGroups = new int[listFaces.size()];
-    smoothingGroups = faceSmoothingGroups;
+			// Add polygon indices to the list
+			indices.add(polyIndices);
+		});
 
-    // Create and return the mesh
-    return createMesh();
-}
+		// Convert texture coordinates list to float array
+		textureCoords = new float[texCoords.size() * 2];
+		for (int i = 0; i < texCoords.size(); i++) {
+			textureCoords[i * 2] = (float) texCoords.get(i).getX();
+			textureCoords[i * 2 + 1] = (float) texCoords.get(i).getY();
+		}
 
-private Vector3d computePolygonNormal(Polygon p) {
-    return p.plane.normal;
-}
+		// Convert polygons into triangles and create faces
+		indices.forEach(pVerts -> {
+			int index1 = pVerts.get(0);
+			for (int i = 0; i < pVerts.size() - 2; i++) {
+				int index2 = pVerts.get(i + 1);
+				int index3 = pVerts.get(i + 2);
+				listTextures.add(new Face3(index1 - 1, index2 - 1, index3 - 1));
+				listFaces.add(new Face3(index1 - 1, index2 - 1, index3 - 1));
+			}
+		});
 
-private Affine createTransform(Vector3d normal, Vector3d point) {
-    // Create a transformation matrix based on the polygon normal and a point on the polygon
-    Affine transform = new Affine();
+		// Set smoothing groups
+		int[] faceSmoothingGroups = new int[listFaces.size()];
+		smoothingGroups = faceSmoothingGroups;
 
-    // Translate the point to origin
-    transform.prepend(new Translate(-point.x, -point.y, -point.z));
+		// Create and return the mesh
+		return createMesh();
+	}
 
-    // Rotate to align the normal with the Z-axis
-    Vector3d zAxis = new Vector3d(0, 0, 1);
-    Vector3d axis = zAxis.cross(normal);
-    		axis		.normalize();
-    double angle = Math.acos(zAxis.dot(normal));
-    transform.prepend(new Rotate(Math.toDegrees(angle), axis.x, axis.y, axis.z));
+	private Vector3d computePolygonNormal(Polygon p) {
+		return p.plane.normal;
+	}
 
-    return transform;
-}
+	private Affine createTransform(Vector3d normal, Vector3d point) {
+		// Create a transformation matrix based on the polygon normal and a point on the
+		// polygon
+		Affine transform = new Affine();
+
+		// Translate the point to origin
+		transform.prepend(new Translate(-point.x, -point.y, -point.z));
+
+		// Rotate to align the normal with the Z-axis
+		Vector3d zAxis = new Vector3d(0, 0, 1);
+		Vector3d axis = zAxis.cross(normal);
+		axis.normalize();
+		double angle = Math.acos(zAxis.dot(normal));
+		transform.prepend(new Rotate(Math.toDegrees(angle), axis.x, axis.y, axis.z));
+
+		return transform;
+	}
 }

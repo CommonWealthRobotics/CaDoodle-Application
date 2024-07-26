@@ -507,23 +507,7 @@ public class MainController implements ICaDoodleStateUpdate {
 			meshView= new TexturedCSG(c,texture);
 			//addTextureCoordinates(meshView);
 		    // Create a new PhongMaterial
-		    PhongMaterial material = new PhongMaterial();
-		    Color in=c.getColor();
-//		    // Set the diffuse color with transparency
-//		    material.setDiffuseColor(new Color(in.getRed(), in.getGreen(), in.getBlue(), 0.25));
-//		    
-	        // Set opacity for semi-transparency
-	        //meshView.setOpacity(0.5); // Adjust this value between 0.0 and 1.0 as needed
-	        //material.setDiffuseColor(new Color(0.1, 0.1, 0.1, 0.25));
-	        // Load the texture
 
-	        // Create a material and set the diffuse map to the texture
-	        material.setDiffuseMap(texture);
-	        material.setDiffuseColor(javafx.scene.paint.Color.WHITE);
-
-
-	        // Apply the material to the meshview
-	        meshView.setMaterial(material);
 
 	        // Set opacity for semi-transparency
 	        meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
@@ -536,7 +520,6 @@ public class MainController implements ICaDoodleStateUpdate {
 	        System.out.println("Mesh tex coords: " + mesh.getTexCoords().size() / 2);
 	        printSomeTextureCoordinates(mesh);
 		    // Apply the material to the MeshView
-	        meshView.setMaterial(material);
 
 		}				
 		engine.addUserNode(meshView);
