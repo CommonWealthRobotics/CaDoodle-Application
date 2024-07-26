@@ -12,6 +12,8 @@ import java.util.ResourceBundle;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -47,7 +49,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 
-public class MainController {
+public class MainController implements ICaDoodleStateUpdate {
 	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
 	private List<CSG> onDisplay =new ArrayList<>();
@@ -206,13 +208,11 @@ public class MainController {
     void onRedo(ActionEvent event) {
     	System.out.println("On Redo");
     	cadoodle.forward();
-		displayCurrent();
     }
     @FXML
     void onUndo(ActionEvent event) {
     	System.out.println("On Undo");
     	cadoodle.back();
-		displayCurrent();
     }
     @FXML
     void onPaste(ActionEvent event) {
@@ -470,7 +470,8 @@ public class MainController {
 	private void setupFile() {
 		new Thread(()->{
 			try {
-				cadoodle=ap.loadActive();
+				// cadoodle varable set on the first instance of the listener fireing
+				ap.loadActive(this);
 				displayCurrent();
 				ap.save(cadoodle);
 			} catch (Exception e) {
@@ -620,6 +621,13 @@ public class MainController {
 		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
 		navigationCube.addUserNode(viewCubeMesh);
 
+	}
+	@Override
+	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
+		if(cadoodle==null)
+			cadoodle = f;
+		System.out.println("Displaying result of "+source.getType());
+		displayCurrent();
 	}
 
 }

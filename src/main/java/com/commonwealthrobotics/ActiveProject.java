@@ -10,6 +10,7 @@ import org.eclipse.jgit.api.errors.TransportException;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 
 public class ActiveProject {
 	static String[] adjectives = {
@@ -97,8 +98,8 @@ public class ActiveProject {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", random.getAbsolutePath());
 		return random;
 	}
-	public CaDoodleFile loadActive() throws Exception {
-		return CaDoodleFile.fromFile(getActiveProject());
+	public CaDoodleFile loadActive(ICaDoodleStateUpdate listener) throws Exception {
+		return CaDoodleFile.fromFile(getActiveProject(),listener);
 	}
 	public void save(CaDoodleFile cf) {
 		cf.setSelf(getActiveProject());
