@@ -102,8 +102,8 @@ public class TexturedCSG extends TexturedMesh {
             Vector3d normal = computePolygonNormal(p);
            
             // Create transformation matrix
-            Transform transform = createTransform(normal,  p.getBounds().getMin());
-
+            //Transform transform = createTransform(normal,  p.getBounds().getMin());
+            Transform transform=createPolygonTransform(p);
             // Invert transformation matrix
             Transform inverseTransform = transform.inverse();
 
@@ -113,7 +113,7 @@ public class TexturedCSG extends TexturedMesh {
             // Transform vertices to 2D plane and calculate bounding box for texture mapping
             for (Vertex v : p.vertices) {
                 Vector3d pos = v.pos;
-                Vector3d transformed = inverseTransform.transform(pos.clone());
+                Vector3d transformed = pos.transformed(inverseTransform);
 
                 minXt = Math.min(minXt, transformed.x);
                 minYt = Math.min(minYt, transformed.y);
@@ -133,7 +133,10 @@ public class TexturedCSG extends TexturedMesh {
                     listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
 
                     Vector3d pos = v.pos;
-                    Vector3d transformed = inverseTransform.transform(pos.clone());
+                    Vector3d transformed = pos.transform(inverseTransform);
+//                    if(Math.abs(transformed.z)>0.000001) {
+//                    	throw new RuntimeException("Failed to transform the point to the xy plane");
+//                    }
 
                     // Normalize coordinates to fit within the image bounds
                     float u = (float) ((transformed.x - minX) / (maxX - minX));
@@ -180,9 +183,83 @@ public class TexturedCSG extends TexturedMesh {
         return createMesh();
     }
 
-    private Vector3d computePolygonNormal(Polygon p) {
-        return p.plane.normal;
+    private Vector3d computePolygonNormal(Polygon polygon) {
+        if (polygon.vertices.size() < 3) {
+            throw new IllegalArgumentException("Polygon must have at least 3 vertices");
+        }
+
+        Vector3d v1 = polygon.vertices.get(1).pos.minus(polygon.vertices.get(0).pos);
+        Vector3d v2 = polygon.vertices.get(2).pos.minus(polygon.vertices.get(0).pos);
+
+        Vector3d normal = v1.cross(v2).normalized();
+
+        // Ensure the normal is pointing outwards
+        // This assumes your polygons are defined in a consistent winding order
+        if (normal.dot(polygon.plane.normal) < 0) {
+            normal = normal.negated();
+        }
+
+        return normal;
     }
+    private Transform createPolygonTransform(Polygon polygon) {
+        // Step 1: Compute the normal using the polygon's vertices
+        Vector3d normal = computePolygonNormal(polygon);
+        
+        // Step 2: Choose a point on the polygon (we'll use the first vertex)
+        Vector3d point = polygon.vertices.get(0).pos;
+        
+        // Step 3: Calculate initial rotation angles
+        double rotX, rotY;
+        
+        // Rotation around Y-axis
+        rotY = Math.atan2(normal.x, normal.z);
+        
+        // Rotation around X-axis
+        double lenXZ = Math.sqrt(normal.x * normal.x + normal.z * normal.z);
+        rotX = Math.atan2(-normal.y, lenXZ);
+        
+        // Step 4: Create the initial transform
+        Transform initialTransform = new Transform()
+            .rotX(Math.toDegrees(-rotX))
+            .rotY(Math.toDegrees(-rotY))
+            .translate(-point.x, -point.y, -point.z);  // Translate to origin first
+        
+        // Step 5: Find the bounding box after initial transformation
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+        for (Vertex vertex : polygon.vertices) {
+            Vector3d transformed = initialTransform.transform(vertex.pos.clone());
+            minX = Math.min(minX, transformed.x);
+            minY = Math.min(minY, transformed.y);
+            maxX = Math.max(maxX, transformed.x);
+            maxY = Math.max(maxY, transformed.y);
+        }
+        
+        // Step 6: Calculate rotation around Z-axis to align with first quadrant
+        double centerX = (minX + maxX) / 2;
+        double centerY = (minY + maxY) / 2;
+        double rotZ = Math.atan2(-centerY, -centerX);
+        
+        // Step 7: Determine if we need to flip the polygon
+        Vector3d v1 = polygon.vertices.get(1).pos.minus(polygon.vertices.get(0).pos);
+        Vector3d v2 = polygon.vertices.get(2).pos.minus(polygon.vertices.get(0).pos);
+        boolean needsFlip = v1.cross(v2).dot(normal) < 0;
+        
+        // Step 8: Create the final transform
+        Transform finalTransform = new Transform()
+            .rotX(Math.toDegrees(-rotX))
+            .rotY(Math.toDegrees(-rotY))
+            .rotZ(Math.toDegrees(rotZ));
+
+        if (needsFlip) {
+            finalTransform = finalTransform.rotX(180);  // Flip around X-axis
+        }
+        
+        finalTransform = finalTransform.translate(-point.x, -point.y, -point.z);
+        
+        return finalTransform;
+    }
+
 //    private Transform createTransform(Vector3d normal, Vector3d point) {
 //        // Normalize the normal vector
 //        Vector3d n = normal.normalized();
@@ -210,27 +287,21 @@ public class TexturedCSG extends TexturedMesh {
 //        return transform;
 //    }
     private Transform createTransform(Vector3d normal, Vector3d point) {
-       double rotz=-Math.atan2(normal.y, normal.x);
-       Transform tmp=new Transform().move(normal.x,normal.y, normal.z);
-       tmp.rotZ(Math.toDegrees(rotz));
-       double y = tmp.getY();
-		double z = tmp.getZ();
-		double x = tmp.getX();
-		double roty=Math.atan2(x, z);
+       double rotz=Math.toDegrees(-Math.atan2(normal.y, normal.x));
 
-        double degrees = Math.toDegrees(roty);
+		double x = Math.sqrt(Math.pow(normal.x, 2) +Math.pow(normal.y, 2) );
+		double z = normal.z;
+		double roty=Math.atan2(z,x);
+
+        double degrees = 0;//Math.toDegrees(roty);
         if(degrees>90||degrees<-90) {
-        	if(z>0)
-        		degrees=90;
-        	else
-        		degrees=-90;
-        	rotz=0;
+        	System.out.println("ERROR Angle impossible!");
         }
 		return TransformFactory.nrToCSG(
         		new TransformNR(point.x,point.y,point.z,
         				new RotationNR(
         						0,
-        						-Math.toDegrees(rotz),
-        						-degrees)));
+        						rotz,
+        						degrees)));
     }
 }

@@ -57,7 +57,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	private static final int ZOOM = -1000;
 	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
-	private List<CSG> onDisplay =new ArrayList<>();
+	private List<CSG> onDisplay = new ArrayList<>();
 	private boolean drawerOpen = true;
 	@FXML
 	private AnchorPane anchorPanForConfiguration;
@@ -209,28 +209,34 @@ public class MainController implements ICaDoodleStateUpdate {
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
-    @FXML
-    void onRedo(ActionEvent event) {
-    	System.out.println("On Redo");
-    	cadoodle.forward();
-    }
-    @FXML
-    void onUndo(ActionEvent event) {
-    	System.out.println("On Undo");
-    	cadoodle.back();
-    }
-    @FXML
-    void onPaste(ActionEvent event) {
-    	System.out.println("On Paste");
-    }
-    @FXML
-    void onCopy(ActionEvent event) {
-    	System.out.println("On copy");
-    }
-    @FXML
-    void onDelete(ActionEvent event) {
-    	System.out.println("On Delete");
-    }
+
+	@FXML
+	void onRedo(ActionEvent event) {
+		System.out.println("On Redo");
+		cadoodle.forward();
+	}
+
+	@FXML
+	void onUndo(ActionEvent event) {
+		System.out.println("On Undo");
+		cadoodle.back();
+	}
+
+	@FXML
+	void onPaste(ActionEvent event) {
+		System.out.println("On Paste");
+	}
+
+	@FXML
+	void onCopy(ActionEvent event) {
+		System.out.println("On copy");
+	}
+
+	@FXML
+	void onDelete(ActionEvent event) {
+		System.out.println("On Delete");
+	}
+
 	@FXML
 	void onColorPick(ActionEvent event) {
 
@@ -267,8 +273,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(),
-				ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(), ZOOM);
 	}
 
 	@FXML
@@ -303,8 +308,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(),
-				ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(), ZOOM);
 	}
 
 	@FXML
@@ -388,7 +392,9 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void setName(ActionEvent event) {
-		System.out.println("Set Project Name");
+		System.out.println("Set Project Name to " + fileNameBox.getText());
+		cadoodle.setProjectName(fileNameBox.getText());
+		save();
 	}
 
 	@FXML
@@ -468,81 +474,65 @@ public class MainController implements ICaDoodleStateUpdate {
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		setupActiveProject();
+		
+		// Threaded load happens after UI opens
 		setupFile();
 	}
 
 	private void setupFile() {
-		new Thread(()->{
+		new Thread(() -> {
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				ap.loadActive(this);
-				displayCurrent();
 				ap.save(cadoodle);
+				BowlerStudio.runLater(() -> {
+					fileNameBox.setText(cadoodle.getProjectName());
+				});
+				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}).start();
 	}
-	
+
 	private void displayCurrent() {
-		BowlerStudio.runLater(()->{
+		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!cadoodle.isForwardAvailible());
 			undoButton.setDisable(!cadoodle.isBackAvailible());
 
-			//for(CSG c:onDisplay) {
+			// for(CSG c:onDisplay) {
 			engine.clearUserNode();
-			//}
+			// }
 			onDisplay.clear();
-			for(CSG c:(List<CSG>)CaDoodleLoader.process(cadoodle)) {
+			for (CSG c : (List<CSG>) CaDoodleLoader.process(cadoodle)) {
 				displayCSG(c);
 			}
 		});
 	}
+
 	private void displayCSG(CSG c) {
 		MeshView meshView = c.getMesh();
-		if(c.isHole()) {
-	        Image texture = new Image(getClass().getResourceAsStream("holeTexture.png"));
+		if (c.isHole()) {
+			Image texture = new Image(getClass().getResourceAsStream("holeTexture.png"));
 
-			meshView= new TexturedCSG(c,texture);
-			//addTextureCoordinates(meshView);
-		    // Create a new PhongMaterial
+			meshView = new TexturedCSG(c, texture);
+			// addTextureCoordinates(meshView);
+			// Create a new PhongMaterial
 
-
-	        // Set opacity for semi-transparency
-	        meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
-
-	        // Print some debug information
-	        System.out.println("Texture dimensions: " + texture.getWidth() + "x" + texture.getHeight());
-	        TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
-			System.out.println("Mesh faces: " + mesh.getFaces().size() / 6);
-	        System.out.println("Mesh points: " + mesh.getPoints().size() / 3);
-	        System.out.println("Mesh tex coords: " + mesh.getTexCoords().size() / 2);
-	        printSomeTextureCoordinates(mesh);
-
-
-		}				
+			// Set opacity for semi-transparency
+			meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
+		}
 		engine.addUserNode(meshView);
 		onDisplay.add(c);
 	}
-	private void printSomeTextureCoordinates(TriangleMesh meshView) {
-	    float[] texCoords = meshView.getTexCoords().toArray(null);
-	    System.out.println("Some texture coordinates:");
-	    for (int i = 0; i < Math.min(20, texCoords.length / 2); i++) {
-	        System.out.printf("(%f, %f)\n", texCoords[i*2], texCoords[i*2 + 1]);
-	    }
-	}
 
-	private void setupActiveProject() {
-		fileNameBox.setText(ActiveProject.getNextRandomName());
-	}
 	private void setUpColorPicker() {
 		colorPicker.setValue(Color.RED);
 		onColorPick(null);
 		colorPicker.setOnMousePressed(event -> {
 			System.out.println("Set to Solid ");
 		});
-		shapeConfiguration.setExpanded(true);
 	}
 
 	private void setUp3dEngine() {
@@ -646,12 +636,16 @@ public class MainController implements ICaDoodleStateUpdate {
 		navigationCube.addUserNode(viewCubeMesh);
 
 	}
+
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
-		if(cadoodle==null)
+		if (cadoodle == null)
 			cadoodle = f;
-		System.out.println("Displaying result of "+source.getType());
+		System.out.println("Displaying result of " + source.getType());
 		displayCurrent();
 	}
 
+	private void save() {
+		new Thread(() -> ap.save(cadoodle));
+	}
 }
