@@ -51,6 +51,7 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Matrix3d;
 import eu.mihosoft.vrl.v3d.Polygon;
@@ -73,7 +74,7 @@ public class TexturedCSG extends TexturedMesh {
         setDepthTest(DepthTest.ENABLE);
 	    PhongMaterial material = new PhongMaterial();
 
-	    material.setDiffuseMap(texture);
+	    //material.setDiffuseMap(texture);
         material.setDiffuseColor(javafx.scene.paint.Color.WHITE);
         setMaterial(material);
     }
@@ -99,7 +100,7 @@ public class TexturedCSG extends TexturedMesh {
             List<Integer> polyIndices = new ArrayList<>();
 
             // Compute polygon normal
-            Vector3d normal = computePolygonNormal(p);
+            //Vector3d normal = computePolygonNormal(p);
            
             // Create transformation matrix
             //Transform transform = createTransform(normal,  p.getBounds().getMin());
@@ -183,82 +184,35 @@ public class TexturedCSG extends TexturedMesh {
         return createMesh();
     }
 
-    private Vector3d computePolygonNormal(Polygon polygon) {
-        if (polygon.vertices.size() < 3) {
-            throw new IllegalArgumentException("Polygon must have at least 3 vertices");
-        }
-
-        Vector3d v1 = polygon.vertices.get(1).pos.minus(polygon.vertices.get(0).pos);
-        Vector3d v2 = polygon.vertices.get(2).pos.minus(polygon.vertices.get(0).pos);
-
-        Vector3d normal = v1.cross(v2).normalized();
-
-        // Ensure the normal is pointing outwards
-        // This assumes your polygons are defined in a consistent winding order
-        if (normal.dot(polygon.plane.normal) < 0) {
-            normal = normal.negated();
-        }
-
-        return normal;
-    }
     private Transform createPolygonTransform(Polygon polygon) {
-        // Step 1: Compute the normal using the polygon's vertices
-        Vector3d normal = computePolygonNormal(polygon);
-        
-        // Step 2: Choose a point on the polygon (we'll use the first vertex)
-        Vector3d point = polygon.vertices.get(0).pos;
-        
-        // Step 3: Calculate initial rotation angles
-        double rotX, rotY;
-        
-        // Rotation around Y-axis
-        rotY = Math.atan2(normal.x, normal.z);
-        
-        // Rotation around X-axis
-        double lenXZ = Math.sqrt(normal.x * normal.x + normal.z * normal.z);
-        rotX = Math.atan2(-normal.y, lenXZ);
-        
-        // Step 4: Create the initial transform
-        Transform initialTransform = new Transform()
-            .rotX(Math.toDegrees(-rotX))
-            .rotY(Math.toDegrees(-rotY))
-            .translate(-point.x, -point.y, -point.z);  // Translate to origin first
-        
-        // Step 5: Find the bounding box after initial transformation
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
-        double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
-        for (Vertex vertex : polygon.vertices) {
-            Vector3d transformed = initialTransform.transform(vertex.pos.clone());
-            minX = Math.min(minX, transformed.x);
-            minY = Math.min(minY, transformed.y);
-            maxX = Math.max(maxX, transformed.x);
-            maxY = Math.max(maxY, transformed.y);
-        }
-        
-        // Step 6: Calculate rotation around Z-axis to align with first quadrant
-        double centerX = (minX + maxX) / 2;
-        double centerY = (minY + maxY) / 2;
-        double rotZ = Math.atan2(-centerY, -centerX);
-        
-        // Step 7: Determine if we need to flip the polygon
-        Vector3d v1 = polygon.vertices.get(1).pos.minus(polygon.vertices.get(0).pos);
-        Vector3d v2 = polygon.vertices.get(2).pos.minus(polygon.vertices.get(0).pos);
-        boolean needsFlip = v1.cross(v2).dot(normal) < 0;
-        
-        // Step 8: Create the final transform
-        Transform finalTransform = new Transform()
-            .rotX(Math.toDegrees(-rotX))
-            .rotY(Math.toDegrees(-rotY))
-            .rotZ(Math.toDegrees(rotZ));
+    	Transform finalTransform = new Transform();
+    	
+    	Vector3d pos1 = polygon.vertices.get(0).pos;
+    	Vector3d pos2 = polygon.vertices.get(1).pos;
+    	Vector3d pos3 = polygon.vertices.get(2).pos;
+		finalTransform= finalTransform.move(pos1);
+		Transform inverse = finalTransform.inverse();
+		pos1 = pos1.transformed(inverse);// should be at origin
+    	pos2 = pos2.transformed(inverse);
+    	pos3 = pos3.transformed(inverse);
+    	double sqrt = Math.sqrt(Math.pow(pos2.x, 2) + Math.pow(pos2.y, 2));
+		if(sqrt<0.000001) {
+    		// this point is on the z axis, swap them
+    		Vector3d tmp=pos3;
+    		pos3=pos2;
+    		pos2=tmp;
+    	}
+		double allignToX = Math.atan2(pos2.y, pos2.x);
+		finalTransform=finalTransform.rotZ(Math.toDegrees(allignToX));
 
-        if (needsFlip) {
-            finalTransform = finalTransform.rotX(180);  // Flip around X-axis
-        }
-        
-        finalTransform = finalTransform.translate(-point.x, -point.y, -point.z);
-        
         return finalTransform;
     }
+
+
+    private Polygon applyTransformToPolygon(Polygon polygon, Transform transform) {
+        return polygon.transformed(transform);
+    }
+
 
 //    private Transform createTransform(Vector3d normal, Vector3d point) {
 //        // Normalize the normal vector
