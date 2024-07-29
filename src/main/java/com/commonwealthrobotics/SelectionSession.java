@@ -22,6 +22,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Transform;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TitledPane;
@@ -49,6 +50,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ColorPicker colorPicker;
 	private ComboBox<String> snapGrid;
 	private double currentGrid = 1.0;
+	private List<Button> buttons;
+	private Button ungroupButton;
+	private Button groupButton;
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -78,7 +82,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (String s : selected) {
 				boolean exists = false;
 				for (CSG c : currentState) {
-					if (c.getName().contentEquals(s))
+					if (c.getName().contentEquals(s) && !c.isInGroup())
 						exists = true;
 				}
 				if (!exists) {
@@ -126,7 +130,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void updateSelection() {
-		System.out.println("\n");
+		//System.out.println("\n");
 		if (selected.size() > 0) {
 			for (String s : selected) {
 				System.out.println("Current Selection " + s);
@@ -143,10 +147,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			String style = String.format(" -fx-background-color: %s;", hexColor);
 			colorPicker.setStyle(style);
-			System.out.println("Color set to " + value);
+			showButtons();
 		} else {
-			System.out.println("None selected");
+			//System.out.println("None selected");
 			shapeConfigurationHolder.getChildren().clear();
+			hideButtons();
 		}
 	}
 
@@ -325,6 +330,53 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		System.out.println("Adding "+h.getType());
 		cadoodle.addOpperation(h);
+	}
+
+	public void setButtons(Button ... buttonsList) {
+		buttons = Arrays.asList(buttonsList);
+		hideButtons();
+	}
+
+	private void hideButtons() {
+		BowlerStudio.runLater(()->{
+			for(Button b:buttons) {
+				b.setDisable(true);
+			}
+			if(ungroupButton!=null)
+				ungroupButton.setDisable(true);
+			if(groupButton!=null)
+				groupButton.setDisable(true);
+		});
+	}
+	private void showButtons() {
+		
+		BowlerStudio.runLater(()->{
+			for(Button b:buttons) {
+				b.setDisable(false);
+			}
+			System.out.println("Number Selected is "+selected.size());
+			if(selected.size()>1) {
+				groupButton.setDisable(false);
+			}
+			for(String s:selected) {
+				CSG c=getSelectedCSG(s);
+				if(c!=null) {
+					if(c.isGroupResult()) {
+						ungroupButton.setDisable(false);
+					}
+				}
+			}
+		});
+	}
+
+	public void setUngroup(Button ungroupButton) {
+		this.ungroupButton = ungroupButton;
+		
+	}
+
+	public void setGroup(Button groupButton) {
+		this.groupButton = groupButton;
+		
 	}
 
 }
