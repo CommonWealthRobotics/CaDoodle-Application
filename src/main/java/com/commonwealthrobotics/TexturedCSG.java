@@ -75,8 +75,11 @@ public class TexturedCSG extends TexturedMesh {
 	    PhongMaterial material = new PhongMaterial();
 
 	    //material.setDiffuseMap(texture);
-        material.setDiffuseColor(javafx.scene.paint.Color.WHITE);
+        material.setDiffuseColor(new Color(0.25,0.25,0.25,0.75));
+        material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+        
         setMaterial(material);
+        setOpacity(0.25);
     }
 
     @Override
@@ -134,7 +137,7 @@ public class TexturedCSG extends TexturedMesh {
                     listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
 
                     Vector3d pos = v.pos;
-                    Vector3d transformed = pos.transform(inverseTransform);
+                    Vector3d transformed = pos.transformed(inverseTransform);
 //                    if(Math.abs(transformed.z)>0.000001) {
 //                    	throw new RuntimeException("Failed to transform the point to the xy plane");
 //                    }
