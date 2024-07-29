@@ -4,6 +4,7 @@
 
 package com.commonwealthrobotics;
 
+import javafx.scene.input.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +173,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	private Button showAllButton;
 
 	@FXML
-	private ComboBox<?> snapGrid;
+	private ComboBox<String> snapGrid;
 
 	@FXML
 	private GridPane topBar;
@@ -214,44 +215,47 @@ public class MainController implements ICaDoodleStateUpdate {
 	void onRedo(ActionEvent event) {
 		System.out.println("On Redo");
 		cadoodle.forward();
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUndo(ActionEvent event) {
 		System.out.println("On Undo");
 		cadoodle.back();
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onPaste(ActionEvent event) {
 		System.out.println("On Paste");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onCopy(ActionEvent event) {
 		System.out.println("On copy");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onDelete(ActionEvent event) {
 		System.out.println("On Delete");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onColorPick(ActionEvent event) {
 
 		Color value = colorPicker.getValue();
-		String hexColor = String.format("#%02X%02X%02X", (int) (value.getRed() * 255), (int) (value.getGreen() * 255),
-				(int) (value.getBlue() * 255));
 
-		String style = String.format(" -fx-background-color: %s;", hexColor);
-		colorPicker.setStyle(style);
-		System.out.println("Color set to " + value);
+		session.setColor(value);
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onCruse(ActionEvent event) {
 		System.out.println("On Cruse");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
@@ -264,116 +268,140 @@ public class MainController implements ICaDoodleStateUpdate {
 			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 			drawerHolder.getChildren().remove(drawerArea);
 		}
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onExport(ActionEvent event) {
 		System.out.println("On Export");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(), ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)),session.getFocusCenter(), ZOOM);
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onGroup(ActionEvent event) {
 		System.out.println("On Group");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideConnections(ActionEvent event) {
 		System.out.println(" on Hide Physics Connections");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideNotes(ActionEvent event) {
 		System.out.println("On Hide Notes ");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideShow(ActionEvent event) {
 		System.out.println("On Hide Show");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHoleButton(ActionEvent event) {
 		System.out.println("Set to Hole ");
+		session.setToHole();
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHome(ActionEvent event) {
 		System.out.println("On Home");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(), ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(0,0,10), ZOOM);
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onImport(ActionEvent event) {
 		System.out.println("On Import");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onLock(ActionEvent event) {
 		System.out.println("On Lock Selected");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onMirron(ActionEvent event) {
 		System.out.println("On Mirron Object");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onModeling(ActionEvent event) {
 		System.out.println("Select Modeling View");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onNotesClick(ActionEvent event) {
 		System.out.println("On Notes");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onPhysics(ActionEvent event) {
 		System.out.println("On Physics Mode Selected");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onRuler(ActionEvent event) {
 		System.out.println("On Add Ruler");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onSetCatagory(ActionEvent event) {
 		System.out.println("On Set Catagory");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onSettings(ActionEvent event) {
 		System.out.println("On Settings");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onShowHidden(ActionEvent event) {
 		System.out.println("On Show Hidden");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUngroup(ActionEvent event) {
 		System.out.println("On Ungroup");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onVisibility(ActionEvent event) {
 		System.out.println("On Visibility Menu");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
 		System.out.println("On Set Workplane");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
@@ -381,6 +409,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 		System.out.println("Zoom In");
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 20);
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
@@ -388,24 +417,29 @@ public class MainController implements ICaDoodleStateUpdate {
 		System.out.println("Zoom Out");
 
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() - 20);
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void setName(ActionEvent event) {
 		System.out.println("Set Project Name to " + fileNameBox.getText());
 		cadoodle.setProjectName(fileNameBox.getText());
+		session.setKeyBindingFocus();
 		save();
 	}
 
 	@FXML
 	void setSnapGrid(ActionEvent event) {
 		System.out.println("Set Snap Grid");
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void showAll(ActionEvent event) {
 		System.out.println("On SHow All");
+		session.setKeyBindingFocus();
 	}
+
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
@@ -474,7 +508,8 @@ public class MainController implements ICaDoodleStateUpdate {
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		session.set(shapeConfiguration,shapeConfigurationBox,shapeConfigurationHolder,configurationGrid,control3d,engine);
+		
+		session.set(shapeConfiguration,shapeConfigurationBox,shapeConfigurationHolder,configurationGrid,control3d,engine,colorPicker,snapGrid);
 		// Threaded load happens after UI opens
 		setupFile();
 	}
@@ -489,6 +524,7 @@ public class MainController implements ICaDoodleStateUpdate {
 					fileNameBox.setText(cadoodle.getProjectName());
 				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
+				session.setKeyBindingFocus();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -502,13 +538,15 @@ public class MainController implements ICaDoodleStateUpdate {
 		onColorPick(null);
 		colorPicker.setOnMousePressed(event -> {
 			System.out.println("Set to Solid ");
+			session.setToSolid();
 		});
+		
 	}
 
 	private void setUp3dEngine() {
 		engine = new BowlerStudio3dEngine();
 		engine.rebuild(true);
-		engine.hideHand();
+		//engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
 			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
