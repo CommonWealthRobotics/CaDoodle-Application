@@ -51,6 +51,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button ungroupButton;
 	private Button groupButton;
 	private ImageView showHideImage;
+	private List<String> copySet;
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -250,6 +251,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					System.out.println("redo");
 					cadoodle.forward();
 				}
+				if ((int) character.charAt(0)==7) {
+					System.out.println("Group");
+					onGroup();
+				}
+				if(event.isShiftDown()) {
+					if ((int) character.charAt(0)==71) {
+						System.out.println("Un-Group");
+						onUngroup();
+					}
+				}
 			}
 		});
 	}
@@ -359,15 +370,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if(selected.size()>1) {
 				groupButton.setDisable(false);
 			}
-			for(String s:selected) {
-				CSG c=getSelectedCSG(s);
-				if(c!=null) {
-					if(c.isGroupResult()) {
-						ungroupButton.setDisable(false);
-					}
-				}
+			if(isAGroupSelected()) {
+				ungroupButton.setDisable(false);
 			}
 		});
+	}
+
+	private boolean isAGroupSelected() {
+		for(String s:selected) {
+			CSG c=getSelectedCSG(s);
+			if(c!=null) {
+				if(c.isGroupResult()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void setUngroup(Button ungroupButton) {
@@ -381,18 +399,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDelete() {
-		// TODO Auto-generated method stub
-		
+		cadoodle.addOpperation(new Delete().setNames(selectedSnapshot()));		
 	}
 
 	public void onCopy() {
-		// TODO Auto-generated method stub
-		
+		copySet=selectedSnapshot();
 	}
 
 	public void onPaste() {
-		// TODO Auto-generated method stub
-		
+		cadoodle.addOpperation(new Paste().setNames(copySet));		
+		copySet=null;
 	}
 
 	public void conCruse() {
@@ -403,8 +419,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 
 	public void onLock() {
-		// TODO Auto-generated method stub
-		
+		cadoodle.addOpperation(new Lock().setNames(selectedSnapshot()));		
 	}
 
 	public void showHiddenSelected() {
@@ -418,10 +433,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 	public void onGroup() {
-		cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
+		if(selected.size()>1)
+			cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
 	}
 	public void onUngroup() {
-		cadoodle.addOpperation(new UnGroup().setNames(selectedSnapshot()));
+		if(isAGroupSelected() )
+			cadoodle.addOpperation(new UnGroup().setNames(selectedSnapshot()));
 	}
 
 	public void onHideShowButton() {
