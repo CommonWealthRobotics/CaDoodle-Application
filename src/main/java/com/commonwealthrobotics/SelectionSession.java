@@ -10,11 +10,7 @@ import java.util.List;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ToHole;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ToSolid;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -27,6 +23,7 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -53,6 +50,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private List<Button> buttons;
 	private Button ungroupButton;
 	private Button groupButton;
+	private ImageView showHideImage;
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -95,6 +93,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void displayCSG(CSG c) {
+		if(c.isHide())
+			return;
 		MeshView meshView = c.getMesh();
 		if (c.isHole()) {
 			Image texture = new Image(getClass().getResourceAsStream("holeTexture.png"));
@@ -148,6 +148,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			String style = String.format(" -fx-background-color: %s;", hexColor);
 			colorPicker.setStyle(style);
 			showButtons();
+			updateShowHideButton();
 		} else {
 			//System.out.println("None selected");
 			shapeConfigurationHolder.getChildren().clear();
@@ -257,7 +258,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if(engine!=null)
 			BowlerStudio.runLater(()->	engine.getSubScene().requestFocus());
 	}
-	private void save() {
+	public void save() {
 		if(cadoodle!=null)
 		new Thread(()->{
 			try {
@@ -377,6 +378,102 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setGroup(Button groupButton) {
 		this.groupButton = groupButton;
 		
+	}
+
+	public void onDelete() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onCopy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onPaste() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void conCruse() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void onLock() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void showHiddenSelected() {
+		ArrayList<String> toShow = new ArrayList<String>();
+		for(CSG c:currentState) {
+			if(c.isHide())
+				toShow.add(c.getName());
+		}
+		if(toShow.size()>0) {
+			cadoodle.addOpperation(new Show().setNames(toShow));
+		}
+	}
+	public void onGroup() {
+		cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
+	}
+	public void onUngroup() {
+		cadoodle.addOpperation(new UnGroup().setNames(selectedSnapshot()));
+	}
+
+	public void onHideShowButton() {
+		ICaDoodleOpperation op;
+		if(isSelectedHidden()) {
+			op=new Show().setNames(selectedSnapshot());
+		}else {
+			op= new Hide().setNames(selectedSnapshot());
+		}
+		cadoodle.addOpperation(op);
+		updateShowHideButton();
+	}
+
+	private void updateShowHideButton() {
+		if(isSelectedHidden()) {
+			showHideImage.setImage(new Image(MainController.class.getResourceAsStream("litBulb.png")));
+		}else {
+			showHideImage.setImage(new Image(MainController.class.getResourceAsStream("darkBulb.png")));
+		}
+	}
+	public boolean isAnyHidden() {
+		boolean ishid = false;
+		for(CSG c:currentState) {
+			if(c.isHide()) {
+				ishid=true;
+			}
+		}
+		return ishid;
+	}
+	public boolean isSelectedHidden() {
+		boolean ishid = true;
+		for(CSG c:getSelectedCSG()) {
+			if(!c.isHide()) {
+				ishid=false;
+			}
+		}
+		return ishid;
+	}
+	
+	public List<CSG> getSelectedCSG(){
+		ArrayList<CSG> back = new ArrayList<CSG>();
+		for(String sel:selected) {
+			CSG t=getSelectedCSG(sel);
+			if(t!=null) {
+				back.add(t);
+			}
+		}
+		return back;
+	}
+
+	public void setShowHideImage(ImageView showHideImage) {
+		this.showHideImage = showHideImage;
 	}
 
 }

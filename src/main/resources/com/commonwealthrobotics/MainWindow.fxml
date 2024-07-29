@@ -103,7 +103,7 @@
                                                 <HBox pickOnBounds="false" GridPane.columnIndex="1">
                                                    <children>
                                                       <Label text="Snap Grid" />
-                                                      <ComboBox fx:id="snapGrid" onAction="#setSnapGrid" />
+                                                      <ComboBox fx:id="snapGrid" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -178,7 +178,7 @@
                                                                   <VBox pickOnBounds="false" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
                                                                   <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button" GridPane.columnIndex="2">
                                                                      <graphic>
-                                                                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                                        <ImageView fx:id="showHideImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                                            <image>
                                                                               <Image url="@darkBulb.png" />
                                                                            </image>
@@ -190,7 +190,7 @@
                                                                   </Button>
                                                                   <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="1">
                                                                      <graphic>
-                                                                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                                        <ImageView fx:id="lockImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                                            <image>
                                                                               <Image url="@unlock.png" />
                                                                            </image>
@@ -370,7 +370,7 @@
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="showAllImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@litBulb.png" />
                                  </image>
