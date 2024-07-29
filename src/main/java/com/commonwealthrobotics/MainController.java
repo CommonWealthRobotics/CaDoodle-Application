@@ -57,8 +57,8 @@ public class MainController implements ICaDoodleStateUpdate {
 	private static final int ZOOM = -1000;
 	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
-	private List<CSG> onDisplay = new ArrayList<>();
 	private boolean drawerOpen = true;
+	private SelectionSession session= new SelectionSession();
 	@FXML
 	private AnchorPane anchorPanForConfiguration;
 
@@ -474,7 +474,7 @@ public class MainController implements ICaDoodleStateUpdate {
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		
+		session.set(shapeConfiguration,shapeConfigurationBox,shapeConfigurationHolder,configurationGrid,control3d,engine);
 		// Threaded load happens after UI opens
 		setupFile();
 	}
@@ -489,43 +489,13 @@ public class MainController implements ICaDoodleStateUpdate {
 					fileNameBox.setText(cadoodle.getProjectName());
 				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
-
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}).start();
 	}
 
-	private void displayCurrent() {
-		BowlerStudio.runLater(() -> {
-			redoButton.setDisable(!cadoodle.isForwardAvailible());
-			undoButton.setDisable(!cadoodle.isBackAvailible());
 
-			// for(CSG c:onDisplay) {
-			engine.clearUserNode();
-			// }
-			onDisplay.clear();
-			for (CSG c : (List<CSG>) CaDoodleLoader.process(cadoodle)) {
-				displayCSG(c);
-			}
-		});
-	}
-
-	private void displayCSG(CSG c) {
-		MeshView meshView = c.getMesh();
-		if (c.isHole()) {
-			Image texture = new Image(getClass().getResourceAsStream("holeTexture.png"));
-
-			meshView = new TexturedCSG(c, texture);
-			// addTextureCoordinates(meshView);
-			// Create a new PhongMaterial
-
-			// Set opacity for semi-transparency
-			meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
-		}
-		engine.addUserNode(meshView);
-		onDisplay.add(c);
-	}
 
 	private void setUpColorPicker() {
 		colorPicker.setValue(Color.RED);
@@ -642,10 +612,14 @@ public class MainController implements ICaDoodleStateUpdate {
 		if (cadoodle == null)
 			cadoodle = f;
 		System.out.println("Displaying result of " + source.getType());
-		displayCurrent();
+		BowlerStudio.runLater(() -> {
+			redoButton.setDisable(!cadoodle.isForwardAvailible());
+			undoButton.setDisable(!cadoodle.isBackAvailible());
+		});
+		session.onUpdate(currentState, source, f);
 	}
 
 	private void save() {
-		new Thread(() -> ap.save(cadoodle));
+		new Thread(() -> ap.save(cadoodle)).start();
 	}
 }
