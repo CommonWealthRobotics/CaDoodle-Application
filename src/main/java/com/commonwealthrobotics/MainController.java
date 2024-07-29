@@ -62,6 +62,12 @@ public class MainController implements ICaDoodleStateUpdate {
 	private SelectionSession session= new SelectionSession();
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
+    @FXML // fx:id="lockImage"
+    private ImageView lockImage; // Value injected by FXMLLoader
+    @FXML // fx:id="showHideImage"
+    private ImageView showHideImage; // Value injected by FXMLLoader
+    @FXML // fx:id="showHideImage"
+    private ImageView showAllImage;
 
     @FXML // URL location of the FXML file that was given to the FXMLLoader
     private URL location;
@@ -238,18 +244,21 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onPaste(ActionEvent event) {
 		System.out.println("On Paste");
+		session.onPaste();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onCopy(ActionEvent event) {
 		System.out.println("On copy");
+		session.onCopy();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onDelete(ActionEvent event) {
 		System.out.println("On Delete");
+		session.onDelete();
 		session.setKeyBindingFocus();
 	}
 
@@ -265,6 +274,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onCruse(ActionEvent event) {
 		System.out.println("On Cruse");
+		session.conCruse();
 		session.setKeyBindingFocus();
 	}
 
@@ -289,13 +299,14 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)),session.getFocusCenter(), ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)),session.getFocusCenter(), engine.getFlyingCamera().getZoomDepth());
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onGroup(ActionEvent event) {
 		System.out.println("On Group");
+		session.onGroup();
 		session.setKeyBindingFocus();
 	}
 
@@ -314,6 +325,8 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onHideShow(ActionEvent event) {
 		System.out.println("On Hide Show");
+		session.onHideShowButton();
+
 		session.setKeyBindingFocus();
 	}
 
@@ -326,7 +339,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onHome(ActionEvent event) {
-		System.out.println("On Home");
+		System.out.println("Open the Project Select UI");
 		session.setKeyBindingFocus();
 	}
 
@@ -345,6 +358,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onLock(ActionEvent event) {
 		System.out.println("On Lock Selected");
+		session.onLock();
 		session.setKeyBindingFocus();
 	}
 
@@ -380,7 +394,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onSetCatagory(ActionEvent event) {
-		System.out.println("On Set Catagory");
+		System.out.println("On Set Catagory, re-lod object pallet");
 		session.setKeyBindingFocus();
 	}
 
@@ -393,18 +407,20 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onShowHidden(ActionEvent event) {
 		System.out.println("On Show Hidden");
+		session.showHiddenSelected();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUngroup(ActionEvent event) {
 		System.out.println("On Ungroup");
+		session.onUngroup();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onVisibility(ActionEvent event) {
-		System.out.println("On Visibility Menu");
+		System.out.println("On Visibility Menu opening");
 		session.setKeyBindingFocus();
 	}
 
@@ -438,15 +454,11 @@ public class MainController implements ICaDoodleStateUpdate {
 		save();
 	}
 
-	@FXML
-	void setSnapGrid(ActionEvent event) {
-		System.out.println("Set Snap Grid");
-		session.setKeyBindingFocus();
-	}
 
 	@FXML
 	void showAll(ActionEvent event) {
 		System.out.println("On SHow All");
+		session.showHiddenSelected();
 		session.setKeyBindingFocus();
 	}
 
@@ -512,6 +524,7 @@ public class MainController implements ICaDoodleStateUpdate {
 		session.setButtons(copyButton,deleteButton,pasteButton,hideSHow,mirronButton,cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
+		session.setShowHideImage(showHideImage);
 		// Threaded load happens after UI opens
 		setupFile();
 	}
@@ -657,6 +670,18 @@ public class MainController implements ICaDoodleStateUpdate {
 			undoButton.setDisable(!cadoodle.isBackAvailible());
 		});
 		session.onUpdate(currentState, source, f);
+		if (session.isAnyHidden()) {
+			BowlerStudio.runLater(() -> {
+				showAllImage.setImage(new Image(MainController.class.getResourceAsStream("litBulb.png")));
+				showAllButton.setDisable(false);
+			});
+		} else {
+			BowlerStudio.runLater(() -> {
+				showAllImage.setImage(new Image(MainController.class.getResourceAsStream("darkBulb.png")));
+				showAllButton.setDisable(true);
+			});
+		}
+		session.save();
 	}
 
 	private void save() {
