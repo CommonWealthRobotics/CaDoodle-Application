@@ -34,7 +34,6 @@ import javafx.scene.shape.MeshView;
 
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
-	private List<CSG> currentState;
 	private ICaDoodleOpperation source;
 	private CaDoodleFile cadoodle;
 	private TitledPane shapeConfiguration;
@@ -62,8 +61,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
-		this.currentState = currentState;
-		// TODO Auto-generated method stub
 		this.source = source;
 		this.cadoodle = file;
 		displayCurrent();
@@ -81,7 +78,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			ArrayList<String> toRemove = new ArrayList<String>();
 			for (String s : selected) {
 				boolean exists = false;
-				for (CSG c : currentState) {
+				for (CSG c : getCurrentState()) {
 					if (c.getName().contentEquals(s) && !c.isInGroup())
 						exists = true;
 				}
@@ -215,7 +212,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 	public void selectAll() {
 		selected.clear();
-		for(CSG c:currentState) {
+		for(CSG c:getCurrentState()) {
 			if(c.isInGroup())
 				continue;
 			if(c.isHide())
@@ -371,12 +368,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onPaste() {
-		List<CSG> before = currentState;
+		List<CSG> before = cadoodle.getCurrentState();
 		cadoodle.addOpperation(new Paste().setNames(copySet));	
 		copySet.clear();
-		for(int i=before.size();i<currentState.size();i++) {
-			copySet.add(currentState.get(i).getName());
+		System.out.println("\n");
+		for(int i=before.size();i<getCurrentState().size();i++) {
+			String name = getCurrentState().get(i).getName();
+			System.out.println("Resetting copy target to "+name);
+			copySet.add(name);
 		}
+		
 		//copySet=null;
 	}
 
@@ -393,7 +394,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void showHiddenSelected() {
 		ArrayList<String> toShow = new ArrayList<String>();
-		for(CSG c:currentState) {
+		for(CSG c:getCurrentState()) {
 			if(c.isHide())
 				toShow.add(c.getName());
 		}
@@ -404,7 +405,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onGroup() {
 		if(selected.size()>1)
 			cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
-		CSG newOne = currentState.get(currentState.size()-1);
+		CSG newOne = getCurrentState().get(getCurrentState().size()-1);
 		selected.clear();
 		selected.add(newOne.getName());
 		updateSelection();
@@ -414,7 +415,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for(CSG c:getSelectedCSG()) {
 			if(c.isGroupResult()) {
 				String name = c.getName();
-				for(CSG inG: currentState) {
+				for(CSG inG: getCurrentState()) {
 					if(inG.isInGroup()) {
 						if(inG.checkGroupMembership(name)) {
 							toSelect.add(inG.getName());
@@ -454,7 +455,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 	public boolean isAnyHidden() {
 		boolean ishid = false;
-		for(CSG c:currentState) {
+		for(CSG c:getCurrentState()) {
 			if(c.isHide()) {
 				ishid=true;
 			}
@@ -494,5 +495,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setAllignButton(Button allignButton) {
 		this.allignButton = allignButton;
 	}
+
+	public List<CSG> getCurrentState() {
+		return cadoodle.getCurrentState();
+	}
+
+
 
 }
