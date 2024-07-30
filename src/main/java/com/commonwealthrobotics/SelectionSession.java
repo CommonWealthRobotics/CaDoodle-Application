@@ -53,6 +53,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ImageView showHideImage;
 	private List<String> copySet;
 	private Button allignButton;
+	private long timeSinceLastMove = System.currentTimeMillis();
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -371,7 +372,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onPaste() {
 		List<CSG> before = cadoodle.getCurrentState();
-		cadoodle.addOpperation(new Paste().setNames(copySet));	
+		ArrayList<String> copyTarget=new ArrayList<String>();
+		copyTarget.addAll(copySet);
+		cadoodle.addOpperation(new Paste().setNames(copyTarget));	
 		copySet.clear();
 		System.out.println("\n");
 		for(int i=before.size();i<getCurrentState().size();i++) {
@@ -575,7 +578,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			roundToNearist(stateUnitVector.getX()*incement,incement),
 			roundToNearist(stateUnitVector.getY()*incement,incement),
 			roundToNearist(stateUnitVector.getZ()*incement,incement));
-		TransformNR current = getMoveSessionTransform();
+		MoveCenter mc =getActiveMove();
+		if(System.currentTimeMillis()-timeSinceLastMove>2000 || mc==null) {
+			mc=new MoveCenter()
+					.setLocation(new TransformNR())
+					.setNames(selectedSnapshot());// force a new move event
+		}
+		timeSinceLastMove=System.currentTimeMillis();
+		TransformNR current = mc.getLocation();
 		TransformNR currentRotation = new TransformNR(0,0,0,current.getRotation());
 		TransformNR tf= current.times(	
 								currentRotation.inverse().times(
@@ -584,22 +594,49 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							)
 						);
 		
-		System.out.println("Move "+tf.toSimpleString());
 		
 		List<String> selectedSnapshot = selectedSnapshot();
 		for(String s:selectedSnapshot) {
 			System.out.println("\t"+s);
 		}
-		cadoodle.addOpperation(new MoveCenter()
-				.setLocation(tf)
-				.setNames(selectedSnapshot));
-		
-	}
+		ICaDoodleOpperation op = cadoodle.currentOpperation();
 
-	private TransformNR getMoveSessionTransform() {
+		if(op==mc) {
+			if(compareLists(selectedSnapshot, mc.getNames())) {
+				System.out.println("Move "+tf.toSimpleString());
+				mc.setLocation(tf);
+				cadoodle.regenerateCurrent();
+				return;
+			}
+		}
+		cadoodle.addOpperation(mc);
 		
-		return new TransformNR();
 	}
+    public boolean compareLists(List<String> list1, List<String> list2) {
+        if (list1 == null || list2 == null) {
+            return list1 == list2;
+        }
+        
+        if (list1.size() != list2.size()) {
+            return false;
+        }
+        
+        HashSet<String> set1 = new HashSet<>(list1);
+        HashSet<String> set2 = new HashSet<>(list2);
+        
+        return set1.equals(set2);
+    }
+    private MoveCenter getActiveMove() {
+		ICaDoodleOpperation op = cadoodle.currentOpperation();
+		if(MoveCenter.class.isInstance(op)) {
+			MoveCenter active = (MoveCenter)op;
+			if(compareLists(selectedSnapshot(), active.getNames())) {
+				return active;
+			}
+		}
+		return null;
+    }
+
 
 	double roundToNearist(double incoiming, double modulo) {
 		return modulo*(Math.round(incoiming/modulo));

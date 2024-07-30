@@ -230,6 +230,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML // fx:id="zoomOutButton"
 	private Button zoomOutButton; // Value injected by FXMLLoader
+	private ICaDoodleOpperation source;
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -719,7 +720,10 @@ public class MainController implements ICaDoodleStateUpdate {
 				showAllButton.setDisable(true);
 			});
 		}
-		session.save();
+		if(this.source!=source) {
+			session.save();
+		}
+		this.source = source;
 	}
 
 	private void save() {
