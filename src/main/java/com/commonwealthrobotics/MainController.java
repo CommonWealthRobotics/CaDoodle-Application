@@ -60,187 +60,183 @@ public class MainController implements ICaDoodleStateUpdate {
 	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
-	private SelectionSession session= new SelectionSession();
+	private SelectionSession session = new SelectionSession();
 	/**
 	 * CaDoodle Model Classes
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
-	
-	
 
-    @FXML // fx:id="allignButton"
-    private Button allignButton; // Value injected by FXMLLoader
-    @FXML // ResourceBundle that was given to the FXMLLoader
-    private ResourceBundle resources;
-    @FXML // fx:id="lockImage"
-    private ImageView lockImage; // Value injected by FXMLLoader
-    @FXML // fx:id="showHideImage"
-    private ImageView showHideImage; // Value injected by FXMLLoader
-    @FXML // fx:id="showHideImage"
-    private ImageView showAllImage;
+	@FXML // fx:id="allignButton"
+	private Button allignButton; // Value injected by FXMLLoader
+	@FXML // ResourceBundle that was given to the FXMLLoader
+	private ResourceBundle resources;
+	@FXML // fx:id="lockImage"
+	private ImageView lockImage; // Value injected by FXMLLoader
+	@FXML // fx:id="showHideImage"
+	private ImageView showHideImage; // Value injected by FXMLLoader
+	@FXML // fx:id="showHideImage"
+	private ImageView showAllImage;
 
-    @FXML // URL location of the FXML file that was given to the FXMLLoader
-    private URL location;
+	@FXML // URL location of the FXML file that was given to the FXMLLoader
+	private URL location;
 
-    @FXML // fx:id="anchorPanForConfiguration"
-    private AnchorPane anchorPanForConfiguration; // Value injected by FXMLLoader
+	@FXML // fx:id="anchorPanForConfiguration"
+	private AnchorPane anchorPanForConfiguration; // Value injected by FXMLLoader
 
-    @FXML // fx:id="buttonGrid"
-    private GridPane buttonGrid; // Value injected by FXMLLoader
+	@FXML // fx:id="buttonGrid"
+	private GridPane buttonGrid; // Value injected by FXMLLoader
 
-    @FXML // fx:id="colorPicker"
-    private ColorPicker colorPicker; // Value injected by FXMLLoader
+	@FXML // fx:id="colorPicker"
+	private ColorPicker colorPicker; // Value injected by FXMLLoader
 
-    @FXML // fx:id="configurationGrid"
-    private GridPane configurationGrid; // Value injected by FXMLLoader
+	@FXML // fx:id="configurationGrid"
+	private GridPane configurationGrid; // Value injected by FXMLLoader
 
-    @FXML // fx:id="control3d"
-    private AnchorPane control3d; // Value injected by FXMLLoader
+	@FXML // fx:id="control3d"
+	private AnchorPane control3d; // Value injected by FXMLLoader
 
-    @FXML // fx:id="controlBar"
-    private GridPane controlBar; // Value injected by FXMLLoader
+	@FXML // fx:id="controlBar"
+	private GridPane controlBar; // Value injected by FXMLLoader
 
-    @FXML // fx:id="copyButton"
-    private Button copyButton; // Value injected by FXMLLoader
+	@FXML // fx:id="copyButton"
+	private Button copyButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="cruseButton"
-    private Button cruseButton; // Value injected by FXMLLoader
+	@FXML // fx:id="cruseButton"
+	private Button cruseButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="deleteButton"
-    private Button deleteButton; // Value injected by FXMLLoader
+	@FXML // fx:id="deleteButton"
+	private Button deleteButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="drawerArea"
-    private AnchorPane drawerArea; // Value injected by FXMLLoader
+	@FXML // fx:id="drawerArea"
+	private AnchorPane drawerArea; // Value injected by FXMLLoader
 
-    @FXML // fx:id="drawerButton"
-    private Button drawerButton; // Value injected by FXMLLoader
+	@FXML // fx:id="drawerButton"
+	private Button drawerButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="drawerGrid"
-    private GridPane drawerGrid; // Value injected by FXMLLoader
+	@FXML // fx:id="drawerGrid"
+	private GridPane drawerGrid; // Value injected by FXMLLoader
 
-    @FXML // fx:id="drawerHolder"
-    private HBox drawerHolder; // Value injected by FXMLLoader
+	@FXML // fx:id="drawerHolder"
+	private HBox drawerHolder; // Value injected by FXMLLoader
 
-    @FXML // fx:id="drawrImage"
-    private ImageView drawrImage; // Value injected by FXMLLoader
+	@FXML // fx:id="drawrImage"
+	private ImageView drawrImage; // Value injected by FXMLLoader
 
-    @FXML // fx:id="export"
-    private Button export; // Value injected by FXMLLoader
+	@FXML // fx:id="export"
+	private Button export; // Value injected by FXMLLoader
 
-    @FXML // fx:id="fileNameBox"
-    private TextField fileNameBox; // Value injected by FXMLLoader
+	@FXML // fx:id="fileNameBox"
+	private TextField fileNameBox; // Value injected by FXMLLoader
 
-    @FXML // fx:id="fitViewButton"
-    private Button fitViewButton; // Value injected by FXMLLoader
+	@FXML // fx:id="fitViewButton"
+	private Button fitViewButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="groupButton"
-    private Button groupButton; // Value injected by FXMLLoader
+	@FXML // fx:id="groupButton"
+	private Button groupButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="hideSHow"
-    private Button hideSHow; // Value injected by FXMLLoader
+	@FXML // fx:id="hideSHow"
+	private Button hideSHow; // Value injected by FXMLLoader
 
-    @FXML // fx:id="holeButton"
-    private Button holeButton; // Value injected by FXMLLoader
+	@FXML // fx:id="holeButton"
+	private Button holeButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="homeButton"
-    private Button homeButton; // Value injected by FXMLLoader
+	@FXML // fx:id="homeButton"
+	private Button homeButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="homeViewButton"
-    private Button homeViewButton; // Value injected by FXMLLoader
+	@FXML // fx:id="homeViewButton"
+	private Button homeViewButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="importButton"
-    private Button importButton; // Value injected by FXMLLoader
+	@FXML // fx:id="importButton"
+	private Button importButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="lockButton"
-    private Button lockButton; // Value injected by FXMLLoader
+	@FXML // fx:id="lockButton"
+	private Button lockButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="lockUnlockTooltip"
-    private Tooltip lockUnlockTooltip; // Value injected by FXMLLoader
+	@FXML // fx:id="lockUnlockTooltip"
+	private Tooltip lockUnlockTooltip; // Value injected by FXMLLoader
 
-    @FXML // fx:id="mirronButton"
-    private Button mirronButton; // Value injected by FXMLLoader
+	@FXML // fx:id="mirronButton"
+	private Button mirronButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="model"
-    private Button model; // Value injected by FXMLLoader
+	@FXML // fx:id="model"
+	private Button model; // Value injected by FXMLLoader
 
-    @FXML // fx:id="notesButton"
-    private Button notesButton; // Value injected by FXMLLoader
+	@FXML // fx:id="notesButton"
+	private Button notesButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="objectPallet"
-    private GridPane objectPallet; // Value injected by FXMLLoader
+	@FXML // fx:id="objectPallet"
+	private GridPane objectPallet; // Value injected by FXMLLoader
 
-    @FXML // fx:id="pasteButton"
-    private Button pasteButton; // Value injected by FXMLLoader
+	@FXML // fx:id="pasteButton"
+	private Button pasteButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="physicsButton"
-    private Button physicsButton; // Value injected by FXMLLoader
+	@FXML // fx:id="physicsButton"
+	private Button physicsButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="redoButton"
-    private Button redoButton; // Value injected by FXMLLoader
+	@FXML // fx:id="redoButton"
+	private Button redoButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="rulerButton"
-    private Button rulerButton; // Value injected by FXMLLoader
+	@FXML // fx:id="rulerButton"
+	private Button rulerButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="settingsButton"
-    private Button settingsButton; // Value injected by FXMLLoader
+	@FXML // fx:id="settingsButton"
+	private Button settingsButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="shapeCatagory"
-    private ComboBox<?> shapeCatagory; // Value injected by FXMLLoader
+	@FXML // fx:id="shapeCatagory"
+	private ComboBox<?> shapeCatagory; // Value injected by FXMLLoader
 
-    @FXML // fx:id="shapeConfiguration"
-    private TitledPane shapeConfiguration; // Value injected by FXMLLoader
+	@FXML // fx:id="shapeConfiguration"
+	private TitledPane shapeConfiguration; // Value injected by FXMLLoader
 
-    @FXML // fx:id="shapeConfigurationBox"
-    private Accordion shapeConfigurationBox; // Value injected by FXMLLoader
+	@FXML // fx:id="shapeConfigurationBox"
+	private Accordion shapeConfigurationBox; // Value injected by FXMLLoader
 
-    @FXML // fx:id="shapeConfigurationHolder"
-    private AnchorPane shapeConfigurationHolder; // Value injected by FXMLLoader
+	@FXML // fx:id="shapeConfigurationHolder"
+	private AnchorPane shapeConfigurationHolder; // Value injected by FXMLLoader
 
-    @FXML // fx:id="showAllButton"
-    private Button showAllButton; // Value injected by FXMLLoader
+	@FXML // fx:id="showAllButton"
+	private Button showAllButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="snapGrid"
-    private ComboBox<String> snapGrid; // Value injected by FXMLLoader
+	@FXML // fx:id="snapGrid"
+	private ComboBox<String> snapGrid; // Value injected by FXMLLoader
 
-    @FXML // fx:id="topBar"
-    private GridPane topBar; // Value injected by FXMLLoader
+	@FXML // fx:id="topBar"
+	private GridPane topBar; // Value injected by FXMLLoader
 
-    @FXML // fx:id="totalApplicationBackground"
-    private AnchorPane totalApplicationBackground; // Value injected by FXMLLoader
+	@FXML // fx:id="totalApplicationBackground"
+	private AnchorPane totalApplicationBackground; // Value injected by FXMLLoader
 
-    @FXML // fx:id="undoButton"
-    private Button undoButton; // Value injected by FXMLLoader
+	@FXML // fx:id="undoButton"
+	private Button undoButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="ungroupButton"
-    private Button ungroupButton; // Value injected by FXMLLoader
+	@FXML // fx:id="ungroupButton"
+	private Button ungroupButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="view3d"
-    private AnchorPane view3d; // Value injected by FXMLLoader
+	@FXML // fx:id="view3d"
+	private AnchorPane view3d; // Value injected by FXMLLoader
 
-    @FXML // fx:id="viewControlCubeHolder"
-    private AnchorPane viewControlCubeHolder; // Value injected by FXMLLoader
+	@FXML // fx:id="viewControlCubeHolder"
+	private AnchorPane viewControlCubeHolder; // Value injected by FXMLLoader
 
-    @FXML // fx:id="visbilityButton"
-    private MenuButton visbilityButton; // Value injected by FXMLLoader
+	@FXML // fx:id="visbilityButton"
+	private MenuButton visbilityButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="workplaneButton"
-    private Button workplaneButton; // Value injected by FXMLLoader
+	@FXML // fx:id="workplaneButton"
+	private Button workplaneButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="zoomInButton"
-    private Button zoomInButton; // Value injected by FXMLLoader
+	@FXML // fx:id="zoomInButton"
+	private Button zoomInButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="zoomOutButton"
-    private Button zoomOutButton; // Value injected by FXMLLoader
+	@FXML // fx:id="zoomOutButton"
+	private Button zoomOutButton; // Value injected by FXMLLoader
 
-	
-    @FXML
-    void onAllign(ActionEvent event) {
-    	System.out.println("On Allign Clicked");
-    	session.onAllign();
+	@FXML
+	void onAllign(ActionEvent event) {
+		System.out.println("On Allign Clicked");
+		session.onAllign();
 		session.setKeyBindingFocus();
-    }
-
+	}
 
 	@FXML
 	void onRedo(ActionEvent event) {
@@ -314,7 +310,8 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)),session.getFocusCenter(), engine.getFlyingCamera().getZoomDepth());
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), session.getFocusCenter(),
+				engine.getFlyingCamera().getZoomDepth());
 		session.setKeyBindingFocus();
 	}
 
@@ -340,7 +337,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onHideShow(ActionEvent event) {
 		System.out.println("On Hide Show");
-		session.onHideShowButton();
+		session.onHideShowOpperation();
 
 		session.setKeyBindingFocus();
 	}
@@ -360,7 +357,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 45, -45)), new TransformNR(0,0,10), ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 5), ZOOM);
 		session.setKeyBindingFocus();
 	}
 
@@ -422,14 +419,14 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onShowHidden(ActionEvent event) {
 		System.out.println("On Show Hidden");
-		session.showHiddenSelected();
+		session.showAll();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUngroup(ActionEvent event) {
 		System.out.println("On Ungroup");
-		
+
 		session.onUngroup();
 		session.setKeyBindingFocus();
 	}
@@ -470,74 +467,98 @@ public class MainController implements ICaDoodleStateUpdate {
 		save();
 	}
 
-
 	@FXML
 	void showAll(ActionEvent event) {
 		System.out.println("On SHow All");
-		session.showHiddenSelected();
+		session.showAll();
 		session.setKeyBindingFocus();
 	}
 
-
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
-        assert anchorPanForConfiguration != null : "fx:id=\"anchorPanForConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert buttonGrid != null : "fx:id=\"buttonGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert colorPicker != null : "fx:id=\"colorPicker\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert configurationGrid != null : "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert control3d != null : "fx:id=\"control3d\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert copyButton != null : "fx:id=\"copyButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert cruseButton != null : "fx:id=\"cruseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert deleteButton != null : "fx:id=\"deleteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert drawerArea != null : "fx:id=\"drawerArea\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert drawerButton != null : "fx:id=\"drawerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert drawerGrid != null : "fx:id=\"drawerGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert drawerHolder != null : "fx:id=\"drawerHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert drawrImage != null : "fx:id=\"drawrImage\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert export != null : "fx:id=\"export\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fileNameBox != null : "fx:id=\"fileNameBox\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fitViewButton != null : "fx:id=\"fitViewButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert groupButton != null : "fx:id=\"groupButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert hideSHow != null : "fx:id=\"hideSHow\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert holeButton != null : "fx:id=\"holeButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert homeButton != null : "fx:id=\"homeButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert homeViewButton != null : "fx:id=\"homeViewButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert importButton != null : "fx:id=\"importButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert lockButton != null : "fx:id=\"lockButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert lockUnlockTooltip != null : "fx:id=\"lockUnlockTooltip\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert mirronButton != null : "fx:id=\"mirronButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert model != null : "fx:id=\"model\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert notesButton != null : "fx:id=\"notesButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert objectPallet != null : "fx:id=\"objectPallet\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert pasteButton != null : "fx:id=\"pasteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert physicsButton != null : "fx:id=\"physicsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert redoButton != null : "fx:id=\"redoButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert rulerButton != null : "fx:id=\"rulerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert settingsButton != null : "fx:id=\"settingsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert shapeCatagory != null : "fx:id=\"shapeCatagory\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert shapeConfiguration != null : "fx:id=\"shapeConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert shapeConfigurationBox != null : "fx:id=\"shapeConfigurationBox\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert shapeConfigurationHolder != null : "fx:id=\"shapeConfigurationHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert showAllButton != null : "fx:id=\"showAllButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert snapGrid != null : "fx:id=\"snapGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert topBar != null : "fx:id=\"topBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert totalApplicationBackground != null : "fx:id=\"totalApplicationBackground\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert undoButton != null : "fx:id=\"undoButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert ungroupButton != null : "fx:id=\"ungroupButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert view3d != null : "fx:id=\"view3d\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert viewControlCubeHolder != null : "fx:id=\"viewControlCubeHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert visbilityButton != null : "fx:id=\"visbilityButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert workplaneButton != null : "fx:id=\"workplaneButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert zoomInButton != null : "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert zoomOutButton != null : "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert anchorPanForConfiguration != null
+				: "fx:id=\"anchorPanForConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert buttonGrid != null : "fx:id=\"buttonGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert colorPicker != null : "fx:id=\"colorPicker\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert configurationGrid != null
+				: "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert control3d != null : "fx:id=\"control3d\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert copyButton != null : "fx:id=\"copyButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert cruseButton != null : "fx:id=\"cruseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert deleteButton != null
+				: "fx:id=\"deleteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert drawerArea != null : "fx:id=\"drawerArea\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert drawerButton != null
+				: "fx:id=\"drawerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert drawerGrid != null : "fx:id=\"drawerGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert drawerHolder != null
+				: "fx:id=\"drawerHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert drawrImage != null : "fx:id=\"drawrImage\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert export != null : "fx:id=\"export\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert fileNameBox != null : "fx:id=\"fileNameBox\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert fitViewButton != null
+				: "fx:id=\"fitViewButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert groupButton != null : "fx:id=\"groupButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert hideSHow != null : "fx:id=\"hideSHow\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert holeButton != null : "fx:id=\"holeButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert homeButton != null : "fx:id=\"homeButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert homeViewButton != null
+				: "fx:id=\"homeViewButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert importButton != null
+				: "fx:id=\"importButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert lockButton != null : "fx:id=\"lockButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert lockUnlockTooltip != null
+				: "fx:id=\"lockUnlockTooltip\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert mirronButton != null
+				: "fx:id=\"mirronButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert model != null : "fx:id=\"model\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert notesButton != null : "fx:id=\"notesButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert objectPallet != null
+				: "fx:id=\"objectPallet\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert pasteButton != null : "fx:id=\"pasteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert physicsButton != null
+				: "fx:id=\"physicsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert redoButton != null : "fx:id=\"redoButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert rulerButton != null : "fx:id=\"rulerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert settingsButton != null
+				: "fx:id=\"settingsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert shapeCatagory != null
+				: "fx:id=\"shapeCatagory\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert shapeConfiguration != null
+				: "fx:id=\"shapeConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert shapeConfigurationBox != null
+				: "fx:id=\"shapeConfigurationBox\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert shapeConfigurationHolder != null
+				: "fx:id=\"shapeConfigurationHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert showAllButton != null
+				: "fx:id=\"showAllButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert snapGrid != null : "fx:id=\"snapGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert topBar != null : "fx:id=\"topBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert totalApplicationBackground != null
+				: "fx:id=\"totalApplicationBackground\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert undoButton != null : "fx:id=\"undoButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert ungroupButton != null
+				: "fx:id=\"ungroupButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert view3d != null : "fx:id=\"view3d\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert viewControlCubeHolder != null
+				: "fx:id=\"viewControlCubeHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert visbilityButton != null
+				: "fx:id=\"visbilityButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert workplaneButton != null
+				: "fx:id=\"workplaneButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert zoomInButton != null
+				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert zoomOutButton != null
+				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		
-		session.set(shapeConfiguration,shapeConfigurationBox,shapeConfigurationHolder,configurationGrid,control3d,engine,colorPicker,snapGrid);
-		session.setButtons(copyButton,deleteButton,pasteButton,hideSHow,mirronButton,cruseButton);
+
+		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, control3d,
+				engine, colorPicker, snapGrid);
+		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
 		session.setShowHideImage(showHideImage);
@@ -565,8 +586,6 @@ public class MainController implements ICaDoodleStateUpdate {
 		}).start();
 	}
 
-
-
 	private void setUpColorPicker() {
 		colorPicker.setValue(Color.RED);
 		onColorPick(null);
@@ -574,13 +593,13 @@ public class MainController implements ICaDoodleStateUpdate {
 			System.out.println("Set to Solid ");
 			session.setToSolid();
 		});
-		
+
 	}
 
 	private void setUp3dEngine() {
 		engine = new BowlerStudio3dEngine();
 		engine.rebuild(true);
-		//engine.hideHand();
+		// engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
 			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -706,6 +725,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	private void save() {
 		new Thread(() -> ap.save(cadoodle)).start();
 	}
+
 	private void setupEngineControls() {
 		engine.getSubScene().setOnMousePressed(event -> {
 			session.clearSelection();
@@ -714,26 +734,46 @@ public class MainController implements ICaDoodleStateUpdate {
 		SubScene subScene = engine.getSubScene();
 
 		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-		    if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN ||
-		        event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT||event.getCode() == KeyCode.TAB) {
-		    	System.out.println("Arrows "+event.getCode());
-		        // Consume the event to prevent default focus traversal
-		        event.consume();
-		    }
-		    if (event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE) {
-		    	session.onDelete();
-		        // Handle the backspace or delete key press
-		        event.consume(); // Prevents the event from being processed further
-		    }
+			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
+					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
+				switch(event.getCode()) {
+				case UP:
+					if(event.isControlDown()) {
+						session.moveInCameraFrame(new TransformNR(0,0,1));
+					}else
+						session.moveInCameraFrame(new TransformNR(1,0,0));
+					break;
+				case DOWN:
+					if(event.isControlDown()) {
+						session.moveInCameraFrame(new TransformNR(0,0,-1));
+					}else
+						session.moveInCameraFrame(new TransformNR(-1,0,0));
+					break;
+				case LEFT:
+					session.moveInCameraFrame(new TransformNR(0,1,0));
+					break;
+				case RIGHT:
+					session.moveInCameraFrame(new TransformNR(0,-1,0));
+					break;
+				}
+				// System.out.println("Arrows " + event.getCode());
+				// Consume the event to prevent default focus traversal
+				event.consume();
+			}
+			if (event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE) {
+				session.onDelete();
+				// Handle the backspace or delete key press
+				event.consume(); // Prevents the event from being processed further
+			}
 		});
 		subScene.setOnKeyTyped(event -> {
-		    String character = event.getCharacter();
+			String character = event.getCharacter();
 
-		    // You can still use the key code for non-character keys
-		    //System.out.println("Key code: " + event.getCode());
+			// You can still use the key code for non-character keys
+			// System.out.println("Key code: " + event.getCode());
 			if (event.isControlDown()) {
-				System.out.println("CTRL + ");
-				switch((int) character.charAt(0)) {
+				// System.out.println("CTRL + ");
+				switch ((int) character.charAt(0)) {
 				case 26:
 					System.out.println("Undo");
 					cadoodle.back();
@@ -747,7 +787,7 @@ public class MainController implements ICaDoodleStateUpdate {
 					session.onGroup();
 					break;
 				case 71:
-					if(event.isShiftDown()) {
+					if (event.isShiftDown()) {
 						System.out.println("Un-Group");
 						session.onUngroup();
 					}
@@ -762,21 +802,36 @@ public class MainController implements ICaDoodleStateUpdate {
 				case 22:
 					session.onPaste();
 					break;
+				case 4:
+					session.Duplicate();
+					break;
+				case 8:
+					session.onHideShowOpperation();
+					break;
+				case 72:
+					session.showAll();
+					break;
 				default:
 				    if (!character.isEmpty()) {
-				        char rawChar = character.charAt(0);
-				        int rawByte = (int) rawChar;
-				        
-				        System.out.println("Character: '" + character + "'");
-				        System.out.println("Raw char value: " + (int) rawChar);
-				        System.out.println("Hex value: 0x" + Integer.toHexString(rawByte));
-				        
-				        // If you need the actual byte value (which might lose information for Unicode characters)
-				        byte actualByte = (byte) rawChar;
-				        System.out.println("Actual byte value: " + actualByte);
+				        char rawChar = character.charAt(0);			        
+				        System.out.println("CTRL+ Raw char value: " + (int) rawChar);
 				    } else {
 				        System.out.println("No character data available (probably a non-character key)");
 				    }
+					break;
+				}
+			} else {
+				switch ((int) character.charAt(0)) {
+				case 100:
+					session.dropToWorkplane();
+					break;
+				default:
+					if (!character.isEmpty()) {
+						char rawChar = character.charAt(0);
+						System.out.println("Raw char value: " + (int) rawChar);
+					} else {
+						System.out.println("No character data available (probably a non-character key)");
+					}
 					break;
 				}
 			}

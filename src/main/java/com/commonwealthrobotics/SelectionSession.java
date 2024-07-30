@@ -12,6 +12,7 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
@@ -199,6 +200,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (num != null) {
 				currentGrid = num;
 				System.out.println("Snap Grid Set to " + currentGrid);
+				setKeyBindingFocus();
 			}
 		});
 	}
@@ -392,7 +394,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		cadoodle.addOpperation(new Lock().setNames(selectedSnapshot()));		
 	}
 
-	public void showHiddenSelected() {
+	public void showAll() {
 		ArrayList<String> toShow = new ArrayList<String>();
 		for(CSG c:getCurrentState()) {
 			if(c.isHide())
@@ -435,7 +437,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		
 	}
 
-	public void onHideShowButton() {
+	public void onHideShowOpperation() {
 		ICaDoodleOpperation op;
 		if(isSelectedHidden()) {
 			op=new Show().setNames(selectedSnapshot());
@@ -500,6 +502,107 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return cadoodle.getCurrentState();
 	}
 
+	public void Duplicate() {
+		// TODO Auto-generated method stub
+		
+	}
 
+	public void dropToWorkplane() {
+		System.out.println("Drop to Workplane");
+	}
+	public enum Quadrent {
+		first,second,third,fourth
+	}
+	Quadrent getQuad(double angle) {
+		if(angle>45 && angle<135)
+			return Quadrent.first;
+		if(angle>135 ||angle < (-135))
+			return Quadrent.second;
+		if(angle>-135&& angle<-45)
+			return Quadrent.third;
+		if(angle>-45&&angle<45)
+			return Quadrent.fourth;
+		throw new RuntimeException("Impossible nummber! "+angle);
+	}
+	double 	QuadrentToAngle(Quadrent q) {
+		switch(q) {
+			case first:
+			return 90;
+			case second:
+			return 180;
+			case third:
+			return -90;
+			case fourth:
+			default:
+			return 0;
+		}
+	}
+	public void moveInCameraFrame(TransformNR stateUnitVectorTmp) {
+		if(selected.size()==0)
+			return;
+		RotationNR getCamerFrameGetRotation;
+		double currentRotZ ;
+		Quadrent quad ;
+		getCamerFrameGetRotation = engine.getFlyingCamera().getCamerFrame().getRotation();
+		double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuth());
+		quad = getQuad(toDegrees);
+		currentRotZ = QuadrentToAngle(quad);
+		
+		TransformNR orentationOffset = new TransformNR(0,0,0,new RotationNR(0,currentRotZ-90,0));
+		TransformNR frame = new TransformNR();// BowlerStudio.getTargetFrame() ;
+		TransformNR frameOffset = new TransformNR(0,0,0,frame.getRotation());
+		TransformNR stateUnitVector = new TransformNR();
+		double incement = currentGrid;
+		stateUnitVector= orentationOffset.times(stateUnitVectorTmp);
+		stateUnitVector.setRotation(new RotationNR());
+		boolean updateTrig = false;
+		double bound =0.5;
+		if(stateUnitVector.getX()>bound)
+			updateTrig=true;
+		if(stateUnitVector.getX()<-bound)
+			updateTrig=true;
+		if(stateUnitVector.getY()>bound)
+			updateTrig=true;
+		if(stateUnitVector.getY()<-bound)
+			updateTrig=true;
+		if(stateUnitVector.getZ()>bound)
+			updateTrig=true;
+		if(stateUnitVector.getZ()<-bound)
+			updateTrig=true;
+		if(!updateTrig)
+			return;
+		stateUnitVector=new TransformNR(
+			roundToNearist(stateUnitVector.getX()*incement,incement),
+			roundToNearist(stateUnitVector.getY()*incement,incement),
+			roundToNearist(stateUnitVector.getZ()*incement,incement));
+		TransformNR current = getMoveSessionTransform();
+		TransformNR currentRotation = new TransformNR(0,0,0,current.getRotation());
+		TransformNR tf= current.times(	
+								currentRotation.inverse().times(
+									frameOffset.inverse().times(stateUnitVector).times(frameOffset)						
+								.times(currentRotation)
+							)
+						);
+		
+		System.out.println("Move "+tf.toSimpleString());
+		
+		List<String> selectedSnapshot = selectedSnapshot();
+		for(String s:selectedSnapshot) {
+			System.out.println("\t"+s);
+		}
+		cadoodle.addOpperation(new MoveCenter()
+				.setLocation(tf)
+				.setNames(selectedSnapshot));
+		
+	}
+
+	private TransformNR getMoveSessionTransform() {
+		
+		return new TransformNR();
+	}
+
+	double roundToNearist(double incoiming, double modulo) {
+		return modulo*(Math.round(incoiming/modulo));
+	}
 
 }
