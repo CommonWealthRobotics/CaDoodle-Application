@@ -27,7 +27,7 @@
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" minWidth="700.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="750.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints vgrow="NEVER" />
@@ -185,7 +185,7 @@
                                                                         </ImageView>
                                                                      </graphic>
                                                                      <tooltip>
-                                                                        <Tooltip text="Hide Object" />
+                                                                        <Tooltip text="Hide Object &lt; Ctrl H &gt;" />
                                                                      </tooltip>
                                                                   </Button>
                                                                   <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="1">
@@ -232,6 +232,9 @@
                                                    </image>
                                                 </ImageView>
                                              </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Home View" />
+                                             </tooltip>
                                           </Button>
                                           <Button fx:id="fitViewButton" mnemonicParsing="false" onAction="#onFitView" styleClass="image-button" GridPane.rowIndex="2">
                                              <graphic>
@@ -241,6 +244,9 @@
                                                    </image>
                                                 </ImageView>
                                              </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Fit View &lt; F &gt;" />
+                                             </tooltip>
                                           </Button>
                                           <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#onZoomIn" styleClass="image-button" GridPane.rowIndex="3">
                                              <graphic>
@@ -250,6 +256,9 @@
                                                    </image>
                                                 </ImageView>
                                              </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Zoom In &lt; + &gt;" />
+                                             </tooltip>
                                           </Button>
                                           <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#onZoomOut" styleClass="image-button" GridPane.rowIndex="4">
                                              <graphic>
@@ -259,6 +268,9 @@
                                                    </image>
                                                 </ImageView>
                                              </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Zoom Out &lt; - &gt;" />
+                                             </tooltip>
                                           </Button>
                                        </children>
                                     </GridPane>
@@ -322,7 +334,7 @@
                                     </ImageView>
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Workplane" />
+                                    <Tooltip text="Workplane Tool &lt; W &gt;" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" styleClass="image-button" GridPane.columnIndex="1">
@@ -334,7 +346,7 @@
                                     </ImageView>
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Ruler" />
+                                    <Tooltip text="Ruler Tool &lt; R &gt;" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="notesButton" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" GridPane.columnIndex="2">
@@ -346,7 +358,7 @@
                                     </ImageView>
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Notes" />
+                                    <Tooltip text="Notes &lt; N &gt;" />
                                  </tooltip>
                               </Button>
                            </children>
@@ -377,7 +389,7 @@
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Show All " />
+                              <Tooltip text="Show All  &lt; Ctrl + Shift + H &gt;" />
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
@@ -425,7 +437,7 @@
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Group" />
+                              <Tooltip text="Group &lt; Ctrl + G &gt;" />
                            </tooltip>
                         </Button>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
@@ -437,10 +449,22 @@
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Un-Group" />
+                              <Tooltip text="Un-Group &lt; Ctrl + Shift + G &gt;" />
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
+                        <Button fx:id="allignButton" mnemonicParsing="false" onAction="#onAllign" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@allign.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Allign &lt; L &gt;" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirron" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -450,7 +474,7 @@
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Mirror" />
+                              <Tooltip text="Mirror &lt; M &gt;" />
                            </tooltip>
                         </Button>
                         <Button fx:id="cruseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruse" styleClass="image-button">
@@ -462,7 +486,7 @@
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Cruse" />
+                              <Tooltip text="Cruse &lt; C &gt;" />
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
@@ -480,6 +504,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Copy &lt; Ctrl + C &gt;" />
+                           </tooltip>
                         </Button>
                         <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
                            <graphic>
@@ -489,6 +516,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Paste &lt; Ctrl +  V &gt;" />
+                           </tooltip>
                         </Button>
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
                            <graphic>
@@ -498,6 +528,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Delete &lt; Backspace or Delete &gt;" />
+                           </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" />
                         <Button fx:id="undoButton" mnemonicParsing="false" onAction="#onUndo" styleClass="image-button">
@@ -508,6 +541,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Undo &lt; Ctrl + Z &gt;" />
+                           </tooltip>
                         </Button>
                         <Button fx:id="redoButton" mnemonicParsing="false" onAction="#onRedo" styleClass="image-button">
                            <graphic>
@@ -517,6 +553,9 @@
                                  </image>
                               </ImageView>
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Re-Do &lt; Ctrl + Y &gt;" />
+                           </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" />
                      </children>

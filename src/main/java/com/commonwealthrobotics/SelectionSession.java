@@ -52,6 +52,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button groupButton;
 	private ImageView showHideImage;
 	private List<String> copySet;
+	private Button allignButton;
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -95,6 +96,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void displayCSG(CSG c) {
 		if(c.isHide())
+			return;
+		if(c.isInGroup())
 			return;
 		MeshView meshView = c.getMesh();
 		if (c.isHole()) {
@@ -177,7 +180,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
 		setupSnapGrid();
-		setupEngineControls();
 	}
 
 	private void setupSnapGrid() {
@@ -204,81 +206,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-	private void setupEngineControls() {
-		engine.getSubScene().setOnMousePressed(event -> {
-			System.out.println("Background Click " + event.getSource());
-			selected.clear();
-			updateSelection();
-			setKeyBindingFocus();
-		});
+
+	public void clearSelection() {
+		//System.out.println("Background Click " + event.getSource());
+		selected.clear();
+		updateSelection();
 		setKeyBindingFocus();
-		SubScene subScene = engine.getSubScene();
-
-		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-		    if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN ||
-		        event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT||event.getCode() == KeyCode.TAB) {
-		    	System.out.println("Arrows "+event.getCode());
-		        // Consume the event to prevent default focus traversal
-		        event.consume();
-		    }
-		});
-		subScene.setOnKeyTyped(event -> {
-		    String character = event.getCharacter();
-
-		    // You can still use the key code for non-character keys
-		    //System.out.println("Key code: " + event.getCode());
-			if (event.isControlDown()) {
-				System.out.println("CTRL + ");
-				switch((int) character.charAt(0)) {
-				case 26:
-					System.out.println("Undo");
-					cadoodle.back();
-					break;
-				case 25:
-					System.out.println("redo");
-					cadoodle.forward();
-					break;
-				case 7:
-					System.out.println("Group");
-					onGroup();
-					break;
-				case 71:
-					if(event.isShiftDown()) {
-						System.out.println("Un-Group");
-						onUngroup();
-					}
-					break;
-				case 1:
-					System.out.println("Select All");
-					selected.clear();
-					for(CSG c:currentState) {
-						if(c.isInGroup())
-							continue;
-						if(c.isHide())
-							continue;
-						selected.add(c.getName());
-					}
-					updateSelection();
-					break;
-				default:
-				    if (!character.isEmpty()) {
-				        char rawChar = character.charAt(0);
-				        int rawByte = (int) rawChar;
-				        
-				        System.out.println("Character: '" + character + "'");
-				        System.out.println("Raw char value: " + (int) rawChar);
-				        System.out.println("Hex value: 0x" + Integer.toHexString(rawByte));
-				        
-				        // If you need the actual byte value (which might lose information for Unicode characters)
-				        byte actualByte = (byte) rawChar;
-				        System.out.println("Actual byte value: " + actualByte);
-				    } else {
-				        System.out.println("No character data available (probably a non-character key)");
-				    }
-					break;
-				}
-			}
-		});
+	}
+	public void selectAll() {
+		selected.clear();
+		for(CSG c:currentState) {
+			if(c.isInGroup())
+				continue;
+			if(c.isHide())
+				continue;
+			selected.add(c.getName());
+		}
+		updateSelection();
 	}
 
 	public void setKeyBindingFocus() {
@@ -374,6 +318,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				ungroupButton.setDisable(true);
 			if(groupButton!=null)
 				groupButton.setDisable(true);
+			if(allignButton!=null)
+				allignButton.setDisable(true);
 		});
 	}
 	private void showButtons() {
@@ -385,6 +331,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.out.println("Number Selected is "+selected.size());
 			if(selected.size()>1) {
 				groupButton.setDisable(false);
+				allignButton.setDisable(false);
 			}
 			if(isAGroupSelected()) {
 				ungroupButton.setDisable(false);
@@ -415,6 +362,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDelete() {
+		System.out.println("Delete");
 		cadoodle.addOpperation(new Delete().setNames(selectedSnapshot()));		
 	}
 
@@ -423,8 +371,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onPaste() {
-		cadoodle.addOpperation(new Paste().setNames(copySet));		
-		copySet=null;
+		List<CSG> before = currentState;
+		cadoodle.addOpperation(new Paste().setNames(copySet));	
+		copySet.clear();
+		for(int i=before.size();i<currentState.size();i++) {
+			copySet.add(currentState.get(i).getName());
+		}
+		//copySet=null;
 	}
 
 	public void conCruse() {
@@ -463,7 +416,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				String name = c.getName();
 				for(CSG inG: currentState) {
 					if(inG.isInGroup()) {
-						if(inG.getGroupMembership().contentEquals(name)) {
+						if(inG.checkGroupMembership(name)) {
 							toSelect.add(inG.getName());
 						}
 					}
@@ -531,6 +484,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setShowHideImage(ImageView showHideImage) {
 		this.showHideImage = showHideImage;
+	}
+
+	public void onAllign() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setAllignButton(Button allignButton) {
+		this.allignButton = allignButton;
 	}
 
 }

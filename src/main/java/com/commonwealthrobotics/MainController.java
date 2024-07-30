@@ -4,6 +4,7 @@
 
 package com.commonwealthrobotics;
 
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
@@ -60,6 +61,16 @@ public class MainController implements ICaDoodleStateUpdate {
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session= new SelectionSession();
+	/**
+	 * CaDoodle Model Classes
+	 */
+	private BowlerStudio3dEngine navigationCube;
+	private BowlerStudio3dEngine engine;
+	
+	
+
+    @FXML // fx:id="allignButton"
+    private Button allignButton; // Value injected by FXMLLoader
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
     @FXML // fx:id="lockImage"
@@ -221,11 +232,15 @@ public class MainController implements ICaDoodleStateUpdate {
 
     @FXML // fx:id="zoomOutButton"
     private Button zoomOutButton; // Value injected by FXMLLoader
-	/**
-	 * CaDoodle Model Classes
-	 */
-	private BowlerStudio3dEngine navigationCube;
-	private BowlerStudio3dEngine engine;
+
+	
+    @FXML
+    void onAllign(ActionEvent event) {
+    	System.out.println("On Allign Clicked");
+    	session.onAllign();
+		session.setKeyBindingFocus();
+    }
+
 
 	@FXML
 	void onRedo(ActionEvent event) {
@@ -414,6 +429,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML
 	void onUngroup(ActionEvent event) {
 		System.out.println("On Ungroup");
+		
 		session.onUngroup();
 		session.setKeyBindingFocus();
 	}
@@ -434,7 +450,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	void onZoomIn(ActionEvent event) {
 
 		System.out.println("Zoom In");
-		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 20);
+		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 40);
 		session.setKeyBindingFocus();
 	}
 
@@ -442,7 +458,7 @@ public class MainController implements ICaDoodleStateUpdate {
 	void onZoomOut(ActionEvent event) {
 		System.out.println("Zoom Out");
 
-		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() - 20);
+		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() - 40);
 		session.setKeyBindingFocus();
 	}
 
@@ -525,6 +541,9 @@ public class MainController implements ICaDoodleStateUpdate {
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
 		session.setShowHideImage(showHideImage);
+		session.setAllignButton(allignButton);
+		// do this after setting up the session
+		setupEngineControls();
 		// Threaded load happens after UI opens
 		setupFile();
 	}
@@ -686,5 +705,81 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	private void save() {
 		new Thread(() -> ap.save(cadoodle)).start();
+	}
+	private void setupEngineControls() {
+		engine.getSubScene().setOnMousePressed(event -> {
+			session.clearSelection();
+		});
+		session.setKeyBindingFocus();
+		SubScene subScene = engine.getSubScene();
+
+		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+		    if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN ||
+		        event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT||event.getCode() == KeyCode.TAB) {
+		    	System.out.println("Arrows "+event.getCode());
+		        // Consume the event to prevent default focus traversal
+		        event.consume();
+		    }
+		    if (event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE) {
+		    	session.onDelete();
+		        // Handle the backspace or delete key press
+		        event.consume(); // Prevents the event from being processed further
+		    }
+		});
+		subScene.setOnKeyTyped(event -> {
+		    String character = event.getCharacter();
+
+		    // You can still use the key code for non-character keys
+		    //System.out.println("Key code: " + event.getCode());
+			if (event.isControlDown()) {
+				System.out.println("CTRL + ");
+				switch((int) character.charAt(0)) {
+				case 26:
+					System.out.println("Undo");
+					cadoodle.back();
+					break;
+				case 25:
+					System.out.println("redo");
+					cadoodle.forward();
+					break;
+				case 7:
+					System.out.println("Group");
+					session.onGroup();
+					break;
+				case 71:
+					if(event.isShiftDown()) {
+						System.out.println("Un-Group");
+						session.onUngroup();
+					}
+					break;
+				case 1:
+					System.out.println("Select All");
+					session.selectAll();
+					break;
+				case 3:
+					session.onCopy();
+					break;
+				case 22:
+					session.onPaste();
+					break;
+				default:
+				    if (!character.isEmpty()) {
+				        char rawChar = character.charAt(0);
+				        int rawByte = (int) rawChar;
+				        
+				        System.out.println("Character: '" + character + "'");
+				        System.out.println("Raw char value: " + (int) rawChar);
+				        System.out.println("Hex value: 0x" + Integer.toHexString(rawByte));
+				        
+				        // If you need the actual byte value (which might lose information for Unicode characters)
+				        byte actualByte = (byte) rawChar;
+				        System.out.println("Actual byte value: " + actualByte);
+				    } else {
+				        System.out.println("No character data available (probably a non-character key)");
+				    }
+					break;
+				}
+			}
+		});
 	}
 }
