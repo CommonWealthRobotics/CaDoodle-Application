@@ -224,42 +224,58 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 		subScene.setOnKeyTyped(event -> {
 		    String character = event.getCharacter();
-		    if (!character.isEmpty()) {
-		        char rawChar = character.charAt(0);
-		        int rawByte = (int) rawChar;
-		        
-		        System.out.println("Character: '" + character + "'");
-		        System.out.println("Raw char value: " + (int) rawChar);
-		        System.out.println("Hex value: 0x" + Integer.toHexString(rawByte));
-		        
-		        // If you need the actual byte value (which might lose information for Unicode characters)
-		        byte actualByte = (byte) rawChar;
-		        System.out.println("Actual byte value: " + actualByte);
-		    } else {
-		        System.out.println("No character data available (probably a non-character key)");
-		    }
-		    
+
 		    // You can still use the key code for non-character keys
-		    System.out.println("Key code: " + event.getCode());
+		    //System.out.println("Key code: " + event.getCode());
 			if (event.isControlDown()) {
 				System.out.println("CTRL + ");
-				if ((int) character.charAt(0)==26) {
+				switch((int) character.charAt(0)) {
+				case 26:
 					System.out.println("Undo");
 					cadoodle.back();
-				}
-				if ((int) character.charAt(0)==25) {
+					break;
+				case 25:
 					System.out.println("redo");
 					cadoodle.forward();
-				}
-				if ((int) character.charAt(0)==7) {
+					break;
+				case 7:
 					System.out.println("Group");
 					onGroup();
-				}
-				if(event.isShiftDown()) {
-					if ((int) character.charAt(0)==71) {
+					break;
+				case 71:
+					if(event.isShiftDown()) {
 						System.out.println("Un-Group");
 						onUngroup();
 					}
+					break;
+				case 1:
+					System.out.println("Select All");
+					selected.clear();
+					for(CSG c:currentState) {
+						if(c.isInGroup())
+							continue;
+						if(c.isHide())
+							continue;
+						selected.add(c.getName());
+					}
+					updateSelection();
+					break;
+				default:
+				    if (!character.isEmpty()) {
+				        char rawChar = character.charAt(0);
+				        int rawByte = (int) rawChar;
+				        
+				        System.out.println("Character: '" + character + "'");
+				        System.out.println("Raw char value: " + (int) rawChar);
+				        System.out.println("Hex value: 0x" + Integer.toHexString(rawByte));
+				        
+				        // If you need the actual byte value (which might lose information for Unicode characters)
+				        byte actualByte = (byte) rawChar;
+				        System.out.println("Actual byte value: " + actualByte);
+				    } else {
+				        System.out.println("No character data available (probably a non-character key)");
+				    }
+					break;
 				}
 			}
 		});
@@ -435,10 +451,34 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onGroup() {
 		if(selected.size()>1)
 			cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
+		CSG newOne = currentState.get(currentState.size()-1);
+		selected.clear();
+		selected.add(newOne.getName());
+		updateSelection();
 	}
 	public void onUngroup() {
-		if(isAGroupSelected() )
-			cadoodle.addOpperation(new UnGroup().setNames(selectedSnapshot()));
+		ArrayList<String> toSelect = new ArrayList<String>();
+		for(CSG c:getSelectedCSG()) {
+			if(c.isGroupResult()) {
+				String name = c.getName();
+				for(CSG inG: currentState) {
+					if(inG.isInGroup()) {
+						if(inG.getGroupMembership().contentEquals(name)) {
+							toSelect.add(inG.getName());
+						}
+					}
+				}
+			}
+		}
+		List<String> selectedSnapshot = selectedSnapshot();
+
+		if(isAGroupSelected() ) {
+			selected.clear();
+			selected.addAll(toSelect);
+			cadoodle.addOpperation(new UnGroup().setNames(selectedSnapshot));
+		}
+		updateSelection();
+		
 	}
 
 	public void onHideShowButton() {
