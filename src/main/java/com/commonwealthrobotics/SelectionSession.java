@@ -51,7 +51,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button ungroupButton;
 	private Button groupButton;
 	private ImageView showHideImage;
-	private List<String> copySet;
+	private List<String> copySetinternal;
 	private Button allignButton;
 	private long timeSinceLastMove = System.currentTimeMillis();
 
@@ -367,14 +367,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onCopy() {
-		copySet=selectedSnapshot();
+		copySetinternal=selectedSnapshot();
 	}
 
 	public void onPaste() {
+		performPaste(20,copySetinternal);
+	}
+
+	private void performPaste(double distance,List<String> copySet) {
 		List<CSG> before = cadoodle.getCurrentState();
 		ArrayList<String> copyTarget=new ArrayList<String>();
 		copyTarget.addAll(copySet);
-		cadoodle.addOpperation(new Paste().setNames(copyTarget));	
+		cadoodle.addOpperation(new Paste()
+				.setOffset(distance)
+				.setNames(copyTarget));	
 		copySet.clear();
 		System.out.println("\n");
 		for(int i=before.size();i<getCurrentState().size();i++) {
@@ -382,8 +388,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.out.println("Resetting copy target to "+name);
 			copySet.add(name);
 		}
-		
-		//copySet=null;
+	}
+	public void Duplicate() {
+		performPaste(0,selectedSnapshot());
 	}
 
 	public void conCruse() {
@@ -505,10 +512,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return cadoodle.getCurrentState();
 	}
 
-	public void Duplicate() {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	public void dropToWorkplane() {
 		System.out.println("Drop to Workplane");
