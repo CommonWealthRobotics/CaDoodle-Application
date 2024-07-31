@@ -5,6 +5,7 @@ package com.commonwealthrobotics;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -13,6 +14,7 @@ import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
+import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 
 import javafx.application.Application;
@@ -84,6 +86,12 @@ public class Main  extends Application {
 		File file = new File(relative + "/CaDoodle-workspace/");
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
+		try {
+			PasswordManager.setupAnyonmous();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		launch(args);	
 		
