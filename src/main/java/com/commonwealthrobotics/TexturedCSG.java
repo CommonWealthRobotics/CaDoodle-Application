@@ -36,6 +36,7 @@ import javax.vecmath.Matrix4d;
 
 import javafx.geometry.Point2D;
 import javafx.scene.DepthTest;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -69,9 +70,10 @@ public class TexturedCSG extends TexturedMesh {
         this.textureImage = texture;
         primitive.triangulate();
         updateMesh();
-        setCullFace(CullFace.BACK);
+        setCullFace(CullFace.NONE);
         setDrawMode(DrawMode.FILL);
         setDepthTest(DepthTest.ENABLE);
+        setBlendMode(BlendMode.SRC_OVER);
 	    PhongMaterial material = new PhongMaterial();
 
 	    //material.setDiffuseMap(texture);

@@ -19,7 +19,9 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.ICameraChangeListener;
 import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
+import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -55,7 +57,7 @@ import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
-public class MainController implements ICaDoodleStateUpdate {
+public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -1000;
 	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
@@ -233,6 +235,9 @@ public class MainController implements ICaDoodleStateUpdate {
 	@FXML // fx:id="zoomOutButton"
 	private Button zoomOutButton; // Value injected by FXMLLoader
 	private ICaDoodleOpperation source;
+	private boolean resetArmed;
+	private long timeOfClick;
+
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -360,7 +365,7 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 5), ZOOM);
+		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), ZOOM);
 		session.setKeyBindingFocus();
 	}
 
@@ -590,7 +595,6 @@ public class MainController implements ICaDoodleStateUpdate {
 	}
 
 	private void setUpColorPicker() {
-		colorPicker.setValue(Color.RED);
 		colorPicker.setOnMousePressed(event -> {
 			System.out.println("Set to Solid ");
 			session.setToSolid();
@@ -668,6 +672,23 @@ public class MainController implements ICaDoodleStateUpdate {
 		engine.getFlyingCamera().bind(navigationCube.getFlyingCamera());
 		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
 		onHomeViewButton(null);
+		engine.addListener(this);
+		// Add listeners to changes in the viewport sizes
+		buttonGrid.widthProperty().addListener((observable, oldValue, newValue) -> {
+			engine.getSubScene().setWidth(newValue.doubleValue());
+			control3d.setMaxWidth(newValue.doubleValue());
+			control3d.setPrefWidth(newValue.doubleValue());
+
+			onChange(engine.getFlyingCamera());
+		});
+
+		buttonGrid.heightProperty().addListener((observable, oldValue, newValue) -> {
+			engine.getSubScene().setHeight(newValue.doubleValue());
+			control3d.setMaxHeight(newValue.doubleValue());
+			control3d.setPrefHeight(newValue.doubleValue());
+			onChange(engine.getFlyingCamera());
+		});
+		
 	}
 
 	private void setUpNavigationCube() {
@@ -725,6 +746,7 @@ public class MainController implements ICaDoodleStateUpdate {
 			save();
 		}
 		this.source = source;
+		onChange(engine.getFlyingCamera());
 	}
 
 	private void save() {
@@ -751,9 +773,23 @@ public class MainController implements ICaDoodleStateUpdate {
 	}
 
 	private void setupEngineControls() {
+		
 		engine.getSubScene().setOnMousePressed(event -> {
+			resetArmed=true;
+			timeOfClick = System.currentTimeMillis();
+		});
+		engine.getSubScene().addEventFilter(MouseEvent.DRAG_DETECTED, event->{
+			resetArmed=false;
+		});
+		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_RELEASED, event->{
+			if(!resetArmed)
+				return;
+			resetArmed=false;
+			if(System.currentTimeMillis()-timeOfClick>200)
+				return;
 			session.clearSelection();
 		});
+		
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
 
@@ -860,5 +896,18 @@ public class MainController implements ICaDoodleStateUpdate {
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onChange(VirtualCameraMobileBase camera) {
+		double zoom = camera.getZoomDepth();
+		double az = camera.getPanAngle();
+		double el = camera.getTiltAngle();
+		double x= camera.getGlobalX();
+		double y= camera.getGlobalY();
+		double z= camera.getGlobalZ();
+		double screenW = engine.getSubScene().getWidth();
+		double screenH = engine.getSubScene().getHeight();
+		session.onCameraChange(screenW,screenH,zoom,az,el,x,y,z);
 	}
 }

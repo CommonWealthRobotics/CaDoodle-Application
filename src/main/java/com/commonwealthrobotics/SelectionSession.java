@@ -12,6 +12,7 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -34,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 
 public class SelectionSession implements ICaDoodleStateUpdate {
+	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	private ICaDoodleOpperation source;
 	private CaDoodleFile cadoodle;
@@ -54,6 +56,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private List<String> copySetinternal;
 	private Button allignButton;
 	private long timeSinceLastMove = System.currentTimeMillis();
+	private double screenW;
+	private double screenH;
+	private double zoom;
+	private double az;
+	private double el;
+	private double x;
+	private double y;
+	private double z;
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -152,10 +162,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			colorPicker.setStyle(style);
 			showButtons();
 			updateShowHideButton();
+			updateControls();
 		} else {
 			//System.out.println("None selected");
 			shapeConfigurationHolder.getChildren().clear();
 			hideButtons();
+			controls.clearSelection();
 		}
 	}
 
@@ -179,6 +191,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
 		setupSnapGrid();
+		controls = new ControlSprites(control3d,this,engine);
 	}
 
 	private void setupSnapGrid() {
@@ -668,6 +681,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	double roundToNearist(double incoiming, double modulo) {
 		return modulo*(Math.round(incoiming/modulo));
+	}
+	public void updateControls() {
+		onCameraChange(engine.getFlyingCamera());
+	}
+	public void onCameraChange(VirtualCameraMobileBase camera) {
+		double zoom = camera.getZoomDepth();
+		double az = camera.getPanAngle();
+		double el = camera.getTiltAngle();
+		double x= camera.getGlobalX();
+		double y= camera.getGlobalY();
+		double z= camera.getGlobalZ();
+		double screenW = engine.getSubScene().getWidth();
+		double screenH = engine.getSubScene().getHeight();
+		onCameraChange(screenW,screenH,zoom,az,el,x,y,z);
+	}
+	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
+			double z) {
+		this.screenW = screenW;
+		this.screenH = screenH;
+		this.zoom = zoom;
+		this.az = az;
+		this.el = el;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		if(cadoodle==null && controls!=null)
+			return;
+		if(selected.size()==0)
+			return;
+		List<CSG> selectedCSG = cadoodle.getSelect(selectedSnapshot());
+		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG);
 	}
 
 }

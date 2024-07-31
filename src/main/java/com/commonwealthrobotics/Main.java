@@ -23,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -47,7 +48,7 @@ public class Main  extends Application {
 		w=sw-40;
 		h=sh-40;
 		
-		Scene scene = new Scene(root,  w/2, h/2,true);
+		Scene scene = new Scene(root,  w/2, h/2,true,SceneAntialiasing.BALANCED);
 		newStage.setScene(scene);
 		String title=StudioBuildInfo.getAppName()+" v " + StudioBuildInfo.getVersion();
 		if(newStage!=null)
