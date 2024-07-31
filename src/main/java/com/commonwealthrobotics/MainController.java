@@ -61,6 +61,8 @@ public class MainController implements ICaDoodleStateUpdate {
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = new SelectionSession();
+	private boolean needsSave=false;
+	private Thread autosaveThread=null;
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -589,7 +591,6 @@ public class MainController implements ICaDoodleStateUpdate {
 
 	private void setUpColorPicker() {
 		colorPicker.setValue(Color.RED);
-		onColorPick(null);
 		colorPicker.setOnMousePressed(event -> {
 			System.out.println("Set to Solid ");
 			session.setToSolid();
@@ -721,13 +722,32 @@ public class MainController implements ICaDoodleStateUpdate {
 			});
 		}
 		if(this.source!=source) {
-			session.save();
+			save();
 		}
 		this.source = source;
 	}
 
 	private void save() {
-		new Thread(() -> ap.save(cadoodle)).start();
+		System.out.println("Save Requested");
+		needsSave=true;
+		if(autosaveThread == null) {
+			autosaveThread= new Thread(()->{
+				while(ap.isOpen()) {
+					if(needsSave) {
+						System.out.println("Auto save "+cadoodle.getSelf().getAbsolutePath());
+						ap.save(cadoodle);
+						needsSave=false;
+					}
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			autosaveThread.start();
+		}
 	}
 
 	private void setupEngineControls() {

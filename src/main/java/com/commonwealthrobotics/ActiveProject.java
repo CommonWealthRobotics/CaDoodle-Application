@@ -71,6 +71,7 @@ public class ActiveProject {
 		ConfigurationDatabase.put("CaDoodle", "projectNameIndex", index);
 		return adjectives[(int) (Math.random()*adjectives.length)]+"_"+creaturesMachines[index];
 	}
+	private boolean isOpenValue=true;
 	public void setActiveProject(File f) {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
 	}
@@ -112,5 +113,9 @@ public class ActiveProject {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public boolean isOpen() {
+		// TODO Auto-generated method stub
+		return isOpenValue;
 	}
 }

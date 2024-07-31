@@ -229,17 +229,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if(engine!=null)
 			BowlerStudio.runLater(()->	engine.getSubScene().requestFocus());
 	}
-	public void save() {
-		if(cadoodle!=null)
-		new Thread(()->{
-			try {
-				cadoodle.save();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}).start();
-	}
+
 	public void setToSolid() {
 		if(selected.size()==0)
 			return;
@@ -253,7 +243,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;// all solid
 		ToSolid h=  new ToSolid().setNames(selectedSnapshot());
 		addOp(h);
-		save();
 		
 	}
 
@@ -263,7 +252,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				.setColor(value);
 		
 		addOp(solid);
-		save();
 	}
 
 	public void setToHole() {
@@ -279,7 +267,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;// all holes
 		ToHole h=  new ToHole().setNames(selectedSnapshot());
 		addOp(h);
-		save();
 	}
 	
 	public TransformNR getFocusCenter() {
@@ -300,6 +287,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void addOp(ICaDoodleOpperation h) {
 		if(cadoodle==null)
 			return;
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		System.out.println("Adding "+h.getType());
 		cadoodle.addOpperation(h);
 	}
@@ -362,6 +353,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDelete() {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		System.out.println("Delete");
 		cadoodle.addOpperation(new Delete().setNames(selectedSnapshot()));		
 	}
@@ -375,6 +370,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void performPaste(double distance,List<String> copySet) {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		List<CSG> before = cadoodle.getCurrentState();
 		ArrayList<String> copyTarget=new ArrayList<String>();
 		copyTarget.addAll(copySet);
@@ -401,10 +400,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 
 	public void onLock() {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		cadoodle.addOpperation(new Lock().setNames(selectedSnapshot()));		
 	}
 
 	public void showAll() {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		ArrayList<String> toShow = new ArrayList<String>();
 		for(CSG c:getCurrentState()) {
 			if(c.isHide())
@@ -415,6 +422,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 	public void onGroup() {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		if(selected.size()>1)
 			cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
 		CSG newOne = getCurrentState().get(getCurrentState().size()-1);
@@ -423,6 +434,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		updateSelection();
 	}
 	public void onUngroup() {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		ArrayList<String> toSelect = new ArrayList<String>();
 		for(CSG c:getSelectedCSG()) {
 			if(c.isGroupResult()) {
@@ -448,6 +463,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onHideShowOpperation() {
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		ICaDoodleOpperation op;
 		if(isSelectedHidden()) {
 			op=new Show().setNames(selectedSnapshot());
@@ -547,6 +566,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void moveInCameraFrame(TransformNR stateUnitVectorTmp) {
 		if(selected.size()==0)
 			return;
+		MoveCenter mc =getActiveMove();
+		if(System.currentTimeMillis()-timeSinceLastMove>2000 || mc==null) {
+			mc=new MoveCenter()
+					.setLocation(new TransformNR())
+					.setNames(selectedSnapshot());// force a new move event
+		}
+		timeSinceLastMove=System.currentTimeMillis();
+		if(cadoodle.isOperationRunning()) {
+			System.err.println("Ignoring operation because previous had not finished!");
+			return;
+		}
 		RotationNR getCamerFrameGetRotation;
 		double currentRotZ ;
 		Quadrent quad ;
@@ -582,13 +612,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			roundToNearist(stateUnitVector.getX()*incement,incement),
 			roundToNearist(stateUnitVector.getY()*incement,incement),
 			roundToNearist(stateUnitVector.getZ()*incement,incement));
-		MoveCenter mc =getActiveMove();
-		if(System.currentTimeMillis()-timeSinceLastMove>2000 || mc==null) {
-			mc=new MoveCenter()
-					.setLocation(new TransformNR())
-					.setNames(selectedSnapshot());// force a new move event
-		}
-		timeSinceLastMove=System.currentTimeMillis();
+
 		TransformNR current = mc.getLocation();
 		TransformNR currentRotation = new TransformNR(0,0,0,current.getRotation());
 		TransformNR tf= current.times(	
@@ -604,7 +628,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.out.println("\t"+s);
 		}
 		ICaDoodleOpperation op = cadoodle.currentOpperation();
-
 		if(op==mc) {
 			if(compareLists(selectedSnapshot, mc.getNames())) {
 				System.out.println("Move "+tf.toSimpleString());
@@ -613,6 +636,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			}
 		}
+
 		cadoodle.addOpperation(mc);
 		
 	}
