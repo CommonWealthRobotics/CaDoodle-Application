@@ -10,10 +10,12 @@ import java.io.IOException;
 import javax.swing.filechooser.FileSystemView;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
+import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 
@@ -26,6 +28,9 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.control.action.ActionUtils;
+import org.controlsfx.control.decoration.Decorator;
 
 public class Main  extends Application {
 
@@ -87,6 +92,8 @@ public class Main  extends Application {
 		File file = new File(relative + "/CaDoodle-workspace/");
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
+		NameGetter mykey = new NameGetter();
+		GitHubWebFlow.setName(mykey);
 		try {
 			PasswordManager.setupAnyonmous();
 		} catch (IOException e) {
