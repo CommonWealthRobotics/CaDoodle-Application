@@ -84,6 +84,11 @@
 .scroll-pane > .corner {
     -fx-background-color: #e0e0e0;
 }
+#drawerArea{
+
+    -fx-border-width: 2px;
+     -fx-border-color: -logo-blue; /* Blue border when focused */
+}
 #shapeConfigurationBox{
 
     -fx-border-width: 2px;
