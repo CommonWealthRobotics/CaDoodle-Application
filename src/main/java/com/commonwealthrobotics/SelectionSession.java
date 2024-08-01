@@ -207,7 +207,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			this.snapGrid.getItems().add(key);
 		}
 
-		snapGrid.getSelectionModel().select(starting);
+		snapGrid.getSelectionModel().select(starting+" mm");
 		this.snapGrid.setOnAction(event -> {
 			String selected = this.snapGrid.getSelectionModel().getSelectedItem();
 			Double num = map.get(selected);

@@ -60,7 +60,7 @@ public class ControlSprites {
 		this.z = z;
 		
 		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(50,0,0));
-		right.threeDTarget(screenW,screenH,zoom, new TransformNR(0,25.4,0));
+		right.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,0));
 		forward.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,100));
 
 
