@@ -27,26 +27,26 @@
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" minWidth="750.0" />
+            <ColumnConstraints hgrow="ALWAYS" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints vgrow="NEVER" />
             <RowConstraints maxHeight="53.0" minHeight="43.0" prefHeight="43.0" vgrow="NEVER" />
-            <RowConstraints minHeight="300.0" valignment="TOP" vgrow="SOMETIMES" />
+            <RowConstraints valignment="TOP" vgrow="ALWAYS" />
          </rowConstraints>
          <children>
-            <HBox fx:id="drawerHolder" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+            <HBox fx:id="drawerHolder" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" spacing="5.0" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                <children>
-                  <AnchorPane HBox.hgrow="SOMETIMES">
+                  <StackPane minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" HBox.hgrow="SOMETIMES">
                      <children>
-                        <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" />
+                        <AnchorPane fx:id="control3d" mouseTransparent="true" pickOnBounds="false" />
+                        <AnchorPane fx:id="layerHolder" pickOnBounds="false">
                            <children>
-                              <AnchorPane fx:id="view3d" pickOnBounds="false" />
-                              <AnchorPane fx:id="control3d" mouseTransparent="true" pickOnBounds="false" />
-                              <GridPane fx:id="buttonGrid" pickOnBounds="false">
+                              <GridPane fx:id="buttonGrid" pickOnBounds="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
                                   <ColumnConstraints hgrow="NEVER" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -209,6 +209,9 @@
                                             </panes>
                                           </Accordion>
                                        </children>
+                                       <GridPane.margin>
+                                          <Insets top="3.0" />
+                                       </GridPane.margin>
                                     </AnchorPane>
                                     <GridPane pickOnBounds="false" GridPane.rowSpan="2147483647">
                                       <columnConstraints>
@@ -277,9 +280,9 @@
                                  </children>
                               </GridPane>
                            </children>
-                        </StackPane>
+                        </AnchorPane>
                      </children>
-                  </AnchorPane>
+                  </StackPane>
                   <AnchorPane fx:id="drawerArea" HBox.hgrow="NEVER">
                      <children>
                         <GridPane fx:id="drawerGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -494,7 +497,7 @@
                         <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="40.0" styleClass="normal-button" text="Export" />
                      </children>
                   </HBox>
-                  <HBox>
+                  <HBox fx:id="buttonBar">
                      <children>
                         <Button fx:id="copyButton" mnemonicParsing="false" onAction="#onCopy" styleClass="image-button">
                            <graphic>
@@ -564,12 +567,12 @@
             </GridPane>
             <GridPane fx:id="topBar" minHeight="43.0" prefHeight="43.0">
               <columnConstraints>
-                  <ColumnConstraints hgrow="ALWAYS" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="304.0" prefWidth="346.0" />
+                <ColumnConstraints fillWidth="false" hgrow="NEVER" minWidth="10.0" prefWidth="308.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="NEVER" />
+                <RowConstraints maxHeight="100.0" prefHeight="43.0" vgrow="NEVER" />
               </rowConstraints>
                <children>
                   <HBox>
@@ -586,7 +589,7 @@
                               <Tooltip text="Cadoodle Dashboard" />
                            </tooltip>
                         </Button>
-                        <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" onAction="#setName" onInputMethodTextChanged="#setName" text="File Name" HBox.hgrow="ALWAYS">
+                        <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" text="File Name" HBox.hgrow="SOMETIMES">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -627,6 +630,14 @@
                         </Button>
                      </children>
                   </HBox>
+                  <ImageView fitHeight="90.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                     <image>
+                        <Image url="@biglogo.png" />
+                     </image>
+                     <GridPane.margin>
+                        <Insets bottom="5.0" />
+                     </GridPane.margin>
+                  </ImageView>
                </children>
             </GridPane>
          </children>

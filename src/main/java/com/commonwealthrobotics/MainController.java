@@ -123,7 +123,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="drawerHolder"
 	private HBox drawerHolder; // Value injected by FXMLLoader
-
+	@FXML // fx:id="drawerHolder"
+	private HBox buttonBar;
 	@FXML // fx:id="drawrImage"
 	private ImageView drawrImage; // Value injected by FXMLLoader
 
@@ -219,7 +220,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="view3d"
 	private AnchorPane view3d; // Value injected by FXMLLoader
-
+	@FXML // fx:id="view3d"
+	private AnchorPane layerHolder;
 	@FXML // fx:id="viewControlCubeHolder"
 	private AnchorPane viewControlCubeHolder; // Value injected by FXMLLoader
 
@@ -608,13 +610,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
-			view3d.widthProperty().addListener((observable, oldValue, newValue) -> {
-				engine.getSubScene().setWidth(newValue.doubleValue());
-			});
-
-			view3d.heightProperty().addListener((observable, oldValue, newValue) -> {
-				engine.getSubScene().setHeight(newValue.doubleValue());
-			});
+//			layerHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
+//				engine.getSubScene().setWidth(newValue.doubleValue());
+//				onChange(engine.getFlyingCamera());
+//			});
+//
+//			layerHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
+//				engine.getSubScene().setHeight(newValue.doubleValue());
+//				onChange(engine.getFlyingCamera());
+//			});
 			BowlerStudio.runLater(() -> {
 				// Add the 3d environment
 				view3d.getChildren().add(engine.getSubScene());
@@ -673,19 +677,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		navigationCube.getFlyingCamera().bind(engine.getFlyingCamera());
 		onHomeViewButton(null);
 		engine.addListener(this);
-		// Add listeners to changes in the viewport sizes
-		buttonGrid.widthProperty().addListener((observable, oldValue, newValue) -> {
-			engine.getSubScene().setWidth(newValue.doubleValue());
-			control3d.setMaxWidth(newValue.doubleValue());
-			control3d.setPrefWidth(newValue.doubleValue());
 
+		layerHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
+			engine.getSubScene().setWidth(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
 
-		buttonGrid.heightProperty().addListener((observable, oldValue, newValue) -> {
+		layerHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
 			engine.getSubScene().setHeight(newValue.doubleValue());
-			control3d.setMaxHeight(newValue.doubleValue());
-			control3d.setPrefHeight(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
 		

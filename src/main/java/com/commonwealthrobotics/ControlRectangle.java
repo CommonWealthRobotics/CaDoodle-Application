@@ -72,19 +72,34 @@ public class ControlRectangle extends Rectangle {
         return worldXY;
     }
 	public void threeDTarget(double screenW,double screenH, double zoom , TransformNR target) {
-		double verticalFOV = engine.getFlyingCamera().getCamera().getFieldOfView(); // in degrees
+		double bigFov = Math.toRadians(engine.getFlyingCamera().getCamera().getFieldOfView());
+		double scalex;
+		double scaley;	
 
-	    double smallerDimension = Math.min(screenW,screenH);
-	    double scale = smallerDimension / (2 * Math.tan(verticalFOV / 2) );
-		double d = screenW / 2;
-		double e = screenH/2;
+		double wHalf= screenW / 2;
+		double hHalf = screenH/2;
+		double fovX; //= Math.atan2(screenW/2, -zoom);
+		double fovY;//=Math.atan2(screenH/2, -zoom);;
+		
+		double zoomInPix=wHalf/Math.tan(bigFov/2);
+		fovY = Math.toDegrees(Math.atan2(hHalf,zoomInPix));
+
+		//if(screenW>screenH) {
+			fovX=bigFov;
+			scalex = screenW / (2* Math.tan(fovX/2 ));
+		//}
+		
+		
+		scaley = screenH / (2 * Math.tan(Math.toRadians(fovY) ));
+
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(RotationNR.getRotationZ(180)));
 
 		TransformNR tp = cf.inverse().times(target);
-		double fuge =-3.25;
+		double fuge =1;
 		double yFuge=fuge*1;
-		double xValue = -(getWidth()/2)+((tp.getX()/-zoom)*(scale*fuge))+ d;
-		double yValue = -(getHeight()/2)+((tp.getY()/-zoom)* (scale*yFuge))+ e;
+		
+		double xValue = -(getWidth()/2)+((tp.getX()/-zoom)*(scalex*fuge))+wHalf;
+		double yValue = -(getHeight()/2)+((tp.getY()/-zoom)* (scaley*yFuge))+ hHalf;
 		System.out.println("Targeting "+target.toSimpleString());
 		System.out.println("In Frame  "+screenToWorld(screenW, screenH,  zoom,
 				xValue+(getWidth()/2),
@@ -92,6 +107,9 @@ public class ControlRectangle extends Rectangle {
 				new Vector3d(0, 0,0),
 				new Vector3d(0, 0,1)
 				).toSimpleString());
+		System.out.println("Fov X "+Math.toDegrees(fovX)+" Fov Y"+(fovY*2) );
+		System.out.println(cf.toSimpleString());
+		System.out.println("\tScalex= " + scalex);
 		if(xValue>screenW || xValue<0 || yValue>screenH||yValue<0) {
 			BowlerStudio.runLater(()->{
 				setVisible(false);
@@ -103,9 +121,6 @@ public class ControlRectangle extends Rectangle {
 				setLayoutX(Math.max(0, Math.min(screenW, xValue)));
 				setLayoutY(Math.max(0, Math.min(screenH, yValue)));	
 			});
-//		System.out.println("\n" + tp.toSimpleString());
-//		System.out.println(cf.toSimpleString());
-//		System.out.println("\tScale= " + scale);
-//		System.out.println("\tReal= " + calculatedRealWidth);
+
 	}
 }
