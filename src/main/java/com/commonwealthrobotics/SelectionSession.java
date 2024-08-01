@@ -16,8 +16,10 @@ import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Transform;
+import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -544,10 +546,36 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return cadoodle.getCurrentState();
 	}
 
-
+	public Bounds getSellectedBounds(List<CSG> incoming) {
+		Vector3d min=null;
+		Vector3d max=null;
+		for(CSG c: incoming) {
+			Vector3d min2 = c.getBounds().getMin();
+			Vector3d max2 = c.getBounds().getMax();
+			if(min==null)
+				min=min2;
+			if(max==null)
+				max=max2;
+			if(min2.x<min.x)
+				min.x=min2.x;
+			if(min2.y<min.y)
+				min.y=min2.y;
+			if(min2.z<min.z)
+				min.z=min2.z;
+			if(max.x<max2.x)
+				max.x=max2.x;
+			if(max.y<max2.y)
+				max.y=max2.y;
+			if(max.z<max2.z)
+				max.z=max2.z;
+		}
+		
+		return new Bounds(min,max);
+	}
 
 	public void dropToWorkplane() {
 		System.out.println("Drop to Workplane");
+		
 	}
 	public enum Quadrent {
 		first,second,third,fourth
@@ -711,7 +739,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if(selected.size()==0)
 			return;
 		List<CSG> selectedCSG = cadoodle.getSelect(selectedSnapshot());
-		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG);
+		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG,getSellectedBounds(selectedCSG));
 	}
 
 }
