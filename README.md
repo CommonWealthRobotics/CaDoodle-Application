@@ -2,6 +2,12 @@
 
 The core Java Application for CaDoodle
 
+This is the source code for the Java Application of Cadoodle. 
+
+# Installers
+
+The installers for specific operating systems can be found here: https://github.com/CommonWealthRobotics/CaDoodle/releases
+
 
 # Build (Linux)
 
