@@ -144,6 +144,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void updateSelection() {
 		//System.out.println("\n");
+		updateControls();
 		if (selected.size() > 0) {
 			for (String s : selected) {
 				System.out.println("Current Selection " + s);
@@ -162,7 +163,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			colorPicker.setStyle(style);
 			showButtons();
 			updateShowHideButton();
-			updateControls();
 		} else {
 			//System.out.println("None selected");
 			shapeConfigurationHolder.getChildren().clear();
@@ -706,7 +706,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		if(cadoodle==null && controls!=null)
+		if(cadoodle==null || controls==null)
 			return;
 		if(selected.size()==0)
 			return;

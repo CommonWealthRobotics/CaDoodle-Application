@@ -98,9 +98,10 @@ public class ViewCube {
 		if (Math.abs(point.getY() - maxY) < epsilon)
 			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 0));
 		if (Math.abs(point.getZ() - minZ) < epsilon)
-			return new TransformNR(0, 0, 0, new RotationNR(0, 0, 90));
-		if (Math.abs(point.getZ() - maxZ) < epsilon)
-			return new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
+			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 90));
+		if (Math.abs(point.getZ() - maxZ) < epsilon) {
+			return new TransformNR(0, 0, 0, new RotationNR(0, 90, -90));
+		}
 
 		return new TransformNR();
 	}

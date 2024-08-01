@@ -3,6 +3,7 @@ package com.commonwealthrobotics;
 import java.util.List;
 
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
@@ -22,7 +23,9 @@ public class ControlSprites {
 	private double z;
 	private SelectionSession session;
 	private BowlerStudio3dEngine engine;
-	Rectangle topCenter = new Rectangle(10, 10, Color.WHITE);
+	ControlRectangle topCenter = null;
+	ControlRectangle right =null;
+	ControlRectangle forward =null;
     private boolean selectionLive = false;
 
 	public ControlSprites(AnchorPane controls, SelectionSession session,BowlerStudio3dEngine engine) {
@@ -30,8 +33,10 @@ public class ControlSprites {
 		if(controls==null)
 			throw new NullPointerException();
 		this.controls = controls;
-		topCenter.setStroke(Color.BLACK);
 		this.engine = engine;
+		topCenter= new ControlRectangle(engine);
+		right= new ControlRectangle(engine);
+		forward= new ControlRectangle(engine);
 //		AnchorPane.setTopAnchor(topCenter, screenH/2);
 //        AnchorPane.setLeftAnchor(topCenter, screenW/2);
 	}
@@ -40,10 +45,10 @@ public class ControlSprites {
 		if(!selectionLive) {
 			selectionLive=true;
 			controls.getChildren().add(topCenter);
-
+			controls.getChildren().add(right);
+			controls.getChildren().add(forward);
 		}
 		
-		TransformNR target= new TransformNR(50,0,0);
 
 		this.screenW = controls.getWidth();
 		this.screenH = controls.getHeight();
@@ -53,14 +58,13 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		//TransformNR cameraLocation =  new TransformNR(0,0,-zoom);
-		TransformNR cf = engine.getFlyingCamera().getCamerFrame();
+		
+		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(50,0,0));
+		right.threeDTarget(screenW,screenH,zoom, new TransformNR(0,25.4,0));
+		forward.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,100));
 
-        
-        topCenter.setLayoutX(screenW/2);
-        topCenter.setLayoutY(screenH/2);
-        System.out.println("\n"+cf.toSimpleString());
-		System.out.println("ScrW:"+screenW+"ScrH:"+screenH+" zoom:"+zoom+" Pan:"+az+" Tilt:"+el+" X:"+x+" Y:"+y+" Z:"+z);
+
+        System.out.println("ScrW:"+screenW+"ScrH:"+screenH+" zoom:"+zoom+" Pan:"+az+" Tilt:"+el+" X:"+x+" Y:"+y+" Z:"+z);
 		
 	}
 	public void clearSelection() {
