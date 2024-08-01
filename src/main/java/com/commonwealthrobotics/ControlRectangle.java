@@ -104,12 +104,12 @@ public class ControlRectangle extends Rectangle {
 		double yComp = Math.tan(angleOfYPoint) * (-zoom) * scalex;
 		double xValue = -(getWidth() / 2) + xComp + wHalf;
 		double yValue = -(getHeight() / 2) + yComp + hHalf;
-		System.out.println("Targeting " + target.toSimpleString());
-		System.out.println("In Frame  " + screenToWorld(screenW, screenH, zoom, xValue + (getWidth() / 2),
-				yValue + (getHeight() / 2)).toSimpleString());
-		// System.out.println("Fov X "+Math.toDegrees(fovX)+" Fov Y"+(fovY*2) );
-		System.out.println(cf.toSimpleString());
-		System.out.println("\tX COmp= " + xComp + " y comp " + yComp);
+//		System.out.println("Targeting " + target.toSimpleString());
+//		System.out.println("In Frame  " + screenToWorld(screenW, screenH, zoom, xValue + (getWidth() / 2),
+//				yValue + (getHeight() / 2)).toSimpleString());
+//		// System.out.println("Fov X "+Math.toDegrees(fovX)+" Fov Y"+(fovY*2) );
+//		System.out.println(cf.toSimpleString());
+//		System.out.println("\tX COmp= " + xComp + " y comp " + yComp);
 		if (xValue > screenW || xValue < 0 || yValue > screenH || yValue < 0) {
 			BowlerStudio.runLater(() -> {
 				setVisible(false);
