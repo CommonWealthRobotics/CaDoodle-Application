@@ -736,9 +736,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.z = z;
 		if(cadoodle==null || controls==null)
 			return;
-		if(selected.size()==0)
-			return;
+
 		List<CSG> selectedCSG = cadoodle.getSelect(selectedSnapshot());
+		if(selectedCSG.size()==0)
+			return;
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG,getSellectedBounds(selectedCSG));
 	}
 
