@@ -1,13 +1,23 @@
 .root {
+    -logo-blue:#263d8c;
+	-logo-red:#bb1f09;
+	-logo-orange:#e7a436;
+	-logo-yellow:#f2c83d;
+	-logo-Beige:#f4ede0;
+	
     -my-primary-color: #3498db;
     -my-secondary-color: #2ecc71;
     
-    -my-background-color:  #E6E6FA;
+    -my-background-color: -logo-Beige;
     
 
-    -my-button-color:#F0F0FF;
-}
+    -my-button-color:-logo-yellow;
+    
 
+}
+.label, .text-field, .text-area, .button {
+    -fx-text-fill: -logo-blue;
+}
 
 .image-button {
     -fx-background-color: transparent;
@@ -17,22 +27,25 @@
 }
 .normal-button {
     -fx-background-color: -my-button-color;
-    -fx-border-width: 2px;
     -fx-background-insets: 0;
+    -fx-border-width: 2px;
+     -fx-border-color: -logo-blue; /* Blue border when focused */
+    
 }
 .normal-button:focused {
-    -fx-border-color: #0000FF; /* Blue border when focused */
+	-fx-border-width: 2px;
+    -fx-border-color: -logo-red; /* Blue border when focused */
 }
 
 .normal-button:pressed {
-    -fx-background-color: #CCCCCC; /* Light gray background when pressed */
+    -fx-background-color: -logo-orange; /* Light gray background when pressed */
 }
 .image-button:focused {
-    -fx-border-color: #0000FF; /* Blue border when focused */
+    -fx-border-color: -logo-red; /* Blue border when focused */
 }
 
 .image-button:pressed {
-    -fx-background-color: #CCCCCC; /* Light gray background when pressed */
+    -fx-background-color: -logo-orange; /* Light gray background when pressed */
 }
 
 .scroll-pane {
@@ -45,17 +58,17 @@
 
 .scroll-pane .scroll-bar:horizontal,
 .scroll-pane .scroll-bar:vertical {
-    -fx-background-color: #e0e0e0;
+    -fx-background-color: -logo-blue;
 }
 
 .scroll-pane .scroll-bar:horizontal .thumb,
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #909090;
+    -fx-background-color: -logo-blue;
 }
 
 .scroll-pane .increment-button,
 .scroll-pane .decrement-button {
-    -fx-background-color: #c0c0c0;
+    -fx-background-color: -logo-blue;
 }
 
 .scroll-pane .increment-arrow,
@@ -65,15 +78,19 @@
 
 .scroll-pane .scroll-bar:horizontal .track,
 .scroll-pane .scroll-bar:vertical .track {
-    -fx-background-color: #d0d0d0;
+    -fx-background-color:-logo-yellow;
 }
 
 .scroll-pane > .corner {
     -fx-background-color: #e0e0e0;
 }
+#shapeConfigurationHolder{
 
+    -fx-border-width: 2px;
+     -fx-border-color: -logo-blue; /* Blue border when focused */
+}
 #view3d {
-    -fx-background-color:  radial-gradient(center 50% 50%, radius 70%, #F0E6FF 0%, #E6E6FA 30%, #D8BFD8 100%);
+    -fx-background-color:  radial-gradient(center 50% 50%, radius 30%, #D0D0D0 0%, -logo-Beige 90%);
 }
 
 #control3d {

@@ -39,7 +39,7 @@
                <children>
                   <AnchorPane HBox.hgrow="SOMETIMES">
                      <children>
-                        <StackPane minHeight="200.0" minWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane fx:id="view3d" pickOnBounds="false" />
                               <AnchorPane fx:id="control3d" mouseTransparent="true" pickOnBounds="false" />
