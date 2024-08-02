@@ -103,7 +103,7 @@ public class ControlRectangle extends Rectangle {
 		screenH-=heightBoundOffset;
 		double scalex = 1/calculatePixelToMmScale( screenW,  screenH,-zoom);
 		double zoomInPix = zoom*scalex;
-		System.out.println(" Zoom "+zoom+" zoom in pix "+zoomInPix);
+		//System.out.println(" Zoom "+zoom+" zoom in pix "+zoomInPix);
 		
 		TransformNR zTf = new TransformNR(0,0,-zoom);
 		TransformNR camerFrame2 = engine.getFlyingCamera().getCamerFrame();
@@ -114,7 +114,7 @@ public class ControlRectangle extends Rectangle {
 						.times(zTf);
 		
 		TransformNR inverse = cf.inverse();
-		System.out.println("Camera fraame: "+inverse.toSimpleString());
+		//System.out.println("Camera fraame: "+inverse.toSimpleString());
 
 	    // Get the projection transform from the camera
 //	    Affine input = new Affine(camera.getLocalToSceneTransform());
@@ -125,7 +125,7 @@ public class ControlRectangle extends Rectangle {
 //		System.out.println("Projection frame: "+projection.toSimpleString());
 
 	    // Project the point
-		System.out.println("Camera PureTrans: "+cameraTranslation.toSimpleString());
+		//System.out.println("Camera PureTrans: "+cameraTranslation.toSimpleString());
 	    TransformNR times = target.inverse().times(cameraTranslation);
 	    
 		TransformNR simpleProjection = inverse.times(times);
@@ -134,10 +134,10 @@ public class ControlRectangle extends Rectangle {
 		
 		double pointAngle = Math.toDegrees(Math.atan2(simpleProjection.getY(), simpleProjection.getX()));
 		TransformNR t = new TransformNR(new RotationNR(0,-pointAngle,0));
-		System.out.println("Rotaation Angle : "+pointAngle);
-		System.out.println("Projection point: "+simpleProjection.toSimpleString());
+		//System.out.println("Rotaation Angle : "+pointAngle);
+		//System.out.println("Projection point: "+simpleProjection.toSimpleString());
 		TransformNR projectedPoint=t.times(simpleProjection);
-		System.out.println("Rotated    point: "+projectedPoint.toSimpleString());
+		//System.out.println("Rotated    point: "+projectedPoint.toSimpleString());
 
 	    // Perform viewport transformation
 //	    double scaledVectorRotated = (-projectedPoint.getX() )*scalex;
