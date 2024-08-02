@@ -99,32 +99,55 @@ public class ControlRectangle extends Rectangle {
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target) {
-		TransformNR zTf = new TransformNR(0,0,zoom);
-		TransformNR cf = 
-						engine.getFlyingCamera().getCamerFrame()
-						.times(new TransformNR(RotationNR.getRotationZ(180)).times(zTf));
+		double heightBoundOffset=0;
+		screenH-=heightBoundOffset;
+		double scalex = 1/calculatePixelToMmScale( screenW,  screenH,-zoom);
+		double zoomInPix = zoom*scalex;
+		System.out.println(" Zoom "+zoom+" zoom in pix "+zoomInPix);
 		
-		System.out.println("Camera fraame: "+cf.toSimpleString());
-		//target= cf.inverse().times(target);
-//		Point3D worldPoint=new Point3D(target.getX(), target.getY(), target.getZ());
-//		   // Transform the point to scene coordinates
-//	    Point3D scenePoint = engine.getSubScene().getRoot().localToScene(worldPoint);
+		TransformNR zTf = new TransformNR(0,0,-zoom);
+		TransformNR camerFrame2 = engine.getFlyingCamera().getCamerFrame();
+		TransformNR cameraTranslation = camerFrame2.copy().setRotation(new RotationNR());
+		RotationNR camRot=camerFrame2.getRotation();
+		TransformNR cf = 
+				new TransformNR(camRot)
+						.times(zTf);
+		
+		TransformNR inverse = cf.inverse();
+		System.out.println("Camera fraame: "+inverse.toSimpleString());
 
 	    // Get the projection transform from the camera
-	    Affine input = new Affine(camera.getLocalToSceneTransform());
-		TransformNR projection = TransformFactory.affineToNr(input);
-		System.out.println("Projection frame: "+projection.toSimpleString());
+//	    Affine input = new Affine(camera.getLocalToSceneTransform());
+//		TransformNR projection = TransformFactory.affineToNr(input)
+//				.times(new TransformNR(RotationNR.getRotationY(0)))
+//				.times(new TransformNR(RotationNR.getRotationZ(0)))
+//				.times(new TransformNR(RotationNR.getRotationX(0)));
+//		System.out.println("Projection frame: "+projection.toSimpleString());
 
 	    // Project the point
-	    TransformNR projectedPoint = projection.times(cf.inverse().times(target));
-		double scalex = 1;//1/calculatePixelToMmScale( screenW,  screenH,-zoom);
+		System.out.println("Camera PureTrans: "+cameraTranslation.toSimpleString());
+	    TransformNR times = target.inverse().times(cameraTranslation);
+	    
+		TransformNR simpleProjection = inverse.times(times);
+	    
+	
+		
+		double pointAngle = Math.toDegrees(Math.atan2(simpleProjection.getY(), simpleProjection.getX()));
+		TransformNR t = new TransformNR(new RotationNR(0,-pointAngle,0));
+		System.out.println("Rotaation Angle : "+pointAngle);
+		System.out.println("Projection point: "+simpleProjection.toSimpleString());
+		TransformNR projectedPoint=t.times(simpleProjection);
+		System.out.println("Rotated    point: "+projectedPoint.toSimpleString());
 
 	    // Perform viewport transformation
-	    double d = (projectedPoint.getX() + 1)*scalex;
-	    double e = (-projectedPoint.getY() + 1)*scalex;
-
-		double xValue = e + (screenW / 2)+getWidth()/2;
-		double yValue = d + (screenH / 2)+getHeight()/2;
+//	    double scaledVectorRotated = (-projectedPoint.getX() )*scalex;
+//	    TransformNR backRotatedScaled=t.inverse().times(new TransformNR(scaledVectorRotated,0,0));
+//	    double d= backRotatedScaled.getX();
+//	    double e = backRotatedScaled.getY();
+	    double d= simpleProjection.getX()*scalex;;
+	    double e = simpleProjection.getY()*scalex;;
+		double xValue = d + (screenW / 2)-getWidth()/2;
+		double yValue = e + (screenH / 2)-getHeight()/2 +heightBoundOffset/2;
 	    
 		if (xValue > screenW || xValue < 0 || yValue > screenH || yValue < 0) {
 			//BowlerStudio.runLater(() -> {
@@ -134,8 +157,8 @@ public class ControlRectangle extends Rectangle {
 		} else
 			//BowlerStudio.runLater(() -> {
 				setVisible(true);
-				setLayoutX(Math.max(0, Math.min(screenW, xValue)));
-				setLayoutY(Math.max(0, Math.min(screenH, yValue)));
+				setLayoutX(Math.max(getWidth()/2+20, Math.min(screenW-getWidth()/2-20, xValue)));
+				setLayoutY(Math.max(getWidth()/2+20, Math.min(screenH-getWidth()/2-20, yValue)));
 			//});
 
 	}

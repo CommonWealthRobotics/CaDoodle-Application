@@ -111,15 +111,15 @@ public class ControlSprites {
 		bottomDimentions.setTranslateZ(min.z);
 		bottomDimentions.setStrokeWidth(1+2*(-zoom/1000));
 		
-//		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(center.x,center.y,max.z));
-//		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z));
-//		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y,  min.z));
-//		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y,  min.z));
-//		leftRear.threeDTarget(screenW,screenH,zoom, new TransformNR(min.x,min.y, min.z));
+		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(center.x,center.y,max.z));
+		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z));
+		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y,  min.z));
+		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y,  min.z));
+		leftRear.threeDTarget(screenW,screenH,zoom, new TransformNR(min.x,min.y, min.z));
 
-		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,0));
-		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(30, 0,0));
-		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(0,40,0));
+//		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,0));
+//		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(40, 0,0));
+//		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(0,25.4*2,0));
 
 
         //System.out.println("ScrW:"+screenW+"ScrH:"+screenH+" zoom:"+zoom+" Pan:"+az+" Tilt:"+el+" X:"+x+" Y:"+y+" Z:"+z);
