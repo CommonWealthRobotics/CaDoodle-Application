@@ -239,6 +239,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private ICaDoodleOpperation source;
 	private boolean resetArmed;
 	private long timeOfClick;
+	private ImageView ground;
 
 
 	@FXML
@@ -687,6 +688,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			engine.getSubScene().setHeight(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
+		Image image = new Image(Main.class.getResourceAsStream("BlueNoise470.png"));
+		ground = new ImageView(image);
+		ground.setOpacity(0.25);
+		ground.setScaleX(2);
+		ground.setScaleY(2);
+		ground.setX(-image.getWidth()/2);
+		ground.setY(-image.getHeight()/2);
+		ground.setTranslateZ(-0.1);
+		
+		engine.addUserNode(ground);
 		
 	}
 
@@ -902,6 +913,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double zoom = camera.getZoomDepth();
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
+		//System.out.println("Elevation "+el);
+		if(el<-90 ||el>90) {
+			ground.setVisible(false);
+		}else {
+			ground.setVisible(true);
+		}
 		double x= camera.getGlobalX();
 		double y= camera.getGlobalY();
 		double z= camera.getGlobalZ();
