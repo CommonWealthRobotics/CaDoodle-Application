@@ -59,12 +59,9 @@ import javafx.scene.shape.TriangleMesh;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -1000;
-	private ActiveProject ap = new ActiveProject();
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = new SelectionSession();
-	private boolean needsSave=false;
-	private Thread autosaveThread=null;
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -475,7 +472,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		System.out.println("Set Project Name to " + fileNameBox.getText());
 		cadoodle.setProjectName(fileNameBox.getText());
 		session.setKeyBindingFocus();
-		save();
+		session.save();
 	}
 
 	@FXML
@@ -584,8 +581,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		new Thread(() -> {
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
-				ap.loadActive(this);
-				ap.save(cadoodle);
+				session.loadActive(this);
+				session.save();
 				BowlerStudio.runLater(() -> {
 					fileNameBox.setText(cadoodle.getProjectName());
 				});
@@ -753,34 +750,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			});
 		}
 		if(this.source!=source) {
-			save();
+			session.save();
 		}
 		this.source = source;
 		onChange(engine.getFlyingCamera());
 	}
 
-	private void save() {
-		System.out.println("Save Requested");
-		needsSave=true;
-		if(autosaveThread == null) {
-			autosaveThread= new Thread(()->{
-				while(ap.isOpen()) {
-					if(needsSave) {
-						System.out.println("Auto save "+cadoodle.getSelf().getAbsolutePath());
-						ap.save(cadoodle);
-						needsSave=false;
-					}
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-			autosaveThread.start();
-		}
-	}
+
 
 	private void setupEngineControls() {
 		

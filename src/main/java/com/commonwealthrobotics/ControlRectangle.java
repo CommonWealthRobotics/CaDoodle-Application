@@ -6,20 +6,31 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Scale;
 
-public class ControlRectangle extends Rectangle {
+public class ControlRectangle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-
+	private double size=10;
+	private MeshView mesh;
+	private Affine location = new Affine();
+	private Affine cameraOrent = new Affine();
+	private Scale scaleTF = new Scale();
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
 	 * 
@@ -28,17 +39,28 @@ public class ControlRectangle extends Rectangle {
 	 * @param fill   determines how to fill the interior of the rectangle
 	 */
 	public ControlRectangle(BowlerStudio3dEngine engine) {
-		super(12.0, 12.0, Color.WHITE);
+//		super(12.0, 12.0, Color.WHITE);
+//		setStroke(Color.BLACK);
+//		setStrokeWidth(3);
 		this.engine = engine;
-		setStroke(Color.BLACK);
-		setStrokeWidth(3);
 		camera = engine.getFlyingCamera().getCamera();
-		setOnMouseEntered(event -> {
-			setFill(Color.RED);
+		CSG cube = new Cube(size,size,1).toCSG();
+		mesh=cube.getMesh();
+		PhongMaterial material = new PhongMaterial();
+		material.setDiffuseColor(new Color(1,1,1,1));
+		 getMesh().setCullFace(CullFace.NONE);
+	    //material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+	    getMesh().setMaterial(material);
+		getMesh().addEventFilter(MouseEvent.MOUSE_EXITED,event -> {
+			material.setDiffuseColor(new Color(1,1,1,1));
 		});
-		setOnMouseExited(event -> {
-			setFill(Color.WHITE);
+		getMesh().addEventFilter(MouseEvent.MOUSE_ENTERED,event -> {
+			material.setDiffuseColor(new Color(1,0,0,1));
 		});
+
+		mesh.getTransforms().add(location);
+		mesh.getTransforms().add(cameraOrent);
+		mesh.getTransforms().add(scaleTF);
 	}
 
 	public TransformNR screenToWorld(double screenW, double screenH, double zoom, double mouseX, double mouseY) {
@@ -72,7 +94,7 @@ public class ControlRectangle extends Rectangle {
 
 	public double calculateEffectiveFov(double screenW, double screenH) {
 		double aspectRatio = screenW / screenH;
-		double verticalFov = Math.toRadians(camera.getFieldOfView());
+		double verticalFov = Math.toRadians(camera.getFieldOfView());	
 
 		if (aspectRatio >= 1) {
 			// Landscape or square orientation
@@ -99,67 +121,56 @@ public class ControlRectangle extends Rectangle {
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target) {
-		double heightBoundOffset=0;
-		screenH-=heightBoundOffset;
-		double scalex = 1/calculatePixelToMmScale( screenW,  screenH,-zoom);
-		double zoomInPix = zoom*scalex;
-		//System.out.println(" Zoom "+zoom+" zoom in pix "+zoomInPix);
+		TransformNR cf = engine.getFlyingCamera().getCamerFrame();//.times(new TransformNR(RotationNR.getRotationZ(180)));
+		TransformNR pureRot = new TransformNR(cf.getRotation());
 		
 		TransformNR zTf = new TransformNR(0,0,-zoom);
 		TransformNR camerFrame2 = engine.getFlyingCamera().getCamerFrame();
-		TransformNR cameraTranslation = camerFrame2.copy().setRotation(new RotationNR());
+		//TransformNR cameraTranslation = camerFrame2.copy().setRotation(new RotationNR());
 		RotationNR camRot=camerFrame2.getRotation();
-		TransformNR cf = 
+		TransformNR cfimageFrame = 
 				new TransformNR(camRot)
 						.times(zTf);
+		TransformNR inverse = cfimageFrame;
+		double x = inverse.getX()+target.getX();
+		double y = inverse.getY()+target.getY();
+		double z = inverse.getZ()+target.getZ();
+		double vect = Math.max(1, Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)+Math.pow(z, 2)));
+		//vect = Math.min(1000, vect);
+		double scale = (vect/1000.0)*2;
 		
-		TransformNR inverse = cf.inverse();
-		//System.out.println("Camera fraame: "+inverse.toSimpleString());
+		//System.out.println("Point From Cam distaance "+vect+" scale "+scale);
+		//System.out.println("");
+		BowlerStudio.runLater(() -> {
+			scaleTF.setX(scale);
+			scaleTF.setY(scale);
+			scaleTF.setZ(scale);
+			TransformFactory.nrToAffine(pureRot ,cameraOrent);
+			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
+		});
 
-	    // Get the projection transform from the camera
-//	    Affine input = new Affine(camera.getLocalToSceneTransform());
-//		TransformNR projection = TransformFactory.affineToNr(input)
-//				.times(new TransformNR(RotationNR.getRotationY(0)))
-//				.times(new TransformNR(RotationNR.getRotationZ(0)))
-//				.times(new TransformNR(RotationNR.getRotationX(0)));
-//		System.out.println("Projection frame: "+projection.toSimpleString());
 
-	    // Project the point
-		//System.out.println("Camera PureTrans: "+cameraTranslation.toSimpleString());
-	    TransformNR times = target.inverse().times(cameraTranslation);
-	    
-		TransformNR simpleProjection = inverse.times(times);
-	    
-	
-		
-		double pointAngle = Math.toDegrees(Math.atan2(simpleProjection.getY(), simpleProjection.getX()));
-		TransformNR t = new TransformNR(new RotationNR(0,-pointAngle,0));
-		//System.out.println("Rotaation Angle : "+pointAngle);
-		//System.out.println("Projection point: "+simpleProjection.toSimpleString());
-		TransformNR projectedPoint=t.times(simpleProjection);
-		//System.out.println("Rotated    point: "+projectedPoint.toSimpleString());
+	}
 
-	    // Perform viewport transformation
-//	    double scaledVectorRotated = (-projectedPoint.getX() )*scalex;
-//	    TransformNR backRotatedScaled=t.inverse().times(new TransformNR(scaledVectorRotated,0,0));
-//	    double d= backRotatedScaled.getX();
-//	    double e = backRotatedScaled.getY();
-	    double d= simpleProjection.getX()*scalex;;
-	    double e = simpleProjection.getY()*scalex;;
-		double xValue = d + (screenW / 2)-getWidth()/2;
-		double yValue = e + (screenH / 2)-getHeight()/2 +heightBoundOffset/2;
-	    
-		if (xValue > screenW || xValue < 0 || yValue > screenH || yValue < 0) {
-			//BowlerStudio.runLater(() -> {
-				setVisible(false);
-			//});
-			return;
-		} else
-			//BowlerStudio.runLater(() -> {
-				setVisible(true);
-				setLayoutX(Math.max(getWidth()/2+20, Math.min(screenW-getWidth()/2-20, xValue)));
-				setLayoutY(Math.max(getWidth()/2+20, Math.min(screenH-getWidth()/2-20, yValue)));
-			//});
+	private void setVisible(boolean b) {
+		mesh.setVisible(b);
+	}
 
+	private double getHeight() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+
+	private double getWidth() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+
+	public MeshView getMesh() {
+		return mesh;
+	}
+
+	public void setMesh(MeshView mesh) {
+		this.mesh = mesh;
 	}
 }

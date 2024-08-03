@@ -37,6 +37,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 
 public class SelectionSession implements ICaDoodleStateUpdate {
+	private ActiveProject ap = new ActiveProject();
+
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	private ICaDoodleOpperation source;
@@ -66,6 +68,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double x;
 	private double y;
 	private double z;
+	private Thread autosaveThread=null;
+	private boolean needsSave=false;
+
 
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
@@ -148,9 +153,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// System.out.println("\n");
 
 		if (selected.size() > 0) {
-			for (String s : selected) {
-				System.out.println("Current Selection " + s);
-			}
+//			for (String s : selected) {
+//				System.out.println("Current Selection " + s);
+//			}
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = getSelectedCSG((String) selected.toArray()[0]);
@@ -305,7 +310,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		System.out.println("Adding " + h.getType());
+		//System.out.println("Adding " + h.getType());
 		cadoodle.addOpperation(h);
 	}
 
@@ -334,7 +339,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (Button b : buttons) {
 				b.setDisable(false);
 			}
-			System.out.println("Number Selected is " + selected.size());
+			//System.out.println("Number Selected is " + selected.size());
 			if (selected.size() > 1) {
 				groupButton.setDisable(false);
 				allignButton.setDisable(false);
@@ -695,6 +700,28 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		cadoodle.addOpperation(mc);
 
 	}
+	public void save() {
+		System.out.println("Save Requested");
+		needsSave=true;
+		if(autosaveThread == null) {
+			autosaveThread= new Thread(()->{
+				while(ap.isOpen()) {
+					if(needsSave) {
+						System.out.println("Auto save "+cadoodle.getSelf().getAbsolutePath());
+						ap.save(cadoodle);
+						needsSave=false;
+					}
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			autosaveThread.start();
+		}
+	}
 
 	public boolean compareLists(List<String> list1, List<String> list2) {
 		if (list1 == null || list2 == null) {
@@ -759,6 +786,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selectedCSG.size() == 0)
 			return;
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, getSellectedBounds(selectedCSG));
+	}
+
+	public void loadActive(MainController mainController) throws Exception {
+		ap.loadActive(mainController);
 	}
 
 }

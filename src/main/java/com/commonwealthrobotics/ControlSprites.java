@@ -11,8 +11,10 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -37,7 +39,7 @@ public class ControlSprites {
 	
 	private Rectangle footprint = new Rectangle(100,100,new Color(0,0,1,0.25));
 	private Rectangle bottomDimentions = new Rectangle(100,100,new Color(0,0,1,0.25));
-	private List<Rectangle> allElems;
+	private List<Node> allElems;
     private boolean selectionLive = false;
 	private Bounds bounds;
 
@@ -58,16 +60,19 @@ public class ControlSprites {
 		bottomDimentions.setStrokeLineCap(StrokeLineCap.BUTT);
 		bottomDimentions.setStrokeLineJoin(StrokeLineJoin.MITER);
 		bottomDimentions.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
-		allElems = Arrays.asList(topCenter,rightFront,rightRear,leftFront,leftRear,footprint,bottomDimentions);
+		allElems = Arrays.asList(topCenter.getMesh(),rightFront.getMesh(),
+				rightRear.getMesh(),
+				leftFront.getMesh(),
+				leftRear.getMesh(),footprint,bottomDimentions);
 		clearSelection();
 		BowlerStudio.runLater(() -> {
 			engine.addUserNode(footprint);
 			engine.addUserNode(bottomDimentions);
-			controls.getChildren().add(topCenter);
-			controls.getChildren().add(rightFront);
-			controls.getChildren().add(rightRear);
-			controls.getChildren().add(leftFront);
-			controls.getChildren().add(leftRear);
+			for(Node r:allElems) {
+				if(MeshView.class.isInstance(r)) {
+					engine.addUserNode(r);
+				}
+			}
 		});
 //		AnchorPane.setTopAnchor(topCenter, screenH/2);
 //        AnchorPane.setLeftAnchor(topCenter, screenW/2);
@@ -78,7 +83,7 @@ public class ControlSprites {
 		if(!selectionLive) {
 			selectionLive=true;
 			BowlerStudio.runLater(() -> {
-				for(Rectangle r:allElems)
+				for(Node r:allElems)
 					r.setVisible(true);
 			});
 		}
@@ -110,6 +115,7 @@ public class ControlSprites {
 		bottomDimentions.setY(min.y);
 		bottomDimentions.setTranslateZ(min.z);
 		bottomDimentions.setStrokeWidth(1+2*(-zoom/1000));
+		//bottomDimentions.bl;
 		
 		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(center.x,center.y,max.z));
 		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z));
@@ -127,7 +133,7 @@ public class ControlSprites {
 	}
 	public void clearSelection() {
 		BowlerStudio.runLater(() -> {
-			for(Rectangle r:allElems)
+			for(Node r:allElems)
 				r.setVisible(false);
 		});
 		selectionLive = false;
