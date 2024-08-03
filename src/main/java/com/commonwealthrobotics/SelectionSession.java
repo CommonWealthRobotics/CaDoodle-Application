@@ -693,6 +693,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				System.out.println("Move " + tf.toSimpleString());
 				mc.setLocation(tf);
 				cadoodle.regenerateCurrent();
+				save();
 				return;
 			}
 		}

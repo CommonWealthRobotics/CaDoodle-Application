@@ -1,9 +1,11 @@
 package com.commonwealthrobotics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -12,12 +14,15 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.transform.Affine;
 
 public class ControlSprites {
 	private AnchorPane controls;
@@ -31,6 +36,7 @@ public class ControlSprites {
 	private double z;
 	private SelectionSession session;
 	private BowlerStudio3dEngine engine;
+	private BowlerStudio3dEngine spriteEngine;
 	ControlRectangle topCenter = null;
 	ControlRectangle rightFront =null;
 	ControlRectangle rightRear =null;
@@ -38,10 +44,18 @@ public class ControlSprites {
 	ControlRectangle leftRear =null;
 	
 	private Rectangle footprint = new Rectangle(100,100,new Color(0,0,1,0.25));
-	private Rectangle bottomDimentions = new Rectangle(100,100,new Color(0,0,1,0.25));
+	//private Rectangle bottomDimentions = new Rectangle(100,100,new Color(0,0,1,0.25));
+	private Line frontLine = new Line(1, 1, 2, 2);
+	private Line backLine = new Line(1, 1, 2, 2);
+	private Line leftLine = new Line(1, 1, 2, 2);
+	private Line rightLine = new Line(1, 1, 2, 2);
+	private Line heightLine = new Line(1, 1, 2, 2);
+	
 	private List<Node> allElems;
     private boolean selectionLive = false;
 	private Bounds bounds;
+	private List<Line> lines;
+	private Affine spriteFace = new Affine();
 
 	public ControlSprites(AnchorPane controls, SelectionSession session,BowlerStudio3dEngine engine) {
 		this.session = session;
@@ -54,28 +68,66 @@ public class ControlSprites {
 		rightRear =new ControlRectangle(engine);
 		leftFront =new ControlRectangle(engine);
 		leftRear =new ControlRectangle(engine);
-		bottomDimentions.setFill(null);
-		bottomDimentions.setStroke(Color.BLACK);
-		bottomDimentions.setStrokeWidth(2);
-		bottomDimentions.setStrokeLineCap(StrokeLineCap.BUTT);
-		bottomDimentions.setStrokeLineJoin(StrokeLineJoin.MITER);
-		bottomDimentions.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
+		Affine heightLineOrentation = TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)));
+		heightLine.getTransforms().add(spriteFace);
+		heightLine.getTransforms().add(heightLineOrentation);
+		lines = Arrays.asList(frontLine,backLine,leftLine,rightLine,heightLine);
+		for(Line l:lines) {
+			l.setFill(null);
+			l.setStroke(Color.BLACK);
+			l.setStrokeWidth(2);
+			l.setStrokeLineCap(StrokeLineCap.BUTT);
+			l.setStrokeLineJoin(StrokeLineJoin.MITER);
+			l.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
+		}
 		allElems = Arrays.asList(topCenter.getMesh(),rightFront.getMesh(),
 				rightRear.getMesh(),
 				leftFront.getMesh(),
-				leftRear.getMesh(),footprint,bottomDimentions);
+				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine);
 		clearSelection();
+
+		spriteEngine = new BowlerStudio3dEngine("SpriteEngine");
+		spriteEngine.disableControls();
+		spriteEngine.rebuild(false);
+		setupEngine(controls);
+		engine.getFlyingCamera().bind(spriteEngine.getFlyingCamera());
 		BowlerStudio.runLater(() -> {
 			engine.addUserNode(footprint);
-			engine.addUserNode(bottomDimentions);
+			for(Line l:lines)
+				spriteEngine.addUserNode(l);
 			for(Node r:allElems) {
 				if(MeshView.class.isInstance(r)) {
-					engine.addUserNode(r);
+					spriteEngine.addUserNode(r);
 				}
 			}
 		});
-//		AnchorPane.setTopAnchor(topCenter, screenH/2);
-//        AnchorPane.setLeftAnchor(topCenter, screenW/2);
+	}
+
+	private void setupEngine(AnchorPane controls) {
+		controls.setMouseTransparent(true);
+		spriteEngine.getSubScene().setPickOnBounds(false);
+		controls.addEventFilter(MouseEvent.ANY, event -> {
+		    Node pickedNode = event.getPickResult().getIntersectedNode();
+		    System.out.println("Event at " + controls + ": " + event.getEventType()+" on node "+pickedNode);
+		});
+		BowlerStudio.runLater(() -> {
+			spriteEngine.getSubScene().setFocusTraversable(false);
+			controls.widthProperty().addListener((observable, oldValue, newValue) -> {
+				spriteEngine.getSubScene().setWidth(newValue.doubleValue());
+			});
+
+			controls.heightProperty().addListener((observable, oldValue, newValue) -> {
+				spriteEngine.getSubScene().setHeight(newValue.doubleValue());
+			});
+			BowlerStudio.runLater(() -> {
+				controls.getChildren().add(spriteEngine.getSubScene());
+				AnchorPane.setTopAnchor(spriteEngine.getSubScene(), 0.0);
+				AnchorPane.setRightAnchor(spriteEngine.getSubScene(), 0.0);
+				AnchorPane.setLeftAnchor(spriteEngine.getSubScene(), 0.0);
+				AnchorPane.setBottomAnchor(spriteEngine.getSubScene(), 0.0);
+			});
+
+		});
 	}
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z,List<CSG> selectedCSG, Bounds bounds) {
@@ -108,13 +160,43 @@ public class ControlSprites {
 		footprint.setWidth(Math.abs(max.x-min.x));
 		footprint.setX(min.x);
 		footprint.setY(min.y);
+
+		double lineScale = 2*(-zoom/1000);
+		double lineEndOffsetY = Math.min(10*lineScale,max.y-min.y);
+		double lineEndOffsetX = Math.min(10*lineScale,max.x-min.x);
+		double lineEndOffsetZ = Math.min(10*lineScale,max.z-min.z);
+		frontLine.setStartX(max.x);
+		frontLine.setStartY(min.y+lineEndOffsetY);
+		frontLine.setEndX(max.x);
+		frontLine.setEndY(max.y-lineEndOffsetY);
 		
-		bottomDimentions.setHeight(Math.abs(max.y-min.y));
-		bottomDimentions.setWidth(Math.abs(max.x-min.x));
-		bottomDimentions.setX(min.x);
-		bottomDimentions.setY(min.y);
-		bottomDimentions.setTranslateZ(min.z);
-		bottomDimentions.setStrokeWidth(1+2*(-zoom/1000));
+		backLine.setStartX(min.x);
+		backLine.setStartY(min.y+lineEndOffsetY);
+		backLine.setEndX(min.x);
+		backLine.setEndY(max.y-lineEndOffsetY);
+		
+		leftLine.setStartX(min.x+lineEndOffsetX);
+		leftLine.setStartY(max.y);
+		leftLine.setEndX(max.x-lineEndOffsetX);
+		leftLine.setEndY(max.y);
+		
+		rightLine.setStartX(min.x+lineEndOffsetX);
+		rightLine.setStartY(min.y);
+		rightLine.setEndX(max.x-lineEndOffsetX);
+		rightLine.setEndY(min.y);
+		
+		heightLine.setStartX(0);
+		heightLine.setStartY(0);
+		heightLine.setEndX(max.z-min.z-lineEndOffsetZ);
+		heightLine.setEndY(0);
+		heightLine.setTranslateX(center.x);
+		heightLine.setTranslateY(center.y);
+		TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90-az)),spriteFace);
+		
+		for(Line l:lines) {
+			l.setStrokeWidth(1+lineScale);
+			l.setTranslateZ(min.z);
+		}
 		//bottomDimentions.bl;
 		
 		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(center.x,center.y,max.z));

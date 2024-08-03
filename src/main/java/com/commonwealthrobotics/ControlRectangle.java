@@ -7,6 +7,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ChamferedCube;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -26,7 +27,7 @@ public class ControlRectangle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-	private double size=10;
+	private double size=20;
 	private MeshView mesh;
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
@@ -44,7 +45,7 @@ public class ControlRectangle {
 //		setStrokeWidth(3);
 		this.engine = engine;
 		camera = engine.getFlyingCamera().getCamera();
-		CSG cube = new Cube(size,size,1).toCSG();
+		CSG cube = new ChamferedCube(size,size,size,size/5).toCSG().toZMin();
 		mesh=cube.getMesh();
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(new Color(1,1,1,1));
@@ -136,8 +137,8 @@ public class ControlRectangle {
 		double y = inverse.getY()+target.getY();
 		double z = inverse.getZ()+target.getZ();
 		double vect = Math.max(1, Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)+Math.pow(z, 2)));
-		//vect = Math.min(1000, vect);
-		double scale = (vect/1000.0)*2;
+		vect = Math.min(9000, vect);
+		double scale =Math.max(0.1, ((vect/1000.0))*0.75);
 		
 		//System.out.println("Point From Cam distaance "+vect+" scale "+scale);
 		//System.out.println("");

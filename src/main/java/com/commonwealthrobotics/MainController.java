@@ -603,7 +603,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUp3dEngine() {
-		engine = new BowlerStudio3dEngine();
+		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		// engine.hideHand();
 		BowlerStudio.runLater(() -> {
@@ -699,10 +699,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUpNavigationCube() {
-		navigationCube = new BowlerStudio3dEngine();
+		navigationCube = new BowlerStudio3dEngine("NaviCube");
 		navigationCube.rebuild(false);
 		navigationCube.setZoom(-400);
 		navigationCube.lockZoom();
+		navigationCube.lockMove();
 		navigationCube.setMouseScale(10);
 		BowlerStudio.runLater(() -> {
 			navigationCube.getSubScene().setFocusTraversable(false);
