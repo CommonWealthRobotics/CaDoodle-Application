@@ -27,11 +27,12 @@ public class ControlRectangle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-	private double size=20;
+	private static final double size=20;
 	private MeshView mesh;
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
+	private double scale;
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
 	 * 
@@ -45,7 +46,7 @@ public class ControlRectangle {
 //		setStrokeWidth(3);
 		this.engine = engine;
 		camera = engine.getFlyingCamera().getCamera();
-		CSG cube = new ChamferedCube(size,size,size,size/5).toCSG().toZMin();
+		CSG cube = new ChamferedCube(getSize(),getSize(),getSize(),getSize()/5).toCSG().toZMin();
 		mesh=cube.getMesh();
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(new Color(1,1,1,1));
@@ -138,14 +139,14 @@ public class ControlRectangle {
 		double z = inverse.getZ()+target.getZ();
 		double vect = Math.max(1, Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)+Math.pow(z, 2)));
 		vect = Math.min(9000, vect);
-		double scale =Math.max(0.1, ((vect/1000.0))*0.75);
+		setScale(Math.max(0.1, ((vect/1000.0))*0.75));
 		
 		//System.out.println("Point From Cam distaance "+vect+" scale "+scale);
 		//System.out.println("");
 		BowlerStudio.runLater(() -> {
-			scaleTF.setX(scale);
-			scaleTF.setY(scale);
-			scaleTF.setZ(scale);
+			scaleTF.setX(getScale());
+			scaleTF.setY(getScale());
+			scaleTF.setZ(getScale());
 			TransformFactory.nrToAffine(pureRot ,cameraOrent);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
@@ -159,12 +160,12 @@ public class ControlRectangle {
 
 	private double getHeight() {
 		// TODO Auto-generated method stub
-		return size;
+		return getSize();
 	}
 
 	private double getWidth() {
 		// TODO Auto-generated method stub
-		return size;
+		return getSize();
 	}
 
 	public MeshView getMesh() {
@@ -173,5 +174,17 @@ public class ControlRectangle {
 
 	public void setMesh(MeshView mesh) {
 		this.mesh = mesh;
+	}
+
+	public static double getSize() {
+		return size;
+	}
+
+	public double getScale() {
+		return scale;
+	}
+
+	public void setScale(double scale) {
+		this.scale = scale;
 	}
 }

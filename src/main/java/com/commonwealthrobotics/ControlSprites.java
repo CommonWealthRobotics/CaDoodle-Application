@@ -12,6 +12,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -23,6 +24,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Scale;
 
 public class ControlSprites {
 	private AnchorPane controls;
@@ -56,6 +58,9 @@ public class ControlSprites {
 	private Bounds bounds;
 	private List<Line> lines;
 	private Affine spriteFace = new Affine();
+	private MeshView moveUpArrow;
+	private Affine moveUpLocation=new Affine();
+	private Scale scaleTF = new Scale();
 
 	public ControlSprites(AnchorPane controls, SelectionSession session,BowlerStudio3dEngine engine) {
 		this.session = session;
@@ -68,6 +73,12 @@ public class ControlSprites {
 		rightRear =new ControlRectangle(engine);
 		leftFront =new ControlRectangle(engine);
 		leftRear =new ControlRectangle(engine);
+		CSG setColor = new Cylinder(ControlRectangle.getSize()/2, 0,ControlRectangle.getSize() )
+				.toCSG()
+				.setColor(Color.BLACK);
+		moveUpArrow = setColor.getMesh();
+		moveUpArrow.getTransforms().add(moveUpLocation);
+		moveUpArrow.getTransforms().add(scaleTF);
 		Affine heightLineOrentation = TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)));
 		heightLine.getTransforms().add(spriteFace);
 		heightLine.getTransforms().add(heightLineOrentation);
@@ -83,7 +94,7 @@ public class ControlSprites {
 		allElems = Arrays.asList(topCenter.getMesh(),rightFront.getMesh(),
 				rightRear.getMesh(),
 				leftFront.getMesh(),
-				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine);
+				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
 		clearSelection();
 
 		spriteEngine = new BowlerStudio3dEngine("SpriteEngine");
@@ -191,7 +202,10 @@ public class ControlSprites {
 		heightLine.setEndY(0);
 		heightLine.setTranslateX(center.x);
 		heightLine.setTranslateY(center.y);
+		//moveUpLocation
 		TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90-az)),spriteFace);
+		TransformFactory.nrToAffine(new TransformNR(center.x,center.y,max.z+ControlRectangle.getSize()),moveUpLocation);
+
 		
 		for(Line l:lines) {
 			l.setStrokeWidth(1+lineScale);
@@ -204,6 +218,10 @@ public class ControlSprites {
 		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y,  min.z));
 		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y,  min.z));
 		leftRear.threeDTarget(screenW,screenH,zoom, new TransformNR(min.x,min.y, min.z));
+		
+		scaleTF.setX(topCenter.getScale());
+		scaleTF.setY(topCenter.getScale());
+		scaleTF.setZ(topCenter.getScale());
 
 //		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,0));
 //		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(40, 0,0));
