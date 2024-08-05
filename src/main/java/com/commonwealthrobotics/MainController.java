@@ -51,6 +51,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Mesh;
@@ -68,6 +69,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
 
+	
+
+    @FXML // fx:id="stackPane"
+    private StackPane stackPane; // Value injected by FXMLLoader
 	@FXML // fx:id="allignButton"
 	private Button allignButton; // Value injected by FXMLLoader
 	@FXML // ResourceBundle that was given to the FXMLLoader
@@ -754,7 +759,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.save();
 		}
 		this.source = source;
-		onChange(engine.getFlyingCamera());
+		BowlerStudio.runLater(()->{
+			onChange(engine.getFlyingCamera());
+				
+		});
 	}
 
 

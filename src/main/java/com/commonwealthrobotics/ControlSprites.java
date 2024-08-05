@@ -15,6 +15,8 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.SubScene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -102,6 +104,9 @@ public class ControlSprites {
 		spriteEngine.rebuild(false);
 		setupEngine(controls);
 		engine.getFlyingCamera().bind(spriteEngine.getFlyingCamera());
+		
+	}
+	private void setUpUIComponennts() {
 		BowlerStudio.runLater(() -> {
 			engine.addUserNode(footprint);
 			for(Line l:lines)
@@ -109,17 +114,34 @@ public class ControlSprites {
 			for(Node r:allElems) {
 				if(MeshView.class.isInstance(r)) {
 					spriteEngine.addUserNode(r);
+					enableMouseEventsFor3DObject(r);
 				}
 			}
 		});
 	}
-
+	private void disableMouseEventConsumption(Node node) {
+	    node.setPickOnBounds(false);
+	    node.setMouseTransparent(true);
+	    node.setFocusTraversable(false);
+	    if (node instanceof Parent) {
+	        ((Parent) node).getChildrenUnmodifiable().forEach(this::disableMouseEventConsumption);
+	    }
+	}
+	public void enableMouseEventsFor3DObject(Node node) {
+	    node.setMouseTransparent(false);
+	    node.setPickOnBounds(true);
+	}
 	private void setupEngine(AnchorPane controls) {
-		controls.setMouseTransparent(true);
-		spriteEngine.getSubScene().setPickOnBounds(false);
-		controls.addEventFilter(MouseEvent.ANY, event -> {
+//		controls.setPickOnBounds(false);
+//		controls.setMouseTransparent(true);
+		SubScene subScene = spriteEngine.getSubScene();
+		disableMouseEventConsumption(controls);
+		subScene.pickOnBoundsProperty().addListener(event->{
+			System.out.println("SubScene Pick On Bounds changed!");
+		});
+		subScene.addEventFilter(MouseEvent.ANY, event -> {
 		    Node pickedNode = event.getPickResult().getIntersectedNode();
-		    System.out.println("Event at " + controls + ": " + event.getEventType()+" on node "+pickedNode);
+		    System.out.println( event.getEventType()+" on node "+pickedNode);
 		});
 		BowlerStudio.runLater(() -> {
 			spriteEngine.getSubScene().setFocusTraversable(false);
@@ -136,6 +158,7 @@ public class ControlSprites {
 				AnchorPane.setRightAnchor(spriteEngine.getSubScene(), 0.0);
 				AnchorPane.setLeftAnchor(spriteEngine.getSubScene(), 0.0);
 				AnchorPane.setBottomAnchor(spriteEngine.getSubScene(), 0.0);
+				setUpUIComponennts();
 			});
 
 		});

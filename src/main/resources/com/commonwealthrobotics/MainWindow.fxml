@@ -37,7 +37,7 @@
          <children>
             <HBox fx:id="drawerHolder" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" spacing="5.0" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                <children>
-                  <StackPane minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" HBox.hgrow="SOMETIMES">
+                  <StackPane fx:id="stackPane" minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" HBox.hgrow="SOMETIMES">
                      <children>
                         <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" />
                         <AnchorPane fx:id="control3d" pickOnBounds="false" snapToPixel="false" />
