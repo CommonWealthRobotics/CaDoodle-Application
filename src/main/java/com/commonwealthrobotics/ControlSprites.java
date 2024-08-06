@@ -14,6 +14,8 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.scene.DepthTest;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SubScene;
@@ -99,24 +101,28 @@ public class ControlSprites {
 				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
 		clearSelection();
 
-		spriteEngine = new BowlerStudio3dEngine("SpriteEngine");
-		spriteEngine.disableControls();
-		spriteEngine.rebuild(false);
-		setupEngine(controls);
-		engine.getFlyingCamera().bind(spriteEngine.getFlyingCamera());
-		
+//		spriteEngine = new BowlerStudio3dEngine("SpriteEngine");
+//		spriteEngine.disableControls();
+//		spriteEngine.rebuild(false);
+//		//setupEngine(controls);
+//		engine.getFlyingCamera().bind(spriteEngine.getFlyingCamera());
+		setUpUIComponennts();
 	}
 	private void setUpUIComponennts() {
+		Group controlsGroup = new Group();
+        controlsGroup.setDepthTest(DepthTest.DISABLE);
+        controlsGroup.setViewOrder(-1);  // Lower viewOrder renders on top
+
 		BowlerStudio.runLater(() -> {
 			engine.addUserNode(footprint);
 			for(Line l:lines)
-				spriteEngine.addUserNode(l);
+				controlsGroup.getChildren().add(l);
 			for(Node r:allElems) {
 				if(MeshView.class.isInstance(r)) {
-					spriteEngine.addUserNode(r);
-					enableMouseEventsFor3DObject(r);
+					controlsGroup.getChildren().add(r);
 				}
 			}
+			//engine.addUserNode(controlsGroup);
 		});
 	}
 	private void disableMouseEventConsumption(Node node) {
@@ -144,7 +150,7 @@ public class ControlSprites {
 		    System.out.println( event.getEventType()+" on node "+pickedNode);
 		});
 		BowlerStudio.runLater(() -> {
-			spriteEngine.getSubScene().setFocusTraversable(false);
+			//spriteEngine.getSubScene().setFocusTraversable(false);
 			controls.widthProperty().addListener((observable, oldValue, newValue) -> {
 				spriteEngine.getSubScene().setWidth(newValue.doubleValue());
 			});
