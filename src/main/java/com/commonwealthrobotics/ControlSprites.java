@@ -1,6 +1,5 @@
 package com.commonwealthrobotics;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,11 +16,8 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.SubScene;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
@@ -31,7 +27,6 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
 public class ControlSprites {
-	private AnchorPane controls;
 	private double screenW;
 	private double screenH;
 	private double zoom;
@@ -42,7 +37,7 @@ public class ControlSprites {
 	private double z;
 	private SelectionSession session;
 	private BowlerStudio3dEngine engine;
-	private BowlerStudio3dEngine spriteEngine;
+	//private BowlerStudio3dEngine spriteEngine;
 	ControlRectangle topCenter = null;
 	ControlRectangle rightFront =null;
 	ControlRectangle rightRear =null;
@@ -66,12 +61,10 @@ public class ControlSprites {
 	private Affine moveUpLocation=new Affine();
 	private Scale scaleTF = new Scale();
 
-	public ControlSprites(AnchorPane controls, SelectionSession session,BowlerStudio3dEngine engine) {
+	public ControlSprites(SelectionSession session,BowlerStudio3dEngine e) {
 		this.session = session;
-		if(controls==null)
-			throw new NullPointerException();
-		this.controls = controls;
-		this.engine = engine;
+
+		this.engine = e;
 		topCenter= new ControlRectangle(engine);
 		rightFront= new ControlRectangle(engine);
 		rightRear =new ControlRectangle(engine);
@@ -101,11 +94,6 @@ public class ControlSprites {
 				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
 		clearSelection();
 
-//		spriteEngine = new BowlerStudio3dEngine("SpriteEngine");
-//		spriteEngine.disableControls();
-//		spriteEngine.rebuild(false);
-//		//setupEngine(controls);
-//		engine.getFlyingCamera().bind(spriteEngine.getFlyingCamera());
 		setUpUIComponennts();
 	}
 	private void setUpUIComponennts() {
@@ -119,56 +107,15 @@ public class ControlSprites {
 				controlsGroup.getChildren().add(l);
 			for(Node r:allElems) {
 				if(MeshView.class.isInstance(r)) {
+					
 					controlsGroup.getChildren().add(r);
+					((MeshView)r).setCullFace(CullFace.BACK);
 				}
 			}
-			//engine.addUserNode(controlsGroup);
+			engine.addUserNode(controlsGroup);
 		});
 	}
-	private void disableMouseEventConsumption(Node node) {
-	    node.setPickOnBounds(false);
-	    node.setMouseTransparent(true);
-	    node.setFocusTraversable(false);
-	    if (node instanceof Parent) {
-	        ((Parent) node).getChildrenUnmodifiable().forEach(this::disableMouseEventConsumption);
-	    }
-	}
-	public void enableMouseEventsFor3DObject(Node node) {
-	    node.setMouseTransparent(false);
-	    node.setPickOnBounds(true);
-	}
-	private void setupEngine(AnchorPane controls) {
-//		controls.setPickOnBounds(false);
-//		controls.setMouseTransparent(true);
-		SubScene subScene = spriteEngine.getSubScene();
-		disableMouseEventConsumption(controls);
-		subScene.pickOnBoundsProperty().addListener(event->{
-			System.out.println("SubScene Pick On Bounds changed!");
-		});
-		subScene.addEventFilter(MouseEvent.ANY, event -> {
-		    Node pickedNode = event.getPickResult().getIntersectedNode();
-		    System.out.println( event.getEventType()+" on node "+pickedNode);
-		});
-		BowlerStudio.runLater(() -> {
-			//spriteEngine.getSubScene().setFocusTraversable(false);
-			controls.widthProperty().addListener((observable, oldValue, newValue) -> {
-				spriteEngine.getSubScene().setWidth(newValue.doubleValue());
-			});
 
-			controls.heightProperty().addListener((observable, oldValue, newValue) -> {
-				spriteEngine.getSubScene().setHeight(newValue.doubleValue());
-			});
-			BowlerStudio.runLater(() -> {
-				controls.getChildren().add(spriteEngine.getSubScene());
-				AnchorPane.setTopAnchor(spriteEngine.getSubScene(), 0.0);
-				AnchorPane.setRightAnchor(spriteEngine.getSubScene(), 0.0);
-				AnchorPane.setLeftAnchor(spriteEngine.getSubScene(), 0.0);
-				AnchorPane.setBottomAnchor(spriteEngine.getSubScene(), 0.0);
-				setUpUIComponennts();
-			});
-
-		});
-	}
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z,List<CSG> selectedCSG, Bounds bounds) {
 		this.bounds = bounds;
@@ -185,8 +132,8 @@ public class ControlSprites {
 			footprint.setVisible(true);
 		}
 
-		this.screenW = controls.getWidth();
-		this.screenH = controls.getHeight();
+		this.screenW = screenW;
+		this.screenH = screenH;
 		this.zoom = zoom;
 		this.az = az;
 		this.el = el;

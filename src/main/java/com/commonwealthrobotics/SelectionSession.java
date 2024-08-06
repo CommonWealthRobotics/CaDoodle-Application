@@ -199,7 +199,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
 		setupSnapGrid();
-		controls = new ControlSprites(control3d, this, engine);
+		controls = new ControlSprites( this, engine);
 	}
 
 	private void setupSnapGrid() {

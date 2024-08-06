@@ -99,9 +99,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="configurationGrid"
 	private GridPane configurationGrid; // Value injected by FXMLLoader
 
-	@FXML // fx:id="control3d"
-	private AnchorPane control3d; // Value injected by FXMLLoader
-
 	@FXML // fx:id="controlBar"
 	private GridPane controlBar; // Value injected by FXMLLoader
 
@@ -495,7 +492,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert colorPicker != null : "fx:id=\"colorPicker\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert configurationGrid != null
 				: "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert control3d != null : "fx:id=\"control3d\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert copyButton != null : "fx:id=\"copyButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert cruseButton != null : "fx:id=\"cruseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
@@ -569,7 +565,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUp3dEngine();
 		setUpColorPicker();
 
-		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, control3d,
+		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 				engine, colorPicker, snapGrid);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
@@ -613,15 +609,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
-//			layerHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
-//				engine.getSubScene().setWidth(newValue.doubleValue());
-//				onChange(engine.getFlyingCamera());
-//			});
-//
-//			layerHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
-//				engine.getSubScene().setHeight(newValue.doubleValue());
-//				onChange(engine.getFlyingCamera());
-//			});
 			BowlerStudio.runLater(() -> {
 				// Add the 3d environment
 				view3d.getChildren().add(engine.getSubScene());
