@@ -81,7 +81,6 @@ subprojects { subproject ->
 repositories {
 	// Use Maven Central for resolving dependencies.
 	mavenCentral()
-	jcenter()
 	maven {
 		url "https://repository.ow2.org/nexus/content/repositories/public/"
 		allowInsecureProtocol = true
