@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
+import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
@@ -20,6 +23,8 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -31,11 +36,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
+import javafx.scene.transform.Affine;
 
+@SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private ActiveProject ap = new ActiveProject();
 
@@ -70,8 +78,42 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double z;
 	private Thread autosaveThread=null;
 	private boolean needsSave=false;
+	private Affine selection = new Affine();
+	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR());
+	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
+	
+	public SelectionSession(){
+		manipulation.addSaveListener(()->{
+			System.out.println("Objects Moved! "+manipulation.getGlobalPose().toSimpleString());
+			Thread t= cadoodle.addOpperation(new MoveCenter()
+					.setLocation(manipulation.getGlobalPose().copy())
+					.setNames(selectedSnapshot()));
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		});
+		manipulation.addEventListener(()->{
+			BowlerKernel.runLater(()->updateControls()) ;
+		});
+		manipulation.setUi(new IInteractiveUIElementProvider() {
+			public void runLater(Runnable r) {
+				BowlerKernel.runLater(r);
+			}
 
+			public TransformNR getCamerFrame() {
+				return engine.getFlyingCamera().getCamerFrame();
+			}
 
+			public double getCamerDepth() {
+				return engine.getFlyingCamera().getZoomDepth();
+			}
+		});
+	}
+	
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
 		s.addAll(selected);
@@ -82,7 +124,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
 		this.source = source;
 		this.cadoodle = file;
+		manipulation.set(0, 0, 0);
 		displayCurrent();
+		
 	}
 
 	private void displayCurrent() {
@@ -140,13 +184,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					} else
 						selected.add(name);
 				} else {
-					selected.clear();
-					selected.add(name);
+					if(!selected.contains(name)) {
+						selected.clear();
+						selected.add(name);
+					}
 				}
 				updateSelection();
 				event.consume();
 			}
 		});
+		
 	}
 
 	private void updateSelection() {
@@ -170,7 +217,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			colorPicker.setStyle(style);
 			showButtons();
 			updateShowHideButton();
+			for(CSG c: getCurrentState()) {
+				MeshView meshView = meshes.get(c);
+				if(meshView!=null) {
+					meshView.getTransforms().remove(selection);
+					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
+				}
+
+			}
+			TransformFactory.nrToAffine(new TransformNR(), selection);
+			for(CSG c: getSelectedCSG()) {
+				MeshView meshView = meshes.get(c);
+				if(meshView!=null) {
+					meshView.getTransforms().add(selection);
+					meshView.addEventFilter(MouseEvent.ANY, mouseMover);
+				}
+			}
+			
 		} else {
+			for(CSG c: getCurrentState()) {
+				MeshView meshView = meshes.get(c);
+				if(meshView!=null) {
+					meshView.getTransforms().remove(selection);
+					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
+				}
+			}
 			// System.out.println("None selected");
 			shapeConfigurationHolder.getChildren().clear();
 			hideButtons();
@@ -199,7 +270,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
 		setupSnapGrid();
-		controls = new ControlSprites( this, engine);
+		controls = new ControlSprites( this, engine,selection);
+
 	}
 
 	private void setupSnapGrid() {
@@ -549,6 +621,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentState() {
+		if (cadoodle==null)
+			return new ArrayList<CSG>();
 		return cadoodle.getCurrentState();
 	}
 

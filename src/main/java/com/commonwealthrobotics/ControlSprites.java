@@ -60,27 +60,33 @@ public class ControlSprites {
 	private MeshView moveUpArrow;
 	private Affine moveUpLocation=new Affine();
 	private Scale scaleTF = new Scale();
+	private Affine selection;
 
-	public ControlSprites(SelectionSession session,BowlerStudio3dEngine e) {
+	public ControlSprites(SelectionSession session,BowlerStudio3dEngine e, Affine selection) {
 		this.session = session;
 
 		this.engine = e;
-		topCenter= new ControlRectangle(engine);
-		rightFront= new ControlRectangle(engine);
-		rightRear =new ControlRectangle(engine);
-		leftFront =new ControlRectangle(engine);
-		leftRear =new ControlRectangle(engine);
+		this.selection = selection;
+		topCenter= new ControlRectangle(engine,selection);
+		rightFront= new ControlRectangle(engine,selection);
+		rightRear =new ControlRectangle(engine,selection);
+		leftFront =new ControlRectangle(engine,selection);
+		leftRear =new ControlRectangle(engine,selection);
 		CSG setColor = new Cylinder(ControlRectangle.getSize()/2, 0,ControlRectangle.getSize() )
 				.toCSG()
 				.setColor(Color.BLACK);
 		moveUpArrow = setColor.getMesh();
+		moveUpArrow.getTransforms().add(selection);
 		moveUpArrow.getTransforms().add(moveUpLocation);
 		moveUpArrow.getTransforms().add(scaleTF);
 		Affine heightLineOrentation = TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)));
+		heightLine.getTransforms().add(selection);
 		heightLine.getTransforms().add(spriteFace);
 		heightLine.getTransforms().add(heightLineOrentation);
 		lines = Arrays.asList(frontLine,backLine,leftLine,rightLine,heightLine);
 		for(Line l:lines) {
+			if(l!=heightLine)
+				l.getTransforms().add(selection);
 			l.setFill(null);
 			l.setStroke(Color.BLACK);
 			l.setStrokeWidth(2);
@@ -88,10 +94,12 @@ public class ControlSprites {
 			l.setStrokeLineJoin(StrokeLineJoin.MITER);
 			l.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
 		}
+		footprint.getTransforms().add(selection);
 		allElems = Arrays.asList(topCenter.getMesh(),rightFront.getMesh(),
 				rightRear.getMesh(),
 				leftFront.getMesh(),
 				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
+		
 		clearSelection();
 
 		setUpUIComponennts();

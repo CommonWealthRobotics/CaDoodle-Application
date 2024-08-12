@@ -40,7 +40,7 @@ public class ControlRectangle {
 	 * @param height height of the rectangle
 	 * @param fill   determines how to fill the interior of the rectangle
 	 */
-	public ControlRectangle(BowlerStudio3dEngine engine) {
+	public ControlRectangle(BowlerStudio3dEngine engine,Affine move) {
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
@@ -59,7 +59,7 @@ public class ControlRectangle {
 		getMesh().addEventFilter(MouseEvent.MOUSE_ENTERED,event -> {
 			material.setDiffuseColor(new Color(1,0,0,1));
 		});
-
+		mesh.getTransforms().add(move);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);
 		mesh.getTransforms().add(scaleTF);
