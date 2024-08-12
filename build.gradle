@@ -85,6 +85,10 @@ repositories {
 		url "https://repository.ow2.org/nexus/content/repositories/public/"
 		allowInsecureProtocol = true
 	}
+	maven {
+		url 'https://commonwealthrobotics.com/jcenter-mirror/'
+		allowInsecureProtocol = true
+	}
 }
 
 java {
