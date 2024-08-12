@@ -81,11 +81,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Affine selection = new Affine();
 	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR());
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
+
+	private double size;
 	
 	public SelectionSession(){
 		manipulation.addSaveListener(()->{
 			System.out.println("Objects Moved! "+manipulation.getGlobalPose().toSimpleString());
-			Thread t= cadoodle.addOpperation(new MoveCenter()
+			Thread t= getCadoodle().addOpperation(new MoveCenter()
 					.setLocation(manipulation.getGlobalPose().copy())
 					.setNames(selectedSnapshot()));
 			try {
@@ -123,7 +125,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
 		this.source = source;
-		this.cadoodle = file;
+		this.setCadoodle(file);
 		manipulation.set(0, 0, 0);
 		displayCurrent();
 		
@@ -135,7 +137,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				engine.removeUserNode(meshes.get(c));
 			}
 			meshes.clear();
-			for (CSG c : (List<CSG>) CaDoodleLoader.process(cadoodle)) {
+			for (CSG c : (List<CSG>) CaDoodleLoader.process(getCadoodle())) {
 				displayCSG(c);
 			}
 			ArrayList<String> toRemove = new ArrayList<String>();
@@ -270,7 +272,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
 		setupSnapGrid();
-		controls = new ControlSprites( this, engine,selection);
+		
 
 	}
 
@@ -288,11 +290,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		snapGrid.getSelectionModel().select(starting + " mm");
+		setSnapGrid(currentGrid);
 		this.snapGrid.setOnAction(event -> {
 			String selected = this.snapGrid.getSelectionModel().getSelectedItem();
 			Double num = map.get(selected);
 			if (num != null) {
 				currentGrid = num;
+				setSnapGrid(currentGrid);
 				System.out.println("Snap Grid Set to " + currentGrid);
 				setKeyBindingFocus();
 			}
@@ -376,14 +380,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void addOp(ICaDoodleOpperation h) {
-		if (cadoodle == null)
+		if (getCadoodle() == null)
 			return;
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
 		//System.out.println("Adding " + h.getType());
-		cadoodle.addOpperation(h);
+		getCadoodle().addOpperation(h);
 	}
 
 	public void setButtons(Button... buttonsList) {
@@ -445,12 +449,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDelete() {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
 		System.out.println("Delete");
-		cadoodle.addOpperation(new Delete().setNames(selectedSnapshot()));
+		getCadoodle().addOpperation(new Delete().setNames(selectedSnapshot()));
 	}
 
 	public void onCopy() {
@@ -462,14 +466,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void performPaste(double distance, List<String> copySet) {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		List<CSG> before = cadoodle.getCurrentState();
+		List<CSG> before = getCadoodle().getCurrentState();
 		ArrayList<String> copyTarget = new ArrayList<String>();
 		copyTarget.addAll(copySet);
-		cadoodle.addOpperation(new Paste().setOffset(distance).setNames(copyTarget));
+		getCadoodle().addOpperation(new Paste().setOffset(distance).setNames(copyTarget));
 		copySet.clear();
 		System.out.println("\n");
 		for (int i = before.size(); i < getCurrentState().size(); i++) {
@@ -489,15 +493,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onLock() {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		cadoodle.addOpperation(new Lock().setNames(selectedSnapshot()));
+		getCadoodle().addOpperation(new Lock().setNames(selectedSnapshot()));
 	}
 
 	public void showAll() {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -507,17 +511,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				toShow.add(c.getName());
 		}
 		if (toShow.size() > 0) {
-			cadoodle.addOpperation(new Show().setNames(toShow));
+			getCadoodle().addOpperation(new Show().setNames(toShow));
 		}
 	}
 
 	public void onGroup() {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
 		if (selected.size() > 1)
-			cadoodle.addOpperation(new Group().setNames(selectedSnapshot()));
+			getCadoodle().addOpperation(new Group().setNames(selectedSnapshot()));
 		CSG newOne = getCurrentState().get(getCurrentState().size() - 1);
 		selected.clear();
 		selected.add(newOne.getName());
@@ -525,7 +529,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onUngroup() {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -547,14 +551,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (isAGroupSelected()) {
 			selected.clear();
 			selected.addAll(toSelect);
-			cadoodle.addOpperation(new UnGroup().setNames(selectedSnapshot));
+			getCadoodle().addOpperation(new UnGroup().setNames(selectedSnapshot));
 		}
 		updateSelection();
 
 	}
 
 	public void onHideShowOpperation() {
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -564,7 +568,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		} else {
 			op = new Hide().setNames(selectedSnapshot());
 		}
-		cadoodle.addOpperation(op);
+		getCadoodle().addOpperation(op);
 		updateShowHideButton();
 	}
 
@@ -621,9 +625,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentState() {
-		if (cadoodle==null)
+		if (getCadoodle()==null)
 			return new ArrayList<CSG>();
-		return cadoodle.getCurrentState();
+		return getCadoodle().getCurrentState();
 	}
 
 	public Bounds getSellectedBounds(List<CSG> incoming) {
@@ -659,7 +663,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// Run a down move for each object, since each will move a different amount based on its own bottom
 			for(CSG c:getSelectedCSG()) {
 				double downMove = -c.getMinZ();
-				Thread op = cadoodle.addOpperation(
+				Thread op = getCadoodle().addOpperation(
 						new MoveCenter()
 						.setLocation(new TransformNR(0,0,downMove))
 						.setNames(Arrays.asList(c.getName()))
@@ -713,7 +717,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			mc = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
 		}
 		timeSinceLastMove = System.currentTimeMillis();
-		if (cadoodle.isOperationRunning()) {
+		if (getCadoodle().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -761,18 +765,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (String s : selectedSnapshot) {
 			System.out.println("\t" + s);
 		}
-		ICaDoodleOpperation op = cadoodle.currentOpperation();
+		ICaDoodleOpperation op = getCadoodle().currentOpperation();
 		if (op == mc) {
 			if (compareLists(selectedSnapshot, mc.getNames())) {
 				System.out.println("Move " + tf.toSimpleString());
 				mc.setLocation(tf);
-				cadoodle.regenerateCurrent();
+				getCadoodle().regenerateCurrent();
 				save();
 				return;
 			}
 		}
 
-		cadoodle.addOpperation(mc);
+		getCadoodle().addOpperation(mc);
 
 	}
 	public void save() {
@@ -782,8 +786,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			autosaveThread= new Thread(()->{
 				while(ap.isOpen()) {
 					if(needsSave) {
-						System.out.println("Auto save "+cadoodle.getSelf().getAbsolutePath());
-						ap.save(cadoodle);
+						System.out.println("Auto save "+getCadoodle().getSelf().getAbsolutePath());
+						ap.save(getCadoodle());
 						needsSave=false;
 					}
 					try {
@@ -814,7 +818,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private MoveCenter getActiveMove() {
-		ICaDoodleOpperation op = cadoodle.currentOpperation();
+		ICaDoodleOpperation op = getCadoodle().currentOpperation();
 		if (MoveCenter.class.isInstance(op)) {
 			MoveCenter active = (MoveCenter) op;
 			if (compareLists(selectedSnapshot(), active.getNames())) {
@@ -854,10 +858,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		if (cadoodle == null || controls == null)
+		if (getCadoodle() == null || controls == null)
 			return;
 
-		List<CSG> selectedCSG = cadoodle.getSelect(selectedSnapshot());
+		List<CSG> selectedCSG = getCadoodle().getSelect(selectedSnapshot());
 		if (selectedCSG.size() == 0)
 			return;
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, getSellectedBounds(selectedCSG));
@@ -865,6 +869,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void loadActive(MainController mainController) throws Exception {
 		ap.loadActive(mainController);
+	}
+
+	public CaDoodleFile getCadoodle() {
+		return cadoodle;
+	}
+
+	public void setCadoodle(CaDoodleFile cadoodle) {
+		if(this.cadoodle==null) {
+			controls = new ControlSprites( this, engine,selection,manipulation,cadoodle);
+			controls.setSnapGrid(size);
+		}
+		this.cadoodle = cadoodle;
+	}
+	public void setSnapGrid(double size) {
+		this.size = size;
+		manipulation.setIncrement(size);
+		if(controls!=null)
+			controls.setSnapGrid(size);
 	}
 
 }

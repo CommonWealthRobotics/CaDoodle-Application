@@ -3,8 +3,12 @@ package com.commonwealthrobotics;
 import java.util.Arrays;
 import java.util.List;
 
+import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -16,6 +20,7 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Line;
@@ -61,12 +66,47 @@ public class ControlSprites {
 	private Affine moveUpLocation=new Affine();
 	private Scale scaleTF = new Scale();
 	private Affine selection;
-
-	public ControlSprites(SelectionSession session,BowlerStudio3dEngine e, Affine selection) {
+	private Manipulation xyMove;
+	private Manipulation zMove;
+	private CaDoodleFile cadoodle;
+	private double size;
+	public void setSnapGrid(double size) {
+		this.size = size;
+		zMove.setIncrement(size);
+	}
+	public ControlSprites(SelectionSession session,BowlerStudio3dEngine e, Affine selection,Manipulation xyMove,CaDoodleFile c) {
 		this.session = session;
 
 		this.engine = e;
 		this.selection = selection;
+		this.xyMove = xyMove;
+		this.cadoodle = c;
+		Affine zMoveOffsetFootprint =  new Affine();
+		zMove = new Manipulation(selection, new Vector3d(0,0, 1), new TransformNR());
+		zMove.addSaveListener(()->{
+			System.out.println("Objects Moved! "+zMove.getGlobalPose().toSimpleString());
+			Thread t= cadoodle.addOpperation(new MoveCenter()
+					.setLocation(zMove.getGlobalPose().copy())
+					.setNames(session.selectedSnapshot()));
+			try {
+				t.join();
+			} catch (InterruptedException exx) {
+				// TODO Auto-generated catch block
+				exx.printStackTrace();
+			}
+			zMove.set(0, 0, 0);
+			BowlerKernel.runLater(() -> {
+				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
+			});
+			
+		});
+		zMove.addEventListener(()->{
+			
+			TransformNR inverse = zMove.getCurrentPose().copy().inverse();
+			System.out.println("ApplyOffset "+inverse.toSimpleString());
+			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse, zMoveOffsetFootprint));
+		});
+		
 		topCenter= new ControlRectangle(engine,selection);
 		rightFront= new ControlRectangle(engine,selection);
 		rightRear =new ControlRectangle(engine,selection);
@@ -79,6 +119,8 @@ public class ControlSprites {
 		moveUpArrow.getTransforms().add(selection);
 		moveUpArrow.getTransforms().add(moveUpLocation);
 		moveUpArrow.getTransforms().add(scaleTF);
+		moveUpArrow.addEventFilter(MouseEvent.ANY, zMove.getMouseEvents());
+		
 		Affine heightLineOrentation = TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)));
 		heightLine.getTransforms().add(selection);
 		heightLine.getTransforms().add(spriteFace);
@@ -94,6 +136,7 @@ public class ControlSprites {
 			l.setStrokeLineJoin(StrokeLineJoin.MITER);
 			l.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
 		}
+		footprint.getTransforms().add(zMoveOffsetFootprint);
 		footprint.getTransforms().add(selection);
 		allElems = Arrays.asList(topCenter.getMesh(),rightFront.getMesh(),
 				rightRear.getMesh(),
