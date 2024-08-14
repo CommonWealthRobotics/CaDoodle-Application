@@ -66,6 +66,7 @@ public class ControlSprites {
 	private Manipulation zMove;
 	private CaDoodleFile cadoodle;
 	private double size;
+	private Bounds b;
 	public void setSnapGrid(double size) {
 		this.size = size;
 		zMove.setIncrement(size);
@@ -114,7 +115,10 @@ public class ControlSprites {
 		moveUpArrow.getTransforms().add(scaleTF);
 		moveUpArrow.addEventFilter(MouseEvent.ANY, zMove.getMouseEvents());
 		
-		Affine heightLineOrentation = TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)));
+		Affine heightLineOrentation = new Affine();
+		BowlerStudio.runLater(() -> 		TransformFactory
+				.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)),heightLineOrentation));
+		
 		heightLine.getTransforms().add(selection);
 		heightLine.getTransforms().add(spriteFace);
 		heightLine.getTransforms().add(heightLineOrentation);
@@ -163,8 +167,9 @@ public class ControlSprites {
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z,List<CSG> selectedCSG, Bounds b) {
-		scaleSession.threeDTarget(screenW,screenH,zoom,b);
 		
+		
+		this.b = b;
 		if(!selectionLive) {
 			selectionLive=true;
 			BowlerStudio.runLater(() -> {
@@ -186,9 +191,11 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		updateCubes();
 		updateLines();
 	}
 	private void updateLines() {
+		
 		this.bounds = scaleSession.getBounds();
 		Vector3d center = bounds.getCenter();
 		Vector3d min = bounds.getMin();
@@ -201,7 +208,7 @@ public class ControlSprites {
 		double lineScale = 2*(-zoom/1000);
 		double lineEndOffsetY = Math.min(10*lineScale,max.y-min.y);
 		double lineEndOffsetX = Math.min(10*lineScale,max.x-min.x);
-		double lineEndOffsetZ = Math.min(10*lineScale,max.z-min.z);
+		double lineEndOffsetZ = Math.min(5,max.z-min.z);
 		frontLine.setStartX(max.x);
 		frontLine.setStartY(min.y+lineEndOffsetY);
 		frontLine.setEndX(max.x);
@@ -242,6 +249,9 @@ public class ControlSprites {
 		scaleTF.setX(scaleSession.getScale());
 		scaleTF.setY(scaleSession.getScale());
 		scaleTF.setZ(scaleSession.getScale());
+	}
+	private void updateCubes() {
+		scaleSession.threeDTarget(screenW,screenH,zoom,b);
 	}
 	public void clearSelection() {
 		BowlerStudio.runLater(() -> {

@@ -36,15 +36,18 @@ public class ControlRectangle {
 	private double scale;
 	Manipulation manipulator;
 	private Affine scaleAffine = new Affine();
+	private String name;
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
+	 * @param name 
 	 * @param vector3d 
 	 * 
 	 * @param width  width of the rectangle
 	 * @param height height of the rectangle
 	 * @param fill   determines how to fill the interior of the rectangle
 	 */
-	public ControlRectangle(BowlerStudio3dEngine engine,Affine move, Vector3d vector3d) {
+	public ControlRectangle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d) {
+		this.name = name;
 		manipulator=new Manipulation(scaleAffine, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
@@ -202,5 +205,9 @@ public class ControlRectangle {
 
 	public void setScale(double scale) {
 		this.scale = scale;
+	}
+	@Override 
+	public String toString() {
+		return name;
 	}
 }
