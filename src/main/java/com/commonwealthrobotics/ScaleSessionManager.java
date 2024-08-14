@@ -148,7 +148,7 @@ public class ScaleSessionManager {
 				topCenter.manipulator.set(x, y,0);
 				beingUpdated=beingUpdated2;
 			}else {
-				System.out.println("Not updating center cube "+beingUpdated2);
+				//System.out.println("Not updating center cube "+beingUpdated2);
 			}
 	}
 	

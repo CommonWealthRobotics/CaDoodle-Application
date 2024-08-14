@@ -102,7 +102,7 @@ public class ControlSprites {
 			
 			TransformNR inverse = zMove.getCurrentPose().copy().inverse();
 			System.out.println("ApplyOffset "+inverse.toSimpleString());
-			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse, zMoveOffsetFootprint));
+			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse.translateZ(0.1), zMoveOffsetFootprint));
 		});
 		
 		
