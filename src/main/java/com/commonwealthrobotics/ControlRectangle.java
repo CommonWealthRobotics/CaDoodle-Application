@@ -75,7 +75,13 @@ public class ControlRectangle {
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
-	
+	public TransformNR getParametric() {
+		return new TransformNR(
+				scaleAffine.getTx(),
+				scaleAffine.getTy(),
+				scaleAffine.getTz()	
+				);
+	}
 	public TransformNR getCurrent() {
 		return new TransformNR(
 				scaleAffine.getTx()+location.getTx(),
