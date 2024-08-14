@@ -19,6 +19,7 @@ public class ScaleSessionManager {
 	ControlRectangle leftFront =null;
 	ControlRectangle leftRear =null;
 	private List<ControlRectangle> controls;
+	private ControlRectangle beingUpdated=null;
 	public ScaleSessionManager(BowlerStudio3dEngine engine,Affine selection, Runnable updateLines, CaDoodleFile cadoodle,SelectionSession sel) {
 		topCenter= new ControlRectangle(engine,selection,new Vector3d(0, 0, 1));
 		rightFront= new ControlRectangle(engine,selection,new Vector3d(1, 1, 0));
@@ -27,6 +28,10 @@ public class ScaleSessionManager {
 		leftRear =new ControlRectangle(engine,selection,new Vector3d(1, 1, 0));
 
 		rightFront.manipulator.addEventListener(()->{
+			if(beingUpdated==null)
+				beingUpdated=rightFront;
+			if(beingUpdated!=rightFront)
+				return;
 			double x=rightRear.manipulator.getCurrentPose().getX();
 			double y=rightFront.manipulator.getCurrentPose().getY();
 			double z=rightRear.manipulator.getCurrentPose().getZ();
@@ -37,6 +42,17 @@ public class ScaleSessionManager {
 			updateLines.run();
 		});
 		rightRear.manipulator.addEventListener(()->{
+			if(beingUpdated==null)
+				beingUpdated=rightRear;
+			if(beingUpdated!=rightRear)
+				return;
+			double x=rightFront.manipulator.getCurrentPose().getX();
+			double y=rightRear.manipulator.getCurrentPose().getY();
+			double z=rightFront.manipulator.getCurrentPose().getZ();
+			rightFront.manipulator.set(x, y,z);
+			x=rightRear.manipulator.getCurrentPose().getX();
+			y=leftRear.manipulator.getCurrentPose().getY();
+			leftRear.manipulator.set(x, y,z);
 			updateLines.run();
 		});
 		leftFront.manipulator.addEventListener(()->{
@@ -51,6 +67,7 @@ public class ScaleSessionManager {
 		controls = Arrays.asList(topCenter,rightFront ,rightRear ,leftFront,leftRear);
 		for(ControlRectangle c:controls) {
 			c.manipulator.addSaveListener(()->{
+				beingUpdated=null;
 				cadoodle.addOpperation(new Resize()
 						.setNames(sel.selectedSnapshot())
 						.setResize(topCenter.getCurrent(), rightFront.getCurrent(), leftRear.getCurrent())
