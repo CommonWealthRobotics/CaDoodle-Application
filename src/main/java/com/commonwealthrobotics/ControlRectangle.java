@@ -1,5 +1,6 @@
 package com.commonwealthrobotics;
 
+import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -33,14 +34,18 @@ public class ControlRectangle {
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
 	private double scale;
+	Manipulation manipulator;
+	private Affine scaleAffine = new Affine();
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
+	 * @param vector3d 
 	 * 
 	 * @param width  width of the rectangle
 	 * @param height height of the rectangle
 	 * @param fill   determines how to fill the interior of the rectangle
 	 */
-	public ControlRectangle(BowlerStudio3dEngine engine,Affine move) {
+	public ControlRectangle(BowlerStudio3dEngine engine,Affine move, Vector3d vector3d) {
+		manipulator=new Manipulation(scaleAffine, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
@@ -60,9 +65,20 @@ public class ControlRectangle {
 			material.setDiffuseColor(new Color(1,0,0,1));
 		});
 		mesh.getTransforms().add(move);
+		mesh.getTransforms().add(scaleAffine);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);
 		mesh.getTransforms().add(scaleTF);
+		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
+
+	}
+	
+	public TransformNR getCurrent() {
+		return new TransformNR(
+				scaleAffine.getTx()+location.getTx(),
+				scaleAffine.getTy()+location.getTy(),
+				scaleAffine.getTz()+location.getTz()	
+				);
 	}
 
 	public TransformNR screenToWorld(double screenW, double screenH, double zoom, double mouseX, double mouseY) {

@@ -43,11 +43,7 @@ public class ControlSprites {
 	private SelectionSession session;
 	private BowlerStudio3dEngine engine;
 	//private BowlerStudio3dEngine spriteEngine;
-	ControlRectangle topCenter = null;
-	ControlRectangle rightFront =null;
-	ControlRectangle rightRear =null;
-	ControlRectangle leftFront =null;
-	ControlRectangle leftRear =null;
+	private ScaleSessionManager scaleSession;
 	
 	private Rectangle footprint = new Rectangle(100,100,new Color(0,0,1,0.25));
 	//private Rectangle bottomDimentions = new Rectangle(100,100,new Color(0,0,1,0.25));
@@ -73,6 +69,7 @@ public class ControlSprites {
 	public void setSnapGrid(double size) {
 		this.size = size;
 		zMove.setIncrement(size);
+		scaleSession.setSnapGrid( size);
 	}
 	public ControlSprites(SelectionSession session,BowlerStudio3dEngine e, Affine selection,Manipulation xyMove,CaDoodleFile c) {
 		this.session = session;
@@ -107,11 +104,7 @@ public class ControlSprites {
 			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse, zMoveOffsetFootprint));
 		});
 		
-		topCenter= new ControlRectangle(engine,selection);
-		rightFront= new ControlRectangle(engine,selection);
-		rightRear =new ControlRectangle(engine,selection);
-		leftFront =new ControlRectangle(engine,selection);
-		leftRear =new ControlRectangle(engine,selection);
+		
 		CSG setColor = new Cylinder(ControlRectangle.getSize()/2, 0,ControlRectangle.getSize() )
 				.toCSG()
 				.setColor(Color.BLACK);
@@ -138,10 +131,11 @@ public class ControlSprites {
 		}
 		footprint.getTransforms().add(zMoveOffsetFootprint);
 		footprint.getTransforms().add(selection);
-		allElems = Arrays.asList(topCenter.getMesh(),rightFront.getMesh(),
-				rightRear.getMesh(),
-				leftFront.getMesh(),
-				leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
+		scaleSession=new ScaleSessionManager(e, selection,()->updateLines(),cadoodle,session);
+		allElems = Arrays.asList(scaleSession.topCenter.getMesh(),scaleSession.rightFront.getMesh(),
+				scaleSession.rightRear.getMesh(),
+				scaleSession.leftFront.getMesh(),
+				scaleSession.leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
 		
 		clearSelection();
 
@@ -168,8 +162,9 @@ public class ControlSprites {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z,List<CSG> selectedCSG, Bounds bounds) {
-		this.bounds = bounds;
+			double z,List<CSG> selectedCSG, Bounds b) {
+		scaleSession.threeDTarget(screenW,screenH,zoom,b);
+		
 		if(!selectionLive) {
 			selectionLive=true;
 			BowlerStudio.runLater(() -> {
@@ -191,6 +186,10 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		updateLines();
+	}
+	private void updateLines() {
+		this.bounds = scaleSession.getBounds();
 		Vector3d center = bounds.getCenter();
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
@@ -230,33 +229,19 @@ public class ControlSprites {
 		heightLine.setTranslateX(center.x);
 		heightLine.setTranslateY(center.y);
 		//moveUpLocation
-		TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90-az)),spriteFace);
-		TransformFactory.nrToAffine(new TransformNR(center.x,center.y,max.z+ControlRectangle.getSize()),moveUpLocation);
-
-		
+		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90-az)),spriteFace);
+			TransformFactory.nrToAffine(new TransformNR(center.x,center.y,max.z+ControlRectangle.getSize()),moveUpLocation);
+		});
 		for(Line l:lines) {
 			l.setStrokeWidth(1+lineScale);
 			l.setTranslateZ(min.z);
 		}
 		//bottomDimentions.bl;
-		
-		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(center.x,center.y,max.z));
-		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z));
-		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y,  min.z));
-		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y,  min.z));
-		leftRear.threeDTarget(screenW,screenH,zoom, new TransformNR(min.x,min.y, min.z));
-		
-		scaleTF.setX(topCenter.getScale());
-		scaleTF.setY(topCenter.getScale());
-		scaleTF.setZ(topCenter.getScale());
 
-//		topCenter.threeDTarget(screenW,screenH,zoom, new TransformNR(0,0,0));
-//		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(40, 0,0));
-//		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(0,25.4*2,0));
-
-
-        //System.out.println("ScrW:"+screenW+"ScrH:"+screenH+" zoom:"+zoom+" Pan:"+az+" Tilt:"+el+" X:"+x+" Y:"+y+" Z:"+z);
-		
+		scaleTF.setX(scaleSession.getScale());
+		scaleTF.setY(scaleSession.getScale());
+		scaleTF.setZ(scaleSession.getScale());
 	}
 	public void clearSelection() {
 		BowlerStudio.runLater(() -> {
