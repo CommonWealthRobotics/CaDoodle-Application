@@ -205,6 +205,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 //			for (String s : selected) {
 //				System.out.println("Current Selection " + s);
 //			}
+			
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = getSelectedCSG((String) selected.toArray()[0]);
@@ -314,7 +315,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		updateSelection();
 		setKeyBindingFocus();
 	}
+	public void selectAll(HashSet<String> select) {
+		selected.clear();
+		for (CSG c : getCurrentState()) {
+			if (c.isInGroup())
+				continue;
+			if (c.isHide())
+				continue;
+			if(select.contains(c.getName()))
+				selected.add(c.getName());
+		}
+		BowlerStudio.runLater(()->{
 
+			updateSelection();
+		});
+	}
 	public void selectAll() {
 		selected.clear();
 		for (CSG c : getCurrentState()) {

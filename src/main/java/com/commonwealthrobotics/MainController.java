@@ -579,7 +579,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// Threaded load happens after UI opens
 		setupFile();
 		
-		pallet=new ShapesPallet(shapeCatagory,objectPallet);
+		pallet=new ShapesPallet(shapeCatagory,objectPallet,session);
 	}
 
 	private void setupFile() {

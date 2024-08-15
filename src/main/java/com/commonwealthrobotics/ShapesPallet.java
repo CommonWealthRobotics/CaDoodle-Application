@@ -2,13 +2,17 @@ package com.commonwealthrobotics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 
+import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
@@ -31,9 +35,11 @@ public class ShapesPallet {
 	private Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 	private HashMap<String, HashMap<String, String>> active=null;
 	private CaDoodleFile cadoodle;
-	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet) {
+	private SelectionSession session;
+	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet,SelectionSession session) {
 		this.shapeCatagory = shapeCatagory;
 		this.objectPallet = objectPallet;
+		this.session = session;
 		try {
 			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
 			for(String f:files) {
@@ -92,7 +98,32 @@ public class ShapesPallet {
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.setOnAction(ev->{
-			cadoodle.addOpperation(new AddFromScript().set(key.get("git"), key.get("file")));
+			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
+			new Thread(()->{
+				try {
+					List<CSG> current=cadoodle.getCurrentState();
+					cadoodle.addOpperation(set).join();
+					List<CSG> after=cadoodle.getCurrentState();
+					HashSet<String>toSelect=new HashSet<>();
+					HashSet<String>prev=new HashSet<>();
+					for(CSG c:current) {
+						prev.remove(c);
+					}
+					for(CSG c:after) {
+						if(!prev.contains(c))
+							toSelect.add(c.getName());
+					}
+					
+					session.selectAll(toSelect);
+				} catch (CadoodleConcurrencyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}).start();
+			session.setKeyBindingFocus();
 		});
 		return button;
 	}
