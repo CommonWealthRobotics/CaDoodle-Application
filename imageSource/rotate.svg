@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   version="1.1"
+   id="Capa_1"
+   width="800px"
+   height="800px"
+   viewBox="0 0 863.2 863.2"
+   xml:space="preserve"
+   sodipodi:docname="rotate.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs11" /><sodipodi:namedview
+   id="namedview9"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="0.17199747"
+   inkscape:cx="235.46858"
+   inkscape:cy="398.26168"
+   inkscape:window-width="1433"
+   inkscape:window-height="938"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+<g
+   id="g968"
+   transform="rotate(10.588355,513.36021,136.91238)"
+   inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/rotateSelected.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1"><g
+     id="g6"
+     transform="rotate(-111.92663,496.55413,75.726174)"
+     style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1">
+	<g
+   id="g4"
+   style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1">
+		<path
+   d="m 863.2,14.55 -170,-0.1 c 0,70.4 -13.8,139.4 -40.9,205.2 -40.5,98.6 -108.399,182.1 -196.3,241.6 -40.2,27.2 -83.5,48.7 -128.8,64.1 V 389.95 L 0,619.35 327.2,848.75 v -146.2 c 79.399,-20.1 155.2,-54 224,-100.5 115.7,-78.2 205,-188 258.399,-317.6 C 845.1,198.05 863.2,107.25 863.2,14.55 Z"
+   id="path2"
+   style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1" />
+	</g>
+</g><g
+     id="g6-3"
+     transform="matrix(0.00481599,-0.9999884,-0.9999884,-0.00481599,596.98516,570.03793)"
+     style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1"><g
+       id="g4-6"
+       style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1"><path
+         d="m 863.2,14.55 -170,-0.1 c 0,70.4 -13.8,139.4 -40.9,205.2 -40.5,98.6 -108.399,182.1 -196.3,241.6 -40.2,27.2 -83.5,48.7 -128.8,64.1 V 389.95 L 0,619.35 327.2,848.75 v -146.2 c 79.399,-20.1 155.2,-54 224,-100.5 115.7,-78.2 205,-188 258.399,-317.6 C 845.1,198.05 863.2,107.25 863.2,14.55 Z"
+         id="path2-7"
+         style="fill:#f89404;stroke:#ff8000;stroke-opacity:1;fill-opacity:1" /></g></g></g>
+</svg>
