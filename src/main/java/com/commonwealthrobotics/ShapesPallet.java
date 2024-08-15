@@ -6,8 +6,12 @@ import java.util.Map;
 
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 
 import com.google.gson.Gson;
@@ -26,6 +30,7 @@ public class ShapesPallet {
 	private Type TT = new TypeToken<HashMap<String, HashMap<String, String>>>() {}.getType();
 	private Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 	private HashMap<String, HashMap<String, String>> active=null;
+	private CaDoodleFile cadoodle;
 	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet) {
 		this.shapeCatagory = shapeCatagory;
 		this.objectPallet = objectPallet;
@@ -70,8 +75,32 @@ public class ShapesPallet {
 			orderedList.set(index, hashMap);
 			names.put(hashMap, key);
 		}
+		objectPallet.getChildren().clear();
+		for(int i=0;i<orderedList.size();i++) {
+			int col=i%3;
+			int row = i/3;
+			HashMap<String, String> key = orderedList.get(i);
+			System.out.println("Placing "+names.get(key)+" at "+row+" , "+col);
+			Button button = setupButton(names,  key);
+			objectPallet.add(button, col, row);
+		}
 		
-		
+	}
+	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key) {
+		String name = names.get(key);
+		Tooltip hover = new Tooltip(name);
+		Button button = new Button();
+		button.setTooltip(hover);
+		button.setOnAction(ev->{
+			cadoodle.addOpperation(new AddFromScript().set(key.get("git"), key.get("file")));
+		});
+		return button;
+	}
+	public CaDoodleFile getCadoodle() {
+		return cadoodle;
+	}
+	public void setCadoodle(CaDoodleFile cadoodle) {
+		this.cadoodle = cadoodle;
 	}
 
 }
