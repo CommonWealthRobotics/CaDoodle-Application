@@ -63,6 +63,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = new SelectionSession();
+	private ShapesPallet pallet;
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -188,7 +189,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button settingsButton; // Value injected by FXMLLoader
 
 	@FXML // fx:id="shapeCatagory"
-	private ComboBox<?> shapeCatagory; // Value injected by FXMLLoader
+	private ComboBox<String> shapeCatagory; // Value injected by FXMLLoader
 
 	@FXML // fx:id="shapeConfiguration"
 	private TitledPane shapeConfiguration; // Value injected by FXMLLoader
@@ -417,6 +418,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onSetCatagory(ActionEvent event) {
 		System.out.println("On Set Catagory, re-lod object pallet");
+		pallet.onSetCatagory();
 		session.setKeyBindingFocus();
 	}
 
@@ -576,6 +578,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setupEngineControls();
 		// Threaded load happens after UI opens
 		setupFile();
+		
+		pallet=new ShapesPallet(shapeCatagory,objectPallet);
 	}
 
 	private void setupFile() {
@@ -606,7 +610,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void setUp3dEngine() {
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
-		// engine.hideHand();
+		engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
 			BowlerStudio.runLater(() -> {
