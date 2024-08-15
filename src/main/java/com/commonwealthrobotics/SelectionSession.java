@@ -223,15 +223,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshView meshView = meshes.get(c);
 				if(meshView!=null) {
 					meshView.getTransforms().remove(selection);
+					meshView.getTransforms().remove(controls.getViewRotation());
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 
 			}
 			TransformFactory.nrToAffine(new TransformNR(), selection);
+			TransformFactory.nrToAffine(new TransformNR(), controls.getViewRotation());
 			for(CSG c: getSelectedCSG()) {
 				MeshView meshView = meshes.get(c);
 				if(meshView!=null) {
-					meshView.getTransforms().add(selection);
+					meshView.getTransforms().addAll(
+							controls.getViewRotation(),
+							selection);
 					meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
@@ -241,6 +245,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshView meshView = meshes.get(c);
 				if(meshView!=null) {
 					meshView.getTransforms().remove(selection);
+					meshView.getTransforms().remove(controls.getViewRotation());
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
@@ -864,7 +869,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		List<CSG> selectedCSG = getCadoodle().getSelect(selectedSnapshot());
 		if (selectedCSG.size() == 0)
 			return;
-		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, getSellectedBounds(selectedCSG));
+		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot(), getSellectedBounds(selectedCSG));
 	}
 
 	public void loadActive(MainController mainController) throws Exception {

@@ -143,7 +143,7 @@ public class ControlSprites {
 				scaleSession.leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
 		allElems.addAll(tmp);
 		
-		rotationManager = new RotationSessionManager(selection);
+		rotationManager = new RotationSessionManager(selection,cadoodle);
 		allElems.addAll(rotationManager.getElements());
 		
 		clearSelection();
@@ -171,7 +171,7 @@ public class ControlSprites {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z,List<CSG> selectedCSG, Bounds b) {
+			double z,List<String> selectedCSG, Bounds b) {
 		
 		
 		this.b = b;
@@ -260,6 +260,10 @@ public class ControlSprites {
 		scaleTF.setY(scaleSession.getScale());
 		scaleTF.setZ(scaleSession.getScale());
 	}
+	public Affine getViewRotation() {
+		return rotationManager.getViewRotation();
+	}
+
 	private void updateCubes() {
 		scaleSession.threeDTarget(screenW,screenH,zoom,b);
 	}

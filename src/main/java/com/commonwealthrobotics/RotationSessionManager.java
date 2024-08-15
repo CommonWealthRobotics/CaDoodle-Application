@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -19,12 +22,13 @@ public class RotationSessionManager {
 	RotationHandle tlt;
 
 	private Affine selection;
+	private Affine viewRotation = new Affine();
 
-	public RotationSessionManager(Affine selection) {
+	public RotationSessionManager(Affine selection, CaDoodleFile cadoodle) {
 		this.selection = selection;
-		 az= new RotationHandle(EulerAxis.azimuth,selection);
-		 el= new RotationHandle(EulerAxis.elevation,selection);
-		 tlt= new RotationHandle(EulerAxis.tilt,selection);
+		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,cadoodle);
+		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,cadoodle);
+		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,cadoodle);
 	}
 	
 	public List<Node> getElements(){
@@ -32,6 +36,7 @@ public class RotationSessionManager {
 		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
 			result.add(r.handle);
 			result.add(r.controlCircle);
+			result.add(r.arc);
 		}
 		return result;
 	}
@@ -39,13 +44,23 @@ public class RotationSessionManager {
 		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
 			r.handle.setVisible(true);
 			r.controlCircle.setVisible(false);
+			r.arc.setVisible(false);
 		}
+
 	}
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z,List<CSG> selectedCSG, Bounds b) {
+			double z,List<String> selectedCSG, Bounds b) {
 		this.az.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		this.el.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		this.tlt.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
+	}
+
+	public Affine getViewRotation() {
+		return viewRotation;
+	}
+
+	public void setViewRotation(Affine viewRotation) {
+		this.viewRotation = viewRotation;
 	}
 
 }

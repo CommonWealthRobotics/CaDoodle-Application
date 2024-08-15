@@ -25,7 +25,7 @@
      showgrid="false"
      inkscape:zoom="0.58974467"
      inkscape:cx="397.62971"
-     inkscape:cy="562.10767"
+     inkscape:cy="507.8469"
      inkscape:window-width="1433"
      inkscape:window-height="938"
      inkscape:window-x="0"
@@ -38,12 +38,30 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <ellipse
-       style="fill:none;stroke:#ff8000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none"
-       id="path1446"
-       cx="96.403282"
-       cy="112.55961"
-       rx="74.495323"
-       ry="74.495346" />
+    <g
+       id="g1769"
+       inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fullCircle.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <ellipse
+         style="fill:none;stroke:#ff8000;stroke-width:13.7202;stroke-miterlimit:4;stroke-dasharray:none"
+         id="path1446"
+         cx="107.20691"
+         cy="124.56718"
+         rx="68.139847"
+         ry="68.139877"
+         inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fullCircle.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <circle
+         style="fill:none;stroke:#ff8000;stroke-width:15;stroke-miterlimit:4;stroke-dasharray:none"
+         id="path1446-5"
+         cx="107.20691"
+         cy="124.56718"
+         inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/fullCircle.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96"
+         r="87.077744" />
+    </g>
   </g>
 </svg>
