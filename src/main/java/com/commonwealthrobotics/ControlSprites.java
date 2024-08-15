@@ -1,5 +1,6 @@
 package com.commonwealthrobotics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class ControlSprites {
 	private BowlerStudio3dEngine engine;
 	//private BowlerStudio3dEngine spriteEngine;
 	private ScaleSessionManager scaleSession;
-	
+	private RotationSessionManager rotationManager;
 	private Rectangle footprint = new Rectangle(100,100,new Color(0,0,1,0.25));
 	//private Rectangle bottomDimentions = new Rectangle(100,100,new Color(0,0,1,0.25));
 	private Line frontLine = new Line(1, 1, 2, 2);
@@ -53,7 +54,7 @@ public class ControlSprites {
 	private Line rightLine = new Line(1, 1, 2, 2);
 	private Line heightLine = new Line(1, 1, 2, 2);
 	
-	private List<Node> allElems;
+	private ArrayList<Node> allElems=new ArrayList<Node>();
     private boolean selectionLive = false;
 	private Bounds bounds;
 	private List<Line> lines;
@@ -136,15 +137,20 @@ public class ControlSprites {
 		footprint.getTransforms().add(zMoveOffsetFootprint);
 		footprint.getTransforms().add(selection);
 		scaleSession=new ScaleSessionManager(e, selection,()->updateLines(),cadoodle,session);
-		allElems = Arrays.asList(scaleSession.topCenter.getMesh(),scaleSession.rightFront.getMesh(),
+		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(),scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(),
 				scaleSession.leftFront.getMesh(),
 				scaleSession.leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
+		allElems.addAll(tmp);
+		
+		rotationManager = new RotationSessionManager(selection);
+		allElems.addAll(rotationManager.getElements());
 		
 		clearSelection();
-
 		setUpUIComponennts();
+		
 	}
+
 	private void setUpUIComponennts() {
 		Group controlsGroup = new Group();
         controlsGroup.setDepthTest(DepthTest.DISABLE);
@@ -152,14 +158,13 @@ public class ControlSprites {
 
 		BowlerStudio.runLater(() -> {
 			engine.addUserNode(footprint);
-			for(Line l:lines)
-				controlsGroup.getChildren().add(l);
 			for(Node r:allElems) {
 				if(MeshView.class.isInstance(r)) {
-					
-					controlsGroup.getChildren().add(r);
 					((MeshView)r).setCullFace(CullFace.BACK);
 				}
+				if(r==footprint)
+					continue;
+				controlsGroup.getChildren().add(r);
 			}
 			engine.addUserNode(controlsGroup);
 		});
@@ -173,8 +178,7 @@ public class ControlSprites {
 		if(!selectionLive) {
 			selectionLive=true;
 			BowlerStudio.runLater(() -> {
-				for(Node r:allElems)
-					r.setVisible(true);
+				initialize();
 			});
 		}
 		if(el<-90 ||el>90) {
@@ -191,8 +195,14 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		updateCubes();
 		updateLines();
+	}
+	private void initialize() {
+		for(Node r:allElems)
+			r.setVisible(true);
+		rotationManager.initialize();
 	}
 	private void updateLines() {
 		
