@@ -14,6 +14,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -91,21 +92,23 @@ public class RotationHandle {
 			if(!rotationStarted)
 				controlCircle.setVisible(false);
 		});
-		handle.addEventFilter(MouseEvent.MOUSE_PRESSED, ev->{
+		EventHandler<? super MouseEvent> eventFilter = ev->{
 			rotationStarted=true;
 			System.out.println("Handle clicked");
 			rotationSessionManager.initialize();
 			controlCircle.setVisible(true);
 			flagSaveChange = false;
 			ev.consume();
-		});
+		};
+		handle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
+		controlCircle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_PRESSED, event->{
 			if(event.getPickResult().getIntersectedNode()==controlCircle) {
 				StartAngle=22.5*Math.round(getAngle(event)/22.5);
 				
 			}
 		});
-		controlCircle.addEventFilter(MouseEvent.MOUSE_RELEASED, event->{
+		EventHandler<? super MouseEvent> released = event->{
 			if(!flagSaveChange)
 				return;
 			TransformNR toUpdate = rotAtCenter.copy();
@@ -116,8 +119,10 @@ public class RotationHandle {
 					);
 			controlCircle.setVisible(false);
 			arc.setVisible(false);
-		});
-		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, event->{
+		};
+		handle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
+		controlCircle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
+		EventHandler<? super MouseEvent> dragged = event->{
 			if(event.getPickResult().getIntersectedNode()==controlCircle) {
 				current = StartAngle-getAngle(event);
 				while(current>180)
@@ -157,7 +162,9 @@ public class RotationHandle {
 					TransformFactory.nrToAffine(rotAtCenter,viewRotation);
 				});
 			}
-		});
+		};
+		handle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
+		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
 	    arc.setFill(new Color(0.0,0,1,0.5));
 
 		arc.getTransforms().addAll(translate,controlPin,arcPlanerOffset);
@@ -179,7 +186,7 @@ public class RotationHandle {
 		double unitVect = Math.sqrt(Math.pow(unitX, 2)+Math.pow(unitY, 2));
 		
 		double angle = Math.toDegrees(Math.atan2(unitY, unitX));
-		if(unitVect<0.75) {
+		if(unitVect<0.85) {
 			angle=22.5*Math.round(angle/22.5);
 		}
 		//System.out.println("Unit Location "+angle);
