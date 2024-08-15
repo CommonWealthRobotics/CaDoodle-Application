@@ -106,7 +106,7 @@ public class ControlSprites {
 		});
 		
 		
-		CSG setColor = new Cylinder(ControlRectangle.getSize()/2, 0,ControlRectangle.getSize() )
+		CSG setColor = new Cylinder(ResizingHandle.getSize()/2, 0,ResizingHandle.getSize() )
 				.toCSG()
 				.setColor(Color.BLACK);
 		moveUpArrow = setColor.getMesh();
@@ -238,7 +238,7 @@ public class ControlSprites {
 		//moveUpLocation
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90-az)),spriteFace);
-			TransformFactory.nrToAffine(new TransformNR(center.x,center.y,max.z+ControlRectangle.getSize()),moveUpLocation);
+			TransformFactory.nrToAffine(new TransformNR(center.x,center.y,max.z+ResizingHandle.getSize()),moveUpLocation);
 		});
 		for(Line l:lines) {
 			l.setStrokeWidth(1+lineScale);

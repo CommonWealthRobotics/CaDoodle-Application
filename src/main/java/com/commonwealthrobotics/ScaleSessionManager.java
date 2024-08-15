@@ -13,13 +13,13 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.transform.Affine;
 
 public class ScaleSessionManager {
-	ControlRectangle topCenter = null;
-	ControlRectangle rightFront = null;
-	ControlRectangle rightRear = null;
-	ControlRectangle leftFront = null;
-	ControlRectangle leftRear = null;
-	private List<ControlRectangle> controls;
-	private ControlRectangle beingUpdated = null;
+	ResizingHandle topCenter = null;
+	ResizingHandle rightFront = null;
+	ResizingHandle rightRear = null;
+	ResizingHandle leftFront = null;
+	ResizingHandle leftRear = null;
+	private List<ResizingHandle> controls;
+	private ResizingHandle beingUpdated = null;
 	private Runnable updateLines;
 	private Bounds bounds;
 	private double screenW;
@@ -29,11 +29,11 @@ public class ScaleSessionManager {
 
 	public ScaleSessionManager(BowlerStudio3dEngine engine,Affine selection, Runnable updateLines, CaDoodleFile cadoodle,SelectionSession sel) {
 		this.updateLines = updateLines;
-		topCenter= new ControlRectangle("topCenter",engine,selection,new Vector3d(0, 0, 1));
-		rightFront= new ControlRectangle("rightFront",engine,selection,new Vector3d(1, 1, 0));
-		rightRear =new ControlRectangle("rightRear",engine,selection,new Vector3d(1, 1, 0));
-		leftFront =new ControlRectangle("leftFront",engine,selection,new Vector3d(1, 1, 0));
-		leftRear =new ControlRectangle("leftRear",engine,selection,new Vector3d(1, 1, 0));
+		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1));
+		rightFront= new ResizingHandle("rightFront",engine,selection,new Vector3d(1, 1, 0));
+		rightRear =new ResizingHandle("rightRear",engine,selection,new Vector3d(1, 1, 0));
+		leftFront =new ResizingHandle("leftFront",engine,selection,new Vector3d(1, 1, 0));
+		leftRear =new ResizingHandle("leftRear",engine,selection,new Vector3d(1, 1, 0));
 
 		rightFront.manipulator.addEventListener(()->{
 			if(beingUpdated==null)
@@ -122,14 +122,14 @@ public class ScaleSessionManager {
 			//System.out.println("topCenter");
 		});
 		controls = Arrays.asList(topCenter,rightFront ,rightRear ,leftFront,leftRear);
-		for(ControlRectangle c:controls) {
+		for(ResizingHandle c:controls) {
 			c.manipulator.addSaveListener(()->{
 				//System.out.println("Saving from "+c);
 				Resize setResize = new Resize()
 						.setNames(sel.selectedSnapshot())
 						.setResize(topCenter.getCurrent(), leftFront.getCurrent(), rightRear.getCurrent());
 				bounds=getBounds();
-				for(ControlRectangle ctrl:controls) {
+				for(ResizingHandle ctrl:controls) {
 					ctrl.manipulator.set(0, 0, 0);
 				}
 				
@@ -149,7 +149,7 @@ public class ScaleSessionManager {
 	private void update() {
 		updateLines.run();
 		// if(beingUpdated!=null)
-		ControlRectangle beingUpdated2 = beingUpdated;
+		ResizingHandle beingUpdated2 = beingUpdated;
 		if (beingUpdated2 != topCenter || beingUpdated2 == null) {
 			Bounds b = getBounds();
 			double x = b.getCenter().x - bounds.getCenter().x;
@@ -202,7 +202,7 @@ public class ScaleSessionManager {
 
 	public void setSnapGrid(double size) {
 		this.size = size;
-		for (ControlRectangle ctrl : controls) {
+		for (ResizingHandle ctrl : controls) {
 			ctrl.manipulator.setIncrement(size);
 		}
 	}

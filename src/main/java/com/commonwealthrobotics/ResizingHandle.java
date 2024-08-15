@@ -24,7 +24,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
-public class ControlRectangle {
+public class ResizingHandle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
@@ -46,7 +46,7 @@ public class ControlRectangle {
 	 * @param height height of the rectangle
 	 * @param fill   determines how to fill the interior of the rectangle
 	 */
-	public ControlRectangle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d) {
+	public ResizingHandle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d) {
 		this.name = name;
 		manipulator=new Manipulation(scaleAffine, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
