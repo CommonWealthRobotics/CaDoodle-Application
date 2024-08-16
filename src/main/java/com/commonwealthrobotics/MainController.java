@@ -760,7 +760,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			cadoodle = f;
 			pallet.setCadoodle(f);
 			workplane = new WorkplaneManager(f,ground,engine);
-			session.setWorkPlane(workplane);
+			session.setWorkplaneManager(workplane);
+			pallet.setWorkplaneManager(workplane);
 		}
 	}
 

@@ -11,6 +11,7 @@ import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.control.Button;
@@ -29,21 +30,24 @@ public class ShapesPallet {
 
 	private ComboBox<String> shapeCatagory;
 	private GridPane objectPallet;
-	private String gitULR= "https://github.com/madhephaestus/CaDoodle-Example-Objects.git";
-	private HashMap<String,HashMap<String, HashMap<String, String>>> nameToFile = new HashMap<>();
-	private Type TT = new TypeToken<HashMap<String, HashMap<String, String>>>() {}.getType();
+	private String gitULR = "https://github.com/madhephaestus/CaDoodle-Example-Objects.git";
+	private HashMap<String, HashMap<String, HashMap<String, String>>> nameToFile = new HashMap<>();
+	private Type TT = new TypeToken<HashMap<String, HashMap<String, String>>>() {
+	}.getType();
 	private Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-	private HashMap<String, HashMap<String, String>> active=null;
+	private HashMap<String, HashMap<String, String>> active = null;
 	private CaDoodleFile cadoodle;
 	private SelectionSession session;
-	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet,SelectionSession session) {
+	private WorkplaneManager workplane;
+
+	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet, SelectionSession session) {
 		this.shapeCatagory = shapeCatagory;
 		this.objectPallet = objectPallet;
 		this.session = session;
 		try {
 			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
-			for(String f:files) {
-				if(f.toLowerCase().endsWith(".json")) {
+			for (String f : files) {
+				if (f.toLowerCase().endsWith(".json")) {
 					String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
 					File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
 					String name = fileFromGit.getName();
@@ -58,68 +62,93 @@ public class ShapesPallet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String starting = ConfigurationDatabase.get("ShapesPallet", "selected","BasicShapes").toString();
+		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
 		shapeCatagory.getSelectionModel().select(starting);
 		onSetCatagory();
 	}
+
 	public void onSetCatagory() {
-		String current=shapeCatagory.getSelectionModel().getSelectedItem();
-		System.out.println("Selecting shapes from "+current);
-		ConfigurationDatabase.put("ShapesPallet", "selected",current).toString();
+		String current = shapeCatagory.getSelectionModel().getSelectedItem();
+		System.out.println("Selecting shapes from " + current);
+		ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
 		active = nameToFile.get(current);
-		if(active ==null)
+		if (active == null)
 			return;
-		ArrayList<HashMap<String,String>> orderedList = new ArrayList<HashMap<String,String>>();
+		ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
 		// store the name os the keys for labeling the hoverover later
-		HashMap<Map,String> names = new HashMap<>();
-		for(String key:active.keySet()) {
+		HashMap<Map, String> names = new HashMap<>();
+		for (String key : active.keySet()) {
 			HashMap<String, String> hashMap = active.get(key);
 			int index = Integer.parseInt(hashMap.get("order"));
-			System.out.println("Adding "+key+" at "+index);
-			while(orderedList.size()<=index)
+			System.out.println("Adding " + key + " at " + index);
+			while (orderedList.size() <= index)
 				orderedList.add(null);
 			orderedList.set(index, hashMap);
 			names.put(hashMap, key);
 		}
 		objectPallet.getChildren().clear();
-		for(int i=0;i<orderedList.size();i++) {
-			int col=i%3;
-			int row = i/3;
+		for (int i = 0; i < orderedList.size(); i++) {
+			int col = i % 3;
+			int row = i / 3;
 			HashMap<String, String> key = orderedList.get(i);
-			System.out.println("Placing "+names.get(key)+" at "+row+" , "+col);
-			Button button = setupButton(names,  key);
+			System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
+			Button button = setupButton(names, key);
 			objectPallet.add(button, col, row);
 		}
-		
+
 	}
+
 	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key) {
 		String name = names.get(key);
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
-		button.setOnAction(ev->{
+		button.setOnAction(ev -> {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
-			new Thread(()->{
-				try {
-					cadoodle.addOpperation(set).join();		
-					session.selectAll(set.getNamesAdded());
-				} catch (CadoodleConcurrencyException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			new Thread(() -> {
+
+				List<CSG> ScriptObjects = set.process(new ArrayList<>());
+				CSG indicator = ScriptObjects.get(0);
+				if(ScriptObjects.size()>1) {
+					indicator=CSG.unionAll(ScriptObjects);
 				}
+				workplane.setIndicator(indicator);
+				workplane.setOnSelectEvent(() -> {
+					try {
+						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"));
+						cadoodle.addOpperation(setAddFromScript).join();
+						List<String> namesToMove = new ArrayList<>();
+						namesToMove.addAll(setAddFromScript.getNamesAdded());
+						cadoodle.addOpperation(new MoveCenter()
+								.setNames(namesToMove)
+								.setLocation(workplane.getCurrentAbsolutePose())).join();
+						session.selectAll(setAddFromScript.getNamesAdded());
+					} catch (CadoodleConcurrencyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+				workplane.activate();
+
 			}).start();
 			session.setKeyBindingFocus();
 		});
 		return button;
 	}
+
 	public CaDoodleFile getCadoodle() {
 		return cadoodle;
 	}
+
 	public void setCadoodle(CaDoodleFile cadoodle) {
 		this.cadoodle = cadoodle;
+	}
+
+	public void setWorkplaneManager(WorkplaneManager workplane) {
+		this.workplane = workplane;
 	}
 
 }

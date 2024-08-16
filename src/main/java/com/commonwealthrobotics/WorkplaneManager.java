@@ -30,17 +30,28 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	private HashMap<CSG, MeshView> meshes;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
+	private MeshView indicatorMesh;
+	private TransformNR currentAbsolutePose;
+	private Runnable onSelectEvent=()->{};
 
 	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine ) {
 		this.cadoodle = f;
 		this.ground = ground;
 		this.engine = engine;
 		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
-		MeshView indicatorMesh=indicator.getMesh();
+		
+		setIndicator( indicator);
+		
+	}
+
+	public void setIndicator(CSG indicator) {
+		if(indicatorMesh!=null) {
+			engine.removeUserNode(indicatorMesh);
+		}
+		indicatorMesh = indicator.newMesh();
 		indicatorMesh.getTransforms().add(workplaneLocation);
 		indicatorMesh.setMouseTransparent(true);
 		engine.addUserNode(indicatorMesh);
-		
 	}
 
 	public void updateMeshes(HashMap<CSG, MeshView> meshes) {
@@ -53,6 +64,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			MeshView mv=meshes.get(key);
 			mv.removeEventFilter(MouseEvent.ANY, this);
 		}
+		indicatorMesh.setVisible(false);
+		onSelectEvent.run();
 	}
 	public void activate() {
 		System.out.println("Starting workplane listeners");
@@ -61,6 +74,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			MeshView mv=meshes.get(key);
 			mv.addEventFilter(MouseEvent.ANY, this);
 		}
+		indicatorMesh.setVisible(true);
 	}
 	@Override
 	public void handle(MouseEvent ev) {
@@ -93,7 +107,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			TransformNR pureRot = new TransformNR(new RotationNR(angles[1],angles[0],0));
 			
 			TransformNR t = new TransformNR(x,y,z);
-			TransformFactory.nrToAffine(t.times(pureRot), workplaneLocation);
+			setCurrentAbsolutePose(t.times(pureRot));
+			TransformFactory.nrToAffine(getCurrentAbsolutePose(), workplaneLocation);
 		}
 	}
 	private double[] getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
@@ -120,6 +135,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	    // Convert to degrees
 	    azimuth = Math.toDegrees(azimuth)-90;
 	    tilt = Math.toDegrees(tilt)-90;
+	    if(Math.abs(tilt)<0.01) {
+	    	azimuth=0;
+	    }
 	    
 	    // Ensure azimuth is in the range [-180, 180)
 	    if (azimuth < -180) {
@@ -129,5 +147,21 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	        azimuth -= 360;
 	    }
 	    return new double[]{azimuth, tilt};
+	}
+
+	public TransformNR getCurrentAbsolutePose() {
+		return currentAbsolutePose;
+	}
+
+	private void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
+		this.currentAbsolutePose = currentAbsolutePose;
+	}
+
+	public Runnable getOnSelectEvent() {
+		return onSelectEvent;
+	}
+
+	public void setOnSelectEvent(Runnable onSelectEvent) {
+		this.onSelectEvent = onSelectEvent;
 	}
 }
