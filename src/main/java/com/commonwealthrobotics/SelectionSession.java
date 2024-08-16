@@ -789,6 +789,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void moveInCameraFrame(TransformNR stateUnitVectorTmp) {
 		if (selected.size() == 0)
 			return;
+		TransformNR wp=cadoodle.getWorkplane();
+		//stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
+
 		MoveCenter mc = getActiveMove();
 		if (System.currentTimeMillis() - timeSinceLastMove > 2000 || mc == null) {
 			mc = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
@@ -832,7 +835,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		stateUnitVector = new TransformNR(roundToNearist(stateUnitVector.getX() * incement, incement),
 				roundToNearist(stateUnitVector.getY() * incement, incement),
 				roundToNearist(stateUnitVector.getZ() * incement, incement));
-
+		stateUnitVector=wp.times(stateUnitVector).times(wp.inverse());
 		TransformNR current = mc.getLocation();
 		TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
 		TransformNR tf = current.times(currentRotation.inverse()
