@@ -296,7 +296,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onCruse(ActionEvent event) {
-		System.out.println("On Cruse");
 		session.conCruse();
 		session.setKeyBindingFocus();
 	}

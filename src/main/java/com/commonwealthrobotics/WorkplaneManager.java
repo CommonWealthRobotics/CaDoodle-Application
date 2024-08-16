@@ -18,6 +18,8 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.ObservableFaceArray;
 import javafx.scene.shape.TriangleMesh;
@@ -40,17 +42,30 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		this.engine = engine;
 		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
 		
-		setIndicator( indicator);
+		setIndicator( indicator, new Affine());
 		
 	}
 
-	public void setIndicator(CSG indicator) {
+	public void setIndicator(CSG indicator, Affine centerOffset) {
 		if(indicatorMesh!=null) {
 			engine.removeUserNode(indicatorMesh);
 		}
 		indicatorMesh = indicator.newMesh();
-		indicatorMesh.getTransforms().add(workplaneLocation);
+		indicatorMesh.getTransforms().addAll(workplaneLocation,centerOffset);
 		indicatorMesh.setMouseTransparent(true);
+
+		PhongMaterial material = new PhongMaterial();
+
+		if(indicator.isHole()) {
+		    //material.setDiffuseMap(texture);
+	        material.setDiffuseColor(new Color(0.25,0.25,0.25,0.75));
+	        material.setSpecularColor(javafx.scene.paint.Color.WHITE);        
+		}else {
+			Color c = indicator.getColor();
+			material.setDiffuseColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),0.75));
+	        material.setSpecularColor(javafx.scene.paint.Color.WHITE);  
+		}
+		indicatorMesh.setMaterial(material);
 		engine.addUserNode(indicatorMesh);
 	}
 
@@ -108,7 +123,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			
 			TransformNR t = new TransformNR(x,y,z);
 			setCurrentAbsolutePose(t.times(pureRot));
-			TransformFactory.nrToAffine(getCurrentAbsolutePose(), workplaneLocation);
+			
 		}
 	}
 	private double[] getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
@@ -153,8 +168,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		return currentAbsolutePose;
 	}
 
-	private void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
+	public void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
 		this.currentAbsolutePose = currentAbsolutePose;
+		TransformFactory.nrToAffine(getCurrentAbsolutePose(), workplaneLocation);
 	}
 
 	public Runnable getOnSelectEvent() {

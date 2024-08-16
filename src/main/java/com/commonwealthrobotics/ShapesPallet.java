@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.transform.Affine;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -112,7 +113,7 @@ public class ShapesPallet {
 				if(ScriptObjects.size()>1) {
 					indicator=CSG.unionAll(ScriptObjects);
 				}
-				workplane.setIndicator(indicator);
+				workplane.setIndicator(indicator, new Affine());
 				workplane.setOnSelectEvent(() -> {
 					try {
 						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"));

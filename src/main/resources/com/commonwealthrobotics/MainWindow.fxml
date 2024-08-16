@@ -286,9 +286,9 @@
                      <children>
                         <GridPane fx:id="drawerGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="60.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="60.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
@@ -296,7 +296,7 @@
                               <RowConstraints vgrow="ALWAYS" />
                           </rowConstraints>
                            <children>
-                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" prefWidth="150.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                               <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                                  <children>
                                     <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

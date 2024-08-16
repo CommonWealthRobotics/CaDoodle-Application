@@ -516,8 +516,41 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 
 	public void conCruse() {
-		// TODO Auto-generated method stub
-
+		System.out.println("On Cruse");
+		List<CSG> selectedCSG = getSelectedCSG();
+		List<String> seleectedNames=selectedSnapshot();
+		Bounds bounds = getSellectedBounds(selectedCSG);
+		Vector3d center=bounds.getCenter();
+		TransformNR geomCenteringOffset = new TransformNR(-center.x,-center.y,-bounds.getMin().z);
+		Affine gemoAffine = new Affine();
+		BowlerKernel.runLater(()->{
+			TransformFactory.nrToAffine(geomCenteringOffset, gemoAffine);
+		});
+		CSG indicator = selectedCSG.get(0);
+		if(selectedCSG.size()>1) {
+			indicator=CSG.unionAll(selectedCSG);
+		}
+		for(CSG c:selectedCSG) {
+			MeshView meshView = meshes.get(c);
+			if(meshView!=null)
+			BowlerKernel.runLater(()->{
+				meshView.setVisible(false);
+			});
+		}
+		workplane.setIndicator(indicator, gemoAffine);
+		workplane.setOnSelectEvent(()->{
+			for(CSG c:selectedCSG) {
+				MeshView meshView = meshes.get(c);
+				if(meshView!=null)
+				BowlerKernel.runLater(()->{
+					meshView.setVisible(true);
+				});
+			}
+			TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(geomCenteringOffset);
+			cadoodle.addOpperation(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+		});
+		workplane.setCurrentAbsolutePose(geomCenteringOffset.inverse());
+		workplane.activate();
 	}
 
 	public void onLock() {
