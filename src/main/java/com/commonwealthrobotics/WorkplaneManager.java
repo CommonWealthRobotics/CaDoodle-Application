@@ -102,7 +102,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			    int faceIndex = pickResult.getIntersectedFace();
 			    angles= getFaceNormalAngles(mesh, faceIndex);
 			    
-			    System.out.println("Face normal azimuth: " + angles[0] + "°, tilt: " + angles[1] + "°");
+			    //System.out.println("Face normal azimuth: " + angles[0] + "°, tilt: " + angles[1] + "°");
 			}
 			TransformNR pureRot = new TransformNR(new RotationNR(angles[1],angles[0],0));
 			
