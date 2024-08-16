@@ -296,7 +296,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onCruse(ActionEvent event) {
-		session.conCruse();
+		session.onCruse();
 		session.setKeyBindingFocus();
 	}
 
@@ -878,6 +878,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				switch ((int) character.charAt(0)) {
 				case 100:
 					session.dropToWorkplane();
+					break;
+				case 99:
+					session.onCruse();
 					break;
 				default:
 					if (!character.isEmpty()) {

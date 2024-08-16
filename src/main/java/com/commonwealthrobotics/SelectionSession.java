@@ -515,7 +515,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 
 
-	public void conCruse() {
+	public void onCruse() {
 		System.out.println("On Cruse");
 		List<CSG> selectedCSG = getSelectedCSG();
 		List<String> seleectedNames=selectedSnapshot();
