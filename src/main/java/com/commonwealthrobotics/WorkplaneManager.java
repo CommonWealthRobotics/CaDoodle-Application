@@ -35,15 +35,17 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	private MeshView indicatorMesh;
 	private TransformNR currentAbsolutePose;
 	private Runnable onSelectEvent=()->{};
+	private boolean clickOnGround=false;
 
 	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine ) {
 		this.cadoodle = f;
 		this.ground = ground;
 		this.engine = engine;
-		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
-		
-		setIndicator( indicator, new Affine());
-		
+
+		ground.addEventFilter(MouseEvent.MOUSE_PRESSED, ev->{
+			//System.out.println("Ground Click!");
+			setClickOnGround(true);
+		});
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
@@ -83,6 +85,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		onSelectEvent.run();
 	}
 	public void activate() {
+		setClickOnGround(false);
 		System.out.println("Starting workplane listeners");
 		ground.addEventFilter(MouseEvent.ANY, this);
 		for(CSG key:meshes.keySet()) {
@@ -93,12 +96,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	}
 	@Override
 	public void handle(MouseEvent ev) {
+		PickResult pickResult = ev.getPickResult();
+		Node intersectedNode = pickResult.getIntersectedNode();
 		if(ev.getEventType()==MouseEvent.MOUSE_PRESSED) {
 			cancle();
 		}
 		if(ev.getEventType()==MouseEvent.MOUSE_MOVED) {
 			//System.out.println(ev);
-			PickResult pickResult = ev.getPickResult();
 			Point3D intersectedPoint = pickResult.getIntersectedPoint();
 			double x = intersectedPoint.getX();
 			double y = intersectedPoint.getY();
@@ -108,7 +112,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 				y*=2;
 				z*=2;
 			}
-			Node intersectedNode = pickResult.getIntersectedNode();
+			
 			double[] angles=new double[]{0, 0} ;
 			if (intersectedNode instanceof MeshView) {
 			    MeshView meshView = (MeshView) intersectedNode;
@@ -179,5 +183,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 
 	public void setOnSelectEvent(Runnable onSelectEvent) {
 		this.onSelectEvent = onSelectEvent;
+	}
+
+	public boolean isClickOnGround() {
+		return clickOnGround;
+	}
+
+	public void setClickOnGround(boolean clickOnGround) {
+		this.clickOnGround = clickOnGround;
 	}
 }

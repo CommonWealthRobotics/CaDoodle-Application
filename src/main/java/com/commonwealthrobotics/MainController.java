@@ -26,6 +26,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cylinder;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -57,6 +58,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
+import javafx.scene.transform.Affine;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -1000;
@@ -451,6 +453,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
+		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
+		workplane.setIndicator( indicator, new Affine());
+		workplane.setOnSelectEvent(()->{
+			if(workplane.isClickOnGround()) {
+				//System.out.println("Ground plane click detected");
+				cadoodle.setWorkplane(new TransformNR());
+			}else {
+				cadoodle.setWorkplane(workplane.getCurrentAbsolutePose());
+			}
+			engine.placeGrid(cadoodle.getWorkplane());
+			session.save();
+		});
 		workplane.activate();
 		session.setKeyBindingFocus();
 	}
@@ -761,6 +775,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			workplane = new WorkplaneManager(f,ground,engine);
 			session.setWorkplaneManager(workplane);
 			pallet.setWorkplaneManager(workplane);
+			engine.placeGrid(cadoodle.getWorkplane());
 		}
 	}
 
