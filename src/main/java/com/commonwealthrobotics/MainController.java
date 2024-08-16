@@ -892,7 +892,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			} else {
 				switch ((int) character.charAt(0)) {
 				case 100:
-					session.dropToWorkplane();
+					session.onDrop();
 					break;
 				case 99:
 					session.onCruse();

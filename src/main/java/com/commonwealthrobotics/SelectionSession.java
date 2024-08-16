@@ -731,15 +731,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return new Bounds(min, max);
 	}
 
-	public void dropToWorkplane() {
+	public void onDrop() {
 		System.out.println("Drop to Workplane");
 		new Thread(()->{
+			TransformNR wp = cadoodle.getWorkplane();
+			Transform t= TransformFactory.nrToCSG(wp);
 			// Run a down move for each object, since each will move a different amount based on its own bottom
 			for(CSG c:getSelectedCSG()) {
-				double downMove = -c.getMinZ();
+				double downMove = -c.transformed(t.inverse()).getMinZ();
+				TransformNR location = wp.times(new TransformNR(0,0,downMove)).times(wp.inverse());
 				Thread op = getCadoodle().addOpperation(
 						new MoveCenter()
-						.setLocation(new TransformNR(0,0,downMove))
+						.setLocation(location)
 						.setNames(Arrays.asList(c.getName()))
 						);
 				try {
