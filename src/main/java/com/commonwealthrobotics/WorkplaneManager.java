@@ -1,0 +1,133 @@
+package com.commonwealthrobotics;
+
+import java.util.HashMap;
+
+import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+
+import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cube;
+import eu.mihosoft.vrl.v3d.Cylinder;
+import javafx.collections.ObservableFloatArray;
+import javafx.event.EventHandler;
+import javafx.geometry.Point3D;
+import javafx.scene.Node;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.PickResult;
+import javafx.scene.shape.MeshView;
+import javafx.scene.shape.ObservableFaceArray;
+import javafx.scene.shape.TriangleMesh;
+import javafx.scene.transform.Affine;
+
+public class WorkplaneManager implements EventHandler<MouseEvent>{
+
+	private CaDoodleFile cadoodle;
+	private ImageView ground;
+	private HashMap<CSG, MeshView> meshes;
+	private BowlerStudio3dEngine engine;
+	private Affine workplaneLocation = new Affine();
+
+	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine ) {
+		this.cadoodle = f;
+		this.ground = ground;
+		this.engine = engine;
+		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
+		MeshView indicatorMesh=indicator.getMesh();
+		indicatorMesh.getTransforms().add(workplaneLocation);
+		indicatorMesh.setMouseTransparent(true);
+		engine.addUserNode(indicatorMesh);
+		
+	}
+
+	public void updateMeshes(HashMap<CSG, MeshView> meshes) {
+		this.meshes = meshes;
+		
+	}
+	public void cancle() {
+		ground.removeEventFilter(MouseEvent.ANY, this);
+		for(CSG key:meshes.keySet()) {
+			MeshView mv=meshes.get(key);
+			mv.removeEventFilter(MouseEvent.ANY, this);
+		}
+	}
+	public void activate() {
+		System.out.println("Starting workplane listeners");
+		ground.addEventFilter(MouseEvent.ANY, this);
+		for(CSG key:meshes.keySet()) {
+			MeshView mv=meshes.get(key);
+			mv.addEventFilter(MouseEvent.ANY, this);
+		}
+	}
+	@Override
+	public void handle(MouseEvent ev) {
+		if(ev.getEventType()==MouseEvent.MOUSE_PRESSED) {
+			cancle();
+		}
+		if(ev.getEventType()==MouseEvent.MOUSE_MOVED) {
+			//System.out.println(ev);
+			PickResult pickResult = ev.getPickResult();
+			Point3D intersectedPoint = pickResult.getIntersectedPoint();
+			double x = intersectedPoint.getX();
+			double y = intersectedPoint.getY();
+			double z = intersectedPoint.getZ();
+			if(ev.getSource()==ground) {
+				x*=2;
+				y*=2;
+				z*=2;
+			}
+			Node intersectedNode = pickResult.getIntersectedNode();
+			double[] angles=new double[]{0, 0} ;
+			if (intersectedNode instanceof MeshView) {
+			    MeshView meshView = (MeshView) intersectedNode;
+			    TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
+			    
+			    int faceIndex = pickResult.getIntersectedFace();
+			    angles= getFaceNormalAngles(mesh, faceIndex);
+			    
+			    System.out.println("Face normal azimuth: " + angles[0] + "°, tilt: " + angles[1] + "°");
+			}
+			TransformNR pureRot = new TransformNR(new RotationNR(angles[1],angles[0],0));
+			
+			TransformNR t = new TransformNR(x,y,z);
+			TransformFactory.nrToAffine(t.times(pureRot), workplaneLocation);
+		}
+	}
+	private double[] getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
+	    ObservableFaceArray faces = mesh.getFaces();
+	    ObservableFloatArray points = mesh.getPoints();
+	    
+	    int p1Index = faces.get(faceIndex * 6) * 3;
+	    int p2Index = faces.get(faceIndex * 6 + 2) * 3;
+	    int p3Index = faces.get(faceIndex * 6 + 4) * 3;
+	    
+	    Point3D p1 = new Point3D(points.get(p1Index), points.get(p1Index + 1), points.get(p1Index + 2));
+	    Point3D p2 = new Point3D(points.get(p2Index), points.get(p2Index + 1), points.get(p2Index + 2));
+	    Point3D p3 = new Point3D(points.get(p3Index), points.get(p3Index + 1), points.get(p3Index + 2));
+	    
+	    Point3D v1 = p2.subtract(p1);
+	    Point3D v2 = p3.subtract(p1);
+	    
+	    Point3D normal = v1.crossProduct(v2).normalize();
+	    
+	    // Calculate azimuth and tilt
+	    double azimuth = Math.atan2(normal.getY(), normal.getX());
+	    double tilt = Math.asin(normal.getZ());
+	    
+	    // Convert to degrees
+	    azimuth = Math.toDegrees(azimuth)-90;
+	    tilt = Math.toDegrees(tilt)-90;
+	    
+	    // Ensure azimuth is in the range [-180, 180)
+	    if (azimuth < -180) {
+	        azimuth += 360;
+	    }
+	    if (azimuth > 180) {
+	        azimuth -= 360;
+	    }
+	    return new double[]{azimuth, tilt};
+	}
+}

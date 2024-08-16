@@ -101,20 +101,8 @@ public class ShapesPallet {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
 			new Thread(()->{
 				try {
-					List<CSG> current=cadoodle.getCurrentState();
-					cadoodle.addOpperation(set).join();
-					List<CSG> after=cadoodle.getCurrentState();
-					HashSet<String>toSelect=new HashSet<>();
-					HashSet<String>prev=new HashSet<>();
-					for(CSG c:current) {
-						prev.remove(c);
-					}
-					for(CSG c:after) {
-						if(!prev.contains(c))
-							toSelect.add(c.getName());
-					}
-					
-					session.selectAll(toSelect);
+					cadoodle.addOpperation(set).join();		
+					session.selectAll(set.getNamesAdded());
 				} catch (CadoodleConcurrencyException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

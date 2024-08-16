@@ -83,6 +83,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 
 	private double size;
+
+	private WorkplaneManager workplane;
 	
 	public SelectionSession(){
 		manipulation.addSaveListener(()->{
@@ -152,6 +154,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}
 			selected.removeAll(toRemove);
+			workplane.updateMeshes(meshes);
 			updateSelection();
 		});
 	}
@@ -480,9 +483,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onCopy() {
 		copySetinternal = selectedSnapshot();
 	}
-
+	public void Duplicate() {
+		new Thread(()->performPaste(0, selectedSnapshot())).start();;
+	}
 	public void onPaste() {
-		performPaste(20, copySetinternal);
+		new Thread(()->performPaste(20, copySetinternal)).start();;
+
 	}
 
 	private void performPaste(double distance, List<String> copySet) {
@@ -490,22 +496,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		List<CSG> before = getCadoodle().getCurrentState();
 		ArrayList<String> copyTarget = new ArrayList<String>();
 		copyTarget.addAll(copySet);
-		getCadoodle().addOpperation(new Paste().setOffset(distance).setNames(copyTarget));
 		copySet.clear();
-		System.out.println("\n");
-		for (int i = before.size(); i < getCurrentState().size(); i++) {
-			String name = getCurrentState().get(i).getName();
-			System.out.println("Resetting copy target to " + name);
-			copySet.add(name);
+		try {
+			Paste setNames = new Paste().setOffset(distance).setNames(copyTarget);
+			getCadoodle().addOpperation(setNames).join();
+			selectAll(setNames.getNewNames());
+			onCopy();
+			BowlerStudio.runLater(()->updateSelection());
+		} catch (CadoodleConcurrencyException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+
 	}
 
-	public void Duplicate() {
-		performPaste(0, selectedSnapshot());
-	}
+
 
 	public void conCruse() {
 		// TODO Auto-generated method stub
@@ -540,12 +548,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		if (selected.size() > 1)
-			getCadoodle().addOpperation(new Group().setNames(selectedSnapshot()));
-		CSG newOne = getCurrentState().get(getCurrentState().size() - 1);
-		selected.clear();
-		selected.add(newOne.getName());
-		updateSelection();
+		if (selected.size() > 1) {
+			new Thread(()->{
+				Group setNames = new Group().setNames(selectedSnapshot());
+				try {
+					getCadoodle().addOpperation(setNames).join();
+					selected.clear();
+					selected.add(setNames.getGroupID());
+					BowlerStudio.runLater(()->updateSelection());
+				} catch (CadoodleConcurrencyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}).start();
+		}else
+			updateSelection();
+
 	}
 
 	public void onUngroup() {
@@ -907,6 +928,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		manipulation.setIncrement(size);
 		if(controls!=null)
 			controls.setSnapGrid(size);
+	}
+
+	public void setWorkPlane(WorkplaneManager workplane) {
+		this.workplane = workplane;
+		
 	}
 
 }

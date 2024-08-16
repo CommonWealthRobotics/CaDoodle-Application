@@ -63,6 +63,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = new SelectionSession();
+	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
 	/**
 	 * CaDoodle Model Classes
@@ -451,13 +452,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
-		System.out.println("On Set Workplane");
+		workplane.activate();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onZoomIn(ActionEvent event) {
-
 		System.out.println("Zoom In");
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 40);
 		session.setKeyBindingFocus();
@@ -727,10 +727,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
-		if (cadoodle == null) {
-			cadoodle = f;
-			pallet.setCadoodle(f);
-		}
+		setCadoodleFile(f);
 		System.out.println("Displaying result of " + source.getType());
 		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!cadoodle.isForwardAvailible());
@@ -756,6 +753,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			onChange(engine.getFlyingCamera());
 				
 		});
+	}
+
+	private void setCadoodleFile(CaDoodleFile f) {
+		if (cadoodle == null) {
+			cadoodle = f;
+			pallet.setCadoodle(f);
+			workplane = new WorkplaneManager(f,ground,engine);
+			session.setWorkPlane(workplane);
+		}
 	}
 
 

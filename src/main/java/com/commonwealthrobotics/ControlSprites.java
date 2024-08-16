@@ -133,9 +133,11 @@ public class ControlSprites {
 			l.setStrokeLineCap(StrokeLineCap.BUTT);
 			l.setStrokeLineJoin(StrokeLineJoin.MITER);
 			l.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
+			l.setMouseTransparent(true);
 		}
 		footprint.getTransforms().add(zMoveOffsetFootprint);
 		footprint.getTransforms().add(selection);
+		footprint.setMouseTransparent(true);
 		scaleSession=new ScaleSessionManager(e, selection,()->updateLines(),cadoodle,session);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(),scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(),
