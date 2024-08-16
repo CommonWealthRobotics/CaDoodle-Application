@@ -36,6 +36,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	private TransformNR currentAbsolutePose;
 	private Runnable onSelectEvent=()->{};
 	private boolean clickOnGround=false;
+	private boolean clicked = false;
 
 	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine ) {
 		this.cadoodle = f;
@@ -86,6 +87,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	}
 	public void activate() {
 		setClickOnGround(false);
+		clicked = false;
 		System.out.println("Starting workplane listeners");
 		ground.addEventFilter(MouseEvent.ANY, this);
 		for(CSG key:meshes.keySet()) {
@@ -99,6 +101,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		PickResult pickResult = ev.getPickResult();
 		Node intersectedNode = pickResult.getIntersectedNode();
 		if(ev.getEventType()==MouseEvent.MOUSE_PRESSED) {
+			clicked = true;
 			cancle();
 		}
 		if(ev.getEventType()==MouseEvent.MOUSE_MOVED) {
@@ -191,5 +194,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 
 	public void setClickOnGround(boolean clickOnGround) {
 		this.clickOnGround = clickOnGround;
+	}
+
+	public boolean isClicked() {
+		return clicked;
 	}
 }

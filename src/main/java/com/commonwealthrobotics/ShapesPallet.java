@@ -115,6 +115,7 @@ public class ShapesPallet {
 				}
 				workplane.setIndicator(indicator, new Affine());
 				workplane.setOnSelectEvent(() -> {
+					if(workplane.isClicked())
 					try {
 						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"));
 						cadoodle.addOpperation(setAddFromScript).join();

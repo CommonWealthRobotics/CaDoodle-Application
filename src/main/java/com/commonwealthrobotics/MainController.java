@@ -456,6 +456,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
 		workplane.setIndicator( indicator, new Affine());
 		workplane.setOnSelectEvent(()->{
+			if(!workplane.isClicked())
+				return;
 			if(workplane.isClickOnGround()) {
 				//System.out.println("Ground plane click detected");
 				cadoodle.setWorkplane(new TransformNR());
@@ -845,6 +847,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				switch ((int) character.charAt(0)) {
 				case 26:
 					System.out.println("Undo");
+					workplane.cancle();
 					cadoodle.back();
 					break;
 				case 25:
@@ -896,6 +899,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 99:
 					session.onCruse();
+					break;
+				case 27:
+					workplane.cancle();
 					break;
 				default:
 					if (!character.isEmpty()) {

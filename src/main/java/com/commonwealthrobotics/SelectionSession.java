@@ -516,20 +516,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 
 	public void onCruse() {
+		TransformNR wp = cadoodle.getWorkplane();
+		Transform tf = TransformFactory.nrToCSG(wp);
+		
 		System.out.println("On Cruse");
 		List<CSG> selectedCSG = getSelectedCSG();
-		List<String> seleectedNames=selectedSnapshot();
-		Bounds bounds = getSellectedBounds(selectedCSG);
-		Vector3d center=bounds.getCenter();
-		TransformNR geomCenteringOffset = new TransformNR(-center.x,-center.y,-bounds.getMin().z);
-		Affine gemoAffine = new Affine();
-		BowlerKernel.runLater(()->{
-			TransformFactory.nrToAffine(geomCenteringOffset, gemoAffine);
-		});
 		CSG indicator = selectedCSG.get(0);
 		if(selectedCSG.size()>1) {
 			indicator=CSG.unionAll(selectedCSG);
 		}
+		List<String> seleectedNames=selectedSnapshot();
+		TransformNR g =wp.inverse();
+
+		Affine gemoAffine = new Affine();
+		TransformNR copy = g.copy();
+		BowlerKernel.runLater(()->{
+			TransformFactory.nrToAffine(copy, gemoAffine);
+		});
+
 		for(CSG c:selectedCSG) {
 			MeshView meshView = meshes.get(c);
 			if(meshView!=null)
@@ -546,10 +550,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					meshView.setVisible(true);
 				});
 			}
-			TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(geomCenteringOffset);
-			cadoodle.addOpperation(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+			if(workplane.isClicked()) {
+				TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
+				cadoodle.addOpperation(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+			}	
 		});
-		workplane.setCurrentAbsolutePose(geomCenteringOffset.inverse());
+		workplane.setCurrentAbsolutePose(copy.inverse());
 		workplane.activate();
 	}
 
