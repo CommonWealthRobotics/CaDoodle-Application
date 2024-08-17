@@ -819,6 +819,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				roundToNearist(stateUnitVector.getY() * incement, incement),
 				roundToNearist(stateUnitVector.getZ() * incement, incement));
 		stateUnitVector=wp.times(stateUnitVector).times(wp.inverse());
+
+		
 		TransformNR current = mc.getLocation();
 		TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
 		TransformNR tf = current.times(currentRotation.inverse()
@@ -826,12 +828,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		List<String> selectedSnapshot = selectedSnapshot();
 		for (String s : selectedSnapshot) {
-			System.out.println("\t" + s);
+			//System.out.println("\t" + s);
 		}
 		ICaDoodleOpperation op = getCadoodle().currentOpperation();
 		if (op == mc) {
 			if (compareLists(selectedSnapshot, mc.getNames())) {
-				System.out.println("Move " + tf.toSimpleString());
+				//System.out.println("Move " + tf.toSimpleString());
 				mc.setLocation(tf);
 				getCadoodle().regenerateCurrent();
 				save();
@@ -843,7 +845,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 	public void save() {
-		System.out.println("Save Requested");
+		//System.out.println("Save Requested");
 		needsSave=true;
 		if(autosaveThread == null) {
 			autosaveThread= new Thread(()->{
