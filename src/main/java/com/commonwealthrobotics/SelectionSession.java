@@ -517,7 +517,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCruse() {
 		TransformNR wp = cadoodle.getWorkplane();
-		Transform tf = TransformFactory.nrToCSG(wp);
+		
 		
 		System.out.println("On Cruse");
 		List<CSG> selectedCSG = getSelectedCSG();
@@ -526,8 +526,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			indicator=CSG.unionAll(selectedCSG);
 		}
 		List<String> seleectedNames=selectedSnapshot();
-		TransformNR g =wp.inverse();
+		TransformNR o = new TransformNR(RotationNR.getRotationY(180));
 
+		TransformNR g =o.times(wp.inverse());
+		Transform tf = TransformFactory.nrToCSG(g);
+		Bounds bounds = indicator.transformed(tf).getBounds();
+		Vector3d center=bounds.getCenter();
+		TransformNR b = new TransformNR(-center.x,-center.y,-bounds.getMin().z);
+		g=b.times(g);
+		
 		Affine gemoAffine = new Affine();
 		TransformNR copy = g.copy();
 		BowlerKernel.runLater(()->{
@@ -762,36 +769,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}).start();
 	}
 
-	public enum Quadrent {
-		first, second, third, fourth
-	}
-
-	Quadrent getQuad(double angle) {
-		if (angle > 45 && angle < 135)
-			return Quadrent.first;
-		if (angle > 135 || angle < (-135))
-			return Quadrent.second;
-		if (angle > -135 && angle < -45)
-			return Quadrent.third;
-		if (angle > -45 && angle < 45)
-			return Quadrent.fourth;
-		throw new RuntimeException("Impossible nummber! " + angle);
-	}
-
-	double QuadrentToAngle(Quadrent q) {
-		switch (q) {
-		case first:
-			return 90;
-		case second:
-			return 180;
-		case third:
-			return -90;
-		case fourth:
-		default:
-			return 0;
-		}
-	}
-
 	public void moveInCameraFrame(TransformNR stateUnitVectorTmp) {
 		if (selected.size() == 0)
 			return;
@@ -812,8 +789,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Quadrent quad;
 		getCamerFrameGetRotation = engine.getFlyingCamera().getCamerFrame().getRotation();
 		double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuth());
-		quad = getQuad(toDegrees);
-		currentRotZ = QuadrentToAngle(quad);
+		quad = Quadrent.getQuad(toDegrees);
+		currentRotZ = Quadrent.QuadrentToAngle(quad);
 
 		TransformNR orentationOffset = new TransformNR(0, 0, 0, new RotationNR(0, currentRotZ - 90, 0));
 		TransformNR frame = new TransformNR();// BowlerStudio.getTargetFrame() ;

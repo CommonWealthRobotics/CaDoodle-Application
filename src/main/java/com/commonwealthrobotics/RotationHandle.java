@@ -2,7 +2,6 @@ package com.commonwealthrobotics;
 
 import java.util.List;
 
-import com.commonwealthrobotics.SelectionSession.Quadrent;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -46,35 +45,6 @@ public class RotationHandle {
 	private TransformNR rotAtCenter;
 	private boolean flagSaveChange=false;
 	private List<String> selectedCSG;
-	public enum Quadrent {
-		first, second, third, fourth
-	}
-
-	Quadrent getQuad(double angle) {
-		if (angle > 45 && angle < 135)
-			return Quadrent.first;
-		if (angle > 135 || angle < (-135))
-			return Quadrent.second;
-		if (angle > -135 && angle <= -45)
-			return Quadrent.third;
-		if (angle > -45 && angle < 45)
-			return Quadrent.fourth;
-		throw new RuntimeException("Impossible nummber! " + angle);
-	}
-
-	double QuadrentToAngle(Quadrent q) {
-		switch (q) {
-		case first:
-			return 90;
-		case second:
-			return 180;
-		case third:
-			return -90;
-		case fourth:
-		default:
-			return 0;
-		}
-	}
 
 	public RotationHandle(EulerAxis axis, Affine translate, Affine viewRotation, RotationSessionManager rotationSessionManager, CaDoodleFile cadoodle) {
 		this.axis = axis;
@@ -208,7 +178,7 @@ public class RotationHandle {
 		Vector3d center = b.getCenter();
 		Vector3d min = b.getMin();
 		Vector3d max = b.getMax();
-		Quadrent q= getQuad(-az);
+		Quadrent q= Quadrent.getQuad(-az);
 		rotationStarted=false;
 		//System.out.println("Az camera in Rotation Handle "+az);
 		RotationNR axisOrent = new RotationNR();
@@ -219,7 +189,7 @@ public class RotationHandle {
 			pinLocx = center.x;
 			pinLocy = center.y;
 			pinLocz=min.z;
-			axisOrent = RotationNR.getRotationZ(QuadrentToAngle(q)+180);
+			axisOrent = RotationNR.getRotationZ(Quadrent.QuadrentToAngle(q)+180);
 			break;
 		case elevation:
 			rA=totx;
