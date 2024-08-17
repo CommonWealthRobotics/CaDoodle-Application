@@ -76,7 +76,7 @@ public class Main  extends Application {
 				e.printStackTrace();
 			}
 		});
-		newStage.setMinWidth(800);
+		newStage.setMinWidth(900);
 		newStage.setMinHeight(600);
 
 		newStage.show();
