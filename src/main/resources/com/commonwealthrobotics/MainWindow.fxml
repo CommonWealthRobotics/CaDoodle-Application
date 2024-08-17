@@ -286,9 +286,9 @@
                      <children>
                         <GridPane fx:id="drawerGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="60.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="60.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
@@ -303,11 +303,11 @@
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0">
                                              <children>
-                                                <GridPane fx:id="objectPallet">
+                                                <GridPane fx:id="objectPallet" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
                                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="60.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
                                                     <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />

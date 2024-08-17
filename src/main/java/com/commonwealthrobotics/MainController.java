@@ -50,7 +50,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
-	private static final int ZOOM = -1000;
+	private static final int ZOOM = -700;
 	private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = new SelectionSession();

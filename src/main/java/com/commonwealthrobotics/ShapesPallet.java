@@ -110,7 +110,7 @@ public class ShapesPallet {
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
-		button.setStyle("image-button");
+		button.getStyleClass().add("image-button");
 		new Thread(() -> {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
 			List<CSG> ScriptObjects = set.process(new ArrayList<>());
@@ -118,8 +118,8 @@ public class ShapesPallet {
 			BowlerStudio.runLater(()->{
 				Image thumb = ThumbnailImage.get(ScriptObjects);
 				ImageView tIv = new ImageView(thumb);
-				tIv.setFitHeight(30);
-				tIv.setFitWidth(30);
+				tIv.setFitHeight(50);
+				tIv.setFitWidth(50);
 				button.setGraphic(tIv);
 			});
 		}).start();
