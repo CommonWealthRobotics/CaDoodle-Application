@@ -133,67 +133,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			
 		}
 	}
-	private double[] getFaceEulerAngles(TriangleMesh mesh, int faceIndex) {
-	    ObservableFaceArray faces = mesh.getFaces();
-	    ObservableFloatArray points = mesh.getPoints();
-	    
-	    int p1Index = faces.get(faceIndex * 6) * 3;
-	    int p2Index = faces.get(faceIndex * 6 + 2) * 3;
-	    int p3Index = faces.get(faceIndex * 6 + 4) * 3;
-	    
-	    Point3D p1 = new Point3D(points.get(p1Index), points.get(p1Index + 1), points.get(p1Index + 2));
-	    Point3D p2 = new Point3D(points.get(p2Index), points.get(p2Index + 1), points.get(p2Index + 2));
-	    Point3D p3 = new Point3D(points.get(p3Index), points.get(p3Index + 1), points.get(p3Index + 2));
-	    
-	    Point3D v1 = p2.subtract(p1);
-	    Point3D v2 = p3.subtract(p1);
-	    
-	    Point3D normal = v1.crossProduct(v2).normalize();
-	    
-	    // Calculate yaw (azimuth) and pitch (tilt)
-	    double yaw = Math.atan2(normal.getY(), normal.getX());
-	    double pitch = Math.asin(normal.getZ());
-	    
-	    // Calculate roll to align local X with global X
-	    Point3D globalX = new Point3D(1, 0, 0);
-	    Point3D localY = normal.crossProduct(globalX).normalize();
-	    Point3D localX = normal.crossProduct(localY).normalize();
-	    double roll = Math.atan2(localY.getZ(), localX.getZ());
-	    
-	    // Convert to degrees
-	    yaw = Math.toDegrees(yaw);
-	    pitch = Math.toDegrees(pitch);
-	    roll = Math.toDegrees(roll);
-	    
-	    // Bound yaw and pitch to -180 to 180
-	    yaw = boundAngle180(yaw);
-	    pitch = boundAngle180(pitch);
-	    
-	    // Bound roll to -90 to 90
-	    roll = boundAngle90(roll);
-	    
-	    return new double[]{yaw, pitch, roll};
-	}
 
-	private double boundAngle180(double angle) {
-	    angle = angle % 360;
-	    if (angle > 180) {
-	        angle -= 360;
-	    } else if (angle < -180) {
-	        angle += 360;
-	    }
-	    return angle;
-	}
-
-	private double boundAngle90(double angle) {
-	    angle = boundAngle180(angle);
-	    if (angle > 90) {
-	        angle = 180 - angle;
-	    } else if (angle < -90) {
-	        angle = -180 - angle;
-	    }
-	    return angle;
-	}
 	private double[] getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
 	    ObservableFaceArray faces = mesh.getFaces();
 	    ObservableFloatArray points = mesh.getPoints();
