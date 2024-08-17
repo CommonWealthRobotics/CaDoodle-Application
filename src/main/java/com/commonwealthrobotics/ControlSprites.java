@@ -132,7 +132,7 @@ public class ControlSprites {
 			l.setStrokeWidth(2);
 			l.setStrokeLineCap(StrokeLineCap.BUTT);
 			l.setStrokeLineJoin(StrokeLineJoin.MITER);
-			l.getStrokeDashArray().addAll(10.0, 5.0, 2.0, 5.0);
+			l.getStrokeDashArray().addAll(2.0,2.0);
 			l.setMouseTransparent(true);
 		}
 		footprint.getTransforms().add(zMoveOffsetFootprint);
@@ -218,8 +218,8 @@ public class ControlSprites {
 		footprint.setY(min.y);
 
 		double lineScale = 2*(-zoom/1000);
-		double lineEndOffsetY = Math.min(10*lineScale,max.y-min.y);
-		double lineEndOffsetX = Math.min(10*lineScale,max.x-min.x);
+		double lineEndOffsetY = Math.min(5*lineScale,max.y-min.y);
+		double lineEndOffsetX = Math.min(5*lineScale,max.x-min.x);
 		double lineEndOffsetZ = Math.min(5,max.z-min.z);
 		frontLine.setStartX(max.x);
 		frontLine.setStartY(min.y+lineEndOffsetY);
