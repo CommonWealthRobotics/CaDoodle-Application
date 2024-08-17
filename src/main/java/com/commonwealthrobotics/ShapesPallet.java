@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -17,6 +19,8 @@ import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Affine;
 
@@ -40,6 +44,7 @@ public class ShapesPallet {
 	private CaDoodleFile cadoodle;
 	private SelectionSession session;
 	private WorkplaneManager workplane;
+	private HashMap<Button,List<CSG>> referenceParts = new HashMap<>();
 
 	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet, SelectionSession session) {
 		this.shapeCatagory = shapeCatagory;
@@ -88,6 +93,7 @@ public class ShapesPallet {
 			names.put(hashMap, key);
 		}
 		objectPallet.getChildren().clear();
+		referenceParts.clear();
 		for (int i = 0; i < orderedList.size(); i++) {
 			int col = i % 3;
 			int row = i / 3;
@@ -104,11 +110,21 @@ public class ShapesPallet {
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
-		button.setOnAction(ev -> {
+		new Thread(() -> {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
+			List<CSG> ScriptObjects = set.process(new ArrayList<>());
+			referenceParts.put(button,ScriptObjects);
+			BowlerStudio.runLater(()->{
+				Image thumb = ThumbnailImage.get(ScriptObjects);
+				ImageView tIv = new ImageView(thumb);
+				tIv.setFitHeight(30);
+				tIv.setFitWidth(30);
+				button.setGraphic(tIv);
+			});
+		}).start();
+		button.setOnMousePressed(ev -> {
 			new Thread(() -> {
-
-				List<CSG> ScriptObjects = set.process(new ArrayList<>());
+				List<CSG> ScriptObjects = referenceParts.get(button);
 				CSG indicator = ScriptObjects.get(0);
 				if(ScriptObjects.size()>1) {
 					indicator=CSG.unionAll(ScriptObjects);
