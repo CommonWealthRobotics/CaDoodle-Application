@@ -110,6 +110,7 @@ public class ShapesPallet {
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
+		button.setStyle("image-button");
 		new Thread(() -> {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
 			List<CSG> ScriptObjects = set.process(new ArrayList<>());
