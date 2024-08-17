@@ -37,6 +37,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	private Runnable onSelectEvent=()->{};
 	private boolean clickOnGround=false;
 	private boolean clicked = false;
+	private boolean active;
 
 	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine ) {
 		this.cadoodle = f;
@@ -77,15 +78,23 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		
 	}
 	public void cancle() {
+		if(!active)
+			return;
 		ground.removeEventFilter(MouseEvent.ANY, this);
 		for(CSG key:meshes.keySet()) {
 			MeshView mv=meshes.get(key);
 			mv.removeEventFilter(MouseEvent.ANY, this);
 		}
-		indicatorMesh.setVisible(false);
-		onSelectEvent.run();
+		if(indicatorMesh!=null)
+			indicatorMesh.setVisible(false);
+		indicatorMesh=null;
+		if(onSelectEvent!=null)
+			onSelectEvent.run();
+		onSelectEvent=null;
+		active=false;
 	}
 	public void activate() {
+		active=true;
 		setClickOnGround(false);
 		clicked = false;
 		System.out.println("Starting workplane listeners");
@@ -94,7 +103,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			MeshView mv=meshes.get(key);
 			mv.addEventFilter(MouseEvent.ANY, this);
 		}
-		indicatorMesh.setVisible(true);
+		if(indicatorMesh!=null)
+			indicatorMesh.setVisible(true);
 	}
 	@Override
 	public void handle(MouseEvent ev) {
