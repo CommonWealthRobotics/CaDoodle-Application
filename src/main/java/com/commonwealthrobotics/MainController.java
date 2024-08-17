@@ -8,8 +8,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import eu.mihosoft.vrl.v3d.Vector3d;
 
 import org.fxyz3d.scene.paint.Patterns;
 
@@ -27,6 +30,8 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
+import eu.mihosoft.vrl.v3d.ext.quickhull3d.Point3d;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -453,7 +458,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
-		CSG indicator = new Cylinder(5,0,2.5,3).toCSG();
+		double pointerLen = 10;
+		double pointerWidth=2;
+		CSG indicator = HullUtil.hull(Arrays.asList(
+				new Vector3d(0,0,0),
+				new Vector3d(pointerLen,0,0),
+				new Vector3d(pointerWidth,pointerWidth,0),
+				new Vector3d(0,0,pointerWidth)
+				)).union(HullUtil.hull(Arrays.asList(
+						new Vector3d(0,0,0),
+						new Vector3d(0,pointerLen,0),
+						new Vector3d(pointerWidth,pointerWidth,0),
+						new Vector3d(0,0,pointerWidth)
+						))).setColor(Color.YELLOWGREEN);
 		workplane.setIndicator( indicator, new Affine());
 		workplane.setOnSelectEvent(()->{
 			if(!workplane.isClicked())
