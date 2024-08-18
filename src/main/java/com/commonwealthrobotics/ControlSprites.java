@@ -48,16 +48,16 @@ public class ControlSprites {
 	private RotationSessionManager rotationManager;
 	private Rectangle footprint = new Rectangle(100,100,new Color(0,0,1,0.25));
 	//private Rectangle bottomDimentions = new Rectangle(100,100,new Color(0,0,1,0.25));
-	private Line frontLine = new Line(1, 1, 2, 2);
-	private Line backLine = new Line(1, 1, 2, 2);
-	private Line leftLine = new Line(1, 1, 2, 2);
-	private Line rightLine = new Line(1, 1, 2, 2);
-	private Line heightLine = new Line(1, 1, 2, 2);
+	private DottedLine frontLine = new DottedLine(1, 5);
+	private DottedLine backLine = new DottedLine(1, 5);
+	private DottedLine leftLine = new DottedLine(1, 5);
+	private DottedLine rightLine = new DottedLine(1, 5);
+	private DottedLine heightLine = new DottedLine(1, 5);
 	
 	private ArrayList<Node> allElems=new ArrayList<Node>();
     private boolean selectionLive = false;
 	private Bounds bounds;
-	private List<Line> lines;
+	private List<DottedLine> lines;
 	private Affine spriteFace = new Affine();
 	private MeshView moveUpArrow;
 	private Affine moveUpLocation=new Affine();
@@ -98,10 +98,11 @@ public class ControlSprites {
 			BowlerKernel.runLater(() -> {
 				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
 			});
-			
+			setMode(SpriteDisplayMode.Default);
+
 		});
 		zMove.addEventListener(()->{
-			
+			setMode(SpriteDisplayMode.MoveZ);
 			TransformNR inverse = zMove.getCurrentPose().copy().inverse();
 			System.out.println("ApplyOffset "+inverse.toSimpleString());
 			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse.translateZ(0.1), zMoveOffsetFootprint));
@@ -125,15 +126,15 @@ public class ControlSprites {
 		heightLine.getTransforms().add(spriteFace);
 		heightLine.getTransforms().add(heightLineOrentation);
 		lines = Arrays.asList(frontLine,backLine,leftLine,rightLine,heightLine);
-		for(Line l:lines) {
+		for(DottedLine l:lines) {
 			if(l!=heightLine)
 				l.getTransforms().add(selection);
-			l.setFill(null);
+			//l.setFill(null);
 			l.setStroke(Color.BLACK);
-			l.setStrokeWidth(2);
-			l.setStrokeLineCap(StrokeLineCap.BUTT);
-			l.setStrokeLineJoin(StrokeLineJoin.MITER);
-			l.getStrokeDashArray().addAll(2.0,2.0);
+			//l.setStrokeWidth(2);
+			//l.setStrokeLineCap(StrokeLineCap.BUTT);
+			//l.setStrokeLineJoin(StrokeLineJoin.MITER);
+			//l.getStrokeDashArray().addAll(2.0,2.0);
 			l.setMouseTransparent(true);
 		}
 		footprint.getTransforms().add(zMoveOffsetFootprint);
@@ -253,8 +254,8 @@ public class ControlSprites {
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90-az)),spriteFace);
 			TransformFactory.nrToAffine(new TransformNR(center.x,center.y,max.z+ResizingHandle.getSize()),moveUpLocation);
 		});
-		for(Line l:lines) {
-			l.setStrokeWidth(1+lineScale);
+		for(DottedLine l:lines) {
+			//l.setStrokeWidth(1+lineScale);
 			l.setTranslateZ(min.z);
 		}
 		//bottomDimentions.bl;
@@ -287,11 +288,16 @@ public class ControlSprites {
 		BowlerStudio.runLater(() -> {
 			for(Node r:allElems)
 				r.setVisible(mode==SpriteDisplayMode.Default);
+			System.out.println(mode);
+
 			switch(this.mode) {
 			case Default:
 				initialize();
 				return;
 			case MoveXY:
+				for(DottedLine l:lines) {
+					l.setVisible(true);
+				}
 				break;
 			case MoveZ:
 				break;

@@ -98,9 +98,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			controls.setMode(SpriteDisplayMode.Default);
+
 		});
 		manipulation.addEventListener(()->{
+			controls.setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(()->updateControls()) ;
 		});
 		manipulation.setUi(new IInteractiveUIElementProvider() {
