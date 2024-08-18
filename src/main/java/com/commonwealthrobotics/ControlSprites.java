@@ -68,6 +68,7 @@ public class ControlSprites {
 	private CaDoodleFile cadoodle;
 	private double size;
 	private Bounds b;
+	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
 	public void setSnapGrid(double size) {
 		this.size = size;
 		zMove.setIncrement(size);
@@ -145,7 +146,7 @@ public class ControlSprites {
 				scaleSession.leftRear.getMesh(),footprint,frontLine,backLine,leftLine,rightLine,heightLine,moveUpArrow);
 		allElems.addAll(tmp);
 		
-		rotationManager = new RotationSessionManager(selection,cadoodle);
+		rotationManager = new RotationSessionManager(selection,cadoodle,this);
 		allElems.addAll(rotationManager.getElements());
 		
 		clearSelection();
@@ -275,5 +276,40 @@ public class ControlSprites {
 				r.setVisible(false);
 		});
 		selectionLive = false;
+	}
+	public SpriteDisplayMode getMode() {
+		return mode;
+	}
+	public void setMode(SpriteDisplayMode mode) {
+		if(mode==this.mode)
+			return;
+		this.mode = mode;
+		BowlerStudio.runLater(() -> {
+			for(Node r:allElems)
+				r.setVisible(mode==SpriteDisplayMode.Default);
+			switch(this.mode) {
+			case Default:
+				initialize();
+				return;
+			case MoveXY:
+				break;
+			case MoveZ:
+				break;
+			case ResizeX:
+				break;
+			case ResizeXY:
+				break;
+			case ResizeY:
+				break;
+			case ResizeZ:
+				break;
+			case Rotating:
+				break;
+			default:
+				break;
+			
+			}
+			
+		});
 	}
 }

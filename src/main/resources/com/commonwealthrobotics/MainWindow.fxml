@@ -113,7 +113,7 @@
                                        <children>
                                           <Accordion fx:id="shapeConfigurationBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <panes>
-                                              <TitledPane fx:id="shapeConfiguration" animated="false" text="Cube">
+                                              <TitledPane fx:id="shapeConfiguration" animated="false" text="Shape">
                                                 <content>
                                                   <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                          <children>

@@ -23,12 +23,14 @@ public class RotationSessionManager {
 
 	private Affine selection;
 	private Affine viewRotation = new Affine();
+	private ControlSprites controlSprites;
 
-	public RotationSessionManager(Affine selection, CaDoodleFile cadoodle) {
+	public RotationSessionManager(Affine selection, CaDoodleFile cadoodle, ControlSprites controlSprites) {
 		this.selection = selection;
-		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,cadoodle);
-		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,cadoodle);
-		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,cadoodle);
+		this.controlSprites = controlSprites;
+		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,cadoodle,controlSprites);
+		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,cadoodle,controlSprites);
+		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,cadoodle,controlSprites);
 	}
 	
 	public List<Node> getElements(){
@@ -47,6 +49,13 @@ public class RotationSessionManager {
 			r.arc.setVisible(false);
 		}
 
+	}
+	public void hide() {
+		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+			r.handle.setVisible(true);
+			r.controlCircle.setVisible(false);
+			r.arc.setVisible(false);
+		}
 	}
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z,List<String> selectedCSG, Bounds b) {
