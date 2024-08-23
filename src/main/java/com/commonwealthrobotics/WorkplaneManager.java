@@ -18,13 +18,18 @@ import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.collections.ObservableFloatArray;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
+import javafx.scene.DepthTest;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.ObservableFaceArray;
 import javafx.scene.shape.TriangleMesh;
@@ -51,18 +56,27 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		this.cadoodle = f;
 		this.ground = ground;
 		this.engine = engine;
-		wpPick = new Cube(150,150,0.1).toCSG().newMesh();
+		wpPick = new Cube(300,300,0.1).toCSG().newMesh();
 	    PhongMaterial material = new PhongMaterial();
 
 	    //material.setDiffuseMap(texture);
-        material.setDiffuseColor(new Color(0.9,0.9,0.9,0.025));
+        material.setDiffuseColor(new Color(0.5,0.5,0,0.025));
         //material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-        
+
+//        wpPick.setCullFace(CullFace.BACK);
+//        wpPick.setDrawMode(DrawMode.FILL);
+//        wpPick.setDepthTest(DepthTest.ENABLE);
+//        wpPick.setBlendMode(BlendMode.SRC_OVER);
         wpPick.setMaterial(material);
         wpPick.setOpacity(0.25);
 		//Affine pickPlacement =TransformFactory.newAffine(-image.getWidth()/2, -image.getHeight()/2, -0.01);
 		wpPick.getTransforms().addAll(wpPickPlacement);
-		wpPick.setViewOrder(2); // Lower viewOrder renders on top
+		Group linesGroupp = new Group();
+		linesGroupp.setDepthTest(DepthTest.ENABLE);
+		linesGroupp.setViewOrder(-1); // Lower viewOrder renders on top
+		linesGroupp.getChildren().add(wpPick);
+		//wpPick.setViewOrder(10); // Lower viewOrder renders on top
+		
 //		ground.setOpacity(0.25);
 //		ground.setX(-image.getWidth()/2);
 ////		ground.setY(-image.getHeight()/2);
@@ -73,7 +87,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			setClickOnGround(true);
 		});
 
-		engine.addUserNode(wpPick);
+		engine.addUserNode(linesGroupp);
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
