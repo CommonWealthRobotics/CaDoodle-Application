@@ -257,11 +257,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void pickPlane(Runnable r) {
 		double pointerLen = 10;
 		double pointerWidth = 2;
+		double pointerHeight = 20;
 		CSG indicator = HullUtil
 				.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(pointerLen, 0, 0),
-						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerWidth)))
+						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight)))
 				.union(HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(0, pointerLen, 0),
-						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerWidth))))
+						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
 				.setColor(Color.YELLOWGREEN);
 		this.setIndicator(indicator, new Affine());
 		this.setOnSelectEvent(() -> {

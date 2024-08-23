@@ -23,6 +23,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.MeshView;
@@ -120,7 +121,16 @@ public class ControlSprites {
 		moveUpArrow.getTransforms().add(moveUpLocation);
 		moveUpArrow.getTransforms().add(scaleTF);
 		moveUpArrow.addEventFilter(MouseEvent.ANY, zMove.getMouseEvents());
-
+		PhongMaterial material = new PhongMaterial();
+		material.setDiffuseColor(Color.GRAY);
+		material.setSpecularColor(Color.WHITE);
+		moveUpArrow.setMaterial(material);
+		moveUpArrow.addEventFilter(MouseEvent.MOUSE_EXITED,event -> {
+			material.setDiffuseColor(Color.GRAY);
+		});
+		moveUpArrow.addEventFilter(MouseEvent.MOUSE_ENTERED,event -> {
+			material.setDiffuseColor(new Color(1,0,0,1));
+		});
 		Affine heightLineOrentation = new Affine();
 		BowlerStudio.runLater(
 				() -> TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)), heightLineOrentation));
