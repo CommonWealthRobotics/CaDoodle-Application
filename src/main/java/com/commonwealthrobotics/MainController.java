@@ -442,33 +442,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
-		double pointerLen = 10;
-		double pointerWidth=2;
-		CSG indicator = HullUtil.hull(Arrays.asList(
-				new Vector3d(0,0,0),
-				new Vector3d(pointerLen,0,0),
-				new Vector3d(pointerWidth,pointerWidth,0),
-				new Vector3d(0,0,pointerWidth)
-				)).union(HullUtil.hull(Arrays.asList(
-						new Vector3d(0,0,0),
-						new Vector3d(0,pointerLen,0),
-						new Vector3d(pointerWidth,pointerWidth,0),
-						new Vector3d(0,0,pointerWidth)
-						))).setColor(Color.YELLOWGREEN);
-		workplane.setIndicator( indicator, new Affine());
-		workplane.setOnSelectEvent(()->{
-			if(!workplane.isClicked())
-				return;
-			if(workplane.isClickOnGround()) {
-				//System.out.println("Ground plane click detected");
-				cadoodle.setWorkplane(new TransformNR());
-			}else {
-				cadoodle.setWorkplane(workplane.getCurrentAbsolutePose());
-			}
-			engine.placeGrid(cadoodle.getWorkplane());
-			session.save();
-		});
-		workplane.activate();
+		workplane.pickPlane(()->session.save());
 		session.setKeyBindingFocus();
 	}
 
@@ -778,7 +752,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			workplane = new WorkplaneManager(f,ground,engine);
 			session.setWorkplaneManager(workplane);
 			pallet.setWorkplaneManager(workplane);
-			engine.placeGrid(cadoodle.getWorkplane());
+			workplane.placeWorkplaneVisualization();
 		}
 	}
 

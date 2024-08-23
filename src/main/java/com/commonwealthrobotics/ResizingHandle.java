@@ -150,21 +150,28 @@ public class ResizingHandle {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target) {
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame();//.times(new TransformNR(RotationNR.getRotationZ(180)));
 		TransformNR pureRot = new TransformNR(cf.getRotation());
-		
-		TransformNR zTf = new TransformNR(0,0,-zoom);
-		TransformNR camerFrame2 = engine.getFlyingCamera().getCamerFrame();
-		//TransformNR cameraTranslation = camerFrame2.copy().setRotation(new RotationNR());
-		RotationNR camRot=camerFrame2.getRotation();
-		TransformNR cfimageFrame = 
-				new TransformNR(camRot)
-						.times(zTf);
-		TransformNR inverse = cfimageFrame;
-		double x = inverse.getX()+target.getX();
-		double y = inverse.getY()+target.getY();
-		double z = inverse.getZ()+target.getZ();
-		double vect = Math.max(1, Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)+Math.pow(z, 2)));
-		vect = Math.min(9000, vect);
-		setScale(Math.max(0.1, ((vect/1000.0))*0.75));
+		cf=cf.times(new TransformNR(0,0,zoom));
+
+		//System.out.println(cf.toSimpleString());
+		// Calculate the vector from camera to target
+		double x = target.getX() - cf.getX();
+		double y = target.getY() - cf.getY();
+		double z = target.getZ() - cf.getZ();
+
+		// Calculate the distance between camera and target
+		double distance = Math.sqrt(x*x + y*y + z*z);
+
+		// Define a base scale and distance
+		double baseScale = 0.75;
+		double baseDistance = 1000.0;
+
+		// Calculate the scale factor
+		double scaleFactor = ((distance / baseDistance) * baseScale);
+
+		// Clamp the scale factor to a reasonable range
+		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
+
+		setScale(scaleFactor);
 		
 		//System.out.println("Point From Cam distaance "+vect+" scale "+scale);
 		//System.out.println("");

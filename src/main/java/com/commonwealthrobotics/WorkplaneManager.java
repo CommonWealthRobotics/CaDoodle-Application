@@ -1,7 +1,9 @@
 package com.commonwealthrobotics;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -11,10 +13,13 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.collections.ObservableFloatArray;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
@@ -29,6 +34,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 
 	private CaDoodleFile cadoodle;
 	private ImageView ground;
+	private MeshView wpPick;
 	private HashMap<CSG, MeshView> meshes;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
@@ -38,16 +44,36 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 	private boolean clickOnGround=false;
 	private boolean clicked = false;
 	private boolean active;
+	private Affine wpPickPlacement = new Affine();
 
+	
 	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine ) {
 		this.cadoodle = f;
 		this.ground = ground;
 		this.engine = engine;
+		wpPick = new Cube(150,150,0.1).toCSG().newMesh();
+	    PhongMaterial material = new PhongMaterial();
+
+	    //material.setDiffuseMap(texture);
+        material.setDiffuseColor(new Color(0.9,0.9,0.9,0.025));
+        //material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+        
+        wpPick.setMaterial(material);
+        wpPick.setOpacity(0.25);
+		//Affine pickPlacement =TransformFactory.newAffine(-image.getWidth()/2, -image.getHeight()/2, -0.01);
+		wpPick.getTransforms().addAll(wpPickPlacement);
+		wpPick.setViewOrder(2); // Lower viewOrder renders on top
+//		ground.setOpacity(0.25);
+//		ground.setX(-image.getWidth()/2);
+////		ground.setY(-image.getHeight()/2);
+//		ground.setTranslateZ(-0.1);
 
 		ground.addEventFilter(MouseEvent.MOUSE_PRESSED, ev->{
 			//System.out.println("Ground Click!");
 			setClickOnGround(true);
 		});
+
+		engine.addUserNode(wpPick);
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
@@ -81,6 +107,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		if(!active)
 			return;
 		ground.removeEventFilter(MouseEvent.ANY, this);
+		wpPick.removeEventFilter(MouseEvent.ANY, this);
+		wpPick.setVisible(isWorkplaneInOrigin());
+//		engine.getGrid().removeEventFilter(MouseEvent.ANY, this);
+//		engine.getGrid().setPickOnBounds(false);
+//		engine.getGrid().setMouseTransparent(true);
 		for(CSG key:meshes.keySet()) {
 			MeshView mv=meshes.get(key);
 			mv.removeEventFilter(MouseEvent.ANY, this);
@@ -99,6 +130,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 		clicked = false;
 		System.out.println("Starting workplane listeners");
 		ground.addEventFilter(MouseEvent.ANY, this);
+		wpPick.addEventFilter(MouseEvent.ANY, this);
+		wpPick.setVisible(isWorkplaneInOrigin());
+
+//		engine.getGrid().addEventFilter(MouseEvent.ANY, this);
+//		engine.getGrid().setPickOnBounds(true);
+//		engine.getGrid().setMouseTransparent(false);
 		for(CSG key:meshes.keySet()) {
 			MeshView mv=meshes.get(key);
 			mv.addEventFilter(MouseEvent.ANY, this);
@@ -114,7 +151,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 			clicked = true;
 			cancle();
 		}
-		if(ev.getEventType()==MouseEvent.MOUSE_MOVED) {
+		if(ev.getEventType()==MouseEvent.MOUSE_MOVED||ev.getEventType()==MouseEvent.MOUSE_DRAGGED) {
 			//System.out.println(ev);
 			Point3D intersectedPoint = pickResult.getIntersectedPoint();
 			double x = intersectedPoint.getX();
@@ -125,21 +162,31 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 				y*=2;
 				z*=2;
 			}
-			
-			double[] angles=new double[]{0, 0,0} ;
-			if (intersectedNode instanceof MeshView) {
-			    MeshView meshView = (MeshView) intersectedNode;
-			    TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
-			    
-			    int faceIndex = pickResult.getIntersectedFace();
-			    angles= getFaceNormalAngles(mesh, faceIndex);
-			    
-			    //System.out.println("Face normal azimuth: " + angles[0] + "°, tilt: " + angles[1] + "°");
-			}
-			TransformNR pureRot = new TransformNR(new RotationNR(angles[1],angles[0],angles[2]));
-			
-			TransformNR t = new TransformNR(x,y,z);
-			setCurrentAbsolutePose(t.times(pureRot));
+			TransformNR screenLocation;
+//			if(intersectedNode!=wpPick) {
+				double[] angles=new double[]{0, 0,0} ;
+				if (intersectedNode instanceof MeshView) {
+				    MeshView meshView = (MeshView) intersectedNode;
+				    TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
+				    
+				    int faceIndex = pickResult.getIntersectedFace();
+				    if(faceIndex>=0)
+				    	angles= getFaceNormalAngles(mesh, faceIndex);
+				    else
+				    	System.out.println("Error face index came back: "+faceIndex);
+				    
+				    //System.out.println("Face normal azimuth: " + angles[0] + "°, tilt: " + angles[1] + "°");
+				}
+				TransformNR pureRot = new TransformNR(new RotationNR(angles[1],angles[0],angles[2]));
+				TransformNR t = new TransformNR(x,y,z);
+				screenLocation = t.times(pureRot);
+				if(intersectedNode==wpPick) {
+					screenLocation=cadoodle.getWorkplane().times(screenLocation);
+				}
+//			}else {
+//				screenLocation=cadoodle.getWorkplane();
+//			}
+			setCurrentAbsolutePose(screenLocation);
 			
 		}
 	}
@@ -213,5 +260,55 @@ public class WorkplaneManager implements EventHandler<MouseEvent>{
 
 	public boolean isClicked() {
 		return clicked;
+	}
+
+	public void pickPlane(Runnable r) {
+		double pointerLen = 10;
+		double pointerWidth=2;
+		CSG indicator = HullUtil.hull(Arrays.asList(
+				new Vector3d(0,0,0),
+				new Vector3d(pointerLen,0,0),
+				new Vector3d(pointerWidth,pointerWidth,0),
+				new Vector3d(0,0,pointerWidth)
+				)).union(HullUtil.hull(Arrays.asList(
+						new Vector3d(0,0,0),
+						new Vector3d(0,pointerLen,0),
+						new Vector3d(pointerWidth,pointerWidth,0),
+						new Vector3d(0,0,pointerWidth)
+						))).setColor(Color.YELLOWGREEN);
+		this.setIndicator( indicator, new Affine());
+		this.setOnSelectEvent(()->{
+			if(!this.isClicked())
+				return;
+			if(this.isClickOnGround()) {
+				//System.out.println("Ground plane click detected");
+				cadoodle.setWorkplane(new TransformNR());
+			}else {
+				cadoodle.setWorkplane(this.getCurrentAbsolutePose());
+			}
+			placeWorkplaneVisualization();
+			r.run();
+		});
+		this.activate();
+	}
+
+	public void placeWorkplaneVisualization() {
+		engine.placeGrid(cadoodle.getWorkplane());
+		BowlerKernel.runLater(()->{
+			wpPick.setVisible(isWorkplaneInOrigin());
+			TransformFactory.nrToAffine(cadoodle.getWorkplane(), wpPickPlacement);
+		});
+	}
+
+	private boolean isWorkplaneInOrigin() {
+		TransformNR w = cadoodle.getWorkplane();
+		double epsilon=0.00001;
+		if( Math.abs(w.getX())>epsilon||
+				Math.abs(w.getY())>epsilon||
+				Math.abs(w.getZ())>epsilon
+				) {
+			return true;
+		}
+		return false;
 	}
 }

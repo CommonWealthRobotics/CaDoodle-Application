@@ -3,6 +3,7 @@ package com.commonwealthrobotics;
 import java.util.Arrays;
 import java.util.List;
 
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -118,7 +119,8 @@ public class ScaleSessionManager {
 				//System.out.println("Motion from "+beingUpdated+" rejected by "+topCenter);
 				return;
 			}
-			update();
+			BowlerStudio.runLater(()->update());
+			
 			//System.out.println("topCenter");
 		});
 		controls = Arrays.asList(topCenter,rightFront ,rightRear ,leftFront,leftRear);
@@ -162,7 +164,7 @@ public class ScaleSessionManager {
 		}
 	}
 
-	public double getScale() {
+	public double getViewScale() {
 		return topCenter.getScale();
 	}
 

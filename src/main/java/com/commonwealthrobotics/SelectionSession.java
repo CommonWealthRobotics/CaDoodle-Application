@@ -177,6 +177,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// Set opacity for semi-transparency
 			meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
 		}
+		meshView.setViewOrder(1);
 		engine.addUserNode(meshView);
 		meshes.put(c, meshView);
 		setUpControls(meshView, c.getName());
