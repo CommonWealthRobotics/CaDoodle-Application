@@ -249,8 +249,8 @@ public class ControlSprites {
 			Vector3d max = bounds.getMax();
 			footprint.setHeight(Math.abs(max.y - min.y));
 			footprint.setWidth(Math.abs(max.x - min.x));
-			footprint.setX(min.x);
-			footprint.setY(min.y);
+			footprint.setX(Math.min( min.x,max.x));
+			footprint.setY(Math.min( min.y,max.y));
 
 			double lineScale = 2 * (-zoom / 1000);
 			double lineEndOffsetY = Math.min(5 * lineScale, max.y - min.y);

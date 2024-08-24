@@ -161,6 +161,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			selected.removeAll(toRemove);
 			workplane.updateMeshes(meshes);
 			BowlerStudio.runLater(() ->updateSelection());
+			setKeyBindingFocus();
 		});
 	}
 
