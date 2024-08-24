@@ -88,9 +88,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	
 	public SelectionSession(){
 		manipulation.addSaveListener(()->{
-			System.out.println("Objects Moved! "+manipulation.getGlobalPose().toSimpleString());
+			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
+			System.out.println("Objects Moved! "+globalPose.toSimpleString());
 			Thread t= getCadoodle().addOpperation(new MoveCenter()
-					.setLocation(manipulation.getGlobalPose().copy())
+					.setLocation(globalPose)
 					.setNames(selectedSnapshot()));
 			try {
 				t.join();
@@ -118,6 +119,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return engine.getFlyingCamera().getZoomDepth();
 			}
 		});
+		manipulation.setFrameOfReference(()->cadoodle.getWorkplane());
 	}
 	
 	public List<String> selectedSnapshot() {
@@ -131,6 +133,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.source = source;
 		this.setCadoodle(file);
 		manipulation.set(0, 0, 0);
+		controls.setMode(SpriteDisplayMode.Default);
 		displayCurrent();
 		
 	}
@@ -157,7 +160,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			selected.removeAll(toRemove);
 			workplane.updateMeshes(meshes);
-			updateSelection();
+			BowlerStudio.runLater(() ->updateSelection());
 		});
 	}
 
@@ -724,6 +727,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Vector3d min = null;
 		Vector3d max = null;
 		for (CSG c : incoming) {
+			c=c.transformed(TransformFactory.nrToCSG(cadoodle.getWorkplane()).inverse());
 			Vector3d min2 = c.getBounds().getMin().clone();
 			Vector3d max2 = c.getBounds().getMax().clone();
 			if (min == null)
@@ -932,6 +936,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		List<CSG> selectedCSG = getCadoodle().getSelect(selectedSnapshot());
 		if (selectedCSG.size() == 0)
 			return;
+		
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot(), getSellectedBounds(selectedCSG));
 	}
 

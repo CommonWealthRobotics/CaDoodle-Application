@@ -52,11 +52,13 @@ public class ControlSprites {
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
 	// private Rectangle bottomDimentions = new Rectangle(100,100,new
 	// Color(0,0,1,0.25));
-	private DottedLine frontLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT);
-	private DottedLine backLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT);
-	private DottedLine leftLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT);
-	private DottedLine rightLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT);
-	private DottedLine heightLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT);
+	private Affine workplaneOffset = new Affine();
+
+	private DottedLine frontLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT,workplaneOffset);
+	private DottedLine backLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT,workplaneOffset);
+	private DottedLine leftLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT,workplaneOffset);
+	private DottedLine rightLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT,workplaneOffset);
+	private DottedLine heightLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT,workplaneOffset);
 
 	private ArrayList<Node> allElems = new ArrayList<Node>();
 	private boolean selectionLive = false;
@@ -90,10 +92,12 @@ public class ControlSprites {
 		this.cadoodle = c;
 		Affine zMoveOffsetFootprint = new Affine();
 		zMove = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR());
+		zMove.setFrameOfReference(()->cadoodle.getWorkplane());
 		zMove.addSaveListener(() -> {
-			System.out.println("Objects Moved! " + zMove.getGlobalPose().toSimpleString());
+			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
+			System.out.println("Objects Moved! " + globalPose.toSimpleString());
 			Thread t = cadoodle.addOpperation(
-					new MoveCenter().setLocation(zMove.getGlobalPose().copy()).setNames(session.selectedSnapshot()));
+					new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
 			try {
 				t.join();
 			} catch (InterruptedException exx) {
@@ -109,8 +113,11 @@ public class ControlSprites {
 		});
 		zMove.addEventListener(() -> {
 			setMode(SpriteDisplayMode.MoveZ);
-			TransformNR inverse = zMove.getCurrentPose().copy().inverse();
-			System.out.println("ApplyOffset " + inverse.toSimpleString());
+			TransformNR globalPose = zMove.getCurrentPose();
+			TransformNR wp = new TransformNR(cadoodle.getWorkplane().getRotation());
+			globalPose=wp.times(globalPose);
+			globalPose.setRotation(new RotationNR());
+			TransformNR inverse = globalPose.inverse();
 			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse.translateZ(0.1), zMoveOffsetFootprint));
 		});
 
@@ -118,6 +125,7 @@ public class ControlSprites {
 				.setColor(Color.BLACK);
 		moveUpArrow = setColor.getMesh();
 		moveUpArrow.getTransforms().add(selection);
+		moveUpArrow.getTransforms().add(workplaneOffset);
 		moveUpArrow.getTransforms().add(moveUpLocation);
 		moveUpArrow.getTransforms().add(scaleTF);
 		moveUpArrow.addEventFilter(MouseEvent.ANY, zMove.getMouseEvents());
@@ -131,19 +139,22 @@ public class ControlSprites {
 		moveUpArrow.addEventFilter(MouseEvent.MOUSE_ENTERED,event -> {
 			material.setDiffuseColor(new Color(1,0,0,1));
 		});
-		Affine heightLineOrentation = new Affine();
-		BowlerStudio.runLater(
-				() -> TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)), heightLineOrentation));
+//		Affine heightLineOrentation = new Affine();
+//		BowlerStudio.runLater(
+//				() -> TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationY(-90)), heightLineOrentation));
+		
+		//heightLine.getTransforms().add(selection);
+		//heightLine.getTransforms().add(spriteFace);
 
-		heightLine.getTransforms().add(selection);
-		heightLine.getTransforms().add(spriteFace);
-		heightLine.getTransforms().add(heightLineOrentation);
+
 		lines = Arrays.asList(frontLine, backLine, leftLine, rightLine, heightLine);
 		for (DottedLine l : lines) {
-			if (l != heightLine)
+			//if (l != heightLine) {
 				l.getTransforms().add(selection);
+				//l.getTransforms().add(workplaneOffset);
+				//
+			//}
 			// l.setFill(null);
-			l.setStroke(Color.BLACK);
 			// l.setStrokeWidth(2);
 			// l.setStrokeLineCap(StrokeLineCap.BUTT);
 			// l.setStrokeLineJoin(StrokeLineJoin.MITER);
@@ -152,14 +163,15 @@ public class ControlSprites {
 		}
 		footprint.getTransforms().add(zMoveOffsetFootprint);
 		footprint.getTransforms().add(selection);
+		footprint.getTransforms().add(workplaneOffset);
 		footprint.setMouseTransparent(true);
-		scaleSession = new ScaleSessionManager(e, selection, () -> updateLines(), cadoodle, session);
+		scaleSession = new ScaleSessionManager(e, selection, () -> updateLines(), cadoodle, session,workplaneOffset);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(), scaleSession.leftFront.getMesh(), scaleSession.leftRear.getMesh(),
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, moveUpArrow);
 		allElems.addAll(tmp);
 
-		rotationManager = new RotationSessionManager(selection, cadoodle, this);
+		rotationManager = new RotationSessionManager(selection, cadoodle, this,workplaneOffset);
 		allElems.addAll(rotationManager.getElements());
 
 		clearSelection();
@@ -195,7 +207,7 @@ public class ControlSprites {
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, List<String> selectedCSG, Bounds b) {
-
+		
 		this.b = b;
 		if (!selectionLive) {
 			selectionLive = true;
@@ -230,6 +242,7 @@ public class ControlSprites {
 
 	private void updateLines() {
 		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(cadoodle.getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
 			Vector3d center = bounds.getCenter();
 			Vector3d min = bounds.getMin();
@@ -247,37 +260,45 @@ public class ControlSprites {
 			frontLine.setStartY(min.y + lineEndOffsetY);
 			frontLine.setEndX(max.x);
 			frontLine.setEndY(max.y - lineEndOffsetY);
+			frontLine.setStartZ(min.z);
+			frontLine.setEndZ(min.z);
 
 			backLine.setStartX(min.x);
 			backLine.setStartY(min.y + lineEndOffsetY);
 			backLine.setEndX(min.x);
 			backLine.setEndY(max.y - lineEndOffsetY);
+			backLine.setStartZ(min.z);
+			backLine.setEndZ(min.z);
 
 			leftLine.setStartX(min.x + lineEndOffsetX);
 			leftLine.setStartY(max.y);
 			leftLine.setEndX(max.x - lineEndOffsetX);
 			leftLine.setEndY(max.y);
+			leftLine.setStartZ(min.z);
+			leftLine.setEndZ(min.z);
 
 			rightLine.setStartX(min.x + lineEndOffsetX);
 			rightLine.setStartY(min.y);
 			rightLine.setEndX(max.x - lineEndOffsetX);
 			rightLine.setEndY(min.y);
+			rightLine.setStartZ(min.z);
+			rightLine.setEndZ(min.z);
 
-			heightLine.setStartX(0);
-			heightLine.setStartY(0);
-			heightLine.setEndX(max.z - min.z - lineEndOffsetZ);
-			heightLine.setEndY(0);
-			heightLine.setTranslateX(center.x);
-			heightLine.setTranslateY(center.y);
+			heightLine.setStartX(center.x);
+			heightLine.setStartY(center.y);
+			heightLine.setEndY(center.y);
+			heightLine.setEndX(center.x);
+			heightLine.setStartZ(min.z);
+			heightLine.setEndZ(max.z  - lineEndOffsetZ);
 			// moveUpLocation
 
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
 			TransformFactory.nrToAffine(new TransformNR(center.x, center.y, max.z + (ResizingHandle.getSize()*scaleSession.getViewScale())),
 					moveUpLocation);
-			for (DottedLine l : lines) {
-				// l.setStrokeWidth(1+lineScale);
-				l.setTranslateZ(min.z);
-			}
+//			for (DottedLine l : lines) {
+//				// l.setStrokeWidth(1+lineScale);
+//				l.setTranslateZ(min.z);
+//			}
 			scaleTF.setX(scaleSession.getViewScale());
 			scaleTF.setY(scaleSession.getViewScale());
 			scaleTF.setZ(scaleSession.getViewScale());

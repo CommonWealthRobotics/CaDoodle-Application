@@ -49,7 +49,7 @@ public class RotationHandle {
 	private boolean startAngleFound;
 
 	public RotationHandle(EulerAxis axis, Affine translate, Affine viewRotation,
-			RotationSessionManager rotationSessionManager, CaDoodleFile cadoodle, ControlSprites controlSprites) {
+			RotationSessionManager rotationSessionManager, CaDoodleFile cadoodle, ControlSprites controlSprites, Affine workplaneOffset) {
 		this.axis = axis;
 		handle.setImage(rotateImage);
 		controlCircle.setImage(fullcircleImage);
@@ -133,7 +133,8 @@ public class RotationHandle {
 				// divide the angle in 2 and aply it twice avaoids Euler singularities
 				TransformNR update = new TransformNR(new RotationNR(axis, -current / 2));
 				TransformNR pureRot = update.times(update);
-				TransformNR center = new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z);
+				TransformNR wp = cadoodle.getWorkplane();
+				TransformNR center = wp.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
 				rotAtCenter = center.times(pureRot.times(center.inverse()));
 				BowlerStudio.runLater(() -> {
 					TransformFactory.nrToAffine(rotAtCenter, viewRotation);
@@ -146,9 +147,9 @@ public class RotationHandle {
 		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
 		arc.setFill(new Color(0.0, 0, 1, 0.5));
 
-		arc.getTransforms().addAll(translate, controlPin, arcPlanerOffset);
-		handle.getTransforms().addAll(translate, controlPin, handlePlanarOffset);
-		controlCircle.getTransforms().addAll(translate, controlPin, circelPlanerOffset);
+		arc.getTransforms().addAll(translate,workplaneOffset, controlPin, arcPlanerOffset);
+		handle.getTransforms().addAll(translate, workplaneOffset,controlPin, handlePlanarOffset);
+		controlCircle.getTransforms().addAll(translate, workplaneOffset,controlPin, circelPlanerOffset);
 		controlCircle.setOpacity(0.5);
 	}
 

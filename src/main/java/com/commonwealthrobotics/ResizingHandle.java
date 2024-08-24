@@ -41,12 +41,13 @@ public class ResizingHandle {
 	 * Creates a new instance of Rectangle with the given size and fill.
 	 * @param name 
 	 * @param vector3d 
+	 * @param workplaneOffset 
 	 * 
 	 * @param width  width of the rectangle
 	 * @param height height of the rectangle
 	 * @param fill   determines how to fill the interior of the rectangle
 	 */
-	public ResizingHandle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d) {
+	public ResizingHandle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d, Affine workplaneOffset) {
 		this.name = name;
 		manipulator=new Manipulation(scaleAffine, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
@@ -69,9 +70,11 @@ public class ResizingHandle {
 		});
 		mesh.getTransforms().add(move);
 		mesh.getTransforms().add(scaleAffine);
+		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);
 		mesh.getTransforms().add(scaleTF);
+
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
@@ -82,7 +85,15 @@ public class ResizingHandle {
 				scaleAffine.getTz()	
 				);
 	}
+	public TransformNR getCurrentInReferenceFrame() {
+		TransformNR globalPose =getCurrent();
+		TransformNR wp = new TransformNR( manipulator.getFrameOfReference() .getRotation());
+		globalPose=wp.times(globalPose);
+		globalPose.setRotation(new RotationNR());
+		return globalPose;
+	}
 	public TransformNR getCurrent() {
+		
 		return new TransformNR(
 				scaleAffine.getTx()+location.getTx(),
 				scaleAffine.getTy()+location.getTy(),
@@ -150,7 +161,7 @@ public class ResizingHandle {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target) {
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame();//.times(new TransformNR(RotationNR.getRotationZ(180)));
 		TransformNR pureRot = new TransformNR(cf.getRotation());
-		cf=cf.times(new TransformNR(0,0,zoom));
+		cf=manipulator.getFrameOfReference().inverse().times( cf.times(new TransformNR(0,0,zoom)));
 
 		//System.out.println(cf.toSimpleString());
 		// Calculate the vector from camera to target
@@ -179,7 +190,7 @@ public class ResizingHandle {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pureRot ,cameraOrent);
+			//TransformFactory.nrToAffine(pureRot ,cameraOrent);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 

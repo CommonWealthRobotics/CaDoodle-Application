@@ -51,11 +51,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private boolean clicked = false;
 	private boolean active;
 	private Affine wpPickPlacement = new Affine();
+	private SelectionSession session;
 
-	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine) {
+	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 		this.cadoodle = f;
 		this.ground = ground;
 		this.engine = engine;
+		this.session = session;
 		wpPick = new Cube(300, 300, 0.1).toCSG().newMesh();
 		PhongMaterial material = new PhongMaterial();
 
@@ -148,6 +150,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
 			cancle();
+			ev.consume();
+			session.updateControls();
+			return;
 		}
 		if (ev.getEventType() == MouseEvent.MOUSE_MOVED || ev.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 			// System.out.println(ev);
@@ -291,7 +296,15 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private boolean isWorkplaneInOrigin() {
 		TransformNR w = cadoodle.getWorkplane();
 		double epsilon = 0.00001;
+		RotationNR r = w.getRotation();
 		if (Math.abs(w.getX()) > epsilon || Math.abs(w.getY()) > epsilon || Math.abs(w.getZ()) > epsilon) {
+			return true;
+		}
+		double abs = Math.abs(r.getRotationAzimuthDegrees());
+		double abs2 = Math.abs(r.getRotationElevationDegrees());
+		double abs3 = Math.abs(r.getRotationTiltDegrees());
+		if (abs > epsilon ||
+				abs2 > epsilon || abs3 > epsilon) {
 			return true;
 		}
 		return false;

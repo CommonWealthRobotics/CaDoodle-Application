@@ -27,14 +27,16 @@ public class ScaleSessionManager {
 	private double screenH;
 	private double zoom;
 	private double size=1;
+	//private Affine workplaneOffset;
 
-	public ScaleSessionManager(BowlerStudio3dEngine engine,Affine selection, Runnable updateLines, CaDoodleFile cadoodle,SelectionSession sel) {
+	public ScaleSessionManager(BowlerStudio3dEngine engine,Affine selection, Runnable updateLines, CaDoodleFile cadoodle,SelectionSession sel, Affine workplaneOffset) {
 		this.updateLines = updateLines;
-		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1));
-		rightFront= new ResizingHandle("rightFront",engine,selection,new Vector3d(1, 1, 0));
-		rightRear =new ResizingHandle("rightRear",engine,selection,new Vector3d(1, 1, 0));
-		leftFront =new ResizingHandle("leftFront",engine,selection,new Vector3d(1, 1, 0));
-		leftRear =new ResizingHandle("leftRear",engine,selection,new Vector3d(1, 1, 0));
+		//this.workplaneOffset = workplaneOffset;
+		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1),workplaneOffset);
+		rightFront= new ResizingHandle("rightFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
+		rightRear =new ResizingHandle("rightRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
+		leftFront =new ResizingHandle("leftFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
+		leftRear =new ResizingHandle("leftRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
 
 		rightFront.manipulator.addEventListener(()->{
 			if(beingUpdated==null)
@@ -46,10 +48,11 @@ public class ScaleSessionManager {
 			double x=rightRear.manipulator.getCurrentPose().getX();
 			double y=rightFront.manipulator.getCurrentPose().getY();
 			double z=rightRear.manipulator.getCurrentPose().getZ();
-			rightRear.manipulator.set(x, y,z);
+			System.out.println("Move x"+x+" y"+y+" z"+z);
+			rightRear.manipulator.setInReferenceFrame(x, y,z);
 			x=rightFront.manipulator.getCurrentPose().getX();
 			y=leftFront.manipulator.getCurrentPose().getY();
-			leftFront.manipulator.set(x, y,z);
+			leftFront.manipulator.setInReferenceFrame(x, y,z);
 			update();
 			//System.out.println("rightFront");
 		});
@@ -63,10 +66,10 @@ public class ScaleSessionManager {
 			double x=rightFront.manipulator.getCurrentPose().getX();
 			double y=rightRear.manipulator.getCurrentPose().getY();
 			double z=rightFront.manipulator.getCurrentPose().getZ();
-			rightFront.manipulator.set(x, y,z);
+			rightFront.manipulator.setInReferenceFrame(x, y,z);
 			x=rightRear.manipulator.getCurrentPose().getX();
 			y=leftRear.manipulator.getCurrentPose().getY();
-			leftRear.manipulator.set(x, y,z);
+			leftRear.manipulator.setInReferenceFrame(x, y,z);
 			update();
 			//System.out.println("rightRear");
 		});
@@ -80,10 +83,10 @@ public class ScaleSessionManager {
 			double x=leftRear.manipulator.getCurrentPose().getX();
 			double y=leftFront.manipulator.getCurrentPose().getY();
 			double z=leftFront.manipulator.getCurrentPose().getZ();
-			leftRear.manipulator.set(x, y,z);
+			leftRear.manipulator.setInReferenceFrame(x, y,z);
 			x=leftFront.manipulator.getCurrentPose().getX();
 			y=rightFront.manipulator.getCurrentPose().getY();
-			rightFront.manipulator.set(x, y,z);
+			rightFront.manipulator.setInReferenceFrame(x, y,z);
 			update();
 			//System.out.println("leftFront");
 		});
@@ -94,21 +97,14 @@ public class ScaleSessionManager {
 				//System.out.println("Motion from "+beingUpdated+" rejected by "+leftRear);
 				return;
 			}
-//			if((leftFront.getCurrent().getX()-leftRear.getCurrent().getX())<(size-0.001)) {
-//				leftRear.manipulator.cancel();
-//				return;
-//			}
-//			if((leftRear.getCurrent().getY()-rightRear.getCurrent().getY())<(size-0.001)) {
-//				leftRear.manipulator.cancel();
-//				return;
-//			}
+
 			double x=leftFront.manipulator.getCurrentPose().getX();
 			double y=leftRear.manipulator.getCurrentPose().getY();
 			double z=leftRear.manipulator.getCurrentPose().getZ();
-			leftFront.manipulator.set(x, y,z);
+			leftFront.manipulator.setInReferenceFrame(x, y,z);
 			x=leftRear.manipulator.getCurrentPose().getX();
 			y=rightRear.manipulator.getCurrentPose().getY();
-			rightRear.manipulator.set(x, y,z);
+			rightRear.manipulator.setInReferenceFrame(x, y,z);
 			update();
 			//System.out.println("leftRear");
 		});
@@ -125,23 +121,24 @@ public class ScaleSessionManager {
 		});
 		controls = Arrays.asList(topCenter,rightFront ,rightRear ,leftFront,leftRear);
 		for(ResizingHandle c:controls) {
+			c.manipulator.setFrameOfReference(()->cadoodle.getWorkplane());
 			c.manipulator.addSaveListener(()->{
 				//System.out.println("Saving from "+c);
 				Resize setResize = new Resize()
 						.setNames(sel.selectedSnapshot())
-						.setResize(topCenter.getCurrent(), leftFront.getCurrent(), rightRear.getCurrent());
+						.setResize(topCenter.getCurrentInReferenceFrame(), leftFront.getCurrentInReferenceFrame(), rightRear.getCurrentInReferenceFrame());
 				bounds=getBounds();
 				for(ResizingHandle ctrl:controls) {
 					ctrl.manipulator.set(0, 0, 0);
 				}
 				
-				Thread t=cadoodle.addOpperation(setResize);
-				try {
-					t.join();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				Thread t=cadoodle.addOpperation(setResize);
+//				try {
+//					t.join();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				beingUpdated=null;
 				threeDTarget();
 			});

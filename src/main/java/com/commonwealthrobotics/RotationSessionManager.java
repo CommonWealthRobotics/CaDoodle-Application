@@ -25,12 +25,12 @@ public class RotationSessionManager {
 	private Affine viewRotation = new Affine();
 	private ControlSprites controlSprites;
 
-	public RotationSessionManager(Affine selection, CaDoodleFile cadoodle, ControlSprites controlSprites) {
+	public RotationSessionManager(Affine selection, CaDoodleFile cadoodle, ControlSprites controlSprites, Affine workplaneOffset) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
-		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,cadoodle,controlSprites);
-		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,cadoodle,controlSprites);
-		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,cadoodle,controlSprites);
+		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,cadoodle,controlSprites,workplaneOffset);
+		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,cadoodle,controlSprites,workplaneOffset);
+		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,cadoodle,controlSprites,workplaneOffset);
 	}
 	
 	public List<Node> getElements(){

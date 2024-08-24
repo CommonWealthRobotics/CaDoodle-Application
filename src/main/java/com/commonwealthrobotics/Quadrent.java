@@ -4,13 +4,13 @@ public enum Quadrent {
 	first, second, third, fourth;
 	
 	public static Quadrent getQuad(double angle) {
-		if (angle > 45 && angle < 135)
+		if (angle > 45 && angle <= 135)
 			return Quadrent.first;
 		if (angle > 135 || angle <= (-135))
 			return Quadrent.second;
 		if (angle > -135 && angle <= -45)
 			return Quadrent.third;
-		if (angle > -45 && angle < 45)
+		if (angle > -45 && angle <= 45)
 			return Quadrent.fourth;
 		throw new RuntimeException("Impossible nummber! " + angle);
 	}

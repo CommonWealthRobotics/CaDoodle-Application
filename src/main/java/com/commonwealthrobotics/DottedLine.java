@@ -1,11 +1,14 @@
 package com.commonwealthrobotics;
 
+import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 
 public class DottedLine extends Group {
@@ -19,11 +22,12 @@ public class DottedLine extends Group {
     private final double dotRadius;
     private final double dotSpacing;
     private Color dotColor = Color.BLACK;
+	private Affine workplaneOffset;
 
-    public DottedLine(double dotRadius, double dotSpacing) {
+    public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset) {
         this.dotRadius = dotRadius;
         this.dotSpacing = dotSpacing;
-
+		this.workplaneOffset = workplaneOffset;
         startX.addListener((obs, oldVal, newVal) -> updateLine());
         startY.addListener((obs, oldVal, newVal) -> updateLine());
         startZ.addListener((obs, oldVal, newVal) -> updateLine());
@@ -41,6 +45,8 @@ public class DottedLine extends Group {
         double length = Math.sqrt(dx*dx + dy*dy + dz*dz);
 
         int numDots = (int) Math.floor(length / dotSpacing);
+        if(numDots==0)
+        	return;
 
         for (int i = 0; i <= numDots; i++) {
             double t = i / (double) numDots;
@@ -49,15 +55,17 @@ public class DottedLine extends Group {
             double z = startZ.get() + t * dz;
 
             Sphere dot = new Sphere(dotRadius);
-            dot.setTranslateX(x);
-            dot.setTranslateY(y);
-            dot.setTranslateZ(z);
-
+            Affine loc= TransformFactory.newAffine(x, y, z);
+            dot.getTransforms().add(workplaneOffset);
+            dot.getTransforms().addAll(loc);
+            
             PhongMaterial material = new PhongMaterial(dotColor);
             dot.setMaterial(material);
 
             getChildren().add(dot);
         }
+      
+
     }
 
     // Mimic Line class API
