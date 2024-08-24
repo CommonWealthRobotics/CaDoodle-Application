@@ -14,6 +14,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.control.Button;
@@ -139,10 +140,21 @@ public class ShapesPallet {
 						cadoodle.addOpperation(setAddFromScript).join();
 						List<String> namesToMove = new ArrayList<>();
 						namesToMove.addAll(setAddFromScript.getNamesAdded());
+						TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
 						cadoodle.addOpperation(new MoveCenter()
 								.setNames(namesToMove)
-								.setLocation(workplane.getCurrentAbsolutePose())).join();
+								.setLocation(currentAbsolutePose)).join();
 						session.selectAll(setAddFromScript.getNamesAdded());
+						if (!workplane.isClicked())
+							return;
+						if (workplane.isClickOnGround()) {
+							// System.out.println("Ground plane click detected");
+							cadoodle.setWorkplane(new TransformNR());
+						} else {
+							cadoodle.setWorkplane(workplane.getCurrentAbsolutePose());
+						}
+						workplane.placeWorkplaneVisualization();
+						workplane.setTemporaryPlane();
 					} catch (CadoodleConcurrencyException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

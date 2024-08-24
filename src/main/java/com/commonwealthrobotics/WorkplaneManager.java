@@ -52,6 +52,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private boolean active;
 	private Affine wpPickPlacement = new Affine();
 	private SelectionSession session;
+	private boolean tempory;
 
 	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 		this.cadoodle = f;
@@ -129,6 +130,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void activate() {
 		active = true;
+		tempory=false;
 		setClickOnGround(false);
 		clicked = false;
 		System.out.println("Starting workplane listeners");
@@ -308,5 +310,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			return true;
 		}
 		return false;
+	}
+
+	public void setTemporaryPlane() {
+		tempory=true;
+	}
+	public boolean isTemporaryPlane() {
+		return tempory;
 	}
 }
