@@ -569,7 +569,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// Threaded load happens after UI opens
 		setupFile();
 		
-		pallet=new ShapesPallet(shapeCatagory,objectPallet,session);
 	}
 
 	private void setupFile() {
@@ -748,9 +747,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void setCadoodleFile(CaDoodleFile f) {
 		if (cadoodle == null) {
 			cadoodle = f;
-			pallet.setCadoodle(f);
+
 			workplane = new WorkplaneManager(f,ground,engine,session);
 			session.setWorkplaneManager(workplane);
+			pallet=new ShapesPallet(shapeCatagory,objectPallet,session);
+			pallet.setCadoodle(f);
 			pallet.setWorkplaneManager(workplane);
 			workplane.placeWorkplaneVisualization();
 		}
