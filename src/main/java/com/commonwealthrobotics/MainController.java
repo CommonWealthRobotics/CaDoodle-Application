@@ -62,10 +62,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
 
-	
-
-    @FXML // fx:id="stackPane"
-    private StackPane stackPane; // Value injected by FXMLLoader
+	@FXML // fx:id="stackPane"
+	private StackPane stackPane; // Value injected by FXMLLoader
 	@FXML // fx:id="allignButton"
 	private Button allignButton; // Value injected by FXMLLoader
 	@FXML // ResourceBundle that was given to the FXMLLoader
@@ -232,7 +230,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private boolean resetArmed;
 	private long timeOfClick;
 	private ImageView ground;
-
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -442,7 +439,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
-		workplane.pickPlane(()->session.save());
+		workplane.pickPlane(() -> session.save());
 		session.setKeyBindingFocus();
 	}
 
@@ -566,17 +563,23 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setAllignButton(allignButton);
 		// do this after setting up the session
 		setupEngineControls();
-		// Threaded load happens after UI opens
-		setupFile();
-		
+		try {
+			CaDoodleFile f = session.loadActive(this);
+			setCadoodleFile(f);
+			// Threaded load happens after UI opens
+			setupFile(f);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 	}
 
-	private void setupFile() {
+	private void setupFile(CaDoodleFile f) {
 		new Thread(() -> {
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
-				CaDoodleFile f = session.loadActive(this);
-				setCadoodleFile(f);
 				f.initialize();
 				session.save();
 				BowlerStudio.runLater(() -> {
@@ -588,6 +591,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				e.printStackTrace();
 			}
 		}).start();
+
 	}
 
 	private void setUpColorPicker() {
@@ -677,12 +681,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ground.setOpacity(0.25);
 		ground.setScaleX(2);
 		ground.setScaleY(2);
-		ground.setX(-image.getWidth()/2);
-		ground.setY(-image.getHeight()/2);
+		ground.setX(-image.getWidth() / 2);
+		ground.setY(-image.getHeight() / 2);
 		ground.setTranslateZ(-0.1);
-		
+
 		engine.addUserNode(ground);
-		
+
 	}
 
 	private void setUpNavigationCube() {
@@ -736,77 +740,75 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				showAllButton.setDisable(true);
 			});
 		}
-		if(this.source!=source) {
+		if (this.source != source) {
 			session.save();
 		}
 		this.source = source;
-		BowlerStudio.runLater(()->{
+		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
-				
+
 		});
 	}
 
 	private void setCadoodleFile(CaDoodleFile f) {
 		if (cadoodle == null) {
 			cadoodle = f;
-			workplane = new WorkplaneManager(f,ground,engine,session);
+			workplane = new WorkplaneManager(f, ground, engine, session);
 			session.setWorkplaneManager(workplane);
-			pallet=new ShapesPallet(shapeCatagory,objectPallet,session);
+			pallet = new ShapesPallet(shapeCatagory, objectPallet, session);
 			pallet.setCadoodle(f);
 			pallet.setWorkplaneManager(workplane);
 			workplane.placeWorkplaneVisualization();
 		}
 	}
 
-
-
 	private void setupEngineControls() {
-		
+
 		engine.getSubScene().setOnMousePressed(event -> {
-			resetArmed=true;
+			resetArmed = true;
 			timeOfClick = System.currentTimeMillis();
-			if(event.getPickResult().getIntersectedNode() == ground)
-			if(workplane.isTemporaryPlane()) {
-				cadoodle.setWorkplane(new TransformNR());
-				workplane.placeWorkplaneVisualization();
-			}
+			if (event.getPickResult().getIntersectedNode() == ground)
+				if (workplane.isTemporaryPlane()) {
+					cadoodle.setWorkplane(new TransformNR());
+					workplane.placeWorkplaneVisualization();
+				}
 		});
-		engine.getSubScene().addEventFilter(MouseEvent.DRAG_DETECTED, event->{
-			resetArmed=false;
+		engine.getSubScene().addEventFilter(MouseEvent.DRAG_DETECTED, event -> {
+			resetArmed = false;
 		});
-		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_RELEASED, event->{
-			if(!resetArmed)
+		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+			if (!resetArmed)
 				return;
-			resetArmed=false;
-			if(System.currentTimeMillis()-timeOfClick>200)
+			resetArmed = false;
+			if (System.currentTimeMillis() - timeOfClick > 200)
 				return;
 			session.clearSelection();
 		});
-		
+
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
 
 		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
-				switch(event.getCode()) {
+				switch (event.getCode()) {
 				case UP:
-					if(event.isControlDown()) {
-						session.moveInCameraFrame(new TransformNR(0,0,1));
-					}else
-						session.moveInCameraFrame(new TransformNR(1,0,0));
+					if (event.isControlDown()) {
+						session.moveInCameraFrame(new TransformNR(0, 0, 1));
+					} else
+						session.moveInCameraFrame(new TransformNR(1, 0, 0));
 					break;
 				case DOWN:
-					if(event.isControlDown()) {
-						session.moveInCameraFrame(new TransformNR(0,0,-1));
-					}else
-						session.moveInCameraFrame(new TransformNR(-1,0,0));
+					if (event.isControlDown()) {
+						session.moveInCameraFrame(new TransformNR(0, 0, -1));
+					} else
+						session.moveInCameraFrame(new TransformNR(-1, 0, 0));
 					break;
 				case LEFT:
-					session.moveInCameraFrame(new TransformNR(0,1,0));
+					session.moveInCameraFrame(new TransformNR(0, 1, 0));
 					break;
 				case RIGHT:
-					session.moveInCameraFrame(new TransformNR(0,-1,0));
+					session.moveInCameraFrame(new TransformNR(0, -1, 0));
 					break;
 				}
 				// System.out.println("Arrows " + event.getCode());
@@ -866,12 +868,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.showAll();
 					break;
 				default:
-				    if (!character.isEmpty()) {
-				        char rawChar = character.charAt(0);			        
-				        System.out.println("CTRL+ Raw char value: " + (int) rawChar);
-				    } else {
-				        System.out.println("No character data available (probably a non-character key)");
-				    }
+					if (!character.isEmpty()) {
+						char rawChar = character.charAt(0);
+						System.out.println("CTRL+ Raw char value: " + (int) rawChar);
+					} else {
+						System.out.println("No character data available (probably a non-character key)");
+					}
 					break;
 				}
 			} else {
@@ -903,17 +905,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double zoom = camera.getZoomDepth();
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
-		//System.out.println("Elevation "+el);
-		if(el<-90 ||el>90) {
+		// System.out.println("Elevation "+el);
+		if (el < -90 || el > 90) {
 			ground.setVisible(false);
-		}else {
+		} else {
 			ground.setVisible(true);
 		}
-		double x= camera.getGlobalX();
-		double y= camera.getGlobalY();
-		double z= camera.getGlobalZ();
+		double x = camera.getGlobalX();
+		double y = camera.getGlobalY();
+		double z = camera.getGlobalZ();
 		double screenW = engine.getSubScene().getWidth();
 		double screenH = engine.getSubScene().getHeight();
-		session.onCameraChange(screenW,screenH,zoom,az,el,x,y,z);
+		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 	}
 }
