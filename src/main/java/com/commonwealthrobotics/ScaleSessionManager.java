@@ -48,7 +48,7 @@ public class ScaleSessionManager {
 			double x=rightRear.manipulator.getCurrentPose().getX();
 			double y=rightFront.manipulator.getCurrentPose().getY();
 			double z=rightRear.manipulator.getCurrentPose().getZ();
-			System.out.println("Move x"+x+" y"+y+" z"+z);
+			System.out.println("rightRear Move x"+x+" y"+y+" z"+z);
 			rightRear.manipulator.setInReferenceFrame(x, y,z);
 			x=rightFront.manipulator.getCurrentPose().getX();
 			y=leftFront.manipulator.getCurrentPose().getY();
@@ -123,23 +123,44 @@ public class ScaleSessionManager {
 		for(ResizingHandle c:controls) {
 			c.manipulator.setFrameOfReference(()->cadoodle.getWorkplane());
 			c.manipulator.addSaveListener(()->{
+				try {
+					Thread.sleep(32);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				//System.out.println("Saving from "+c);
-				Resize setResize = new Resize()
-						.setNames(sel.selectedSnapshot())
-						.setResize(topCenter.getCurrentInReferenceFrame(), leftFront.getCurrentInReferenceFrame(), rightRear.getCurrentInReferenceFrame());
+				TransformNR wp = cadoodle.getWorkplane().copy();
+				TransformNR rrC = rightRear.getCurrentInReferenceFrame();
+				TransformNR lfC = leftFront.getCurrentInReferenceFrame();
+				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+				
+//				rrC=wp.inverse().times(rrC);
+//				lfC=wp.inverse().times(lfC);
+//				tcC=wp.inverse().times(tcC);
+				
 				bounds=getBounds();
 				for(ResizingHandle ctrl:controls) {
 					ctrl.manipulator.set(0, 0, 0);
 				}
-				
-//				Thread t=cadoodle.addOpperation(setResize);
-//				try {
-//					t.join();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 				beingUpdated=null;
+				if(Math.abs(lfC.getZ()-rrC.getZ())>0.00001) {
+					throw new RuntimeException("The control points of the corners must be at the same Z value \n"+
+							lfC.toSimpleString()+"\n"+rrC.toSimpleString());
+				}
+				Resize setResize = new Resize()
+						.setNames(sel.selectedSnapshot())
+						//.setDebugger(engine)
+						.setWorkplane(wp)
+						.setResize(tcC, lfC, rrC);			
+				Thread t=cadoodle.addOpperation(setResize);
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				threeDTarget();
 			});
 		}

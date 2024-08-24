@@ -14,6 +14,7 @@ import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -35,8 +36,9 @@ public class ResizingHandle {
 	private Scale scaleTF = new Scale();
 	private double scale;
 	Manipulation manipulator;
-	private Affine scaleAffine = new Affine();
+	private Affine resizeHandleLocation = new Affine();
 	private String name;
+	private Tooltip hover = new Tooltip();
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
 	 * @param name 
@@ -49,7 +51,7 @@ public class ResizingHandle {
 	 */
 	public ResizingHandle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d, Affine workplaneOffset) {
 		this.name = name;
-		manipulator=new Manipulation(scaleAffine, vector3d, new TransformNR());
+		manipulator=new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
@@ -67,37 +69,37 @@ public class ResizingHandle {
 		});
 		getMesh().addEventFilter(MouseEvent.MOUSE_ENTERED,event -> {
 			material.setDiffuseColor(new Color(1,0,0,1));
+			
 		});
 		mesh.getTransforms().add(move);
-		mesh.getTransforms().add(scaleAffine);
+		mesh.getTransforms().add(resizeHandleLocation);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);
 		mesh.getTransforms().add(scaleTF);
-
+		Tooltip.install(mesh, hover);
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
 	public TransformNR getParametric() {
 		return new TransformNR(
-				scaleAffine.getTx(),
-				scaleAffine.getTy(),
-				scaleAffine.getTz()	
+				resizeHandleLocation.getTx(),
+				resizeHandleLocation.getTy(),
+				resizeHandleLocation.getTz()	
 				);
 	}
 	public TransformNR getCurrentInReferenceFrame() {
-		TransformNR globalPose =getCurrent();
-		TransformNR wp = new TransformNR( manipulator.getFrameOfReference() .getRotation());
-		globalPose=wp.times(globalPose);
-		globalPose.setRotation(new RotationNR());
-		return globalPose;
+		TransformNR wp =  manipulator.getFrameOfReference().copy();
+		TransformNR rsz = TransformFactory.affineToNr(resizeHandleLocation);
+		TransformNR loc = TransformFactory.affineToNr(location);
+		return wp.inverse().times(rsz.times(wp.times(loc)));
 	}
 	public TransformNR getCurrent() {
 		
 		return new TransformNR(
-				scaleAffine.getTx()+location.getTx(),
-				scaleAffine.getTy()+location.getTy(),
-				scaleAffine.getTz()+location.getTz()	
+				resizeHandleLocation.getTx()+location.getTx(),
+				resizeHandleLocation.getTy()+location.getTy(),
+				resizeHandleLocation.getTz()+location.getTz()	
 				);
 	}
 
@@ -194,7 +196,7 @@ public class ResizingHandle {
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 
-
+		hover.setText(name +" "+getCurrentInReferenceFrame()) ;
 	}
 
 	private void setVisible(boolean b) {
