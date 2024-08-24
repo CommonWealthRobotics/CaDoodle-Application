@@ -53,7 +53,7 @@ public class ScaleSessionManager {
 			x=rightFront.manipulator.getCurrentPose().getX();
 			y=leftFront.manipulator.getCurrentPose().getY();
 			leftFront.manipulator.setInReferenceFrame(x, y,z);
-			update();
+			BowlerStudio.runLater(()->update());
 			//System.out.println("rightFront");
 		});
 		rightRear.manipulator.addEventListener(()->{
@@ -70,7 +70,7 @@ public class ScaleSessionManager {
 			x=rightRear.manipulator.getCurrentPose().getX();
 			y=leftRear.manipulator.getCurrentPose().getY();
 			leftRear.manipulator.setInReferenceFrame(x, y,z);
-			update();
+			BowlerStudio.runLater(()->update());
 			//System.out.println("rightRear");
 		});
 		leftFront.manipulator.addEventListener(()->{
@@ -87,8 +87,7 @@ public class ScaleSessionManager {
 			x=leftFront.manipulator.getCurrentPose().getX();
 			y=rightFront.manipulator.getCurrentPose().getY();
 			rightFront.manipulator.setInReferenceFrame(x, y,z);
-			update();
-			//System.out.println("leftFront");
+			BowlerStudio.runLater(()->update());			//System.out.println("leftFront");
 		});
 		leftRear.manipulator.addEventListener(()->{
 			if(beingUpdated==null)
@@ -105,8 +104,7 @@ public class ScaleSessionManager {
 			x=leftRear.manipulator.getCurrentPose().getX();
 			y=rightRear.manipulator.getCurrentPose().getY();
 			rightRear.manipulator.setInReferenceFrame(x, y,z);
-			update();
-			//System.out.println("leftRear");
+			BowlerStudio.runLater(()->update());			//System.out.println("leftRear");
 		});
 		topCenter.manipulator.addEventListener(()->{
 			if(beingUpdated==null)
@@ -166,7 +164,7 @@ public class ScaleSessionManager {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				threeDTarget();
+				BowlerStudio.runLater(()->threeDTarget());
 			});
 		}
 	}

@@ -89,10 +89,10 @@ public class ResizingHandle {
 				);
 	}
 	public void setInReferenceFrame(double x, double y, double z) {
+		TransformNR wp =  manipulator.getFrameOfReference().copy();
 		TransformNR tmp = new TransformNR(x, y, z);
-		TransformNR loc = TransformFactory.affineToNr(location);
-		tmp = loc.inverse().times(tmp);
-		manipulator.set(-tmp.getX(), tmp.getY(), tmp.getZ());
+		
+		TransformFactory.nrToAffine(tmp,location);
 	}
 	public TransformNR getCurrentInGlobalFrame() {
 		TransformNR wp =  manipulator.getFrameOfReference().copy();
