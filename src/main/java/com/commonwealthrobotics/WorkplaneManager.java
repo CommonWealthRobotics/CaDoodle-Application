@@ -59,11 +59,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		this.ground = ground;
 		this.engine = engine;
 		this.session = session;
-		wpPick = new Cube(300, 300, 0.1).toCSG().newMesh();
+		wpPick = new Cube(200, 200, 0.1).toCSG().newMesh();
 		PhongMaterial material = new PhongMaterial();
 
 		// material.setDiffuseMap(texture);
-		material.setDiffuseColor(new Color(0.5, 0.5, 0, 0.025));
+		material.setDiffuseColor(new Color(0.25, 0.25, 0, 0.0025));
 		wpPick.setCullFace(CullFace.BACK);
 		wpPick.setMaterial(material);
 		wpPick.setOpacity(0.25);
