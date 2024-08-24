@@ -87,6 +87,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private WorkplaneManager workplane;
 	
 	public SelectionSession(){
+
 		manipulation.addSaveListener(()->{
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			System.out.println("Objects Moved! "+globalPose.toSimpleString());
@@ -159,7 +160,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}
 			selected.removeAll(toRemove);
-			workplane.updateMeshes(meshes);
+			if(workplane!=null)
+				workplane.updateMeshes(meshes);
 			BowlerStudio.runLater(() ->updateSelection());
 			setKeyBindingFocus();
 		});
@@ -941,7 +943,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot(), getSellectedBounds(selectedCSG));
 	}
 
-	public void loadActive(MainController mainController) throws Exception {
+	public void loadActive(MainController mainController ) throws Exception {
 		ap.loadActive(mainController);
 	}
 

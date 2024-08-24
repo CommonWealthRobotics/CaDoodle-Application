@@ -764,10 +764,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			resetArmed=true;
 			timeOfClick = System.currentTimeMillis();
 			if(event.getPickResult().getIntersectedNode() == ground)
-				if(workplane.isTemporaryPlane()) {
-					cadoodle.setWorkplane(new TransformNR());
-					workplane.placeWorkplaneVisualization();
-				}
+			if(workplane.isTemporaryPlane()) {
+				cadoodle.setWorkplane(new TransformNR());
+				workplane.placeWorkplaneVisualization();
+			}
 		});
 		engine.getSubScene().addEventFilter(MouseEvent.DRAG_DETECTED, event->{
 			resetArmed=false;
