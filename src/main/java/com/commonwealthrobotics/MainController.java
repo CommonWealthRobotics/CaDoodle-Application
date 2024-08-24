@@ -575,7 +575,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		new Thread(() -> {
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
-				session.loadActive(this);
+				CaDoodleFile f = session.loadActive(this);
+				setCadoodleFile(f);
+				f.initialize();
 				session.save();
 				BowlerStudio.runLater(() -> {
 					fileNameBox.setText(cadoodle.getProjectName());

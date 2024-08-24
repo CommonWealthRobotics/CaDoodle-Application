@@ -49,7 +49,7 @@ public class ActiveProject {
 		return random;
 	}
 	public CaDoodleFile loadActive(ICaDoodleStateUpdate listener) throws Exception {
-		return CaDoodleFile.fromFile(getActiveProject(),listener);
+		return CaDoodleFile.fromFile(getActiveProject(),listener,false);
 	}
 	public void save(CaDoodleFile cf) {
 		cf.setSelf(getActiveProject());

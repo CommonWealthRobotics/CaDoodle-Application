@@ -243,7 +243,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			TransformFactory.nrToAffine(new TransformNR(), selection);
 			TransformFactory.nrToAffine(new TransformNR(), controls.getViewRotation());
-			for(CSG c: getSelectedCSG()) {
+			for(CSG c: getSelectedCSG(selectedSnapshot())) {
 				MeshView meshView = meshes.get(c);
 				if(meshView!=null) {
 					meshView.getTransforms().addAll(
@@ -529,7 +529,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		
 		
 		System.out.println("On Cruse");
-		List<CSG> selectedCSG = getSelectedCSG();
+		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 		CSG indicator = selectedCSG.get(0);
 		if(selectedCSG.size()>1) {
 			indicator=CSG.unionAll(selectedCSG);
@@ -630,7 +630,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		}
 		ArrayList<String> toSelect = new ArrayList<String>();
-		for (CSG c : getSelectedCSG()) {
+		for (CSG c : getSelectedCSG(selectedSnapshot())) {
 			if (c.isGroupResult()) {
 				String name = c.getName();
 				for (CSG inG : getCurrentState()) {
@@ -688,7 +688,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public boolean isSelectedHidden() {
 		boolean ishid = true;
-		for (CSG c : getSelectedCSG()) {
+		for (CSG c : getSelectedCSG(selectedSnapshot())) {
 			if (!c.isHide()) {
 				ishid = false;
 			}
@@ -696,9 +696,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return ishid;
 	}
 
-	public List<CSG> getSelectedCSG() {
+	public List<CSG> getSelectedCSG(List<String> sele) {
 		ArrayList<CSG> back = new ArrayList<CSG>();
-		for (String sel : selected) {
+		for (String sel : sele) {
 			CSG t = getSelectedCSG(sel);
 			if (t != null) {
 				back.add(t);
@@ -760,7 +760,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			TransformNR wp = cadoodle.getWorkplane();
 			Transform t= TransformFactory.nrToCSG(wp);
 			// Run a down move for each object, since each will move a different amount based on its own bottom
-			for(CSG c:getSelectedCSG()) {
+			for(CSG c:getSelectedCSG(selectedSnapshot())) {
 				double downMove = -c.transformed(t.inverse()).getMinZ();
 				TransformNR location = wp.times(new TransformNR(0,0,downMove)).times(wp.inverse());
 				Thread op = getCadoodle().addOpperation(
@@ -943,8 +943,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot(), getSellectedBounds(selectedCSG));
 	}
 
-	public void loadActive(MainController mainController ) throws Exception {
-		ap.loadActive(mainController);
+	public CaDoodleFile loadActive(MainController mainController ) throws Exception {
+		return ap.loadActive(mainController);
 	}
 
 	public CaDoodleFile getCadoodle() {
