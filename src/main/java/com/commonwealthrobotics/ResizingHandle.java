@@ -88,12 +88,23 @@ public class ResizingHandle {
 				resizeHandleLocation.getTz()	
 				);
 	}
-	public TransformNR getCurrentInReferenceFrame() {
+	public void setInReferenceFrame(double x, double y, double z) {
+		TransformNR tmp = new TransformNR(x, y, z);
+		TransformNR loc = TransformFactory.affineToNr(location);
+		tmp = loc.inverse().times(tmp);
+		manipulator.set(-tmp.getX(), tmp.getY(), tmp.getZ());
+	}
+	public TransformNR getCurrentInGlobalFrame() {
 		TransformNR wp =  manipulator.getFrameOfReference().copy();
 		TransformNR rsz = TransformFactory.affineToNr(resizeHandleLocation);
 		TransformNR loc = TransformFactory.affineToNr(location);
-		return wp.inverse().times(rsz.times(wp.times(loc)));
+		return rsz.times(wp.times(loc));
 	}
+	public TransformNR getCurrentInReferenceFrame() {
+		TransformNR wp =  manipulator.getFrameOfReference().copy();
+		return wp.inverse().times(getCurrentInGlobalFrame());
+	}
+	
 	public TransformNR getCurrent() {
 		
 		return new TransformNR(
@@ -236,4 +247,5 @@ public class ResizingHandle {
 	public String toString() {
 		return name;
 	}
+
 }

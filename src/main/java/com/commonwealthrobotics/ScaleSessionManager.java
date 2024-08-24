@@ -160,26 +160,33 @@ public class ScaleSessionManager {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+				try {
+					Thread.sleep(32);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				threeDTarget();
 			});
 		}
 	}
 
 	private void update() {
-		updateLines.run();
 		// if(beingUpdated!=null)
 		ResizingHandle beingUpdated2 = beingUpdated;
 		if (beingUpdated2 != topCenter || beingUpdated2 == null) {
-			Bounds b = getBounds();
-			double x = b.getCenter().x - bounds.getCenter().x;
-			double y = b.getCenter().y - bounds.getCenter().y;
-
-			topCenter.manipulator.set(x, y, 0);
+			TransformNR rrC = rightRear.getCurrentInReferenceFrame();
+			TransformNR lfC = leftFront.getCurrentInReferenceFrame();
+			TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+			double x= (lfC.getX()-rrC.getX())/2 + rrC.getX();
+			double y= (lfC.getY()-rrC.getY())/2 + rrC.getY();
+			double z = tcC.getZ();
+			topCenter.setInReferenceFrame(x,y,z);
 			beingUpdated = beingUpdated2;
 		} else {
 			// System.out.println("Not updating center cube "+beingUpdated2);
 		}
+		updateLines.run();
 	}
 
 	public double getViewScale() {
@@ -211,12 +218,11 @@ public class ScaleSessionManager {
 	}
 
 	public Bounds getBounds() {
-		TransformNR lr = rightRear.getCurrent();
-		TransformNR rf = leftFront.getCurrent();
+		TransformNR lr = rightRear.getCurrentInReferenceFrame();
+		TransformNR rf = leftFront.getCurrentInReferenceFrame();
+		TransformNR tc = topCenter.getCurrentInReferenceFrame();
 		Vector3d min = new Vector3d(lr.getX(), lr.getY(), lr.getZ());
-		Vector3d max = new Vector3d(rf.getX(), rf.getY(), topCenter.getCurrent().getZ());
-		;
-
+		Vector3d max = new Vector3d(rf.getX(), rf.getY(), tc.getZ());
 		return new Bounds(min, max);
 	}
 
