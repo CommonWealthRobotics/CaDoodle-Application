@@ -747,7 +747,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void setCadoodleFile(CaDoodleFile f) {
 		if (cadoodle == null) {
 			cadoodle = f;
-
 			workplane = new WorkplaneManager(f,ground,engine,session);
 			session.setWorkplaneManager(workplane);
 			pallet=new ShapesPallet(shapeCatagory,objectPallet,session);
