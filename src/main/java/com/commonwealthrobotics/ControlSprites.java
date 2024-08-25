@@ -333,7 +333,7 @@ public class ControlSprites {
 			return;
 		this.mode = mode;
 		System.out.println("Mode Set to "+mode);
-		new Exception().printStackTrace();
+		//new Exception().printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default);

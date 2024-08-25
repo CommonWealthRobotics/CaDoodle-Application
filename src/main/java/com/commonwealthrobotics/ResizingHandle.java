@@ -38,7 +38,7 @@ public class ResizingHandle {
 	Manipulation manipulator;
 	private Affine resizeHandleLocation = new Affine();
 	private String name;
-	private Tooltip hover = new Tooltip();
+	//private Tooltip hover = new Tooltip();
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
 	 * @param name 
@@ -77,7 +77,7 @@ public class ResizingHandle {
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);
 		mesh.getTransforms().add(scaleTF);
-		Tooltip.install(mesh, hover);
+		//Tooltip.install(mesh, hover);
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
@@ -207,7 +207,7 @@ public class ResizingHandle {
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 
-		hover.setText(name +" "+getCurrentInReferenceFrame()) ;
+		//hover.setText(name +" "+getCurrentInReferenceFrame()) ;
 	}
 
 	private void setVisible(boolean b) {

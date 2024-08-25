@@ -39,6 +39,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
@@ -86,6 +87,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private WorkplaneManager workplane;
 	boolean intitialization = false;
+
+	private VBox parametrics;
 	
 	public SelectionSession(){
 
@@ -218,12 +221,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void updateSelection() {
-		// System.out.println("\n");
-
+		parametrics.getChildren().clear();
 		if (selected.size() > 0) {
-//			for (String s : selected) {
-//				System.out.println("Current Selection " + s);
-//			}
+
 			
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
@@ -260,6 +260,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}
 			shapeConfiguration.setText("Shape ("+selected.size()+")");
+			if(selected.size()==1) {
+				
+			}
 		} else {
 			for(CSG c: getCurrentState()) {
 				MeshView meshView = meshes.get(c);
@@ -287,7 +290,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid) {
+			ComboBox<String> snapGrid,VBox parametrics) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -296,6 +299,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.engine = engine;
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
+		this.parametrics = parametrics;
 		setupSnapGrid();
 		
 

@@ -174,7 +174,7 @@
                                                                         </Label>
                                                                      </children>
                                                                   </GridPane>
-                                                                  <VBox pickOnBounds="false" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
+                                                                  <VBox fx:id="parametrics" pickOnBounds="false" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
                                                                   <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button" GridPane.columnIndex="2">
                                                                      <graphic>
                                                                         <ImageView fx:id="showHideImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

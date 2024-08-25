@@ -46,6 +46,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
@@ -166,6 +167,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="pasteButton"
 	private Button pasteButton; // Value injected by FXMLLoader
+
+	@FXML
+	private VBox parametrics;
 
 	@FXML // fx:id="physicsButton"
 	private Button physicsButton; // Value injected by FXMLLoader
@@ -556,7 +560,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpColorPicker();
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid);
+				engine, colorPicker, snapGrid,parametrics);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
