@@ -332,10 +332,12 @@ public class ControlSprites {
 		if (mode == this.mode)
 			return;
 		this.mode = mode;
+		System.out.println("Mode Set to "+mode);
+		new Exception().printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default);
-			System.out.println(mode);
+			
 
 			switch (this.mode) {
 			case Default:

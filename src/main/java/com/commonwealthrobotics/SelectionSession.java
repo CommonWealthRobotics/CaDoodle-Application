@@ -85,10 +85,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double size;
 
 	private WorkplaneManager workplane;
+	boolean intitialization = false;
 	
 	public SelectionSession(){
 
 		manipulation.addSaveListener(()->{
+			if(intitialization)
+				return;
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			System.out.println("Objects Moved! "+globalPose.toSimpleString());
 			Thread t= getCadoodle().addOpperation(new MoveCenter()
@@ -104,6 +107,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		});
 		manipulation.addEventListener(()->{
+			if(intitialization)
+				return;
 			controls.setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(()->updateControls()) ;
 		});
@@ -133,8 +138,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
 		this.source = source;
 		this.setCadoodle(file);
+		intitialization = true;
 		manipulation.set(0, 0, 0);
 		controls.setMode(SpriteDisplayMode.Default);
+		intitialization = false;
 		displayCurrent();
 		
 	}
