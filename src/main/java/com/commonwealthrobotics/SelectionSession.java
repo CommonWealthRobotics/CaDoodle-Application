@@ -252,7 +252,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
-			
+			shapeConfiguration.setText("Shape ("+selected.size()+")");
 		} else {
 			for(CSG c: getCurrentState()) {
 				MeshView meshView = meshes.get(c);

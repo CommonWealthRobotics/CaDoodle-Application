@@ -28,6 +28,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -767,23 +768,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.getSubScene().setOnMousePressed(event -> {
 			resetArmed = true;
 			timeOfClick = System.currentTimeMillis();
-			if (event.getPickResult().getIntersectedNode() == ground)
+			if (isEventACancel(event)) {
 				if (workplane.isTemporaryPlane()) {
 					cadoodle.setWorkplane(new TransformNR());
 					workplane.placeWorkplaneVisualization();
 				}
+				session.clearSelection();
+				System.out.println("Cancle");
+			}
 		});
-		engine.getSubScene().addEventFilter(MouseEvent.DRAG_DETECTED, event -> {
-			resetArmed = false;
-		});
-		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
-			if (!resetArmed)
-				return;
-			resetArmed = false;
-			if (System.currentTimeMillis() - timeOfClick > 200)
-				return;
-			session.clearSelection();
-		});
+
 
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
@@ -898,6 +892,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			}
 		});
+	}
+
+	public boolean isEventACancel(MouseEvent event) {
+		Node in = event.getPickResult().getIntersectedNode();
+		if(in !=ground && in!=engine.getSubScene())
+			return false;
+		if(event.isControlDown())
+			return false;
+		if(!event.isPrimaryButtonDown())
+			return false;
+		if(event.isSecondaryButtonDown())
+			return false;
+		return true;
 	}
 
 	@Override
