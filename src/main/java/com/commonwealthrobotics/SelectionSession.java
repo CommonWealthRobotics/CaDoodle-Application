@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
@@ -23,6 +24,10 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
+import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
+import eu.mihosoft.vrl.v3d.parametrics.Parameter;
+import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.SubScene;
@@ -30,6 +35,8 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,6 +46,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
@@ -146,6 +154,32 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
 		displayCurrent();
+		if(AbstractAddFrom.class.isInstance(source)) {
+			AbstractAddFrom s =(AbstractAddFrom)source;
+			//System.out.println("Adding A op for "+s.getClass());
+			HashSet<String> namesAdded = s.getNamesAdded();
+			System.out.println(namesAdded.size());
+			for(String nameString:namesAdded) {
+				CSG n=null;
+				for(CSG c:currentState) {
+					if(c.getName().contentEquals(nameString)) {
+						n=c;
+					}
+				}
+				if(n==null)
+					continue;
+				for(String k:n.getParameters()) {
+					Parameter para = CSGDatabase.get(k);
+					//System.out.println("Adding listener to "+para.getName());
+					CSGDatabase.addParameterListener(k, (name1, p) -> {
+						new Thread(()->{
+							cadoodle.regenerateFrom(source);
+						}).start();
+						//System.out.println("Parameter "+p.getName()+" changed "+p.getStrValue());
+					});
+				}
+			}
+		}
 		
 	}
 
@@ -261,7 +295,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			shapeConfiguration.setText("Shape ("+selected.size()+")");
 			if(selected.size()==1) {
-				
+				CSG sel =getSelectedCSG(selectedSnapshot()).get(0);
+				for(String key:sel.getParameters()) {
+					if(key.contains("CaDoodle")) {
+						String []parts = key.split("_");
+						HBox thisLine = new HBox(5);
+						String text = parts[parts.length-1];
+						Label e = new Label(text);
+						e.setMinWidth(50);
+						thisLine.getChildren().add(e);
+						parametrics.getChildren().add(thisLine);
+						Parameter para =CSGDatabase.get(key);
+						int width=140;
+						if (LengthParameter.class.isInstance(para)) {
+							setUpNumberChoices(thisLine, text,(LengthParameter) para, width);
+						}
+						if (StringParameter.class.isInstance(para)) {
+							ArrayList<String> opts = para.getOptions();
+							if(opts.size()>0) {
+								setUpTextEntry(thisLine, text, para, opts, width);
+							}else {
+								setUpStringChoices(thisLine, text, para, width);
+							}
+						}
+					}
+				}
 			}
 		} else {
 			for(CSG c: getCurrentState()) {
@@ -278,6 +336,46 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			controls.clearSelection();
 		}
 		updateControls();
+	}
+	private void setUpNumberChoices(HBox thisLine, String text, LengthParameter para, int width) {
+		ComboBox<Double> options = new ComboBox<Double>();
+		
+		for(String s:para.getOptions()) {
+			options.getItems().add(Double.parseDouble(s));
+		}
+		options.getSelectionModel().select(para.getMM());
+		options.setMinWidth(width);
+		thisLine.getChildren().add(options);
+		options.setOnAction(event->{
+			para.setMM(options.getSelectionModel().getSelectedItem());
+			CSGDatabase.saveDatabase();
+			//System.out.println("Saving "+text);
+		});
+	}
+	private void setUpStringChoices(HBox thisLine, String text, Parameter para, int width) {
+		TextField tf = new TextField(para.getStrValue());
+		tf.setOnAction(event->{
+			para.setStrValue(tf.getText());
+			CSGDatabase.saveDatabase();
+			//System.out.println("Saving "+text);
+		});
+		thisLine.getChildren().add(tf);
+		thisLine.setMinWidth(width);
+	}
+
+	private void setUpTextEntry(HBox thisLine, String text, Parameter para, ArrayList<String> opts, int width) {
+		ComboBox<String> options = new ComboBox<String>();
+		for(String s:opts) {
+			options.getItems().add(s);
+		}
+		options.getSelectionModel().select(para.getStrValue());
+		options.setMinWidth(width);
+		thisLine.getChildren().add(options);
+		options.setOnAction(event->{
+			para.setStrValue(options.getSelectionModel().getSelectedItem());
+			CSGDatabase.saveDatabase();
+			//System.out.println("Saving "+text);
+		});
 	}
 
 	private CSG getSelectedCSG(String string) {
@@ -706,8 +804,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		return ishid;
 	}
-
-	public List<CSG> getSelectedCSG(List<String> sele) {
+	
+	public List<CSG> getSelectedCSG(Iterable<String> sele) {
 		ArrayList<CSG> back = new ArrayList<CSG>();
 		for (String sel : sele) {
 			CSG t = getSelectedCSG(sel);

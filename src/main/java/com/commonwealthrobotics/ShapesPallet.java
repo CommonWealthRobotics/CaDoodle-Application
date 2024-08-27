@@ -17,6 +17,8 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
+import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
@@ -136,15 +138,18 @@ public class ShapesPallet {
 				workplane.setOnSelectEvent(() -> {
 					if(workplane.isClicked())
 					try {
-						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"));
-						cadoodle.addOpperation(setAddFromScript).join();
-						List<String> namesToMove = new ArrayList<>();
-						namesToMove.addAll(setAddFromScript.getNamesAdded());
 						TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-						cadoodle.addOpperation(new MoveCenter()
-								.setNames(namesToMove)
-								.setLocation(currentAbsolutePose)).join();
-						session.selectAll(setAddFromScript.getNamesAdded());
+						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"))
+								.setLocation(currentAbsolutePose);
+						cadoodle.addOpperation(setAddFromScript).join();
+//						List<String> namesToMove = new ArrayList<>();
+//						namesToMove.addAll(setAddFromScript.getNamesAdded());
+//						cadoodle.addOpperation(new MoveCenter()
+//								.setNames(namesToMove)
+//								.setLocation(currentAbsolutePose)).join();
+						HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
+						session.selectAll(namesAdded);
+		
 						if (!workplane.isClicked())
 							return;
 						if (workplane.isClickOnGround()) {
