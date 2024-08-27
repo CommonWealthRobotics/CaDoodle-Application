@@ -54,6 +54,8 @@ public class ShapesPallet {
 		this.objectPallet = objectPallet;
 		this.session = session;
 		try {
+			ScriptingEngine.cloneRepo(gitULR, null);
+			ScriptingEngine.pull(gitULR);
 			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
 			for (String f : files) {
 				if (f.toLowerCase().endsWith(".json")) {
