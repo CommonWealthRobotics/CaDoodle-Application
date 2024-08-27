@@ -158,7 +158,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			AbstractAddFrom s =(AbstractAddFrom)source;
 			//System.out.println("Adding A op for "+s.getClass());
 			HashSet<String> namesAdded = s.getNamesAdded();
-			System.out.println(namesAdded.size());
+			//System.out.println(namesAdded.size());
 			for(String nameString:namesAdded) {
 				CSG n=null;
 				for(CSG c:currentState) {
