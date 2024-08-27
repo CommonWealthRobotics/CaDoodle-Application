@@ -90,11 +90,16 @@ public class ShapesPallet {
 		HashMap<Map, String> names = new HashMap<>();
 		for (String key : active.keySet()) {
 			HashMap<String, String> hashMap = active.get(key);
-			int index = Integer.parseInt(hashMap.get("order"));
-			System.out.println("Adding " + key + " at " + index);
-			while (orderedList.size() <= index)
-				orderedList.add(null);
-			orderedList.set(index, hashMap);
+			String s = hashMap.get("order");
+			if(s!=null) {
+				int index = Integer.parseInt(s);
+				System.out.println("Adding " + key + " at " + index);
+				while (orderedList.size() <= index)
+					orderedList.add(null);
+				orderedList.set(index, hashMap);
+			}else {
+				orderedList.add( hashMap);
+			}
 			names.put(hashMap, key);
 		}
 		objectPallet.getChildren().clear();
@@ -103,6 +108,8 @@ public class ShapesPallet {
 			int col = i % 3;
 			int row = i / 3;
 			HashMap<String, String> key = orderedList.get(i);
+			if(key==null)
+				continue;
 			System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
 			Button button = setupButton(names, key);
 			objectPallet.add(button, col, row);
