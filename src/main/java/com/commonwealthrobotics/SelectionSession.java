@@ -50,6 +50,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 
 @SuppressWarnings("unused")
@@ -371,6 +372,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ComboBox<String> options = new ComboBox<String>();
 		for(String s:opts) {
 			options.getItems().add(s);
+		}
+		if (para.getName().toLowerCase().endsWith("font")) {
+			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					setText(item);
+					setFont(Font.font(item));
+				}
+			});
+
+			options.setButtonCell(new javafx.scene.control.ListCell<String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					setText(item);
+					setFont(Font.font(item));
+				}
+			});
 		}
 		options.getSelectionModel().select(para.getStrValue());
 		options.setMinWidth(width);
