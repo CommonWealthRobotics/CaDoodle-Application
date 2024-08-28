@@ -728,7 +728,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
 		setCadoodleFile(f);
-		System.out.println("Displaying result of " + source.getType());
+		//System.out.println("Displaying result of " + source.getType());
 		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!cadoodle.isForwardAvailible());
 			undoButton.setDisable(!cadoodle.isBackAvailible());

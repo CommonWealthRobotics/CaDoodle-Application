@@ -154,6 +154,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
 		displayCurrent();
+		setUpParametrics(currentState, source);
+		
+	}
+
+	private void setUpParametrics(List<CSG> currentState, ICaDoodleOpperation source) {
 		if(AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s =(AbstractAddFrom)source;
 			//System.out.println("Adding A op for "+s.getClass());
@@ -180,7 +185,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}
 		}
-		
 	}
 
 	private void displayCurrent() {
