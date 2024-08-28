@@ -29,6 +29,7 @@ import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
@@ -36,6 +37,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -391,8 +393,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					setFont(Font.font(item));
 				}
 			});
+			for(String s:opts) {
+				// select each item to set the font
+				BowlerStudio.runLater(()->options.getSelectionModel().select(s));
+				
+			}
 		}
-		options.getSelectionModel().select(para.getStrValue());
+
+		BowlerStudio.runLater(()->options.getSelectionModel().select(para.getStrValue()));
 		options.setMinWidth(width);
 		thisLine.getChildren().add(options);
 		options.setOnAction(event->{
