@@ -345,17 +345,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		updateControls();
 	}
 	private void setUpNumberChoices(HBox thisLine, String text, LengthParameter para, int width) {
-		ComboBox<Double> options = new ComboBox<Double>();
+		ComboBox<String> options = new ComboBox<String>();
 		
 		for(String s:para.getOptions()) {
-			options.getItems().add(Double.parseDouble(s));
+			options.getItems().add(s);
 		}
-		options.getSelectionModel().select(para.getMM());
+		options.setEditable(true);
+		options.getSelectionModel().select(para.getMM()+"");
 		options.setMinWidth(width);
 		thisLine.getChildren().add(options);
 		options.setOnAction(event->{
-			para.setMM(options.getSelectionModel().getSelectedItem());
-			CSGDatabase.saveDatabase();
+			String string = options.getSelectionModel().getSelectedItem().toString();
+			try {
+				double parseDouble = Double.parseDouble(string);
+				para.setMM(parseDouble);
+				CSGDatabase.saveDatabase();
+			}catch(Throwable t) {
+				t.printStackTrace();
+			}
 			//System.out.println("Saving "+text);
 		});
 	}
@@ -372,16 +379,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setUpTextEntry(HBox thisLine, String text, Parameter para, ArrayList<String> opts, int width) {
 		ComboBox<String> options = new ComboBox<String>();
-		for(String s:opts) {
-			options.getItems().add(s);
-		}
 		if (para.getName().toLowerCase().endsWith("font")) {
 			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
 				@Override
 				protected void updateItem(String item, boolean empty) {
 					super.updateItem(item, empty);
-					setText(item);
 					setFont(Font.font(item));
+					setText(item);
 				}
 			});
 
@@ -389,20 +393,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				@Override
 				protected void updateItem(String item, boolean empty) {
 					super.updateItem(item, empty);
-					setText(item);
 					setFont(Font.font(item));
+					setFont(Font.font(item));
+					setText(item);
 				}
 			});
-			for(String s:opts) {
-				// select each item to set the font
-				BowlerStudio.runLater(()->options.getSelectionModel().select(s));
-				
-			}
 		}
-
+		thisLine.getChildren().add(options);
+		for(String s:opts) {
+			options.getItems().add(s);
+			options.getSelectionModel().select(s);
+		}
 		BowlerStudio.runLater(()->options.getSelectionModel().select(para.getStrValue()));
 		options.setMinWidth(width);
-		thisLine.getChildren().add(options);
 		options.setOnAction(event->{
 			para.setStrValue(options.getSelectionModel().getSelectedItem());
 			CSGDatabase.saveDatabase();
