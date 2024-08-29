@@ -347,17 +347,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void setUpNumberChoices(HBox thisLine, String text, LengthParameter para, int width) {
 		ComboBox<String> options = new ComboBox<String>();
 		
-		for(String s:para.getOptions()) {
+		ArrayList<String> options2 = para.getOptions();
+		for(String s:options2) {
 			options.getItems().add(s);
 		}
 		options.setEditable(true);
 		options.getSelectionModel().select(para.getMM()+"");
 		options.setMinWidth(width);
 		thisLine.getChildren().add(options);
+		double top = Double.parseDouble(options2.get(options2.size()-1));
+		double bot = Double.parseDouble(options2.get(0));
+
 		options.setOnAction(event->{
 			String string = options.getSelectionModel().getSelectedItem().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
+				if(parseDouble>top)
+					parseDouble=top;
+				if(parseDouble<bot)
+					parseDouble=bot;
 				para.setMM(parseDouble);
 				CSGDatabase.saveDatabase();
 			}catch(Throwable t) {
@@ -395,7 +403,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				protected void updateItem(String item, boolean empty) {
 					super.updateItem(item, empty);
 					setFont(Font.font(item));
-					setFont(Font.font(item));
 					setText(item);
 				}
 			});
@@ -403,7 +410,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		thisLine.getChildren().add(options);
 		for(String s:opts) {
 			options.getItems().add(s);
-			options.getSelectionModel().select(s);
+			BowlerStudio.runLater(()->options.getSelectionModel().select(s));
 		}
 		BowlerStudio.runLater(()->options.getSelectionModel().select(para.getStrValue()));
 		options.setMinWidth(width);

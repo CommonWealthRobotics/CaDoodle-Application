@@ -293,7 +293,7 @@ public class ControlSprites {
 			// moveUpLocation
 
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
-			TransformFactory.nrToAffine(new TransformNR(center.x, center.y, max.z + (ResizingHandle.getSize()*scaleSession.getViewScale())),
+			TransformFactory.nrToAffine(new TransformNR(center.x, center.y, 5+max.z + (ResizingHandle.getSize()*scaleSession.getViewScale())),
 					moveUpLocation);
 //			for (DottedLine l : lines) {
 //				// l.setStrokeWidth(1+lineScale);
