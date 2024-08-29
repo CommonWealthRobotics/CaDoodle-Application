@@ -362,6 +362,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				CSGDatabase.saveDatabase();
 			}catch(Throwable t) {
 				t.printStackTrace();
+				options.getSelectionModel().select(para.getMM()+"");
 			}
 			//System.out.println("Saving "+text);
 		});
