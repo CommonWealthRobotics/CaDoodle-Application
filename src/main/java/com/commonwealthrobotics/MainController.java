@@ -745,9 +745,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				showAllButton.setDisable(true);
 			});
 		}
-		if (this.source != source) {
-			session.save();
-		}
+//		if (this.source != source) {
+//			session.save();
+//		}
 		this.source = source;
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
