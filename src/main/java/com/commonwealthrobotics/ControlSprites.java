@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.commonwealthrobotics.allign.AllignManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -49,6 +50,7 @@ public class ControlSprites {
 	// private BowlerStudio3dEngine spriteEngine;
 	private ScaleSessionManager scaleSession;
 	private RotationSessionManager rotationManager;
+	private AllignManager allign;
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
 	// private Rectangle bottomDimentions = new Rectangle(100,100,new
 	// Color(0,0,1,0.25));
@@ -75,6 +77,7 @@ public class ControlSprites {
 	private double size;
 	private Bounds b;
 	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
+	private TransformNR cf;
 
 	public void setSnapGrid(double size) {
 		this.size = size;
@@ -172,6 +175,8 @@ public class ControlSprites {
 		allElems.addAll(tmp);
 
 		rotationManager = new RotationSessionManager(selection, cadoodle, this,workplaneOffset);
+		allign=new AllignManager(selection, workplaneOffset);
+		allElems.addAll(allign.getElements());
 		allElems.addAll(rotationManager.getElements());
 
 		clearSelection();
@@ -229,6 +234,7 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0,0,zoom));
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		updateCubes();
 		updateLines();
@@ -313,7 +319,7 @@ public class ControlSprites {
 	}
 
 	private void updateCubes() {
-		scaleSession.threeDTarget(screenW, screenH, zoom, b);
+		scaleSession.threeDTarget(screenW, screenH, zoom, b,cf);
 	}
 
 	public void clearSelection() {

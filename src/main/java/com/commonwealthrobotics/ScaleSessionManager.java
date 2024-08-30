@@ -27,9 +27,12 @@ public class ScaleSessionManager {
 	private double screenH;
 	private double zoom;
 	private double size=1;
+	private BowlerStudio3dEngine engine;
 	//private Affine workplaneOffset;
+	private TransformNR cf;
 
 	public ScaleSessionManager(BowlerStudio3dEngine engine,Affine selection, Runnable updateLines, CaDoodleFile cadoodle,SelectionSession sel, Affine workplaneOffset) {
+		this.engine = engine;
 		this.updateLines = updateLines;
 		//this.workplaneOffset = workplaneOffset;
 		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1),workplaneOffset);
@@ -191,7 +194,9 @@ public class ScaleSessionManager {
 		return topCenter.getScale();
 	}
 
-	public void threeDTarget(double w, double h, double z, Bounds b) {
+	public void threeDTarget(double w, double h, double z, Bounds b,TransformNR cameraFrame) {
+		cf = cameraFrame;
+
 
 		this.screenW = w;
 		this.screenH = h;
@@ -207,11 +212,11 @@ public class ScaleSessionManager {
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
 
-		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z));
-		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z));
-		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z));
-		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z));
-		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z));
+		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z),cf);
+		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z),cf);
+		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z),cf);
+		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z),cf);
+		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z),cf);
 		update();
 	}
 

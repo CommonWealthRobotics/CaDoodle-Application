@@ -171,10 +171,8 @@ public class ResizingHandle {
 		}
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target) {
-		TransformNR cf = engine.getFlyingCamera().getCamerFrame();//.times(new TransformNR(RotationNR.getRotationZ(180)));
-		TransformNR pureRot = new TransformNR(cf.getRotation());
-		cf=manipulator.getFrameOfReference().inverse().times( cf.times(new TransformNR(0,0,zoom)));
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target,TransformNR cf) {
+		cf=manipulator.getFrameOfReference().inverse().times( cf);
 
 		//System.out.println(cf.toSimpleString());
 		// Calculate the vector from camera to target
