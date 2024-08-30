@@ -238,7 +238,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onAllign(ActionEvent event) {
-		System.out.println("On Allign Clicked");
+		
 		session.onAllign();
 		session.setKeyBindingFocus();
 	}
@@ -778,6 +778,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					workplane.placeWorkplaneVisualization();
 				}
 				session.clearSelection();
+				session.cancleAllign();
 				System.out.println("Cancle");
 			}
 		});
@@ -878,6 +879,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				switch ((int) character.charAt(0)) {
 				case 100:
 					session.onDrop();
+					break;
+				case 108:
+					session.onAllign();
 					break;
 				case 99:
 					session.onCruse();

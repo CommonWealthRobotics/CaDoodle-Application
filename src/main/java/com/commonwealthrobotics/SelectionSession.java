@@ -361,7 +361,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (parseDouble < bot)
 					parseDouble = bot;
 				para.setMM(parseDouble);
-				//CSGDatabase.saveDatabase();
+				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
 				t.printStackTrace();
 				options.getSelectionModel().select(para.getMM() + "");
@@ -374,7 +374,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
 			para.setStrValue(tf.getText());
-			//CSGDatabase.saveDatabase();
+			// CSGDatabase.saveDatabase();
 			// System.out.println("Saving "+text);
 		});
 		thisLine.getChildren().add(tf);
@@ -411,9 +411,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			options.getSelectionModel().select(para.getStrValue());
 			options.setMinWidth(width);
 			options.setOnAction(event -> {
-				System.out.println(System.currentTimeMillis()+" Event "+event);
+				System.out.println(System.currentTimeMillis() + " Event " + event);
 				para.setStrValue(options.getSelectionModel().getSelectedItem());
-				//CSGDatabase.saveDatabase();
+				// CSGDatabase.saveDatabase();
 				// System.out.println("Saving "+text);
 			});
 		});
@@ -864,8 +864,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onAllign() {
-		// TODO Auto-generated method stub
+		if (controls == null)
+			return;
+		controls.setMode(SpriteDisplayMode.Allign);
+		controls.initializeAllign(getSelectedCSG(selectedSnapshot()));
+	}
 
+	public void cancleAllign() {
+		if (controls == null)
+			return;
+		if (controls.allignIsActive()) {
+			controls.setMode(SpriteDisplayMode.Default);
+		}
+
+		controls.cancleAllign();
 	}
 
 	public void setAllignButton(Button allignButton) {

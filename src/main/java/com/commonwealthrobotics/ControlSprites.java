@@ -2,6 +2,7 @@ package com.commonwealthrobotics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.commonwealthrobotics.allign.AllignManager;
@@ -236,10 +237,16 @@ public class ControlSprites {
 		this.z = z;
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0,0,zoom));
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
+		allign.threeDTarget(screenW, screenH, zoom, b, cf);
 		updateCubes();
 		updateLines();
 	}
-
+	public void initializeAllign(List<CSG> toAllign) {
+		allign.initialize(toAllign);
+	}
+	public void cancleAllign() {
+		allign.cancel();
+	}
 	private void initialize() {
 		for (Node r : allElems)
 			r.setVisible(true);
@@ -348,6 +355,8 @@ public class ControlSprites {
 			switch (this.mode) {
 			case Default:
 				initialize();
+				System.out.println("Hiding the allign handles");
+				allign.hide();
 				return;
 			case MoveXY:
 				for (DottedLine l : lines) {
@@ -377,5 +386,9 @@ public class ControlSprites {
 			}
 
 		});
+	}
+
+	public boolean allignIsActive() {
+		return allign.isActive();
 	}
 }

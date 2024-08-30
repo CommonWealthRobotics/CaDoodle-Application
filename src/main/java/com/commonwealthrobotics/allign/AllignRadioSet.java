@@ -21,15 +21,14 @@ public class AllignRadioSet {
 	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d){
 		this.name = name;
 		this.vector3d = vector3d;
-		positive = new AllignHandle(Allignment.positive,move,workplaneOffset);
-		middle = new AllignHandle(Allignment.middle,move,workplaneOffset);
-		negetive = new AllignHandle(Allignment.negative,move,workplaneOffset);
+		positive = new AllignHandle(Allignment.positive,move,workplaneOffset,vector3d);
+		middle = new AllignHandle(Allignment.middle,move,workplaneOffset,vector3d);
+		negetive = new AllignHandle(Allignment.negative,move,workplaneOffset,vector3d);
 	}
 	public void threeDTarget(double screenW, double screenH, double zoom,Bounds b, TransformNR cf) {
-		TransformNR target = new TransformNR();
-		positive.threeDTarget(screenW, screenH, zoom, target, cf);
-		middle.threeDTarget(screenW, screenH, zoom, target, cf);
-		negetive.threeDTarget(screenW, screenH, zoom, target, cf);
+		positive.threeDTarget(screenW, screenH, zoom, b, cf);
+		middle.threeDTarget(screenW, screenH, zoom, b, cf);
+		negetive.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
 	public List<Node> getElements(){
 		ArrayList<Node> result = new ArrayList<Node>(); 
