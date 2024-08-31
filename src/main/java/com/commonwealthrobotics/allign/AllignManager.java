@@ -33,6 +33,12 @@ public class AllignManager {
 		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0,1,0));
 		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0,0,1));
 		AS_LIST = Arrays.asList(frontBack,leftRight,upDown);
+		for(AllignRadioSet r: AS_LIST) {
+			r.setOnClickCallback(()->{
+				System.out.println("AllignManager clicked");
+				allignemntSelected=true;
+			});
+		}
 		hide();
 	}
 	public void threeDTarget(double screenW, double screenH, double zoom,Bounds b, TransformNR cf) {
@@ -67,13 +73,15 @@ public class AllignManager {
 		return toAllign.size()>1;
 	}
 	public void cancel() {
-		hide();
 		if(isActive()) {
 			this.toAllign.clear();
-			if(allignemntSelected == false)
-				session.addOp(opperation);
+			if(allignemntSelected == false) {
+				System.out.println("Add op "+opperation);
+				//session.addOp(opperation);
+			}
 			opperation=null;
 		}
+		hide();
 	}
 	public void hide() {
 		for(AllignRadioSet r: AS_LIST) {

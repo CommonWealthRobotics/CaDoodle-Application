@@ -49,6 +49,9 @@ public class AllignHandle {
 	private EventHandler<? super MouseEvent> entered;
 
 	private EventHandler<? super MouseEvent> exited;
+	private EventHandler<? super MouseEvent> onClickEvent;
+
+	private Runnable onClick;
 
 	public AllignHandle(Allignment set, Affine move, Affine workplaneOffset, Vector3d vector3d) {
 		self = set;
@@ -67,7 +70,7 @@ public class AllignHandle {
 			CSG h = pointer.union(nub);
 			mesh = h.getMesh();
 			material = new PhongMaterial();
-			material.setDiffuseColor(Color.BLACK);
+
 			mesh.setCullFace(CullFace.NONE);
 			mesh.setMaterial(material);
 			exited = event -> {
@@ -76,6 +79,21 @@ public class AllignHandle {
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
 				System.out.println("ENtered " + self + " " + orentation);
+			};
+			onClickEvent = event -> {
+				onClick.run();
+				System.out.println("Handle clicked ");
+				material.setDiffuseColor(Color.GRAY);
+				getHandle().removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
+				getHandle().removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
+				getHandle().removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
+				if(isXvector())
+					opperation.x=self;
+				if(isYvector())
+					opperation.y=self;
+				if(isZvector())
+					opperation.z=self;
+
 			};
 			mesh.getTransforms().add(move);
 			mesh.getTransforms().add(allignLoc);
@@ -238,12 +256,23 @@ public class AllignHandle {
 		this.engine = engine;
 		this.toAllign = toAllign;
 		this.selected = selected;
-		getHandle().setVisible(true);
-		getHandle().addEventFilter(MouseEvent.MOUSE_EXITED, exited);
-		getHandle().addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
+		reset();
 	}
 
 	public void hide() {
 		getHandle().setVisible(false);
+	}
+
+	public void setOnClickCallback(Runnable onClick) {
+		this.onClick = onClick;
+
+	}
+
+	public void reset() {
+		getHandle().setVisible(true);
+		getHandle().addEventFilter(MouseEvent.MOUSE_EXITED, exited);
+		getHandle().addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
+		getHandle().addEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
+		material.setDiffuseColor(Color.BLACK);
 	}
 }

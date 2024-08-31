@@ -53,4 +53,15 @@ public class AllignRadioSet {
 			r.hide();
 		}
 	}
+	public void setOnClickCallback(Runnable onClick) {
+		for(AllignHandle r: asList) {
+			r.setOnClickCallback(()->{
+				System.out.println("Radio group click ");
+				for(AllignHandle ah: asList) {
+					ah.reset();
+				}
+				onClick.run();
+			});			
+		}
+	}
 }
