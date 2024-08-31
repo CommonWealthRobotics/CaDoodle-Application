@@ -679,13 +679,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCruse() {
 		TransformNR wp = cadoodle.getWorkplane();
-
-		System.out.println("On Cruse");
 		List<String> selectedSnapshot = selectedSnapshot();
 		if(selectedSnapshot.size()==0) {
-			new RuntimeException("Cruse called with nothing selected").printStackTrace();
+			//new RuntimeException("Cruse called with nothing selected").printStackTrace();
 			return;
 		}
+		System.out.println("On Cruse");
 		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
 		CSG indicator = selectedCSG.get(0);
 		if (selectedCSG.size() > 1) {

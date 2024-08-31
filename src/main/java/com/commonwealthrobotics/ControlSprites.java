@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.commonwealthrobotics.allign.AllignManager;
+import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
