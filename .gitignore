@@ -30,3 +30,4 @@ bowler
 /.gradle/
 **~
 /CSGdatabase.json
+**-autosave.kra
