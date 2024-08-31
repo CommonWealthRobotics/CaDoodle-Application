@@ -8,6 +8,7 @@ import java.util.List;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.rotate.RotationHandle;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -37,6 +38,17 @@ public class AllignManager {
 			r.setOnClickCallback(()->{
 				System.out.println("AllignManager clicked");
 				setAllignemntSelected(true);
+				recompute(()->{
+					ICaDoodleOpperation curOp = session.getCadoodle().currentOpperation();
+					if(curOp!= opperation)
+						session.addOp(opperation);
+					else
+						session.getCadoodle().regenerateCurrent();
+					
+					session.selectAll(opperation.getNames());
+				});
+				
+				
 			});
 		}
 		hide();
@@ -63,15 +75,23 @@ public class AllignManager {
 		this.toAllign.clear();
 		for(CSG c:toAllign)
 			this.toAllign.add( c);
-		opperation=new Allign().setNames(selected);
+		opperation=new Allign().setNames(selected).setWorkplane(session.getWorkplane());
 		System.out.println("Allign manager reinitialized");
 		setAllignemntSelected(false);
-		new Thread(()->{
-			for(AllignRadioSet r: AS_LIST) {
-				r.initialize(opperation,engine,toAllign,selected);
-			}
-		}).start();
+		for(AllignRadioSet r: AS_LIST) {
+			r.initialize(opperation,engine,toAllign,selected);
+		}
+		recompute(null);
 	
+	}
+	private void recompute(Runnable r) {
+		new Thread(()->{
+			for(AllignRadioSet rs: AS_LIST) {
+				rs.recomputeOps();
+			}
+			if(r!=null)
+				r.run();
+		}).start();
 	}
 	public boolean isActive() {
 		return toAllign.size()>1;
@@ -82,7 +102,7 @@ public class AllignManager {
 			this.toAllign.clear();
 			if(isAllignemntSelected() ) {
 				System.out.println("Add op "+opperation);
-				//session.addOp(opperation);
+				
 			}
 			opperation=null;
 		}

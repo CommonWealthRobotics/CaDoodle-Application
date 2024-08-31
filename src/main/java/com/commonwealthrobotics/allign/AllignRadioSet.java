@@ -64,4 +64,9 @@ public class AllignRadioSet {
 			});			
 		}
 	}
+	public void recomputeOps() {
+		for(AllignHandle ah: asList) {
+			ah.recomputeOps();
+		}
+	}
 }

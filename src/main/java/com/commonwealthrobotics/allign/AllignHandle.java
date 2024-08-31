@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.allign;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -23,6 +24,9 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
 public class AllignHandle {
+	private BowlerStudio3dEngine engine;
+
+	private HashMap<CSG,MeshView> visualizers = new HashMap<>();
 	private double scale;
 
 	public Allignment self;
@@ -38,7 +42,6 @@ public class AllignHandle {
 
 	private Allign opperation;
 
-	private BowlerStudio3dEngine engine;
 
 	private List<CSG> toAllign;
 
@@ -52,6 +55,8 @@ public class AllignHandle {
 	private EventHandler<? super MouseEvent> onClickEvent;
 
 	private Runnable onClick;
+
+	private List<CSG> visualizationObjects;
 
 	public AllignHandle(Allignment set, Affine move, Affine workplaneOffset, Vector3d vector3d) {
 		self = set;
@@ -75,10 +80,16 @@ public class AllignHandle {
 			mesh.setMaterial(material);
 			exited = event -> {
 				material.setDiffuseColor(Color.BLACK);
+				for(CSG key:visualizers.keySet()) {
+					visualizers.get(key).setVisible(false);
+				}
 			};
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
 				System.out.println("ENtered " + self + " " + orentation);
+				for(CSG key:visualizers.keySet()) {
+					visualizers.get(key).setVisible(true);
+				}
 			};
 			onClickEvent = event -> {
 				onClick.run();
@@ -87,13 +98,7 @@ public class AllignHandle {
 				getHandle().removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
-				if(isXvector())
-					opperation.x=self;
-				if(isYvector())
-					opperation.y=self;
-				if(isZvector())
-					opperation.z=self;
-
+				setMyOperation();
 			};
 			mesh.getTransforms().add(move);
 			mesh.getTransforms().add(allignLoc);
@@ -108,6 +113,15 @@ public class AllignHandle {
 		}
 
 		return mesh;
+	}
+
+	private void setMyOperation() {
+		if(isXvector())
+			opperation.x=self;
+		if(isYvector())
+			opperation.y=self;
+		if(isZvector())
+			opperation.z=self;
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf) {
@@ -274,5 +288,44 @@ public class AllignHandle {
 		getHandle().addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
 		getHandle().addEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
 		material.setDiffuseColor(Color.BLACK);
+	}
+
+	public void recomputeOps() {
+		Allignment x= opperation.x;
+		Allignment y=opperation.y;
+		Allignment z=opperation.z;
+		setMyOperation();
+		
+		if(visualizationObjects!=null) {
+			for(CSG obj:visualizationObjects) {
+				MeshView mv = visualizers.remove(obj);
+				engine.removeUserNode(mv);
+			}
+		}
+		visualizationObjects = opperation.process(toAllign);
+		for(CSG indicator:visualizationObjects) {
+			MeshView indicatorMesh = indicator.newMesh();
+			indicatorMesh.setMouseTransparent(true);
+			//indicatorMesh.getTransforms().addAll(workplaneOffset);
+			PhongMaterial material = new PhongMaterial();
+
+			if (indicator.isHole()) {
+				// material.setDiffuseMap(texture);
+				material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+			} else {
+				Color c = indicator.getColor();
+				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
+				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+			}
+			indicatorMesh.setMaterial(material);
+			engine.addUserNode(indicatorMesh);
+			indicatorMesh.setVisible(false);
+			visualizers.put(indicator, indicatorMesh);
+		}
+		
+		opperation.x=x;
+		opperation.y=y;
+		opperation.z = z;
 	}
 }

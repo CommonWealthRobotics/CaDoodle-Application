@@ -159,7 +159,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.setCadoodle(file);
 		intitialization = true;
 		manipulation.set(0, 0, 0);
-		controls.setMode(SpriteDisplayMode.Default);
+		if (controls.allignIsActive())
+			controls.setMode(SpriteDisplayMode.Allign);
+		else
+			controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
 		displayCurrent();
 		setUpParametrics(currentState, source);
@@ -478,26 +481,30 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearSelection() {
-		cancleAllign();	
+		cancleAllign();
 		selected.clear();
 		updateSelection();
 		setKeyBindingFocus();
 	}
 
-	public void selectAll(HashSet<String> select) {
+	public void selectAll(Iterable<String> names) {
 		selected.clear();
 		for (CSG c : getCurrentState()) {
 			if (c.isInGroup())
 				continue;
 			if (c.isHide())
 				continue;
-			if (select.contains(c.getName()))
-				selected.add(c.getName());
+			for (String s : names)
+				if (s.contains(c.getName())) {
+					selected.add(c.getName());
+					break;
+				}
 		}
 		BowlerStudio.runLater(() -> {
 
 			updateSelection();
 		});
+
 	}
 
 	public void selectAll() {
@@ -686,8 +693,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onCruse() {
 		TransformNR wp = cadoodle.getWorkplane();
 		List<String> selectedSnapshot = selectedSnapshot();
-		if(selectedSnapshot.size()==0) {
-			//new RuntimeException("Cruse called with nothing selected").printStackTrace();
+		if (selectedSnapshot.size() == 0) {
+			// new RuntimeException("Cruse called with nothing selected").printStackTrace();
 			return;
 		}
 		System.out.println("On Cruse");
@@ -1147,6 +1154,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onSaveSuggestion() {
 		// The Main COntroller triggers this
+	}
+
+	public TransformNR getWorkplane() {
+		return cadoodle.getWorkplane();
 	}
 
 }

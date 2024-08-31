@@ -357,7 +357,6 @@ public class ControlSprites {
 			switch (this.mode) {
 			case Default:
 				initialize();
-				System.out.println("Hiding the allign handles");
 				allign.hide();
 				return;
 			case MoveXY:
