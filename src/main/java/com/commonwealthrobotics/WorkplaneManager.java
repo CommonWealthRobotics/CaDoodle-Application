@@ -60,7 +60,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		this.ground = ground;
 		this.engine = engine;
 		this.session = session;
-		wpPick = new Cube(200, 200, 0.1).toCSG().newMesh();
+		wpPick = new Cube(200, 200, 0.001).toCSG().newMesh();
 		PhongMaterial material = new PhongMaterial();
 
 		// material.setDiffuseMap(texture);
@@ -215,9 +215,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		// Convert to degrees
 		azimuth = Math.toDegrees(azimuth) - 90;
 		tilt = Math.toDegrees(tilt) - 90;
-		if (Math.abs(tilt) < 0.01) {
-			azimuth = 0;
-		}
+
 		Point3D globalX = new Point3D(1, 0, 0);
 		Point3D localY = normal.crossProduct(globalX).normalize();
 		Point3D localX = normal.crossProduct(localY).normalize();
