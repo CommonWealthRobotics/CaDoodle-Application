@@ -177,7 +177,7 @@ public class ControlSprites {
 		allElems.addAll(tmp);
 
 		rotationManager = new RotationSessionManager(selection, cadoodle, this,workplaneOffset);
-		allign=new AllignManager(selection, workplaneOffset);
+		allign=new AllignManager(session,selection, workplaneOffset);
 		allElems.addAll(allign.getElements());
 		allElems.addAll(rotationManager.getElements());
 
@@ -243,7 +243,7 @@ public class ControlSprites {
 		updateLines();
 	}
 	public void initializeAllign(List<CSG> toAllign) {
-		allign.initialize(toAllign);
+		allign.initialize(engine,toAllign,session.selectedSnapshot());
 	}
 	public void cancleAllign() {
 		allign.cancel();

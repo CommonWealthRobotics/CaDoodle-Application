@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.Main;
 import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.TexturedCSG;
 import com.commonwealthrobotics.WorkplaneManager;
@@ -225,7 +226,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		MeshView meshView = c.getMesh();
 		if (c.isHole()) {
-			Image texture = new Image(getClass().getResourceAsStream("holeTexture.png"));
+			Image texture = new Image(Main.class.getResourceAsStream("holeTexture.png"));
 
 			meshView = new TexturedCSG(c, texture);
 			// addTextureCoordinates(meshView);
@@ -567,7 +568,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return new TransformNR(boxes.getCenterX(), -boxes.getCenterY(), -boxes.getCenterZ());
 	}
 
-	private void addOp(ICaDoodleOpperation h) {
+	public void addOp(ICaDoodleOpperation h) {
 		if (getCadoodle() == null)
 			return;
 		if (getCadoodle().isOperationRunning()) {
