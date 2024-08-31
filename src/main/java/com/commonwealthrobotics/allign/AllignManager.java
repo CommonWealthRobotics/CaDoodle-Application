@@ -36,7 +36,7 @@ public class AllignManager {
 		for(AllignRadioSet r: AS_LIST) {
 			r.setOnClickCallback(()->{
 				System.out.println("AllignManager clicked");
-				allignemntSelected=true;
+				setAllignemntSelected(true);
 			});
 		}
 		hide();
@@ -64,18 +64,23 @@ public class AllignManager {
 		for(CSG c:toAllign)
 			this.toAllign.add( c);
 		opperation=new Allign().setNames(selected);
-		allignemntSelected = false;
-		for(AllignRadioSet r: AS_LIST) {
-			r.initialize(opperation,engine,toAllign,selected);
-		}
+		System.out.println("Allign manager reinitialized");
+		setAllignemntSelected(false);
+		new Thread(()->{
+			for(AllignRadioSet r: AS_LIST) {
+				r.initialize(opperation,engine,toAllign,selected);
+			}
+		}).start();
+	
 	}
 	public boolean isActive() {
 		return toAllign.size()>1;
 	}
 	public void cancel() {
+		System.out.println("Allign canceled here");
 		if(isActive()) {
 			this.toAllign.clear();
-			if(allignemntSelected == false) {
+			if(isAllignemntSelected() ) {
 				System.out.println("Add op "+opperation);
 				//session.addOp(opperation);
 			}
@@ -90,5 +95,12 @@ public class AllignManager {
 		for(Node n:getElements()) {
 			n.setVisible(false);
 		}
+	}
+	public boolean isAllignemntSelected() {
+		return allignemntSelected;
+	}
+	public void setAllignemntSelected(boolean allignemntSelected) {
+		//new Exception("Allignment selected set to "+allignemntSelected).printStackTrace();
+		this.allignemntSelected = allignemntSelected;
 	}
 }

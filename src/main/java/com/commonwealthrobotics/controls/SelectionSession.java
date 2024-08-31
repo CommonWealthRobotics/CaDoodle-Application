@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -74,7 +75,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private GridPane configurationGrid;
 	private AnchorPane control3d;
 	private BowlerStudio3dEngine engine;
-	private HashSet<String> selected = new HashSet<String>();
+	private LinkedHashSet<String> selected = new LinkedHashSet<>();
 	private ColorPicker colorPicker;
 	private ComboBox<String> snapGrid;
 	private double currentGrid = 1.0;
