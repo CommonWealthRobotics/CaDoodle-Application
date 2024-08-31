@@ -1,4 +1,4 @@
-package com.commonwealthrobotics;
+package com.commonwealthrobotics.controls;
 
 public enum SpriteDisplayMode {
 	Default,

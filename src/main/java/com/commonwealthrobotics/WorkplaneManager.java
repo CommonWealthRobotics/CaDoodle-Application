@@ -3,6 +3,7 @@ package com.commonwealthrobotics;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;

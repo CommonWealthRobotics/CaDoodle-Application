@@ -1,4 +1,4 @@
-package com.commonwealthrobotics;
+package com.commonwealthrobotics.controls;
 
 import java.util.Arrays;
 import java.util.List;

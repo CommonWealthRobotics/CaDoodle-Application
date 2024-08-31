@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.commonwealthrobotics.ControlSprites;
+import com.commonwealthrobotics.controls.ControlSprites;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;

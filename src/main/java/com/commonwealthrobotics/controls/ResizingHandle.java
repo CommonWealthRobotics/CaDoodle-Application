@@ -1,4 +1,4 @@
-package com.commonwealthrobotics;
+package com.commonwealthrobotics.controls;
 
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;

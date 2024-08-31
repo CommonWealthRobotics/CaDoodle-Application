@@ -2,10 +2,10 @@ package com.commonwealthrobotics.rotate;
 
 import java.util.List;
 
-import com.commonwealthrobotics.ControlSprites;
 import com.commonwealthrobotics.MainController;
-import com.commonwealthrobotics.Quadrent;
-import com.commonwealthrobotics.SpriteDisplayMode;
+import com.commonwealthrobotics.controls.ControlSprites;
+import com.commonwealthrobotics.controls.Quadrent;
+import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;

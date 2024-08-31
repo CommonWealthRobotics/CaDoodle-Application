@@ -1,4 +1,4 @@
-package com.commonwealthrobotics;
+package com.commonwealthrobotics.controls;
 
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 

@@ -1,4 +1,4 @@
-package com.commonwealthrobotics;
+package com.commonwealthrobotics.controls;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.MainController;
+import com.commonwealthrobotics.TexturedCSG;
+import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;

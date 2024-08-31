@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 
 import eu.mihosoft.vrl.v3d.Vector3d;
 
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
