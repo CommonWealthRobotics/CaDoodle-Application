@@ -472,7 +472,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearSelection() {
-		// System.out.println("Background Click " + event.getSource());
+		cancleAllign();	
 		selected.clear();
 		updateSelection();
 		setKeyBindingFocus();
@@ -681,7 +681,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TransformNR wp = cadoodle.getWorkplane();
 
 		System.out.println("On Cruse");
-		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+		List<String> selectedSnapshot = selectedSnapshot();
+		if(selectedSnapshot.size()==0) {
+			new RuntimeException("Cruse called with nothing selected").printStackTrace();
+			return;
+		}
+		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
 		CSG indicator = selectedCSG.get(0);
 		if (selectedCSG.size() > 1) {
 			indicator = CSG.unionAll(selectedCSG);

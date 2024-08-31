@@ -684,14 +684,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		Image image = new Image(Main.class.getResourceAsStream("BlueNoise470.png"));
 		ground = new ImageView(image);
 		ground.setOpacity(0.25);
-		ground.setScaleX(2);
-		ground.setScaleY(2);
+		ground.setScaleX(groundScale());
+		ground.setScaleY(groundScale());
 		ground.setX(-image.getWidth() / 2);
 		ground.setY(-image.getHeight() / 2);
 		ground.setTranslateZ(-0.1);
 
 		engine.addUserNode(ground);
 
+	}
+	public static double groundScale() {
+		return 0.75;
 	}
 
 	private void setUpNavigationCube() {
@@ -777,8 +780,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					cadoodle.setWorkplane(new TransformNR());
 					workplane.placeWorkplaneVisualization();
 				}
+				
 				session.clearSelection();
-				session.cancleAllign();
+				
 				System.out.println("Cancle");
 			}
 		});

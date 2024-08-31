@@ -251,6 +251,7 @@ public class ControlSprites {
 		for (Node r : allElems)
 			r.setVisible(true);
 		rotationManager.initialize();
+		allign.hide();
 	}
 
 	private void updateLines() {

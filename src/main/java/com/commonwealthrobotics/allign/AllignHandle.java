@@ -66,7 +66,7 @@ public class AllignHandle {
 			mesh.getTransforms().add(scaleTF);
 			mesh.setVisible(false);
 			mesh.visibleProperty().addListener( (observable, oldValue, newValue) -> {
-				new Exception("Mesh visibilitr changed "+newValue).printStackTrace();
+				//new Exception("Mesh visibilitr changed "+newValue).printStackTrace();
 			});
 		}
 

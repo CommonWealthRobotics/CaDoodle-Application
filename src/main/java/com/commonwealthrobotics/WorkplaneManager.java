@@ -163,9 +163,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			double y = intersectedPoint.getY();
 			double z = intersectedPoint.getZ();
 			if (ev.getSource() == ground) {
-				x *= 2;
-				y *= 2;
-				z *= 2;
+				x *= MainController.groundScale();
+				y *=  MainController.groundScale();
+				z *=  MainController.groundScale();
 			}
 			TransformNR screenLocation;
 			double[] angles = new double[] { 0, 0, 0 };
