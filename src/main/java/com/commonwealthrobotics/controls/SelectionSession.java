@@ -159,7 +159,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.setCadoodle(file);
 		intitialization = true;
 		manipulation.set(0, 0, 0);
-		if (controls.allignIsActive())
+		if (controls.allignIsActive() && Allign.class.isInstance(source))
 			controls.setMode(SpriteDisplayMode.Allign);
 		else
 			controls.setMode(SpriteDisplayMode.Default);
