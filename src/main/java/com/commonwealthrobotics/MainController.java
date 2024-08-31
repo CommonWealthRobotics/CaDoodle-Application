@@ -938,4 +938,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double screenH = engine.getSubScene().getHeight();
 		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 	}
+
+	@Override
+	public void onSaveSuggestion() {
+		session.save();
+	}
 }

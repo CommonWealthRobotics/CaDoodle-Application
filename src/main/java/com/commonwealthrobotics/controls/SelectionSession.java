@@ -1143,4 +1143,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
+	@Override
+	public void onSaveSuggestion() {
+		// The Main COntroller triggers this
+	}
+
 }
