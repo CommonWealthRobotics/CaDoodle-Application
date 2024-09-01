@@ -269,9 +269,9 @@ public class ControlSprites {
 			footprint.setY(Math.min( min.y,max.y));
 
 			double lineScale = 2 * (-zoom / 1000);
-			double lineEndOffsetY = Math.min(5 * lineScale, max.y - min.y);
-			double lineEndOffsetX = Math.min(5 * lineScale, max.x - min.x);
-			double lineEndOffsetZ = Math.min(5, max.z - min.z);
+			double lineEndOffsetY = 0;//Math.min(5 * lineScale, max.y - min.y);
+			double lineEndOffsetX = 0;//Math.min(5 * lineScale, max.x - min.x);
+			double lineEndOffsetZ = 0;//Math.min(5, max.z - min.z);
 			frontLine.setStartX(max.x);
 			frontLine.setStartY(min.y + lineEndOffsetY);
 			frontLine.setEndX(max.x);
