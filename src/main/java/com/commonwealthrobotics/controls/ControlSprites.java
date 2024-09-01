@@ -3,6 +3,7 @@ package com.commonwealthrobotics.controls;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import com.commonwealthrobotics.allign.AllignManager;
@@ -242,8 +243,8 @@ public class ControlSprites {
 		updateCubes();
 		updateLines();
 	}
-	public void initializeAllign(List<CSG> toAllign) {
-		allign.initialize(engine,toAllign,session.selectedSnapshot());
+	public void initializeAllign(List<CSG> toAllign,Bounds b, HashMap<CSG, MeshView> meshes) {
+		allign.initialize(b,engine,toAllign,session.selectedSnapshot(),meshes);
 	}
 	public void cancleAllign() {
 		allign.cancel();
@@ -381,7 +382,10 @@ public class ControlSprites {
 				break;
 			case Rotating:
 				break;
-			default:
+			case Allign:
+				for (DottedLine l : lines) {
+					l.setVisible(true);
+				}
 				break;
 
 			}

@@ -3,6 +3,7 @@ package com.commonwealthrobotics.allign;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -15,7 +16,10 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
 public class AllignManager {
@@ -23,104 +27,151 @@ public class AllignManager {
 	AllignRadioSet frontBack;
 	AllignRadioSet leftRight;
 	AllignRadioSet upDown;
-	Allign opperation =null;
+	Allign opperation = null;
 	private ArrayList<CSG> toAllign = new ArrayList<CSG>();
 	private SelectionSession session;
 	private boolean allignemntSelected = false;
+	private HashMap<CSG, MeshView> meshes;
+	private HashMap<CSG, EventHandler<? super MouseEvent>> events = new HashMap<CSG, EventHandler<? super MouseEvent>>();
+	private double screenW;
+	private double screenH;
+	private double zoom;
+	private TransformNR cf;
+	private Bounds b;
 
 	public AllignManager(SelectionSession session, Affine move, Affine workplaneOffset) {
 		this.session = session;
-		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1,0,0));
-		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0,1,0));
-		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0,0,1));
-		AS_LIST = Arrays.asList(frontBack,leftRight,upDown);
-		for(AllignRadioSet r: AS_LIST) {
-			r.setOnClickCallback(()->{
+		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0));
+		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0));
+		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1));
+		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
+		for (AllignRadioSet r : AS_LIST) {
+			r.setOnClickCallback(() -> {
 				System.out.println("AllignManager clicked");
 				setAllignemntSelected(true);
-				recompute(()->{
+				recompute(() -> {
 					ICaDoodleOpperation curOp = session.getCadoodle().currentOpperation();
-					if(curOp!= opperation)
+					if (curOp != opperation)
 						session.addOp(opperation);
 					else
 						session.getCadoodle().regenerateCurrent();
-					
+
 					session.selectAll(opperation.getNames());
 				});
-				
-				
+
 			});
 		}
 		hide();
 	}
-	public void threeDTarget(double screenW, double screenH, double zoom,Bounds b, TransformNR cf) {
+
+	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c) {
+		this.screenW = w;
+		this.screenH = h;
+		this.zoom = z;
+		this.b = bo;
+		this.cf = c;
+		updateHandles();
+
+	}
+
+	private void updateHandles() {
+		if(opperation!=null)
+			b = opperation.getBounds();
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
-	public List<Node> getElements(){
-		ArrayList<Node> result = new ArrayList<Node>(); 
-		for(AllignRadioSet r: AS_LIST) {
-			result.addAll(r. getElements());
+
+	public List<Node> getElements() {
+		ArrayList<Node> result = new ArrayList<Node>();
+		for (AllignRadioSet r : AS_LIST) {
+			result.addAll(r.getElements());
 		}
 		return result;
 	}
+
 	public ArrayList<CSG> getToAllign() {
 		return toAllign;
 	}
-	public void initialize(BowlerStudio3dEngine engine,List<CSG> toAllign, List<String> selected) {
-		for(Node n:getElements()) {
+
+	public void initialize(Bounds b, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
+			HashMap<CSG, MeshView> meshes) {
+		this.meshes = meshes;
+		for (Node n : getElements()) {
 			n.setVisible(true);
 		}
 		this.toAllign.clear();
-		for(CSG c:toAllign)
-			this.toAllign.add( c);
-		opperation=new Allign().setNames(selected).setWorkplane(session.getWorkplane());
+		for (CSG c : ta)
+			this.toAllign.add(c);
+		opperation = new Allign().setNames(selected).setWorkplane(session.getWorkplane());
+		opperation.setBounds(b);
+
 		System.out.println("Allign manager reinitialized");
 		setAllignemntSelected(false);
-		for(AllignRadioSet r: AS_LIST) {
-			r.initialize(opperation,engine,toAllign,selected);
+		for (AllignRadioSet r : AS_LIST) {
+			r.initialize(opperation, engine, toAllign, selected);
 		}
 		recompute(null);
-	
+		for (CSG c : toAllign) {
+			MeshView mv = meshes.get(c);
+			EventHandler<? super MouseEvent> eventFilter = event -> {
+				opperation.setBounds(c.getBounds());
+				recompute(null);
+				updateHandles();
+			};
+			mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
+			events.put(c, eventFilter);
+		}
 	}
+
 	private void recompute(Runnable r) {
-		new Thread(()->{
-			for(AllignRadioSet rs: AS_LIST) {
+		new Thread(() -> {
+			for (AllignRadioSet rs : AS_LIST) {
 				rs.recomputeOps();
 			}
-			if(r!=null)
+			if (r != null)
 				r.run();
 		}).start();
 	}
+
 	public boolean isActive() {
-		return toAllign.size()>1;
+		return toAllign.size() > 1;
 	}
+
 	public void cancel() {
 		System.out.println("Allign canceled here");
-		if(isActive()) {
+		if (isActive()) {
 			this.toAllign.clear();
-			if(isAllignemntSelected() ) {
-				System.out.println("Add op "+opperation);
-				
+			if (isAllignemntSelected()) {
+				System.out.println("Add op " + opperation);
+
 			}
-			opperation=null;
+			opperation = null;
 		}
 		hide();
+		for (CSG c : toAllign) {
+			MeshView mv = meshes.get(c);
+			EventHandler<? super MouseEvent> eventFilter = events.remove(c);
+			mv.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
+		}
 	}
+
 	public void hide() {
-		for(AllignRadioSet r: AS_LIST) {
+		for (AllignRadioSet r : AS_LIST) {
 			r.hide();
 		}
-		for(Node n:getElements()) {
+		for (Node n : getElements()) {
 			n.setVisible(false);
 		}
 	}
+
 	public boolean isAllignemntSelected() {
 		return allignemntSelected;
 	}
+
 	public void setAllignemntSelected(boolean allignemntSelected) {
-		//new Exception("Allignment selected set to "+allignemntSelected).printStackTrace();
+		// new Exception("Allignment selected set to
+		// "+allignemntSelected).printStackTrace();
 		this.allignemntSelected = allignemntSelected;
 	}
 }

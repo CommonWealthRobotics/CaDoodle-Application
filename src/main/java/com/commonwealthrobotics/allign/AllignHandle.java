@@ -86,7 +86,7 @@ public class AllignHandle {
 			};
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
-				System.out.println("ENtered " + self + " " + orentation);
+				//System.out.println("ENtered " + self + " " + orentation);
 				for(CSG key:visualizers.keySet()) {
 					visualizers.get(key).setVisible(true);
 				}

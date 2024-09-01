@@ -884,7 +884,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (controls == null)
 			return;
 		controls.setMode(SpriteDisplayMode.Allign);
-		controls.initializeAllign(getSelectedCSG(selectedSnapshot()));
+		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+		Bounds b = getSellectedBounds(selectedCSG);
+		controls.initializeAllign(selectedCSG,b,meshes);
 	}
 
 	public void cancleAllign() {
