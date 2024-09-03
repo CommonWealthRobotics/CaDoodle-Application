@@ -793,6 +793,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		SubScene subScene = engine.getSubScene();
 
 		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+			if(session.isFocused()) {
+				System.out.println("Key ignonred, session in focus");
+				return;
+			}
+				
 			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
 				switch (event.getCode()) {
@@ -826,6 +831,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 		});
 		subScene.setOnKeyTyped(event -> {
+			if(session.isFocused()) {
+				//System.out.println("Key ignonred, session in focus");
+				return;
+			}
 			String character = event.getCharacter();
 
 			// You can still use the key code for non-character keys

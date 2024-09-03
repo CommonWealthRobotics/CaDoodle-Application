@@ -35,11 +35,15 @@ public class ScaleSessionManager {
 		this.engine = engine;
 		this.updateLines = updateLines;
 		//this.workplaneOffset = workplaneOffset;
-		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1),workplaneOffset);
-		rightFront= new ResizingHandle("rightFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
-		rightRear =new ResizingHandle("rightRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
-		leftFront =new ResizingHandle("leftFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
-		leftRear =new ResizingHandle("leftRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset);
+		Runnable onSelect = () -> {
+			resetSelected();
+			updateLines.run();
+		};
+		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1),workplaneOffset,onSelect);
+		rightFront= new ResizingHandle("rightFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
+		rightRear =new ResizingHandle("rightRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
+		leftFront =new ResizingHandle("leftFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
+		leftRear =new ResizingHandle("leftRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
 
 		rightFront.manipulator.addEventListener(()->{
 			if(beingUpdated==null)
@@ -219,7 +223,19 @@ public class ScaleSessionManager {
 		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z),cf);
 		update();
 	}
-
+	
+	boolean leftSelected() {
+		return leftFront.isSelected() || leftRear.isSelected();
+	}
+	boolean rightSelected() {
+		return rightFront.isSelected() || rightRear.isSelected();
+	}
+	boolean frontSelected() {
+		return rightFront.isSelected() || leftFront.isSelected();
+	}
+	boolean rearSelected() {
+		return rightRear.isSelected() || leftRear.isSelected();
+	}
 	public Bounds getBounds() {
 		TransformNR lr = rightRear.getCurrentInReferenceFrame();
 		TransformNR rf = leftFront.getCurrentInReferenceFrame();
@@ -235,4 +251,12 @@ public class ScaleSessionManager {
 			ctrl.manipulator.setIncrement(size);
 		}
 	}
+
+	public void resetSelected() {
+		for(ResizingHandle c:controls) {
+			c.resetSelected();
+		}
+	}
+
+
 }

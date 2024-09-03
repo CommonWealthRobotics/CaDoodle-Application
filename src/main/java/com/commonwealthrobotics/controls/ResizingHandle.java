@@ -29,89 +29,110 @@ public class ResizingHandle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-	private static final double size=20;
+	private static final double size = 20;
 	private MeshView mesh;
+	
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
 	private double scale;
-	Manipulation manipulator;
 	private Affine resizeHandleLocation = new Affine();
+
+	Manipulation manipulator;
 	private String name;
-	//private Tooltip hover = new Tooltip();
+	private PhongMaterial material;
+	private boolean selected = false;
+
+	// private Tooltip hover = new Tooltip();
 	/**
 	 * Creates a new instance of Rectangle with the given size and fill.
-	 * @param name 
-	 * @param vector3d 
-	 * @param workplaneOffset 
 	 * 
-	 * @param width  width of the rectangle
-	 * @param height height of the rectangle
-	 * @param fill   determines how to fill the interior of the rectangle
+	 * @param name
+	 * @param vector3d
+	 * @param workplaneOffset
+	 * 
+	 * @param width           width of the rectangle
+	 * @param height          height of the rectangle
+	 * @param fill            determines how to fill the interior of the rectangle
 	 */
-	public ResizingHandle(String name, BowlerStudio3dEngine engine,Affine move, Vector3d vector3d, Affine workplaneOffset) {
+	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
+			Affine workplaneOffset, Runnable onSelect) {
 		this.name = name;
-		manipulator=new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
+		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
 		this.engine = engine;
 		camera = engine.getFlyingCamera().getCamera();
-		CSG cube = new ChamferedCube(getSize(),getSize(),getSize(),getSize()/5).toCSG().toZMin();
-		mesh=cube.getMesh();
-		PhongMaterial material = new PhongMaterial();
-		material.setDiffuseColor(new Color(1,1,1,1));
-		 getMesh().setCullFace(CullFace.NONE);
-	    //material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-	    getMesh().setMaterial(material);
-		getMesh().addEventFilter(MouseEvent.MOUSE_EXITED,event -> {
-			material.setDiffuseColor(new Color(1,1,1,1));
+		CSG cube = new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin();
+		mesh = cube.getMesh();
+		material = new PhongMaterial();
+		resetColor();
+		mesh.setCullFace(CullFace.NONE);
+		// material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+		mesh.setMaterial(material);
+		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
+			if(!selected)
+				resetColor();
 		});
-		getMesh().addEventFilter(MouseEvent.MOUSE_ENTERED,event -> {
-			material.setDiffuseColor(new Color(1,0,0,1));
-			
+		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
+			setSelectedColor();
 		});
+		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			System.out.println("Corner selected");
+			onSelect.run();
+			setSelectedColor();
+			selected=true;
+		});
+		
+		
 		mesh.getTransforms().add(move);
 		mesh.getTransforms().add(resizeHandleLocation);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);
 		mesh.getTransforms().add(scaleTF);
-		//Tooltip.install(mesh, hover);
+		// Tooltip.install(mesh, hover);
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
+
+	private void setSelectedColor() {
+		material.setDiffuseColor(new Color(1, 0, 0, 1));
+	}
+
+	private void resetColor() {
+		material.setDiffuseColor(new Color(1, 1, 1, 1));
+	}
+
 	public TransformNR getParametric() {
-		return new TransformNR(
-				resizeHandleLocation.getTx(),
-				resizeHandleLocation.getTy(),
-				resizeHandleLocation.getTz()	
-				);
+		return new TransformNR(resizeHandleLocation.getTx(), resizeHandleLocation.getTy(),
+				resizeHandleLocation.getTz());
 	}
+
 	public void setInReferenceFrame(double x, double y, double z) {
-		TransformNR wp =  manipulator.getFrameOfReference().copy();
+		TransformNR wp = manipulator.getFrameOfReference().copy();
 		TransformNR tmp = new TransformNR(x, y, z);
-		
-		TransformFactory.nrToAffine(tmp,location);
+
+		TransformFactory.nrToAffine(tmp, location);
 	}
+
 	public TransformNR getCurrentInGlobalFrame() {
-		TransformNR wp =  manipulator.getFrameOfReference().copy();
+		TransformNR wp = manipulator.getFrameOfReference().copy();
 		TransformNR rsz = TransformFactory.affineToNr(resizeHandleLocation);
 		TransformNR loc = TransformFactory.affineToNr(location);
 		return rsz.times(wp.times(loc));
 	}
+
 	public TransformNR getCurrentInReferenceFrame() {
-		TransformNR wp =  manipulator.getFrameOfReference().copy();
+		TransformNR wp = manipulator.getFrameOfReference().copy();
 		return wp.inverse().times(getCurrentInGlobalFrame());
 	}
-	
+
 	public TransformNR getCurrent() {
-		
-		return new TransformNR(
-				resizeHandleLocation.getTx()+location.getTx(),
-				resizeHandleLocation.getTy()+location.getTy(),
-				resizeHandleLocation.getTz()+location.getTz()	
-				);
+
+		return new TransformNR(resizeHandleLocation.getTx() + location.getTx(),
+				resizeHandleLocation.getTy() + location.getTy(), resizeHandleLocation.getTz() + location.getTz());
 	}
 
 	public TransformNR screenToWorld(double screenW, double screenH, double zoom, double mouseX, double mouseY) {
@@ -145,7 +166,7 @@ public class ResizingHandle {
 
 	public double calculateEffectiveFov(double screenW, double screenH) {
 		double aspectRatio = screenW / screenH;
-		double verticalFov = Math.toRadians(camera.getFieldOfView());	
+		double verticalFov = Math.toRadians(camera.getFieldOfView());
 
 		if (aspectRatio >= 1) {
 			// Landscape or square orientation
@@ -171,17 +192,17 @@ public class ResizingHandle {
 		}
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target,TransformNR cf) {
-		cf=manipulator.getFrameOfReference().inverse().times( cf);
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf) {
+		cf = manipulator.getFrameOfReference().inverse().times(cf);
 
-		//System.out.println(cf.toSimpleString());
+		// System.out.println(cf.toSimpleString());
 		// Calculate the vector from camera to target
 		double x = target.getX() - cf.getX();
 		double y = target.getY() - cf.getY();
 		double z = target.getZ() - cf.getZ();
 
 		// Calculate the distance between camera and target
-		double distance = Math.sqrt(x*x + y*y + z*z);
+		double distance = Math.sqrt(x * x + y * y + z * z);
 
 		// Define a base scale and distance
 		double baseScale = 0.75;
@@ -194,18 +215,18 @@ public class ResizingHandle {
 		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
 
 		setScale(scaleFactor);
-		
-		//System.out.println("Point From Cam distaance "+vect+" scale "+scale);
-		//System.out.println("");
+
+		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
+		// System.out.println("");
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			//TransformFactory.nrToAffine(pureRot ,cameraOrent);
+			// TransformFactory.nrToAffine(pureRot ,cameraOrent);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 
-		//hover.setText(name +" "+getCurrentInReferenceFrame()) ;
+		// hover.setText(name +" "+getCurrentInReferenceFrame()) ;
 	}
 
 	private void setVisible(boolean b) {
@@ -241,9 +262,19 @@ public class ResizingHandle {
 	public void setScale(double scale) {
 		this.scale = scale;
 	}
-	@Override 
+
+	@Override
 	public String toString() {
 		return name;
+	}
+
+	public void resetSelected() {
+		resetColor();
+		selected=false;
+	}
+
+	public boolean isSelected() {
+		return selected;
 	}
 
 }

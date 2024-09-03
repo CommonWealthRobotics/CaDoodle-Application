@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.commonwealthrobotics.allign.AllignManager;
+import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -81,7 +82,14 @@ public class ControlSprites {
 	private Bounds b;
 	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
 	private TransformNR cf;
-
+	private ThreedNumber xdimen;
+	private ThreedNumber ydimen;
+	private ThreedNumber zdimen;
+	private ThreedNumber xOffset;
+	private ThreedNumber yOffset;
+	private ThreedNumber zOffset;
+	private List<ThreedNumber> numbers;
+	
 	public void setSnapGrid(double size) {
 		this.size = size;
 		zMove.setIncrement(size);
@@ -181,7 +189,19 @@ public class ControlSprites {
 		allign=new AllignManager(session,selection, workplaneOffset);
 		allElems.addAll(allign.getElements());
 		allElems.addAll(rotationManager.getElements());
-
+		Runnable onSelect = ()->{
+			updateLines();
+		};
+		xdimen = new ThreedNumber(session, selection, workplaneOffset,onSelect);
+		ydimen= new ThreedNumber(session, selection, workplaneOffset,onSelect);
+		zdimen= new ThreedNumber(session, selection, workplaneOffset,onSelect);
+		xOffset= new ThreedNumber(session, selection, workplaneOffset,onSelect);
+		yOffset= new ThreedNumber(session, selection, workplaneOffset,onSelect);
+		zOffset= new ThreedNumber(session, selection, workplaneOffset,onSelect);
+		numbers = Arrays.asList(xdimen,ydimen,zdimen,xOffset,yOffset,zOffset);
+		for(ThreedNumber t:numbers)
+			allElems.add(t.get());
+		
 		clearSelection();
 		setUpUIComponennts();
 
@@ -254,6 +274,14 @@ public class ControlSprites {
 			r.setVisible(true);
 		rotationManager.initialize();
 		allign.hide();
+		scaleSession.resetSelected();
+	}
+	public boolean isFocused() {
+		for(ThreedNumber t:numbers) {
+			if(t.isFocused())
+				return true;
+		}
+		return false;
 	}
 
 	private void updateLines() {
@@ -306,6 +334,11 @@ public class ControlSprites {
 			heightLine.setEndX(center.x);
 			heightLine.setStartZ(min.z);
 			heightLine.setEndZ(max.z  - lineEndOffsetZ);
+			double numberOffset=10;
+			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
+					scaleSession.leftSelected()?max.y+numberOffset:min.y-numberOffset,
+					min.z), cf);
+			
 			// moveUpLocation
 
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
@@ -353,7 +386,8 @@ public class ControlSprites {
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default);
-			
+			for(ThreedNumber t:numbers)
+				t.hide();
 
 			switch (this.mode) {
 			case Default:

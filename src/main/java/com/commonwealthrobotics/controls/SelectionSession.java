@@ -888,7 +888,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Bounds b = getSellectedBounds(selectedCSG);
 		controls.initializeAllign(selectedCSG,b,meshes);
 	}
-
+	public boolean isFocused() {
+		return controls.isFocused();
+	}
 	public void cancleAllign() {
 		if (controls == null)
 			return;
