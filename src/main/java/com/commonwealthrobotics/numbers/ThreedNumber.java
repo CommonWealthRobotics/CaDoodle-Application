@@ -168,7 +168,8 @@ public class ThreedNumber {
 
 		setScale(scaleFactor*1.25);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
-		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
+		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
+		TransformNR pr=wp.inverse().times(pureRot);
 
 		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
 		// System.out.println("");
@@ -178,7 +179,7 @@ public class ThreedNumber {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pureRot, cameraOrent);
+			TransformFactory.nrToAffine(pr, cameraOrent);
 			TransformFactory.nrToAffine(positionPin.setRotation(new RotationNR()), location);
 		});
 	}
