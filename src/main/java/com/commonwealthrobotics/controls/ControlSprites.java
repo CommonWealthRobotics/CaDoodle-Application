@@ -130,6 +130,7 @@ public class ControlSprites {
 			globalPose.setRotation(new RotationNR());
 			TransformNR inverse = globalPose.inverse();
 			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse.translateZ(0.1), zMoveOffsetFootprint));
+			updateLines();
 		});
 
 		up = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(), () -> {
@@ -336,7 +337,7 @@ public class ControlSprites {
 			xOffset.setValue(min.x+pose.getX());
 			yOffset.setValue(min.y+pose.getY());
 			
-			zOffset.setValue(min.z);
+			zOffset.setValue(min.z+zMove.getCurrentPoseInReferenceFrame().getZ());
 			
 			
 			if(up.isSelected()&& mode ==SpriteDisplayMode.Default || mode==SpriteDisplayMode.MoveZ) {
