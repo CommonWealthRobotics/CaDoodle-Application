@@ -26,139 +26,143 @@ public class ScaleSessionManager {
 	private double screenW;
 	private double screenH;
 	private double zoom;
-	private double size=1;
+	private double size = 1;
 	private BowlerStudio3dEngine engine;
-	//private Affine workplaneOffset;
+	// private Affine workplaneOffset;
 	private TransformNR cf;
 
-	public ScaleSessionManager(BowlerStudio3dEngine engine,Affine selection, Runnable updateLines, CaDoodleFile cadoodle,SelectionSession sel, Affine workplaneOffset) {
+	public ScaleSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
+			CaDoodleFile cadoodle, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
 		this.engine = engine;
 		this.updateLines = updateLines;
-		//this.workplaneOffset = workplaneOffset;
+		// this.workplaneOffset = workplaneOffset;
 		Runnable onSelect = () -> {
 			resetSelected();
 			updateLines.run();
+			up.resetSelected();
 		};
-		topCenter= new ResizingHandle("topCenter",engine,selection,new Vector3d(0, 0, 1),workplaneOffset,onSelect);
-		rightFront= new ResizingHandle("rightFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
-		rightRear =new ResizingHandle("rightRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
-		leftFront =new ResizingHandle("leftFront",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
-		leftRear =new ResizingHandle("leftRear",engine,selection,new Vector3d(1, 1, 0),workplaneOffset,onSelect);
+		topCenter = new ResizingHandle("topCenter", engine, selection, new Vector3d(0, 0, 1), workplaneOffset,
+				onSelect);
+		rightFront = new ResizingHandle("rightFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
+				onSelect);
+		rightRear = new ResizingHandle("rightRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
+				onSelect);
+		leftFront = new ResizingHandle("leftFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
+				onSelect);
+		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset, onSelect);
 
-		rightFront.manipulator.addEventListener(()->{
-			if(beingUpdated==null)
-				beingUpdated=rightFront;
-			if(beingUpdated!=rightFront) {
-				//System.out.println("Motion from "+beingUpdated+" rejected by "+rightFront);
+		rightFront.manipulator.addEventListener(() -> {
+			if (beingUpdated == null)
+				beingUpdated = rightFront;
+			if (beingUpdated != rightFront) {
+				// System.out.println("Motion from "+beingUpdated+" rejected by "+rightFront);
 				return;
 			}
-			double x=rightRear.manipulator.getCurrentPose().getX();
-			double y=rightFront.manipulator.getCurrentPose().getY();
-			double z=rightRear.manipulator.getCurrentPose().getZ();
-			System.out.println("rightRear Move x"+x+" y"+y+" z"+z);
-			rightRear.manipulator.setInReferenceFrame(x, y,z);
-			x=rightFront.manipulator.getCurrentPose().getX();
-			y=leftFront.manipulator.getCurrentPose().getY();
-			leftFront.manipulator.setInReferenceFrame(x, y,z);
-			BowlerStudio.runLater(()->update());
-			//System.out.println("rightFront");
+			double x = rightRear.manipulator.getCurrentPose().getX();
+			double y = rightFront.manipulator.getCurrentPose().getY();
+			double z = rightRear.manipulator.getCurrentPose().getZ();
+			System.out.println("rightRear Move x" + x + " y" + y + " z" + z);
+			rightRear.manipulator.setInReferenceFrame(x, y, z);
+			x = rightFront.manipulator.getCurrentPose().getX();
+			y = leftFront.manipulator.getCurrentPose().getY();
+			leftFront.manipulator.setInReferenceFrame(x, y, z);
+			BowlerStudio.runLater(() -> update());
+			// System.out.println("rightFront");
 		});
-		rightRear.manipulator.addEventListener(()->{
-			if(beingUpdated==null)
-				beingUpdated=rightRear;
-			if(beingUpdated!=rightRear) {
-				//System.out.println("Motion from "+beingUpdated+" rejected by "+rightRear);
+		rightRear.manipulator.addEventListener(() -> {
+			if (beingUpdated == null)
+				beingUpdated = rightRear;
+			if (beingUpdated != rightRear) {
+				// System.out.println("Motion from "+beingUpdated+" rejected by "+rightRear);
 				return;
 			}
-			double x=rightFront.manipulator.getCurrentPose().getX();
-			double y=rightRear.manipulator.getCurrentPose().getY();
-			double z=rightFront.manipulator.getCurrentPose().getZ();
-			rightFront.manipulator.setInReferenceFrame(x, y,z);
-			x=rightRear.manipulator.getCurrentPose().getX();
-			y=leftRear.manipulator.getCurrentPose().getY();
-			leftRear.manipulator.setInReferenceFrame(x, y,z);
-			BowlerStudio.runLater(()->update());
-			//System.out.println("rightRear");
+			double x = rightFront.manipulator.getCurrentPose().getX();
+			double y = rightRear.manipulator.getCurrentPose().getY();
+			double z = rightFront.manipulator.getCurrentPose().getZ();
+			rightFront.manipulator.setInReferenceFrame(x, y, z);
+			x = rightRear.manipulator.getCurrentPose().getX();
+			y = leftRear.manipulator.getCurrentPose().getY();
+			leftRear.manipulator.setInReferenceFrame(x, y, z);
+			BowlerStudio.runLater(() -> update());
+			// System.out.println("rightRear");
 		});
-		leftFront.manipulator.addEventListener(()->{
-			if(beingUpdated==null)
-				beingUpdated=leftFront;
-			if(beingUpdated!=leftFront) {
-				//System.out.println("Motion from "+beingUpdated+" rejected by "+leftFront);
+		leftFront.manipulator.addEventListener(() -> {
+			if (beingUpdated == null)
+				beingUpdated = leftFront;
+			if (beingUpdated != leftFront) {
+				// System.out.println("Motion from "+beingUpdated+" rejected by "+leftFront);
 				return;
 			}
-			double x=leftRear.manipulator.getCurrentPose().getX();
-			double y=leftFront.manipulator.getCurrentPose().getY();
-			double z=leftFront.manipulator.getCurrentPose().getZ();
-			leftRear.manipulator.setInReferenceFrame(x, y,z);
-			x=leftFront.manipulator.getCurrentPose().getX();
-			y=rightFront.manipulator.getCurrentPose().getY();
-			rightFront.manipulator.setInReferenceFrame(x, y,z);
-			BowlerStudio.runLater(()->update());			//System.out.println("leftFront");
+			double x = leftRear.manipulator.getCurrentPose().getX();
+			double y = leftFront.manipulator.getCurrentPose().getY();
+			double z = leftFront.manipulator.getCurrentPose().getZ();
+			leftRear.manipulator.setInReferenceFrame(x, y, z);
+			x = leftFront.manipulator.getCurrentPose().getX();
+			y = rightFront.manipulator.getCurrentPose().getY();
+			rightFront.manipulator.setInReferenceFrame(x, y, z);
+			BowlerStudio.runLater(() -> update()); // System.out.println("leftFront");
 		});
-		leftRear.manipulator.addEventListener(()->{
-			if(beingUpdated==null)
-				beingUpdated=leftRear;
-			if(beingUpdated!=leftRear) {
-				//System.out.println("Motion from "+beingUpdated+" rejected by "+leftRear);
+		leftRear.manipulator.addEventListener(() -> {
+			if (beingUpdated == null)
+				beingUpdated = leftRear;
+			if (beingUpdated != leftRear) {
+				// System.out.println("Motion from "+beingUpdated+" rejected by "+leftRear);
 				return;
 			}
 
-			double x=leftFront.manipulator.getCurrentPose().getX();
-			double y=leftRear.manipulator.getCurrentPose().getY();
-			double z=leftRear.manipulator.getCurrentPose().getZ();
-			leftFront.manipulator.setInReferenceFrame(x, y,z);
-			x=leftRear.manipulator.getCurrentPose().getX();
-			y=rightRear.manipulator.getCurrentPose().getY();
-			rightRear.manipulator.setInReferenceFrame(x, y,z);
-			BowlerStudio.runLater(()->update());			//System.out.println("leftRear");
+			double x = leftFront.manipulator.getCurrentPose().getX();
+			double y = leftRear.manipulator.getCurrentPose().getY();
+			double z = leftRear.manipulator.getCurrentPose().getZ();
+			leftFront.manipulator.setInReferenceFrame(x, y, z);
+			x = leftRear.manipulator.getCurrentPose().getX();
+			y = rightRear.manipulator.getCurrentPose().getY();
+			rightRear.manipulator.setInReferenceFrame(x, y, z);
+			BowlerStudio.runLater(() -> update()); // System.out.println("leftRear");
 		});
-		topCenter.manipulator.addEventListener(()->{
-			if(beingUpdated==null)
-				beingUpdated=topCenter;
-			if(beingUpdated!=topCenter) {
-				//System.out.println("Motion from "+beingUpdated+" rejected by "+topCenter);
+		topCenter.manipulator.addEventListener(() -> {
+			if (beingUpdated == null)
+				beingUpdated = topCenter;
+			if (beingUpdated != topCenter) {
+				// System.out.println("Motion from "+beingUpdated+" rejected by "+topCenter);
 				return;
 			}
-			BowlerStudio.runLater(()->update());
-			
-			//System.out.println("topCenter");
+			BowlerStudio.runLater(() -> update());
+
+			// System.out.println("topCenter");
 		});
-		controls = Arrays.asList(topCenter,rightFront ,rightRear ,leftFront,leftRear);
-		for(ResizingHandle c:controls) {
-			c.manipulator.setFrameOfReference(()->cadoodle.getWorkplane());
-			c.manipulator.addSaveListener(()->{
+		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
+		for (ResizingHandle c : controls) {
+			c.manipulator.setFrameOfReference(() -> cadoodle.getWorkplane());
+			c.manipulator.addSaveListener(() -> {
 				try {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//System.out.println("Saving from "+c);
+				// System.out.println("Saving from "+c);
 				TransformNR wp = cadoodle.getWorkplane().copy();
 				TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 				TransformNR lfC = leftFront.getCurrentInReferenceFrame();
 				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-				
+
 //				rrC=wp.inverse().times(rrC);
 //				lfC=wp.inverse().times(lfC);
 //				tcC=wp.inverse().times(tcC);
-				
-				bounds=getBounds();
-				for(ResizingHandle ctrl:controls) {
+
+				bounds = getBounds();
+				for (ResizingHandle ctrl : controls) {
 					ctrl.manipulator.set(0, 0, 0);
 				}
-				beingUpdated=null;
-				if(Math.abs(lfC.getZ()-rrC.getZ())>0.00001) {
-					throw new RuntimeException("The control points of the corners must be at the same Z value \n"+
-							lfC.toSimpleString()+"\n"+rrC.toSimpleString());
+				beingUpdated = null;
+				if (Math.abs(lfC.getZ() - rrC.getZ()) > 0.00001) {
+					throw new RuntimeException("The control points of the corners must be at the same Z value \n"
+							+ lfC.toSimpleString() + "\n" + rrC.toSimpleString());
 				}
-				Resize setResize = new Resize()
-						.setNames(sel.selectedSnapshot())
-						//.setDebugger(engine)
-						.setWorkplane(wp)
-						.setResize(tcC, lfC, rrC);			
-				Thread t=cadoodle.addOpperation(setResize);
+				Resize setResize = new Resize().setNames(sel.selectedSnapshot())
+						// .setDebugger(engine)
+						.setWorkplane(wp).setResize(tcC, lfC, rrC);
+				Thread t = cadoodle.addOpperation(setResize);
 				try {
 					t.join();
 				} catch (InterruptedException e) {
@@ -171,7 +175,7 @@ public class ScaleSessionManager {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				BowlerStudio.runLater(()->threeDTarget());
+				BowlerStudio.runLater(() -> threeDTarget());
 			});
 		}
 	}
@@ -183,10 +187,10 @@ public class ScaleSessionManager {
 			TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 			TransformNR lfC = leftFront.getCurrentInReferenceFrame();
 			TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-			double x= (lfC.getX()-rrC.getX())/2 + rrC.getX();
-			double y= (lfC.getY()-rrC.getY())/2 + rrC.getY();
+			double x = (lfC.getX() - rrC.getX()) / 2 + rrC.getX();
+			double y = (lfC.getY() - rrC.getY()) / 2 + rrC.getY();
 			double z = tcC.getZ();
-			topCenter.setInReferenceFrame(x,y,z);
+			topCenter.setInReferenceFrame(x, y, z);
 			beingUpdated = beingUpdated2;
 		} else {
 			// System.out.println("Not updating center cube "+beingUpdated2);
@@ -198,9 +202,8 @@ public class ScaleSessionManager {
 		return topCenter.getScale();
 	}
 
-	public void threeDTarget(double w, double h, double z, Bounds b,TransformNR cameraFrame) {
+	public void threeDTarget(double w, double h, double z, Bounds b, TransformNR cameraFrame) {
 		cf = cameraFrame;
-
 
 		this.screenW = w;
 		this.screenH = h;
@@ -216,26 +219,30 @@ public class ScaleSessionManager {
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
 
-		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z),cf);
-		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z),cf);
-		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z),cf);
-		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z),cf);
-		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z),cf);
+		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z), cf);
+		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z), cf);
+		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z), cf);
+		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z), cf);
+		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z), cf);
 		update();
 	}
-	
+
 	boolean leftSelected() {
 		return leftFront.isSelected() || leftRear.isSelected();
 	}
+
 	boolean rightSelected() {
 		return rightFront.isSelected() || rightRear.isSelected();
 	}
+
 	boolean frontSelected() {
 		return rightFront.isSelected() || leftFront.isSelected();
 	}
+
 	boolean rearSelected() {
 		return rightRear.isSelected() || leftRear.isSelected();
 	}
+
 	public Bounds getBounds() {
 		TransformNR lr = rightRear.getCurrentInReferenceFrame();
 		TransformNR rf = leftFront.getCurrentInReferenceFrame();
@@ -253,10 +260,9 @@ public class ScaleSessionManager {
 	}
 
 	public void resetSelected() {
-		for(ResizingHandle c:controls) {
+		for (ResizingHandle c : controls) {
 			c.resetSelected();
 		}
 	}
-
 
 }

@@ -115,6 +115,8 @@ public class AllignManager {
 		for (CSG c : toAllign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = event -> {
+				if(opperation==null)
+					return;
 				opperation.setBounds(c.getBounds());
 				recompute(null);
 				updateHandles();

@@ -1137,7 +1137,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setCadoodle(CaDoodleFile cadoodle) {
 		if (this.cadoodle == null) {
-			controls = new ControlSprites(this, engine, selection, manipulation, cadoodle);
+			controls = new ControlSprites(this, engine, selection, cadoodle);
 			controls.setSnapGrid(size);
 		}
 		this.cadoodle = cadoodle;

@@ -44,6 +44,7 @@ public class ThreedNumber {
 	private double scale;
 	private Affine resizeHandleLocation = new Affine();
 	private Runnable onSelect;
+	private Affine reorent;
 	
 	public ThreedNumber(SelectionSession session, Affine move, Affine workplaneOffset, Runnable onSelect) {
 		this.session = session;
@@ -87,13 +88,15 @@ public class ThreedNumber {
 		};
 		TextFormatter<Double> textFormatter = new TextFormatter<>(converter, mostRecentValue, filter);
 		textField.setTextFormatter(textFormatter);
-		
+		reorent = new Affine();
 		textField.getTransforms().add(move);
 		textField.getTransforms().add(resizeHandleLocation);
 		textField.getTransforms().add(workplaneOffset);
 		textField.getTransforms().add(location);
 		textField.getTransforms().add(cameraOrent);
 		textField.getTransforms().add(scaleTF);
+		textField.getTransforms().add(reorent);
+
 	}
 
 	private String formatValue(double value) {
@@ -130,11 +133,11 @@ public class ThreedNumber {
 	}
 
 	public void hide() {
-
+		textField.setVisible(false);
 	}
 
 	public void show() {
-
+		textField.setVisible(true);
 	}
 
 	public void threeDTarget(double w, double h, double zo, TransformNR positionPin, TransformNR c) {
@@ -143,7 +146,6 @@ public class ThreedNumber {
 		this.zoom = zo;
 		this.positionPin = positionPin;
 		this.cf = c;
-
 		
 		// System.out.println(cf.toSimpleString());
 		// Calculate the vector from camera to target
@@ -164,12 +166,15 @@ public class ThreedNumber {
 		// Clamp the scale factor to a reasonable range
 		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
 
-		setScale(scaleFactor);
+		setScale(scaleFactor*1.25);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
+		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
 
 		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
 		// System.out.println("");
 		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(new TransformNR(10,5,0,new RotationNR(0,180,0)),reorent);	
+
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
