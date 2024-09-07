@@ -86,17 +86,19 @@ public class ControlSprites {
 	private ThreedNumber yOffset;
 	private ThreedNumber zOffset;
 	private List<ThreedNumber> numbers;
+	private Manipulation manipulation;
 
 	public void setSnapGrid(double size) {
 		zMove.setIncrement(size);
 		scaleSession.setSnapGrid(size);
 	}
 
-	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, CaDoodleFile c) {
+	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation manipulation, CaDoodleFile c) {
 		this.session = session;
 
 		this.engine = e;
 		this.selection = sel;
+		this.manipulation = manipulation;
 		// this.xyMove = mov;
 		this.cadoodle = c;
 		Affine zMoveOffsetFootprint = new Affine();
@@ -131,8 +133,9 @@ public class ControlSprites {
 		});
 
 		up = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(), () -> {
-			scaleSession.resetSelected();
-		});
+			updateCubes();
+			updateLines();
+		},()->scaleSession.resetSelected());
 		lines = Arrays.asList(frontLine, backLine, leftLine, rightLine, heightLine);
 		for (DottedLine l : lines) {
 			l.getTransforms().add(selection);
@@ -142,7 +145,11 @@ public class ControlSprites {
 		footprint.getTransforms().add(selection);
 		footprint.getTransforms().add(workplaneOffset);
 		footprint.setMouseTransparent(true);
-		scaleSession = new ScaleSessionManager(e, selection, () -> updateLines(), cadoodle, session, workplaneOffset,
+		Runnable updateLines = () ->{ 
+			updateLines();
+			//System.out.println("Lines updated from scale session");
+		};
+		scaleSession = new ScaleSessionManager(e, selection, updateLines, cadoodle, session, workplaneOffset,
 				up);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(), scaleSession.leftFront.getMesh(), scaleSession.leftRear.getMesh(),
@@ -154,6 +161,7 @@ public class ControlSprites {
 		allElems.addAll(allign.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable onSelect = () -> {
+			updateCubes();
 			updateLines();
 		};
 		xdimen = new ThreedNumber(session, selection, workplaneOffset, onSelect);
@@ -241,9 +249,13 @@ public class ControlSprites {
 			r.setVisible(true);
 		rotationManager.initialize();
 		allign.hide();
-		scaleSession.resetSelected();
-		for (ThreedNumber t : numbers)
+		for (ThreedNumber t : numbers) {
 			t.hide();
+		}
+	}
+
+	private void resetSelected() {
+		scaleSession.resetSelected();
 		up.resetSelected();
 	}
 
@@ -306,6 +318,8 @@ public class ControlSprites {
 			heightLine.setStartZ(min.z);
 			heightLine.setEndZ(max.z - lineEndOffsetZ);
 			double numberOffset = 10;
+			TransformNR zHandleLoc = new TransformNR(center.x, center.y,
+					5 + max.z + (ResizingHandle.getSize() * scaleSession.getViewScale()));
 			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
 					scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
 			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
@@ -313,12 +327,38 @@ public class ControlSprites {
 			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, center.z), cf);
 			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x - numberOffset, min.y, min.z), cf);
 			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y - numberOffset, min.z), cf);
-			zOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, min.z + numberOffset + 5),
+			zOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, zHandleLoc.getZ()+10),
 					cf);
-
+			xdimen.setValue(bounds.getTotalX());
+			ydimen.setValue(bounds.getTotalY());
+			zdimen.setValue(bounds.getTotalZ());
+			TransformNR pose = manipulation.getCurrentPoseInReferenceFrame();
+			xOffset.setValue(min.x+pose.getX());
+			yOffset.setValue(min.y+pose.getY());
+			
+			zOffset.setValue(min.z);
+			
+			
+			if(up.isSelected()&& mode ==SpriteDisplayMode.Default || mode==SpriteDisplayMode.MoveZ) {
+				zOffset.show();
+			}else {
+				zOffset.hide();
+			}
+			if(scaleSession.zScaleSelected()&& mode ==SpriteDisplayMode.Default|| mode==SpriteDisplayMode.ResizeZ) {
+				zdimen.show();
+			}else {
+				zdimen.hide();
+			}
+			if(scaleSession.xySelected() && mode ==SpriteDisplayMode.Default) {
+				xdimen.show();
+				ydimen.show();
+			}else {
+				xdimen.hide();
+				ydimen.hide();
+			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
-			TransformFactory.nrToAffine(new TransformNR(center.x, center.y,
-					5 + max.z + (ResizingHandle.getSize() * scaleSession.getViewScale())), moveUpLocation);
+			
+			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 
 			scaleTF.setX(scaleSession.getViewScale());
 			scaleTF.setY(scaleSession.getViewScale());
@@ -341,6 +381,7 @@ public class ControlSprites {
 				r.setVisible(false);
 		});
 		selectionLive = false;
+		resetSelected();
 	}
 
 	public SpriteDisplayMode getMode() {
@@ -394,7 +435,7 @@ public class ControlSprites {
 				break;
 
 			}
-
+			updateLines();
 		});
 	}
 

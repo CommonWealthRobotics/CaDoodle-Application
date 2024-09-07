@@ -36,20 +36,20 @@ public class ScaleSessionManager {
 		this.engine = engine;
 		this.updateLines = updateLines;
 		// this.workplaneOffset = workplaneOffset;
-		Runnable onSelect = () -> {
+
+		Runnable onReset = () -> {
 			resetSelected();
-			updateLines.run();
 			up.resetSelected();
 		};
 		topCenter = new ResizingHandle("topCenter", engine, selection, new Vector3d(0, 0, 1), workplaneOffset,
-				onSelect);
+				updateLines,onReset);
 		rightFront = new ResizingHandle("rightFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				onSelect);
+				updateLines,onReset);
 		rightRear = new ResizingHandle("rightRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				onSelect);
+				updateLines,onReset);
 		leftFront = new ResizingHandle("leftFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				onSelect);
-		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset, onSelect);
+				updateLines,onReset);
+		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset, updateLines,onReset);
 
 		rightFront.manipulator.addEventListener(() -> {
 			if (beingUpdated == null)
@@ -241,6 +241,13 @@ public class ScaleSessionManager {
 
 	boolean rearSelected() {
 		return rightRear.isSelected() || leftRear.isSelected();
+	}
+	
+	public boolean zScaleSelected() {
+		return topCenter.isSelected();
+	}
+	public boolean xySelected() {
+		return leftSelected()||rightSelected();
 	}
 
 	public Bounds getBounds() {

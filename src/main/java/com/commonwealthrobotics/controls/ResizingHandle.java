@@ -56,7 +56,7 @@ public class ResizingHandle {
 	 * @param fill            determines how to fill the interior of the rectangle
 	 */
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
-			Affine workplaneOffset, Runnable onSelect) {
+			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
 		this.name = name;
 		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
@@ -80,9 +80,10 @@ public class ResizingHandle {
 		});
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			System.out.println("Corner selected");
+			onReset.run();
+			selected=true;
 			onSelect.run();
 			setSelectedColor();
-			selected=true;
 		});
 		
 		

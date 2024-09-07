@@ -16,7 +16,7 @@ public class MoveUpArrow {
 	private PhongMaterial material = new PhongMaterial();
 
 	public MoveUpArrow(Affine selection, Affine workplaneOffset, Affine moveUpLocation, Scale scaleTF,
-			EventHandler<MouseEvent> eventHandler, Runnable onSelect) {
+			EventHandler<MouseEvent> eventHandler, Runnable onSelect, Runnable onReset) {
 		CSG setColor = new Cylinder(ResizingHandle.getSize() / 2, 0, ResizingHandle.getSize()).toCSG()
 				.setColor(Color.BLACK);
 		mesh = setColor.getMesh();
@@ -37,9 +37,10 @@ public class MoveUpArrow {
 		});
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			System.out.println("MoveUp selected");
-			onSelect.run();
-			setSelectedColor();
+			onReset.run();
 			selected=true;
+			setSelectedColor();
+			onSelect.run();
 		});
 	}
 	private void setSelectedColor() {
