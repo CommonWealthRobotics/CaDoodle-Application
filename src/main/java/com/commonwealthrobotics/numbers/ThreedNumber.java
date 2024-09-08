@@ -36,7 +36,7 @@ public class ThreedNumber {
 	private TransformNR positionPin;
 	private EventHandler<ActionEvent> value;
 	private double mostRecentValue = 20;
-	private final DecimalFormat format = new DecimalFormat("#0.00");
+	private final DecimalFormat format = new DecimalFormat("#0.000");
 	
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
@@ -86,8 +86,8 @@ public class ThreedNumber {
 				}
 			}
 		};
-		TextFormatter<Double> textFormatter = new TextFormatter<>(converter, mostRecentValue, filter);
-		textField.setTextFormatter(textFormatter);
+		TextFormatter<Double> textFormatter = new TextFormatter<>(converter, getMostRecentValue(), filter);
+		//textField.setTextFormatter(textFormatter);
 		reorent = new Affine();
 		textField.getTransforms().add(move);
 		textField.getTransforms().add(resizeHandleLocation);
@@ -100,28 +100,30 @@ public class ThreedNumber {
 	}
 
 	private String formatValue(double value) {
-		DecimalFormat df = new DecimalFormat("#0.00");
-		return df.format(value);
+		return format.format(value);
 	}
 
 	private void validate() {
 		// Number set from event
 		String t = textField.getText();
+		//System.out.println(" Validating string "+t);
 		if (t.length() == 0) {
 			// empty string, do nothing
 			return;
 		}
 		try {
-			mostRecentValue = Double.parseDouble(t);
+			setMostRecentValue(Double.parseDouble(t));
 		} catch (NumberFormatException ex) {
-			setValue(mostRecentValue);
+			setValue(getMostRecentValue());
 		}
 	}
 
 	public void setValue(double v) {
 		textField.setOnAction(null);
-		textField.setText(String.format("%.2f", v));
+		textField.setText(format.format(v));
+		setMostRecentValue(v);
 		textField.setOnAction(value);
+		//validate();
 	}
 
 	public boolean isFocused() {
@@ -146,6 +148,8 @@ public class ThreedNumber {
 		this.zoom = zo;
 		this.positionPin = positionPin;
 		this.cf = c;
+		if(c==null)
+			return;
 		
 		// System.out.println(cf.toSimpleString());
 		// Calculate the vector from camera to target
@@ -192,5 +196,12 @@ public class ThreedNumber {
 	}
 	public double getMostRecentValue() {
 		return mostRecentValue;
+	}
+
+	public void setMostRecentValue(double mostRecentValue) {
+		//new Exception().printStackTrace();
+		//System.out.println("internal number set to "+mostRecentValue);
+
+		this.mostRecentValue = mostRecentValue;
 	}
 }

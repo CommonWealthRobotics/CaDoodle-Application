@@ -38,7 +38,7 @@ public class ResizingHandle {
 	private double scale;
 	private Affine resizeHandleLocation = new Affine();
 
-	Manipulation manipulator;
+	public Manipulation manipulator;
 	private String name;
 	private PhongMaterial material;
 	private boolean selected = false;

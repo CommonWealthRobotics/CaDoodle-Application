@@ -272,4 +272,35 @@ public class ScaleSessionManager {
 		}
 	}
 
+	public void set(double x, double y, double z) {
+		Bounds b= getBounds();
+		Vector3d c=b.getCenter();
+		System.out.println("Resizing to "+x+" "+y+" "+z);
+		if(topCenter.isSelected()) {
+			System.out.println("Z resize");
+			topCenter.manipulator.set (0, 0, z-b.getTotalZ());
+			topCenter.manipulator.fireSave();
+		}
+		if(leftFront.isSelected()) {
+			System.out.println("leftFront resize");
+			leftFront.manipulator.set (x-b.getTotalX(), (y-b.getTotalY()), 0);
+			leftFront.manipulator.fireSave();
+		}
+		if(leftRear.isSelected()) {
+			System.out.println("leftRear resize");
+			leftRear.manipulator.set (-(x-b.getTotalX()), (y-b.getTotalY()), 0);
+			leftRear.manipulator.fireSave();
+		}
+		if(rightFront.isSelected()) {
+			System.out.println("rightFront resize");
+			rightFront.manipulator.set (x-b.getTotalX(), -(y-b.getTotalY()), 0);
+			rightFront.manipulator.fireSave();
+		}
+		if(rightRear.isSelected()) {
+			System.out.println("rightRear resize");
+			rightRear.manipulator.set (-(x-b.getTotalX()), -(y-b.getTotalY()), 0);
+			rightRear.manipulator.fireSave();
+		}
+	}
+
 }

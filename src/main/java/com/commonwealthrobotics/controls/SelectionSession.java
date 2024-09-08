@@ -1022,7 +1022,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (String s : selectedSnapshot) {
 			// System.out.println("\t" + s);
 		}
-		ICaDoodleOpperation op = getCadoodle().currentOpperation();
+		ICaDoodleOpperation op = getCadoodle().getCurrentOpperation();
 		if (op == mc) {
 			if (compareLists(selectedSnapshot, mc.getNames())) {
 				// System.out.println("Move " + tf.toSimpleString());
@@ -1076,7 +1076,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private MoveCenter getActiveMove() {
-		ICaDoodleOpperation op = getCadoodle().currentOpperation();
+		ICaDoodleOpperation op = getCadoodle().getCurrentOpperation();
 		if (MoveCenter.class.isInstance(op)) {
 			MoveCenter active = (MoveCenter) op;
 			if (compareLists(selectedSnapshot(), active.getNames())) {

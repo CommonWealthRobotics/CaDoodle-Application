@@ -794,7 +794,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 			if(session.isFocused()) {
-				System.out.println("Key ignonred, session in focus");
+				//System.out.println("Key ignonred, session in focus");
 				return;
 			}
 				
