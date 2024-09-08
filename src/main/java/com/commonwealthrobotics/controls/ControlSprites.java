@@ -204,12 +204,12 @@ public class ControlSprites {
 			updateCubes();
 			updateLines();
 		};
-		xdimen = new ThreedNumber(session, selection, workplaneOffset, dimChange);
-		ydimen = new ThreedNumber(session, selection, workplaneOffset, dimChange);
-		zdimen = new ThreedNumber(session, selection, workplaneOffset, dimChange);
-		xOffset = new ThreedNumber(session, selection, workplaneOffset, offsetxyChange);
-		yOffset = new ThreedNumber(session, selection, workplaneOffset, offsetxyChange);
-		zOffset = new ThreedNumber(session, selection, workplaneOffset, offsetZChange);
+		xdimen = new ThreedNumber( selection, workplaneOffset, dimChange);
+		ydimen = new ThreedNumber( selection, workplaneOffset, dimChange);
+		zdimen = new ThreedNumber( selection, workplaneOffset, dimChange);
+		xOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange);
+		yOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange);
+		zOffset = new ThreedNumber( selection, workplaneOffset, offsetZChange);
 		numbers = Arrays.asList(xdimen, ydimen, zdimen, xOffset, yOffset, zOffset);
 		for (ThreedNumber t : numbers)
 			allElems.add(t.get());
@@ -270,7 +270,7 @@ public class ControlSprites {
 		this.y = y;
 		this.z = z;
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
 		allign.threeDTarget(screenW, screenH, zoom, b, cf);
 		updateCubes();
 		updateLines();
@@ -297,6 +297,7 @@ public class ControlSprites {
 	private void resetSelected() {
 		scaleSession.resetSelected();
 		up.resetSelected();
+		rotationManager.resetSelected();
 	}
 
 	public boolean isFocused() {

@@ -6,6 +6,7 @@ import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.Quadrent;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
+import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -51,10 +52,30 @@ public class RotationHandle {
 	private boolean flagSaveChange = false;
 	private List<String> selectedCSG;
 	private boolean startAngleFound;
+	public ThreedNumber text;
+	private boolean selected = false;
+	private Affine viewRotation;
+	private CaDoodleFile cadoodle;
+	private ControlSprites controlSprites;
 
-	public RotationHandle(EulerAxis axis, Affine translate, Affine viewRotation,
-			RotationSessionManager rotationSessionManager, CaDoodleFile cadoodle, ControlSprites controlSprites, Affine workplaneOffset) {
-		this.axis = axis;
+	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
+			RotationSessionManager rotationSessionManager, CaDoodleFile c, ControlSprites cs, Affine workplaneOffset) {
+		this.axis = ax;
+		this.viewRotation = vr;
+		this.cadoodle = c;
+		this.controlSprites = cs;
+		
+		Runnable onSelect = ()->{
+			double mostRecentValue = text.getMostRecentValue();
+
+			System.out.println("Number entered! = "+mostRecentValue);
+			setSweepAngle(mostRecentValue);
+			flagSaveChange=true;
+			runSaveAndReset();
+		};
+		text=new ThreedNumber(translate,  workplaneOffset, onSelect);
+		text.get();
+		text.hide();
 		handle.setImage(rotateImage);
 		controlCircle.setImage(fullcircleImage);
 		controlCircle.setVisible(false);
@@ -70,6 +91,7 @@ public class RotationHandle {
 				controlCircle.setVisible(false);
 		});
 		EventHandler<? super MouseEvent> eventFilter = ev -> {
+			selected=true;
 			rotationStarted = true;
 			startAngleFound = false;
 			System.out.println("Handle clicked");
@@ -80,22 +102,17 @@ public class RotationHandle {
 			controlCircle.setVisible(true);
 			arc.setVisible(true);
 			handle.setVisible(true);
+			text.setValue(0);
+			text.show();
 			ev.consume();
 		};
 		handle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
 		controlCircle.setPickOnBounds(true);
 		EventHandler<? super MouseEvent> released = event -> {
-			controlSprites.setMode(SpriteDisplayMode.Default);
-			controlCircle.setVisible(false);
-			arc.setVisible(false);
 			if (!flagSaveChange)
 				return;
-			TransformNR toUpdate = rotAtCenter.copy();
-			BowlerStudio.runLater(() -> {
-				TransformFactory.nrToAffine(new TransformNR(), viewRotation);
-			});
-			cadoodle.addOpperation(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
+			runSaveAndReset();
 		};
 
 		EventHandler<? super MouseEvent> dragged = event -> {
@@ -127,22 +144,11 @@ public class RotationHandle {
 				if (axis == EulerAxis.tilt)
 					sweepAngle = -sweepAngle;
 				// Update the Arc properties
-
 				arc.setStartAngle(0);
 				arc.setLength(sweepAngle);
-
-				// Set the type to ROUND to create a wedge shape
-				arc.setType(ArcType.ROUND);
-
-				// divide the angle in 2 and aply it twice avaoids Euler singularities
-				TransformNR update = new TransformNR(new RotationNR(axis, -current / 2));
-				TransformNR pureRot = update.times(update);
-				TransformNR wp = cadoodle.getWorkplane();
-				TransformNR center = wp.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
-				rotAtCenter = center.times(pureRot.times(center.inverse()));
-				BowlerStudio.runLater(() -> {
-					TransformFactory.nrToAffine(rotAtCenter, viewRotation);
-				});
+				text.setValue(sweepAngle);
+				
+				setSweepAngle(current);
 			}
 		};
 		handle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
@@ -155,6 +161,34 @@ public class RotationHandle {
 		handle.getTransforms().addAll(translate, workplaneOffset,controlPin, handlePlanarOffset);
 		controlCircle.getTransforms().addAll(translate, workplaneOffset,controlPin, circelPlanerOffset);
 		controlCircle.setOpacity(0.5);
+	}
+
+	private void runSaveAndReset() {
+		controlSprites.setMode(SpriteDisplayMode.Default);
+		controlCircle.setVisible(false);
+		arc.setVisible(false);
+		selected=false;
+		TransformNR toUpdate = rotAtCenter.copy();
+		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
+		});
+		cadoodle.addOpperation(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
+	}
+
+	private void setSweepAngle(double c) {
+
+		// Set the type to ROUND to create a wedge shape
+		arc.setType(ArcType.ROUND);
+
+		// divide the angle in 2 and aply it twice avaoids Euler singularities
+		TransformNR update = new TransformNR(new RotationNR(axis, -c / 2));
+		TransformNR pureRot = update.times(update);
+		TransformNR wp = cadoodle.getWorkplane();
+		TransformNR center = wp.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
+		rotAtCenter = center.times(pureRot.times(center.inverse()));
+		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(rotAtCenter, viewRotation);
+		});
 	}
 
 	private double getAngle(MouseEvent event) {
@@ -181,18 +215,21 @@ public class RotationHandle {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b) {
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
+		this.bounds = b;
+		Vector3d center = bounds.getCenter();
+		Vector3d min = bounds.getMin();
+		Vector3d max = bounds.getMax();
+		double numberOffset = 20;
+
 		this.az = az;
 		this.selectedCSG = selectedCSG;
-		this.bounds = b;
 		double totx = b.getMax().x - b.getMin().x;
 		double toty = b.getMax().y - b.getMin().y;
 		double totz = b.getMax().z - b.getMin().z;
 		double rA = 1, rB = 1;
 		double pinLocx = 0, pinLocy = 0, pinLocz = 0;
-		Vector3d center = b.getCenter();
-		Vector3d min = b.getMin();
-		Vector3d max = b.getMax();
+		TransformNR positionPin = new TransformNR();
 		Quadrent q = Quadrent.getQuad(-az);
 		rotationStarted = false;
 		// System.out.println("Az camera in Rotation Handle "+az);
@@ -205,6 +242,7 @@ public class RotationHandle {
 			pinLocy = center.y;
 			pinLocz = min.z;
 			axisOrent = RotationNR.getRotationZ(Quadrent.QuadrentToAngle(q) + 180);
+			
 			break;
 		case elevation:
 			rA = totx;
@@ -213,6 +251,7 @@ public class RotationHandle {
 			pinLocy = (az < 90 && az > -90) ? min.y : max.y;
 			pinLocz = center.z;
 			axisOrent = new RotationNR(-90, 0, 0);
+
 			break;
 		case tilt:
 			rA = totz;
@@ -221,9 +260,13 @@ public class RotationHandle {
 			pinLocy = center.y;
 			pinLocz = center.z;
 			axisOrent = new RotationNR(-90, 90, 0);
+			
 			break;
 		}
+		
+
 		double circleDiameter = Math.sqrt(Math.pow(rA, 2) + Math.pow(rB, 2));
+		
 		double radius = circleDiameter / 2;
 
 		TransformNR pureRot = new TransformNR(axisOrent);
@@ -248,11 +291,22 @@ public class RotationHandle {
 				.times(new TransformNR(-circleDiameter / 8, -circleDiameter / 2 - circleDiameter / 8, 0));
 		arc.setRadiusX(radius / 2);
 		arc.setRadiusY(radius / 2);
+		
+		positionPin=input4.times( input.times( new TransformNR(0,0,0)));	
+		text.threeDTarget(screenW, screenH, zoom, positionPin, cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);
 			TransformFactory.nrToAffine(input3, handlePlanarOffset);
 			TransformFactory.nrToAffine(input2, circelPlanerOffset);
 			TransformFactory.nrToAffine(input, controlPin);
 		});
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 }

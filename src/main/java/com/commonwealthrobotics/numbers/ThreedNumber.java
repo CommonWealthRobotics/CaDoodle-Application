@@ -29,7 +29,7 @@ public class ThreedNumber {
 	private double screenH;
 	private double zoom;
 	private TransformNR cf;
-	private SelectionSession session;
+	//private SelectionSession session;
 	private Affine move;
 	private Affine workplaneOffset;
 	private TextField textField = new TextField("20.00");
@@ -46,8 +46,8 @@ public class ThreedNumber {
 	private Runnable onSelect;
 	private Affine reorent;
 	
-	public ThreedNumber(SelectionSession session, Affine move, Affine workplaneOffset, Runnable onSelect) {
-		this.session = session;
+	public ThreedNumber( Affine move, Affine workplaneOffset, Runnable onSelect) {
+		//this.session = session;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
 		this.onSelect = onSelect;

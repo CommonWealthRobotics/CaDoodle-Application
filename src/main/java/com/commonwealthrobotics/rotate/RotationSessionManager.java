@@ -40,6 +40,7 @@ public class RotationSessionManager {
 			result.add(r.handle);
 			result.add(r.controlCircle);
 			result.add(r.arc);
+			result.add(r.text.get());
 		}
 		return result;
 	}
@@ -48,6 +49,8 @@ public class RotationSessionManager {
 			r.handle.setVisible(true);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
+			r.text.hide();
+
 		}
 
 	}
@@ -56,13 +59,14 @@ public class RotationSessionManager {
 			r.handle.setVisible(true);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
+			r.text.hide();
 		}
 	}
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z,List<String> selectedCSG, Bounds b) {
-		this.az.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
-		this.el.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
-		this.tlt.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
+			double z,List<String> selectedCSG, Bounds b, TransformNR cf) {
+		this.az.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
+		this.el.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
+		this.tlt.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
 	}
 
 	public Affine getViewRotation() {
@@ -71,6 +75,11 @@ public class RotationSessionManager {
 
 	public void setViewRotation(Affine viewRotation) {
 		this.viewRotation = viewRotation;
+	}
+	public void resetSelected() {
+		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+			r.setSelected(false);
+		}
 	}
 
 }
