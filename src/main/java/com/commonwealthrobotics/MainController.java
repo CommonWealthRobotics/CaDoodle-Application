@@ -694,8 +694,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void createGroundPlane() {
 		ground= new Cube(1000, 1000, 0.001).toCSG().toZMax().newMesh();
 		PhongMaterial material = new PhongMaterial();
-
-		// material.setDiffuseMap(texture);
 		material.setDiffuseColor(new Color(0, 0, 0.25, 0.0025));
 		ground.setCullFace(CullFace.BACK);
 		ground.setMaterial(material);
@@ -704,16 +702,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroupp.setDepthTest(DepthTest.ENABLE);
 		linesGroupp.setViewOrder(-1); // Lower viewOrder renders on top
 		linesGroupp.getChildren().add(ground);
-		//ground.getTransforms().addAll(wpPickPlacement);
-//		Image image = new Image(Main.class.getResourceAsStream("BlueNoise470.png"));
-//		ground = new ImageView(image);
-//		ground.setOpacity(0.25);
-//		ground.setScaleX(groundScale());
-//		ground.setScaleY(groundScale());
-//		ground.setX(-image.getWidth() / 2);
-//		ground.setY(-image.getHeight() / 2);
-//		ground.setTranslateZ(-0.1);
-
 		engine.addUserNode(linesGroupp);
 	}
 	public static double groundScale() {
