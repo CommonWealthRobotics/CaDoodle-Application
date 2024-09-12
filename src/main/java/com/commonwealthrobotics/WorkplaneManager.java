@@ -39,7 +39,7 @@ import javafx.scene.transform.Affine;
 public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	private CaDoodleFile cadoodle;
-	private ImageView ground;
+	private MeshView ground;
 	private MeshView wpPick;
 	private HashMap<CSG, MeshView> meshes;
 	private BowlerStudio3dEngine engine;
@@ -55,7 +55,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private SelectionSession session;
 	private boolean tempory;
 
-	public WorkplaneManager(CaDoodleFile f, ImageView ground, BowlerStudio3dEngine engine, SelectionSession session) {
+	public WorkplaneManager(CaDoodleFile f, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 		this.cadoodle = f;
 		this.ground = ground;
 		this.engine = engine;

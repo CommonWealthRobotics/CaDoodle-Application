@@ -26,9 +26,12 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.DepthTest;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
@@ -49,6 +52,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
@@ -235,7 +240,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private ICaDoodleOpperation source;
 	private boolean resetArmed;
 	private long timeOfClick;
-	private ImageView ground;
+	private MeshView ground;
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -682,20 +687,37 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			engine.getSubScene().setHeight(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
-		Image image = new Image(Main.class.getResourceAsStream("BlueNoise470.png"));
-		ground = new ImageView(image);
-		ground.setOpacity(0.25);
-		ground.setScaleX(groundScale());
-		ground.setScaleY(groundScale());
-		ground.setX(-image.getWidth() / 2);
-		ground.setY(-image.getHeight() / 2);
-		ground.setTranslateZ(-0.1);
-
-		engine.addUserNode(ground);
+		createGroundPlane();
 
 	}
+
+	private void createGroundPlane() {
+		ground= new Cube(1000, 1000, 0.001).toCSG().toZMax().newMesh();
+		PhongMaterial material = new PhongMaterial();
+
+		// material.setDiffuseMap(texture);
+		material.setDiffuseColor(new Color(0, 0, 0.25, 0.0025));
+		ground.setCullFace(CullFace.BACK);
+		ground.setMaterial(material);
+		ground.setOpacity(0.25);
+		Group linesGroupp = new Group();
+		linesGroupp.setDepthTest(DepthTest.ENABLE);
+		linesGroupp.setViewOrder(-1); // Lower viewOrder renders on top
+		linesGroupp.getChildren().add(ground);
+		//ground.getTransforms().addAll(wpPickPlacement);
+//		Image image = new Image(Main.class.getResourceAsStream("BlueNoise470.png"));
+//		ground = new ImageView(image);
+//		ground.setOpacity(0.25);
+//		ground.setScaleX(groundScale());
+//		ground.setScaleY(groundScale());
+//		ground.setX(-image.getWidth() / 2);
+//		ground.setY(-image.getHeight() / 2);
+//		ground.setTranslateZ(-0.1);
+
+		engine.addUserNode(linesGroupp);
+	}
 	public static double groundScale() {
-		return 0.75;
+		return 1;
 	}
 
 	private void setUpNavigationCube() {
