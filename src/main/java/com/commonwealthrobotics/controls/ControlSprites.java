@@ -14,6 +14,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -89,6 +90,7 @@ public class ControlSprites {
 	private Manipulation manipulation;
 	private boolean xymoving = false;
 	private boolean zmoving = false;
+	private ICaDoodleOpperation currentOp;
 
 	public void setSnapGrid(double size) {
 		zMove.setIncrement(size);
@@ -104,6 +106,7 @@ public class ControlSprites {
 		this.manipulation = manipulation;
 		// this.xyMove = mov;
 		this.cadoodle = c;
+		currentOp = cadoodle.getCurrentOpperation();
 		manipulation.addEventListener(() -> {
 			xymoving = true;
 			zmoving = false;
@@ -400,7 +403,7 @@ public class ControlSprites {
 
 			boolean isThisADisplayMode = mode == SpriteDisplayMode.MoveZ || mode == SpriteDisplayMode.MoveXY
 							|| (mode == SpriteDisplayMode.Default
-									&& MoveCenter.class.isInstance(cadoodle.getCurrentOpperation()));
+									&& MoveCenter.class.isInstance(cadoodle.getCurrentOpperation()) && currentOp!=cadoodle.getCurrentOpperation());
 			if ( isThisADisplayMode && (!scaleSession.xySelected() && !scaleSession.zScaleSelected())) {
 				if (!xymoving)
 					zOffset.show();
@@ -443,6 +446,7 @@ public class ControlSprites {
 		});
 		selectionLive = false;
 		resetSelected();
+		currentOp = cadoodle.getCurrentOpperation();
 	}
 
 	public SpriteDisplayMode getMode() {
