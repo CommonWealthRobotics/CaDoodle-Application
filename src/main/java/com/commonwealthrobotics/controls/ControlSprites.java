@@ -401,14 +401,13 @@ public class ControlSprites {
 				ydimen.hide();
 			}
 
+			ICaDoodleOpperation currentOpperation = cadoodle.getCurrentOpperation();
 			boolean isThisADisplayMode = mode == SpriteDisplayMode.MoveZ || mode == SpriteDisplayMode.MoveXY
 							|| (mode == SpriteDisplayMode.Default
-									&& MoveCenter.class.isInstance(cadoodle.getCurrentOpperation()) && currentOp!=cadoodle.getCurrentOpperation());
+									&& MoveCenter.class.isInstance(currentOpperation) && currentOp!=currentOpperation);
 			if ( isThisADisplayMode && (!scaleSession.xySelected() && !scaleSession.zScaleSelected())) {
 				if (!xymoving)
 					zOffset.show();
-				//else 
-					//System.out.println("YX moving");
 				if (!zmoving) {
 					xOffset.show();
 					yOffset.show();
