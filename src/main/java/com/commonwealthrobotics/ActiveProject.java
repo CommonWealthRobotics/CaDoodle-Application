@@ -1,26 +1,17 @@
 package com.commonwealthrobotics;
-import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
-
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
-import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
-import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
 
 public class ActiveProject {
@@ -28,11 +19,15 @@ public class ActiveProject {
 
 	
 	private boolean isOpenValue=true;
-	private WritableImage img;
-	public void setActiveProject(File f) {
+	private CaDoodleFile fromFile;
+	public CaDoodleFile setActiveProject(File f,ICaDoodleStateUpdate listener) throws Exception {
+		if(fromFile!=null) {
+			fromFile.clearListeners();
+		}
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
+		return loadActive(listener);
 	}
-	public File getActiveProject() {
+	private File getActiveProject() {
 		try {
 			if(!ConfigurationDatabase.containsKey("CaDoodle", 
 					"CaDoodleacriveFile"))
@@ -59,31 +54,11 @@ public class ActiveProject {
 		return random;
 	}
 	public CaDoodleFile loadActive(ICaDoodleStateUpdate listener) throws Exception {
-		return CaDoodleFile.fromFile(getActiveProject(),listener,false);
+		fromFile = CaDoodleFile.fromFile(getActiveProject(),listener,false);
+		return fromFile;
 	}
 	public void save(CaDoodleFile cf) {
 		cf.setSelf(getActiveProject());
-		File parent = getActiveProject().getAbsoluteFile().getParentFile();
-		File image = new File(parent.getAbsolutePath()+delim()+"snapshot.png");
-		img=null;
-		BowlerStudio.runLater(()->img=ThumbnailImage.get(cf.getCurrentState()));
-		while(img==null)
-			try {
-				Thread.sleep(100);
-				//System.out.println("Waiting for image to write");
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				break;
-			}
-		BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
-        try {
-            ImageIO.write(bufferedImage, "png", image);
-            System.out.println("Thumbnail saved successfully to " + image.getAbsolutePath());
-        } catch (IOException e) {
-            System.err.println("Error saving image: " + e.getMessage());
-            e.printStackTrace();
-        }
 		try {
 			cf.save();
 		} catch (IOException e) {
@@ -96,9 +71,6 @@ public class ActiveProject {
 		return isOpenValue;
 	}
 	public WritableImage getImage() {
-		return img;
-	}
-	public void setImage(WritableImage img) {
-		this.img = img;
+		return fromFile.getImage();
 	}
 }
