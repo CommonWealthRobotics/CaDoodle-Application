@@ -70,15 +70,16 @@ public class ActiveProject {
 		while(img==null)
 			try {
 				Thread.sleep(100);
-				System.out.println("Waiting for image to write");
+				//System.out.println("Waiting for image to write");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				break;
 			}
 		BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
         try {
             ImageIO.write(bufferedImage, "png", image);
-            System.out.println("Image saved successfully to " + image.getAbsolutePath());
+            System.out.println("Thumbnail saved successfully to " + image.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error saving image: " + e.getMessage());
             e.printStackTrace();
