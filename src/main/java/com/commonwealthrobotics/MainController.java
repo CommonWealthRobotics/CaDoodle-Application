@@ -15,6 +15,7 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
@@ -241,6 +242,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
+	private int initIndex=0;
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -591,6 +593,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		new Thread(() -> {
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
+				SplashManager.renderSplashFrame(20, "Initialize Model");
 				f.initialize();
 				session.save();
 				BowlerStudio.runLater(() -> {
@@ -598,6 +601,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				session.setKeyBindingFocus();
+				SplashManager.closeSplash();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -741,6 +745,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
+		if(SplashManager.isVisableSplash()) {
+			SplashManager.renderSplashFrame(20+initIndex, "Initialize Model");
+			initIndex++;
+		}
 		setCadoodleFile(f);
 		//System.out.println("Displaying result of " + source.getType());
 		BowlerStudio.runLater(() -> {
