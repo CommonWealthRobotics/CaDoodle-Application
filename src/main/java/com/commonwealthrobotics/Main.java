@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileSystemView;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
@@ -30,9 +31,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main  extends Application {
-
 	@Override
 	public void start(Stage newStage) throws Exception {
+		SplashManager.renderSplashFrame(1, "Main Window Load");
+
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
 		loader.setController(new MainController());
 		Parent root = loader.load();
@@ -78,7 +80,7 @@ public class Main  extends Application {
 		});
 		newStage.setMinWidth(900);
 		newStage.setMinHeight(600);
-
+		SplashManager.renderSplashFrame(1, "Main Window Show");
 		newStage.show();
 	}
 	public static void main(String [] args) {
@@ -98,6 +100,7 @@ public class Main  extends Application {
 			e.printStackTrace();
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+		SplashManager.renderSplashFrame(0, "Startup");
 		launch(args);	
 		
 	}
