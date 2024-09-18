@@ -20,12 +20,17 @@ public class ActiveProject {
 	
 	private boolean isOpenValue=true;
 	private CaDoodleFile fromFile;
-	public CaDoodleFile setActiveProject(File f,ICaDoodleStateUpdate listener) throws Exception {
+	private ICaDoodleStateUpdate listener;
+	public ActiveProject(ICaDoodleStateUpdate listener){
+		this.listener = listener;
+		
+	}
+	public CaDoodleFile setActiveProject(File f) throws Exception {
 		if(fromFile!=null) {
-			fromFile.clearListeners();
+			fromFile.removeListener(listener);
 		}
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
-		return loadActive(listener);
+		return loadActive();
 	}
 	private File getActiveProject() {
 		try {
@@ -53,7 +58,7 @@ public class ActiveProject {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", random.getAbsolutePath());
 		return random;
 	}
-	public CaDoodleFile loadActive(ICaDoodleStateUpdate listener) throws Exception {
+	public CaDoodleFile loadActive() throws Exception {
 		fromFile = CaDoodleFile.fromFile(getActiveProject(),listener,false);
 		return fromFile;
 	}

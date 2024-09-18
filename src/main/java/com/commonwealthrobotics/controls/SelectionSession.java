@@ -63,7 +63,6 @@ import javafx.scene.transform.Affine;
 
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
-	private ActiveProject ap = new ActiveProject();
 
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
@@ -106,6 +105,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	boolean intitialization = false;
 
 	private VBox parametrics;
+	private ActiveProject ap;
 
 	public SelectionSession() {
 
@@ -1127,9 +1127,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				getSellectedBounds(selectedCSG));
 	}
 
-	public CaDoodleFile loadActive(MainController mainController) throws Exception {
-		return ap.loadActive(mainController);
-	}
+
 
 	public CaDoodleFile getCadoodle() {
 		return cadoodle;
@@ -1162,6 +1160,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public TransformNR getWorkplane() {
 		return cadoodle.getWorkplane();
+	}
+
+	public void setActiveProject(ActiveProject ap) {
+		this.ap = ap;
 	}
 
 }

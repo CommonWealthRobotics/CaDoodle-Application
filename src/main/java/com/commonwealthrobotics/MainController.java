@@ -64,6 +64,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionSession session = new SelectionSession();
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
+	private ActiveProject ap=null;
+
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -575,7 +577,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// do this after setting up the session
 		setupEngineControls();
 		try {
-			CaDoodleFile f = session.loadActive(this);
+			CaDoodleFile f = loadActive(this);
 			setCadoodleFile(f);
 			// Threaded load happens after UI opens
 			setupFile(f);
@@ -586,7 +588,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 
 	}
-
+	public CaDoodleFile loadActive(MainController mainController) throws Exception {
+		if(ap==null) {
+			ap = new ActiveProject(mainController);
+			session.setActiveProject(ap);
+		}
+		return ap.loadActive();
+	}
 	private void setupFile(CaDoodleFile f) {
 		new Thread(() -> {
 			try {
