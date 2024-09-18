@@ -18,6 +18,7 @@ import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
@@ -520,8 +521,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setKeyBindingFocus() {
-		if (engine != null)
-			BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
+		if(!SplashManager.isVisableSplash())
+			if (engine != null)
+				BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
 	}
 
 	public void setToSolid() {

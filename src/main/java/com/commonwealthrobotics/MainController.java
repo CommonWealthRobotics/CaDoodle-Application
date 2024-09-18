@@ -244,7 +244,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
-	private int initIndex=0;
+	private int lastFrame=0;
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -754,8 +754,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
 		if(SplashManager.isVisableSplash()) {
-			SplashManager.renderSplashFrame(20+initIndex, "Initialize Model");
-			initIndex++;
+			int frame = (int) (100*f.getPercentInitialized());
+			if(frame-lastFrame>30) {
+				lastFrame=frame;
+				SplashManager.renderSplashFrame(frame, "Initialize Model");
+			}
 		}
 		setCadoodleFile(f);
 		//System.out.println("Displaying result of " + source.getType());

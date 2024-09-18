@@ -82,6 +82,7 @@ public class Main  extends Application {
 		newStage.setMinHeight(600);
 		SplashManager.renderSplashFrame(1, "Main Window Show");
 		newStage.show();
+		SplashManager.renderSplashFrame(1, "Initializing");
 	}
 	public static void main(String [] args) {
 		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
