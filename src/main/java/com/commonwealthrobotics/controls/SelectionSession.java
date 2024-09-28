@@ -105,10 +105,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	boolean intitialization = false;
 
 	private VBox parametrics;
-	private ActiveProject ap;
+	private ActiveProject ap=null;
 
-	public SelectionSession(ActiveProject ap) {
-		this.ap=ap;
+	public SelectionSession( BowlerStudio3dEngine e,ActiveProject ap) {
+		engine=e;
+		setActiveProject(ap);
 		manipulation.addSaveListener(() -> {
 			if (intitialization)
 				return;
@@ -118,9 +119,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					.addOpperation(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
 			try {
 				t.join();
-			} catch (InterruptedException e) {
+			} catch (InterruptedException ex) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ex.printStackTrace();
 			}
 			controls.setMode(SpriteDisplayMode.Default);
 
@@ -1128,13 +1129,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 
-	public void setCadoodle(ActiveProject ap) {
-		if (this.ap == null) {
-			controls = new ControlSprites(this, engine, selection, manipulation, ap);
-			controls.setSnapGrid(size);
-		}
-		this.ap = ap;
-	}
+//	public void setCadoodle(ActiveProject ap) {
+//		
+//	}
 
 	public void setSnapGrid(double size) {
 		this.size = size;
@@ -1158,6 +1155,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setActiveProject(ActiveProject ap) {
+		if (this.ap == null) {
+			controls = new ControlSprites(this, engine, selection, manipulation, ap);
+			controls.setSnapGrid(size);
+		}
 		this.ap = ap;
 	}
 
@@ -1167,6 +1168,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void regenerateCurrent() {
 		ap.get().regenerateCurrent();
+	}
+
+	@Override
+	public void onInitializationDone() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

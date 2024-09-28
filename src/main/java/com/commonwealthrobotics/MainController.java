@@ -564,7 +564,20 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		ap = new ActiveProject();
+		engine = new BowlerStudio3dEngine("CAD window");
+		engine.rebuild(true);
+		engine.hideHand();
+		ap.addListener(this);
+		session = new SelectionSession(engine,ap);
 
+		try {
+			ap.loadActive();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(2);
+		}
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
@@ -579,7 +592,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// do this after setting up the session
 		setupEngineControls();
 		try {
-			loadActive(this);
 			setCadoodleFile();
 			// Threaded load happens after UI opens
 			setupFile();
@@ -591,12 +603,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	}
 	public void loadActive(MainController mainController) throws Exception {
-		if(ap==null) {
-			ap = new ActiveProject(mainController);
-			session = new SelectionSession(ap);
-			session.setActiveProject(ap);
-		}
-		ap.loadActive();
+
+		
 	}
 	private void setupFile() {
 		new Thread(() -> {
@@ -627,9 +635,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUp3dEngine() {
-		engine = new BowlerStudio3dEngine("CAD window");
-		engine.rebuild(true);
-		engine.hideHand();
+		
+
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
 			BowlerStudio.runLater(() -> {
@@ -979,5 +986,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onSaveSuggestion() {
 		session.save();
+	}
+
+	@Override
+	public void onInitializationDone() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -62,6 +62,8 @@ public class ResizingHandle {
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
+		if(engine==null)
+			throw new NullPointerException();
 		this.engine = engine;
 		camera = engine.getFlyingCamera().getCamera();
 		CSG cube = new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin();

@@ -1,6 +1,8 @@
 package com.commonwealthrobotics;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -9,25 +11,45 @@ import org.eclipse.jgit.api.errors.TransportException;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 
+import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.image.WritableImage;
 
-public class ActiveProject {
+public class ActiveProject implements ICaDoodleStateUpdate{
 
 
 	
 	private boolean isOpenValue=true;
 	private CaDoodleFile fromFile;
-	private ICaDoodleStateUpdate listener;
-	public ActiveProject(ICaDoodleStateUpdate listener){
-		this.listener = listener;
+	//private ICaDoodleStateUpdate listener;
+	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
+
+	public ActiveProject(){
+		//this.listener = listener;
 		
+	}
+	public ActiveProject clearListeners() {
+		listeners.clear();
+		return this;
+	}
+
+	public ActiveProject removeListener(ICaDoodleStateUpdate l) {
+		if (listeners.contains(l))
+			listeners.remove(l);
+		return this;
+	}
+
+	public ActiveProject addListener(ICaDoodleStateUpdate l) {
+		if (!listeners.contains(l))
+			listeners.add(l);
+		return this;
 	}
 	public CaDoodleFile setActiveProject(File f) throws Exception {
 		if(fromFile!=null) {
-			fromFile.removeListener(listener);
+			fromFile.removeListener(this);
 		}
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
 		return loadActive();
@@ -59,7 +81,7 @@ public class ActiveProject {
 		return random;
 	}
 	public CaDoodleFile loadActive() throws Exception {
-		fromFile = CaDoodleFile.fromFile(getActiveProject(),listener,false);
+		fromFile = CaDoodleFile.fromFile(getActiveProject(),this,false);
 		return fromFile;
 	}
 	public void save(CaDoodleFile cf) {
@@ -80,5 +102,35 @@ public class ActiveProject {
 	}
 	public CaDoodleFile get() {
 		return fromFile;
+	}
+	@Override
+	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onUpdate(currentState, source, file);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	@Override
+	public void onSaveSuggestion() {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onSaveSuggestion();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	@Override
+	public void onInitializationDone() {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onInitializationDone();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

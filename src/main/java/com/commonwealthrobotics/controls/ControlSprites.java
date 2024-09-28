@@ -16,6 +16,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -102,13 +103,24 @@ public class ControlSprites {
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation manipulation,
 			ActiveProject ap) {
 		this.session = session;
-
+		if(e==null)
+			throw new NullPointerException();
 		this.engine = e;
 		this.selection = sel;
 		this.manipulation = manipulation;
 		this.ap = ap;
 		// this.xyMove = mov;
-		currentOp = ap.get().getCurrentOpperation();
+		ap.addListener(new ICaDoodleStateUpdate() {
+			@Override
+			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {}			
+			@Override
+			public void onSaveSuggestion() {}			
+			@Override
+			public void onInitializationDone() {
+				currentOp = ap.get().getCurrentOpperation();
+			}
+		});
+		
 		manipulation.addEventListener(() -> {
 			xymoving = true;
 			zmoving = false;
@@ -447,7 +459,8 @@ public class ControlSprites {
 		});
 		selectionLive = false;
 		resetSelected();
-		currentOp = ap.get().getCurrentOpperation();
+		if(ap.get()!=null)
+			currentOp = ap.get().getCurrentOpperation();
 	}
 
 	public SpriteDisplayMode getMode() {

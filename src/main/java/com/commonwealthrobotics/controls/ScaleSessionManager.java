@@ -36,6 +36,8 @@ public class ScaleSessionManager {
 	public ScaleSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
 			ActiveProject ap, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
 		this.engine = engine;
+		if(engine==null)
+			throw new NullPointerException();
 		this.updateLines = updateLines;
 		// this.workplaneOffset = workplaneOffset;
 		this.ap = ap;
