@@ -3,6 +3,7 @@ package com.commonwealthrobotics.controls;
 import java.util.Arrays;
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
@@ -30,12 +31,14 @@ public class ScaleSessionManager {
 	private BowlerStudio3dEngine engine;
 	// private Affine workplaneOffset;
 	private TransformNR cf;
+	private ActiveProject ap;
 
 	public ScaleSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
-			CaDoodleFile cadoodle, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
+			ActiveProject ap, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
 		this.engine = engine;
 		this.updateLines = updateLines;
 		// this.workplaneOffset = workplaneOffset;
+		this.ap = ap;
 
 		Runnable onReset = () -> {
 			resetSelected();
@@ -132,7 +135,7 @@ public class ScaleSessionManager {
 		});
 		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
 		for (ResizingHandle c : controls) {
-			c.manipulator.setFrameOfReference(() -> cadoodle.getWorkplane());
+			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 			c.manipulator.addSaveListener(() -> {
 				try {
 					Thread.sleep(32);
@@ -141,7 +144,7 @@ public class ScaleSessionManager {
 					e.printStackTrace();
 				}
 				// System.out.println("Saving from "+c);
-				TransformNR wp = cadoodle.getWorkplane().copy();
+				TransformNR wp = ap.get().getWorkplane().copy();
 				TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 				TransformNR lfC = leftFront.getCurrentInReferenceFrame();
 				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
@@ -162,7 +165,7 @@ public class ScaleSessionManager {
 				Resize setResize = new Resize().setNames(sel.selectedSnapshot())
 						// .setDebugger(engine)
 						.setWorkplane(wp).setResize(tcC, lfC, rrC);
-				Thread t = cadoodle.addOpperation(setResize);
+				Thread t = ap.get().addOpperation(setResize);
 				try {
 					t.join();
 				} catch (InterruptedException e) {

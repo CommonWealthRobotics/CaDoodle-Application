@@ -38,7 +38,6 @@ import javafx.scene.transform.Affine;
 
 public class WorkplaneManager implements EventHandler<MouseEvent> {
 
-	private CaDoodleFile cadoodle;
 	private MeshView ground;
 	private MeshView wpPick;
 	private HashMap<CSG, MeshView> meshes;
@@ -54,9 +53,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private Affine wpPickPlacement = new Affine();
 	private SelectionSession session;
 	private boolean tempory;
+	private ActiveProject ap;
 
-	public WorkplaneManager(CaDoodleFile f, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
-		this.cadoodle = f;
+	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
+		
+		this.ap = ap;
 		this.ground = ground;
 		this.engine = engine;
 		this.session = session;
@@ -184,7 +185,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = t.times(pureRot);
 			if (intersectedNode == wpPick) {
-				screenLocation = cadoodle.getWorkplane().times(screenLocation);
+				screenLocation = ap.get().getWorkplane().times(screenLocation);
 			}
 			setCurrentAbsolutePose(screenLocation);
 
@@ -276,9 +277,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				return;
 			if (this.isClickOnGround()) {
 				// System.out.println("Ground plane click detected");
-				cadoodle.setWorkplane(new TransformNR());
+				ap.get().setWorkplane(new TransformNR());
 			} else {
-				cadoodle.setWorkplane(this.getCurrentAbsolutePose());
+				ap.get().setWorkplane(this.getCurrentAbsolutePose());
 			}
 			placeWorkplaneVisualization();
 			r.run();
@@ -287,15 +288,15 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void placeWorkplaneVisualization() {
-		engine.placeGrid(cadoodle.getWorkplane());
+		engine.placeGrid(ap.get().getWorkplane());
 		BowlerKernel.runLater(() -> {
 			wpPick.setVisible(isWorkplaneInOrigin());
-			TransformFactory.nrToAffine(cadoodle.getWorkplane(), wpPickPlacement);
+			TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
 		});
 	}
 
 	private boolean isWorkplaneInOrigin() {
-		TransformNR w = cadoodle.getWorkplane();
+		TransformNR w = ap.get().getWorkplane();
 		double epsilon = 0.00001;
 		RotationNR r = w.getRotation();
 		if (Math.abs(w.getX()) > epsilon || Math.abs(w.getY()) > epsilon || Math.abs(w.getZ()) > epsilon) {

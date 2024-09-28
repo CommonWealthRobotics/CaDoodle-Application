@@ -45,10 +45,10 @@ public class ShapesPallet {
 	}.getType();
 	private Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 	private HashMap<String, HashMap<String, String>> active = null;
-	private CaDoodleFile cadoodle;
 	private SelectionSession session;
 	private WorkplaneManager workplane;
 	private HashMap<Button,List<CSG>> referenceParts = new HashMap<>();
+	private ActiveProject ap;
 
 	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet, SelectionSession session) {
 		this.shapeCatagory = shapeCatagory;
@@ -151,7 +151,7 @@ public class ShapesPallet {
 						TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
 						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"))
 								.setLocation(currentAbsolutePose);
-						cadoodle.addOpperation(setAddFromScript).join();
+						ap.get().addOpperation(setAddFromScript).join();
 //						List<String> namesToMove = new ArrayList<>();
 //						namesToMove.addAll(setAddFromScript.getNamesAdded());
 //						cadoodle.addOpperation(new MoveCenter()
@@ -164,9 +164,9 @@ public class ShapesPallet {
 							return;
 						if (workplane.isClickOnGround()) {
 							// System.out.println("Ground plane click detected");
-							cadoodle.setWorkplane(new TransformNR());
+							ap.get().setWorkplane(new TransformNR());
 						} else {
-							cadoodle.setWorkplane(workplane.getCurrentAbsolutePose());
+							ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 						}
 						workplane.placeWorkplaneVisualization();
 						workplane.setTemporaryPlane();
@@ -186,12 +186,9 @@ public class ShapesPallet {
 		return button;
 	}
 
-	public CaDoodleFile getCadoodle() {
-		return cadoodle;
-	}
 
-	public void setCadoodle(CaDoodleFile cadoodle) {
-		this.cadoodle = cadoodle;
+	public void setCadoodle(ActiveProject ap) {
+		this.ap = ap;
 	}
 
 	public void setWorkplaneManager(WorkplaneManager workplane) {

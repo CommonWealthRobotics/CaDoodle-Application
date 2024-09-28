@@ -60,7 +60,7 @@ import javafx.scene.transform.Affine;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
-	private CaDoodleFile cadoodle;
+	//private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = new SelectionSession();
 	private WorkplaneManager workplane;
@@ -256,14 +256,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onRedo(ActionEvent event) {
 		System.out.println("On Redo");
-		cadoodle.forward();
+		ap.get().forward();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUndo(ActionEvent event) {
 		System.out.println("On Undo");
-		cadoodle.back();
+		ap.get().back();
 		session.setKeyBindingFocus();
 	}
 
@@ -476,7 +476,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void setName(ActionEvent event) {
 		System.out.println("Set Project Name to " + fileNameBox.getText());
-		cadoodle.setProjectName(fileNameBox.getText());
+		ap.get().setProjectName(fileNameBox.getText());
 		session.setKeyBindingFocus();
 		session.save();
 	}
@@ -580,7 +580,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setupEngineControls();
 		try {
 			CaDoodleFile f = loadActive(this);
-			setCadoodleFile(f);
+			setCadoodleFile();
 			// Threaded load happens after UI opens
 			setupFile(f);
 		} catch (Exception e) {
@@ -605,7 +605,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				f.initialize();
 				session.save();
 				BowlerStudio.runLater(() -> {
-					fileNameBox.setText(cadoodle.getProjectName());
+					fileNameBox.setText(f.getProjectName());
 				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				session.setKeyBindingFocus();
@@ -760,11 +760,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
 		}
-		setCadoodleFile(f);
 		//System.out.println("Displaying result of " + source.getType());
 		BowlerStudio.runLater(() -> {
-			redoButton.setDisable(!cadoodle.isForwardAvailible());
-			undoButton.setDisable(!cadoodle.isBackAvailible());
+			redoButton.setDisable(!ap.get().isForwardAvailible());
+			undoButton.setDisable(!ap.get().isBackAvailible());
 		});
 		session.onUpdate(currentState, source, f);
 		if (session.isAnyHidden()) {
@@ -788,16 +787,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 	}
 
-	private void setCadoodleFile(CaDoodleFile f) {
-		if (cadoodle == null) {
-			cadoodle = f;
-			workplane = new WorkplaneManager(f, ground, engine, session);
+	private void setCadoodleFile() {
+
+			workplane = new WorkplaneManager(ap, ground, engine, session);
 			session.setWorkplaneManager(workplane);
 			pallet = new ShapesPallet(shapeCatagory, objectPallet, session);
-			pallet.setCadoodle(f);
+			pallet.setCadoodle(ap);
 			pallet.setWorkplaneManager(workplane);
 			workplane.placeWorkplaneVisualization();
-		}
+		
 	}
 
 	private void setupEngineControls() {
@@ -807,7 +805,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			timeOfClick = System.currentTimeMillis();
 			if (isEventACancel(event)) {
 				if (workplane.isTemporaryPlane()) {
-					cadoodle.setWorkplane(new TransformNR());
+					ap.get().setWorkplane(new TransformNR());
 					workplane.placeWorkplaneVisualization();
 				}
 				
@@ -874,11 +872,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 26:
 					System.out.println("Undo");
 					workplane.cancle();
-					cadoodle.back();
+					ap.get().back();
 					break;
 				case 25:
 					System.out.println("redo");
-					cadoodle.forward();
+					ap.get().forward();
 					break;
 				case 7:
 					System.out.println("Group");

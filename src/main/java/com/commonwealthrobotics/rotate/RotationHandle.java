@@ -2,6 +2,7 @@ package com.commonwealthrobotics.rotate;
 
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.Quadrent;
@@ -55,14 +56,15 @@ public class RotationHandle {
 	public ThreedNumber text;
 	private boolean selected = false;
 	private Affine viewRotation;
-	private CaDoodleFile cadoodle;
 	private ControlSprites controlSprites;
+	private ActiveProject ap;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
-			RotationSessionManager rotationSessionManager, CaDoodleFile c, ControlSprites cs, Affine workplaneOffset) {
+			RotationSessionManager rotationSessionManager, ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
 		this.axis = ax;
 		this.viewRotation = vr;
-		this.cadoodle = c;
+		this.ap = ap;
+	
 		this.controlSprites = cs;
 		
 		Runnable onSelect = ()->{
@@ -172,7 +174,7 @@ public class RotationHandle {
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
 		});
-		cadoodle.addOpperation(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
+		ap.get().addOpperation(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
 	}
 
 	private void setSweepAngle(double c) {
@@ -183,7 +185,7 @@ public class RotationHandle {
 		// divide the angle in 2 and aply it twice avaoids Euler singularities
 		TransformNR update = new TransformNR(new RotationNR(axis, -c / 2));
 		TransformNR pureRot = update.times(update);
-		TransformNR wp = cadoodle.getWorkplane();
+		TransformNR wp = ap.get().getWorkplane();
 		TransformNR center = wp.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
 		rotAtCenter = center.times(pureRot.times(center.inverse()));
 		BowlerStudio.runLater(() -> {

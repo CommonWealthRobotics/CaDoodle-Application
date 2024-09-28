@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.allign.AllignManager;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
@@ -76,7 +77,7 @@ public class ControlSprites {
 	private Scale scaleTF = new Scale();
 	private Affine selection;
 	private Manipulation zMove;
-	private CaDoodleFile cadoodle;
+	//private CaDoodleFile cadoodle;
 	private Bounds b;
 	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
 	private TransformNR cf;
@@ -91,6 +92,7 @@ public class ControlSprites {
 	private boolean xymoving = false;
 	private boolean zmoving = false;
 	private ICaDoodleOpperation currentOp;
+	private ActiveProject ap;
 
 	public void setSnapGrid(double size) {
 		zMove.setIncrement(size);
@@ -98,15 +100,15 @@ public class ControlSprites {
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation manipulation,
-			CaDoodleFile c) {
+			ActiveProject ap) {
 		this.session = session;
 
 		this.engine = e;
 		this.selection = sel;
 		this.manipulation = manipulation;
+		this.ap = ap;
 		// this.xyMove = mov;
-		this.cadoodle = c;
-		currentOp = cadoodle.getCurrentOpperation();
+		currentOp = ap.get().getCurrentOpperation();
 		manipulation.addEventListener(() -> {
 			xymoving = true;
 			zmoving = false;
@@ -119,11 +121,11 @@ public class ControlSprites {
 		});
 		Affine zMoveOffsetFootprint = new Affine();
 		zMove = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR());
-		zMove.setFrameOfReference(() -> cadoodle.getWorkplane());
+		zMove.setFrameOfReference(() -> ap.get().getWorkplane());
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
 			System.out.println("Z Moved! " + globalPose.toSimpleString());
-			Thread t = cadoodle.addOpperation(
+			Thread t = ap.get().addOpperation(
 					new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
 			try {
 				t.join();
@@ -144,7 +146,7 @@ public class ControlSprites {
 			xymoving = false;
 			setMode(SpriteDisplayMode.MoveZ);
 			TransformNR globalPose = zMove.getCurrentPose();
-			TransformNR wp = new TransformNR(cadoodle.getWorkplane().getRotation());
+			TransformNR wp = new TransformNR(ap.get().getWorkplane().getRotation());
 			globalPose = wp.times(globalPose);
 			globalPose.setRotation(new RotationNR());
 			TransformNR inverse = globalPose.inverse();
@@ -169,13 +171,13 @@ public class ControlSprites {
 			updateLines();
 			// System.out.println("Lines updated from scale session");
 		};
-		scaleSession = new ScaleSessionManager(e, selection, updateLines, cadoodle, session, workplaneOffset, up);
+		scaleSession = new ScaleSessionManager(e, selection, updateLines, ap, session, workplaneOffset, up);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(), scaleSession.leftFront.getMesh(), scaleSession.leftRear.getMesh(),
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, up.getMesh());
 		allElems.addAll(tmp);
 
-		rotationManager = new RotationSessionManager(selection, cadoodle, this, workplaneOffset);
+		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset);
 		allign = new AllignManager(session, selection, workplaneOffset);
 		allElems.addAll(allign.getElements());
 		allElems.addAll(rotationManager.getElements());
@@ -313,7 +315,7 @@ public class ControlSprites {
 
 	private void updateLines() {
 		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(cadoodle.getWorkplane(), workplaneOffset);
+			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
 			Vector3d center = bounds.getCenter();
 			Vector3d min = bounds.getMin();
@@ -401,7 +403,7 @@ public class ControlSprites {
 				ydimen.hide();
 			}
 
-			ICaDoodleOpperation currentOpperation = cadoodle.getCurrentOpperation();
+			ICaDoodleOpperation currentOpperation = ap.get().getCurrentOpperation();
 			boolean isThisADisplayMode = mode == SpriteDisplayMode.MoveZ || mode == SpriteDisplayMode.MoveXY
 							|| (mode == SpriteDisplayMode.Default
 									&& MoveCenter.class.isInstance(currentOpperation) && currentOp!=currentOpperation);
@@ -445,7 +447,7 @@ public class ControlSprites {
 		});
 		selectionLive = false;
 		resetSelected();
-		currentOp = cadoodle.getCurrentOpperation();
+		currentOp = ap.get().getCurrentOpperation();
 	}
 
 	public SpriteDisplayMode getMode() {

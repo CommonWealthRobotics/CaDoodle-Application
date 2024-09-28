@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -26,12 +27,12 @@ public class RotationSessionManager {
 	private Affine viewRotation = new Affine();
 	private ControlSprites controlSprites;
 
-	public RotationSessionManager(Affine selection, CaDoodleFile cadoodle, ControlSprites controlSprites, Affine workplaneOffset) {
+	public RotationSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites, Affine workplaneOffset) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
-		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,cadoodle,controlSprites,workplaneOffset);
-		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,cadoodle,controlSprites,workplaneOffset);
-		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,cadoodle,controlSprites,workplaneOffset);
+		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
+		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
+		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
 	}
 	
 	public List<Node> getElements(){

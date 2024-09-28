@@ -78,4 +78,7 @@ public class ActiveProject {
 	public WritableImage getImage() {
 		return fromFile.getImage();
 	}
+	public CaDoodleFile get() {
+		return fromFile;
+	}
 }

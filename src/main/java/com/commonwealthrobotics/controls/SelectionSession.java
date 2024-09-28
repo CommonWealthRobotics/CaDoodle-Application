@@ -157,7 +157,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
 		this.source = source;
-		this.setCadoodle(file);
 		intitialization = true;
 		manipulation.set(0, 0, 0);
 		if (controls.allignIsActive() && Allign.class.isInstance(source))
@@ -1135,12 +1134,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return cadoodle;
 	}
 
-	public void setCadoodle(CaDoodleFile cadoodle) {
+	public void setCadoodle(ActiveProject ap) {
 		if (this.cadoodle == null) {
-			controls = new ControlSprites(this, engine, selection, manipulation, cadoodle);
+			controls = new ControlSprites(this, engine, selection, manipulation, ap);
 			controls.setSnapGrid(size);
 		}
-		this.cadoodle = cadoodle;
+		this.ap = ap;
 	}
 
 	public void setSnapGrid(double size) {
