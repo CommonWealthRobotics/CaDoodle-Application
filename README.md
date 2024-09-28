@@ -23,3 +23,8 @@ git submodule update  --recursive
 bash  build.sh
 
 ```
+
+# Icons 
+
+https://www.svgrepo.com/collection/solar-bold-icons/
+

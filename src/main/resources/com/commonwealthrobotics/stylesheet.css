@@ -47,7 +47,9 @@
 .image-button:pressed {
     -fx-background-color: -logo-orange; /* Light gray background when pressed */
 }
-
+.grid-pane {
+    -fx-grid-line-color: -logo-blue;
+}
 .scroll-pane {
     -fx-background-color: -my-background-color;
 }
@@ -120,7 +122,9 @@
 #drawerGrid{
     -fx-background-color: -my-background-color;
 }
-
+#projectGrid{
+    -fx-background-color: -my-background-color;
+}
 #totalApplicationBackground{
     -fx-background-color: -my-background-color;
 }
