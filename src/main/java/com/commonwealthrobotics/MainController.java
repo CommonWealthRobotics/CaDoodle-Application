@@ -579,10 +579,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// do this after setting up the session
 		setupEngineControls();
 		try {
-			CaDoodleFile f = loadActive(this);
+			loadActive(this);
 			setCadoodleFile();
 			// Threaded load happens after UI opens
-			setupFile(f);
+			setupFile();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -590,23 +590,23 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 
 	}
-	public CaDoodleFile loadActive(MainController mainController) throws Exception {
+	public void loadActive(MainController mainController) throws Exception {
 		if(ap==null) {
 			ap = new ActiveProject(mainController);
 			session = new SelectionSession(ap);
 			session.setActiveProject(ap);
 		}
-		return ap.loadActive();
+		ap.loadActive();
 	}
-	private void setupFile(CaDoodleFile f) {
+	private void setupFile() {
 		new Thread(() -> {
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(20, "Initialize Model");
-				f.initialize();
+				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> {
-					fileNameBox.setText(f.getProjectName());
+					fileNameBox.setText(ap.get().getProjectName());
 				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				session.setKeyBindingFocus();
@@ -753,9 +753,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@Override
-	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
+	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
 		if(SplashManager.isVisableSplash()) {
-			int frame = (int) (100*f.getPercentInitialized());
+			int frame = (int) (100*ap.get().getPercentInitialized());
 			if(frame-lastFrame>30) {
 				lastFrame=frame;
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
@@ -766,7 +766,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			redoButton.setDisable(!ap.get().isForwardAvailible());
 			undoButton.setDisable(!ap.get().isBackAvailible());
 		});
-		session.onUpdate(currentState, source, f);
+		session.onUpdate(currentState, source, fi);
 		if (session.isAnyHidden()) {
 			BowlerStudio.runLater(() -> {
 				showAllImage.setImage(new Image(MainController.class.getResourceAsStream("litBulb.png")));

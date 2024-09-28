@@ -154,7 +154,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
 		this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
