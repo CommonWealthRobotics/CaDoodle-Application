@@ -68,7 +68,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	private ICaDoodleOpperation source;
-	private CaDoodleFile cadoodle;
 	private TitledPane shapeConfiguration;
 	private Accordion shapeConfigurationBox;
 	private AnchorPane shapeConfigurationHolder;
@@ -108,14 +107,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private VBox parametrics;
 	private ActiveProject ap;
 
-	public SelectionSession() {
-
+	public SelectionSession(ActiveProject ap) {
+		this.ap=ap;
 		manipulation.addSaveListener(() -> {
 			if (intitialization)
 				return;
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			System.out.println("Objects Moved! " + globalPose.toSimpleString());
-			Thread t = getCadoodle()
+			Thread t = ap.get()
 					.addOpperation(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
 			try {
 				t.join();
@@ -145,7 +144,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return engine.getFlyingCamera().getZoomDepth();
 			}
 		});
-		manipulation.setFrameOfReference(() -> cadoodle.getWorkplane());
+		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
 	}
 
 	public List<String> selectedSnapshot() {
@@ -188,7 +187,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Parameter para = CSGDatabase.get(k);
 					// System.out.println("Adding listener to "+para.getName());
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
-						cadoodle.regenerateFrom(source);
+						ap.get().regenerateFrom(source);
 					});
 				}
 			}
@@ -201,7 +200,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				engine.removeUserNode(meshes.get(c));
 			}
 			meshes.clear();
-			for (CSG c : (List<CSG>) CaDoodleLoader.process(getCadoodle())) {
+			for (CSG c : (List<CSG>) CaDoodleLoader.process(ap.get())) {
 				displayCSG(c);
 			}
 			ArrayList<String> toRemove = new ArrayList<String>();
@@ -578,14 +577,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void addOp(ICaDoodleOpperation h) {
-		if (getCadoodle() == null)
+		if (ap.get() == null)
 			return;
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
 		// System.out.println("Adding " + h.getType());
-		getCadoodle().addOpperation(h);
+		ap.get().addOpperation(h);
 	}
 
 	public void setButtons(Button... buttonsList) {
@@ -647,12 +646,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDelete() {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
 		System.out.println("Delete");
-		getCadoodle().addOpperation(new Delete().setNames(selectedSnapshot()));
+		ap.get().addOpperation(new Delete().setNames(selectedSnapshot()));
 	}
 
 	public void onCopy() {
@@ -671,7 +670,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void performPaste(double distance, List<String> copySet) {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -680,7 +679,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		copySet.clear();
 		try {
 			Paste setNames = new Paste().setOffset(distance).setNames(copyTarget);
-			getCadoodle().addOpperation(setNames).join();
+			ap.get().addOpperation(setNames).join();
 			selectAll(setNames.getNewNames());
 			onCopy();
 			BowlerStudio.runLater(() -> updateSelection());
@@ -692,7 +691,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onCruse() {
-		TransformNR wp = cadoodle.getWorkplane();
+		TransformNR wp = ap.get().getWorkplane();
 		List<String> selectedSnapshot = selectedSnapshot();
 		if (selectedSnapshot.size() == 0) {
 			// new RuntimeException("Cruse called with nothing selected").printStackTrace();
@@ -738,7 +737,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			if (workplane.isClicked()) {
 				TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
-				cadoodle.addOpperation(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+				ap.get().addOpperation(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
 			}
 		});
 		workplane.setCurrentAbsolutePose(copy.inverse());
@@ -746,15 +745,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onLock() {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		getCadoodle().addOpperation(new Lock().setNames(selectedSnapshot()));
+		ap.get().addOpperation(new Lock().setNames(selectedSnapshot()));
 	}
 
 	public void showAll() {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -764,12 +763,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				toShow.add(c.getName());
 		}
 		if (toShow.size() > 0) {
-			getCadoodle().addOpperation(new Show().setNames(toShow));
+			ap.get().addOpperation(new Show().setNames(toShow));
 		}
 	}
 
 	public void onGroup() {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -777,7 +776,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			new Thread(() -> {
 				Group setNames = new Group().setNames(selectedSnapshot());
 				try {
-					getCadoodle().addOpperation(setNames).join();
+					ap.get().addOpperation(setNames).join();
 					selected.clear();
 					selected.add(setNames.getGroupID());
 					BowlerStudio.runLater(() -> updateSelection());
@@ -795,7 +794,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onUngroup() {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -817,14 +816,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (isAGroupSelected()) {
 			selected.clear();
 			selected.addAll(toSelect);
-			getCadoodle().addOpperation(new UnGroup().setNames(selectedSnapshot));
+			ap.get().addOpperation(new UnGroup().setNames(selectedSnapshot));
 		}
 		updateSelection();
 
 	}
 
 	public void onHideShowOpperation() {
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -834,7 +833,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		} else {
 			op = new Hide().setNames(selectedSnapshot());
 		}
-		getCadoodle().addOpperation(op);
+		ap.get().addOpperation(op);
 		updateShowHideButton();
 	}
 
@@ -907,16 +906,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentState() {
-		if (getCadoodle() == null)
+		if (ap.get() == null)
 			return new ArrayList<CSG>();
-		return getCadoodle().getCurrentState();
+		return ap.get().getCurrentState();
 	}
 
 	public Bounds getSellectedBounds(List<CSG> incoming) {
 		Vector3d min = null;
 		Vector3d max = null;
 		for (CSG c : incoming) {
-			c = c.transformed(TransformFactory.nrToCSG(cadoodle.getWorkplane()).inverse());
+			c = c.transformed(TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse());
 			Vector3d min2 = c.getBounds().getMin().clone();
 			Vector3d max2 = c.getBounds().getMax().clone();
 			if (min == null)
@@ -943,14 +942,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onDrop() {
 		System.out.println("Drop to Workplane");
 		new Thread(() -> {
-			TransformNR wp = cadoodle.getWorkplane();
+			TransformNR wp = ap.get().getWorkplane();
 			Transform t = TransformFactory.nrToCSG(wp);
 			// Run a down move for each object, since each will move a different amount
 			// based on its own bottom
 			for (CSG c : getSelectedCSG(selectedSnapshot())) {
 				double downMove = -c.transformed(t.inverse()).getMinZ();
 				TransformNR location = wp.times(new TransformNR(0, 0, downMove)).times(wp.inverse());
-				Thread op = getCadoodle()
+				Thread op = ap.get()
 						.addOpperation(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName())));
 				try {
 					op.join();// wait for the move of this object to finish
@@ -966,7 +965,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void moveInCameraFrame(TransformNR stateUnitVectorTmp) {
 		if (selected.size() == 0)
 			return;
-		TransformNR wp = cadoodle.getWorkplane();
+		TransformNR wp = ap.get().getWorkplane();
 		// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
 
 		MoveCenter mc = getActiveMove();
@@ -974,7 +973,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			mc = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
 		}
 		timeSinceLastMove = System.currentTimeMillis();
-		if (getCadoodle().isOperationRunning()) {
+		if (ap.get().isOperationRunning()) {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
@@ -1023,18 +1022,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (String s : selectedSnapshot) {
 			// System.out.println("\t" + s);
 		}
-		ICaDoodleOpperation op = getCadoodle().getCurrentOpperation();
+		ICaDoodleOpperation op = ap.get().getCurrentOpperation();
 		if (op == mc) {
 			if (compareLists(selectedSnapshot, mc.getNames())) {
 				// System.out.println("Move " + tf.toSimpleString());
 				mc.setLocation(tf);
-				getCadoodle().regenerateCurrent();
+				ap.get().regenerateCurrent();
 				save();
 				return;
 			}
 		}
 
-		getCadoodle().addOpperation(mc);
+		ap.get().addOpperation(mc);
 
 	}
 
@@ -1045,8 +1044,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
 					if (needsSave) {
-						System.out.println("Auto save " + getCadoodle().getSelf().getAbsolutePath());
-						ap.save(getCadoodle());
+						System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
+						ap.save(ap.get());
 						needsSave = false;
 					}
 					try {
@@ -1077,7 +1076,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private MoveCenter getActiveMove() {
-		ICaDoodleOpperation op = getCadoodle().getCurrentOpperation();
+		ICaDoodleOpperation op = ap.get().getCurrentOpperation();
 		if (MoveCenter.class.isInstance(op)) {
 			MoveCenter active = (MoveCenter) op;
 			if (compareLists(selectedSnapshot(), active.getNames())) {
@@ -1117,10 +1116,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		if (getCadoodle() == null || controls == null)
+		if (ap.get() == null || controls == null)
 			return;
 
-		List<CSG> selectedCSG = getCadoodle().getSelect(selectedSnapshot());
+		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot());
 		if (selectedCSG.size() == 0)
 			return;
 
@@ -1129,13 +1128,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 
-
-	public CaDoodleFile getCadoodle() {
-		return cadoodle;
-	}
-
 	public void setCadoodle(ActiveProject ap) {
-		if (this.cadoodle == null) {
+		if (this.ap == null) {
 			controls = new ControlSprites(this, engine, selection, manipulation, ap);
 			controls.setSnapGrid(size);
 		}
@@ -1160,11 +1154,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public TransformNR getWorkplane() {
-		return cadoodle.getWorkplane();
+		return ap.get().getWorkplane();
 	}
 
 	public void setActiveProject(ActiveProject ap) {
 		this.ap = ap;
+	}
+
+	public ICaDoodleOpperation getCurrentOpperation() {
+		return ap.get().getCurrentOpperation();
+	}
+
+	public void regenerateCurrent() {
+		ap.get().regenerateCurrent();
 	}
 
 }

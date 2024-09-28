@@ -50,11 +50,11 @@ public class AllignManager {
 				System.out.println("AllignManager clicked");
 				setAllignemntSelected(true);
 				recompute(() -> {
-					ICaDoodleOpperation curOp = session.getCadoodle().getCurrentOpperation();
+					ICaDoodleOpperation curOp = session.getCurrentOpperation();
 					if (curOp != opperation)
 						session.addOp(opperation);
 					else
-						session.getCadoodle().regenerateCurrent();
+						session.regenerateCurrent();
 
 					session.selectAll(opperation.getNames());
 				});

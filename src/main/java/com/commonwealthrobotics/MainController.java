@@ -62,7 +62,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private static final int ZOOM = -700;
 	//private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
-	private SelectionSession session = new SelectionSession();
+	private SelectionSession session =null;
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
 	private ActiveProject ap=null;
@@ -593,6 +593,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public CaDoodleFile loadActive(MainController mainController) throws Exception {
 		if(ap==null) {
 			ap = new ActiveProject(mainController);
+			session = new SelectionSession(ap);
 			session.setActiveProject(ap);
 		}
 		return ap.loadActive();
