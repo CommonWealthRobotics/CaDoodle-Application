@@ -54,6 +54,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private SelectionSession session;
 	private boolean tempory;
 	private ActiveProject ap;
+	private double increment = 1.0;
 
 	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 		
@@ -169,6 +170,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				y *=  MainController.groundScale();
 				z *=  MainController.groundScale();
 			}
+			x=SelectionSession.roundToNearist(x,increment);
+			y=SelectionSession.roundToNearist(y,increment);
+			z=SelectionSession.roundToNearist(z,increment);
+			
 			TransformNR screenLocation;
 			double[] angles = new double[] { 0, 0, 0 };
 			if (intersectedNode instanceof MeshView) {
@@ -317,5 +322,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 	public boolean isTemporaryPlane() {
 		return tempory;
+	}
+
+	public double getIncrement() {
+		return increment;
+	}
+
+	public void setIncrement(double increment) {
+		this.increment = increment;
 	}
 }

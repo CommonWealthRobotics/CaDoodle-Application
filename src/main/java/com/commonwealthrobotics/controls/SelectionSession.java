@@ -467,7 +467,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		snapGrid.getSelectionModel().select(starting + " mm");
-		setSnapGrid(currentGrid);
+		
 		this.snapGrid.setOnAction(event -> {
 			String selected = this.snapGrid.getSelectionModel().getSelectedItem();
 			Double num = map.get(selected);
@@ -1087,7 +1087,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return null;
 	}
 
-	double roundToNearist(double incoiming, double modulo) {
+	public static double roundToNearist(double incoiming, double modulo) {
 		return modulo * (Math.round(incoiming / modulo));
 	}
 
@@ -1138,11 +1138,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		manipulation.setIncrement(size);
 		if (controls != null)
 			controls.setSnapGrid(size);
+		workplane.setIncrement(size);
 	}
 
 	public void setWorkplaneManager(WorkplaneManager workplane) {
 		this.workplane = workplane;
-
+		setSnapGrid(currentGrid);
 	}
 
 	@Override

@@ -567,7 +567,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ap = new ActiveProject();
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
-		engine.hideHand();
 		ap.addListener(this);
 		session = new SelectionSession(engine,ap);
 
@@ -635,8 +634,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUp3dEngine() {
-		
-
+		engine.hideHand();
 		BowlerStudio.runLater(() -> {
 			engine.getSubScene().setFocusTraversable(false);
 			BowlerStudio.runLater(() -> {
