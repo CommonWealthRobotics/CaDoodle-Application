@@ -761,7 +761,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
 		if(SplashManager.isVisableSplash()) {
 			int frame = (int) (100*ap.get().getPercentInitialized());
-			if(frame-lastFrame>30) {
+			if(frame-lastFrame>15) {
 				lastFrame=frame;
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
