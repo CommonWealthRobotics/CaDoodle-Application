@@ -42,6 +42,7 @@ public class ResizingHandle {
 	private String name;
 	private PhongMaterial material;
 	private boolean selected = false;
+	private Affine workplaneOffset;
 
 	// private Tooltip hover = new Tooltip();
 	/**
@@ -58,6 +59,7 @@ public class ResizingHandle {
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
 		this.name = name;
+		this.workplaneOffset = workplaneOffset;
 		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
@@ -218,14 +220,16 @@ public class ResizingHandle {
 		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
 
 		setScale(scaleFactor);
-
+		TransformNR pureRot = new TransformNR(cf.getRotation());
+//		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
+//		TransformNR pr=wp.inverse().times(pureRot);
 		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
 		// System.out.println("");
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			// TransformFactory.nrToAffine(pureRot ,cameraOrent);
+			TransformFactory.nrToAffine(pureRot ,cameraOrent);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 
