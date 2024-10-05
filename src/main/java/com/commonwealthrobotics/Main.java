@@ -13,6 +13,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
@@ -85,6 +86,14 @@ public class Main  extends Application {
 		SplashManager.renderSplashFrame(1, "Initializing");
 	}
 	public static void main(String [] args) {
+		if(args!=null) {
+			if(args.length!=0) {
+				File f = new File(args[0]);
+				if(f.exists()) {
+					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
+				}
+			}
+		}
 		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 		if (!relative.endsWith("Documents")) {
 			relative = relative + DownloadManager.delim()+"Documents";
@@ -102,7 +111,7 @@ public class Main  extends Application {
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		SplashManager.renderSplashFrame(0, "Startup");
-		launch(args);	
+		launch();	
 		
 	}
 
