@@ -196,7 +196,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void displayCurrent() {
-		BowlerStudio.runLater(() -> {
+		//BowlerStudio.runLater(() -> {
 			for (CSG c : meshes.keySet()) {
 				engine.removeUserNode(meshes.get(c));
 			}
@@ -220,7 +220,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				workplane.updateMeshes(meshes);
 			BowlerStudio.runLater(() -> updateSelection());
 			setKeyBindingFocus();
-		});
+		//});
 	}
 
 	private void displayCSG(CSG c) {
@@ -521,8 +521,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setKeyBindingFocus() {
 		if(!SplashManager.isVisableSplash())
-			if (engine != null)
+			if (engine != null) {
+				//new Exception("KB Focused here").printStackTrace();
+				System.out.println("Setting KeyBindingFocus");
 				BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
+			}
 	}
 
 	public void setToSolid() {

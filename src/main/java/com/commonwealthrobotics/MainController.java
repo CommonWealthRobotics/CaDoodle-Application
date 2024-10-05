@@ -263,8 +263,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onUndo(ActionEvent event) {
 		System.out.println("On Undo");
-		ap.get().back();
-		session.setKeyBindingFocus();
+		new Thread(()->{
+			ap.get().back();
+			session.setKeyBindingFocus();	
+		}).start();	
 	}
 
 	@FXML
@@ -616,8 +618,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					fileNameBox.setText(ap.get().getProjectName());
 				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
-				session.setKeyBindingFocus();
 				SplashManager.closeSplash();
+				session.setKeyBindingFocus();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -761,7 +763,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
 		if(SplashManager.isVisableSplash()) {
 			int frame = (int) (100*ap.get().getPercentInitialized());
-			if(frame-lastFrame>30) {
+			if(frame-lastFrame>15) {
 				lastFrame=frame;
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
