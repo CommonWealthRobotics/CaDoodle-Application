@@ -60,12 +60,12 @@ import javafx.scene.transform.Affine;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
-	//private CaDoodleFile cadoodle;
+	// private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
-	private SelectionSession session =null;
+	private SelectionSession session = null;
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
-	private ActiveProject ap=null;
+	private ActiveProject ap = null;
 
 	/**
 	 * CaDoodle Model Classes
@@ -244,11 +244,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
-	private int lastFrame=0;
+	private int lastFrame = 0;
 
 	@FXML
 	void onAllign(ActionEvent event) {
-		
+
 		session.onAllign();
 		session.setKeyBindingFocus();
 	}
@@ -263,10 +263,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onUndo(ActionEvent event) {
 		System.out.println("On Undo");
-		new Thread(()->{
+		new Thread(() -> {
 			ap.get().back();
-			session.setKeyBindingFocus();	
-		}).start();	
+			session.setKeyBindingFocus();
+		}).start();
 	}
 
 	@FXML
@@ -368,7 +368,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onHome(ActionEvent event) {
 		System.out.println("Open the Project Select UI");
-		session.setKeyBindingFocus();
+		// session.setKeyBindingFocus();
+		Runnable onFinish = () -> {
+			session.setKeyBindingFocus();
+			System.out.println("ProjectManager Close");
+		};
+		ProjectManager.launch(ap, onFinish);
 	}
 
 	@FXML
@@ -570,7 +575,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		ap.addListener(this);
-		session = new SelectionSession(engine,ap);
+		session = new SelectionSession(engine, ap);
 
 		try {
 			ap.loadActive();
@@ -584,7 +589,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpColorPicker();
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid,parametrics);
+				engine, colorPicker, snapGrid, parametrics);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
@@ -603,10 +608,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 
 	}
+
 	public void loadActive(MainController mainController) throws Exception {
 
-		
 	}
+
 	private void setupFile() {
 		new Thread(() -> {
 			try {
@@ -712,7 +718,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void createGroundPlane() {
-		ground= new Cube(1000, 1000, 0.001).toCSG().toZMax().newMesh();
+		ground = new Cube(1000, 1000, 0.001).toCSG().toZMax().newMesh();
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(new Color(0, 0, 0.25, 0.0025));
 		ground.setCullFace(CullFace.BACK);
@@ -724,6 +730,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroupp.getChildren().add(ground);
 		engine.addUserNode(linesGroupp);
 	}
+
 	public static double groundScale() {
 		return 1;
 	}
@@ -761,14 +768,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
-		if(SplashManager.isVisableSplash()) {
-			int frame = (int) (100*ap.get().getPercentInitialized());
-			if(frame-lastFrame>15) {
-				lastFrame=frame;
+		if (SplashManager.isVisableSplash()) {
+			int frame = (int) (100 * ap.get().getPercentInitialized());
+			if (frame - lastFrame > 15) {
+				lastFrame = frame;
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
 		}
-		//System.out.println("Displaying result of " + source.getType());
+		// System.out.println("Displaying result of " + source.getType());
 		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!ap.get().isForwardAvailible());
 			undoButton.setDisable(!ap.get().isBackAvailible());
@@ -797,13 +804,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setCadoodleFile() {
 
-			workplane = new WorkplaneManager(ap, ground, engine, session);
-			session.setWorkplaneManager(workplane);
-			pallet = new ShapesPallet(shapeCatagory, objectPallet, session);
-			pallet.setCadoodle(ap);
-			pallet.setWorkplaneManager(workplane);
-			workplane.placeWorkplaneVisualization();
-		
+		workplane = new WorkplaneManager(ap, ground, engine, session);
+		session.setWorkplaneManager(workplane);
+		pallet = new ShapesPallet(shapeCatagory, objectPallet, session);
+		pallet.setCadoodle(ap);
+		pallet.setWorkplaneManager(workplane);
+		workplane.placeWorkplaneVisualization();
+
 	}
 
 	private void setupEngineControls() {
@@ -816,23 +823,22 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					ap.get().setWorkplane(new TransformNR());
 					workplane.placeWorkplaneVisualization();
 				}
-				
+
 				session.clearSelection();
-				
+
 				System.out.println("Cancle");
 			}
 		});
-
 
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
 
 		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			if(session.isFocused()) {
-				//System.out.println("Key ignonred, session in focus");
+			if (session.isFocused()) {
+				// System.out.println("Key ignonred, session in focus");
 				return;
 			}
-				
+
 			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
 				switch (event.getCode()) {
@@ -866,8 +872,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 		});
 		subScene.setOnKeyTyped(event -> {
-			if(session.isFocused()) {
-				//System.out.println("Key ignonred, session in focus");
+			if (session.isFocused()) {
+				// System.out.println("Key ignonred, session in focus");
 				return;
 			}
 			String character = event.getCharacter();
@@ -953,13 +959,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if(in !=ground && in!=engine.getSubScene())
+		if (in != ground && in != engine.getSubScene())
 			return false;
-		if(event.isControlDown())
+		if (event.isControlDown())
 			return false;
-		if(!event.isPrimaryButtonDown())
+		if (!event.isPrimaryButtonDown())
 			return false;
-		if(event.isSecondaryButtonDown())
+		if (event.isSecondaryButtonDown())
 			return false;
 		return true;
 	}
@@ -991,6 +997,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onInitializationDone() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
