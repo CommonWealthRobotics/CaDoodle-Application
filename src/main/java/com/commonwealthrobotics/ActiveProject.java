@@ -62,7 +62,7 @@ public class ActiveProject implements ICaDoodleStateUpdate{
 			return new File(ConfigurationDatabase.get(
 					"CaDoodle", 
 					"CaDoodleacriveFile", 
-					ScriptingEngine.fileFromGit("https://github.com/madhephaestus/TestRepo.git", "TestRepo.doodle").getAbsolutePath()).toString());
+					ScriptingEngine.fileFromGit("https://github.com/madhephaestus/TestRepo.git", "Doodle1/TestRepo.doodle").getAbsolutePath()).toString());
 		} catch (InvalidRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
