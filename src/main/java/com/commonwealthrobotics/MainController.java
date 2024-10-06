@@ -7,11 +7,8 @@ package com.commonwealthrobotics;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import eu.mihosoft.vrl.v3d.Vector3d;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -28,7 +25,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
-import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
@@ -56,7 +52,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
-import javafx.scene.transform.Affine;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
@@ -373,7 +368,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setKeyBindingFocus();
 			System.out.println("ProjectManager Close");
 		};
-		ProjectManager.launch(ap, onFinish);
+		Runnable onClear=()->{
+			session.clearScreen();
+		};
+		ProjectManager.launch(ap, onFinish,onClear);
 	}
 
 	@FXML
@@ -580,7 +578,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 			ap.loadActive();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(2);
 		}
@@ -602,7 +599,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			// Threaded load happens after UI opens
 			setupFile();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -620,9 +616,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				SplashManager.renderSplashFrame(20, "Initialize Model");
 				ap.get().initialize();
 				session.save();
-				BowlerStudio.runLater(() -> {
-					fileNameBox.setText(ap.get().getProjectName());
-				});
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				SplashManager.closeSplash();
 				session.setKeyBindingFocus();
@@ -996,7 +989,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationDone() {
-		// TODO Auto-generated method stub
-
+		BowlerStudio.runLater(() -> {
+			fileNameBox.setText(ap.get().getProjectName());
+		});
 	}
 }

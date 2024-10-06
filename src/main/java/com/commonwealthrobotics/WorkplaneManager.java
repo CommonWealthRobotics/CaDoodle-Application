@@ -118,6 +118,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		ground.removeEventFilter(MouseEvent.ANY, this);
 		wpPick.removeEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
+		if(meshes!=null)
 		for (CSG key : meshes.keySet()) {
 			MeshView mv = meshes.get(key);
 			mv.removeEventFilter(MouseEvent.ANY, this);
@@ -140,6 +141,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		ground.addEventFilter(MouseEvent.ANY, this);
 		wpPick.addEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
+		if(meshes!=null)
 		for (CSG key : meshes.keySet()) {
 			MeshView mv = meshes.get(key);
 			mv.addEventFilter(MouseEvent.ANY, this);

@@ -33,9 +33,19 @@ public class ProjectManager {
 
 	private static Runnable onFinish;
 
+	private static Runnable clearScreen;
+
 
 	@FXML
 	void onNewProject(ActionEvent event) {
+		clearScreen.run();
+		try {
+			ap.newProject();
+			ap.get().initialize();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		stage.close();
 		onFinish.run();
 	}
@@ -48,9 +58,10 @@ public class ProjectManager {
 
 	}
 
-	public static void launch(ActiveProject ap, Runnable onFinish) {
+	public static void launch(ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
 		ProjectManager.ap = ap;
 		ProjectManager.onFinish = onFinish;
+		ProjectManager.clearScreen = clearScreen;
 		try {
 			// Load the FXML file
 			FXMLLoader loader = new FXMLLoader(ProjectManager.class.getResource("ProjectManager.fxml"));

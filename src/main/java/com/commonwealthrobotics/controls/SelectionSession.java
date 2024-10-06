@@ -197,10 +197,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void displayCurrent() {
 		//BowlerStudio.runLater(() -> {
-			for (CSG c : meshes.keySet()) {
-				engine.removeUserNode(meshes.get(c));
-			}
-			meshes.clear();
+			clearScreen();
 			for (CSG c : (List<CSG>) CaDoodleLoader.process(ap.get())) {
 				displayCSG(c);
 			}
@@ -221,6 +218,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			BowlerStudio.runLater(() -> updateSelection());
 			setKeyBindingFocus();
 		//});
+	}
+
+	public void clearScreen() {
+		if(meshes==null)
+			return;
+		for (CSG c : meshes.keySet()) {
+			engine.removeUserNode(meshes.get(c));
+		}
+		meshes.clear();
 	}
 
 	private void displayCSG(CSG c) {

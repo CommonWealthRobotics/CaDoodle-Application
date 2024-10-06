@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.filechooser.FileSystemView;
+import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
@@ -96,9 +97,9 @@ public class Main  extends Application {
 		}
 		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 		if (!relative.endsWith("Documents")) {
-			relative = relative + DownloadManager.delim()+"Documents";
+			relative = relative + delim()+"Documents";
 		}
-		File file = new File(relative + "/CaDoodle-workspace/");
+		File file = new File(relative + delim()+"CaDoodle-workspace"+delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
 		NameGetter mykey = new NameGetter();
