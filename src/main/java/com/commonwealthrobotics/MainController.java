@@ -617,6 +617,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
+				Thread.sleep(500);
 				SplashManager.closeSplash();
 				session.setKeyBindingFocus();
 			} catch (Exception e) {

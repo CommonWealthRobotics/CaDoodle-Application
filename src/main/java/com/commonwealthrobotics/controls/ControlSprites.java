@@ -512,6 +512,11 @@ public class ControlSprites {
 					l.setVisible(true);
 				}
 				break;
+			case PLACING:
+				for (DottedLine l : lines) {
+					l.setVisible(true);
+				}
+				break;
 
 			}
 			updateLines();

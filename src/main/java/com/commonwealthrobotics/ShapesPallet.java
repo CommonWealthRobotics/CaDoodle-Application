@@ -28,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Affine;
 
 import com.commonwealthrobotics.controls.SelectionSession;
+import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -144,8 +145,10 @@ public class ShapesPallet {
 				if(ScriptObjects.size()>1) {
 					indicator=CSG.unionAll(ScriptObjects);
 				}
+				session.setMode(SpriteDisplayMode.PLACING);
 				workplane.setIndicator(indicator, new Affine());
 				workplane.setOnSelectEvent(() -> {
+					session.setMode(SpriteDisplayMode.Default);
 					if(workplane.isClicked())
 					try {
 						TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();

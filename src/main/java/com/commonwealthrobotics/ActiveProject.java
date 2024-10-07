@@ -169,16 +169,26 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", file.getAbsolutePath()));
 	}
 
-	public List<Path> getProjects() throws IOException {
+	public List<CaDoodleFile> getProjects() throws IOException {
 	    String directoryPath = getWorkingDir().getAbsolutePath();
 	    File dir = new File(directoryPath);
-	    List<Path> list = new ArrayList<>();
+	    List<CaDoodleFile> list = new ArrayList<>();
 	    
 	    File[] files = dir.listFiles();
 	    if (files != null) {
 	        for (File file : files) {
 	            if (file.isDirectory() && !file.equals(dir)) {
-	                list.add(file.toPath());
+	            	File[] contents = file.listFiles();
+	            	for(File f:contents) {
+	            		if(f.getName().toLowerCase().endsWith(".doodle")) {
+	            			try {
+								list.add(CaDoodleFile.fromFile(f,null,false));
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+	            		}
+	            	}
 	            }
 	        }
 	    }
@@ -187,7 +197,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public void newProject() throws IOException {
-		List<Path> proj = getProjects();
+		List<CaDoodleFile> proj = getProjects();
 		String pathname = "Doodle-" + proj.size();
 		File np = new File(getWorkingDir().getAbsolutePath() + delim() + pathname);
 		np.mkdirs();

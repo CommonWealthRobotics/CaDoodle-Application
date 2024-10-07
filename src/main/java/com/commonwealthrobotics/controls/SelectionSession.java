@@ -1186,4 +1186,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		
 	}
 
+	public void setMode(SpriteDisplayMode placing) {
+		controls.setMode(placing);
+	}
+
 }

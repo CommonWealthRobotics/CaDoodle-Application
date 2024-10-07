@@ -9,5 +9,5 @@ public enum SpriteDisplayMode {
 	ResizeZ,
 	MoveXY,
 	MoveZ,
-	Allign
+	Allign, PLACING
 }
