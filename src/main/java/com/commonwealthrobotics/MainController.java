@@ -370,6 +370,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		};
 		Runnable onClear=()->{
 			session.clearScreen();
+			session.clearSelection();
 		};
 		ProjectManager.launch(ap, onFinish,onClear);
 	}
