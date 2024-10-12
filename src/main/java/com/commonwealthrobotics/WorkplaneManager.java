@@ -221,7 +221,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		double tilt = Math.asin(normal.getZ());
 
 		// Convert to degrees
-		azimuth = Math.toDegrees(azimuth) - 90;
+		azimuth =0;// Math.toDegrees(azimuth) - 90;
 		tilt = Math.toDegrees(tilt) - 90;
 
 		Point3D globalX = new Point3D(1, 0, 0);
