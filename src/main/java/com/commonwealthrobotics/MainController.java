@@ -6,13 +6,25 @@ package com.commonwealthrobotics;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
+import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
+import com.neuronrobotics.bowlerstudio.scripting.FreecadLoader;
+import com.neuronrobotics.bowlerstudio.scripting.GroovyHelper;
+import com.neuronrobotics.bowlerstudio.scripting.OpenSCADLoader;
+import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.StlLoader;
+import com.neuronrobotics.bowlerstudio.scripting.SvgLoader;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
@@ -20,6 +32,7 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.ICameraChangeListener;
 import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
+import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -52,6 +65,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
@@ -240,6 +254,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private long timeOfClick;
 	private MeshView ground;
 	private int lastFrame = 0;
+	private File currentFile = null;
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -368,11 +383,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setKeyBindingFocus();
 			System.out.println("ProjectManager Close");
 		};
-		Runnable onClear=()->{
+		Runnable onClear = () -> {
 			session.clearScreen();
 			session.clearSelection();
 		};
-		ProjectManager.launch(ap, onFinish,onClear);
+		ProjectManager.launch(ap, onFinish, onClear);
 	}
 
 	@FXML
@@ -384,7 +399,39 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onImport(ActionEvent event) {
 		System.out.println("On Import");
-		session.setKeyBindingFocus();
+		new Thread(() -> {
+			File start = currentFile == null ? ScriptingEngine.getWorkspace()
+					: new File(ScriptingEngine.getWorkspace().getAbsolutePath() + "/"
+							+ currentFile.getName());
+			ArrayList<String> extentions = new ArrayList<>();
+			//extentions.add("*");
+			for(String s:new StlLoader().getFileExtenetion())
+				extentions.add("*."+s);
+			for(String s:new SvgLoader().getFileExtenetion())
+				extentions.add("*."+s);
+			for(String s:new GroovyHelper().getFileExtenetion())
+				extentions.add("*."+s);
+			for(String s:new BlenderLoader().getFileExtenetion())
+				extentions.add("*."+s);
+			for(String s:new FreecadLoader().getFileExtenetion())
+				extentions.add("*."+s);
+			for(String s:new OpenSCADLoader().getFileExtenetion())
+				extentions.add("*."+s);
+			for(String s:new CaDoodleLoader().getFileExtenetion())
+				extentions.add("*."+s);
+			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
+
+			File last = FileSelectionFactory
+					.GetFile(
+							start,
+							false, stl);
+			if (last != null) {
+				System.out.println("Adding file "+last);
+				AddFromFile toAdd = new AddFromFile().set(last).setLocation(new TransformNR());
+				session.addOp(toAdd);
+			}
+			session.setKeyBindingFocus();
+		}).start();
 	}
 
 	@FXML
@@ -603,7 +650,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			e.printStackTrace();
 			System.exit(1);
 		}
-		fileNameBox.setOnKeyTyped(ev->{
+		fileNameBox.setOnKeyTyped(ev -> {
 			System.out.println("Set Project Name to " + fileNameBox.getText());
 			ap.get().setProjectName(fileNameBox.getText());
 			session.save();

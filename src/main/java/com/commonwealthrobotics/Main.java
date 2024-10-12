@@ -21,6 +21,7 @@ import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -83,6 +84,7 @@ public class Main  extends Application {
 		newStage.setMinWidth(900);
 		newStage.setMinHeight(600);
 		SplashManager.renderSplashFrame(1, "Main Window Show");
+		FileSelectionFactory.setStage(newStage);
 		newStage.show();
 		SplashManager.renderSplashFrame(1, "Initializing");
 	}
