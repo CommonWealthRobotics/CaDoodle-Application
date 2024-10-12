@@ -29,7 +29,7 @@ public class ResizingHandle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-	private static final double size = 20;
+	private static final double size = 10;
 	private MeshView mesh;
 	
 	private Affine location = new Affine();
