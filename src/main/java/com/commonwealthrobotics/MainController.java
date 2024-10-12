@@ -603,6 +603,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			e.printStackTrace();
 			System.exit(1);
 		}
+		fileNameBox.setOnKeyTyped(ev->{
+			System.out.println("Set Project Name to " + fileNameBox.getText());
+			ap.get().setProjectName(fileNameBox.getText());
+			session.save();
+		});
 
 	}
 
