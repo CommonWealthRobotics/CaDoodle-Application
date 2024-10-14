@@ -2,6 +2,7 @@ package com.commonwealthrobotics.controls;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,8 +24,11 @@ import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
+import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
+import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
+import com.neuronrobotics.bowlerstudio.util.IFileChangeListener;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -39,9 +43,11 @@ import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -101,12 +107,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 
 	private double size;
-
+	
 	private WorkplaneManager workplane;
 	boolean intitialization = false;
 
 	private VBox parametrics;
 	private ActiveProject ap=null;
+	private HashMap<ICaDoodleOpperation,FileChangeWatcher> myWatchers = new HashMap<>();
 
 	public SelectionSession( BowlerStudio3dEngine e,ActiveProject ap) {
 		engine=e;
@@ -175,6 +182,27 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// System.out.println("Adding A op for "+s.getClass());
 			HashSet<String> namesAdded = s.getNamesAdded();
 			// System.out.println(namesAdded.size());
+			File f = s.getFile();
+			IFileChangeListener l = new IFileChangeListener() {
+				
+				@Override
+				public void onFileDelete(File fileThatIsDeleted) {}
+				
+				@Override
+				public void onFileChange(File fileThatChanged, WatchEvent event) {
+					ap.get().regenerateFrom(source);
+				}
+			};
+			if(myWatchers.get(source)==null) {
+				try {
+					FileChangeWatcher w=  FileChangeWatcher.watch(f);
+					myWatchers.put(source, w);
+					w.addIFileChangeListener(l);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			for (String nameString : namesAdded) {
 				CSG n = null;
 				for (CSG c : currentState) {
@@ -189,7 +217,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					System.out.println("Adding listener to "+para.getName());
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						System.out.println("Regenerating from CaDoodle "+para.getName());
+						myWatchers.get(source).close();
+						myWatchers.remove(source);
 						ap.get().regenerateFrom(source);
+						FileChangeWatcher w;
+						try {
+							w = FileChangeWatcher.watch(f);
+							myWatchers.put(source, w);
+							w.addIFileChangeListener(l);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					});
 				}
 			}
@@ -330,10 +369,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							ArrayList<String> opts = para.getOptions();
 							if (opts.size() > 0) {
 								setUpComboBoxParametrics(thisLine, text, para, opts, width);
-							}else if (new File(para.getStrValue()).exists()){
-								setUpFileBox(thisLine, text, para, width);
 							} else {
-								setUpTextBoxEnterData(thisLine, text, para, width);
+								File file = new File(para.getStrValue());
+								boolean exists = file.exists();
+								if (exists){
+									setUpFileBox(thisLine, text, para, width,file);
+								} else {
+									setUpTextBoxEnterData(thisLine, text, para, width);
+								}
 							}
 						}
 					}
@@ -398,13 +441,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
 	}
-	private void setUpFileBox(HBox thisLine, String text, Parameter para, int width) {
-		Button tf = new Button(new File(para.getStrValue()).getName());
-		tf.setOnAction(event -> {
-			para.setStrValue(para.getStrValue());
-			// CSGDatabase.saveDatabase();
-			// System.out.println("Saving "+text);
-		});
+	private void setUpFileBox(HBox thisLine, String text, Parameter para, int width, File file) {
+		//Button tf = new Button(new File(para.getStrValue()).getName());
+		ExternalEditorController ec = new ExternalEditorController(file, new CheckBox());
+		Node tf = ec.getControl();
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
 	}
