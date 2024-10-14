@@ -113,7 +113,11 @@ public class Main  extends Application {
 			e.printStackTrace();
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
-		SplashManager.renderSplashFrame(0, "Startup");
+		SplashManager.renderSplashFrame(1, "Inkscape");
+		DownloadManager.getConfigExecutable("inkscape", null);
+		SplashManager.renderSplashFrame(5, "Blender");
+		DownloadManager.getConfigExecutable("blender", null);
+		
 		launch();	
 		
 	}

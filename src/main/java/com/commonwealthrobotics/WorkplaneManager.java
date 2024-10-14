@@ -221,13 +221,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		double tilt = Math.asin(normal.getZ());
 
 		// Convert to degrees
-		azimuth =0;// Math.toDegrees(azimuth) - 90;
+		azimuth = Math.toDegrees(azimuth) - 90;
 		tilt = Math.toDegrees(tilt) - 90;
 
 		Point3D globalX = new Point3D(1, 0, 0);
 		Point3D localY = normal.crossProduct(globalX).normalize();
 		Point3D localX = normal.crossProduct(localY).normalize();
-		double roll = Math.atan2(localY.getZ(), localX.getZ());
+		double roll =0;// Math.atan2(localY.getZ(), localX.getZ());
 
 		// Ensure azimuth is in the range [-180, 180)
 		if (azimuth < -180) {

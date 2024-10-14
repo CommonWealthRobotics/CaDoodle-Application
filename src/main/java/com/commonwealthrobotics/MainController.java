@@ -400,9 +400,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onImport(ActionEvent event) {
 		System.out.println("On Import");
 		new Thread(() -> {
-			File start = currentFile == null ? ScriptingEngine.getWorkspace()
-					: new File(ScriptingEngine.getWorkspace().getAbsolutePath() + "/"
-							+ currentFile.getName());
+			
 			ArrayList<String> extentions = new ArrayList<>();
 			//extentions.add("*");
 			for(String s:new StlLoader().getFileExtenetion())
@@ -423,9 +421,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			File last = FileSelectionFactory
 					.GetFile(
-							start,
+							currentFile,
 							false, stl);
 			if (last != null) {
+				currentFile=last;
 				System.out.println("Adding file "+last);
 				AddFromFile toAdd = new AddFromFile().set(last).setLocation(new TransformNR());
 				session.addOp(toAdd);

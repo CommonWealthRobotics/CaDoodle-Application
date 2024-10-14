@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.controls;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,8 +187,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					continue;
 				for (String k : n.getParameters()) {
 					Parameter para = CSGDatabase.get(k);
-					// System.out.println("Adding listener to "+para.getName());
+					System.out.println("Adding listener to "+para.getName());
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
+						System.out.println("Regenerating from CaDoodle "+para.getName());
 						ap.get().regenerateFrom(source);
 					});
 				}
@@ -328,9 +330,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						if (StringParameter.class.isInstance(para)) {
 							ArrayList<String> opts = para.getOptions();
 							if (opts.size() > 0) {
-								setUpTextEntry(thisLine, text, para, opts, width);
+								setUpComboBoxParametrics(thisLine, text, para, opts, width);
+							}else if (new File(para.getStrValue()).exists()){
+								setUpFileBox(thisLine, text, para, width);
 							} else {
-								setUpStringChoices(thisLine, text, para, width);
+								setUpTextBoxEnterData(thisLine, text, para, width);
 							}
 						}
 					}
@@ -385,7 +389,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-	private void setUpStringChoices(HBox thisLine, String text, Parameter para, int width) {
+	private void setUpTextBoxEnterData(HBox thisLine, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
 			para.setStrValue(tf.getText());
@@ -395,8 +399,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
 	}
+	private void setUpFileBox(HBox thisLine, String text, Parameter para, int width) {
+		Button tf = new Button(new File(para.getStrValue()).getName());
+		tf.setOnAction(event -> {
+			para.setStrValue(para.getStrValue());
+			// CSGDatabase.saveDatabase();
+			// System.out.println("Saving "+text);
+		});
+		thisLine.getChildren().add(tf);
+		thisLine.setMinWidth(width);
+	}
 
-	private void setUpTextEntry(HBox thisLine, String text, Parameter para, ArrayList<String> opts, int width) {
+	private void setUpComboBoxParametrics(HBox thisLine, String text, Parameter para, ArrayList<String> opts, int width) {
 		ComboBox<String> options = new ComboBox<String>();
 		if (para.getName().toLowerCase().endsWith("font")) {
 			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
