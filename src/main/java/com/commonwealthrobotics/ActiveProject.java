@@ -41,8 +41,36 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// this.listener = listener;
 
 	}
+	public Thread regenerateFrom(ICaDoodleOpperation source) {
+		Thread t = get().regenerateFrom(source);
+		new Thread(()->{
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(t.isAlive()) {
+				SplashManager.renderSplashFrame(50, " Re-Generating");
+			}else {
+				return;
+			}
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			SplashManager.closeSplash();
+		}).start();
+		return t;
+	}
 	public Thread addOp(ICaDoodleOpperation h) {
 		Thread t = get().addOpperation(h);
+		timeoutThread(h, t);
+		return t;
+	}
+	private void timeoutThread(ICaDoodleOpperation h, Thread t) {
 		new Thread(()->{
 			try {
 				Thread.sleep(200);
@@ -63,7 +91,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 			SplashManager.closeSplash();
 		}).start();
-		return t;
 	}
 	public ActiveProject clearListeners() {
 		listeners.clear();

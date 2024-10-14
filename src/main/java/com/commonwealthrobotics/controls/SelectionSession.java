@@ -175,7 +175,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		setUpParametrics(currentState, source);
 
 	}
-
+	private void myRegenerate(ICaDoodleOpperation source) {
+		Thread t = ap.regenerateFrom(source);
+		new Thread(()->{
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			onUpdate(ap.get().getCurrentState(),ap.get().getCurrentOpperation(),ap.get());
+		}).start();
+	}
 	private void setUpParametrics(List<CSG> currentState, ICaDoodleOpperation source) {
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
@@ -190,8 +201,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				
 				@Override
 				public void onFileChange(File fileThatChanged, WatchEvent event) {
-					ap.get().regenerateFrom(source);
+					myRegenerate(source);
 				}
+
+
 			};
 			if(myWatchers.get(source)==null) {
 				try {
@@ -219,7 +232,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						System.out.println("Regenerating from CaDoodle "+para.getName());
 						myWatchers.get(source).close();
 						myWatchers.remove(source);
-						ap.get().regenerateFrom(source);
+						myRegenerate(source);
 						FileChangeWatcher w;
 						try {
 							w = FileChangeWatcher.watch(f);
@@ -236,9 +249,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void displayCurrent() {
-		//BowlerStudio.runLater(() -> {
+		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get());
+		if(ap.get().isRegenerating()) {
+			return;
+		}
+		BowlerStudio.runLater(() -> {
+		
 			clearScreen();
-			for (CSG c : (List<CSG>) CaDoodleLoader.process(ap.get())) {
+			for (CSG c : process) {
 				displayCSG(c);
 			}
 			ArrayList<String> toRemove = new ArrayList<String>();
@@ -255,9 +273,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			selected.removeAll(toRemove);
 			if (workplane != null)
 				workplane.updateMeshes(meshes);
-			BowlerStudio.runLater(() -> updateSelection());
+			updateSelection();
 			setKeyBindingFocus();
-		//});
+			});
+
+
 	}
 
 	public void clearScreen() {
