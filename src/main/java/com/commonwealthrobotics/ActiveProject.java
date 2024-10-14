@@ -18,6 +18,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
@@ -40,7 +41,30 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// this.listener = listener;
 
 	}
-
+	public Thread addOp(ICaDoodleOpperation h) {
+		Thread t = get().addOpperation(h);
+		new Thread(()->{
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(t.isAlive()) {
+				SplashManager.renderSplashFrame(50, h.getType()+" running");
+			}else {
+				return;
+			}
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			SplashManager.closeSplash();
+		}).start();
+		return t;
+	}
 	public ActiveProject clearListeners() {
 		listeners.clear();
 		return this;

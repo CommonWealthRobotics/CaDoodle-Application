@@ -154,7 +154,7 @@ public class ShapesPallet {
 						TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
 						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"))
 								.setLocation(currentAbsolutePose);
-						ap.get().addOpperation(setAddFromScript).join();
+						ap.addOp(setAddFromScript).join();
 //						List<String> namesToMove = new ArrayList<>();
 //						namesToMove.addAll(setAddFromScript.getNamesAdded());
 //						cadoodle.addOpperation(new MoveCenter()

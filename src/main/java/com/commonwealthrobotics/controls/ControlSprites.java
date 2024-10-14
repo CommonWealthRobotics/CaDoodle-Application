@@ -137,7 +137,7 @@ public class ControlSprites {
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
 			System.out.println("Z Moved! " + globalPose.toSimpleString());
-			Thread t = ap.get().addOpperation(
+			Thread t = ap.addOp(
 					new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
 			try {
 				t.join();

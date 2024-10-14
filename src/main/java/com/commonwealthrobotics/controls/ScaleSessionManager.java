@@ -167,7 +167,7 @@ public class ScaleSessionManager {
 				Resize setResize = new Resize().setNames(sel.selectedSnapshot())
 						// .setDebugger(engine)
 						.setWorkplane(wp).setResize(tcC, lfC, rrC);
-				Thread t = ap.get().addOpperation(setResize);
+				Thread t = ap.addOp(setResize);
 				try {
 					t.join();
 				} catch (InterruptedException e) {

@@ -116,8 +116,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			System.out.println("Objects Moved! " + globalPose.toSimpleString());
-			Thread t = ap.get()
-					.addOpperation(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
+			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
 			try {
 				t.join();
 			} catch (InterruptedException ex) {
@@ -608,7 +607,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		}
 		// System.out.println("Adding " + h.getType());
-		ap.get().addOpperation(h);
+		ap.addOp(h);
 	}
 
 	public void setButtons(Button... buttonsList) {
@@ -675,7 +674,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		}
 		System.out.println("Delete");
-		ap.get().addOpperation(new Delete().setNames(selectedSnapshot()));
+		ap.addOp(new Delete().setNames(selectedSnapshot()));
 	}
 
 	public void onCopy() {
@@ -703,7 +702,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		copySet.clear();
 		try {
 			Paste setNames = new Paste().setOffset(distance).setNames(copyTarget);
-			ap.get().addOpperation(setNames).join();
+			ap.addOp(setNames).join();
 			selectAll(setNames.getNewNames());
 			onCopy();
 			BowlerStudio.runLater(() -> updateSelection());
@@ -761,7 +760,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			if (workplane.isClicked()) {
 				TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
-				ap.get().addOpperation(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+				ap.addOp(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
 			}
 		});
 		workplane.setCurrentAbsolutePose(copy.inverse());
@@ -773,7 +772,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			System.err.println("Ignoring operation because previous had not finished!");
 			return;
 		}
-		ap.get().addOpperation(new Lock().setNames(selectedSnapshot()));
+		ap.addOp(new Lock().setNames(selectedSnapshot()));
 	}
 
 	public void showAll() {
@@ -787,7 +786,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				toShow.add(c.getName());
 		}
 		if (toShow.size() > 0) {
-			ap.get().addOpperation(new Show().setNames(toShow));
+			ap.addOp(new Show().setNames(toShow));
 		}
 	}
 
@@ -800,7 +799,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			new Thread(() -> {
 				Group setNames = new Group().setNames(selectedSnapshot());
 				try {
-					ap.get().addOpperation(setNames).join();
+					ap.addOp(setNames).join();
 					selected.clear();
 					selected.add(setNames.getGroupID());
 					BowlerStudio.runLater(() -> updateSelection());
@@ -840,7 +839,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (isAGroupSelected()) {
 			selected.clear();
 			selected.addAll(toSelect);
-			ap.get().addOpperation(new UnGroup().setNames(selectedSnapshot));
+			ap.addOp(new UnGroup().setNames(selectedSnapshot));
 		}
 		updateSelection();
 
@@ -857,7 +856,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		} else {
 			op = new Hide().setNames(selectedSnapshot());
 		}
-		ap.get().addOpperation(op);
+		ap.addOp(op);
 		updateShowHideButton();
 	}
 
@@ -973,8 +972,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (CSG c : getSelectedCSG(selectedSnapshot())) {
 				double downMove = -c.transformed(t.inverse()).getMinZ();
 				TransformNR location = wp.times(new TransformNR(0, 0, downMove)).times(wp.inverse());
-				Thread op = ap.get()
-						.addOpperation(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName())));
+				Thread op = ap.addOp(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName())));
 				try {
 					op.join();// wait for the move of this object to finish
 				} catch (InterruptedException e) {
@@ -1057,7 +1055,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		}
 
-		ap.get().addOpperation(mc);
+		ap.addOp(mc);
 
 	}
 

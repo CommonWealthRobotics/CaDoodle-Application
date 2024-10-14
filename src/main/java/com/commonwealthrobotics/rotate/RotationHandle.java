@@ -174,7 +174,7 @@ public class RotationHandle {
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
 		});
-		ap.get().addOpperation(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
+		ap.addOp(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
 	}
 
 	private void setSweepAngle(double c) {
