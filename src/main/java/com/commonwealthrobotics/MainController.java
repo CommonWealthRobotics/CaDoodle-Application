@@ -427,7 +427,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			for(String s:new CaDoodleLoader().getFileExtenetion())
 				extentions.add("*."+s);
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
-
+			if (currentFile == null)
+				currentFile = new File(System.getProperty("user.home") + "/Desktop/");
 			File last = FileSelectionFactory
 					.GetFile(
 							currentFile,
