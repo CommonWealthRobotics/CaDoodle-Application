@@ -117,7 +117,8 @@ public class Main  extends Application {
 		DownloadManager.getConfigExecutable("inkscape", null);
 		SplashManager.renderSplashFrame(5, "Blender");
 		DownloadManager.getConfigExecutable("blender", null);
-		
+		SplashManager.renderSplashFrame(5, "FreeCAD");
+		DownloadManager.getConfigExecutable("freecad", null);
 		launch();	
 		
 	}
