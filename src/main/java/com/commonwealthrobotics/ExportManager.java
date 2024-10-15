@@ -79,7 +79,8 @@ public class ExportManager {
 
 	@FXML // fx:id="stl"
 	private CheckBox stl; // Value injected by FXMLLoader
-
+	@FXML // fx:id="stl"
+	private CheckBox obj; // Value injected by FXMLLoader
 	@FXML // fx:id="svg"
 	private CheckBox svg; // Value injected by FXMLLoader
 
@@ -114,10 +115,13 @@ public class ExportManager {
 					c.addExportFormat("svg");
 				}
 				if (blender.isSelected()) {
-					c.addExportFormat("blender");
+					c.addExportFormat("blend");
 				}
 				if (freecad.isSelected()) {
 					c.addExportFormat("freecad");
+				}
+				if(obj.isSelected()) {
+					c.addExportFormat("obj");
 				}
 				c.setName(name + "_" + index);
 				index++;
