@@ -331,6 +331,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onExport(ActionEvent event) {
 		System.out.println("On Export");
+		Runnable onFinish = () -> {
+			session.setKeyBindingFocus();
+			System.out.println("ExportManager Close");
+		};
+		Runnable onClear = () -> {
+			session.clearScreen();
+			session.clearSelection();
+		};
+		ExportManager.launch(session,ap, onFinish, onClear);
 		session.setKeyBindingFocus();
 	}
 

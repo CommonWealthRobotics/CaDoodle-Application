@@ -107,16 +107,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 
 	private double size;
-	
+
 	private WorkplaneManager workplane;
 	boolean intitialization = false;
 
 	private VBox parametrics;
-	private ActiveProject ap=null;
-	private HashMap<ICaDoodleOpperation,FileChangeWatcher> myWatchers = new HashMap<>();
+	private ActiveProject ap = null;
+	private HashMap<ICaDoodleOpperation, FileChangeWatcher> myWatchers = new HashMap<>();
 
-	public SelectionSession( BowlerStudio3dEngine e,ActiveProject ap) {
-		engine=e;
+	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
+		engine = e;
 		setActiveProject(ap);
 		manipulation.addSaveListener(() -> {
 			if (intitialization)
@@ -175,18 +175,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		setUpParametrics(currentState, source);
 
 	}
+
 	private void myRegenerate(ICaDoodleOpperation source) {
 		Thread t = ap.regenerateFrom(source);
-		new Thread(()->{
+		new Thread(() -> {
 			try {
 				t.join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			onUpdate(ap.get().getCurrentState(),ap.get().getCurrentOpperation(),ap.get());
+			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOpperation(), ap.get());
 		}).start();
 	}
+
 	private void setUpParametrics(List<CSG> currentState, ICaDoodleOpperation source) {
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
@@ -195,20 +197,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// System.out.println(namesAdded.size());
 			File f = s.getFile();
 			IFileChangeListener l = new IFileChangeListener() {
-				
+
 				@Override
-				public void onFileDelete(File fileThatIsDeleted) {}
-				
+				public void onFileDelete(File fileThatIsDeleted) {
+				}
+
 				@Override
 				public void onFileChange(File fileThatChanged, WatchEvent event) {
 					myRegenerate(source);
 				}
 
-
 			};
-			if(myWatchers.get(source)==null) {
+			if (myWatchers.get(source) == null) {
 				try {
-					FileChangeWatcher w=  FileChangeWatcher.watch(f);
+					FileChangeWatcher w = FileChangeWatcher.watch(f);
 					myWatchers.put(source, w);
 					w.addIFileChangeListener(l);
 				} catch (IOException e) {
@@ -227,9 +229,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					continue;
 				for (String k : n.getParameters()) {
 					Parameter para = CSGDatabase.get(k);
-					System.out.println("Adding listener to "+para.getName());
+					System.out.println("Adding listener to " + para.getName());
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
-						System.out.println("Regenerating from CaDoodle "+para.getName());
+						System.out.println("Regenerating from CaDoodle " + para.getName());
 						myWatchers.get(source).close();
 						myWatchers.remove(source);
 						myRegenerate(source);
@@ -250,11 +252,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void displayCurrent() {
 		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get());
-		if(ap.get().isRegenerating()) {
+		if (ap.get().isRegenerating()) {
 			return;
 		}
 		BowlerStudio.runLater(() -> {
-		
+
 			clearScreen();
 			for (CSG c : process) {
 				displayCSG(c);
@@ -275,13 +277,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				workplane.updateMeshes(meshes);
 			updateSelection();
 			setKeyBindingFocus();
-			});
-
+		});
 
 	}
 
 	public void clearScreen() {
-		if(meshes==null)
+		if (meshes == null)
 			return;
 		for (CSG c : meshes.keySet()) {
 			engine.removeUserNode(meshes.get(c));
@@ -392,8 +393,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							} else {
 								File file = new File(para.getStrValue());
 								boolean exists = file.exists();
-								if (exists){
-									setUpFileBox(thisLine, text, para, width,file);
+								if (exists) {
+									setUpFileBox(thisLine, text, para, width, file);
 								} else {
 									setUpTextBoxEnterData(thisLine, text, para, width);
 								}
@@ -461,15 +462,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
 	}
+
 	private void setUpFileBox(HBox thisLine, String text, Parameter para, int width, File file) {
-		//Button tf = new Button(new File(para.getStrValue()).getName());
+		// Button tf = new Button(new File(para.getStrValue()).getName());
 		ExternalEditorController ec = new ExternalEditorController(file, new CheckBox());
 		Node tf = ec.getControl();
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
 	}
 
-	private void setUpComboBoxParametrics(HBox thisLine, String text, Parameter para, ArrayList<String> opts, int width) {
+	private void setUpComboBoxParametrics(HBox thisLine, String text, Parameter para, ArrayList<String> opts,
+			int width) {
 		ComboBox<String> options = new ComboBox<String>();
 		if (para.getName().toLowerCase().endsWith("font")) {
 			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
@@ -546,7 +549,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		snapGrid.getSelectionModel().select(starting + " mm");
-		
+
 		this.snapGrid.setOnAction(event -> {
 			String selected = this.snapGrid.getSelectionModel().getSelectedItem();
 			Double num = map.get(selected);
@@ -599,9 +602,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setKeyBindingFocus() {
-		if(!SplashManager.isVisableSplash())
+		if (!SplashManager.isVisableSplash())
 			if (engine != null) {
-				//new Exception("KB Focused here").printStackTrace();
+				// new Exception("KB Focused here").printStackTrace();
 				System.out.println("Setting KeyBindingFocus");
 				BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
 			}
@@ -969,11 +972,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		controls.setMode(SpriteDisplayMode.Allign);
 		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 		Bounds b = getSellectedBounds(selectedCSG);
-		controls.initializeAllign(selectedCSG,b,meshes);
+		controls.initializeAllign(selectedCSG, b, meshes);
 	}
+
 	public boolean isFocused() {
 		return controls.isFocused();
 	}
+
 	public void cancleAllign() {
 		if (controls == null)
 			return;
@@ -1209,7 +1214,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				getSellectedBounds(selectedCSG));
 	}
 
-
 //	public void setCadoodle(ActiveProject ap) {
 //		
 //	}
@@ -1255,11 +1259,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onInitializationDone() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setMode(SpriteDisplayMode placing) {
 		controls.setMode(placing);
+	}
+
+	public ArrayList<CSG> getAllVisable() {
+		ArrayList<CSG> back = new ArrayList<CSG>();
+		for (CSG c : getCurrentState()) {
+			if (c.isHide())
+				continue;
+			if (c.isInGroup())
+				continue;
+			back.add(c);
+		}
+		return back;
 	}
 
 }
