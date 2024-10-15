@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 
@@ -85,10 +86,15 @@ public class ExportManager {
 
 	@FXML
 	void onExport(ActionEvent event) {
+		stage.close();
 		new Thread(()->{
+			
 			if(exportDir==null)
 				exportDir = new File(System.getProperty("user.home") +"/Desktop/");
 			ArrayList<CSG> back = session.getAllVisable();
+			String name = ap.get().getProjectName();
+			name=name.replace(' ', '_');
+			int index=1;
 			for(CSG c:back) {
 				if(stl.isSelected()) {
 					c.addExportFormat("stl");
@@ -102,16 +108,18 @@ public class ExportManager {
 				if(freecad.isSelected()) {
 					c.addExportFormat("freecad");
 				}
-			}
-			String name = ap.get().getProjectName()+"/";
-			name=name.replace(' ', '_');
-			if(!exportDir.getAbsolutePath().endsWith(name)) {
-				exportDir=new File(exportDir+"/"+name);
+				c.setName(name+"_"+index);
+				index++;
 			}
 			exportDir=FileSelectionFactory.GetDirectory(exportDir);
+			//SplashManager.renderSplashFrame(50, " Exporting...");
 			
+			if(!exportDir.getAbsolutePath().endsWith(name+"/")) {
+				exportDir=new File(exportDir+"/"+name+"/");
+			}
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
 			onFinish.run();
+			SplashManager.closeSplash();
 		}).start();
 	}
 
