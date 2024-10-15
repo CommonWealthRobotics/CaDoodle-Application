@@ -615,9 +615,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		boolean isSilid = true;
 		for (String s : selected) {
-			if (getSelectedCSG(s).isHole()) {
-				isSilid = false;
-			}
+			CSG selectedCSG = getSelectedCSG(s);
+			if (selectedCSG != null)
+				if (selectedCSG.isHole()) {
+					isSilid = false;
+				}
 		}
 		if (isSilid)
 			return;// all solid
@@ -1273,7 +1275,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			if (c.isInGroup())
 				continue;
-			back.add(c);
+			if(c.isHole())
+				continue;
+			back.add(c.clone());
 		}
 		return back;
 	}

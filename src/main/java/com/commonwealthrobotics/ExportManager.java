@@ -9,15 +9,18 @@ import java.util.List;
 /**
  * Sample Skeleton for 'ProjectManager.fxml' Controller Class
  */
-
+import java.util.Locale;
 import java.net.URL;
 import java.nio.file.Path;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -81,45 +84,53 @@ public class ExportManager {
 	private CheckBox svg; // Value injected by FXMLLoader
 
 	private static SelectionSession session;
-	
-	private File exportDir=null;
+
+	private File exportDir = null;
+	private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");
+	private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
+
+	public static String toSlug(String input) {
+		String nowhitespace = WHITESPACE.matcher(input).replaceAll("-");
+		String normalized = Normalizer.normalize(nowhitespace, Form.NFD);
+		String slug = NONLATIN.matcher(normalized).replaceAll("");
+		return slug.toLowerCase(Locale.ENGLISH);
+	}
 
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
-		new Thread(()->{
-			
-			if(exportDir==null)
-				exportDir = new File(System.getProperty("user.home") +"/Desktop/");
+		new Thread(() -> {
+
+			if (exportDir == null)
+				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
 			ArrayList<CSG> back = session.getAllVisable();
-			String name = ap.get().getProjectName();
-			name=name.replace(' ', '_');
-			int index=1;
-			for(CSG c:back) {
-				if(stl.isSelected()) {
+			String name = toSlug(ap.get().getProjectName());
+			int index = 1;
+			for (CSG c : back) {
+				if (stl.isSelected()) {
 					c.addExportFormat("stl");
 				}
-				if(svg.isSelected()) {
+				if (svg.isSelected()) {
 					c.addExportFormat("svg");
 				}
-				if(blender.isSelected()) {
+				if (blender.isSelected()) {
 					c.addExportFormat("blender");
 				}
-				if(freecad.isSelected()) {
+				if (freecad.isSelected()) {
 					c.addExportFormat("freecad");
 				}
-				c.setName(name+"_"+index);
+				c.setName(name + "_" + index);
 				index++;
 			}
-			exportDir=FileSelectionFactory.GetDirectory(exportDir);
-			//SplashManager.renderSplashFrame(50, " Exporting...");
-			
-			if(!exportDir.getAbsolutePath().endsWith(name+"/")) {
-				exportDir=new File(exportDir+"/"+name+"/");
+			exportDir = FileSelectionFactory.GetDirectory(exportDir);
+			SplashManager.renderSplashFrame(50, " Exporting...");
+
+			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
+				exportDir = new File(exportDir + "/" + name + "/");
 			}
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
-			onFinish.run();
 			SplashManager.closeSplash();
+			onFinish.run();
 		}).start();
 	}
 
@@ -131,7 +142,7 @@ public class ExportManager {
 				: "fx:id=\"projectGrid\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert stl != null : "fx:id=\"stl\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert svg != null : "fx:id=\"svg\" was not injected: check your FXML file 'ExportWindow.fxml'.";
-
+		
 	}
 
 	public static void launch(SelectionSession session, ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
