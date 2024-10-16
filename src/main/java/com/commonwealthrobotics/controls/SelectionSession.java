@@ -178,6 +178,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void myRegenerate(ICaDoodleOpperation source) {
 		Thread t = ap.regenerateFrom(source);
+		if(t==null)
+			return;
 		new Thread(() -> {
 			try {
 				t.join();
