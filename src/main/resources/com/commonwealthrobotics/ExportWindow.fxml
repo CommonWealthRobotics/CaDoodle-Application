@@ -69,6 +69,15 @@
                </graphic>
             </CheckBox>
             <Button mnemonicParsing="false" onAction="#onExport" text="Export..." GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <CheckBox fx:id="obj" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" text="OBJ" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@ObjImg.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
          </children>
       </GridPane>
    </children>

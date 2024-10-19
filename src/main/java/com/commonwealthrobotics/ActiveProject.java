@@ -43,6 +43,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 	public Thread regenerateFrom(ICaDoodleOpperation source) {
 		Thread t = get().regenerateFrom(source);
+		if(t==null)
+			return null;
 		new Thread(()->{
 			try {
 				Thread.sleep(200);

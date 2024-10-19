@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 
 import javafx.event.ActionEvent;
@@ -112,9 +113,11 @@ public class ProjectManager {
 					b.setOnAction(ev->{
 						new Thread(()->{
 							try {
+								BowlerStudio.runLater(() ->stage.close());
+								SplashManager.renderSplashFrame(50, "Initialize");
 								ap.setActiveProject(c.getSelf());
 								ap.get().initialize();
-								BowlerStudio.runLater(() ->stage.close());
+								SplashManager.closeSplash();
 								onFinish.run();
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
