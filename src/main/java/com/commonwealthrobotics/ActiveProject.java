@@ -211,11 +211,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public File getWorkingDir() {
-		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
-		if (!relative.endsWith("Documents")) {
-			relative = relative + delim() + "Documents";
-		}
-		File file = new File(relative + delim() + "CaDoodle-workspace" + delim() + "MyCaDoodleProjects" + delim());
+		String relative =ScriptingEngine.getWorkspace().getAbsolutePath();
+		File file = new File(relative + delim()  + "MyCaDoodleProjects" + delim());
 		file.mkdirs();
 		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", file.getAbsolutePath()));
 	}

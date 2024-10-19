@@ -6,6 +6,7 @@ package com.commonwealthrobotics;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import javax.swing.filechooser.FileSystemView;
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
@@ -33,7 +34,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class Main  extends Application {
+public class Main extends Application {
 	@Override
 	public void start(Stage newStage) throws Exception {
 		SplashManager.renderSplashFrame(1, "Main Window Load");
@@ -41,32 +42,56 @@ public class Main  extends Application {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
 		loader.setController(new MainController());
 		Parent root = loader.load();
-		
-		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDisplayMode().getWidth();
-		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDisplayMode().getHeight();
+
+		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
+				.getWidth();
+		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
+				.getHeight();
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-		System.out.println("Screen "+sw+"x"+sh);
-		sw=primaryScreenBounds.getWidth();
-		sh=primaryScreenBounds.getHeight();
-		double w ;
-		double h ;
-		w=sw-40;
-		h=sh-40;
-		
-		Scene scene = new Scene(root,  w, h,true,SceneAntialiasing.BALANCED);
+		System.out.println("Screen " + sw + "x" + sh);
+		sw = primaryScreenBounds.getWidth();
+		sh = primaryScreenBounds.getHeight();
+		double w;
+		double h;
+		w = sw - 40;
+		h = sh - 40;
+
+		Scene scene = new Scene(root, w, h, true, SceneAntialiasing.BALANCED);
 		newStage.setScene(scene);
-		String title=StudioBuildInfo.getAppName()+" v " + StudioBuildInfo.getVersion();
-		if(newStage!=null)
+		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
+		if (newStage != null)
 			newStage.setTitle(title);
+		Thread loadDeps = new Thread(() -> {
+			PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+			SplashManager.renderSplashFrame(1, "Inkscape");
+			DownloadManager.getConfigExecutable("inkscape", null);
+			SplashManager.renderSplashFrame(5, "Blender");
+			DownloadManager.getConfigExecutable("blender", null);
+			SplashManager.renderSplashFrame(5, "FreeCAD");
+			DownloadManager.getConfigExecutable("freecad", null);
+			SplashManager.closeSplash();
+		});
+		loadDeps.start();
 		newStage.setOnCloseRequest(event -> {
+			if (loadDeps.isAlive()) {
+				SplashManager.renderSplashFrame(20, "Download Unfinished");
+
+				try {
+					loadDeps.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			System.out.println("CaDoodle Exiting");
+
 			Platform.exit();
 			System.exit(0);
 		});
 
-		FontSizeManager.addListener(fontNum -> {
+		FontSizeManager.addListener(fontNum ->
+
+		{
 			int tmp = fontNum - 10;
 			if (tmp < 12)
 				tmp = 12;
@@ -74,7 +99,7 @@ public class Main  extends Application {
 		});
 		BowlerStudio.runLater(() -> {
 			try {
-				
+
 				Image loadAsset = new Image(PsudoSplash.getResource().toString());
 				newStage.getIcons().add(loadAsset);
 			} catch (Exception e) {
@@ -88,20 +113,18 @@ public class Main  extends Application {
 		newStage.show();
 		SplashManager.renderSplashFrame(1, "Initializing");
 	}
-	public static void main(String [] args) {
-		if(args!=null) {
-			if(args.length!=0) {
+
+	public static void main(String[] args) {
+		if (args != null) {
+			if (args.length != 0) {
 				File f = new File(args[0]);
-				if(f.exists()) {
+				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
 				}
 			}
 		}
-		String relative = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
-		if (!relative.endsWith("Documents")) {
-			relative = relative + delim()+"Documents";
-		}
-		File file = new File(relative + delim()+"CaDoodle-workspace"+delim());
+		String relative =ScriptingEngine.getWorkingDirectory().getAbsolutePath();
+		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
 		NameGetter mykey = new NameGetter();
@@ -112,15 +135,9 @@ public class Main  extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
-		SplashManager.renderSplashFrame(1, "Inkscape");
-		DownloadManager.getConfigExecutable("inkscape", null);
-		SplashManager.renderSplashFrame(5, "Blender");
-		DownloadManager.getConfigExecutable("blender", null);
-		
-		launch();	
-		
+
+		launch();
+
 	}
 
 }
-	
