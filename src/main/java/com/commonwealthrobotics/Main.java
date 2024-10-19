@@ -123,6 +123,7 @@ public class Main extends Application {
 				}
 			}
 		}
+		ScriptingEngine.setAppName("CaDoodle");
 		String relative =ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
