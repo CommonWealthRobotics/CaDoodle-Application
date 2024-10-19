@@ -674,13 +674,20 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void setupFile() {
 		new Thread(() -> {
 			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(20, "Initialize Model");
 				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				Thread.sleep(500);
-				SplashManager.closeSplash();
+				if(!Main.getLoadDeps().isAlive())
+					SplashManager.closeSplash();
 				session.setKeyBindingFocus();
 			} catch (Exception e) {
 				e.printStackTrace();

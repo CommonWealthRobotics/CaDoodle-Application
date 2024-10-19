@@ -35,9 +35,11 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+	private static Thread loadDeps;
+
 	@Override
 	public void start(Stage newStage) throws Exception {
-		SplashManager.renderSplashFrame(1, "Main Window Load");
+		// SplashManager.renderSplashFrame(1, "Main Window Load");
 
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
 		loader.setController(new MainController());
@@ -61,32 +63,44 @@ public class Main extends Application {
 		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
 		if (newStage != null)
 			newStage.setTitle(title);
-		Thread loadDeps = new Thread(() -> {
-			PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+
+		setLoadDeps(new Thread(() -> {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			long start = System.currentTimeMillis();
+			SplashManager.renderSplashFrame(1, "Initializing");
 			SplashManager.renderSplashFrame(1, "Inkscape");
 			DownloadManager.getConfigExecutable("inkscape", null);
 			SplashManager.renderSplashFrame(5, "Blender");
 			DownloadManager.getConfigExecutable("blender", null);
 			SplashManager.renderSplashFrame(5, "FreeCAD");
 			DownloadManager.getConfigExecutable("freecad", null);
-			SplashManager.closeSplash();
-		});
-		loadDeps.start();
-		newStage.setOnCloseRequest(event -> {
-			if (loadDeps.isAlive()) {
-				SplashManager.renderSplashFrame(20, "Download Unfinished");
-
-				try {
-					loadDeps.join();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			if (System.currentTimeMillis() - start > 2000) {
+				SplashManager.closeSplash();
 			}
-			System.out.println("CaDoodle Exiting");
-
+		}));
+		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
-			System.exit(0);
+			new Thread(() -> {
+				if (getLoadDeps().isAlive()) {
+					SplashManager.renderSplashFrame(20, "Download Unfinished");
+
+					try {
+						getLoadDeps().join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				System.out.println("CaDoodle Exiting");
+				System.exit(0);
+			}).start();
+
 		});
 
 		FontSizeManager.addListener(fontNum ->
@@ -108,10 +122,11 @@ public class Main extends Application {
 		});
 		newStage.setMinWidth(900);
 		newStage.setMinHeight(600);
-		SplashManager.renderSplashFrame(1, "Main Window Show");
+		// SplashManager.renderSplashFrame(1, "Main Window Show");
 		FileSelectionFactory.setStage(newStage);
 		newStage.show();
-		SplashManager.renderSplashFrame(1, "Initializing");
+
+		getLoadDeps().start();
 	}
 
 	public static void main(String[] args) {
@@ -124,7 +139,7 @@ public class Main extends Application {
 			}
 		}
 		ScriptingEngine.setAppName("CaDoodle");
-		String relative =ScriptingEngine.getWorkingDirectory().getAbsolutePath();
+		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
@@ -137,6 +152,14 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		launch();
+	}
+
+	public static Thread getLoadDeps() {
+		return loadDeps;
+	}
+
+	public static void setLoadDeps(Thread loadDeps) {
+		Main.loadDeps = loadDeps;
 	}
 
 }

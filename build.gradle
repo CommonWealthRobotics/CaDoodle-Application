@@ -121,6 +121,8 @@ dependencies {
 		exclude group: 'eu.mihosoft.vvecmath', module: 'vvecmath'
 		
 	}
+	// Zip and unzip, tar and untar
+	implementation 'org.apache.commons:commons-compress:1.26.2'
 }
 javafx {
 	version = '17' // or whichever version you're using
