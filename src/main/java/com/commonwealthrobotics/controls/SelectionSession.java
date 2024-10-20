@@ -1011,9 +1011,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		for (CSG c : incoming) {
 			Transform inverse = TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse();
-			//c = c.transformed(inverse);
-			Vector3d min2 = c.getBounds().getMin().clone().transform(inverse);
-			Vector3d max2 = c.getBounds().getMax().clone().transform(inverse);
+			c = c.getBoundingBox().transformed(inverse);
+			Vector3d min2 = c.getBounds().getMin().clone();
+			Vector3d max2 = c.getBounds().getMax().clone();
 			if (min == null)
 				min = min2;
 			if (max == null)
@@ -1220,14 +1220,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selectedCSG.size() == 0)
 			return;
 //		TickToc.setEnabled(true);
-//		TickToc.tic("onCameraChange");
-//		TickToc.tic("make bounds");
+//		TickToc.tic("Start bounds");
 		Bounds sellectedBounds = getSellectedBounds(selectedCSG);
-		//TickToc.tic("controls.updateControls");
+//		TickToc.tic("bounds made");
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
 				sellectedBounds);
-		//TickToc.toc();
-		//TickToc.setEnabled(false);
+//		TickToc.toc();
+//		TickToc.setEnabled(false);
 	}
 
 //	public void setCadoodle(ActiveProject ap) {
