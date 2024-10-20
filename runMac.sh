@@ -16,4 +16,22 @@ else
 fi
 echo "Java home set to $JAVA_HOME"
 
-./gradlew clean run
+#./gradlew clean shadowJar
+
+$JAVA_HOME/bin/java -Dprism.forceGPU=true --add-exports \
+	javafx.graphics/com.sun.javafx.css=ALL-UNNAMED \
+	--add-exports \
+	javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED \
+	--add-exports \
+	javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED \
+	--add-exports \
+	javafx.base/com.sun.javafx.event=ALL-UNNAMED \
+	--add-exports \
+	javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED \
+	--add-exports \
+	javafx.graphics/com.sun.javafx.util=ALL-UNNAMED \
+	--add-exports \
+	javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED \
+	--add-opens \
+	javafx.graphics/javafx.scene=ALL-UNNAMED \
+	-jar build/libs/CaDoodle-Application.jar
