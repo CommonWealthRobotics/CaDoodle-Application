@@ -268,17 +268,17 @@ public class ControlSprites {
 
 		this.b = b;
 		if (!selectionLive) {
-			TickToc.tic("!selectionLive");
+			//TickToc.tic("!selectionLive");
 			selectionLive = true;
 			BowlerStudio.runLater(() -> {
 				initialize();
 			});
 		}
 		if (el < -90 || el > 90) {
-			TickToc.tic("footprint.setVisible(false)");
+			//TickToc.tic("footprint.setVisible(false)");
 			footprint.setVisible(false);
 		} else {
-			TickToc.tic("footprint.setVisible(true)");
+			//TickToc.tic("footprint.setVisible(true)");
 			footprint.setVisible(true);
 		}
 
@@ -290,15 +290,15 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		TickToc.tic("cam up");
+		//TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
-		TickToc.tic("rot update");
+		//TickToc.tic("rot update");
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
-		TickToc.tic("alligned update");
+		//TickToc.tic("alligned update");
 		allign.threeDTarget(screenW, screenH, zoom, b, cf);
-		TickToc.tic("cubes update");
+		//TickToc.tic("cubes update");
 		updateCubes();
-		TickToc.tic("lines update");
+		//TickToc.tic("lines update");
 		updateLines();
 	}
 
