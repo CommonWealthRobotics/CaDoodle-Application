@@ -7,10 +7,12 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import javax.swing.filechooser.FileSystemView;
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
@@ -20,6 +22,8 @@ import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
+import com.neuronrobotics.bowlerstudio.scripting.IApprovalForDownload;
+import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
@@ -28,9 +32,12 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -65,38 +72,35 @@ public class Main extends Application {
 			newStage.setTitle(title);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 
-		setLoadDeps(new Thread(() -> {
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			long start = System.currentTimeMillis();
-			SplashManager.renderSplashFrame(1, "Initializing");
-			SplashManager.renderSplashFrame(1, "Inkscape");
-			DownloadManager.getConfigExecutable("inkscape", null);
-			SplashManager.renderSplashFrame(5, "Blender");
-			DownloadManager.getConfigExecutable("blender", null);
-			SplashManager.renderSplashFrame(5, "FreeCAD");
-			DownloadManager.getConfigExecutable("freecad", null);
-			if (System.currentTimeMillis() - start > 2000) {
-				SplashManager.closeSplash();
-			}
-		}));
+//		setLoadDeps(new Thread(() -> {
+//			try {
+//				Thread.sleep(200);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			long start = System.currentTimeMillis();
+//			SplashManager.renderSplashFrame(5, "Blender");
+//			DownloadManager.getConfigExecutable("blender", null);
+//			SplashManager.renderSplashFrame(5, "FreeCAD");
+//			DownloadManager.getConfigExecutable("freecad", null);
+//			if (System.currentTimeMillis() - start > 2000) {
+//				SplashManager.closeSplash();
+//			}
+//		}));
 		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
 			new Thread(() -> {
-				if (getLoadDeps().isAlive()) {
-					SplashManager.renderSplashFrame(20, "Download Unfinished");
-
-					try {
-						getLoadDeps().join();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+//				if (getLoadDeps().isAlive()) {
+//					SplashManager.renderSplashFrame(20, "Download Unfinished");
+//
+//					try {
+//						getLoadDeps().join();
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
 				System.out.println("CaDoodle Exiting");
 				System.exit(0);
 			}).start();
@@ -126,7 +130,7 @@ public class Main extends Application {
 		FileSelectionFactory.setStage(newStage);
 		newStage.show();
 
-		getLoadDeps().start();
+		//getLoadDeps().start();
 	}
 
 	public static void main(String[] args) {
@@ -138,6 +142,7 @@ public class Main extends Application {
 				}
 			}
 		}
+		setUpApprovalWindow();
 		ScriptingEngine.setAppName("CaDoodle");
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
@@ -154,12 +159,68 @@ public class Main extends Application {
 		launch();
 	}
 
-	public static Thread getLoadDeps() {
-		return loadDeps;
+	private static void setUpApprovalWindow() {
+		DownloadManager.setDownloadEvents(new IDownloadManagerEvents() {
+			
+			@Override
+			public void startDownload() {
+				SplashManager.renderSplashFrame(0, "Downloading...");
+			}
+			
+			@Override
+			public void finishDownload() {
+				SplashManager.closeSplash();
+			}
+		});
+		DownloadManager.setApproval(new IApprovalForDownload() {
+			private ButtonType buttonType = null;
+
+			@Override
+			public boolean get(String name, String url) {
+				buttonType = null;
+
+				BowlerKernel.runLater(() -> {
+					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+					alert.setTitle("Message");
+					alert.setHeaderText("Would you like to add the: " + name + " Plugin?" );
+					Node root = alert.getDialogPane();
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.setOnCloseRequest(ev -> alert.hide());
+					FontSizeManager.addListener(fontNum -> {
+						int tmp = fontNum - 10;
+						if (tmp < 12)
+							tmp = 12;
+						root.setStyle("-fx-font-size: " + tmp + "pt");
+						alert.getDialogPane().applyCss();
+						alert.getDialogPane().layout();
+						stage.sizeToScene();
+					});
+					Optional<ButtonType> result = alert.showAndWait();
+					buttonType = result.get();
+					alert.close();
+				});
+
+				while (buttonType == null) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+
+				return buttonType.equals(ButtonType.OK);
+			}
+		});
 	}
 
-	public static void setLoadDeps(Thread loadDeps) {
-		Main.loadDeps = loadDeps;
-	}
+//	public static Thread getLoadDeps() {
+//		return loadDeps;
+//	}
+//
+//	public static void setLoadDeps(Thread loadDeps) {
+//		Main.loadDeps = loadDeps;
+//	}
 
 }
