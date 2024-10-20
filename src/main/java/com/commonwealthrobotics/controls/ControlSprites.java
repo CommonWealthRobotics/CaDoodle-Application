@@ -268,14 +268,17 @@ public class ControlSprites {
 
 		this.b = b;
 		if (!selectionLive) {
+			TickToc.tic("!selectionLive");
 			selectionLive = true;
 			BowlerStudio.runLater(() -> {
 				initialize();
 			});
 		}
 		if (el < -90 || el > 90) {
+			TickToc.tic("footprint.setVisible(false)");
 			footprint.setVisible(false);
 		} else {
+			TickToc.tic("footprint.setVisible(true)");
 			footprint.setVisible(true);
 		}
 

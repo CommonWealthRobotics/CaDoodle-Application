@@ -1200,8 +1200,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z) {
-		TickToc.setEnabled(true);
-		TickToc.tic("onCameraChange");
 		this.screenW = screenW;
 		this.screenH = screenH;
 		this.zoom = zoom;
@@ -1213,12 +1211,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (ap.get() == null || controls == null)
 			return;
 
-		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot());
+		List<String> selectedSnapshot = selectedSnapshot();
+		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
 		if (selectedCSG.size() == 0)
 			return;
+		TickToc.setEnabled(true);
+		TickToc.tic("onCameraChange");
+		TickToc.tic("make bounds");
+		Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 		TickToc.tic("controls.updateControls");
-		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot(),
-				getSellectedBounds(selectedCSG));
+		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
+				sellectedBounds);
 		TickToc.toc();
 		TickToc.setEnabled(false);
 	}
