@@ -6,6 +6,8 @@ package com.commonwealthrobotics;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -211,6 +213,16 @@ public class Main extends Application {
 				}
 
 				return buttonType.equals(ButtonType.OK);
+			}
+
+			@Override
+			public void onInstallFail(String url) {
+				try {
+					BowlerStudio.openExternalWebpage(new URL(url));
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}
