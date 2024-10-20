@@ -158,6 +158,10 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		BowlerStudio.ensureUpdated(
+				"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
+				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
+				"https://github.com/CommonWealthRobotics/blender-bowler-cli.git");
 		launch();
 	}
 
