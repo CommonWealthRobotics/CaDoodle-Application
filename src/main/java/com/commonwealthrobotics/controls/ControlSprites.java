@@ -21,6 +21,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -286,10 +287,15 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
+		TickToc.tic("rot update");
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
+		TickToc.tic("alligned update");
 		allign.threeDTarget(screenW, screenH, zoom, b, cf);
+		TickToc.tic("cubes update");
 		updateCubes();
+		TickToc.tic("lines update");
 		updateLines();
 	}
 

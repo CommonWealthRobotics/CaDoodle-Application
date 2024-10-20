@@ -31,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.bowlerstudio.util.IFileChangeListener;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -1199,6 +1200,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z) {
+		TickToc.setEnabled(true);
+		TickToc.tic("onCameraChange");
 		this.screenW = screenW;
 		this.screenH = screenH;
 		this.zoom = zoom;
@@ -1213,9 +1216,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot());
 		if (selectedCSG.size() == 0)
 			return;
-
+		TickToc.tic("controls.updateControls");
 		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot(),
 				getSellectedBounds(selectedCSG));
+		TickToc.toc();
+		TickToc.setEnabled(false);
 	}
 
 //	public void setCadoodle(ActiveProject ap) {
