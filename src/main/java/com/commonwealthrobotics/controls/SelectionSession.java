@@ -179,7 +179,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void myRegenerate(ICaDoodleOpperation source) {
 		Thread t = ap.regenerateFrom(source);
-		if(t==null)
+		if (t == null)
 			return;
 		new Thread(() -> {
 			try {
@@ -207,6 +207,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				@Override
 				public void onFileChange(File fileThatChanged, WatchEvent event) {
+					System.out.println("File Change updating "+source.getType());
 					myRegenerate(source);
 				}
 
@@ -230,13 +231,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				if (n == null)
 					continue;
+				System.out.println("Adding Listeners for "+s.getName());
 				for (String k : n.getParameters()) {
 					Parameter para = CSGDatabase.get(k);
-					System.out.println("Adding listener to " + para.getName());
+					System.out.println("Adding listener to " + k);
+					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						System.out.println("Regenerating from CaDoodle " + para.getName());
-						myWatchers.get(source).close();
-						myWatchers.remove(source);
+						FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
+						if(fileChangeWatcher!=null) {
+							fileChangeWatcher.close();
+							myWatchers.remove(source);
+						}
 						myRegenerate(source);
 						FileChangeWatcher w;
 						try {
@@ -427,6 +433,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ComboBox<String> options = new ComboBox<String>();
 
 		ArrayList<String> options2 = para.getOptions();
+		boolean limited = false;
+		if (options2.size() == 0) {
+			options2.add(para.getMM() + "");
+		} else
+			limited = true;
 		for (String s : options2) {
 			options.getItems().add(s);
 		}
@@ -436,15 +447,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		thisLine.getChildren().add(options);
 		double top = Double.parseDouble(options2.get(options2.size() - 1));
 		double bot = Double.parseDouble(options2.get(0));
-
+		boolean isLimit = limited;
 		options.setOnAction(event -> {
 			String string = options.getSelectionModel().getSelectedItem().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
-				if (parseDouble > top)
-					parseDouble = top;
-				if (parseDouble < bot)
-					parseDouble = bot;
+				if (isLimit) {
+					if (parseDouble > top)
+						parseDouble = top;
+					if (parseDouble < bot)
+						parseDouble = bot;
+				}
+				System.out.println("Setting new value "+parseDouble);
 				para.setMM(parseDouble);
 				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
@@ -608,7 +622,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SplashManager.isVisableSplash())
 			if (engine != null) {
 				// new Exception("KB Focused here").printStackTrace();
-				System.out.println("Setting KeyBindingFocus");
+				//System.out.println("Setting KeyBindingFocus");
 				BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
 			}
 	}
@@ -1007,7 +1021,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public Bounds getSellectedBounds(List<CSG> incoming) {
 		Vector3d min = null;
 		Vector3d max = null;
-		//TickToc.tic("getSellectedBounds "+incoming.size());
+		// TickToc.tic("getSellectedBounds "+incoming.size());
 
 		for (CSG c : incoming) {
 			Transform inverse = TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse();
@@ -1030,7 +1044,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				max.y = max2.y;
 			if (max.z < max2.z)
 				max.z = max2.z;
-			//TickToc.tic("Bounds for "+c.getName());
+			// TickToc.tic("Bounds for "+c.getName());
 		}
 
 		return new Bounds(min, max);
@@ -1223,8 +1237,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 //		TickToc.tic("Start bounds");
 		Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 //		TickToc.tic("bounds made");
-		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
-				sellectedBounds);
+		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds);
 //		TickToc.toc();
 //		TickToc.setEnabled(false);
 	}
@@ -1288,7 +1301,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			if (c.isInGroup())
 				continue;
-			if(c.isHole())
+			if (c.isHole())
 				continue;
 			back.add(c.clone());
 		}
