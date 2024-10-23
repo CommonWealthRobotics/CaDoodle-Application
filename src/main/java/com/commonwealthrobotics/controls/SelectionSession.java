@@ -181,6 +181,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Thread t = ap.regenerateFrom(source);
 		if (t == null)
 			return;
+		//new Exception().printStackTrace();
 		new Thread(() -> {
 			try {
 				t.join();
@@ -232,6 +233,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (n == null)
 					continue;
 				System.out.println("Adding Listeners for "+s.getName());
+				//new Exception().printStackTrace();
 				for (String k : n.getParameters()) {
 					Parameter para = CSGDatabase.get(k);
 					System.out.println("Adding listener to " + k);
