@@ -160,6 +160,13 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		Vitamins.listVitaminTypes();
+//		try {
+//			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git", "MakeVitamins.groovy");
+//			System.exit(1);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		BowlerStudio.ensureUpdated(
 				"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",

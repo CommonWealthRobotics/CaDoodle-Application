@@ -113,13 +113,13 @@ public class ShapesPallet {
 			if(key==null)
 				continue;
 			System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
-			Button button = setupButton(names, key);
-			objectPallet.add(button, col, row);
+			setupButton(names, key,col, row,objectPallet);
+			//objectPallet.add(button, col, row);
 		}
 
 	}
 
-	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key) {
+	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row, GridPane objectPallet2) {
 		String name = names.get(key);
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
@@ -136,6 +136,7 @@ public class ShapesPallet {
 				tIv.setFitHeight(50);
 				tIv.setFitWidth(50);
 				button.setGraphic(tIv);
+				objectPallet.add(button, col, row);
 			});
 		}).start();
 		button.setOnMousePressed(ev -> {
