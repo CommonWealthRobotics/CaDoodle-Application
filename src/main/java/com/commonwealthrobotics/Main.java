@@ -162,7 +162,7 @@ public class Main extends Application {
 		Vitamins.listVitaminTypes();
 //		try {
 //			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git", "MakeVitamins.groovy");
-//			System.exit(1);
+//			//System.exit(1);
 //		} catch (Exception e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();

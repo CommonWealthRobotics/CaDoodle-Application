@@ -113,80 +113,80 @@ public class ShapesPallet {
 			if(key==null)
 				continue;
 			System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
-			setupButton(names, key,col, row,objectPallet);
+			setupButton(names, key,col, row);
 			//objectPallet.add(button, col, row);
 		}
 
 	}
 
-	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row, GridPane objectPallet2) {
+	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row) {
 		String name = names.get(key);
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
-		
+		objectPallet.add(button, col, row);
 		new Thread(() -> {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
-			List<CSG> ScriptObjects = set.process(new ArrayList<>());
-			referenceParts.put(button,ScriptObjects);
+			List<CSG> so = set.process(new ArrayList<>());
+			referenceParts.put(button,so);
 			BowlerStudio.runLater(()->{
-				Image thumb = ThumbnailImage.get(ScriptObjects);
+				Image thumb = ThumbnailImage.get(so);
 				ImageView tIv = new ImageView(thumb);
 				tIv.setFitHeight(50);
 				tIv.setFitWidth(50);
 				button.setGraphic(tIv);
-				objectPallet.add(button, col, row);
+				button.setOnMousePressed(ev -> {
+					new Thread(() -> {
+						List<CSG> ScriptObjects = referenceParts.get(button);
+						CSG indicator = ScriptObjects.get(0);
+						if(ScriptObjects.size()>1) {
+							indicator=CSG.unionAll(ScriptObjects);
+						}
+						session.setMode(SpriteDisplayMode.PLACING);
+						workplane.setIndicator(indicator, new Affine());
+						workplane.setOnSelectEvent(() -> {
+							session.setMode(SpriteDisplayMode.Default);
+							if(workplane.isClicked())
+							try {
+								TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
+								AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"))
+										.setLocation(currentAbsolutePose);
+								ap.addOp(setAddFromScript).join();
+//								List<String> namesToMove = new ArrayList<>();
+//								namesToMove.addAll(setAddFromScript.getNamesAdded());
+//								cadoodle.addOpperation(new MoveCenter()
+//										.setNames(namesToMove)
+//										.setLocation(currentAbsolutePose)).join();
+								HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
+								session.selectAll(namesAdded);
+				
+								if (!workplane.isClicked())
+									return;
+								if (workplane.isClickOnGround()) {
+									// System.out.println("Ground plane click detected");
+									ap.get().setWorkplane(new TransformNR());
+								} else {
+									ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+								}
+								workplane.placeWorkplaneVisualization();
+								workplane.setTemporaryPlane();
+							} catch (CadoodleConcurrencyException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						});
+						workplane.activate();
+
+					}).start();
+					session.setKeyBindingFocus();
+				});
 			});
 		}).start();
-		button.setOnMousePressed(ev -> {
-			new Thread(() -> {
-				List<CSG> ScriptObjects = referenceParts.get(button);
-				CSG indicator = ScriptObjects.get(0);
-				if(ScriptObjects.size()>1) {
-					indicator=CSG.unionAll(ScriptObjects);
-				}
-				session.setMode(SpriteDisplayMode.PLACING);
-				workplane.setIndicator(indicator, new Affine());
-				workplane.setOnSelectEvent(() -> {
-					session.setMode(SpriteDisplayMode.Default);
-					if(workplane.isClicked())
-					try {
-						TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-						AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"))
-								.setLocation(currentAbsolutePose);
-						ap.addOp(setAddFromScript).join();
-//						List<String> namesToMove = new ArrayList<>();
-//						namesToMove.addAll(setAddFromScript.getNamesAdded());
-//						cadoodle.addOpperation(new MoveCenter()
-//								.setNames(namesToMove)
-//								.setLocation(currentAbsolutePose)).join();
-						HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
-						session.selectAll(namesAdded);
-		
-						if (!workplane.isClicked())
-							return;
-						if (workplane.isClickOnGround()) {
-							// System.out.println("Ground plane click detected");
-							ap.get().setWorkplane(new TransformNR());
-						} else {
-							ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-						}
-						workplane.placeWorkplaneVisualization();
-						workplane.setTemporaryPlane();
-					} catch (CadoodleConcurrencyException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				});
-				workplane.activate();
 
-			}).start();
-			session.setKeyBindingFocus();
-		});
 		return button;
 	}
 
