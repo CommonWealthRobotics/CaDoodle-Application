@@ -19,6 +19,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.assets.AssetFactory;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
@@ -145,6 +146,8 @@ public class Main extends Application {
 				}
 			}
 		}
+		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+		SplashManager.renderSplashFrame(1, "Main Window Show");
 		setUpApprovalWindow();
 		ScriptingEngine.setAppName("CaDoodle");
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
@@ -167,6 +170,12 @@ public class Main extends Application {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		try {
+			AssetFactory.loadAllAssets();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		BowlerStudio.ensureUpdated(
 				"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
