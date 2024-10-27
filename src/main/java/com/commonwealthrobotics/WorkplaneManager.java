@@ -333,4 +333,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void setIncrement(double increment) {
 		this.increment = increment;
 	}
+
+	public MeshView getPlacementPlane() {
+		// TODO Auto-generated method stub
+		return wpPick;
+	}
 }

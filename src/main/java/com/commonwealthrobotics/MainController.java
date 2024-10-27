@@ -1026,7 +1026,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && in != engine.getSubScene())
+		if (in != ground && in != engine.getSubScene() && in !=workplane.getPlacementPlane())
 			return false;
 		if (event.isControlDown())
 			return false;
