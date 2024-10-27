@@ -51,8 +51,8 @@ public class ShapesPallet {
 	private HashMap<Button,List<CSG>> referenceParts = new HashMap<>();
 	private ActiveProject ap;
 
-	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet, SelectionSession session) {
-		this.shapeCatagory = shapeCatagory;
+	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session) {
+		this.shapeCatagory = sc;
 		this.objectPallet = objectPallet;
 		this.session = session;
 		try {
@@ -81,42 +81,45 @@ public class ShapesPallet {
 	}
 
 	public void onSetCatagory() {
-		String current = shapeCatagory.getSelectionModel().getSelectedItem();
-		System.out.println("Selecting shapes from " + current);
-		ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
-		active = nameToFile.get(current);
-		if (active == null)
-			return;
-		ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
-		// store the name os the keys for labeling the hoverover later
-		HashMap<Map, String> names = new HashMap<>();
-		for (String key : active.keySet()) {
-			HashMap<String, String> hashMap = active.get(key);
-			String s = hashMap.get("order");
-			if(s!=null) {
-				int index = Integer.parseInt(s);
-				System.out.println("Adding " + key + " at " + index);
-				while (orderedList.size() <= index)
-					orderedList.add(null);
-				orderedList.set(index, hashMap);
-			}else {
-				orderedList.add( hashMap);
-			}
-			names.put(hashMap, key);
-		}
-		objectPallet.getChildren().clear();
-		referenceParts.clear();
-		for (int i = 0; i < orderedList.size(); i++) {
-			int col = i % 3;
-			int row = i / 3;
-			HashMap<String, String> key = orderedList.get(i);
-			if(key==null)
-				continue;
-			System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
-			setupButton(names, key,col, row);
-			//objectPallet.add(button, col, row);
-		}
+		new Thread(()->{
 
+			String current = shapeCatagory.getSelectionModel().getSelectedItem();
+			System.out.println("Selecting shapes from " + current);
+			ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
+			active = nameToFile.get(current);
+			if (active == null)
+				return;
+			ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
+			// store the name os the keys for labeling the hoverover later
+			HashMap<Map, String> names = new HashMap<>();
+			for (String key : active.keySet()) {
+				HashMap<String, String> hashMap = active.get(key);
+				String s = hashMap.get("order");
+				if(s!=null) {
+					int index = Integer.parseInt(s);
+					System.out.println("Adding " + key + " at " + index);
+					while (orderedList.size() <= index)
+						orderedList.add(null);
+					orderedList.set(index, hashMap);
+				}else {
+					orderedList.add( hashMap);
+				}
+				names.put(hashMap, key);
+			}
+			objectPallet.getChildren().clear();
+			referenceParts.clear();
+			for (int i = 0; i < orderedList.size(); i++) {
+				int col = i % 3;
+				int row = i / 3;
+				HashMap<String, String> key = orderedList.get(i);
+				if(key==null)
+					continue;
+				System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
+				setupButton(names, key,col, row);
+				//objectPallet.add(button, col, row);
+			}
+
+		}).start();
 	}
 
 	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row) {
