@@ -60,7 +60,7 @@ public class ShapesPallet {
 		this.session = session;
 		ap = active;
 		workplane = workplane2;
-		new Thread(() -> {
+		//new Thread(() -> {
 			try {
 				ScriptingEngine.cloneRepo(gitULR, null);
 				ScriptingEngine.pull(gitULR);
@@ -84,7 +84,7 @@ public class ShapesPallet {
 			String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
 			BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
 			onSetCatagory();
-		}).start();
+		//}).start();
 	}
 
 	public void onSetCatagory() {
