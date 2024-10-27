@@ -74,7 +74,6 @@ public class Main extends Application {
 		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
 		if (newStage != null)
 			newStage.setTitle(title);
-		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 
 //		setLoadDeps(new Thread(() -> {
 //			try {
@@ -162,14 +161,12 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Vitamins.listVitaminTypes();
-//		try {
-//			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git", "MakeVitamins.groovy");
-//			//System.exit(1);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		ensureGitAssetsArePresent();
+		launch();
+	}
+
+	private static void ensureGitAssetsArePresent() {
+		Vitamins.getGitRepoDatabase();
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
@@ -180,7 +177,14 @@ public class Main extends Application {
 				"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 				"https://github.com/CommonWealthRobotics/blender-bowler-cli.git");
-		launch();
+		
+//		try {
+//		ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git", "MakeVitamins.groovy");
+//		//System.exit(1);
+//	} catch (Exception e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
 	}
 
 	private static void setUpApprovalWindow() {

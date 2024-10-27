@@ -54,6 +54,14 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 			if(t.isAlive()) {
 				SplashManager.renderSplashFrame(50, " Re-Generating");
+				while(!SplashManager.isVisableSplash()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}else {
 				return;
 			}
