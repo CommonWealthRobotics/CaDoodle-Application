@@ -129,7 +129,11 @@ public class ShapesPallet {
 					if (key == null)
 						continue;
 					System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
-					setupButton(names, key, col, row);
+					try {
+						setupButton(names, key, col, row);
+					}catch(Throwable tx) {
+						tx.printStackTrace();
+					}
 					// objectPallet.add(button, col, row);
 				}
 			} catch (Throwable tr) {
@@ -175,11 +179,6 @@ public class ShapesPallet {
 								AddFromScript setAddFromScript = new AddFromScript()
 										.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
 								ap.addOp(setAddFromScript).join();
-//								List<String> namesToMove = new ArrayList<>();
-//								namesToMove.addAll(setAddFromScript.getNamesAdded());
-//								cadoodle.addOpperation(new MoveCenter()
-//										.setNames(namesToMove)
-//										.setLocation(currentAbsolutePose)).join();
 								HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
 								session.selectAll(namesAdded);
 
