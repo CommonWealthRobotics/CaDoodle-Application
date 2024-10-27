@@ -82,7 +82,7 @@ public class ShapesPallet {
 				e.printStackTrace();
 			}
 			String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-			shapeCatagory.getSelectionModel().select(starting);
+			BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
 			onSetCatagory();
 		}).start();
 	}
