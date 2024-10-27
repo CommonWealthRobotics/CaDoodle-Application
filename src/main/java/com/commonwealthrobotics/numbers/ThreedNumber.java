@@ -106,7 +106,7 @@ public class ThreedNumber {
 	private void validate() {
 		// Number set from event
 		String t = textField.getText();
-		//System.out.println(" Validating string "+t);
+		//com.neuronrobotics.sdk.common.Log.error(" Validating string "+t);
 		if (t.length() == 0) {
 			// empty string, do nothing
 			return;
@@ -151,7 +151,7 @@ public class ThreedNumber {
 		if(c==null)
 			return;
 		
-		// System.out.println(cf.toSimpleString());
+		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
 		// Calculate the vector from camera to target
 		double x = positionPin.getX() - cf.getX();
 		double y = positionPin.getY() - cf.getY();
@@ -175,8 +175,8 @@ public class ThreedNumber {
 		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
 		TransformNR pr=wp.inverse().times(pureRot);
 
-		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
-		// System.out.println("");
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
+		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(10,5,0,new RotationNR(0,180,0)),reorent);	
 
@@ -200,7 +200,7 @@ public class ThreedNumber {
 
 	public void setMostRecentValue(double mostRecentValue) {
 		//new Exception().printStackTrace();
-		//System.out.println("internal number set to "+mostRecentValue);
+		//com.neuronrobotics.sdk.common.Log.error("internal number set to "+mostRecentValue);
 
 		this.mostRecentValue = mostRecentValue;
 	}

@@ -688,7 +688,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (ap.get() == null)
 			return;
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		// com.neuronrobotics.sdk.common.Log.error("Adding " + h.getType());
@@ -755,7 +755,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onDelete() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		com.neuronrobotics.sdk.common.Log.error("Delete");
@@ -779,7 +779,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void performPaste(double distance, List<String> copySet) {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ArrayList<String> copyTarget = new ArrayList<String>();
@@ -854,7 +854,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onLock() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ap.addOp(new Lock().setNames(selectedSnapshot()));
@@ -862,7 +862,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void showAll() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ArrayList<String> toShow = new ArrayList<String>();
@@ -877,7 +877,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onGroup() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		if (selected.size() > 1) {
@@ -903,7 +903,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onUngroup() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ArrayList<String> toSelect = new ArrayList<String>();
@@ -932,7 +932,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onHideShowOpperation() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ICaDoodleOpperation op;
@@ -1087,7 +1087,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		timeSinceLastMove = System.currentTimeMillis();
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		RotationNR getCamerFrameGetRotation;
