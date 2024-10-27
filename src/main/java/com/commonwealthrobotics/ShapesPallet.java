@@ -50,43 +50,47 @@ public class ShapesPallet {
 	private WorkplaneManager workplane;
 	private HashMap<Button, List<CSG>> referenceParts = new HashMap<>();
 	private ActiveProject ap;
-	private boolean threadRunning =false;
+	private boolean threadRunning = false;
 	private boolean threadComplete = true;
-	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session,ActiveProject active, WorkplaneManager workplane2) {
+
+	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
+			WorkplaneManager workplane2) {
 		this.shapeCatagory = sc;
 		this.objectPallet = objectPallet;
 		this.session = session;
 		ap = active;
-		workplane=workplane2;
-		try {
-			ScriptingEngine.cloneRepo(gitULR, null);
-			ScriptingEngine.pull(gitULR);
-			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
-			for (String f : files) {
-				if (f.toLowerCase().endsWith(".json")) {
-					String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
-					File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
-					String name = fileFromGit.getName();
-					String[] split = name.split(".json");
-					String filename = split[0];
-					HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
-					nameToFile.put(filename, tmp);
-					shapeCatagory.getItems().add(filename);
+		workplane = workplane2;
+		new Thread(() -> {
+			try {
+				ScriptingEngine.cloneRepo(gitULR, null);
+				ScriptingEngine.pull(gitULR);
+				ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
+				for (String f : files) {
+					if (f.toLowerCase().endsWith(".json")) {
+						String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
+						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
+						String name = fileFromGit.getName();
+						String[] split = name.split(".json");
+						String filename = split[0];
+						HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
+						nameToFile.put(filename, tmp);
+						shapeCatagory.getItems().add(filename);
+					}
 				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-		shapeCatagory.getSelectionModel().select(starting);
-		onSetCatagory();
+			String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+			shapeCatagory.getSelectionModel().select(starting);
+			onSetCatagory();
+		}).start();
 	}
 
 	public void onSetCatagory() {
-		threadRunning=false;
+		threadRunning = false;
 		Thread t = new Thread(() -> {
-			while(!threadComplete) {
+			while (!threadComplete) {
 				System.out.println("Waiting for shapesThread to exit");
 				try {
 					Thread.sleep(100);
@@ -95,8 +99,8 @@ public class ShapesPallet {
 					e.printStackTrace();
 				}
 			}
-			threadComplete=false;
-			threadRunning=true;
+			threadComplete = false;
+			threadRunning = true;
 			ap.setDisableRegenerate(true);
 			try {
 				String current = shapeCatagory.getSelectionModel().getSelectedItem();
@@ -123,6 +127,7 @@ public class ShapesPallet {
 					names.put(hashMap, key);
 				}
 				BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
+				Thread.sleep(30);
 				referenceParts.clear();
 				for (int i = 0; i < orderedList.size() && threadRunning; i++) {
 					int col = i % 3;
@@ -133,7 +138,8 @@ public class ShapesPallet {
 					System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
 					try {
 						setupButton(names, key, col, row);
-					}catch(Throwable tx) {
+						
+					} catch (Throwable tx) {
 						tx.printStackTrace();
 					}
 					// objectPallet.add(button, col, row);
@@ -142,7 +148,7 @@ public class ShapesPallet {
 				tr.printStackTrace();
 			}
 			ap.setDisableRegenerate(false);
-			threadComplete=true;
+			threadComplete = true;
 		});
 		t.start();
 	}
@@ -208,7 +214,12 @@ public class ShapesPallet {
 				session.setKeyBindingFocus();
 			});
 		});
-		// }).start();
+		try {
+			Thread.sleep(30);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return button;
 	}
