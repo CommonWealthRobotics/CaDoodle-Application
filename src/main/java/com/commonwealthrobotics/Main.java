@@ -31,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
+import com.neuronrobotics.sdk.common.Log;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -61,7 +62,7 @@ public class Main extends Application {
 		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
 				.getHeight();
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-		System.out.println("Screen " + sw + "x" + sh);
+		com.neuronrobotics.sdk.common.Log.error("Screen " + sw + "x" + sh);
 		sw = primaryScreenBounds.getWidth();
 		sh = primaryScreenBounds.getHeight();
 		double w;
@@ -104,7 +105,7 @@ public class Main extends Application {
 //						e.printStackTrace();
 //					}
 //				}
-				System.out.println("CaDoodle Exiting");
+				Log.error("CaDoodle Exiting");
 				System.exit(0);
 			}).start();
 

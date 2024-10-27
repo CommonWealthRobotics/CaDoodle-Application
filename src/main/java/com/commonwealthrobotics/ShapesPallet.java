@@ -91,7 +91,7 @@ public class ShapesPallet {
 		threadRunning = false;
 		Thread t = new Thread(() -> {
 			while (!threadComplete) {
-				System.out.println("Waiting for shapesThread to exit");
+				com.neuronrobotics.sdk.common.Log.error("Waiting for shapesThread to exit");
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -104,7 +104,7 @@ public class ShapesPallet {
 			ap.setDisableRegenerate(true);
 			try {
 				String current = shapeCatagory.getSelectionModel().getSelectedItem();
-				System.out.println("Selecting shapes from " + current);
+				com.neuronrobotics.sdk.common.Log.error("Selecting shapes from " + current);
 				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
 				active = nameToFile.get(current);
 				if (active == null)
@@ -117,7 +117,7 @@ public class ShapesPallet {
 					String s = hashMap.get("order");
 					if (s != null) {
 						int index = Integer.parseInt(s);
-						System.out.println("Adding " + key + " at " + index);
+						com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
 						while (orderedList.size() <= index)
 							orderedList.add(null);
 						orderedList.set(index, hashMap);
@@ -135,7 +135,7 @@ public class ShapesPallet {
 					HashMap<String, String> key = orderedList.get(i);
 					if (key == null)
 						continue;
-					System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
+					com.neuronrobotics.sdk.common.Log.error("Placing " + names.get(key) + " at " + row + " , " + col);
 					try {
 						setupButton(names, key, col, row);
 						
@@ -193,7 +193,7 @@ public class ShapesPallet {
 								if (!workplane.isClicked())
 									return;
 								if (workplane.isClickOnGround()) {
-									// System.out.println("Ground plane click detected");
+									// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
 									ap.get().setWorkplane(new TransformNR());
 								} else {
 									ap.get().setWorkplane(workplane.getCurrentAbsolutePose());

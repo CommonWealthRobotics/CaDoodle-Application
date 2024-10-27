@@ -47,7 +47,7 @@ public class AllignManager {
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
 		for (AllignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {
-				System.out.println("AllignManager clicked");
+				com.neuronrobotics.sdk.common.Log.error("AllignManager clicked");
 				setAllignemntSelected(true);
 				recompute(() -> {
 					ICaDoodleOpperation curOp = session.getCurrentOpperation();
@@ -106,7 +106,7 @@ public class AllignManager {
 		opperation = new Allign().setNames(selected).setWorkplane(session.getWorkplane());
 		opperation.setBounds(b);
 
-		System.out.println("Allign manager reinitialized");
+		com.neuronrobotics.sdk.common.Log.error("Allign manager reinitialized");
 		setAllignemntSelected(false);
 		for (AllignRadioSet r : AS_LIST) {
 			r.initialize(opperation, engine, toAllign, selected);
@@ -141,11 +141,11 @@ public class AllignManager {
 	}
 
 	public void cancel() {
-		System.out.println("Allign canceled here");
+		com.neuronrobotics.sdk.common.Log.error("Allign canceled here");
 		if (isActive()) {
 			this.toAllign.clear();
 			if (isAllignemntSelected()) {
-				System.out.println("Add op " + opperation);
+				com.neuronrobotics.sdk.common.Log.error("Add op " + opperation);
 
 			}
 			opperation = null;

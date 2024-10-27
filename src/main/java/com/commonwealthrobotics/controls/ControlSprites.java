@@ -137,7 +137,7 @@ public class ControlSprites {
 		zMove.setFrameOfReference(() -> ap.get().getWorkplane());
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
-			System.out.println("Z Moved! " + globalPose.toSimpleString());
+			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
 			Thread t = ap.addOp(
 					new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
 			try {
@@ -182,7 +182,7 @@ public class ControlSprites {
 		footprint.setMouseTransparent(true);
 		Runnable updateLines = () -> {
 			updateLines();
-			// System.out.println("Lines updated from scale session");
+			// com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
 		};
 		scaleSession = new ScaleSessionManager(e, selection, updateLines, ap, session, workplaneOffset, up);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
@@ -195,7 +195,7 @@ public class ControlSprites {
 		allElems.addAll(allign.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
-			//System.out.println("Typed position update");
+			//com.neuronrobotics.sdk.common.Log.error("Typed position update");
 			scaleSession.set(xdimen.getMostRecentValue(),ydimen.getMostRecentValue(),zdimen.getMostRecentValue());
 			updateCubes();
 			updateLines();
@@ -206,7 +206,7 @@ public class ControlSprites {
 			Vector3d min = bounds.getMin();
 			double xOff = xOffset.getMostRecentValue() - min.x ;
 			double yOff = yOffset.getMostRecentValue() - min.y ;
-			//System.out.println("Typed XY offset update x="+ xOff+" y="+yOff);
+			//com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x="+ xOff+" y="+yOff);
 			manipulation.set(xOff, yOff, 0);
 			manipulation.fireSave();
 			updateCubes();
@@ -216,7 +216,7 @@ public class ControlSprites {
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
 			double manipDiff = zOffset.getMostRecentValue() -min.z; 
-			//System.out.println("Typed Z offset ud "+manipDiff);
+			//com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
 			zMove.set(0, 0, manipDiff);
 			zMove.fireSave();
 			updateCubes();
@@ -435,7 +435,7 @@ public class ControlSprites {
 					xOffset.show();
 					yOffset.show();
 				}else {
-					//System.out.println("Z is moving");
+					//com.neuronrobotics.sdk.common.Log.error("Z is moving");
 				}
 			} else {
 				xOffset.hide();
@@ -480,7 +480,7 @@ public class ControlSprites {
 		if (mode == this.mode)
 			return;
 		this.mode = mode;
-		System.out.println("Mode Set to " + mode);
+		com.neuronrobotics.sdk.common.Log.error("Mode Set to " + mode);
 		// new Exception().printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)

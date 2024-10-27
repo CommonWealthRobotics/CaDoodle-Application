@@ -83,7 +83,7 @@ public class ResizingHandle {
 			setSelectedColor();
 		});
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			System.out.println("Corner selected");
+			com.neuronrobotics.sdk.common.Log.error("Corner selected");
 			onReset.run();
 			selected=true;
 			onSelect.run();
@@ -200,7 +200,7 @@ public class ResizingHandle {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf) {
 		cf = manipulator.getFrameOfReference().inverse().times(cf);
 
-		// System.out.println(cf.toSimpleString());
+		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
 		// Calculate the vector from camera to target
 		double x = target.getX() - cf.getX();
 		double y = target.getY() - cf.getY();
@@ -223,8 +223,8 @@ public class ResizingHandle {
 		TransformNR pureRot = new TransformNR(cf.getRotation());
 //		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
 //		TransformNR pr=wp.inverse().times(pureRot);
-		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
-		// System.out.println("");
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
+		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());

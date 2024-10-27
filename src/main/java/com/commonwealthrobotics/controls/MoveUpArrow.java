@@ -36,7 +36,7 @@ public class MoveUpArrow {
 			setSelectedColor();
 		});
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			System.out.println("MoveUp selected");
+			com.neuronrobotics.sdk.common.Log.error("MoveUp selected");
 			onReset.run();
 			selected=true;
 			setSelectedColor();

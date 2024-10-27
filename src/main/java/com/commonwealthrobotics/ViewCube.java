@@ -72,12 +72,12 @@ public class ViewCube {
 	}
 
 	private void handleMouseClick(MouseEvent event) {
-		System.out.println("Got event");
+		com.neuronrobotics.sdk.common.Log.error("Got event");
 		PickResult pickResult = event.getPickResult();
 		if (pickResult.getIntersectedNode() == meshView) {
 			Point3D intersectionPoint = pickResult.getIntersectedPoint();
 			TransformNR faceOrientation = determineFaceOrientation(intersectionPoint);
-			// System.out.println("Clicked face orientation: " + faceOrientation);
+			// com.neuronrobotics.sdk.common.Log.error("Clicked face orientation: " + faceOrientation);
 			engine.focusOrentation(faceOrientation);
 		}
 	}
@@ -92,27 +92,27 @@ public class ViewCube {
 		TransformNR frame = engine.getFlyingCamera().getCamerFrame();
 
 		if (Math.abs(point.getX() - min) < epsilon) {
-			System.out.println("Back");
+			com.neuronrobotics.sdk.common.Log.error("Back");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 180, 0));
 		}
 		if (Math.abs(point.getX() - max) < epsilon) {
-			System.out.println("Front");
+			com.neuronrobotics.sdk.common.Log.error("Front");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 0, 0));
 		}
 		if (Math.abs(point.getY() - min) < epsilon) {
-			System.out.println("Top");
+			com.neuronrobotics.sdk.common.Log.error("Top");
 			return new TransformNR(0, 0, 0, new RotationNR(0,0 , -90));
 		}
 		if (Math.abs(point.getY() - max) < epsilon) {
-			System.out.println("Bottom");
+			com.neuronrobotics.sdk.common.Log.error("Bottom");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 90));
 		}
 		if (Math.abs(point.getZ() - min) < epsilon) {
-			System.out.println("Right");
+			com.neuronrobotics.sdk.common.Log.error("Right");
 			return new TransformNR(0, 0, 0, new RotationNR(0, -90, 0));
 		}
 		if (Math.abs(point.getZ() - max) < epsilon) {
-			System.out.println("Left");
+			com.neuronrobotics.sdk.common.Log.error("Left");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 0));
 		}
 

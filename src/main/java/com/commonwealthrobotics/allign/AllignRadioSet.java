@@ -56,7 +56,7 @@ public class AllignRadioSet {
 	public void setOnClickCallback(Runnable onClick) {
 		for(AllignHandle r: asList) {
 			r.setOnClickCallback(()->{
-				System.out.println("Radio group click ");
+				com.neuronrobotics.sdk.common.Log.error("Radio group click ");
 				for(AllignHandle ah: asList) {
 					ah.reset();
 				}
