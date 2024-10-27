@@ -52,10 +52,12 @@ public class ShapesPallet {
 	private ActiveProject ap;
 	private boolean threadRunning =false;
 	private boolean threadComplete = true;
-	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session) {
+	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session,ActiveProject active, WorkplaneManager workplane2) {
 		this.shapeCatagory = sc;
 		this.objectPallet = objectPallet;
 		this.session = session;
+		ap = active;
+		workplane=workplane2;
 		try {
 			ScriptingEngine.cloneRepo(gitULR, null);
 			ScriptingEngine.pull(gitULR);
@@ -210,13 +212,4 @@ public class ShapesPallet {
 
 		return button;
 	}
-
-	public void setCadoodle(ActiveProject ap) {
-		this.ap = ap;
-	}
-
-	public void setWorkplaneManager(WorkplaneManager workplane) {
-		this.workplane = workplane;
-	}
-
 }
