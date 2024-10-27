@@ -181,6 +181,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Thread t = ap.regenerateFrom(source);
 		if (t == null)
 			return;
+		
 		//new Exception().printStackTrace();
 		new Thread(() -> {
 			try {

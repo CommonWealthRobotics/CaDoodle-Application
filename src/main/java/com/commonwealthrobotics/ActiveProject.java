@@ -33,6 +33,7 @@ import javafx.scene.image.WritableImage;
 public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private boolean isOpenValue = true;
+	private boolean disableRegenerate = false;
 	private CaDoodleFile fromFile;
 	// private ICaDoodleStateUpdate listener;
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
@@ -42,6 +43,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	}
 	public Thread regenerateFrom(ICaDoodleOpperation source) {
+		if(disableRegenerate)
+			return null;
 		Thread t = get().regenerateFrom(source);
 		if(t==null)
 			return null;
@@ -267,5 +270,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public boolean isDisableRegenerate() {
+		return disableRegenerate;
+	}
+	public void setDisableRegenerate(boolean disableRegenerate) {
+		this.disableRegenerate = disableRegenerate;
 	}
 }
