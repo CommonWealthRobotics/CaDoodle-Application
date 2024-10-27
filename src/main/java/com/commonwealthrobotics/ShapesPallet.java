@@ -129,7 +129,7 @@ public class ShapesPallet {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 		objectPallet.add(button, col, row);
-		new Thread(() -> {
+		//new Thread(() -> {
 			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
 			List<CSG> so = set.process(new ArrayList<>());
 			referenceParts.put(button,so);
@@ -188,7 +188,7 @@ public class ShapesPallet {
 					session.setKeyBindingFocus();
 				});
 			});
-		}).start();
+		//}).start();
 
 		return button;
 	}
