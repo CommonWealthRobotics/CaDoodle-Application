@@ -166,7 +166,8 @@ public class Main extends Application {
 	}
 
 	private static void ensureGitAssetsArePresent() {
-		Vitamins.getGitRepoDatabase();
+		Vitamins.loadAllScriptFiles();
+		
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
