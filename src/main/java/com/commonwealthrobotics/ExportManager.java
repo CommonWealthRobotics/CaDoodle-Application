@@ -128,7 +128,14 @@ public class ExportManager {
 			}
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
 			SplashManager.renderSplashFrame(50, " Exporting...");
-
+			while(!SplashManager.isVisableSplash()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}

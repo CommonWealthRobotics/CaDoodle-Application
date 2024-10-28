@@ -77,7 +77,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		linesGroupp.getChildren().add(wpPick);
 
 		ground.addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
-			// System.out.println("Ground Click!");
+			// com.neuronrobotics.sdk.common.Log.error("Ground Click!");
 			setClickOnGround(true);
 		});
 
@@ -137,7 +137,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		tempory=false;
 		setClickOnGround(false);
 		clicked = false;
-		System.out.println("Starting workplane listeners");
+		com.neuronrobotics.sdk.common.Log.error("Starting workplane listeners");
 		ground.addEventFilter(MouseEvent.ANY, this);
 		wpPick.addEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
@@ -162,7 +162,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			return;
 		}
 		if (ev.getEventType() == MouseEvent.MOUSE_MOVED || ev.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-			// System.out.println(ev);
+			// com.neuronrobotics.sdk.common.Log.error(ev);
 			Point3D intersectedPoint = pickResult.getIntersectedPoint();
 			double x = intersectedPoint.getX();
 			double y = intersectedPoint.getY();
@@ -186,7 +186,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if (faceIndex >= 0)
 					angles = getFaceNormalAngles(mesh, faceIndex);
 				else
-					System.out.println("Error face index came back: " + faceIndex);
+					com.neuronrobotics.sdk.common.Log.error("Error face index came back: " + faceIndex);
 			}
 			TransformNR pureRot = new TransformNR(new RotationNR(angles[1], angles[0], angles[2]));
 			TransformNR t = new TransformNR(x, y, z);
@@ -283,7 +283,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			if (!this.isClicked())
 				return;
 			if (this.isClickOnGround()) {
-				// System.out.println("Ground plane click detected");
+				// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
 				ap.get().setWorkplane(new TransformNR());
 			} else {
 				ap.get().setWorkplane(this.getCurrentAbsolutePose());
@@ -332,5 +332,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setIncrement(double increment) {
 		this.increment = increment;
+	}
+
+	public MeshView getPlacementPlane() {
+		// TODO Auto-generated method stub
+		return wpPick;
 	}
 }

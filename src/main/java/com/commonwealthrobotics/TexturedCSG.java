@@ -254,7 +254,7 @@ public class TexturedCSG extends TexturedMesh {
 
         double degrees = 0;//Math.toDegrees(roty);
         if(degrees>90||degrees<-90) {
-        	System.out.println("ERROR Angle impossible!");
+        	com.neuronrobotics.sdk.common.Log.error("ERROR Angle impossible!");
         }
 		return TransformFactory.nrToCSG(
         		new TransformNR(point.x,point.y,point.z,

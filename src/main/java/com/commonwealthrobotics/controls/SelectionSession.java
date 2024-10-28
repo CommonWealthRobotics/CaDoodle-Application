@@ -123,7 +123,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (intitialization)
 				return;
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
-			System.out.println("Objects Moved! " + globalPose.toSimpleString());
+			com.neuronrobotics.sdk.common.Log.error("Objects Moved! " + globalPose.toSimpleString());
 			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
 			try {
 				t.join();
@@ -181,6 +181,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Thread t = ap.regenerateFrom(source);
 		if (t == null)
 			return;
+		
 		//new Exception().printStackTrace();
 		new Thread(() -> {
 			try {
@@ -196,9 +197,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void setUpParametrics(List<CSG> currentState, ICaDoodleOpperation source) {
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
-			// System.out.println("Adding A op for "+s.getClass());
+			// com.neuronrobotics.sdk.common.Log.error("Adding A op for "+s.getClass());
 			HashSet<String> namesAdded = s.getNamesAdded();
-			// System.out.println(namesAdded.size());
+			// com.neuronrobotics.sdk.common.Log.error(namesAdded.size());
 			File f = s.getFile();
 			IFileChangeListener l = new IFileChangeListener() {
 
@@ -208,7 +209,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				@Override
 				public void onFileChange(File fileThatChanged, WatchEvent event) {
-					System.out.println("File Change updating "+source.getType());
+					com.neuronrobotics.sdk.common.Log.error("File Change updating "+source.getType());
 					myRegenerate(source);
 				}
 
@@ -232,14 +233,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				if (n == null)
 					continue;
-				System.out.println("Adding Listeners for "+s.getName());
+				com.neuronrobotics.sdk.common.Log.error("Adding Listeners for "+s.getName());
 				//new Exception().printStackTrace();
 				for (String k : n.getParameters()) {
 					Parameter para = CSGDatabase.get(k);
-					System.out.println("Adding listener to " + k);
+					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
-						System.out.println("Regenerating from CaDoodle " + para.getName());
+						com.neuronrobotics.sdk.common.Log.error("Regenerating from CaDoodle " + para.getName());
 						FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
 						if(fileChangeWatcher!=null) {
 							fileChangeWatcher.close();
@@ -423,7 +424,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
-			// System.out.println("None selected");
+			// com.neuronrobotics.sdk.common.Log.error("None selected");
 			shapeConfigurationHolder.getChildren().clear();
 			hideButtons();
 			controls.clearSelection();
@@ -460,14 +461,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (parseDouble < bot)
 						parseDouble = bot;
 				}
-				System.out.println("Setting new value "+parseDouble);
+				com.neuronrobotics.sdk.common.Log.error("Setting new value "+parseDouble);
 				para.setMM(parseDouble);
 				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
 				t.printStackTrace();
 				options.getSelectionModel().select(para.getMM() + "");
 			}
-			// System.out.println("Saving "+text);
+			// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
 		});
 	}
 
@@ -476,7 +477,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		tf.setOnAction(event -> {
 			para.setStrValue(tf.getText());
 			// CSGDatabase.saveDatabase();
-			// System.out.println("Saving "+text);
+			// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
 		});
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
@@ -521,10 +522,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			options.getSelectionModel().select(para.getStrValue());
 			options.setMinWidth(width);
 			options.setOnAction(event -> {
-				System.out.println(System.currentTimeMillis() + " Event " + event);
+				com.neuronrobotics.sdk.common.Log.error(System.currentTimeMillis() + " Event " + event);
 				para.setStrValue(options.getSelectionModel().getSelectedItem());
 				// CSGDatabase.saveDatabase();
-				// System.out.println("Saving "+text);
+				// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
 			});
 		});
 
@@ -575,7 +576,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (num != null) {
 				currentGrid = num;
 				setSnapGrid(currentGrid);
-				System.out.println("Snap Grid Set to " + currentGrid);
+				com.neuronrobotics.sdk.common.Log.error("Snap Grid Set to " + currentGrid);
 				setKeyBindingFocus();
 			}
 		});
@@ -624,7 +625,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SplashManager.isVisableSplash())
 			if (engine != null) {
 				// new Exception("KB Focused here").printStackTrace();
-				//System.out.println("Setting KeyBindingFocus");
+				//com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
 				BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
 			}
 	}
@@ -687,10 +688,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (ap.get() == null)
 			return;
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		// System.out.println("Adding " + h.getType());
+		// com.neuronrobotics.sdk.common.Log.error("Adding " + h.getType());
 		ap.addOp(h);
 	}
 
@@ -719,7 +720,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (Button b : buttons) {
 				b.setDisable(false);
 			}
-			// System.out.println("Number Selected is " + selected.size());
+			// com.neuronrobotics.sdk.common.Log.error("Number Selected is " + selected.size());
 			if (selected.size() > 1) {
 				groupButton.setDisable(false);
 				allignButton.setDisable(false);
@@ -754,10 +755,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onDelete() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		System.out.println("Delete");
+		com.neuronrobotics.sdk.common.Log.error("Delete");
 		ap.addOp(new Delete().setNames(selectedSnapshot()));
 	}
 
@@ -778,7 +779,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void performPaste(double distance, List<String> copySet) {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ArrayList<String> copyTarget = new ArrayList<String>();
@@ -804,7 +805,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// new RuntimeException("Cruse called with nothing selected").printStackTrace();
 			return;
 		}
-		System.out.println("On Cruse");
+		com.neuronrobotics.sdk.common.Log.error("On Cruse");
 		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
 		CSG indicator = selectedCSG.get(0);
 		if (selectedCSG.size() > 1) {
@@ -853,7 +854,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onLock() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ap.addOp(new Lock().setNames(selectedSnapshot()));
@@ -861,7 +862,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void showAll() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ArrayList<String> toShow = new ArrayList<String>();
@@ -876,7 +877,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onGroup() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		if (selected.size() > 1) {
@@ -902,7 +903,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onUngroup() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ArrayList<String> toSelect = new ArrayList<String>();
@@ -931,7 +932,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onHideShowOpperation() {
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		ICaDoodleOpperation op;
@@ -1053,7 +1054,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDrop() {
-		System.out.println("Drop to Workplane");
+		com.neuronrobotics.sdk.common.Log.error("Drop to Workplane");
 		new Thread(() -> {
 			TransformNR wp = ap.get().getWorkplane();
 			Transform t = TransformFactory.nrToCSG(wp);
@@ -1086,7 +1087,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		timeSinceLastMove = System.currentTimeMillis();
 		if (ap.get().isOperationRunning()) {
-			System.err.println("Ignoring operation because previous had not finished!");
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 		RotationNR getCamerFrameGetRotation;
@@ -1132,12 +1133,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		List<String> selectedSnapshot = selectedSnapshot();
 		for (String s : selectedSnapshot) {
-			// System.out.println("\t" + s);
+			// com.neuronrobotics.sdk.common.Log.error("\t" + s);
 		}
 		ICaDoodleOpperation op = ap.get().getCurrentOpperation();
 		if (op == mc) {
 			if (compareLists(selectedSnapshot, mc.getNames())) {
-				// System.out.println("Move " + tf.toSimpleString());
+				// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
 				mc.setLocation(tf);
 				ap.get().regenerateCurrent();
 				save();
@@ -1150,13 +1151,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void save() {
-		// System.out.println("Save Requested");
+		// com.neuronrobotics.sdk.common.Log.error("Save Requested");
 		needsSave = true;
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
 					if (needsSave) {
-						System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
+						com.neuronrobotics.sdk.common.Log.error("Auto save " + ap.get().getSelf().getAbsolutePath());
 						ap.save(ap.get());
 						needsSave = false;
 					}

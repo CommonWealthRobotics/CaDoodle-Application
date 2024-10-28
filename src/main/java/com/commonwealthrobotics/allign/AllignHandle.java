@@ -86,14 +86,14 @@ public class AllignHandle {
 			};
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
-				//System.out.println("ENtered " + self + " " + orentation);
+				//com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " + orentation);
 				for(CSG key:visualizers.keySet()) {
 					visualizers.get(key).setVisible(true);
 				}
 			};
 			onClickEvent = event -> {
 				onClick.run();
-				System.out.println("Handle clicked ");
+				com.neuronrobotics.sdk.common.Log.error("Handle clicked ");
 				material.setDiffuseColor(Color.GRAY);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
@@ -210,7 +210,7 @@ public class AllignHandle {
 		}
 		TransformNR pureRot = new TransformNR(new RotationNR(rx, rz, ry));
 
-		// System.out.println(cf.toSimpleString());
+		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
 		// Calculate the vector from camera to target
 		double x = target.getX() - cf.getX();
 		double y = target.getY() - cf.getY();
@@ -231,8 +231,8 @@ public class AllignHandle {
 
 		setScale(scaleFactor);
 
-		// System.out.println("Point From Cam distaance "+vect+" scale "+scale);
-		// System.out.println("");
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
+		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());

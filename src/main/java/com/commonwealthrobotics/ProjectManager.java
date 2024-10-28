@@ -88,7 +88,7 @@ public class ProjectManager {
 	private void loadFiles() {
 		try {
 			List<CaDoodleFile> proj = ap.getProjects();
-			System.out.println("Found " + proj.size() + " projects");
+			com.neuronrobotics.sdk.common.Log.error("Found " + proj.size() + " projects");
 			Collections.sort(proj, new Comparator<CaDoodleFile>() {
 				@Override
 				public int compare(CaDoodleFile c1, CaDoodleFile c2) {
@@ -103,7 +103,7 @@ public class ProjectManager {
 				String formattedDateTime = formatter.format(instant);
 				int row = (i + 1) / 4;
 				int col = (i + 1) % 4;
-				System.out.println(
+				com.neuronrobotics.sdk.common.Log.error(
 						"File " + c.getProjectName() + " on " + formattedDateTime + " row=" + row + " col=" + col);
 
 				

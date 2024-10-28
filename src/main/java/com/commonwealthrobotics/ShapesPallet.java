@@ -48,75 +48,109 @@ public class ShapesPallet {
 	private HashMap<String, HashMap<String, String>> active = null;
 	private SelectionSession session;
 	private WorkplaneManager workplane;
-	private HashMap<Button,List<CSG>> referenceParts = new HashMap<>();
+	private HashMap<Button, List<CSG>> referenceParts = new HashMap<>();
 	private ActiveProject ap;
+	private boolean threadRunning = false;
+	private boolean threadComplete = true;
 
-	public ShapesPallet(ComboBox<String> shapeCatagory, GridPane objectPallet, SelectionSession session) {
-		this.shapeCatagory = shapeCatagory;
+	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
+			WorkplaneManager workplane2) {
+		this.shapeCatagory = sc;
 		this.objectPallet = objectPallet;
 		this.session = session;
-		try {
-			ScriptingEngine.cloneRepo(gitULR, null);
-			ScriptingEngine.pull(gitULR);
-			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
-			for (String f : files) {
-				if (f.toLowerCase().endsWith(".json")) {
-					String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
-					File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
-					String name = fileFromGit.getName();
-					String[] split = name.split(".json");
-					String filename = split[0];
-					HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
-					nameToFile.put(filename, tmp);
-					shapeCatagory.getItems().add(filename);
+		ap = active;
+		workplane = workplane2;
+		//new Thread(() -> {
+			try {
+				ScriptingEngine.cloneRepo(gitULR, null);
+				ScriptingEngine.pull(gitULR);
+				ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
+				for (String f : files) {
+					if (f.toLowerCase().endsWith(".json")) {
+						String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
+						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
+						String name = fileFromGit.getName();
+						String[] split = name.split(".json");
+						String filename = split[0];
+						HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
+						nameToFile.put(filename, tmp);
+						shapeCatagory.getItems().add(filename);
+					}
 				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-		shapeCatagory.getSelectionModel().select(starting);
-		onSetCatagory();
+			String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+			BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
+			onSetCatagory();
+		//}).start();
 	}
 
 	public void onSetCatagory() {
-		String current = shapeCatagory.getSelectionModel().getSelectedItem();
-		System.out.println("Selecting shapes from " + current);
-		ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
-		active = nameToFile.get(current);
-		if (active == null)
-			return;
-		ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
-		// store the name os the keys for labeling the hoverover later
-		HashMap<Map, String> names = new HashMap<>();
-		for (String key : active.keySet()) {
-			HashMap<String, String> hashMap = active.get(key);
-			String s = hashMap.get("order");
-			if(s!=null) {
-				int index = Integer.parseInt(s);
-				System.out.println("Adding " + key + " at " + index);
-				while (orderedList.size() <= index)
-					orderedList.add(null);
-				orderedList.set(index, hashMap);
-			}else {
-				orderedList.add( hashMap);
+		threadRunning = false;
+		Thread t = new Thread(() -> {
+			while (!threadComplete) {
+				com.neuronrobotics.sdk.common.Log.error("Waiting for shapesThread to exit");
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			names.put(hashMap, key);
-		}
-		objectPallet.getChildren().clear();
-		referenceParts.clear();
-		for (int i = 0; i < orderedList.size(); i++) {
-			int col = i % 3;
-			int row = i / 3;
-			HashMap<String, String> key = orderedList.get(i);
-			if(key==null)
-				continue;
-			System.out.println("Placing " + names.get(key) + " at " + row + " , " + col);
-			setupButton(names, key,col, row);
-			//objectPallet.add(button, col, row);
-		}
-
+			threadComplete = false;
+			threadRunning = true;
+			ap.setDisableRegenerate(true);
+			try {
+				String current = shapeCatagory.getSelectionModel().getSelectedItem();
+				com.neuronrobotics.sdk.common.Log.error("Selecting shapes from " + current);
+				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
+				active = nameToFile.get(current);
+				if (active == null)
+					return;
+				ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
+				// store the name os the keys for labeling the hoverover later
+				HashMap<Map, String> names = new HashMap<>();
+				for (String key : active.keySet()) {
+					HashMap<String, String> hashMap = active.get(key);
+					String s = hashMap.get("order");
+					if (s != null) {
+						int index = Integer.parseInt(s);
+						com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
+						while (orderedList.size() <= index)
+							orderedList.add(null);
+						orderedList.set(index, hashMap);
+					} else {
+						orderedList.add(hashMap);
+					}
+					names.put(hashMap, key);
+				}
+				BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
+				Thread.sleep(30);
+				referenceParts.clear();
+				for (int i = 0; i < orderedList.size() && threadRunning; i++) {
+					int col = i % 3;
+					int row = i / 3;
+					HashMap<String, String> key = orderedList.get(i);
+					if (key == null)
+						continue;
+					com.neuronrobotics.sdk.common.Log.error("Placing " + names.get(key) + " at " + row + " , " + col);
+					try {
+						setupButton(names, key, col, row);
+						
+					} catch (Throwable tx) {
+						tx.printStackTrace();
+					}
+					// objectPallet.add(button, col, row);
+				}
+			} catch (Throwable tr) {
+				tr.printStackTrace();
+			}
+			ap.setDisableRegenerate(false);
+			threadComplete = true;
+		});
+		t.start();
 	}
 
 	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row) {
@@ -125,46 +159,41 @@ public class ShapesPallet {
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
-		objectPallet.add(button, col, row);
-		new Thread(() -> {
-			AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
-			List<CSG> so = set.process(new ArrayList<>());
-			referenceParts.put(button,so);
-			BowlerStudio.runLater(()->{
-				Image thumb = ThumbnailImage.get(so);
-				ImageView tIv = new ImageView(thumb);
-				tIv.setFitHeight(50);
-				tIv.setFitWidth(50);
-				button.setGraphic(tIv);
-				button.setOnMousePressed(ev -> {
-					new Thread(() -> {
-						List<CSG> ScriptObjects = referenceParts.get(button);
-						CSG indicator = ScriptObjects.get(0);
-						if(ScriptObjects.size()>1) {
-							indicator=CSG.unionAll(ScriptObjects);
-						}
-						session.setMode(SpriteDisplayMode.PLACING);
-						workplane.setIndicator(indicator, new Affine());
-						workplane.setOnSelectEvent(() -> {
-							session.setMode(SpriteDisplayMode.Default);
-							if(workplane.isClicked())
+		// new Thread(() -> {
+		AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
+		List<CSG> so = set.process(new ArrayList<>());
+		referenceParts.put(button, so);
+		BowlerStudio.runLater(() -> {
+			objectPallet.add(button, col, row);
+			Image thumb = ThumbnailImage.get(so);
+			ImageView tIv = new ImageView(thumb);
+			tIv.setFitHeight(50);
+			tIv.setFitWidth(50);
+			button.setGraphic(tIv);
+			button.setOnMousePressed(ev -> {
+				new Thread(() -> {
+					List<CSG> ScriptObjects = referenceParts.get(button);
+					CSG indicator = ScriptObjects.get(0);
+					if (ScriptObjects.size() > 1) {
+						indicator = CSG.unionAll(ScriptObjects);
+					}
+					session.setMode(SpriteDisplayMode.PLACING);
+					workplane.setIndicator(indicator, new Affine());
+					workplane.setOnSelectEvent(() -> {
+						session.setMode(SpriteDisplayMode.Default);
+						if (workplane.isClicked())
 							try {
 								TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-								AddFromScript setAddFromScript = new AddFromScript().set(key.get("git"), key.get("file"))
-										.setLocation(currentAbsolutePose);
+								AddFromScript setAddFromScript = new AddFromScript()
+										.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
 								ap.addOp(setAddFromScript).join();
-//								List<String> namesToMove = new ArrayList<>();
-//								namesToMove.addAll(setAddFromScript.getNamesAdded());
-//								cadoodle.addOpperation(new MoveCenter()
-//										.setNames(namesToMove)
-//										.setLocation(currentAbsolutePose)).join();
 								HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
 								session.selectAll(namesAdded);
-				
+
 								if (!workplane.isClicked())
 									return;
 								if (workplane.isClickOnGround()) {
-									// System.out.println("Ground plane click detected");
+									// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
 									ap.get().setWorkplane(new TransformNR());
 								} else {
 									ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
@@ -178,25 +207,20 @@ public class ShapesPallet {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-						});
-						workplane.activate();
+					});
+					workplane.activate();
 
-					}).start();
-					session.setKeyBindingFocus();
-				});
+				}).start();
+				session.setKeyBindingFocus();
 			});
-		}).start();
+		});
+		try {
+			Thread.sleep(30);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return button;
 	}
-
-
-	public void setCadoodle(ActiveProject ap) {
-		this.ap = ap;
-	}
-
-	public void setWorkplaneManager(WorkplaneManager workplane) {
-		this.workplane = workplane;
-	}
-
 }

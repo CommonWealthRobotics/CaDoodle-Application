@@ -70,7 +70,7 @@ public class RotationHandle {
 		Runnable onSelect = ()->{
 			double mostRecentValue = text.getMostRecentValue();
 
-			System.out.println("Number entered! = "+mostRecentValue);
+			com.neuronrobotics.sdk.common.Log.error("Number entered! = "+mostRecentValue);
 			setSweepAngle(mostRecentValue);
 			flagSaveChange=true;
 			runSaveAndReset();
@@ -85,7 +85,7 @@ public class RotationHandle {
 			controlCircle.setVisible(true);
 
 			handle.setImage(selectedImage);
-			System.out.println("Entered " + axis);
+			com.neuronrobotics.sdk.common.Log.error("Entered " + axis);
 		});
 		handle.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
 			handle.setImage(rotateImage);
@@ -96,7 +96,7 @@ public class RotationHandle {
 			selected=true;
 			rotationStarted = true;
 			startAngleFound = false;
-			System.out.println("Handle clicked");
+			com.neuronrobotics.sdk.common.Log.error("Handle clicked");
 			rotationSessionManager.initialize();
 
 			flagSaveChange = false;
@@ -129,7 +129,7 @@ public class RotationHandle {
 					current -= 360;
 				while (current < -180)
 					current += 360;
-				// System.out.println("Angle Is "+current);
+				// com.neuronrobotics.sdk.common.Log.error("Angle Is "+current);
 				if (Math.abs(current) > 0.001) {
 					arc.setVisible(true);
 					flagSaveChange = true;
@@ -195,8 +195,8 @@ public class RotationHandle {
 
 	private double getAngle(MouseEvent event) {
 		PickResult result = event.getPickResult();
-		// System.out.println("Draggin on circle");
-		// System.out.println(result);
+		// com.neuronrobotics.sdk.common.Log.error("Draggin on circle");
+		// com.neuronrobotics.sdk.common.Log.error(result);
 		double h = controlCircle.getFitHeight();
 		double w = controlCircle.getFitWidth();
 		double x = result.getIntersectedPoint().getX();
@@ -209,7 +209,7 @@ public class RotationHandle {
 		if (unitVect < 0.85) {
 			angle = 22.5 * Math.round(angle / 22.5);
 		}
-		// System.out.println("Unit Location "+angle);
+		// com.neuronrobotics.sdk.common.Log.error("Unit Location "+angle);
 		if (axis == EulerAxis.tilt)
 			angle = -angle;
 		return angle;
@@ -234,7 +234,7 @@ public class RotationHandle {
 		TransformNR positionPin = new TransformNR();
 		Quadrent q = Quadrent.getQuad(-az);
 		rotationStarted = false;
-		// System.out.println("Az camera in Rotation Handle "+az);
+		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
 		RotationNR axisOrent = new RotationNR();
 		switch (axis) {
 		case azimuth:

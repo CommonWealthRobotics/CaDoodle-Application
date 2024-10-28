@@ -19,6 +19,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.assets.AssetFactory;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
@@ -30,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
+import com.neuronrobotics.sdk.common.Log;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -60,7 +62,7 @@ public class Main extends Application {
 		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
 				.getHeight();
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-		System.out.println("Screen " + sw + "x" + sh);
+		com.neuronrobotics.sdk.common.Log.error("Screen " + sw + "x" + sh);
 		sw = primaryScreenBounds.getWidth();
 		sh = primaryScreenBounds.getHeight();
 		double w;
@@ -73,7 +75,6 @@ public class Main extends Application {
 		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
 		if (newStage != null)
 			newStage.setTitle(title);
-		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 
 //		setLoadDeps(new Thread(() -> {
 //			try {
@@ -104,7 +105,7 @@ public class Main extends Application {
 //						e.printStackTrace();
 //					}
 //				}
-				System.out.println("CaDoodle Exiting");
+				Log.error("CaDoodle Exiting");
 				System.exit(0);
 			}).start();
 
@@ -145,6 +146,8 @@ public class Main extends Application {
 				}
 			}
 		}
+		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+		SplashManager.renderSplashFrame(1, "Main Window Show");
 		setUpApprovalWindow();
 		ScriptingEngine.setAppName("CaDoodle");
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
@@ -159,19 +162,31 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Vitamins.listVitaminTypes();
-//		try {
-//			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git", "MakeVitamins.groovy");
-//			//System.exit(1);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		ensureGitAssetsArePresent();
+		launch();
+	}
+
+	private static void ensureGitAssetsArePresent() {
+		Vitamins.loadAllScriptFiles();
+		
+		try {
+			AssetFactory.loadAllAssets();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		BowlerStudio.ensureUpdated(
 				"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 				"https://github.com/CommonWealthRobotics/blender-bowler-cli.git");
-		launch();
+		
+//		try {
+//		ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git", "MakeVitamins.groovy");
+//		//System.exit(1);
+//	} catch (Exception e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
 	}
 
 	private static void setUpApprovalWindow() {

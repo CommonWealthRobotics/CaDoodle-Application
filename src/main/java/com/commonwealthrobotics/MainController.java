@@ -265,14 +265,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onRedo(ActionEvent event) {
-		System.out.println("On Redo");
+		com.neuronrobotics.sdk.common.Log.error("On Redo");
 		ap.get().forward();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUndo(ActionEvent event) {
-		System.out.println("On Undo");
+		com.neuronrobotics.sdk.common.Log.error("On Undo");
 		new Thread(() -> {
 			ap.get().back();
 			session.setKeyBindingFocus();
@@ -281,21 +281,21 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onPaste(ActionEvent event) {
-		System.out.println("On Paste");
+		com.neuronrobotics.sdk.common.Log.error("On Paste");
 		session.onPaste();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onCopy(ActionEvent event) {
-		System.out.println("On copy");
+		com.neuronrobotics.sdk.common.Log.error("On copy");
 		session.onCopy();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onDelete(ActionEvent event) {
-		System.out.println("On Delete");
+		com.neuronrobotics.sdk.common.Log.error("On Delete");
 		session.onDelete();
 		session.setKeyBindingFocus();
 	}
@@ -330,10 +330,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onExport(ActionEvent event) {
-		System.out.println("On Export");
+		com.neuronrobotics.sdk.common.Log.error("On Export");
 		Runnable onFinish = () -> {
 			session.setKeyBindingFocus();
-			System.out.println("ExportManager Close");
+			com.neuronrobotics.sdk.common.Log.error("ExportManager Close");
 		};
 		Runnable onClear = () -> {
 			session.clearScreen();
@@ -352,26 +352,26 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onGroup(ActionEvent event) {
-		System.out.println("On Group");
+		com.neuronrobotics.sdk.common.Log.error("On Group");
 		session.onGroup();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideConnections(ActionEvent event) {
-		System.out.println(" on Hide Physics Connections");
+		com.neuronrobotics.sdk.common.Log.error(" on Hide Physics Connections");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideNotes(ActionEvent event) {
-		System.out.println("On Hide Notes ");
+		com.neuronrobotics.sdk.common.Log.error("On Hide Notes ");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideShow(ActionEvent event) {
-		System.out.println("On Hide Show");
+		com.neuronrobotics.sdk.common.Log.error("On Hide Show");
 		session.onHideShowOpperation();
 
 		session.setKeyBindingFocus();
@@ -379,18 +379,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHoleButton(ActionEvent event) {
-		System.out.println("Set to Hole ");
+		com.neuronrobotics.sdk.common.Log.error("Set to Hole ");
 		session.setToHole();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHome(ActionEvent event) {
-		System.out.println("Open the Project Select UI");
+		com.neuronrobotics.sdk.common.Log.error("Open the Project Select UI");
 		// session.setKeyBindingFocus();
 		Runnable onFinish = () -> {
 			session.setKeyBindingFocus();
-			System.out.println("ProjectManager Close");
+			com.neuronrobotics.sdk.common.Log.error("ProjectManager Close");
 		};
 		Runnable onClear = () -> {
 			session.clearScreen();
@@ -407,7 +407,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onImport(ActionEvent event) {
-		System.out.println("On Import");
+		com.neuronrobotics.sdk.common.Log.error("On Import");
 		new Thread(() -> {
 			
 			ArrayList<String> extentions = new ArrayList<>();
@@ -435,7 +435,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 							false, stl);
 			if (last != null) {
 				currentFile=last;
-				System.out.println("Adding file "+last);
+				com.neuronrobotics.sdk.common.Log.error("Adding file "+last);
 				AddFromFile toAdd = new AddFromFile().set(last).setLocation(new TransformNR());
 				session.addOp(toAdd);
 			}
@@ -445,64 +445,64 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onLock(ActionEvent event) {
-		System.out.println("On Lock Selected");
+		com.neuronrobotics.sdk.common.Log.error("On Lock Selected");
 		session.onLock();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onMirron(ActionEvent event) {
-		System.out.println("On Mirron Object");
+		com.neuronrobotics.sdk.common.Log.error("On Mirron Object");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onModeling(ActionEvent event) {
-		System.out.println("Select Modeling View");
+		com.neuronrobotics.sdk.common.Log.error("Select Modeling View");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onNotesClick(ActionEvent event) {
-		System.out.println("On Notes");
+		com.neuronrobotics.sdk.common.Log.error("On Notes");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onPhysics(ActionEvent event) {
-		System.out.println("On Physics Mode Selected");
+		com.neuronrobotics.sdk.common.Log.error("On Physics Mode Selected");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onRuler(ActionEvent event) {
-		System.out.println("On Add Ruler");
+		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onSetCatagory(ActionEvent event) {
-		System.out.println("On Set Catagory, re-lod object pallet");
+		com.neuronrobotics.sdk.common.Log.error("On Set Catagory, re-lod object pallet");
 		pallet.onSetCatagory();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onSettings(ActionEvent event) {
-		System.out.println("On Settings");
+		com.neuronrobotics.sdk.common.Log.error("On Settings");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onShowHidden(ActionEvent event) {
-		System.out.println("On Show Hidden");
+		com.neuronrobotics.sdk.common.Log.error("On Show Hidden");
 		session.showAll();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUngroup(ActionEvent event) {
-		System.out.println("On Ungroup");
+		com.neuronrobotics.sdk.common.Log.error("On Ungroup");
 
 		session.onUngroup();
 		session.setKeyBindingFocus();
@@ -510,7 +510,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onVisibility(ActionEvent event) {
-		System.out.println("On Visibility Menu opening");
+		com.neuronrobotics.sdk.common.Log.error("On Visibility Menu opening");
 		session.setKeyBindingFocus();
 	}
 
@@ -522,14 +522,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onZoomIn(ActionEvent event) {
-		System.out.println("Zoom In");
+		com.neuronrobotics.sdk.common.Log.error("Zoom In");
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 40);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onZoomOut(ActionEvent event) {
-		System.out.println("Zoom Out");
+		com.neuronrobotics.sdk.common.Log.error("Zoom Out");
 
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() - 40);
 		session.setKeyBindingFocus();
@@ -537,7 +537,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void setName(ActionEvent event) {
-		System.out.println("Set Project Name to " + fileNameBox.getText());
+		com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
 		ap.get().setProjectName(fileNameBox.getText());
 		session.setKeyBindingFocus();
 		session.save();
@@ -545,7 +545,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void showAll(ActionEvent event) {
-		System.out.println("On SHow All");
+		com.neuronrobotics.sdk.common.Log.error("On SHow All");
 		session.showAll();
 		session.setKeyBindingFocus();
 	}
@@ -660,7 +660,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			System.exit(1);
 		}
 		fileNameBox.setOnKeyTyped(ev -> {
-			System.out.println("Set Project Name to " + fileNameBox.getText());
+			com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
 			ap.get().setProjectName(fileNameBox.getText());
 			session.save();
 		});
@@ -673,21 +673,25 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setupFile() {
 		new Thread(() -> {
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(200);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(20, "Initialize Model");
+				while(!SplashManager.isVisableSplash()) {
+					Thread.sleep(100);
+				}
 				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
-				Thread.sleep(500);
-				//if(!Main.getLoadDeps().isAlive())
+				while(SplashManager.isVisableSplash()) {
 					SplashManager.closeSplash();
+					Thread.sleep(500);
+				}
 				session.setKeyBindingFocus();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -698,7 +702,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setUpColorPicker() {
 		colorPicker.setOnMousePressed(event -> {
-			System.out.println("Set to Solid ");
+			com.neuronrobotics.sdk.common.Log.error("Set to Solid ");
 			session.setToSolid();
 		});
 
@@ -838,7 +842,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
 		}
-		// System.out.println("Displaying result of " + source.getType());
+		// com.neuronrobotics.sdk.common.Log.error("Displaying result of " + source.getType());
 		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!ap.get().isForwardAvailible());
 			undoButton.setDisable(!ap.get().isBackAvailible());
@@ -869,9 +873,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		workplane = new WorkplaneManager(ap, ground, engine, session);
 		session.setWorkplaneManager(workplane);
-		pallet = new ShapesPallet(shapeCatagory, objectPallet, session);
-		pallet.setCadoodle(ap);
-		pallet.setWorkplaneManager(workplane);
+		pallet = new ShapesPallet(shapeCatagory, objectPallet, session,ap,workplane);
 		workplane.placeWorkplaneVisualization();
 
 	}
@@ -889,7 +891,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 				session.clearSelection();
 
-				System.out.println("Cancle");
+				com.neuronrobotics.sdk.common.Log.error("Cancle");
 			}
 		});
 
@@ -898,7 +900,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 			if (session.isFocused()) {
-				// System.out.println("Key ignonred, session in focus");
+				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
 				return;
 			}
 
@@ -924,7 +926,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.moveInCameraFrame(new TransformNR(0, -1, 0));
 					break;
 				}
-				// System.out.println("Arrows " + event.getCode());
+				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());
 				// Consume the event to prevent default focus traversal
 				event.consume();
 			}
@@ -936,37 +938,37 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 		subScene.setOnKeyTyped(event -> {
 			if (session.isFocused()) {
-				// System.out.println("Key ignonred, session in focus");
+				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
 				return;
 			}
 			String character = event.getCharacter();
 
 			// You can still use the key code for non-character keys
-			// System.out.println("Key code: " + event.getCode());
+			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
 			if (event.isControlDown()) {
-				// System.out.println("CTRL + ");
+				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
 				switch ((int) character.charAt(0)) {
 				case 26:
-					System.out.println("Undo");
+					com.neuronrobotics.sdk.common.Log.error("Undo");
 					workplane.cancle();
 					ap.get().back();
 					break;
 				case 25:
-					System.out.println("redo");
+					com.neuronrobotics.sdk.common.Log.error("redo");
 					ap.get().forward();
 					break;
 				case 7:
-					System.out.println("Group");
+					com.neuronrobotics.sdk.common.Log.error("Group");
 					session.onGroup();
 					break;
 				case 71:
 					if (event.isShiftDown()) {
-						System.out.println("Un-Group");
+						com.neuronrobotics.sdk.common.Log.error("Un-Group");
 						session.onUngroup();
 					}
 					break;
 				case 1:
-					System.out.println("Select All");
+					com.neuronrobotics.sdk.common.Log.error("Select All");
 					session.selectAll();
 					break;
 				case 3:
@@ -987,9 +989,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						System.out.println("CTRL+ Raw char value: " + (int) rawChar);
+						com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
 					} else {
-						System.out.println("No character data available (probably a non-character key)");
+						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
 					}
 					break;
 				}
@@ -1010,9 +1012,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						System.out.println("Raw char value: " + (int) rawChar);
+						com.neuronrobotics.sdk.common.Log.error("Raw char value: " + (int) rawChar);
 					} else {
-						System.out.println("No character data available (probably a non-character key)");
+						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
 					}
 					break;
 				}
@@ -1022,7 +1024,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && in != engine.getSubScene())
+		if (in != ground && in != engine.getSubScene() && in !=workplane.getPlacementPlane())
 			return false;
 		if (event.isControlDown())
 			return false;
@@ -1038,7 +1040,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double zoom = camera.getZoomDepth();
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
-		// System.out.println("Elevation "+el);
+		// com.neuronrobotics.sdk.common.Log.error("Elevation "+el);
 		if (el < -90 || el > 90) {
 			ground.setVisible(false);
 		} else {
