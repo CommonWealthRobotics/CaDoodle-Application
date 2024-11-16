@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
@@ -90,6 +91,7 @@ public class ShapesPallet {
 	public void onSetCatagory() {
 		threadRunning = false;
 		Thread t = new Thread(() -> {
+			SplashManager.renderSplashFrame(50, "Loading Shapes");
 			while (!threadComplete) {
 				com.neuronrobotics.sdk.common.Log.error("Waiting for shapesThread to exit");
 				try {
@@ -149,6 +151,7 @@ public class ShapesPallet {
 			}
 			ap.setDisableRegenerate(false);
 			threadComplete = true;
+			SplashManager.closeSplash();
 		});
 		t.start();
 	}
