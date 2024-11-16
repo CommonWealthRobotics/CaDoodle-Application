@@ -26,6 +26,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.image.WritableImage;
@@ -277,5 +278,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 	public void setDisableRegenerate(boolean disableRegenerate) {
 		this.disableRegenerate = disableRegenerate;
+	}
+	@Override
+	public void onWorkplaneChange(TransformNR newWP) {
+		// TODO Auto-generated method stub
+		
 	}
 }

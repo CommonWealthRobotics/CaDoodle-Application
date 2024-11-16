@@ -106,7 +106,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Affine selection = new Affine();
 	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR());
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
-
+	private HashMap<CSG,Bounds> inWorkplaneBounds  =new HashMap<CSG, Bounds>();
 	private double size;
 
 	private WorkplaneManager workplane;
@@ -164,6 +164,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
+		inWorkplaneBounds.clear();
 		this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
@@ -1026,11 +1027,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Vector3d max = null;
 		// TickToc.tic("getSellectedBounds "+incoming.size());
 
-		for (CSG c : incoming) {
+		for (CSG csg : incoming) {
 			Transform inverse = TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse();
-			c = c.getBoundingBox().transformed(inverse);
-			Vector3d min2 = c.getBounds().getMin().clone();
-			Vector3d max2 = c.getBounds().getMax().clone();
+			if(inWorkplaneBounds.get(csg)==null) {
+				inWorkplaneBounds.put(csg, csg.transformed(inverse).getBounds());
+			}
+			Bounds b = inWorkplaneBounds.get(csg);
+			Vector3d min2 = b.getMin().clone();
+			Vector3d max2 = b.getMax().clone();
 			if (min == null)
 				min = min2;
 			if (max == null)
@@ -1309,6 +1313,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			back.add(c.clone());
 		}
 		return back;
+	}
+
+	@Override
+	public void onWorkplaneChange(TransformNR newWP) {
+		inWorkplaneBounds.clear();
 	}
 
 }

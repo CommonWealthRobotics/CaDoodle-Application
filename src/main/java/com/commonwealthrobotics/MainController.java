@@ -1065,4 +1065,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			fileNameBox.setText(ap.get().getProjectName());
 		});
 	}
+
+	@Override
+	public void onWorkplaneChange(TransformNR newWP) {
+		// TODO Auto-generated method stub
+		
+	}
 }

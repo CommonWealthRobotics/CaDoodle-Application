@@ -120,6 +120,8 @@ public class ControlSprites {
 			public void onInitializationDone() {
 				currentOp = ap.get().getCurrentOpperation();
 			}
+			@Override
+			public void onWorkplaneChange(TransformNR newWP) {}
 		});
 		
 		manipulation.addEventListener(() -> {
