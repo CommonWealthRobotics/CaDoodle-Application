@@ -157,6 +157,9 @@ public class ShapesPallet {
 	}
 
 	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row) {
+		// TODO cache images and STLs
+		String typeOfShapes = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+
 		String name = names.get(key);
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
@@ -168,6 +171,10 @@ public class ShapesPallet {
 		referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
+			
+			for(CSG c:so) {
+				c.setIsHole(false);
+			}
 			Image thumb = ThumbnailImage.get(so);
 			ImageView tIv = new ImageView(thumb);
 			tIv.setFitHeight(50);
