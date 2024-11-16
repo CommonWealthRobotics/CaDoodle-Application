@@ -154,6 +154,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		});
 		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
+		ap.addListener(this);
 	}
 
 	public List<String> selectedSnapshot() {
@@ -348,6 +349,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void updateSelection() {
 		parametrics.getChildren().clear();
+		inWorkplaneBounds.clear();
 		if (selected.size() > 0) {
 
 			shapeConfigurationHolder.getChildren().clear();
@@ -1028,8 +1030,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// TickToc.tic("getSellectedBounds "+incoming.size());
 
 		for (CSG csg : incoming) {
-			Transform inverse = TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse();
 			if(inWorkplaneBounds.get(csg)==null) {
+				Transform inverse = TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse();
 				inWorkplaneBounds.put(csg, csg.transformed(inverse).getBounds());
 			}
 			Bounds b = inWorkplaneBounds.get(csg);
@@ -1318,6 +1320,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
 		inWorkplaneBounds.clear();
+		//clearSelection();
 	}
 
 }

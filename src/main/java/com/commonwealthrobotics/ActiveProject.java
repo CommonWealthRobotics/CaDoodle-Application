@@ -281,7 +281,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
-		// TODO Auto-generated method stub
-		
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onWorkplaneChange(newWP);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
