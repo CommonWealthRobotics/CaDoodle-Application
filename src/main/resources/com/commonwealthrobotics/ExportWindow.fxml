@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -86,6 +87,9 @@
                      </image>
                   </ImageView>
                </graphic>
+               <tooltip>
+                  <Tooltip text="This is for low quality slicing engines such as PrusaSlicer and BambooSlicer. They use a Windows only mesh fixing that is not generally availible. This step ensures your STL will work in those slicers. NOTE this will take a LONG time to complete. " />
+               </tooltip>
             </CheckBox>
          </children>
       </GridPane>
