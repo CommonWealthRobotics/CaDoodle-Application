@@ -33,6 +33,7 @@ import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
 
+import eu.mihosoft.vrl.v3d.CSG;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -134,7 +135,7 @@ public class Main extends Application {
 		FileSelectionFactory.setStage(newStage);
 		newStage.show();
 
-		//getLoadDeps().start();
+		// getLoadDeps().start();
 	}
 
 	public static void main(String[] args) {
@@ -163,23 +164,44 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		ensureGitAssetsArePresent();
+		CSG.setPreventNonManifoldTriangles(true);
+		CSG.setProgressMoniter((currentIndex, finalIndex, type, intermediateShape) -> {
+			try {
+				int i = currentIndex + 1;
+				double percent = ((double) i) / ((double) finalIndex) * 100;
+				String x = intermediateShape.getName() + " " + type.trim() + " " + String.format("%.1f", percent)
+						+ "% finished : " + i + " of " + finalIndex;
+				System.out.println(x);
+				if (finalIndex > 50) {
+					if (percent > 95) {
+						SplashManager.closeSplash();
+					} else {
+						SplashManager.renderSplashFrame((int) percent, x);
+					}
+				} else {
+					SplashManager.closeSplash();
+				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 		launch();
 	}
 
 	private static void ensureGitAssetsArePresent() {
 		Vitamins.loadAllScriptFiles();
-		
+
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		BowlerStudio.ensureUpdated(
-				"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
+		BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 				"https://github.com/CommonWealthRobotics/blender-bowler-cli.git");
-		
+
 //		try {
 //			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
 //					"MakeVitamins.groovy");
@@ -192,12 +214,12 @@ public class Main extends Application {
 
 	private static void setUpApprovalWindow() {
 		DownloadManager.setDownloadEvents(new IDownloadManagerEvents() {
-			
+
 			@Override
 			public void startDownload() {
 				SplashManager.renderSplashFrame(0, "Downloading...");
 			}
-			
+
 			@Override
 			public void finishDownload() {
 				SplashManager.closeSplash();
@@ -213,7 +235,7 @@ public class Main extends Application {
 				BowlerKernel.runLater(() -> {
 					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 					alert.setTitle("Message");
-					alert.setHeaderText("Would you like to add the: " + name + " Plugin?" );
+					alert.setHeaderText("Would you like to add the: " + name + " Plugin?");
 					Node root = alert.getDialogPane();
 					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 					stage.setOnCloseRequest(ev -> alert.hide());
