@@ -80,6 +80,8 @@ public class ExportManager {
 	@FXML // fx:id="stl"
 	private CheckBox stl; // Value injected by FXMLLoader
 	@FXML // fx:id="stl"
+	private CheckBox manifoldSTL; // Value injected by FXMLLoader
+	@FXML // fx:id="stl"
 	private CheckBox obj; // Value injected by FXMLLoader
 	@FXML // fx:id="svg"
 	private CheckBox svg; // Value injected by FXMLLoader
@@ -96,7 +98,15 @@ public class ExportManager {
 		String slug = NONLATIN.matcher(normalized).replaceAll("");
 		return slug.toLowerCase(Locale.ENGLISH);
 	}
+    @FXML
+    void fstl(ActionEvent event) {
+    	manifoldSTL.setSelected(false);
+    }
 
+    @FXML
+    void mstl(ActionEvent event) {
+    	stl.setSelected(false);
+    }
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
@@ -107,8 +117,10 @@ public class ExportManager {
 			ArrayList<CSG> back = session.getAllVisable();
 			String name = toSlug(ap.get().getProjectName());
 			int index = 1;
+			boolean prev = CSG.isPreventNonManifoldTriangles();
+			boolean selected = manifoldSTL.isSelected();
 			for (CSG c : back) {
-				if (stl.isSelected()) {
+				if (stl.isSelected() || selected) {
 					c.addExportFormat("stl");
 				}
 				if (svg.isSelected()) {
@@ -139,8 +151,10 @@ public class ExportManager {
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
+			CSG.setPreventNonManifoldTriangles(selected);
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
 			SplashManager.closeSplash();
+			CSG.setPreventNonManifoldTriangles(prev);
 			onFinish.run();
 		}).start();
 	}

@@ -32,7 +32,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </opaqueInsets>
          <children>
-            <CheckBox fx:id="stl" contentDisplay="TOP" mnemonicParsing="false" selected="true" text="STL" GridPane.halignment="CENTER">
+            <CheckBox fx:id="stl" contentDisplay="TOP" mnemonicParsing="false" onAction="#fstl" selected="true" text="Fast STL" GridPane.halignment="CENTER">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -41,7 +41,7 @@
                   </ImageView>
                </graphic>
             </CheckBox>
-            <CheckBox fx:id="svg" contentDisplay="TOP" mnemonicParsing="false" text="SVG" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+            <CheckBox fx:id="svg" contentDisplay="TOP" mnemonicParsing="false" text="SVG" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -74,6 +74,15 @@
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@ObjImg.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="manifoldSTL" contentDisplay="TOP" mnemonicParsing="false" onAction="#mstl" text="Manifold STL" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Script-Tab-Stl.png" />
                      </image>
                   </ImageView>
                </graphic>
