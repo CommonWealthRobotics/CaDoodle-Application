@@ -164,28 +164,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		ensureGitAssetsArePresent();
-		CSG.setPreventNonManifoldTriangles(false);
-		CSG.setProgressMoniter((currentIndex, finalIndex, type, intermediateShape) -> {
-			try {
-				int i = currentIndex + 1;
-				double percent = ((double) i) / ((double) finalIndex) * 100;
-				String x = intermediateShape.getName() + " " + type.trim() + " " + String.format("%.1f", percent)
-						+ "% finished : " + i + " of " + finalIndex;
-				System.out.println(x);
-				if (finalIndex > 50) {
-					if (percent > 95) {
-						SplashManager.closeSplash();
-					} else {
-						SplashManager.renderSplashFrame((int) percent, x);
-					}
-				} else {
-					SplashManager.closeSplash();
-				}
-
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
+	
 		launch();
 	}
 

@@ -664,7 +664,34 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			ap.get().setProjectName(fileNameBox.getText());
 			session.save();
 		});
+		setupCSGEngine();
+	}
 
+	private void setupCSGEngine() {
+		CSG.setPreventNonManifoldTriangles(false);
+		CSG.setProgressMoniter((currentIndex, finalIndex, type, intermediateShape) -> {
+			if (isInitializing())
+				return;
+			try {
+				int i = currentIndex + 1;
+				double percent = ((double) i) / ((double) finalIndex) * 100;
+				String x = intermediateShape.getName() + " " + type.trim() + " " + String.format("%.1f", percent)
+						+ "% finished : " + i + " of " + finalIndex;
+				System.out.println(x);
+				if (finalIndex > 50) {
+					if (percent > 95) {
+						SplashManager.closeSplash();
+					} else {
+						SplashManager.renderSplashFrame((int) percent, x);
+					}
+				} else {
+					SplashManager.closeSplash();
+				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	public void loadActive(MainController mainController) throws Exception {
@@ -835,9 +862,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
-		if (SplashManager.isVisableSplash()) {
+		if (isInitializing()) {
 			int frame = (int) (100 * ap.get().getPercentInitialized());
-			if (frame - lastFrame > 15) {
+			if (frame - lastFrame > 5) {
 				lastFrame = frame;
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
@@ -867,6 +894,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			onChange(engine.getFlyingCamera());
 
 		});
+	}
+
+	private boolean isInitializing() {
+		return ap.get().getPercentInitialized()<1;
 	}
 
 	private void setCadoodleFile() {
