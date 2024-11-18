@@ -164,7 +164,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		ensureGitAssetsArePresent();
-		CSG.setPreventNonManifoldTriangles(true);
+		CSG.setPreventNonManifoldTriangles(false);
 		CSG.setProgressMoniter((currentIndex, finalIndex, type, intermediateShape) -> {
 			try {
 				int i = currentIndex + 1;
