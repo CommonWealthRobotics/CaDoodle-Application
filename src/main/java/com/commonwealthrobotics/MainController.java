@@ -982,18 +982,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (event.isControlDown() || (OsUtils.isOSX()?event.isMetaDown():event.isControlDown())) {
 				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
 				switch ((int) character.charAt(0)) {
+				case 90:
+				case 122:
 				case 26:
 					com.neuronrobotics.sdk.common.Log.error("Undo");
 					workplane.cancle();
-					if(event.isShiftDown())
-						ap.get().forward();
-					else
-						ap.get().back();
+					ap.get().back();
 					break;
+				case 121:
 				case 25:
 					com.neuronrobotics.sdk.common.Log.error("redo");
 					ap.get().forward();
 					break;
+				case 103:
 				case 7:
 					com.neuronrobotics.sdk.common.Log.error("Group");
 					session.onGroup();
@@ -1026,9 +1027,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
+						System.err.println("CTRL+ Raw char value: " + (int) rawChar);
 					} else {
-						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
+						System.err.println("No character data available (probably a non-character key)");
 					}
 					break;
 				}
@@ -1049,9 +1050,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						com.neuronrobotics.sdk.common.Log.error("Raw char value: " + (int) rawChar);
+						System.err.println("Raw char value: " + (int) rawChar);
 					} else {
-						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
+						System.err.println("No character data available (probably a non-character key)");
 					}
 					break;
 				}
