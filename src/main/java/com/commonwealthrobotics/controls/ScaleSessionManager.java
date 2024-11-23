@@ -32,6 +32,7 @@ public class ScaleSessionManager {
 	// private Affine workplaneOffset;
 	private TransformNR cf;
 	private ActiveProject ap;
+	private boolean scalingFlag=false;
 
 	public ScaleSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
 			ActiveProject ap, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
@@ -57,6 +58,9 @@ public class ScaleSessionManager {
 		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset, updateLines,onReset);
 
 		rightFront.manipulator.addEventListener(ev -> {
+			if(scalingFlag)return;
+
+			scalingFlag=false;
 			if (beingUpdated == null)
 				beingUpdated = rightFront;
 			if (beingUpdated != rightFront) {
@@ -66,7 +70,7 @@ public class ScaleSessionManager {
 			double x = rightRear.manipulator.getCurrentPose().getX();
 			double y = rightFront.manipulator.getCurrentPose().getY();
 			double z = rightRear.manipulator.getCurrentPose().getZ();
-			com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + " z" + z);
+			//com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + " z" + z);
 			rightRear.manipulator.setInReferenceFrame(x, y, z);
 			x = rightFront.manipulator.getCurrentPose().getX();
 			y = leftFront.manipulator.getCurrentPose().getY();
@@ -75,6 +79,10 @@ public class ScaleSessionManager {
 			// com.neuronrobotics.sdk.common.Log.error("rightFront");
 		});
 		rightRear.manipulator.addEventListener(ev -> {
+			if(scalingFlag)return;
+
+			scalingFlag=false;
+
 			if (beingUpdated == null)
 				beingUpdated = rightRear;
 			if (beingUpdated != rightRear) {
@@ -92,6 +100,10 @@ public class ScaleSessionManager {
 			// com.neuronrobotics.sdk.common.Log.error("rightRear");
 		});
 		leftFront.manipulator.addEventListener(ev -> {
+			if(scalingFlag)return;
+
+			scalingFlag=false;
+
 			if (beingUpdated == null)
 				beingUpdated = leftFront;
 			if (beingUpdated != leftFront) {
@@ -108,6 +120,9 @@ public class ScaleSessionManager {
 			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftFront");
 		});
 		leftRear.manipulator.addEventListener(ev -> {
+			if(scalingFlag)return;
+			scalingFlag=false;
+
 			if (beingUpdated == null)
 				beingUpdated = leftRear;
 			if (beingUpdated != leftRear) {
@@ -125,6 +140,8 @@ public class ScaleSessionManager {
 			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftRear");
 		});
 		topCenter.manipulator.addEventListener(ev -> {
+			scalingFlag=false;
+
 			if (beingUpdated == null)
 				beingUpdated = topCenter;
 			if (beingUpdated != topCenter) {
@@ -133,11 +150,33 @@ public class ScaleSessionManager {
 			}
 			if(ev!=null)
 				if(ev.isShiftDown()) {
+					scalingFlag = true;
 					double startZ =bounds.getTotalZ();
+					double startX = bounds.getTotalX();
+					double startY = bounds.getTotalY();
 					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
 					double nowZ = tcC.getZ();
 					double scale =nowZ/ startZ;
+					double newXComp = (startX*scale-startX)/2;
+					double newYComp= (startY*scale-startY)/2;
 					
+					double centerX = bounds.getCenterX();
+					double centerY = bounds.getCenterY();
+					System.out.println("Center x:"+centerX+" centerY:"+centerY);
+					double z = leftRear.manipulator.getCurrentPose().getZ();
+					TransformNR rrC = rightRear.getCurrentInReferenceFrame();
+					TransformNR lfC = leftFront.getCurrentInReferenceFrame();
+					double x = (lfC.getX() - rrC.getX()) / 2 + rrC.getX();
+					double y = (lfC.getY() - rrC.getY()) / 2 + rrC.getY();
+					
+					double newX = -newXComp;
+					double newY = -newYComp;
+					double newX2 = +newXComp;
+					double newY2 = +newYComp;
+					rightRear.manipulator.setInReferenceFrame(newX, newY, z);
+					leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
+					rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
+					leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
 					System.out.println("RE-Scaling whole object! "+scale);
 				}
 			BowlerStudio.runLater(() -> update());
