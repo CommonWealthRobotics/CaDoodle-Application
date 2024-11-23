@@ -139,6 +139,8 @@ public class ExportManager {
 				index++;
 			}
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
+			if(exportDir==null)
+				return;
 			SplashManager.renderSplashFrame(50, " Exporting...");
 			while(!SplashManager.isVisableSplash()) {
 				try {
