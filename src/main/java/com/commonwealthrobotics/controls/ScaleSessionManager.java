@@ -208,10 +208,10 @@ public class ScaleSessionManager {
 					ctrl.manipulator.set(0, 0, 0);
 				}
 				beingUpdated = null;
-				if (Math.abs(lfC.getZ() - rrC.getZ()) > 0.00001) {
-					throw new RuntimeException("The control points of the corners must be at the same Z value \n"
-							+ lfC.toSimpleString() + "\n" + rrC.toSimpleString());
-				}
+//				if (Math.abs(lfC.getZ() - rrC.getZ()) > 0.00001) {
+//					throw new RuntimeException("The control points of the corners must be at the same Z value \n"
+//							+ lfC.toSimpleString() + "\n" + rrC.toSimpleString());
+//				}
 				Resize setResize = new Resize().setNames(sel.selectedSnapshot())
 						// .setDebugger(engine)
 						.setWorkplane(wp).setResize(tcC, lfC, rrC);

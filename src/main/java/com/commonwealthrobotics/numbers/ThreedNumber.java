@@ -195,6 +195,7 @@ public class ThreedNumber {
 		this.scale = scale;
 	}
 	public double getMostRecentValue() {
+		validate();
 		return mostRecentValue;
 	}
 
