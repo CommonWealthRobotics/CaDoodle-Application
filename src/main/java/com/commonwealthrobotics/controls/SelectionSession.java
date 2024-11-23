@@ -134,7 +134,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			controls.setMode(SpriteDisplayMode.Default);
 
 		});
-		manipulation.addEventListener(() -> {
+		manipulation.addEventListener(ev -> {
 			if (intitialization)
 				return;
 			controls.setMode(SpriteDisplayMode.MoveXY);

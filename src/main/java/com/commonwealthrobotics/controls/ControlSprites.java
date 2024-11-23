@@ -124,7 +124,7 @@ public class ControlSprites {
 			public void onWorkplaneChange(TransformNR newWP) {}
 		});
 		
-		manipulation.addEventListener(() -> {
+		manipulation.addEventListener(ev -> {
 			xymoving = true;
 			zmoving = false;
 			up.resetSelected();
@@ -156,7 +156,7 @@ public class ControlSprites {
 			setMode(SpriteDisplayMode.Default);
 			updateLines();
 		});
-		zMove.addEventListener(() -> {
+		zMove.addEventListener(ev -> {
 			zmoving = true;
 			xymoving = false;
 			setMode(SpriteDisplayMode.MoveZ);

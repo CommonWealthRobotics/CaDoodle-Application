@@ -56,7 +56,7 @@ public class ScaleSessionManager {
 				updateLines,onReset);
 		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset, updateLines,onReset);
 
-		rightFront.manipulator.addEventListener(() -> {
+		rightFront.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = rightFront;
 			if (beingUpdated != rightFront) {
@@ -74,7 +74,7 @@ public class ScaleSessionManager {
 			BowlerStudio.runLater(() -> update());
 			// com.neuronrobotics.sdk.common.Log.error("rightFront");
 		});
-		rightRear.manipulator.addEventListener(() -> {
+		rightRear.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = rightRear;
 			if (beingUpdated != rightRear) {
@@ -91,7 +91,7 @@ public class ScaleSessionManager {
 			BowlerStudio.runLater(() -> update());
 			// com.neuronrobotics.sdk.common.Log.error("rightRear");
 		});
-		leftFront.manipulator.addEventListener(() -> {
+		leftFront.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = leftFront;
 			if (beingUpdated != leftFront) {
@@ -107,7 +107,7 @@ public class ScaleSessionManager {
 			rightFront.manipulator.setInReferenceFrame(x, y, z);
 			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftFront");
 		});
-		leftRear.manipulator.addEventListener(() -> {
+		leftRear.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = leftRear;
 			if (beingUpdated != leftRear) {
@@ -124,13 +124,22 @@ public class ScaleSessionManager {
 			rightRear.manipulator.setInReferenceFrame(x, y, z);
 			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftRear");
 		});
-		topCenter.manipulator.addEventListener(() -> {
+		topCenter.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = topCenter;
 			if (beingUpdated != topCenter) {
 				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+" rejected by "+topCenter);
 				return;
 			}
+			if(ev!=null)
+				if(ev.isShiftDown()) {
+					double startZ =bounds.getTotalZ();
+					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+					double nowZ = tcC.getZ();
+					double scale =nowZ/ startZ;
+					
+					System.out.println("RE-Scaling whole object! "+scale);
+				}
 			BowlerStudio.runLater(() -> update());
 
 			// com.neuronrobotics.sdk.common.Log.error("topCenter");
