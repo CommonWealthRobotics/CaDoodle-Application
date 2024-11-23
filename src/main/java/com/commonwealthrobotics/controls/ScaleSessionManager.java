@@ -162,7 +162,7 @@ public class ScaleSessionManager {
 					
 					double centerX = bounds.getCenterX();
 					double centerY = bounds.getCenterY();
-					System.out.println("Center x:"+centerX+" centerY:"+centerY);
+					//System.out.println("Center x:"+centerX+" centerY:"+centerY);
 					double z = leftRear.manipulator.getCurrentPose().getZ();
 					TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 					TransformNR lfC = leftFront.getCurrentInReferenceFrame();
@@ -177,7 +177,7 @@ public class ScaleSessionManager {
 					leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
 					rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
 					leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
-					System.out.println("RE-Scaling whole object! "+scale);
+					//System.out.println("RE-Scaling whole object! "+scale);
 				}
 			BowlerStudio.runLater(() -> update());
 
