@@ -668,6 +668,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.save();
 		});
 		setupCSGEngine();
+		SplashManager.setClosePreventer(()->ap.get().getPercentInitialized()<0.99);
 	}
 
 	private void setupCSGEngine() {
