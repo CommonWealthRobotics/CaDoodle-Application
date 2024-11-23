@@ -275,6 +275,9 @@ public class AllignHandle {
 
 	public void hide() {
 		getHandle().setVisible(false);
+		for(CSG key:visualizers.keySet()) {
+			visualizers.get(key).setVisible(false);
+		}
 	}
 
 	public void setOnClickCallback(Runnable onClick) {

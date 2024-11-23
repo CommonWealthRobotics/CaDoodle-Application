@@ -144,12 +144,12 @@ public class AllignManager {
 	}
 
 	public void cancel() {
+
 		com.neuronrobotics.sdk.common.Log.error("Allign canceled here");
 		if (isActive()) {
 			this.toAllign.clear();
 			if (isAllignemntSelected()) {
 				com.neuronrobotics.sdk.common.Log.error("Add op " + opperation);
-
 			}
 			opperation = null;
 		}
