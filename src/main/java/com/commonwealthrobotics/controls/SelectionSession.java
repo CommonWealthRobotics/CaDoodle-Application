@@ -600,7 +600,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (c.isHide())
 				continue;
 			for (String s : names)
-				if (s.contains(c.getName())) {
+				if (s.contentEquals(c.getName())) {
 					selected.add(c.getName());
 					break;
 				}

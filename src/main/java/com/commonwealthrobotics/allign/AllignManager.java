@@ -56,7 +56,8 @@ public class AllignManager {
 					else
 						session.regenerateCurrent();
 
-					session.selectAll(opperation.getNames());
+					List<String> names = opperation.getNames();
+					session.selectAll(names);
 				});
 
 			});
@@ -117,7 +118,9 @@ public class AllignManager {
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if(opperation==null)
 					return;
-				opperation.setBounds(c.getBounds());
+				
+				Bounds bounds = session.getSellectedBounds(Arrays.asList(c));
+				opperation.setBounds(bounds);
 				recompute(null);
 				updateHandles();
 			};

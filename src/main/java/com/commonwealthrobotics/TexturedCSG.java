@@ -68,10 +68,10 @@ public class TexturedCSG extends TexturedMesh {
     public TexturedCSG(CSG primitive, Image texture) {
         this.primitive = primitive;
         this.textureImage = texture;
-        boolean tmp=CSG.isPreventNonManifoldTriangles();
-        CSG.setPreventNonManifoldTriangles(false);
+        //boolean tmp=CSG.isPreventNonManifoldTriangles();
+        //CSG.setPreventNonManifoldTriangles(false);
         primitive.triangulate();
-        CSG.setPreventNonManifoldTriangles(tmp);
+        //CSG.setPreventNonManifoldTriangles(tmp);
         updateMesh();
         setCullFace(CullFace.NONE);
         setDrawMode(DrawMode.FILL);
