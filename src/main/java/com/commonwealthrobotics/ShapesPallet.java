@@ -171,7 +171,7 @@ public class ShapesPallet {
 		referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
-			
+			if(typeOfShapes.toLowerCase().contains("vitamin"))
 			for(CSG c:so) {
 				c.setIsHole(false);
 			}
