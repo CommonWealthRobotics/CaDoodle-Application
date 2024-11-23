@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.sshd.common.util.OsUtils;
+
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
@@ -977,13 +979,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			// You can still use the key code for non-character keys
 			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
-			if (event.isControlDown()) {
+			if (event.isControlDown() || (OsUtils.isOSX()?event.isMetaDown():event.isControlDown())) {
 				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
 				switch ((int) character.charAt(0)) {
 				case 26:
 					com.neuronrobotics.sdk.common.Log.error("Undo");
 					workplane.cancle();
-					ap.get().back();
+					if(event.isShiftDown())
+						ap.get().forward();
+					else
+						ap.get().back();
 					break;
 				case 25:
 					com.neuronrobotics.sdk.common.Log.error("redo");
