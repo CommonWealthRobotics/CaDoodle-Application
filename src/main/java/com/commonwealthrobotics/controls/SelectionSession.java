@@ -384,6 +384,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshView meshView = meshes.get(c);
 				if (meshView != null) {
 					meshView.getTransforms().addAll(controls.getViewRotation(), selection);
+					if(!isLocked())
 					meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}

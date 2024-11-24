@@ -302,6 +302,10 @@ public class ControlSprites {
 		updateCubes();
 		//TickToc.tic("lines update");
 		updateLines();
+		if(session.isLocked())
+			up.hide();
+		else
+			up.show();
 	}
 
 	public void initializeAllign(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
