@@ -33,6 +33,7 @@ public class ScaleSessionManager {
 	private TransformNR cf;
 	private ActiveProject ap;
 	private boolean scalingFlag=false;
+	private boolean locked;
 
 	public ScaleSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
 			ActiveProject ap, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
@@ -255,13 +256,14 @@ public class ScaleSessionManager {
 		return topCenter.getScale();
 	}
 
-	public void threeDTarget(double w, double h, double z, Bounds b, TransformNR cameraFrame) {
+	public void threeDTarget(double w, double h, double z, Bounds b, TransformNR cameraFrame, boolean locked) {
 		cf = cameraFrame;
 
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = z;
 		this.bounds = b;
+		this.locked = locked;
 		threeDTarget();
 	}
 
@@ -272,11 +274,11 @@ public class ScaleSessionManager {
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
 
-		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z), cf);
-		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z), cf);
-		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z), cf);
-		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z), cf);
-		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z), cf);
+		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z), cf,locked);
+		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z), cf,locked);
+		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z), cf,locked);
+		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z), cf,locked);
+		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z), cf,locked);
 		update();
 	}
 
@@ -354,6 +356,14 @@ public class ScaleSessionManager {
 			rightRear.manipulator.set (-(x-b.getTotalX()), -(y-b.getTotalY()), 0);
 			rightRear.manipulator.fireSave();
 		}
+	}
+
+	public void hide() {
+		topCenter.hide();
+		leftFront.hide();
+		leftRear.hide();
+		rightFront.hide();
+		rightRear.hide();
 	}
 
 }

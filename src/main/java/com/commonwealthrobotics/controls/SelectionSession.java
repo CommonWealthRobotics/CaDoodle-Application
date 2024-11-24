@@ -115,6 +115,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private VBox parametrics;
 	private ActiveProject ap = null;
 	private HashMap<ICaDoodleOpperation, FileChangeWatcher> myWatchers = new HashMap<>();
+	private Button lockButton;
+	private ImageView lockImage;
 
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
@@ -366,6 +368,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			colorPicker.setStyle(style);
 			showButtons();
 			updateShowHideButton();
+			updateLockButton();
 			for (CSG c : getCurrentState()) {
 				MeshView meshView = meshes.get(c);
 				if (meshView != null) {
@@ -544,7 +547,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics) {
+			ComboBox<String> snapGrid, VBox parametrics,Button lockButton, ImageView lockImage) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -554,6 +557,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.colorPicker = colorPicker;
 		this.snapGrid = snapGrid;
 		this.parametrics = parametrics;
+		this.lockButton = lockButton;
+		this.lockImage = lockImage;
 		setupSnapGrid();
 
 	}
@@ -860,7 +865,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		ap.addOp(new Lock().setNames(selectedSnapshot()));
+		List<String> selectedSnapshot = selectedSnapshot();
+		if(!isLocked(selectedSnapshot)) {
+			
+			ap.addOp(new Lock().setNames(selectedSnapshot));
+		}else {
+			ap.addOp(new UnLock().setNames(selectedSnapshot));
+		}
+	}
+	private boolean isLocked(List<String> s) {
+		for(String name:s) {
+			CSG c=getSelectedCSG(name);
+			if(c.isLock())
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean isLocked() {
+		return isLocked(selectedSnapshot());
 	}
 
 	public void showAll() {
@@ -955,7 +978,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			showHideImage.setImage(new Image(MainController.class.getResourceAsStream("darkBulb.png")));
 		}
 	}
-
+	private void updateLockButton() {
+		if (isLocked()) {
+			lockImage.setImage(new Image(MainController.class.getResourceAsStream("lock.png")));
+		} else {
+			lockImage.setImage(new Image(MainController.class.getResourceAsStream("unlock.png")));
+		}
+	}
 	public boolean isAnyHidden() {
 		boolean ishid = false;
 		for (CSG c : getCurrentState()) {

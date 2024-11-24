@@ -460,7 +460,8 @@ public class ControlSprites {
 	}
 
 	private void updateCubes() {
-		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf);
+		
+		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf, session.isLocked());
 	}
 
 	public void clearSelection() {

@@ -197,7 +197,7 @@ public class ResizingHandle {
 		}
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf) {
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
 		cf = manipulator.getFrameOfReference().inverse().times(cf);
 
 		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
@@ -226,6 +226,7 @@ public class ResizingHandle {
 		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
+			setVisible(!locked);
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
@@ -235,8 +236,15 @@ public class ResizingHandle {
 
 		// hover.setText(name +" "+getCurrentInReferenceFrame()) ;
 	}
-
-	private void setVisible(boolean b) {
+	
+	public void hide() {
+		setVisible(false);
+	}
+	
+	public void show() {
+		setVisible(true);
+	}
+	public void setVisible(boolean b) {
 		mesh.setVisible(b);
 	}
 
