@@ -1165,7 +1165,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
 					if (needsSave) {
-						com.neuronrobotics.sdk.common.Log.error("Auto save " + ap.get().getSelf().getAbsolutePath());
+						System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
 						ap.save(ap.get());
 						needsSave = false;
 					}
