@@ -1086,6 +1086,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		TransformNR wp = ap.get().getWorkplane();
 		// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
+		TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
 
 		MoveCenter mc = getActiveMove();
 		if (System.currentTimeMillis() - timeSinceLastMove > 2000 || mc == null) {
@@ -1099,14 +1100,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		RotationNR getCamerFrameGetRotation;
 		double currentRotZ;
 		Quadrent quad;
-		getCamerFrameGetRotation = engine.getFlyingCamera().getCamerFrame().getRotation();
+		TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
+		camerFrame=camerFrame.times(frameOffset);
+		getCamerFrameGetRotation = camerFrame.getRotation();
 		double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuth());
 		quad = Quadrent.getQuad(toDegrees);
 		currentRotZ = Quadrent.QuadrentToAngle(quad);
 
 		TransformNR orentationOffset = new TransformNR(0, 0, 0, new RotationNR(0, currentRotZ - 90, 0));
 		TransformNR frame = new TransformNR();// BowlerStudio.getTargetFrame() ;
-		TransformNR frameOffset = new TransformNR(0, 0, 0, frame.getRotation());
 		TransformNR stateUnitVector = new TransformNR();
 		double incement = currentGrid;
 		stateUnitVector = orentationOffset.times(stateUnitVectorTmp);
@@ -1135,7 +1137,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TransformNR current = mc.getLocation();
 		TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
 		TransformNR tf = current.times(currentRotation.inverse()
-				.times(frameOffset.inverse().times(stateUnitVector).times(frameOffset).times(currentRotation)));
+				.times(frame.inverse().times(stateUnitVector).times(frame).times(currentRotation)));
 
 		List<String> selectedSnapshot = selectedSnapshot();
 		for (String s : selectedSnapshot) {
