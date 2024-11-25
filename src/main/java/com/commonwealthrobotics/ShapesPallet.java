@@ -1,6 +1,7 @@
 package com.commonwealthrobotics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +67,9 @@ public class ShapesPallet {
 				ScriptingEngine.cloneRepo(gitULR, null);
 				ScriptingEngine.pull(gitULR);
 				ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
-				for (String f : files) {
+				List<String> sortedList = new ArrayList<>(files);
+				Collections.sort(sortedList);
+				for (String f : sortedList) {
 					if (f.toLowerCase().endsWith(".json")) {
 						String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
 						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
