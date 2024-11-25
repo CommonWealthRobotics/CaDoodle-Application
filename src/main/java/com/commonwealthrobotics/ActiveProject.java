@@ -289,4 +289,34 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 	}
+	@Override
+	public void onInitializationStart() {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onInitializationStart();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	@Override
+	public void onRegenerateDone() {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onRegenerateDone();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	@Override
+	public void onRegenerateStart() {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onRegenerateStart();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

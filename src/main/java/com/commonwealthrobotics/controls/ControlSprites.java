@@ -122,6 +122,12 @@ public class ControlSprites {
 			}
 			@Override
 			public void onWorkplaneChange(TransformNR newWP) {}
+			@Override
+			public void onInitializationStart() {}
+			@Override
+			public void onRegenerateDone() {}
+			@Override
+			public void onRegenerateStart() {}
 		});
 		
 		manipulation.addEventListener(ev -> {

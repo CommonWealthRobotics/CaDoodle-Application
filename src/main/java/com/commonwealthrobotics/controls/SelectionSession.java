@@ -267,6 +267,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void displayCurrent() {
+		@SuppressWarnings("unchecked")
 		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get());
 		if (ap.get().isRegenerating()) {
 			return;
@@ -1178,7 +1179,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (compareLists(selectedSnapshot, mc.getNames())) {
 				// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
 				mc.setLocation(tf);
-				ap.get().regenerateCurrent();
+				regenerateCurrent();
 				save();
 				return;
 			}
@@ -1353,6 +1354,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onWorkplaneChange(TransformNR newWP) {
 		inWorkplaneBounds.clear();
 		//clearSelection();
+	}
+
+	@Override
+	public void onInitializationStart() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRegenerateDone() {
+		System.out.println("Enable parametrics ");
+		BowlerStudio.runLater(()->parametrics.setDisable(false));
+
+	}
+
+	@Override
+	public void onRegenerateStart() {
+		System.out.println("Disable parametrics ");
+
+		BowlerStudio.runLater(()->parametrics.setDisable(true));
 	}
 
 }
