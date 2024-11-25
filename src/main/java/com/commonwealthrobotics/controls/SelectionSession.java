@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -392,7 +393,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			shapeConfiguration.setText("Shape (" + selected.size() + ")");
 			if (selected.size() == 1) {
 				CSG sel = getSelectedCSG(selectedSnapshot()).get(0);
-				for (String key : sel.getParameters()) {
+				List<String> sortedList = new ArrayList<>(sel.getParameters());
+				Collections.sort(sortedList);
+				for (String key : sortedList) {
 					if (key.contains("CaDoodle")) {
 						String[] parts = key.split("_");
 						HBox thisLine = new HBox(5);
