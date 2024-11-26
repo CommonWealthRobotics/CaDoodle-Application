@@ -77,7 +77,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
-	private ICaDoodleOpperation source;
+	//private ICaDoodleOpperation source;
 	private TitledPane shapeConfiguration;
 	private Accordion shapeConfigurationBox;
 	private AnchorPane shapeConfigurationHolder;
@@ -121,7 +121,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ImageView lockImage;
 	private boolean useButton = false;
 	private Button regenerate = new Button("Re-Generate");
-	private HashMap<ICaDoodleOpperation,EventHandler<ActionEvent>> regenEvents = new HashMap<>();
+	private HashMap<String,EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
@@ -173,7 +173,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
 		inWorkplaneBounds.clear();
-		this.source = source;
+		//this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
 		if (controls.allignIsActive() && Allign.class.isInstance(source))
@@ -258,15 +258,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error("Adding Listeners for "+s.getName());
 				//new Exception().printStackTrace();
 				Set<String> parameters = n.getParameters();
-				if(parameters.size()>0) {
+				if(parameters.size()>0 && regenEvents.get(n)==null) {
 					BowlerStudio.runLater(() ->regenerate.setDisable(true));
-					
+					System.err.println("Regester event for "+source.getType()+" "+nameString);
 					EventHandler<ActionEvent> value = e->{
 						BowlerStudio.runLater(() ->regenerate.setDisable(true));
 						System.err.println("Button Change updating "+source.getType()+" "+nameString);
 						myRegenerate(source,l,f);
 					};
-					regenEvents.put(source, value);
+					regenEvents.put(n.getName(), value);
 				}
 				for (String k : parameters) {
 					Parameter para = CSGDatabase.get(k);
@@ -445,9 +445,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				if(sortedList.size()>2) {
 					useButton=true;
-					System.err.println("Using button for regeneration "+source);
+					System.err.println("Using button for regeneration "+sel.getName());
 					parametrics.getChildren().add(regenerate);
-					EventHandler<ActionEvent> value2 = regenEvents.get(source);
+					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
 					if(value2!=null)
 						regenerate.setOnAction(value2);
 					else {
