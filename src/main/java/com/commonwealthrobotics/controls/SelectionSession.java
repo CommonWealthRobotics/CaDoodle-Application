@@ -184,13 +184,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	private void myRegenerate(ICaDoodleOpperation source) {
-		Thread t = ap.regenerateFrom(source);
-		if (t == null)
-			return;
-		
+	private void myRegenerate(ICaDoodleOpperation source,IFileChangeListener l,File f ) {
+		FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
+		if(fileChangeWatcher!=null) {
+			fileChangeWatcher.close();
+			myWatchers.remove(source);
+		}
 		//new Exception().printStackTrace();
 		new Thread(() -> {
+			CSGDatabase.saveDatabase();
+			Thread t = ap.regenerateFrom(source);
+			if (t == null)
+				return;
 			try {
 				t.join();
 			} catch (InterruptedException e) {
@@ -198,6 +203,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOpperation(), ap.get());
+			FileChangeWatcher w;
+			try {
+				w = FileChangeWatcher.watch(f);
+				myWatchers.put(source, w);
+				w.addIFileChangeListener(l);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}).start();
 	}
 
@@ -209,15 +223,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// com.neuronrobotics.sdk.common.Log.error(namesAdded.size());
 			File f = s.getFile();
 			IFileChangeListener l = new IFileChangeListener() {
-
 				@Override
 				public void onFileDelete(File fileThatIsDeleted) {
 				}
 
 				@Override
 				public void onFileChange(File fileThatChanged, WatchEvent event) {
-					com.neuronrobotics.sdk.common.Log.error("File Change updating "+source.getType());
-					myRegenerate(source);
+					System.err.println("File Change updating "+source.getType());
+					myRegenerate(source,this,f);
 				}
 
 			};
@@ -242,36 +255,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					continue;
 				com.neuronrobotics.sdk.common.Log.error("Adding Listeners for "+s.getName());
 				//new Exception().printStackTrace();
-				if(n.getParameters().size()>0) {
+				Set<String> parameters = n.getParameters();
+				if(parameters.size()>0) {
 					BowlerStudio.runLater(() ->regenerate.setDisable(true));
 					regenerate.setOnAction(e->{
-						myRegenerate(source);
+						BowlerStudio.runLater(() ->regenerate.setDisable(true));
+						System.err.println("Button Change updating "+source.getType()+" "+nameString);
+						myRegenerate(source,l,f);
 					});
 				}
-				for (String k : n.getParameters()) {
+				for (String k : parameters) {
 					Parameter para = CSGDatabase.get(k);
 					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						System.err.println("Regenerating from CaDoodle " + para.getName());
-						FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
-						if(fileChangeWatcher!=null) {
-							fileChangeWatcher.close();
-							myWatchers.remove(source);
-						}
 						if(useButton) {
 							BowlerStudio.runLater(() ->regenerate.setDisable(false));
 						}else
-							myRegenerate(source);
-						FileChangeWatcher w;
-						try {
-							w = FileChangeWatcher.watch(f);
-							myWatchers.put(source, w);
-							w.addIFileChangeListener(l);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+							myRegenerate(source,l,f);
+
 					});
 				}
 			}
@@ -439,8 +442,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if(sortedList.size()>2) {
 					useButton=true;
 					parametrics.getChildren().add(regenerate);
-				}else
+				}else {
 					useButton=false;
+					parametrics.getChildren().remove(regenerate);
+				}
 			}
 		} else {
 			for (CSG c : getCurrentState()) {
