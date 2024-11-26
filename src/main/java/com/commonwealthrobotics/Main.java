@@ -76,36 +76,9 @@ public class Main extends Application {
 		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
 		if (newStage != null)
 			newStage.setTitle(title);
-
-//		setLoadDeps(new Thread(() -> {
-//			try {
-//				Thread.sleep(200);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			long start = System.currentTimeMillis();
-//			SplashManager.renderSplashFrame(5, "Blender");
-//			DownloadManager.getConfigExecutable("blender", null);
-//			SplashManager.renderSplashFrame(5, "FreeCAD");
-//			DownloadManager.getConfigExecutable("freecad", null);
-//			if (System.currentTimeMillis() - start > 2000) {
-//				SplashManager.closeSplash();
-//			}
-//		}));
 		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
 			new Thread(() -> {
-//				if (getLoadDeps().isAlive()) {
-//					SplashManager.renderSplashFrame(20, "Download Unfinished");
-//
-//					try {
-//						getLoadDeps().join();
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
 				Log.error("CaDoodle Exiting");
 				System.exit(0);
 			}).start();
