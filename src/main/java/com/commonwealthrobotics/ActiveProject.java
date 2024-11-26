@@ -59,7 +59,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			if(t.isAlive()) {
 				while(!SplashManager.isVisableSplash()) {
 					SplashManager.renderSplashFrame((int)(get().getPercentInitialized()*100), " Re-Generating");
-
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {

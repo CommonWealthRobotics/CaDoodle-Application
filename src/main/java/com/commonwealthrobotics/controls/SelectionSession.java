@@ -44,6 +44,7 @@ import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
@@ -120,6 +121,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ImageView lockImage;
 	private boolean useButton = false;
 	private Button regenerate = new Button("Re-Generate");
+	private HashMap<ICaDoodleOpperation,EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
@@ -258,11 +260,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Set<String> parameters = n.getParameters();
 				if(parameters.size()>0) {
 					BowlerStudio.runLater(() ->regenerate.setDisable(true));
-					regenerate.setOnAction(e->{
+					
+					EventHandler<ActionEvent> value = e->{
 						BowlerStudio.runLater(() ->regenerate.setDisable(true));
 						System.err.println("Button Change updating "+source.getType()+" "+nameString);
 						myRegenerate(source,l,f);
-					});
+					};
+					regenEvents.put(source, value);
 				}
 				for (String k : parameters) {
 					Parameter para = CSGDatabase.get(k);
@@ -441,7 +445,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				if(sortedList.size()>2) {
 					useButton=true;
+					System.err.println("Using button for regeneration "+source);
 					parametrics.getChildren().add(regenerate);
+					EventHandler<ActionEvent> value2 = regenEvents.get(source);
+					if(value2!=null)
+						regenerate.setOnAction(value2);
+					else {
+						System.err.println("ERROR regenerate event is null");
+					}
 				}else {
 					useButton=false;
 					parametrics.getChildren().remove(regenerate);
