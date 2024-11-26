@@ -118,7 +118,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<ICaDoodleOpperation, FileChangeWatcher> myWatchers = new HashMap<>();
 	private Button lockButton;
 	private ImageView lockImage;
-
+	private boolean useButton = false;
+	private Button regenerate = new Button("Re-Generate");
+	
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
 		setActiveProject(ap);
@@ -240,18 +242,27 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					continue;
 				com.neuronrobotics.sdk.common.Log.error("Adding Listeners for "+s.getName());
 				//new Exception().printStackTrace();
+				if(n.getParameters().size()>0) {
+					BowlerStudio.runLater(() ->regenerate.setDisable(true));
+					regenerate.setOnAction(e->{
+						myRegenerate(source);
+					});
+				}
 				for (String k : n.getParameters()) {
 					Parameter para = CSGDatabase.get(k);
 					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
-						com.neuronrobotics.sdk.common.Log.error("Regenerating from CaDoodle " + para.getName());
+						System.err.println("Regenerating from CaDoodle " + para.getName());
 						FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
 						if(fileChangeWatcher!=null) {
 							fileChangeWatcher.close();
 							myWatchers.remove(source);
 						}
-						myRegenerate(source);
+						if(useButton) {
+							BowlerStudio.runLater(() ->regenerate.setDisable(false));
+						}else
+							myRegenerate(source);
 						FileChangeWatcher w;
 						try {
 							w = FileChangeWatcher.watch(f);
@@ -425,6 +436,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 					}
 				}
+				if(sortedList.size()>2) {
+					useButton=true;
+					parametrics.getChildren().add(regenerate);
+				}else
+					useButton=false;
 			}
 		} else {
 			for (CSG c : getCurrentState()) {
