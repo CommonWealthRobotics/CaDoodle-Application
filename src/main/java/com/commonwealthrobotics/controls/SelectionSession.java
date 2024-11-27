@@ -765,8 +765,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (Button b : buttons) {
 				b.setDisable(false);
 			}
-			// com.neuronrobotics.sdk.common.Log.error("Number Selected is " + selected.size());
-			if (selected.size() > 1) {
+			int unlockedSelected = 0;
+			for(CSG c:getSelectedCSG(selected)) {
+				if(!c.isLock())
+					unlockedSelected++;
+			}
+			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				allignButton.setDisable(false);
 			}
