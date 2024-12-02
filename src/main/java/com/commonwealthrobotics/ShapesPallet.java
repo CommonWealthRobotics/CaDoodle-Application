@@ -169,7 +169,7 @@ public class ShapesPallet {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 		// new Thread(() -> {
-		AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file"));
+		AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
 		List<CSG> so = set.process(new ArrayList<>());
 		referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
