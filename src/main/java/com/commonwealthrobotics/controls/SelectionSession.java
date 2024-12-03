@@ -1403,14 +1403,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onRegenerateDone() {
-		System.out.println("Enable parametrics ");
+		//System.out.println("Enable parametrics ");
 		BowlerStudio.runLater(()->parametrics.setDisable(false));
 
 	}
 
 	@Override
 	public void onRegenerateStart() {
-		System.out.println("Disable parametrics ");
+		//System.out.println("Disable parametrics ");
 
 		BowlerStudio.runLater(()->parametrics.setDisable(true));
 	}
