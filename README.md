@@ -1,5 +1,8 @@
 # CaDoodle-Application
 
+
+[![Github All Releases](https://img.shields.io/github/downloads/CommonWealthRobotics/CaDoodle-Application/total.svg)]()
+
 The core Java Application for CaDoodle
 
 This is the source code for the Java Application of Cadoodle. 
