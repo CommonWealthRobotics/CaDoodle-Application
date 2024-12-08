@@ -11,7 +11,9 @@ import java.util.List;
  */
 import java.util.Locale;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.time.Instant;
@@ -155,10 +157,23 @@ public class ExportManager {
 			}
 			CSG.setPreventNonManifoldTriangles(selected);
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
+			copyBom(CaDoodleFile.getBoM().getBomFile());
+			copyBom(CaDoodleFile.getBoM().getBomCsv());
+
 			SplashManager.closeSplash();
 			CSG.setPreventNonManifoldTriangles(prev);
 			onFinish.run();
 		}).start();
+	}
+	private void copyBom(File bomFile) {
+		Path source = bomFile.toPath();
+		Path destination=new File(exportDir.getAbsolutePath()+"/"+bomFile.getName()).toPath();
+		try {
+			Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
