@@ -364,6 +364,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setUpControls(MeshView meshView, String name) {
+		if(name==null)
+			throw new RuntimeException("Name can not be null");
 		meshView.setOnMousePressed(event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
 				if (event.isShiftDown()) {
@@ -935,8 +937,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean isLocked(List<String> s) {
 		for (String name : s) {
 			CSG c = getSelectedCSG(name);
-			if (c.isLock())
-				return true;
+			if(c!=null)
+				if (c.isLock())
+					return true;
 		}
 		return false;
 	}
