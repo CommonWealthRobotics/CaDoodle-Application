@@ -182,8 +182,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		else
 			controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
-		displayCurrent();
 		setUpParametrics(currentState, source);
+		displayCurrent();
 
 	}
 
@@ -283,17 +283,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					regenEvents.put(n.getName(), value);
 				}
 				for (String k : parameters) {
-					if(!k.contains(n.getName()))
+					if (!k.contains(n.getName()))
 						continue;
 					Parameter para = CSGDatabase.get(k);
-					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k+" on "+nameString);
+					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						System.err.println("Regenerating from CaDoodle " + para.getName());
-						if (useButton) {
-							BowlerStudio.runLater(() -> regenerate.setDisable(false));
-						} else
-							myRegenerate(source, myL, myFile);
+						double percentInitialized = ap.get().getPercentInitialized();
+						boolean regenerating = ap.get().isRegenerating();
+						if (regenerating || percentInitialized < 1)
+							return;
+						new Thread(() -> {
+							if (useButton) {
+								BowlerStudio.runLater(() -> regenerate.setDisable(false));
+							} else
+								myRegenerate(source, myL, myFile);
+						}).start();
+
 					});
 				}
 			}
@@ -307,7 +314,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		}
 		BowlerStudio.runLater(() -> {
-
 			clearScreen();
 			for (CSG c : process) {
 				displayCSG(c);
@@ -329,6 +335,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateSelection();
 			setKeyBindingFocus();
 		});
+
+
 
 	}
 
@@ -364,7 +372,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setUpControls(MeshView meshView, String name) {
-		if(name==null)
+		if (name == null)
 			throw new RuntimeException("Name can not be null");
 		meshView.setOnMousePressed(event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
@@ -432,7 +440,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
 				for (String key : sortedList) {
-					if (key.contains("CaDoodle")&&key.contains(sel.getName())) {
+					if (key.contains("CaDoodle") && key.contains(sel.getName())) {
 						numCadParaams++;
 						String[] parts = key.split("_");
 						HBox thisLine = new HBox(5);
@@ -937,7 +945,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean isLocked(List<String> s) {
 		for (String name : s) {
 			CSG c = getSelectedCSG(name);
-			if(c!=null)
+			if (c != null)
 				if (c.isLock())
 					return true;
 		}
