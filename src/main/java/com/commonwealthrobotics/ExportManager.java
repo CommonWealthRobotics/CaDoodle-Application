@@ -157,8 +157,8 @@ public class ExportManager {
 			}
 			CSG.setPreventNonManifoldTriangles(selected);
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
-			copyBom(CaDoodleFile.getBoM().getBomFile());
-			copyBom(CaDoodleFile.getBoM().getBomCsv());
+			copyBom(CaDoodleFile.getBillOfMaterials().getBomFile());
+			copyBom(CaDoodleFile.getBillOfMaterials().getBomCsv());
 
 			SplashManager.closeSplash();
 			CSG.setPreventNonManifoldTriangles(prev);
