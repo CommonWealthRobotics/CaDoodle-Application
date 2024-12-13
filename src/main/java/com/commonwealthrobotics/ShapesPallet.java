@@ -62,33 +62,33 @@ public class ShapesPallet {
 		this.session = session;
 		ap = active;
 		workplane = workplane2;
-		//new Thread(() -> {
-			try {
-				ScriptingEngine.cloneRepo(gitULR, null);
-				ScriptingEngine.pull(gitULR);
-				ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
-				List<String> sortedList = new ArrayList<>(files);
-				Collections.sort(sortedList);
-				for (String f : sortedList) {
-					if (f.toLowerCase().endsWith(".json")) {
-						String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
-						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
-						String name = fileFromGit.getName();
-						String[] split = name.split(".json");
-						String filename = split[0];
-						HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
-						nameToFile.put(filename, tmp);
-						shapeCatagory.getItems().add(filename);
-					}
+		// new Thread(() -> {
+		try {
+			ScriptingEngine.cloneRepo(gitULR, null);
+			ScriptingEngine.pull(gitULR);
+			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
+			List<String> sortedList = new ArrayList<>(files);
+			Collections.sort(sortedList);
+			for (String f : sortedList) {
+				if (f.toLowerCase().endsWith(".json")) {
+					String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
+					File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
+					String name = fileFromGit.getName();
+					String[] split = name.split(".json");
+					String filename = split[0];
+					HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
+					nameToFile.put(filename, tmp);
+					shapeCatagory.getItems().add(filename);
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-			BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
-			onSetCatagory();
-		//}).start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+		BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
+		onSetCatagory();
+		// }).start();
 	}
 
 	public void onSetCatagory() {
@@ -143,7 +143,7 @@ public class ShapesPallet {
 					com.neuronrobotics.sdk.common.Log.error("Placing " + names.get(key) + " at " + row + " , " + col);
 					try {
 						setupButton(names, key, col, row);
-						
+
 					} catch (Throwable tx) {
 						tx.printStackTrace();
 					}
@@ -174,10 +174,10 @@ public class ShapesPallet {
 		referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
-			if(typeOfShapes.toLowerCase().contains("vitamin"))
-			for(CSG c:so) {
-				c.setIsHole(false);
-			}
+			if (typeOfShapes.toLowerCase().contains("vitamin"))
+				for (CSG c : so) {
+					c.setIsHole(false);
+				}
 			Image thumb = ThumbnailImage.get(so);
 			ImageView tIv = new ImageView(thumb);
 			tIv.setFitHeight(50);
@@ -193,33 +193,36 @@ public class ShapesPallet {
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					workplane.setOnSelectEvent(() -> {
-						session.setMode(SpriteDisplayMode.Default);
-						if (workplane.isClicked())
-							try {
-								TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-								AddFromScript setAddFromScript = new AddFromScript()
-										.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
-								ap.addOp(setAddFromScript).join();
-								HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
-								session.selectAll(namesAdded);
+						new Thread(() -> {
+							session.setMode(SpriteDisplayMode.Default);
+							if (workplane.isClicked())
+								try {
+									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
+									AddFromScript setAddFromScript = new AddFromScript()
+											.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
+									ap.addOp(setAddFromScript).join();
+									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
+									session.selectAll(namesAdded);
 
-								if (!workplane.isClicked())
-									return;
-								if (workplane.isClickOnGround()) {
-									// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
-									ap.get().setWorkplane(new TransformNR());
-								} else {
-									ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+									if (!workplane.isClicked())
+										return;
+									if (workplane.isClickOnGround()) {
+										// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
+										ap.get().setWorkplane(new TransformNR());
+									} else {
+										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+									}
+									workplane.placeWorkplaneVisualization();
+									workplane.setTemporaryPlane();
+								} catch (CadoodleConcurrencyException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-								workplane.placeWorkplaneVisualization();
-								workplane.setTemporaryPlane();
-							} catch (CadoodleConcurrencyException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+
+						}).start();
 					});
 					workplane.activate();
 
