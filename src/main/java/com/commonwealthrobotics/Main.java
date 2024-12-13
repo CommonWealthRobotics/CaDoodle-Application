@@ -137,7 +137,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		ensureGitAssetsArePresent();
-	
+		//com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		launch();
 	}
 
