@@ -199,9 +199,15 @@ public class ShapesPallet {
 								try {
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
 									AddFromScript setAddFromScript = new AddFromScript()
-											.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
+											.set(key.get("git"), key.get("file"));
 									ap.addOp(setAddFromScript).join();
 									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
+									ArrayList<String> namesBack = new ArrayList<String>();
+									namesBack.addAll(namesAdded);
+
+									MoveCenter mc = new MoveCenter().setNames(namesBack)
+											.setLocation(currentAbsolutePose);
+									ap.addOp(mc).join();
 									session.selectAll(namesAdded);
 
 									if (!workplane.isClicked())
