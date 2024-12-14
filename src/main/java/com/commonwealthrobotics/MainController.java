@@ -291,7 +291,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onCopy(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On copy");
-		session.onCopy();
+		session.setCopyListToCurrentSelected();
 		session.setKeyBindingFocus();
 	}
 
@@ -1012,7 +1012,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.selectAll();
 					break;
 				case 3:
-					session.onCopy();
+					session.setCopyListToCurrentSelected();
 					break;
 				case 22:
 					session.onPaste();

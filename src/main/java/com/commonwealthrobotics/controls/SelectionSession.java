@@ -332,7 +332,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			selected.removeAll(toRemove);
 			if (workplane != null)
 				workplane.updateMeshes(meshes);
-			updateSelection();
+			updateControlsDisplayOfSelected();
 			setKeyBindingFocus();
 		});
 
@@ -387,14 +387,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						selected.add(name);
 					}
 				}
-				updateSelection();
+				updateControlsDisplayOfSelected();
 				event.consume();
 			}
 		});
 
 	}
 
-	private void updateSelection() {
+	private void updateControlsDisplayOfSelected() {
 		parametrics.getChildren().clear();
 		inWorkplaneBounds.clear();
 		if (selected.size() > 0) {
@@ -657,7 +657,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void clearSelection() {
 		cancleAllign();
 		selected.clear();
-		updateSelection();
+		updateControlsDisplayOfSelected();
 		setKeyBindingFocus();
 	}
 
@@ -676,7 +676,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		BowlerStudio.runLater(() -> {
 
-			updateSelection();
+			updateControlsDisplayOfSelected();
 		});
 
 	}
@@ -690,7 +690,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			selected.add(c.getName());
 		}
-		updateSelection();
+		updateControlsDisplayOfSelected();
 	}
 
 	public void setKeyBindingFocus() {
@@ -838,7 +838,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ap.addOp(new Delete().setNames(selectedSnapshot()));
 	}
 
-	public void onCopy() {
+	public void setCopyListToCurrentSelected() {
 		copySetinternal = selectedSnapshot();
 	}
 
@@ -862,11 +862,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		copyTarget.addAll(copySet);
 		copySet.clear();
 		try {
-			Paste setNames = new Paste().setOffset(distance).setNames(copyTarget);
-			ap.addOp(setNames).join();
-			selectAll(setNames.getNamesAdded());
-			onCopy();
-			BowlerStudio.runLater(() -> updateSelection());
+			Paste paste = new Paste().setNames(copyTarget);
+			ap.addOp(paste).join();
+			HashSet<String> namesAdded = paste.getNamesAdded();
+			ArrayList<String>namesBack=new ArrayList<String>();
+			namesBack.addAll(namesAdded);
+			if(distance>0) {
+				MoveCenter mc = new MoveCenter().setNames(namesBack).setLocation(new TransformNR(distance,0,0));
+				ap.addOp(mc).join();
+			}
+			selectAll(namesAdded);
+			setCopyListToCurrentSelected();
+			BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 		} catch (CadoodleConcurrencyException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -983,7 +990,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					ap.addOp(setNames).join();
 					selected.clear();
 					selected.add(setNames.getGroupID());
-					BowlerStudio.runLater(() -> updateSelection());
+					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 				} catch (CadoodleConcurrencyException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -993,7 +1000,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}).start();
 		} else
-			updateSelection();
+			updateControlsDisplayOfSelected();
 
 	}
 
@@ -1022,7 +1029,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			selected.addAll(toSelect);
 			ap.addOp(new UnGroup().setNames(selectedSnapshot));
 		}
-		updateSelection();
+		updateControlsDisplayOfSelected();
 
 	}
 
