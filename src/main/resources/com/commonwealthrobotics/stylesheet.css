@@ -50,6 +50,7 @@
 .grid-pane {
     -fx-grid-line-color: -logo-blue;
 }
+
 .scroll-pane {
     -fx-background-color: -my-background-color;
 }
