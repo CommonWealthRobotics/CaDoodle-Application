@@ -123,6 +123,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean useButton = false;
 	private Button regenerate = new Button("Re-Generate");
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
+	private boolean showConstituants =true;
 
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
@@ -315,9 +316,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		BowlerStudio.runLater(() -> {
 			clearScreen();
-			for (CSG c : process) {
-				displayCSG(c);
-			}
+			if(isShowConstituants()) {
+				for (CSG c : ap.get().getCurrentState()) {
+					if(c.isInGroup() || c.isHide()) {
+						c.setIsWireFrame(true);
+					}else {
+						c.setIsWireFrame(false);
+					}
+					displayCSG(c);
+					if(c.isInGroup() || c.isHide()) {
+						meshes.get(c).setMouseTransparent(true);
+					}
+				}
+			}else
+				for (CSG c : process) {
+					displayCSG(c);
+				}
 			ArrayList<String> toRemove = new ArrayList<String>();
 			for (String s : selected) {
 				boolean exists = false;
@@ -350,12 +364,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void displayCSG(CSG c) {
-		if (c.isHide())
-			return;
-		if (c.isInGroup())
-			return;
 		MeshView meshView = c.getMesh();
-		if (c.isHole()) {
+		if (c.isHole() && !c.isWireFrame()) {
 			Image texture = new Image(Main.class.getResourceAsStream("holeTexture.png"));
 
 			meshView = new TexturedCSG(c, texture);
@@ -1451,6 +1461,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// System.out.println("Disable parametrics ");
 
 		BowlerStudio.runLater(() -> parametrics.setDisable(true));
+	}
+
+	public boolean isShowConstituants() {
+		return showConstituants;
+	}
+
+	public void setShowConstituants(boolean showConstituants) {
+		this.showConstituants = showConstituants;
 	}
 
 }
