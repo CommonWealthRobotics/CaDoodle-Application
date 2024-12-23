@@ -112,6 +112,7 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
+		BowlerKernel.setKernelMode(false);
 		if (args != null) {
 			if (args.length != 0) {
 				File f = new File(args[0]);
