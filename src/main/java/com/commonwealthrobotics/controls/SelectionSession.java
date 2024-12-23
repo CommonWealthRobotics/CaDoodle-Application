@@ -123,7 +123,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean useButton = false;
 	private Button regenerate = new Button("Re-Generate");
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
-	private boolean showConstituants =true;
+	private boolean showConstituants =false;
 
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
