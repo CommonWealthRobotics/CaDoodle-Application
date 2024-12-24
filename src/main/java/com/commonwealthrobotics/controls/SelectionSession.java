@@ -194,6 +194,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			fileChangeWatcher.close();
 			myWatchers.remove(source);
 		}
+		System.err.println("Regenerating from CaDoodle " + source);
+
 		// new Exception().printStackTrace();
 		new Thread(() -> {
 			CSGDatabase.saveDatabase();
@@ -274,7 +276,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				File myFile = f;
 				if (parameters.size() > 0 && regenEvents.get(n) == null) {
 					BowlerStudio.runLater(() -> regenerate.setDisable(true));
-					System.err.println("Regester event for " + source.getType() + " " + nameString);
+					//new RuntimeException("Regester event for " + source.getType() + " " + nameString).printStackTrace();
 
 					EventHandler<ActionEvent> value = e -> {
 						BowlerStudio.runLater(() -> regenerate.setDisable(true));
@@ -290,7 +292,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
-						System.err.println("Regenerating from CaDoodle " + para.getName());
 						CaDoodleFile caDoodleFile = ap.get();
 						double percentInitialized = caDoodleFile.getPercentInitialized();
 						boolean regenerating = caDoodleFile.isRegenerating();
