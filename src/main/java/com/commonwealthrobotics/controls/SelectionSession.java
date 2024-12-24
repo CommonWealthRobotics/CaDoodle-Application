@@ -291,15 +291,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						System.err.println("Regenerating from CaDoodle " + para.getName());
-						double percentInitialized = ap.get().getPercentInitialized();
-						boolean regenerating = ap.get().isRegenerating();
+						CaDoodleFile caDoodleFile = ap.get();
+						double percentInitialized = caDoodleFile.getPercentInitialized();
+						boolean regenerating = caDoodleFile.isRegenerating();
 						if (regenerating || percentInitialized < 1)
 							return;
 						new Thread(() -> {
 							if (useButton) {
 								BowlerStudio.runLater(() -> regenerate.setDisable(false));
-							} else
+							} else {
 								myRegenerate(source, myL, myFile);
+							}
 						}).start();
 
 					});
