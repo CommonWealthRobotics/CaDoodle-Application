@@ -460,7 +460,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						thisLine.getChildren().add(e);
 						parametrics.getChildren().add(thisLine);
 						Parameter para = CSGDatabase.get(key);
-						int width = 140;
+						int width = 120;
 						if (LengthParameter.class.isInstance(para)) {
 							setUpNumberChoices(thisLine, text, (LengthParameter) para, width);
 						}
@@ -602,7 +602,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			options.getSelectionModel().select(para.getStrValue());
 			options.setMinWidth(width);
 			options.setOnAction(event -> {
-				com.neuronrobotics.sdk.common.Log.error(System.currentTimeMillis() + " Event " + event);
+				System.out.println(System.currentTimeMillis() + " Event " + event);
 				para.setStrValue(options.getSelectionModel().getSelectedItem());
 				// CSGDatabase.saveDatabase();
 				// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
@@ -876,7 +876,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			ap.addOp(paste).join();
 			HashSet<String> namesAdded = paste.getNamesAdded();
 			ArrayList<String>namesBack=new ArrayList<String>();
-			namesBack.addAll(namesAdded);
+			for(CSG c:getSelectedCSG(namesBack)) {
+				if(c.isInGroup())
+					continue;
+				namesBack.add(c.getName());
+			}
 			if(distance>0) {
 				MoveCenter mc = new MoveCenter().setNames(namesBack).setLocation(new TransformNR(distance,0,0));
 				ap.addOp(mc).join();
