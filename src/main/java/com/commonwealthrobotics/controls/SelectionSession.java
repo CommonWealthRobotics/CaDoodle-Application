@@ -184,11 +184,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
-		if (controls.allignIsActive() && Allign.class.isInstance(source))
+		if (isAllignActive() && Allign.class.isInstance(source))
 			controls.setMode(SpriteDisplayMode.Allign);
-		else if (controls.mirrorIsActive() && Mirror.class.isInstance(source))
+		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
 			controls.setMode(SpriteDisplayMode.Mirror);
-		else
+			onMirror();
+		}else
 			controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
 		setUpParametrics(currentState, source);
@@ -1198,10 +1199,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void cancelOperationModes() {
 		if (controls == null)
 			return;
-		if (controls.allignIsActive()) {
+		if (isAllignActive()) {
 			controls.setMode(SpriteDisplayMode.Default);
 		}
-		if (controls.mirrorIsActive()) {
+		if (isMirrorActive()) {
 			controls.setMode(SpriteDisplayMode.Default);
 		}
 		controls.cancelOperationMode();
@@ -1549,7 +1550,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public boolean isInOperationMode() {
 
-		return controls.allignIsActive() || controls.mirrorIsActive();
+		return isAllignActive() || isMirrorActive();
+	}
+
+	private boolean isMirrorActive() {
+		return controls.mirrorIsActive();
+	}
+
+	private boolean isAllignActive() {
+		return controls.allignIsActive();
 	}
 
 }

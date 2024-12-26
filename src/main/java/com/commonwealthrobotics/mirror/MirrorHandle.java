@@ -3,7 +3,9 @@ package com.commonwealthrobotics.mirror;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
@@ -71,8 +73,6 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	private Affine cameraOrent = new Affine();
 	private double scale;
 	private Mirror op;
-	private List<CSG> visualizationObjects;
-
 	public MirrorHandle(MirrorOrentation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
 			ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
 		this.ax = ax;
@@ -117,7 +117,16 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	private void setMyOperation() {
-		System.out.println("\n\nRun Mirror on " + ax);
+		//System.out.println("\n\nRun Mirror on " + ax);
+		new Thread(()->{
+			try {
+				ap.addOp(op).join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			updateState();
+		}).start();
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double xI, double yI,
@@ -235,16 +244,12 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		ap.addListener(this);
 	}
 
-	private void updateState() {
+	public void updateState() {
+		//System.out.println("Initialize Mirror "+ax);
 		op= new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
-		if(visualizationObjects!=null) {
-			for(CSG obj:visualizationObjects) {
-				MeshView mv = visualizers.remove(obj);
-				engine.removeUserNode(mv);
-			}
-		}
-		visualizationObjects = op.process(ta);
-		for(CSG indicator:visualizationObjects) {
+		clearVisualizers();
+		
+		for(CSG indicator: op.process(ta)) {
 			MeshView indicatorMesh = indicator.newMesh();
 			indicatorMesh.setMouseTransparent(true);
 			//indicatorMesh.getTransforms().addAll(workplaneOffset);
@@ -266,6 +271,15 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		}
 	}
 
+	private void clearVisualizers() {
+		ArrayList<CSG> toRem = new ArrayList<>();
+		toRem.addAll(visualizers.keySet());
+		for (CSG obj:toRem) {
+			MeshView mv = visualizers.remove(obj);
+			engine.removeUserNode(mv);
+		}
+	}
+
 	public void hide() {
 		BowlerStudio.runLater(() -> mesh.setVisible(false));
 		mesh.removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
@@ -274,6 +288,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		for(CSG key:visualizers.keySet()) {
 			visualizers.get(key).setVisible(false);
 		}
+		clearVisualizers();
 		ap.removeListener(this);
 	}
 
