@@ -737,6 +737,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		addOp(h);
 
 	}
+	public void toggleTransparent() {
+		new Thread(()->{
+			for(CSG c:getSelectedCSG(selected)) {
+				if(!c.isHole()) {
+					PhongMaterial phongMaterial = (PhongMaterial)c.getMesh().getMaterial();
+					Color diffuseColor = phongMaterial.getDiffuseColor();
+					double opacity=diffuseColor.getOpacity();
+					if(opacity<1)
+						opacity=1;
+					else
+						opacity=0.35;
+					phongMaterial.setDiffuseColor(diffuseColor);
+					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(diffuseColor);
+					try {
+						addOp(solid).join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}	
+		}).start();	
+	}
+	public boolean isSelectedTransparent() {
+		double opacity=0;
+		for(CSG c:getSelectedCSG(selected)) {
+			if(!c.isHole())
+				opacity+=((PhongMaterial)c.getMesh().getMaterial()).getDiffuseColor().getOpacity();
+		}
+		return (opacity/(double)selected.size())<0.999;
+	}
 
 	public void setColor(Color value) {
 		ToSolid solid = new ToSolid().setNames(selectedSnapshot()).setColor(value);
@@ -774,15 +805,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return new TransformNR(boxes.getCenterX(), -boxes.getCenterY(), -boxes.getCenterZ());
 	}
 
-	public void addOp(ICaDoodleOpperation h) {
+	public Thread addOp(ICaDoodleOpperation h) {
 		if (ap.get() == null)
-			return;
+			return null;
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
-			return;
+			return null;
 		}
 		// com.neuronrobotics.sdk.common.Log.error("Adding " + h.getType());
-		ap.addOp(h);
+		return ap.addOp(h);
 	}
 
 	public void setButtons(Button... buttonsList) {
