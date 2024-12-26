@@ -1059,7 +1059,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						System.err.println("Raw char value: " + (int) rawChar);
+						System.err.println("Raw char value: " + (int) rawChar+" : "+character);
 					} else {
 						System.err.println("No character data available (probably a non-character key)");
 					}
