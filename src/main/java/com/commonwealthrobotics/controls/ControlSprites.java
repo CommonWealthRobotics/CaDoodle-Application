@@ -314,12 +314,15 @@ public class ControlSprites {
 		updateCubes();
 		//TickToc.tic("lines update");
 		updateLines();
-		if(session.isLocked()) {
+		if(session.isLocked() || session.isInOperationMode()) {
 			up.hide();
 			rotationManager.hide();
+			scaleSession.hide();
 		}else {
 			up.show();
 			rotationManager.show();
+			//scaleSession.show();
+
 		}
 	}
 
@@ -338,7 +341,7 @@ public class ControlSprites {
 	public void initializeMirror(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
 		mirror.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);	
 	}
-	public void cancleAllign() {
+	public void cancelOperationMode() {
 		allign.cancel();
 		mirror.cancel();
 	}
@@ -347,7 +350,7 @@ public class ControlSprites {
 		for (Node r : allElems)
 			r.setVisible(true);
 		rotationManager.initialize();
-		mirror.initialize();
+		mirror.hide();
 		allign.hide();
 		for (ThreedNumber t : numbers) {
 			t.hide();
@@ -562,7 +565,7 @@ public class ControlSprites {
 				for (DottedLine l : lines) {
 					l.setVisible(true);
 				}
-				mirror.show();
+				rotationManager.hide();
 				break;
 			case PLACING:
 				for (DottedLine l : lines) {

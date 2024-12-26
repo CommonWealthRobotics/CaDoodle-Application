@@ -676,7 +676,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearSelection() {
-		cancleAllign();
+		cancelOperationModes();
 		selected.clear();
 		updateControlsDisplayOfSelected();
 		setKeyBindingFocus();
@@ -1188,14 +1188,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return controls.isFocused();
 	}
 
-	public void cancleAllign() {
+	public void cancelOperationModes() {
 		if (controls == null)
 			return;
 		if (controls.allignIsActive()) {
 			controls.setMode(SpriteDisplayMode.Default);
 		}
+		if(controls.mirrorIsActive()) {
+			controls.setMode(SpriteDisplayMode.Default);
+		}
+		controls.cancelOperationMode();
 
-		controls.cancleAllign();
 	}
 
 	public void setAllignButton(Button allignButton) {
@@ -1535,6 +1538,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setShowConstituants(boolean showConstituants) {
 		this.showConstituants = showConstituants;
+	}
+
+	public boolean isInOperationMode() {
+		
+		return  controls.allignIsActive()||controls.mirrorIsActive();
 	}
 
 }

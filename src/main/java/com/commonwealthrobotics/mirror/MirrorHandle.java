@@ -7,6 +7,7 @@ import java.util.List;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -14,6 +15,7 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
@@ -49,7 +51,7 @@ public class MirrorHandle {
 				this.cs = cs;
 				this.workplaneOffset = workplaneOffset;
 				CSG arrow = getDoubbleArrow();
-				mesh=arrow.getMesh();
+				mesh=arrow.newMesh();
 				
 	}
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
@@ -68,12 +70,10 @@ public class MirrorHandle {
 		
 	}
 	public void hide() {
-		// TODO Auto-generated method stub
-		
+		BowlerStudio.runLater(()->mesh.setVisible(false)) ;
 	}
 	public void initialize() {
-		// TODO Auto-generated method stub
-		
+		BowlerStudio.runLater(()->mesh.setVisible(true)) ;
 	}
 	public List<Node> getElements() {
 		ArrayList<Node> result = new ArrayList<Node>(); 
@@ -82,10 +82,11 @@ public class MirrorHandle {
 	}
 	public static CSG getDoubbleArrow() {
 		if(doubbleArrow==null) {
-			CSG cone = new Cylinder(0,height/2,height).toCSG().movez(height);
+			CSG cone = new Cylinder(height/2,0,height).toCSG().movez(height);
 			CSG pin = new Cylinder(height/4,height).toCSG();
 			CSG arrow = cone.union(pin).rotx(90);
 			doubbleArrow = arrow.union(arrow.rotx(180));
+			doubbleArrow.setColor(Color.BLACK);
 		}
 		return doubbleArrow;
 	}
