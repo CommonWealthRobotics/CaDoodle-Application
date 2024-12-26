@@ -1053,6 +1053,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 84:
 					session.toggleTransparent();
 					break;
+				case 109:
+					session.onMirror();
+					break;
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
