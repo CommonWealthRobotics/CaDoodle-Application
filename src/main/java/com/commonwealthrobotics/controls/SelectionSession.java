@@ -47,6 +47,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.DepthTest;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
@@ -58,6 +59,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -69,6 +71,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
@@ -369,20 +374,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void displayCSG(CSG c) {
 		MeshView meshView = c.getMesh();
 		if (c.isHole() && !c.isWireFrame()) {
-			Image texture = new Image(Main.class.getResourceAsStream("holeTexture.png"));
-
-			meshView = new TexturedCSG(c, texture);
-			// addTextureCoordinates(meshView);
-			// Create a new PhongMaterial
-
-			// Set opacity for semi-transparency
-			meshView.setOpacity(0.75); // Adjust this value between 0.0 and 1.0 as needed
+			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
+			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+			pm.setSpecularColor(new Color(1, 1, 1, 0.75));
+			meshView.setCullFace(CullFace.NONE);
+			meshView.setDrawMode(DrawMode.FILL);
+			meshView.setDepthTest(DepthTest.ENABLE);
+			meshView.setBlendMode(BlendMode.SRC_OVER);
 		}
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		meshes.put(c, meshView);
 		setUpControls(meshView, c.getName());
 	}
+	
 
 	private void setUpControls(MeshView meshView, String name) {
 		if (name == null)

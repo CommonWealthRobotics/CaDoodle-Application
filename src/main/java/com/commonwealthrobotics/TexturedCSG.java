@@ -80,11 +80,11 @@ public class TexturedCSG extends TexturedMesh {
 		PhongMaterial material = new PhongMaterial();
 
 		// material.setDiffuseMap(texture);
-		material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+		material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.35));
 		material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 
 		setMaterial(material);
-		setOpacity(0.25);
+		//setOpacity(0.25);
 	}
 
 	@Override
