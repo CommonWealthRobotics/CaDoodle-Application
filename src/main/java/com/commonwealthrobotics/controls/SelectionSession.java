@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -739,9 +740,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 	public void toggleTransparent() {
 		new Thread(()->{
-			for(CSG c:getSelectedCSG(selected)) {
+			ArrayList<ToSolid> toChange = new ArrayList<>();
+			for (Iterator<String> iterator = selected.iterator(); iterator.hasNext();) {
+				String s = iterator.next();
+				CSG c= getSelectedCSG(s);
 				if(!c.isHole()) {
 					MeshView mesh = meshes.get(c);
+					if(mesh==null)
+						continue;
 					PhongMaterial phongMaterial = (PhongMaterial)mesh.getMaterial();
 					Color diffuseColor = phongMaterial.getDiffuseColor();
 					double opacity=diffuseColor.getOpacity();
@@ -755,14 +761,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					phongMaterial.setDiffuseColor(diffuseColor);
 					mesh.setMaterial(phongMaterial);
 					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(diffuseColor);
-					try {
-						addOp(solid).join();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					toChange.add(solid);
 				}
 			}	
+			for(ToSolid solid:toChange) {
+				try {
+					addOp(solid).join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}).start();	
 	}
 	public boolean isSelectedTransparent() {
