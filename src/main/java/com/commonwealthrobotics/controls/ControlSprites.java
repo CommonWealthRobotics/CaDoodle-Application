@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.allign.AllignManager;
+import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
@@ -59,6 +60,7 @@ public class ControlSprites {
 	private ScaleSessionManager scaleSession;
 	private RotationSessionManager rotationManager;
 	private AllignManager allign;
+	private MirrorSessionManager mirror;
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
 	// private Rectangle bottomDimentions = new Rectangle(100,100,new
 	// Color(0,0,1,0.25));
@@ -198,9 +200,9 @@ public class ControlSprites {
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, up.getMesh());
 		allElems.addAll(tmp);
 
-		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset);
-		allign = new AllignManager(session, selection, workplaneOffset);
+		setUpOpperationManagers(session, ap);
 		allElems.addAll(allign.getElements());
+		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
 			//com.neuronrobotics.sdk.common.Log.error("Typed position update");
@@ -243,6 +245,12 @@ public class ControlSprites {
 		clearSelection();
 		setUpUIComponennts();
 
+	}
+
+	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap) {
+		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset);
+		allign = new AllignManager(session, selection, workplaneOffset);
+		mirror=new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
 	private void setUpUIComponennts() {
@@ -301,9 +309,7 @@ public class ControlSprites {
 		//TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		//TickToc.tic("rot update");
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
-		//TickToc.tic("alligned update");
-		allign.threeDTarget(screenW, screenH, zoom, b, cf);
+		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		//TickToc.tic("cubes update");
 		updateCubes();
 		//TickToc.tic("lines update");
@@ -317,18 +323,31 @@ public class ControlSprites {
 		}
 	}
 
-	public void initializeAllign(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
-		allign.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
+	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x, double y,
+			double z, List<String> selectedCSG, Bounds b) {
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
+		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
+		//TickToc.tic("alligned update");
+		allign.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
 
+	public void initializeAllign(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
+		allign.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
+		
+	}
+	public void initializeMirror(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
+		mirror.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);	
+	}
 	public void cancleAllign() {
 		allign.cancel();
+		mirror.cancel();
 	}
 
 	private void initialize() {
 		for (Node r : allElems)
 			r.setVisible(true);
 		rotationManager.initialize();
+		mirror.initialize();
 		allign.hide();
 		for (ThreedNumber t : numbers) {
 			t.hide();
@@ -339,6 +358,7 @@ public class ControlSprites {
 		scaleSession.resetSelected();
 		up.resetSelected();
 		rotationManager.resetSelected();
+		
 	}
 
 	public boolean isFocused() {
@@ -506,6 +526,7 @@ public class ControlSprites {
 			case Default:
 				initialize();
 				allign.hide();
+				mirror.hide();
 				return;
 			case MoveXY:
 				for (DottedLine l : lines) {
@@ -537,6 +558,12 @@ public class ControlSprites {
 					l.setVisible(true);
 				}
 				break;
+			case Mirror:
+				for (DottedLine l : lines) {
+					l.setVisible(true);
+				}
+				mirror.show();
+				break;
 			case PLACING:
 				for (DottedLine l : lines) {
 					l.setVisible(true);
@@ -546,6 +573,9 @@ public class ControlSprites {
 			}
 			updateLines();
 		});
+	}
+	public boolean mirrorIsActive() {
+		return mirror.isActive();
 	}
 
 	public boolean allignIsActive() {

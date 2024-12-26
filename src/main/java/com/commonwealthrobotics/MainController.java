@@ -454,8 +454,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
-	void onMirron(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Mirron Object");
+	void onMirror(ActionEvent event) {
+		session.onMirror();
 		session.setKeyBindingFocus();
 	}
 

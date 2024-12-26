@@ -186,6 +186,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		manipulation.set(0, 0, 0);
 		if (controls.allignIsActive() && Allign.class.isInstance(source))
 			controls.setMode(SpriteDisplayMode.Allign);
+		else if (controls.mirrorIsActive() && Mirror.class.isInstance(source))
+			controls.setMode(SpriteDisplayMode.Mirror);
 		else
 			controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
@@ -1174,7 +1176,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Bounds b = getSellectedBounds(selectedCSG);
 		controls.initializeAllign(selectedCSG, b, meshes);
 	}
-
+	public void onMirror() {
+		if (controls == null)
+			return;
+		controls.setMode(SpriteDisplayMode.Mirror);
+		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+		Bounds b = getSellectedBounds(selectedCSG);
+		controls.initializeMirror(selectedCSG, b, meshes);
+	}
 	public boolean isFocused() {
 		return controls.isFocused();
 	}

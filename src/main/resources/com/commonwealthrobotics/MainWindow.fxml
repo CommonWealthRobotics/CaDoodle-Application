@@ -467,7 +467,7 @@
                               <Tooltip text="Allign &lt; L &gt;" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirron" styleClass="image-button">
+                        <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
