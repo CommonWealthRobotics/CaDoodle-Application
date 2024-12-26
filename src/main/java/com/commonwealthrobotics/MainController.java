@@ -1049,6 +1049,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 27:
 					workplane.cancle();
 					break;
+				case 116:
+					session.toggleTransparent();
+					break;
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
