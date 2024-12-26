@@ -741,14 +741,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		new Thread(()->{
 			for(CSG c:getSelectedCSG(selected)) {
 				if(!c.isHole()) {
-					PhongMaterial phongMaterial = (PhongMaterial)c.getMesh().getMaterial();
+					MeshView mesh = meshes.get(c);
+					PhongMaterial phongMaterial = (PhongMaterial)mesh.getMaterial();
 					Color diffuseColor = phongMaterial.getDiffuseColor();
 					double opacity=diffuseColor.getOpacity();
-					if(opacity<1)
+					if(opacity<1) {
 						opacity=1;
-					else
+					}
+					else {
 						opacity=0.35;
+					}
+					diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(), opacity);
 					phongMaterial.setDiffuseColor(diffuseColor);
+					mesh.setMaterial(phongMaterial);
 					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(diffuseColor);
 					try {
 						addOp(solid).join();
