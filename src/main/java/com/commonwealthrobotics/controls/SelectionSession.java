@@ -129,7 +129,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean useButton = false;
 	private Button regenerate = new Button("Re-Generate");
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
-	private boolean showConstituants =false;
+	private boolean showConstituants = false;
 
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
@@ -284,7 +284,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				File myFile = f;
 				if (parameters.size() > 0 && regenEvents.get(n) == null) {
 					BowlerStudio.runLater(() -> regenerate.setDisable(true));
-					//new RuntimeException("Regester event for " + source.getType() + " " + nameString).printStackTrace();
+					// new RuntimeException("Regester event for " + source.getType() + " " +
+					// nameString).printStackTrace();
 
 					EventHandler<ActionEvent> value = e -> {
 						BowlerStudio.runLater(() -> regenerate.setDisable(true));
@@ -327,19 +328,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		BowlerStudio.runLater(() -> {
 			clearScreen();
-			if(isShowConstituants()) {
+			if (isShowConstituants()) {
 				for (CSG c : ap.get().getCurrentState()) {
-					if(c.isInGroup() || c.isHide()) {
+					if (c.isInGroup() || c.isHide()) {
 						c.setIsWireFrame(true);
-					}else {
+					} else {
 						c.setIsWireFrame(false);
 					}
 					displayCSG(c);
-					if(c.isInGroup() || c.isHide()) {
+					if (c.isInGroup() || c.isHide()) {
 						meshes.get(c).setMouseTransparent(true);
 					}
 				}
-			}else
+			} else
 				for (CSG c : process) {
 					displayCSG(c);
 				}
@@ -360,8 +361,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateControlsDisplayOfSelected();
 			setKeyBindingFocus();
 		});
-
-
 
 	}
 
@@ -390,7 +389,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		meshes.put(c, meshView);
 		setUpControls(meshView, c.getName());
 	}
-	
 
 	private void setUpControls(MeshView meshView, String name) {
 		if (name == null)
@@ -740,33 +738,34 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		addOp(h);
 
 	}
+
 	public void toggleTransparent() {
-		new Thread(()->{
+		new Thread(() -> {
 			ArrayList<ToSolid> toChange = new ArrayList<>();
 			for (Iterator<String> iterator = selected.iterator(); iterator.hasNext();) {
 				String s = iterator.next();
-				CSG c= getSelectedCSG(s);
-				if(!c.isHole()) {
+				CSG c = getSelectedCSG(s);
+				if (!c.isHole()) {
 					MeshView mesh = meshes.get(c);
-					if(mesh==null)
+					if (mesh == null)
 						continue;
-					PhongMaterial phongMaterial = (PhongMaterial)mesh.getMaterial();
+					PhongMaterial phongMaterial = (PhongMaterial) mesh.getMaterial();
 					Color diffuseColor = phongMaterial.getDiffuseColor();
-					double opacity=diffuseColor.getOpacity();
-					if(opacity<1) {
-						opacity=1;
+					double opacity = diffuseColor.getOpacity();
+					if (opacity < 1) {
+						opacity = 1;
+					} else {
+						opacity = 0.35;
 					}
-					else {
-						opacity=0.35;
-					}
-					diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(), opacity);
+					diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(),
+							opacity);
 					phongMaterial.setDiffuseColor(diffuseColor);
 					mesh.setMaterial(phongMaterial);
 					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(diffuseColor);
 					toChange.add(solid);
 				}
-			}	
-			for(ToSolid solid:toChange) {
+			}
+			for (ToSolid solid : toChange) {
 				try {
 					addOp(solid).join();
 				} catch (InterruptedException e) {
@@ -774,15 +773,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					e.printStackTrace();
 				}
 			}
-		}).start();	
+		}).start();
 	}
+
 	public boolean isSelectedTransparent() {
-		double opacity=0;
-		for(CSG c:getSelectedCSG(selected)) {
-			if(!c.isHole())
-				opacity+=((PhongMaterial)c.getMesh().getMaterial()).getDiffuseColor().getOpacity();
+		double opacity = 0;
+		for (CSG c : getSelectedCSG(selected)) {
+			if (!c.isHole())
+				opacity += ((PhongMaterial) c.getMesh().getMaterial()).getDiffuseColor().getOpacity();
 		}
-		return (opacity/(double)selected.size())<0.999;
+		return (opacity / (double) selected.size()) < 0.999;
 	}
 
 	public void setColor(Color value) {
@@ -930,14 +930,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Paste paste = new Paste().setNames(copyTarget);
 			ap.addOp(paste).join();
 			HashSet<String> namesAdded = paste.getNamesAdded();
-			ArrayList<String>namesBack=new ArrayList<String>();
-			for(CSG c:getSelectedCSG(namesBack)) {
-				if(c.isInGroup())
+			ArrayList<String> namesBack = new ArrayList<String>();
+			for (CSG c : getSelectedCSG(namesBack)) {
+				if (c.isInGroup())
 					continue;
 				namesBack.add(c.getName());
 			}
-			if(distance>0) {
-				MoveCenter mc = new MoveCenter().setNames(namesBack).setLocation(new TransformNR(distance,0,0));
+			if (distance > 0) {
+				MoveCenter mc = new MoveCenter().setNames(namesBack).setLocation(new TransformNR(distance, 0, 0));
 				ap.addOp(mc).join();
 			}
 			selectAll(namesAdded);
@@ -1171,19 +1171,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onAllign() {
 		if (controls == null)
 			return;
-		controls.setMode(SpriteDisplayMode.Allign);
-		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
-		Bounds b = getSellectedBounds(selectedCSG);
-		controls.initializeAllign(selectedCSG, b, meshes);
+		new Thread(() -> {
+			controls.setMode(SpriteDisplayMode.Allign);
+			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+			Bounds b = getSellectedBounds(selectedCSG);
+			controls.initializeAllign(selectedCSG, b, meshes);
+		}).start();
+
 	}
+
 	public void onMirror() {
 		if (controls == null)
 			return;
-		controls.setMode(SpriteDisplayMode.Mirror);
-		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
-		Bounds b = getSellectedBounds(selectedCSG);
-		controls.initializeMirror(selectedCSG, b, meshes);
+		new Thread(() -> {
+			controls.setMode(SpriteDisplayMode.Mirror);
+			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+			Bounds b = getSellectedBounds(selectedCSG);
+			controls.initializeMirror(selectedCSG, b, meshes);
+		}).start();
 	}
+
 	public boolean isFocused() {
 		return controls.isFocused();
 	}
@@ -1194,7 +1201,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (controls.allignIsActive()) {
 			controls.setMode(SpriteDisplayMode.Default);
 		}
-		if(controls.mirrorIsActive()) {
+		if (controls.mirrorIsActive()) {
 			controls.setMode(SpriteDisplayMode.Default);
 		}
 		controls.cancelOperationMode();
@@ -1541,8 +1548,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public boolean isInOperationMode() {
-		
-		return  controls.allignIsActive()||controls.mirrorIsActive();
+
+		return controls.allignIsActive() || controls.mirrorIsActive();
 	}
 
 }

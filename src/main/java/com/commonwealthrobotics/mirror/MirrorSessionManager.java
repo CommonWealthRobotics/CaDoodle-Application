@@ -8,6 +8,7 @@ import java.util.List;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.rotate.RotationHandle;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrentation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -36,10 +37,10 @@ public class MirrorSessionManager {
 			Affine workplaneOffset) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
-		x = new MirrorHandle(EulerAxis.tilt, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
-		y = new MirrorHandle(EulerAxis.elevation, workplaneOffset, selection, null, ap, controlSprites,
+		x = new MirrorHandle(MirrorOrentation.x, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
+		y = new MirrorHandle(MirrorOrentation.y, workplaneOffset, selection, null, ap, controlSprites,
 				workplaneOffset);
-		z = new MirrorHandle(EulerAxis.azimuth, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
+		z = new MirrorHandle(MirrorOrentation.z, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
 		handles = Arrays.asList(x, y, z);
 		hide();
 	}
@@ -50,13 +51,6 @@ public class MirrorSessionManager {
 			result.addAll(r.getElements());
 		}
 		return result;
-	}
-
-	public void initialize() {
-		for (MirrorHandle r : handles) {
-			r.initialize();
-		}
-		//new RuntimeException().printStackTrace();
 	}
 
 	public void hide() {
@@ -80,17 +74,26 @@ public class MirrorSessionManager {
 		this.ta = ta;
 		this.selected = selected;
 		this.meshes = meshes;
-		initialize();
-		active=true;
+		for (MirrorHandle r : handles) {
+			r.initialize(b, engine, ta, selected, meshes);
+		}
+		setActive(true);
 	}
 
 	public void cancel() {
 		hide();
-		active=false;
+		setActive(false);
 	}
 
 	public boolean isActive() {
 		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+		for (MirrorHandle r : handles) {
+			r.setActive(active);
+		}
 	}
 
 }
