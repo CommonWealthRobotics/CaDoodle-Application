@@ -211,13 +211,13 @@ public class ShapesPallet {
 								try {
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
 									AbstractAddFrom setAddFromScript = new AddFromScript()
-											.set(key.get("git"), key.get("file"));
+											.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
 									String string = key.get("copyFile");
 									if(string!=null) {
 										if(Boolean.parseBoolean(string)) {
 											try {
 												File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-												setAddFromScript  = new AddFromFile().set(f);
+												setAddFromScript  = new AddFromFile().set(f).setLocation(currentAbsolutePose);
 											} catch (InvalidRemoteException e) {
 												// 
 												e.printStackTrace();
@@ -230,16 +230,15 @@ public class ShapesPallet {
 											}
 										}
 									}
-									
 									ap.addOp(setAddFromScript).join();
 									
 									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
-
-									MoveCenter mc = new MoveCenter().setNames(namesBack)
-											.setLocation(currentAbsolutePose);
-									ap.addOp(mc).join();
+//
+//									MoveCenter mc = new MoveCenter().setNames(namesBack)
+//											.setLocation(currentAbsolutePose);
+//									ap.addOp(mc).join();
 									session.selectAll(namesAdded);
 
 									if (!workplane.isClicked())
