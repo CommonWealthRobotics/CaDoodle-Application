@@ -26,7 +26,7 @@ import javafx.scene.transform.Scale;
 public class AllignHandle {
 	private BowlerStudio3dEngine engine;
 
-	private HashMap<CSG,MeshView> visualizers = new HashMap<>();
+	private HashMap<CSG, MeshView> visualizers = new HashMap<>();
 	private double scale;
 
 	public Allignment self;
@@ -41,7 +41,6 @@ public class AllignHandle {
 	private Vector3d orentation;
 
 	private Allign opperation;
-
 
 	private List<CSG> toAllign;
 
@@ -80,14 +79,15 @@ public class AllignHandle {
 			mesh.setMaterial(material);
 			exited = event -> {
 				material.setDiffuseColor(Color.BLACK);
-				for(CSG key:visualizers.keySet()) {
+				for (CSG key : visualizers.keySet()) {
 					visualizers.get(key).setVisible(false);
 				}
 			};
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
-				//com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " + orentation);
-				for(CSG key:visualizers.keySet()) {
+				// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
+				// orentation);
+				for (CSG key : visualizers.keySet()) {
 					visualizers.get(key).setVisible(true);
 				}
 			};
@@ -116,12 +116,12 @@ public class AllignHandle {
 	}
 
 	private void setMyOperation() {
-		if(isXvector())
-			opperation.x=self;
-		if(isYvector())
-			opperation.y=self;
-		if(isZvector())
-			opperation.z=self;
+		if (isXvector())
+			opperation.x = self;
+		if (isYvector())
+			opperation.y = self;
+		if (isZvector())
+			opperation.z = self;
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf) {
@@ -231,7 +231,8 @@ public class AllignHandle {
 
 		setScale(scaleFactor);
 
-		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+"
+		// scale "+scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(getScale());
@@ -274,10 +275,12 @@ public class AllignHandle {
 	}
 
 	public void hide() {
-		getHandle().setVisible(false);
-		for(CSG key:visualizers.keySet()) {
-			visualizers.get(key).setVisible(false);
-		}
+		BowlerStudio.runLater(() -> {
+			getHandle().setVisible(false);
+			for (CSG key : visualizers.keySet()) {
+				visualizers.get(key).setVisible(false);
+			}
+		});
 	}
 
 	public void setOnClickCallback(Runnable onClick) {
@@ -294,22 +297,22 @@ public class AllignHandle {
 	}
 
 	public void recomputeOps() {
-		Allignment x= opperation.x;
-		Allignment y=opperation.y;
-		Allignment z=opperation.z;
+		Allignment x = opperation.x;
+		Allignment y = opperation.y;
+		Allignment z = opperation.z;
 		setMyOperation();
-		
-		if(visualizationObjects!=null) {
-			for(CSG obj:visualizationObjects) {
+
+		if (visualizationObjects != null) {
+			for (CSG obj : visualizationObjects) {
 				MeshView mv = visualizers.remove(obj);
 				engine.removeUserNode(mv);
 			}
 		}
 		visualizationObjects = opperation.process(toAllign);
-		for(CSG indicator:visualizationObjects) {
+		for (CSG indicator : visualizationObjects) {
 			MeshView indicatorMesh = indicator.newMesh();
 			indicatorMesh.setMouseTransparent(true);
-			//indicatorMesh.getTransforms().addAll(workplaneOffset);
+			// indicatorMesh.getTransforms().addAll(workplaneOffset);
 			PhongMaterial material = new PhongMaterial();
 
 			if (indicator.isHole()) {
@@ -326,9 +329,9 @@ public class AllignHandle {
 			indicatorMesh.setVisible(false);
 			visualizers.put(indicator, indicatorMesh);
 		}
-		
-		opperation.x=x;
-		opperation.y=y;
+
+		opperation.x = x;
+		opperation.y = y;
 		opperation.z = z;
 	}
 }

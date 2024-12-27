@@ -168,7 +168,7 @@ public class AllignManager {
 			r.hide();
 		}
 		for (Node n : getElements()) {
-			n.setVisible(false);
+			BowlerStudio.runLater(()->n.setVisible(false));
 		}
 	}
 
