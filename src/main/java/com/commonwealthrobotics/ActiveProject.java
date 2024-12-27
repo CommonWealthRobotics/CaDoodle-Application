@@ -154,9 +154,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-		File random = new File(RandomStringFactory.getNextRandomName() + ".doodle");
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", random.getAbsolutePath());
-		return random;
+		try {
+			return newProject();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e); // application should crash
+		}
 	}
 
 	public CaDoodleFile loadActive() throws Exception  {
