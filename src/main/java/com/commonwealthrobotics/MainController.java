@@ -449,7 +449,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onLock(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Lock Selected");
-		session.onLock();
+		session.lockToggle();
 		session.setKeyBindingFocus();
 	}
 
@@ -1026,6 +1026,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 72:
 					session.showAll();
 					break;
+				case 12:
+					session.lockToggle();
+					break;
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
@@ -1037,23 +1040,41 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			} else {
 				switch ((int) character.charAt(0)) {
-				case 100:
+				case 119://w
+					onWOrkplane(null);
+					break;
+				case 45://-
+					onZoomOut(null);
+					break;
+				case 43://+
+					onZoomIn(null);
+					break;
+				case 102://f
+					onFitView(null);
+					break;
+				case 104:// h
+					session.setToHole();
+					break;
+				case 115:
+					session.setToSolid();
+					break;
+				case 100://d
 					session.onDrop();
 					break;
-				case 108:
+				case 108://l
 					session.onAllign();
 					break;
-				case 99:
+				case 99://c
 					session.onCruse();
 					break;
-				case 27:
+				case 27://escape
 					workplane.cancle();
 					break;
-				case 116:
+				case 116://t
 				case 84:
 					session.toggleTransparent();
 					break;
-				case 109:
+				case 109://m
 					session.onMirror();
 					break;
 				default:

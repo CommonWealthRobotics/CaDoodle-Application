@@ -1005,7 +1005,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		workplane.activate();
 	}
 
-	public void onLock() {
+	public void lockToggle() {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
