@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.rotate.RotationHandle;
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -99,7 +100,8 @@ public class AllignManager {
 			HashMap<CSG, MeshView> meshes) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
-			n.setVisible(true);
+			BowlerStudio.runLater(()->n.setVisible(true));
+			;
 		}
 		this.toAllign.clear();
 		for (CSG c : ta)
