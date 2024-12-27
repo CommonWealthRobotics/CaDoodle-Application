@@ -261,13 +261,16 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public File newProject() throws IOException {
 		List<CaDoodleFile> proj = getProjects();
-		String pathname = "Doodle-" + proj.size();
+		String nextRandomName = RandomStringFactory.getNextRandomName();
+		String pathname = "Doodle-" +proj.size()+"-"+ nextRandomName;
 		File np = new File(getWorkingDir().getAbsolutePath() + delim() + pathname);
 		np.mkdirs();
 		File nf = new File(np.getAbsolutePath() + delim() + pathname+".doodle");
 		nf.createNewFile();
 		try {
-			setActiveProject(nf);
+			CaDoodleFile cf =setActiveProject(nf);
+			cf.setProjectName(nextRandomName);
+			cf.save();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
