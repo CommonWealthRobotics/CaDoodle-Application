@@ -7,11 +7,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
+
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
@@ -36,6 +42,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 
 public class ShapesPallet {
@@ -198,9 +205,32 @@ public class ShapesPallet {
 							if (workplane.isClicked())
 								try {
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-									AddFromScript setAddFromScript = new AddFromScript()
+									AbstractAddFrom setAddFromScript = new AddFromScript()
 											.set(key.get("git"), key.get("file"));
+									String string = key.get("copyFile");
+									if(string!=null) {
+										if(Boolean.parseBoolean(string)) {
+											try {
+												File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
+												setAddFromScript  = new AddFromFile().set(f);
+											} catch (InvalidRemoteException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} catch (TransportException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} catch (GitAPIException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} catch (IOException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+										}
+									}
+									
 									ap.addOp(setAddFromScript).join();
+									
 									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
