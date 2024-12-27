@@ -135,10 +135,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		try {
 			if (!ConfigurationDatabase.containsKey("CaDoodle", "CaDoodleacriveFile"))
 				ScriptingEngine.pull("https://github.com/madhephaestus/TestRepo.git");
-			return new File(ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile",
-					ScriptingEngine
-							.fileFromGit("https://github.com/madhephaestus/TestRepo.git", "Doodle1/TestRepo.doodle")
-							.getAbsolutePath())
+			Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile",
+					null);
+			if (object==null)
+				return newProject();
+			return new File(object
 					.toString());
 		} catch (InvalidRemoteException e) {
 			// TODO Auto-generated catch block
@@ -258,7 +259,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	    return list;
 	}
 
-	public void newProject() throws IOException {
+	public File newProject() throws IOException {
 		List<CaDoodleFile> proj = getProjects();
 		String pathname = "Doodle-" + proj.size();
 		File np = new File(getWorkingDir().getAbsolutePath() + delim() + pathname);
@@ -271,6 +272,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return nf;
 	}
 	public boolean isDisableRegenerate() {
 		return disableRegenerate;
