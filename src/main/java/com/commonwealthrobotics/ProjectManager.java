@@ -68,7 +68,7 @@ public class ProjectManager {
 			ap.newProject();
 			ap.get().initialize();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 		stage.close();
@@ -120,7 +120,7 @@ public class ProjectManager {
 								SplashManager.closeSplash();
 								onFinish.run();
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
+								// Auto-generated catch block
 								e.printStackTrace();
 							}
 						}).start();
@@ -145,7 +145,7 @@ public class ProjectManager {
 
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

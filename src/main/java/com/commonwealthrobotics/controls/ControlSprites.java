@@ -153,7 +153,7 @@ public class ControlSprites {
 			try {
 				t.join();
 			} catch (InterruptedException exx) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				exx.printStackTrace();
 			}
 			zMove.set(0, 0, 0);

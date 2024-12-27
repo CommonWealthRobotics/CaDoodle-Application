@@ -89,7 +89,7 @@ public class ShapesPallet {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			// 
 			e.printStackTrace();
 		}
 		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
@@ -107,7 +107,7 @@ public class ShapesPallet {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// 
 					e.printStackTrace();
 				}
 			}
@@ -178,6 +178,11 @@ public class ShapesPallet {
 		// new Thread(() -> {
 		AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
 		List<CSG> so = set.process(new ArrayList<>());
+		for(CSG c:so) {
+			for(String s:c.getParameters()) {
+				CSGDatabase.delete(s);
+			}
+		}
 		referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
@@ -214,16 +219,13 @@ public class ShapesPallet {
 												File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
 												setAddFromScript  = new AddFromFile().set(f);
 											} catch (InvalidRemoteException e) {
-												// TODO Auto-generated catch block
+												// 
 												e.printStackTrace();
 											} catch (TransportException e) {
-												// TODO Auto-generated catch block
 												e.printStackTrace();
 											} catch (GitAPIException e) {
-												// TODO Auto-generated catch block
 												e.printStackTrace();
 											} catch (IOException e) {
-												// TODO Auto-generated catch block
 												e.printStackTrace();
 											}
 										}
@@ -251,10 +253,8 @@ public class ShapesPallet {
 									workplane.placeWorkplaneVisualization();
 									workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 
@@ -269,7 +269,6 @@ public class ShapesPallet {
 		try {
 			Thread.sleep(30);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

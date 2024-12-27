@@ -249,12 +249,12 @@ public class ResizingHandle {
 	}
 
 	private double getHeight() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return getSize();
 	}
 
 	private double getWidth() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return getSize();
 	}
 

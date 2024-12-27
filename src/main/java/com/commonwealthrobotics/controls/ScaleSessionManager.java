@@ -191,7 +191,7 @@ public class ScaleSessionManager {
 				try {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Saving from "+c);
@@ -220,13 +220,13 @@ public class ScaleSessionManager {
 				try {
 					t.join();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 				BowlerStudio.runLater(() -> threeDTarget());

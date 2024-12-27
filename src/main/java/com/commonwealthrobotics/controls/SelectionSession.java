@@ -143,7 +143,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			try {
 				t.join();
 			} catch (InterruptedException ex) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				ex.printStackTrace();
 			}
 			controls.setMode(SpriteDisplayMode.Default);
@@ -214,7 +214,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			try {
 				t.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOpperation(), ap.get());
@@ -225,7 +225,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					myWatchers.put(source, w);
 					w.addIFileChangeListener(l);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -261,7 +261,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						myWatchers.put(source, w);
 						w.addIFileChangeListener(l);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+						// Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -770,7 +770,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				try {
 					addOp(solid).join();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -945,7 +945,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			setCopyListToCurrentSelected();
 			BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 		} catch (CadoodleConcurrencyException | InterruptedException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -1062,10 +1062,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					selected.add(setNames.getGroupID());
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 				} catch (CadoodleConcurrencyException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 			}).start();
@@ -1268,7 +1268,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				try {
 					op.join();// wait for the move of this object to finish
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 
 				}
@@ -1367,7 +1367,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
+						// Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1492,7 +1492,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onInitializationDone() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
@@ -1522,7 +1522,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onInitializationStart() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 

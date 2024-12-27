@@ -134,7 +134,7 @@ public class Main extends Application {
 		try {
 			PasswordManager.setupAnyonmous();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 		ensureGitAssetsArePresent();
@@ -148,7 +148,7 @@ public class Main extends Application {
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 		BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
@@ -161,7 +161,7 @@ public class Main extends Application {
 //					"MakeVitamins.groovy");
 //			System.exit(1);
 //		} catch (Exception e) {
-//			// TODO Auto-generated catch block
+//			// Auto-generated catch block
 //			e.printStackTrace();
 //		}
 	}
@@ -211,7 +211,7 @@ public class Main extends Application {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
+						// Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -225,7 +225,7 @@ public class Main extends Application {
 				try {
 					BowlerStudio.openExternalWebpage(new URL(url));
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
+					// Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

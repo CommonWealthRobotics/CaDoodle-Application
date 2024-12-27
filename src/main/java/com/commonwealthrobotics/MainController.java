@@ -708,7 +708,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 //			try {
 //				Thread.sleep(200);
 //			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
+//				// Auto-generated catch block
 //				e.printStackTrace();
 //			}
 			try {
@@ -1136,25 +1136,25 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onInitializationStart() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onRegenerateDone() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onRegenerateStart() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 }

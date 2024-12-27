@@ -122,7 +122,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 			try {
 				ap.addOp(op).join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 			updateState();
@@ -319,37 +319,37 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onSaveSuggestion() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onInitializationDone() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onInitializationStart() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onRegenerateDone() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onRegenerateStart() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		
 	}
 

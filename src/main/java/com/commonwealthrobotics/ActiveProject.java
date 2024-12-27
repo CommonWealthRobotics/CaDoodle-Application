@@ -53,7 +53,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(t.isAlive()) {
@@ -62,7 +62,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
+						// Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -72,7 +72,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				t.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 			SplashManager.closeSplash();
@@ -89,7 +89,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(t.isAlive()) {
@@ -100,7 +100,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				t.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 			SplashManager.closeSplash();
@@ -142,16 +142,16 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			return new File(object
 					.toString());
 		} catch (InvalidRemoteException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		} catch (TransportException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		} catch (GitAPIException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 		File random = new File(RandomStringFactory.getNextRandomName() + ".doodle");
@@ -174,13 +174,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		try {
 			cf.save();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public boolean isOpen() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return isOpenValue;
 	}
 
@@ -247,7 +247,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	            			try {
 								list.add(CaDoodleFile.fromFile(f,null,false));
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
+								// Auto-generated catch block
 								e.printStackTrace();
 							}
 	            		}
@@ -272,7 +272,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			cf.setProjectName(nextRandomName);
 			cf.save();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 		return nf;

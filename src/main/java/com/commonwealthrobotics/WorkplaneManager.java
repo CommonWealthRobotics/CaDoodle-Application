@@ -335,7 +335,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public MeshView getPlacementPlane() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return wpPick;
 	}
 }

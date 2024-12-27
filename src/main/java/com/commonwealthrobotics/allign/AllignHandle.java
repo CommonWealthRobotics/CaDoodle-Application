@@ -267,7 +267,7 @@ public class AllignHandle {
 
 	public void initialize(Allign opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
 		this.opperation = opperation;
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		this.engine = engine;
 		this.toAllign = toAllign;
 		this.selected = selected;
