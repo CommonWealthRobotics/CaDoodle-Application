@@ -296,7 +296,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					regenEvents.put(n.getName(), value);
 				}
 				for (String k : parameters) {
-					if (!k.contains(n.getName()))
+					if (!k.contains(n.getName()) && ! k.contains("CaDoodle_File_Location"))
 						continue;
 					Parameter para = CSGDatabase.get(k);
 					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
@@ -460,7 +460,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
 				for (String key : sortedList) {
-					if (key.contains("CaDoodle") && key.contains(sel.getName())) {
+					if (key.contains("CaDoodle") &&( key.contains(sel.getName()) || key.contains("CaDoodle_File_Location") )  ) {
 						numCadParaams++;
 						String[] parts = key.split("_");
 						HBox thisLine = new HBox(5);
