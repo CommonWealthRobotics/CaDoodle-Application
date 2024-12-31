@@ -82,6 +82,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		});
 
 		engine.addUserNode(linesGroupp);
+		ground.setMouseTransparent(true);
+		wpPick.setMouseTransparent(true);
+
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
@@ -130,6 +133,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			onSelectEvent.run();
 		onSelectEvent = null;
 		active = false;
+		ground.setMouseTransparent(true);
+
 	}
 
 	public void activate() {
@@ -139,6 +144,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		clicked = false;
 		com.neuronrobotics.sdk.common.Log.error("Starting workplane listeners");
 		ground.addEventFilter(MouseEvent.ANY, this);
+		ground.setMouseTransparent(false);
+		wpPick.setMouseTransparent(false);
+		
 		wpPick.addEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
 		if(meshes!=null)
@@ -159,6 +167,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			cancle();
 			ev.consume();
 			session.updateControls();
+			ground.setMouseTransparent(true);
+			wpPick.setMouseTransparent(true);
 			return;
 		}
 		if (ev.getEventType() == MouseEvent.MOUSE_MOVED || ev.getEventType() == MouseEvent.MOUSE_DRAGGED) {
@@ -302,11 +312,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		});
 	}
 
-	private boolean isWorkplaneInOrigin() {
+	public boolean isWorkplaneInOrigin() {
 		TransformNR w = ap.get().getWorkplane();
 		double epsilon = 0.00001;
 		RotationNR r = w.getRotation();
-		if (Math.abs(w.getX()) > epsilon || Math.abs(w.getY()) > epsilon || Math.abs(w.getZ()) > epsilon) {
+		double abst = Math.abs(w.getX());
+		double abs2t = Math.abs(w.getY());
+		double abs3t = Math.abs(w.getZ());
+		if (abst > epsilon || abs2t > epsilon || abs3t > epsilon) {
 			return true;
 		}
 		double abs = Math.abs(r.getRotationAzimuthDegrees());

@@ -77,6 +77,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
 	private ActiveProject ap = null;
+	private SelectionBox sb=null;
 
 	/**
 	 * CaDoodle Model Classes
@@ -636,8 +637,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.rebuild(true);
 		ap.addListener(this);
 		session = new SelectionSession(engine, ap);
-
-		try {
+		sb = new SelectionBox(session,view3d);
+		try {	
 			ap.loadActive();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -926,9 +927,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					ap.get().setWorkplane(new TransformNR());
 					workplane.placeWorkplaneVisualization();
 				}
-
 				session.clearSelection();
-
 				com.neuronrobotics.sdk.common.Log.error("Cancle");
 			}
 		});

@@ -204,6 +204,8 @@ public class ShapesPallet {
 					}
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
+					boolean workplaneInOrigin = !workplane.isWorkplaneInOrigin();
+					System.out.println("Is Workplane set "+workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {
 							session.setMode(SpriteDisplayMode.Default);
@@ -240,7 +242,6 @@ public class ShapesPallet {
 //											.setLocation(currentAbsolutePose);
 //									ap.addOp(mc).join();
 									session.selectAll(namesAdded);
-
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
@@ -250,7 +251,8 @@ public class ShapesPallet {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
 									workplane.placeWorkplaneVisualization();
-									workplane.setTemporaryPlane();
+									if(workplaneInOrigin)
+										workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
 									e.printStackTrace();
 								} catch (InterruptedException e) {
