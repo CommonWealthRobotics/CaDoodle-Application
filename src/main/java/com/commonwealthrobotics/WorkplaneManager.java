@@ -84,7 +84,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		engine.addUserNode(linesGroupp);
 		ground.setMouseTransparent(true);
 		wpPick.setMouseTransparent(true);
-
+		ground.setVisible(false);
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
@@ -134,7 +134,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		onSelectEvent = null;
 		active = false;
 		ground.setMouseTransparent(true);
-
+		ground.setVisible(false);
 	}
 
 	public void activate() {
@@ -146,7 +146,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		ground.addEventFilter(MouseEvent.ANY, this);
 		ground.setMouseTransparent(false);
 		wpPick.setMouseTransparent(false);
-		
+		ground.setVisible(true);
 		wpPick.addEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
 		if(meshes!=null)
@@ -169,6 +169,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			session.updateControls();
 			ground.setMouseTransparent(true);
 			wpPick.setMouseTransparent(true);
+			ground.setVisible(false);
 			return;
 		}
 		if (ev.getEventType() == MouseEvent.MOUSE_MOVED || ev.getEventType() == MouseEvent.MOUSE_DRAGGED) {

@@ -637,7 +637,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.rebuild(true);
 		ap.addListener(this);
 		session = new SelectionSession(engine, ap);
-		sb = new SelectionBox(session,view3d);
+		sb = new SelectionBox(session,view3d,engine,ap);
 		try {	
 			ap.loadActive();
 		} catch (Exception e) {
@@ -828,7 +828,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ground.setOpacity(0.25);
 		Group linesGroupp = new Group();
 		linesGroupp.setDepthTest(DepthTest.ENABLE);
-		linesGroupp.setViewOrder(-1); // Lower viewOrder renders on top
+		linesGroupp.setViewOrder(1); // Lower viewOrder renders on top
 		linesGroupp.getChildren().add(ground);
 		engine.addUserNode(linesGroupp);
 	}
@@ -914,31 +914,34 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setWorkplaneManager(workplane);
 		pallet = new ShapesPallet(shapeCatagory, objectPallet, session,ap,workplane);
 		workplane.placeWorkplaneVisualization();
-
+		sb.setWorkplaneManager(workplane);
 	}
 
 	private void setupEngineControls() {
 
-		engine.getSubScene().setOnMousePressed(event -> {
+		sb.setPressEvent(event -> {
 			resetArmed = true;
 			timeOfClick = System.currentTimeMillis();
 			if (isEventACancel(event)) {
+				System.out.println("Cancel event");
 				if (workplane.isTemporaryPlane()) {
 					ap.get().setWorkplane(new TransformNR());
 					workplane.placeWorkplaneVisualization();
 				}
 				session.clearSelection();
 				com.neuronrobotics.sdk.common.Log.error("Cancle");
-				sb.activate(event);
 			}
+			
+			//System.out.println("Releses MainController");
 		});
-		engine.getSubScene().setOnMouseDragged(event->{
-			if(event.isPrimaryButtonDown())
-				sb.dragged(event);
-		});
-		engine.getSubScene().setOnMouseReleased(event->{
-			sb.released(event);
-		});
+		
+//		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
+//			if(event.isPrimaryButtonDown())
+//				sb.activate(event);
+//		});
+		
+		
+
 		
 
 		session.setKeyBindingFocus();
@@ -1102,7 +1105,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && in != engine.getSubScene() && in !=workplane.getPlacementPlane())
+		if (in != ground && in != engine.getSubScene() && in !=workplane.getPlacementPlane() && in !=sb.getSelectionPlane())
 			return false;
 		if (event.isControlDown())
 			return false;
@@ -1119,17 +1122,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
 		// com.neuronrobotics.sdk.common.Log.error("Elevation "+el);
-		if (el < -90 || el > 90) {
-			ground.setVisible(false);
-		} else {
-			ground.setVisible(true);
-		}
+//		if (el < -90 || el > 90) {
+//			ground.setVisible(false);
+//		} else {
+//			ground.setVisible(true);
+//		}
 		double x = camera.getGlobalX();
 		double y = camera.getGlobalY();
 		double z = camera.getGlobalZ();
 		double screenW = engine.getSubScene().getWidth();
 		double screenH = engine.getSubScene().getHeight();
 		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
+		sb.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 	}
 
 	@Override

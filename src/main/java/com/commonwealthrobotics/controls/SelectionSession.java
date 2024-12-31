@@ -1218,18 +1218,29 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return new ArrayList<CSG>();
 		return ap.get().getCurrentState();
 	}
-
+	
 	public Bounds getSellectedBounds(List<CSG> incoming) {
+		return getBounds(incoming,ap.get().getWorkplane(),inWorkplaneBounds);
+	}
+	public Bounds getBounds(CSG incoming,TransformNR frame) {
+		return getBounds(Arrays.asList(incoming),frame,null);
+	}
+	public Bounds getBounds(CSG incoming,TransformNR frame, HashMap<CSG, Bounds> cache) {
+		return getBounds(Arrays.asList(incoming),frame,cache);
+	}
+	public Bounds getBounds(List<CSG> incoming,TransformNR frame, HashMap<CSG, Bounds> cache) {
+		if(cache==null)
+			cache = new HashMap<>();
 		Vector3d min = null;
 		Vector3d max = null;
 		// TickToc.tic("getSellectedBounds "+incoming.size());
 
 		for (CSG csg : incoming) {
-			if (inWorkplaneBounds.get(csg) == null) {
-				Transform inverse = TransformFactory.nrToCSG(ap.get().getWorkplane()).inverse();
-				inWorkplaneBounds.put(csg, csg.transformed(inverse).getBounds());
+			if (cache.get(csg) == null) {
+				Transform inverse = TransformFactory.nrToCSG(frame).inverse();
+				cache.put(csg, csg.transformed(inverse).getBounds());
 			}
-			Bounds b = inWorkplaneBounds.get(csg);
+			Bounds b = cache.get(csg);
 			Vector3d min2 = b.getMin().clone();
 			Vector3d max2 = b.getMax().clone();
 			if (min == null)
