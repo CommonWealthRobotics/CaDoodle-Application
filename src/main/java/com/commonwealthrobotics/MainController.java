@@ -929,8 +929,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 				session.clearSelection();
 				com.neuronrobotics.sdk.common.Log.error("Cancle");
+				sb.activate(event);
 			}
 		});
+		engine.getSubScene().setOnMouseDragged(event->{
+			if(event.isPrimaryButtonDown())
+				sb.dragged(event);
+		});
+		engine.getSubScene().setOnMouseReleased(event->{
+			sb.released(event);
+		});
+		
 
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
