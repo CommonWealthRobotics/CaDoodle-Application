@@ -51,6 +51,7 @@ public class SelectionBox {
 	private EventHandler<? super MouseEvent> eventFilter;
 	private HashMap<CSG, Bounds> cache = new HashMap<>();
 	private CSG selection;
+	private boolean start = false;
 
 	public SelectionBox(SelectionSession session, AnchorPane view3d, BowlerStudio3dEngine engine, ActiveProject ap) {
 		this.session = session;
@@ -68,7 +69,7 @@ public class SelectionBox {
 		getSelectionPlane().setOpacity(0.0025);
 		getSelectionPlane().getTransforms().addAll(dottedLine);
 
-		getSelectionPlane().setViewOrder(-2);
+		getSelectionPlane().setViewOrder(-1);
 		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
 			if (event.isPrimaryButtonDown())
 				dragged(event);
@@ -100,9 +101,11 @@ public class SelectionBox {
 
 	}
 	public void dragged(MouseEvent event) {
+		if(!start)
+			return;
 		if(!event.isPrimaryButtonDown())
 			return;
-		if(!(event.getSource()==engine.getSubScene()||event.getSource()==getSelectionPlane()))
+		if(event.getSource()!=getSelectionPlane())
 			return;
 		if (!engine.contains(rect)) {
 			engine.addUserNode(rect);
@@ -157,7 +160,6 @@ public class SelectionBox {
 				
 			}).start();
 			active = true;
-			
 		}
 		
 		// Auto-generated method stub
@@ -196,6 +198,7 @@ public class SelectionBox {
 				return;
 
 			active = false;
+			start=false;
 //			yTop=yTop-view3d.getHeight()/2;
 //			xLeft=xLeft-(view3d.getWidth()/2);
 //			ap.get().setWorkplane(cf);
@@ -275,7 +278,10 @@ public class SelectionBox {
 
 	public void setPressEvent(EventHandler< MouseEvent> value) {
 		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
-			System.out.println("Background Click ");
+			if(event.getSource()!=getSelectionPlane())
+				return;
+			System.out.println("Selection Box Background Click ");
+			start=true;
 			value.handle(event);
 		});
 	}
