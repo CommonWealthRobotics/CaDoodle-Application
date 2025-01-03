@@ -1524,7 +1524,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		return back;
 	}
-
+	public ArrayList<CSG> getSelectable() {
+		ArrayList<CSG> back = new ArrayList<CSG>();
+		for (CSG c : getCurrentState()) {
+			if (c.isHide())
+				continue;
+			if (c.isInGroup())
+				continue;
+			back.add(c);
+		}
+		return back;
+	}
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
 		inWorkplaneBounds.clear();
