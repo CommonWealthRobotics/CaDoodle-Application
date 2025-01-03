@@ -136,6 +136,11 @@ public class SelectionBox {
 
 			//show.clear();
 			cache.clear();
+			HashMap<CSG, MeshView> meshes = session.getMeshes();
+			for(CSG key:meshes.keySet()) {
+				MeshView mv= meshes.get(key);
+				mv.setMouseTransparent(true);
+			}
 			new Thread(()->{
 				ArrayList<CSG> visable = session.getAllVisable();
 				for (CSG c : visable)
@@ -187,6 +192,11 @@ public class SelectionBox {
 //		for (Rectangle r : show) {
 //			engine.removeUserNode(r);
 //		}
+		HashMap<CSG, MeshView> meshes = session.getMeshes();
+		for(CSG key:meshes.keySet()) {
+			MeshView mv= meshes.get(key);
+			mv.setMouseTransparent(false);
+		}
 		new Thread(() -> {
 			double width = Math.abs(event.getX() - xStart);
 			double height = Math.abs(event.getY() - yStart);

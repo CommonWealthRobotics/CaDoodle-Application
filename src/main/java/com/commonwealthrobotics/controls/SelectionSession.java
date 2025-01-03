@@ -338,7 +338,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 					displayCSG(c);
 					if (c.isInGroup() || c.isHide()) {
-						meshes.get(c).setMouseTransparent(true);
+						getMeshes().get(c).setMouseTransparent(true);
 					}
 				}
 			} else
@@ -358,7 +358,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			selected.removeAll(toRemove);
 			if (workplane != null)
-				workplane.updateMeshes(meshes);
+				workplane.updateMeshes(getMeshes());
 			updateControlsDisplayOfSelected();
 			setKeyBindingFocus();
 		});
@@ -366,12 +366,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearScreen() {
-		if (meshes == null)
+		if (getMeshes() == null)
 			return;
-		for (CSG c : meshes.keySet()) {
-			engine.removeUserNode(meshes.get(c));
+		for (CSG c : getMeshes().keySet()) {
+			engine.removeUserNode(getMeshes().get(c));
 		}
-		meshes.clear();
+		getMeshes().clear();
 	}
 
 	private void displayCSG(CSG c) {
@@ -387,7 +387,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
-		meshes.put(c, meshView);
+		getMeshes().put(c, meshView);
 		setUpControls(meshView, c.getName());
 	}
 
@@ -435,7 +435,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateShowHideButton();
 			updateLockButton();
 			for (CSG c : getCurrentState()) {
-				MeshView meshView = meshes.get(c);
+				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(controls.getViewRotation());
@@ -446,7 +446,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			TransformFactory.nrToAffine(new TransformNR(), selection);
 			TransformFactory.nrToAffine(new TransformNR(), controls.getViewRotation());
 			for (CSG c : getSelectedCSG(selectedSnapshot())) {
-				MeshView meshView = meshes.get(c);
+				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().addAll(controls.getViewRotation(), selection);
 					if (!isLocked())
@@ -507,7 +507,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		} else {
 			for (CSG c : getCurrentState()) {
-				MeshView meshView = meshes.get(c);
+				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(controls.getViewRotation());
@@ -622,7 +622,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private CSG getSelectedCSG(String string) {
-		for (CSG c : meshes.keySet()) {
+		for (CSG c : getMeshes().keySet()) {
 			if (c.getName().contentEquals(string))
 				return c;
 		}
@@ -747,7 +747,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				String s = iterator.next();
 				CSG c = getSelectedCSG(s);
 				if (!c.isHole()) {
-					MeshView mesh = meshes.get(c);
+					MeshView mesh = getMeshes().get(c);
 					if (mesh == null)
 						continue;
 					PhongMaterial phongMaterial = (PhongMaterial) mesh.getMaterial();
@@ -981,7 +981,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 
 		for (CSG c : selectedCSG) {
-			MeshView meshView = meshes.get(c);
+			MeshView meshView = getMeshes().get(c);
 			if (meshView != null)
 				BowlerKernel.runLater(() -> {
 					meshView.setVisible(false);
@@ -990,7 +990,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		workplane.setIndicator(indicator, gemoAffine);
 		workplane.setOnSelectEvent(() -> {
 			for (CSG c : selectedCSG) {
-				MeshView meshView = meshes.get(c);
+				MeshView meshView = getMeshes().get(c);
 				if (meshView != null)
 					BowlerKernel.runLater(() -> {
 						meshView.setVisible(true);
@@ -1176,7 +1176,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			controls.setMode(SpriteDisplayMode.Allign);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
-			controls.initializeAllign(selectedCSG, b, meshes);
+			controls.initializeAllign(selectedCSG, b, getMeshes());
 		}).start();
 
 	}
@@ -1188,7 +1188,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			controls.setMode(SpriteDisplayMode.Mirror);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
-			controls.initializeMirror(selectedCSG, b, meshes);
+			controls.initializeMirror(selectedCSG, b, getMeshes());
 		}).start();
 	}
 
@@ -1570,6 +1570,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private boolean isAllignActive() {
 		return controls.allignIsActive();
+	}
+
+	public HashMap<CSG, MeshView> getMeshes() {
+		return meshes;
+	}
+
+	public void setMeshes(HashMap<CSG, MeshView> meshes) {
+		this.meshes = meshes;
 	}
 
 }
