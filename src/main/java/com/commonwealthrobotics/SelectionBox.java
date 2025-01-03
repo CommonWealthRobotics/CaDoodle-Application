@@ -49,7 +49,6 @@ public class SelectionBox {
 
 	//private ArrayList<Rectangle> show = new ArrayList<>();
 	private EventHandler<? super MouseEvent> eventFilter;
-	private HashMap<CSG, Bounds> cache = new HashMap<>();
 	private CSG selection;
 	private boolean start = false;
 
@@ -105,6 +104,8 @@ public class SelectionBox {
 			return;
 		if(!event.isPrimaryButtonDown())
 			return;
+		if(event.isControlDown()||event.isShiftDown())
+			return;
 		if(event.getSource()!=getSelectionPlane())
 			return;
 		if (!engine.contains(rect)) {
@@ -135,35 +136,12 @@ public class SelectionBox {
 			rect.setViewOrder(-2);
 
 			//show.clear();
-			cache.clear();
 			HashMap<CSG, MeshView> meshes = session.getMeshes();
 			for(CSG key:meshes.keySet()) {
 				MeshView mv= meshes.get(key);
 				mv.setMouseTransparent(true);
 			}
-			new Thread(()->{
-				ArrayList<CSG> visable = session.getAllVisable();
-				for (CSG c : visable)
-					session.getBounds(c, cf, cache);
-//				for(CSG key:cache.keySet()) {
-//					Bounds b= key.getBounds();
-//					Rectangle r = new Rectangle();
-//					r.setX(b.getMinX());
-//					r.setY(b.getMinY());
-//					r.setWidth(b.getTotalX());
-//					r.setHeight(b.getTotalY());
-//					r.getTransforms().addAll(wpPickPlacement);
-//					r.setVisible(true);
-//					r.setFill(Color.TRANSPARENT);
-//					r.setStroke(Color.BLACK);
-//					r.setStrokeWidth(1);
-//					r.getStrokeDashArray().addAll(2.0, 2.0);
-//					r.setMouseTransparent(true);
-//					engine.addUserNode(r);
-//					show.add(r);
-//				}
-				
-			}).start();
+			
 			active = true;
 		}
 		
@@ -231,7 +209,7 @@ public class SelectionBox {
 			//selection.setManipulator(dottedLine);
 			selection.setColor(new Color(0.25, 0.25, 0, 0.25));
 			//engine.addCsg(selection, null);
-			List<String> overlapping = checkOverlap(selection, cache);
+			List<String> overlapping = checkOverlap(selection);
 			session.selectAll(overlapping);
 		}).start();
 	}
@@ -267,11 +245,10 @@ public class SelectionBox {
 		return false;
 	}
 
-	public List<String> checkOverlap(CSG selection2, Map<CSG, Bounds> cache) {
+	public List<String> checkOverlap(CSG selection2) {
 		List<String> overlapping = new ArrayList<>();
-
-		for (CSG key : cache.keySet()) {
-			Bounds bounds = cache.get(key);
+		ArrayList<CSG> visable = session.getSelectable();
+		for (CSG key : visable) {
 			// Check if boxes overlap
 			if (key.touching(selection2)) {
 				overlapping.add(key.getName());
