@@ -95,8 +95,8 @@ public class Main extends Application {
 		});
 		BowlerStudio.runLater(() -> {
 			try {
-
-				Image loadAsset = new Image(PsudoSplash.getResource().toString());
+				//CADoodle-Icon.png
+				Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
 				newStage.getIcons().add(loadAsset);
 			} catch (Exception e) {
 				e.printStackTrace();
