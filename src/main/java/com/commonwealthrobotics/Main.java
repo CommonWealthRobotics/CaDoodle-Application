@@ -3,6 +3,7 @@
  */
 package com.commonwealthrobotics;
 
+import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -122,6 +123,20 @@ public class Main extends Application {
 			}
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
+		
+		PsudoSplash.setTextColor(Color.BLACK);
+		PsudoSplash.setVersionX(700);
+		PsudoSplash.setVersionY(120);
+
+		
+		PsudoSplash.setLogX(500);
+		PsudoSplash.setLogY(400);
+		
+		PsudoSplash.setMessageX(500);
+		PsudoSplash.setMessageY(250);
+
+		
 		SplashManager.renderSplashFrame(1, "Main Window Show");
 		setUpApprovalWindow();
 		ScriptingEngine.setAppName("CaDoodle");
