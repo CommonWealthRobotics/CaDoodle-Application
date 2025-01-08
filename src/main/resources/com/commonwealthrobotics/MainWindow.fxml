@@ -603,7 +603,7 @@
                   </HBox>
                   <HBox GridPane.columnIndex="2">
                      <children>
-                        <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onModeling" styleClass="image-button">
+                        <Button fx:id="model" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onModeling" styleClass="image-button" visible="false">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -615,7 +615,7 @@
                               <Tooltip text="3d Design" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="physicsButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onPhysics" styleClass="image-button">
+                        <Button fx:id="physicsButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onPhysics" styleClass="image-button" visible="false">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
