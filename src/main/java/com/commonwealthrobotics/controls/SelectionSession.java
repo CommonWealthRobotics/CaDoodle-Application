@@ -965,7 +965,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			indicator = CSG.unionAll(selectedCSG);
 		}
 		List<String> seleectedNames = selectedSnapshot();
-		TransformNR o = new TransformNR(RotationNR.getRotationY(0));
+		TransformNR o = new TransformNR(RotationNR.getRotationZ(90));
 
 		TransformNR g = o.times(wp.inverse());
 		Transform tf = TransformFactory.nrToCSG(g);
