@@ -92,7 +92,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			engine.removeUserNode(indicatorMesh);
 		}
 		indicatorMesh = indicator.newMesh();
-		indicatorMesh.getTransforms().addAll(workplaneLocation, centerOffset);
+		indicatorMesh.getTransforms().addAll(getWorkplaneLocation(), centerOffset);
 		indicatorMesh.setMouseTransparent(true);
 
 		PhongMaterial material = new PhongMaterial();
@@ -256,7 +256,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
 		this.currentAbsolutePose = currentAbsolutePose;
-		TransformFactory.nrToAffine(getCurrentAbsolutePose(), workplaneLocation);
+		TransformFactory.nrToAffine(getCurrentAbsolutePose(), getWorkplaneLocation());
 	}
 
 	public Runnable getOnSelectEvent() {
@@ -351,5 +351,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public MeshView getPlacementPlane() {
 		// Auto-generated method stub
 		return wpPick;
+	}
+
+	public Affine getWorkplaneLocation() {
+		return workplaneLocation;
+	}
+
+	public void setWorkplaneLocation(Affine workplaneLocation) {
+		this.workplaneLocation = workplaneLocation;
 	}
 }

@@ -78,6 +78,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private ShapesPallet pallet;
 	private ActiveProject ap = null;
 	private SelectionBox sb=null;
+	private RulerManager ruler= new RulerManager();
 
 	/**
 	 * CaDoodle Model Classes
@@ -483,6 +484,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onRuler(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
+		ruler.setActive(true);
 		session.setKeyBindingFocus();
 	}
 
@@ -831,6 +833,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroupp.setViewOrder(1); // Lower viewOrder renders on top
 		linesGroupp.getChildren().add(ground);
 		engine.addUserNode(linesGroupp);
+		Group rulerGroup = engine.getRulerGroup();
+		//rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
+		ruler.setRulerGroup(rulerGroup);
+		
 	}
 
 	public static double groundScale() {
@@ -1150,8 +1156,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
-		// Auto-generated method stub
-		
+		ruler.setWP(newWP);
 	}
 
 	@Override
