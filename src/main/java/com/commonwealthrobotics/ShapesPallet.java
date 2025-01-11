@@ -22,6 +22,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
@@ -44,6 +45,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.NoSuchFileException;
 
 public class ShapesPallet {
 
@@ -89,7 +91,7 @@ public class ShapesPallet {
 				}
 			}
 		} catch (Exception e) {
-			// 
+			//
 			e.printStackTrace();
 		}
 		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
@@ -107,7 +109,7 @@ public class ShapesPallet {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// 
+					//
 					e.printStackTrace();
 				}
 			}
@@ -169,20 +171,36 @@ public class ShapesPallet {
 	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row) {
 		// TODO cache images and STLs
 		String typeOfShapes = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-
+		String sweep = key.get("sweep");
+		boolean isSweep = (sweep != null)? Boolean.parseBoolean(sweep):false;
 		String name = names.get(key);
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 		// new Thread(() -> {
-		AddFromScript set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
+		AbstractAddFrom set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
+		if(isSweep) {
+			try {
+				File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
+				set=new Sweep().set(f).setPreventBoM(true);
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 		List<CSG> so = set.process(new ArrayList<>());
-		for(CSG c:so) {
-			for(String s:c.getParameters()) {
+		for (CSG c : so) {
+			for (String s : c.getParameters()) {
 				CSGDatabase.delete(s);
 			}
 		}
+		if(isSweep)
+			try {
+				set.getFile().delete();
+			} catch (NoSuchFileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
@@ -205,7 +223,7 @@ public class ShapesPallet {
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneInOrigin();
-					System.out.println("Is Workplane set "+workplaneInOrigin);
+					System.out.println("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {
 							session.setMode(SpriteDisplayMode.Default);
@@ -214,14 +232,26 @@ public class ShapesPallet {
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
 									AbstractAddFrom setAddFromScript = new AddFromScript()
 											.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
+
+									if (isSweep) {
+										try {
+											File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
+											setAddFromScript = new Sweep().set(f).setLocation(currentAbsolutePose);
+										} catch (Exception e) {
+											e.printStackTrace();
+											return;
+										}
+									}
+
 									String string = key.get("copyFile");
-									if(string!=null) {
-										if(Boolean.parseBoolean(string)) {
+									if (string != null) {
+										if (Boolean.parseBoolean(string)) {
 											try {
 												File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-												setAddFromScript  = new AddFromFile().set(f).setLocation(currentAbsolutePose);
+												setAddFromScript = new AddFromFile().set(f)
+														.setLocation(currentAbsolutePose);
 											} catch (InvalidRemoteException e) {
-												// 
+												//
 												e.printStackTrace();
 											} catch (TransportException e) {
 												e.printStackTrace();
@@ -233,7 +263,7 @@ public class ShapesPallet {
 										}
 									}
 									ap.addOp(setAddFromScript).join();
-									
+
 									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
@@ -251,7 +281,7 @@ public class ShapesPallet {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
 									workplane.placeWorkplaneVisualization();
-									if(workplaneInOrigin)
+									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
 									e.printStackTrace();
