@@ -131,6 +131,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	private boolean showConstituants = false;
 
+	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
 		engine = e;
 		setActiveProject(ap);
@@ -155,7 +156,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			controls.setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(() -> updateControls());
 		});
-		manipulation.setUi(new IInteractiveUIElementProvider() {
+		Manipulation.setUi(new IInteractiveUIElementProvider() {
 			public void runLater(Runnable r) {
 				BowlerKernel.runLater(r);
 			}
@@ -249,7 +250,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 
 					@Override
-					public void onFileChange(File fileThatChanged, WatchEvent event) {
+					public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
 						System.err.println("File Change updating " + source.getType());
 						myRegenerate(source, this, myFile);
 					}
@@ -283,7 +284,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Set<String> parameters = n.getParameters();
 				IFileChangeListener myL = l;
 				File myFile = f;
-				if (parameters.size() > 0 && regenEvents.get(n) == null) {
+				if (parameters.size() > 0 && regenEvents.get(n.getName()) == null) {
 					BowlerStudio.runLater(() -> regenerate.setDisable(true));
 					// new RuntimeException("Regester event for " + source.getType() + " " +
 					// nameString).printStackTrace();
@@ -808,6 +809,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public TransformNR getFocusCenter() {
+		// TODO convert this to the bounds instead of performing a union on boxes
 		if (selected.size() == 0)
 			return new TransformNR();
 		CSG boxes = null;
@@ -1309,7 +1311,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
 		camerFrame = camerFrame.times(frameOffset);
 		getCamerFrameGetRotation = camerFrame.getRotation();
-		double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuth());
+		double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuthRadians());
 		quad = Quadrent.getQuad(toDegrees);
 		currentRotZ = Quadrent.QuadrentToAngle(quad);
 
