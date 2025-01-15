@@ -303,6 +303,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
+						if(LengthParameter.class.isInstance(p)) {
+							new Exception().printStackTrace();
+							System.out.println("Value Updating "+p.getName()+" to "+p.getMM());
+						}
 						CaDoodleFile caDoodleFile = ap.get();
 						double percentInitialized = caDoodleFile.getPercentInitialized();
 						boolean regenerating = caDoodleFile.isRegenerating();
@@ -472,9 +476,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						parametrics.getChildren().add(thisLine);
 						Parameter para = CSGDatabase.get(key);
 						int width = 120;
-						if (LengthParameter.class.isInstance(para)) {
-							setUpNumberChoices(thisLine, text, (LengthParameter) para, width);
-						}
+						
 						if (StringParameter.class.isInstance(para)) {
 							ArrayList<String> opts = para.getOptions();
 							if (opts.size() > 0) {
@@ -488,6 +490,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 									setUpTextBoxEnterData(thisLine, text, para, width);
 								}
 							}
+						}else {
+							setUpNumberChoices(thisLine, text,  para, width);
 						}
 					}
 				}
@@ -523,7 +527,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		updateControls();
 	}
 
-	private void setUpNumberChoices(HBox thisLine, String text, LengthParameter para, int width) {
+	private void setUpNumberChoices(HBox thisLine, String text, Parameter para, int width) {
 		ComboBox<String> options = new ComboBox<String>();
 
 		ArrayList<String> options2 = para.getOptions();

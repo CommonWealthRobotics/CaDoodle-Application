@@ -197,7 +197,7 @@ public class ShapesPallet {
 		if(isSweep)
 			try {
 				set.getFile().delete();
-			} catch (NoSuchFileException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
