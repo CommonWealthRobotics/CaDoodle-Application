@@ -304,7 +304,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						if(LengthParameter.class.isInstance(p)) {
-							new Exception().printStackTrace();
+							//new Exception().printStackTrace();
 							System.out.println("Value Updating "+p.getName()+" to "+p.getMM());
 						}
 						CaDoodleFile caDoodleFile = ap.get();
@@ -526,16 +526,39 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		updateControls();
 	}
+	private void setUpNumberField(HBox thisLine, String text, Parameter para, int width) {
+		ArrayList<String> options2 = para.getOptions();
+		TextField options = new TextField();
+		options.setEditable(true);
+		options.setText(para.getMM() + "");
+		options.setMinWidth(width);
+		thisLine.getChildren().add(options);
 
+		options.setOnAction(event -> {
+			String string = options.getText().toString();
+			try {
+				double parseDouble = Double.parseDouble(string);
+				System.out.println("Setting new value " + parseDouble);
+				para.setMM(parseDouble);
+				// CSGDatabase.saveDatabase();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				options.setText(para.getMM() + "");
+			}
+			// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
+		});
+	}
 	private void setUpNumberChoices(HBox thisLine, String text, Parameter para, int width) {
-		ComboBox<String> options = new ComboBox<String>();
 
 		ArrayList<String> options2 = para.getOptions();
 		boolean limited = false;
 		if (options2.size() == 0) {
 			options2.add(para.getMM() + "");
+			setUpNumberField(thisLine,text,para,width);
+			return;
 		} else
 			limited = true;
+		ComboBox<String> options = new ComboBox<String>();
 		for (String s : options2) {
 			options.getItems().add(s);
 		}
@@ -543,20 +566,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		options.getSelectionModel().select(para.getMM() + "");
 		options.setMinWidth(width);
 		thisLine.getChildren().add(options);
-		double top = Double.parseDouble(options2.get(options2.size() - 1));
-		double bot = Double.parseDouble(options2.get(0));
+
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
-			String string = options.getSelectionModel().getSelectedItem().toString();
+			String string =options.getSelectionModel().getSelectedItem().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (isLimit) {
+					double top = Double.parseDouble(options2.get(options2.size() - 1));
+					double bot = Double.parseDouble(options2.get(0));
 					if (parseDouble > top)
 						parseDouble = top;
 					if (parseDouble < bot)
 						parseDouble = bot;
 				}
-				com.neuronrobotics.sdk.common.Log.error("Setting new value " + parseDouble);
+				System.out.println("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
 				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
