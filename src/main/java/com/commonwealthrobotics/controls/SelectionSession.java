@@ -543,12 +543,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				System.out.println("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
 				options2.clear();
-				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
 				t.printStackTrace();
 				options.setText(para.getMM() + "");
 			}
-			// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
 		});
 	}
 	private void setUpNumberChoices(HBox thisLine, String text, Parameter para, int width) {
@@ -585,12 +583,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				System.out.println("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
-				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
 				t.printStackTrace();
 				options.getSelectionModel().select(para.getMM() + "");
 			}
-			// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
 		});
 	}
 
