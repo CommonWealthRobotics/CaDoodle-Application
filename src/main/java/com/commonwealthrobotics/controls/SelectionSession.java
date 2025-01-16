@@ -527,7 +527,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		updateControls();
 	}
 	private void setUpNumberField(HBox thisLine, String text, Parameter para, int width) {
-		ArrayList<String> options2 = para.getOptions();
+		ArrayList<String> options3 = para.getOptions();
+
 		TextField options = new TextField();
 		options.setEditable(true);
 		options.setText(para.getMM() + "");
@@ -535,11 +536,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		thisLine.getChildren().add(options);
 
 		options.setOnAction(event -> {
+			ArrayList<String> options2 = para.getOptions();
 			String string = options.getText().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
 				System.out.println("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
+				options2.clear();
 				// CSGDatabase.saveDatabase();
 			} catch (Throwable t) {
 				t.printStackTrace();
@@ -552,8 +555,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		ArrayList<String> options2 = para.getOptions();
 		boolean limited = false;
-		if (options2.size() == 0) {
-			options2.add(para.getMM() + "");
+		if (options2.size() < 2) {
 			setUpNumberField(thisLine,text,para,width);
 			return;
 		} else
@@ -562,6 +564,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (String s : options2) {
 			options.getItems().add(s);
 		}
+		options.getItems().add(para.getMM() + "");
 		options.setEditable(true);
 		options.getSelectionModel().select(para.getMM() + "");
 		options.setMinWidth(width);
