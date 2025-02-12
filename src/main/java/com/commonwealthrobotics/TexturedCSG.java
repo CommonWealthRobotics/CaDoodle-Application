@@ -119,7 +119,7 @@ public class TexturedCSG extends TexturedMesh {
 			double maxXt = -Double.MAX_VALUE, maxYt = -Double.MAX_VALUE;
 
 			// Transform vertices to 2D plane and calculate bounding box for texture mapping
-			for (Vertex v : p.vertices) {
+			for (Vertex v : p.getVertices()) {
 				Vector3d pos = v.pos;
 				Vector3d transformed = pos.transformed(inverseTransform);
 
@@ -135,7 +135,7 @@ public class TexturedCSG extends TexturedMesh {
 			final double maxY = (minYt == maxYt) ? (maxYt + 1.0) : maxYt; // Avoid division by zero
 
 			// Calculate texture coordinates for this polygon
-			for (Vertex v : p.vertices) {
+			for (Vertex v : p.getVertices()) {
 				if (!vertices.contains(v)) {
 					vertices.add(v);
 					listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
@@ -194,9 +194,9 @@ public class TexturedCSG extends TexturedMesh {
 	private Transform createPolygonTransform(Polygon polygon) {
 		Transform finalTransform = new Transform();
 
-		Vector3d pos1 = polygon.vertices.get(0).pos;
-		Vector3d pos2 = polygon.vertices.get(1).pos;
-		Vector3d pos3 = polygon.vertices.get(2).pos;
+		Vector3d pos1 = polygon.getVertices().get(0).pos;
+		Vector3d pos2 = polygon.getVertices().get(1).pos;
+		Vector3d pos3 = polygon.getVertices().get(2).pos;
 		finalTransform = finalTransform.move(pos1);
 		Transform inverse = finalTransform.inverse();
 		pos1 = pos1.transformed(inverse);// should be at origin
