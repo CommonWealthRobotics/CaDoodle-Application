@@ -35,6 +35,8 @@ import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Plane;
+import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -122,6 +124,8 @@ public class Main extends Application {
 				}
 			}
 		}
+		Plane.setEPSILON(1.0e-9);
+		Vector3d.setEXPORTEPSILON(1.0e-10);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
 		
