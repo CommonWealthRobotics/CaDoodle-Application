@@ -162,18 +162,31 @@ public class Main extends Application {
 	}
 
 	private static void ensureGitAssetsArePresent() {
+		String gitassets;
+		try {
+			gitassets = AssetFactory.getGitSource();
+		} catch (Exception e) {
+			throw new RuntimeException (e);
+		}
+		String paramsKey = "CaDoodle-Configs";
+		String objectKey = "currentVersion";
+		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "source").toString();
+		String nowVer  = StudioBuildInfo.getVersion();
+		System.out.println("Pervious version was "+lastVer+" and current version is "+nowVer);
+		if(!lastVer.contentEquals(nowVer) || nowVer.contentEquals("source")) {
+			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
+					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
+					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
+					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",gitassets, Vitamins.getGitRepoDatabase());
+		}
+		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
 		Vitamins.loadAllScriptFiles();
-
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-		BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
-				"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
-				"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
-				"https://github.com/kennetek/gridfinity-rebuilt-openscad.git");
 
 //		try {
 //			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
