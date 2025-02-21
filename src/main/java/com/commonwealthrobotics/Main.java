@@ -3,7 +3,6 @@
  */
 package com.commonwealthrobotics;
 
-import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +47,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -162,9 +162,9 @@ public class Main extends Application {
 	}
 
 	private static void ensureGitAssetsArePresent() {
-		String gitassets;
+		String gitassets=null;
 		try {
-			gitassets = AssetFactory.getGitSource();
+			//gitassets = AssetFactory.getGitSource();
 		} catch (Exception e) {
 			throw new RuntimeException (e);
 		}
