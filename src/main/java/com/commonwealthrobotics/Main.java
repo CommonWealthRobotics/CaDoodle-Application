@@ -134,7 +134,7 @@ public class Main extends Application {
 		PsudoSplash.setVersionY(120);
 
 		
-		PsudoSplash.setLogX(500);
+		PsudoSplash.setLogX(300);
 		PsudoSplash.setLogY(400);
 		
 		PsudoSplash.setMessageX(500);
