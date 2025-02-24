@@ -117,7 +117,7 @@ public class ExportManager {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
 			ArrayList<CSG> back = session.getAllVisable();
-			String name = toSlug(ap.get().getProjectName());
+			String name = toSlug(ap.get().getMyProjectName());
 			int index = 1;
 			boolean prev = CSG.isPreventNonManifoldTriangles();
 			boolean selected = manifoldSTL.isSelected();

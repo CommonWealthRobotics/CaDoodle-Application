@@ -1150,7 +1150,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onInitializationDone() {
 		BowlerStudio.runLater(() -> {
-			fileNameBox.setText(ap.get().getProjectName());
+			fileNameBox.setText(ap.get().getMyProjectName());
 		});
 	}
 

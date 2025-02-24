@@ -104,12 +104,12 @@ public class ProjectManager {
 				int row = (i + 1) / 4;
 				int col = (i + 1) % 4;
 				com.neuronrobotics.sdk.common.Log.error(
-						"File " + c.getProjectName() + " on " + formattedDateTime + " row=" + row + " col=" + col);
+						"File " + c.getMyProjectName() + " on " + formattedDateTime + " row=" + row + " col=" + col);
 
 				
 
 				BowlerStudio.runLater(() -> {
-					Button b = new Button(c.getProjectName());
+					Button b = new Button(c.getMyProjectName());
 					b.setOnAction(ev->{
 						new Thread(()->{
 							try {
