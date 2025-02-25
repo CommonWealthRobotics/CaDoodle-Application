@@ -87,15 +87,15 @@ public class Main extends Application {
 			}).start();
 
 		});
-
-		FontSizeManager.addListener(fontNum ->
-
-		{
-			int tmp = fontNum - 10;
-			if (tmp < 12)
-				tmp = 12;
-			root.setStyle("-fx-font-size: " + tmp + "pt");
-		});
+		
+//		FontSizeManager.addListener(fontNum ->
+//		{
+//			int tmp = fontNum - 10;
+//			if (tmp < 12)
+//				tmp = 12;
+//			root.setStyle("-fx-font-size: " + tmp + "pt");
+//		});
+//		FontSizeManager.setFontSize(12);
 		BowlerStudio.runLater(() -> {
 			try {
 				//CADoodle-Icon.png
@@ -158,6 +158,7 @@ public class Main extends Application {
 		}
 		ensureGitAssetsArePresent();
 		//com.neuronrobotics.sdk.common.Log.enableErrorPrint();
+		FontSizeManager.setFontSize(12);
 		launch();
 	}
 

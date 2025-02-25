@@ -103,7 +103,7 @@ public class ProjectManager {
 				String formattedDateTime = formatter.format(instant);
 				int row = (i + 1) / 4;
 				int col = (i + 1) % 4;
-				com.neuronrobotics.sdk.common.Log.error(
+				System.out.println(
 						"File " + c.getMyProjectName() + " on " + formattedDateTime + " row=" + row + " col=" + col);
 
 				
