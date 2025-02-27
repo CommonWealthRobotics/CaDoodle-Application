@@ -115,6 +115,11 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
+		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
+		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
+		file.mkdirs();
+		ScriptingEngine.setWorkspace(file);
+		
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
 			if (args.length != 0) {
@@ -144,10 +149,7 @@ public class Main extends Application {
 		SplashManager.renderSplashFrame(1, "Main Window Show");
 		setUpApprovalWindow();
 		ScriptingEngine.setAppName("CaDoodle");
-		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
-		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
-		file.mkdirs();
-		ScriptingEngine.setWorkspace(file);
+
 		NameGetter mykey = new NameGetter();
 		GitHubWebFlow.setName(mykey);
 		try {
