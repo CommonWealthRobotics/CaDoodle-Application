@@ -684,7 +684,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				name=intermediateShape.getName();
 			String x = name + " " + type.trim() + " " + String.format("%.1f", percent)
 					+ "% finished : " + i + " of " + finalIndex;
-			System.out.println(x);
+			System.out.println("MainController.setupCSGEngine(): "+x);
 			if (isInitializing())
 				return;
 			try {
