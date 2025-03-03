@@ -135,14 +135,14 @@ public class Main extends Application {
 		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
 		
 		PsudoSplash.setTextColor(Color.BLACK);
-		PsudoSplash.setVersionX(700);
+		PsudoSplash.setVersionX(670);
 		PsudoSplash.setVersionY(120);
 
 		
-		PsudoSplash.setLogX(300);
+		PsudoSplash.setLogX(250);
 		PsudoSplash.setLogY(400);
 		
-		PsudoSplash.setMessageX(500);
+		PsudoSplash.setMessageX(400);
 		PsudoSplash.setMessageY(250);
 
 		
@@ -223,7 +223,8 @@ public class Main extends Application {
 			@Override
 			public boolean get(String name, String url) {
 				buttonType = null;
-
+				boolean isVis = SplashManager.isVisableSplash();
+				SplashManager.closeSplash();
 				BowlerKernel.runLater(() -> {
 					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 					alert.setTitle("Message");
@@ -254,7 +255,8 @@ public class Main extends Application {
 					}
 
 				}
-
+				if(isVis)
+					SplashManager.renderSplashFrame(0, "Downloading "+name);
 				return buttonType.equals(ButtonType.OK);
 			}
 
