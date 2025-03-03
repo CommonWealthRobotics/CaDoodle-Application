@@ -77,8 +77,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
 	private ActiveProject ap = null;
-	private SelectionBox sb=null;
-	private RulerManager ruler= new RulerManager();
+	private SelectionBox sb = null;
+	private RulerManager ruler = new RulerManager();
 
 	/**
 	 * CaDoodle Model Classes
@@ -343,7 +343,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.clearScreen();
 			session.clearSelection();
 		};
-		ExportManager.launch(session,ap, onFinish, onClear);
+		ExportManager.launch(session, ap, onFinish, onClear);
 		session.setKeyBindingFocus();
 	}
 
@@ -396,7 +396,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		Runnable onFinish = () -> {
 			session.setKeyBindingFocus();
 			com.neuronrobotics.sdk.common.Log.error("ProjectManager Close");
-			BowlerStudio.runLater(()->homeButton.setDisable(false));
+			BowlerStudio.runLater(() -> homeButton.setDisable(false));
 		};
 		Runnable onClear = () -> {
 			session.clearScreen();
@@ -415,34 +415,31 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onImport(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Import");
 		new Thread(() -> {
-			
+
 			ArrayList<String> extentions = new ArrayList<>();
-			//extentions.add("*");
-			for(String s:new StlLoader().getFileExtenetion())
-				extentions.add("*."+s);
-			for(String s:new SvgLoader().getFileExtenetion())
-				extentions.add("*."+s);
-			for(String s:new GroovyHelper().getFileExtenetion())
-				extentions.add("*."+s);
-			for(String s:new BlenderLoader().getFileExtenetion())
-				extentions.add("*."+s);
-			for(String s:new FreecadLoader().getFileExtenetion())
-				extentions.add("*."+s);
-			for(String s:new OpenSCADLoader().getFileExtenetion())
-				extentions.add("*."+s);
-			for(String s:new CaDoodleLoader().getFileExtenetion())
-				extentions.add("*."+s);
-			
+			// extentions.add("*");
+			for (String s : new StlLoader().getFileExtenetion())
+				extentions.add("*." + s);
+			for (String s : new SvgLoader().getFileExtenetion())
+				extentions.add("*." + s);
+			for (String s : new GroovyHelper().getFileExtenetion())
+				extentions.add("*." + s);
+			for (String s : new BlenderLoader().getFileExtenetion())
+				extentions.add("*." + s);
+			for (String s : new FreecadLoader().getFileExtenetion())
+				extentions.add("*." + s);
+			for (String s : new OpenSCADLoader().getFileExtenetion())
+				extentions.add("*." + s);
+			for (String s : new CaDoodleLoader().getFileExtenetion())
+				extentions.add("*." + s);
+
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
 			if (currentFile == null)
 				currentFile = new File(System.getProperty("user.home") + "/Desktop/");
-			File last = FileSelectionFactory
-					.GetFile(
-							currentFile,
-							false, stl);
+			File last = FileSelectionFactory.GetFile(currentFile, false, stl);
 			if (last != null) {
-				currentFile=last;
-				com.neuronrobotics.sdk.common.Log.error("Adding file "+last);
+				currentFile = last;
+				com.neuronrobotics.sdk.common.Log.error("Adding file " + last);
 				AddFromFile toAdd = new AddFromFile().set(last);
 				session.addOp(toAdd);
 			}
@@ -639,8 +636,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.rebuild(true);
 		ap.addListener(this);
 		session = new SelectionSession(engine, ap);
-		sb = new SelectionBox(session,view3d,engine,ap);
-		try {	
+		sb = new SelectionBox(session, view3d, engine, ap);
+		try {
 			ap.loadActive();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -651,12 +648,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpColorPicker();
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid, parametrics,lockButton,lockImage);
+				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
 		session.setShowHideImage(showHideImage);
-		
+
 		session.setAllignButton(allignButton);
 		// do this after setting up the session
 		setupEngineControls();
@@ -674,20 +671,23 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.save();
 		});
 		setupCSGEngine();
-		SplashManager.setClosePreventer(()->ap.get().getPercentInitialized()<0.99);
+		SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
 	}
 
 	private void setupCSGEngine() {
 		CSG.setPreventNonManifoldTriangles(false);
 		CSG.setProgressMoniter((currentIndex, finalIndex, type, intermediateShape) -> {
+			int i = currentIndex + 1;
+			double percent = ((double) i) / ((double) finalIndex) * 100;
+			String name = "";
+			if(intermediateShape!=null)
+				name=intermediateShape.getName();
+			String x = name + " " + type.trim() + " " + String.format("%.1f", percent)
+					+ "% finished : " + i + " of " + finalIndex;
+			System.out.println(x);
 			if (isInitializing())
 				return;
 			try {
-				int i = currentIndex + 1;
-				double percent = ((double) i) / ((double) finalIndex) * 100;
-				String x = intermediateShape.getName() + " " + type.trim() + " " + String.format("%.1f", percent)
-						+ "% finished : " + i + " of " + finalIndex;
-				System.out.println(x);
 				if (finalIndex > 50) {
 					if (percent > 95) {
 						SplashManager.closeSplash();
@@ -719,13 +719,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(20, "Initialize Model");
-				while(!SplashManager.isVisableSplash()) {
+				while (!SplashManager.isVisableSplash()) {
 					Thread.sleep(100);
 				}
 				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
-				while(SplashManager.isVisableSplash()) {
+				while (SplashManager.isVisableSplash()) {
 					SplashManager.closeSplash();
 					Thread.sleep(500);
 				}
@@ -834,9 +834,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroupp.getChildren().add(ground);
 		engine.addUserNode(linesGroupp);
 		Group rulerGroup = engine.getRulerGroup();
-		//rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
+		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
 		ruler.setRulerGroup(rulerGroup);
-		
+
 	}
 
 	public static double groundScale() {
@@ -883,7 +883,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
 			}
 		}
-		// com.neuronrobotics.sdk.common.Log.error("Displaying result of " + source.getType());
+		// com.neuronrobotics.sdk.common.Log.error("Displaying result of " +
+		// source.getType());
 		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!ap.get().isForwardAvailible());
 			undoButton.setDisable(!ap.get().isBackAvailible());
@@ -911,14 +912,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private boolean isInitializing() {
-		return ap.get().getPercentInitialized()<1;
+		return ap.get().getPercentInitialized() < 0.9;
 	}
 
 	private void setCadoodleFile() {
 
 		workplane = new WorkplaneManager(ap, ground, engine, session);
 		session.setWorkplaneManager(workplane);
-		pallet = new ShapesPallet(shapeCatagory, objectPallet, session,ap,workplane);
+		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, ap, workplane);
 		workplane.placeWorkplaneVisualization();
 		sb.setWorkplaneManager(workplane);
 	}
@@ -937,18 +938,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				session.clearSelection();
 				com.neuronrobotics.sdk.common.Log.error("Cancle");
 			}
-			
-			//System.out.println("Releses MainController");
+
+			// System.out.println("Releses MainController");
 		});
-		
+
 //		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
 //			if(event.isPrimaryButtonDown())
 //				sb.activate(event);
 //		});
-		
-		
-
-		
 
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
@@ -1000,7 +997,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			// You can still use the key code for non-character keys
 			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
-			if (event.isControlDown() || (OsUtils.isOSX()?event.isMetaDown():event.isControlDown())) {
+			if (event.isControlDown() || (OsUtils.isOSX() ? event.isMetaDown() : event.isControlDown())) {
 				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
 				switch ((int) character.charAt(0)) {
 				case 90:
@@ -1059,16 +1056,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			} else {
 				switch ((int) character.charAt(0)) {
-				case 119://w
+				case 119:// w
 					onWOrkplane(null);
 					break;
-				case 45://-
+				case 45:// -
 					onZoomOut(null);
 					break;
-				case 43://+
+				case 43:// +
 					onZoomIn(null);
 					break;
-				case 102://f
+				case 102:// f
 					onFitView(null);
 					break;
 				case 104:// h
@@ -1077,29 +1074,29 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 115:
 					session.setToSolid();
 					break;
-				case 100://d
+				case 100:// d
 					session.onDrop();
 					break;
-				case 108://l
+				case 108:// l
 					session.onAllign();
 					break;
-				case 99://c
+				case 99:// c
 					session.onCruse();
 					break;
-				case 27://escape
+				case 27:// escape
 					workplane.cancle();
 					break;
-				case 116://t
+				case 116:// t
 				case 84:
 					session.toggleTransparent();
 					break;
-				case 109://m
+				case 109:// m
 					session.onMirror();
 					break;
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						System.err.println("Raw char value: " + (int) rawChar+" : "+character);
+						System.err.println("Raw char value: " + (int) rawChar + " : " + character);
 					} else {
 						System.err.println("No character data available (probably a non-character key)");
 					}
@@ -1111,7 +1108,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && in != engine.getSubScene() && in !=workplane.getPlacementPlane() && in !=sb.getSelectionPlane())
+		if (in != ground && in != engine.getSubScene() && in != workplane.getPlacementPlane()
+				&& in != sb.getSelectionPlane())
 			return false;
 		if (event.isControlDown())
 			return false;
@@ -1162,18 +1160,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onInitializationStart() {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRegenerateDone() {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRegenerateStart() {
 		// Auto-generated method stub
-		
+
 	}
 }
