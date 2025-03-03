@@ -176,7 +176,10 @@ public class Main extends Application {
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "source").toString();
 		String nowVer  = StudioBuildInfo.getVersion();
 		System.out.println("Pervious version was "+lastVer+" and current version is "+nowVer);
-		if(!lastVer.contentEquals(nowVer) || nowVer.contentEquals("source")) {
+		boolean b = !lastVer.contentEquals(nowVer);
+		boolean contentEquals = nowVer.contentEquals("source");
+		boolean c = b || contentEquals;
+		if(c) {
 			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
