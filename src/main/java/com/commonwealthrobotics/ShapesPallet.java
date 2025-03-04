@@ -48,10 +48,18 @@ import java.lang.reflect.Type;
 import java.nio.file.NoSuchFileException;
 
 public class ShapesPallet {
+	/**
+	 * Statics
+	 */
+			
+	private static String gitULR = "https://github.com/madhephaestus/CaDoodle-Example-Objects.git";
 
+	/**
+	 * Class variables
+	 */
+	
 	private ComboBox<String> shapeCatagory;
 	private GridPane objectPallet;
-	private String gitULR = "https://github.com/madhephaestus/CaDoodle-Example-Objects.git";
 	private HashMap<String, HashMap<String, HashMap<String, String>>> nameToFile = new HashMap<>();
 	private Type TT = new TypeToken<HashMap<String, HashMap<String, String>>>() {
 	}.getType();
@@ -73,15 +81,15 @@ public class ShapesPallet {
 		workplane = workplane2;
 		// new Thread(() -> {
 		try {
-			ScriptingEngine.cloneRepo(gitULR, null);
-			ScriptingEngine.pull(gitULR);
-			ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
+			ScriptingEngine.cloneRepo(getGitULR(), null);
+			ScriptingEngine.pull(getGitULR());
+			ArrayList<String> files = ScriptingEngine.filesInGit(getGitULR());
 			List<String> sortedList = new ArrayList<>(files);
 			Collections.sort(sortedList);
 			for (String f : sortedList) {
 				if (f.toLowerCase().endsWith(".json")) {
-					String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
-					File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
+					String contents = ScriptingEngine.codeFromGit(getGitULR(), f)[0];
+					File fileFromGit = ScriptingEngine.fileFromGit(getGitULR(), f);
 					String name = fileFromGit.getName();
 					String[] split = name.split(".json");
 					String filename = split[0];
@@ -306,4 +314,9 @@ public class ShapesPallet {
 
 		return button;
 	}
+
+	public static String getGitULR() {
+		return gitULR;
+	}
+
 }
