@@ -81,8 +81,6 @@ public class ShapesPallet {
 		workplane = workplane2;
 		// new Thread(() -> {
 		try {
-			ScriptingEngine.cloneRepo(getGitULR(), null);
-			ScriptingEngine.pull(getGitULR());
 			ArrayList<String> files = ScriptingEngine.filesInGit(getGitULR());
 			List<String> sortedList = new ArrayList<>(files);
 			Collections.sort(sortedList);
