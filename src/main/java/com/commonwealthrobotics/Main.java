@@ -5,6 +5,7 @@ package com.commonwealthrobotics;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import com.neuronrobotics.bowlerstudio.scripting.IApprovalForDownload;
 import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.external.GroovyEclipseExternalEditor;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
@@ -119,6 +121,15 @@ public class Main extends Application {
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
+		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
+		try {
+			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
+			System.out.println("Application at "+jarFile+" is "+(jarFile.exists()?"Found":"Missing!"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
 		
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
