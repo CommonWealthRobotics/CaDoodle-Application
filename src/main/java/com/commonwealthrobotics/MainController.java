@@ -359,7 +359,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), session.getFocusCenter(),
+		engine.focusOrentation(null, session.getFocusCenter(),
 				engine.getFlyingCamera().getZoomDepth());
 		session.setKeyBindingFocus();
 	}
