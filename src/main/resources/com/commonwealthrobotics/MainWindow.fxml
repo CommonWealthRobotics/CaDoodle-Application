@@ -453,6 +453,9 @@
                                        </graphic>
                                     </MenuItem>
                                 </items>
+                                 <tooltip>
+                                    <Tooltip text="Extra Group Options" />
+                                 </tooltip>
                               </MenuButton>
                            </children>
                         </AnchorPane>
