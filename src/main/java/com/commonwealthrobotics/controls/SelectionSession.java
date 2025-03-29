@@ -58,6 +58,7 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
@@ -130,6 +131,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button regenerate = new Button("Re-Generate");
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	private boolean showConstituants = false;
+	private MenuButton advancedGroupMenu;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
@@ -662,7 +664,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage) {
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, MenuButton advancedGroupMenu) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -674,6 +676,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.parametrics = parametrics;
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
+		this.advancedGroupMenu = advancedGroupMenu;
 		setupSnapGrid();
 
 	}
@@ -881,6 +884,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				groupButton.setDisable(true);
 			if (allignButton != null)
 				allignButton.setDisable(true);
+			if(advancedGroupMenu!=null)
+				advancedGroupMenu.setDisable(true);
 		});
 	}
 
@@ -891,13 +896,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				b.setDisable(false);
 			}
 			int unlockedSelected = 0;
-			for (CSG c : getSelectedCSG(selected)) {
+			List<CSG> selectedCSG = getSelectedCSG(selected);
+			for (CSG c : selectedCSG) {
 				if (!c.isLock())
 					unlockedSelected++;
 			}
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				allignButton.setDisable(false);
+			}
+			if (selectedCSG.size() > 0) {
+				advancedGroupMenu.setDisable(false);
 			}
 			if (isAGroupSelected()) {
 				ungroupButton.setDisable(false);
@@ -1092,7 +1101,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Paste copy = new Paste().setNames(selectedSnapshot);
 					ap.addOp(copy).join();
 					ArrayList<String> n = new ArrayList<>(copy.getNamesAdded());
-					Group groups = new Group().setNames(n);
+					Group groups = new Group().setNames(selectedSnapshot);
 					groups.setHull(false);
 					groups.setIntersect(true);
 					ap.addOp(groups).join();
@@ -1102,10 +1111,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					ToHole th = new ToHole().setNames(names);
 					ap.addOp(th).join();
 					
-					for(int i=0;i<selectedSnapshot.size();i++) {
+					for(int i=0;i<n.size();i++) {
+						String e = n.get(i);
+						ap.get();
+						CSG g= CaDoodleFile.getByName(ap.get().getCurrentState(), e);
+						if(g==null)
+							continue;
+						if(g.isInGroup())
+							continue;
 						ArrayList<String> namesToDiff = new ArrayList<String>();
 						namesToDiff.add(intersectName);
-						namesToDiff.add(selectedSnapshot.get(i));
+						namesToDiff.add(e);
 						Group cutIntersect = new Group().setNames(namesToDiff);
 						ap.addOp(cutIntersect).join();
 

@@ -676,7 +676,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpColorPicker();
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage);
+				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage,advancedGroupMenu);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
