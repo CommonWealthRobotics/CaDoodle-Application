@@ -253,12 +253,22 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="zoomOutButton"
 	private Button zoomOutButton; // Value injected by FXMLLoader
+	@FXML
+	private AnchorPane AdvancedBooleanOpsMenuHolder;
+	@FXML
+	private MenuButton advancedGroupMenu;
+	
+	
+	
+	
 	private ICaDoodleOpperation source;
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
 	private int lastFrame = 0;
 	private File currentFile = null;
+	
+
 
 	@FXML
 	void onAllign(ActionEvent event) {
@@ -357,10 +367,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onGroup(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Group");
-		session.onGroup();
+		session.onGroup(false);
 		session.setKeyBindingFocus();
 	}
-
+	@FXML
+	void onHullOpperation(ActionEvent e) {
+		com.neuronrobotics.sdk.common.Log.error("On Hull");
+		session.onGroup(true);
+		session.setKeyBindingFocus();
+	}
 	@FXML
 	void onHideConnections(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error(" on Hide Physics Connections");
@@ -1014,8 +1029,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 103:
 				case 7:
-					com.neuronrobotics.sdk.common.Log.error("Group");
-					session.onGroup();
+					onGroup(null);
 					break;
 				case 71:
 					if (event.isShiftDown()) {

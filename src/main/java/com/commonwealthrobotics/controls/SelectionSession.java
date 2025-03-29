@@ -1077,7 +1077,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
-	public void onGroup() {
+	public void onGroup(boolean hull) {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
@@ -1085,6 +1085,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selected.size() > 1) {
 			new Thread(() -> {
 				Group setNames = new Group().setNames(selectedSnapshot());
+				setNames.setHull(hull);
 				try {
 					ap.addOp(setNames).join();
 					selected.clear();

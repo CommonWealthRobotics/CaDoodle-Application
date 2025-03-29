@@ -395,7 +395,7 @@
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
-                        <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="image-button">
+                        <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="image-button" HBox.hgrow="NEVER">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
                                  <graphic>
@@ -442,6 +442,23 @@
                               <Tooltip text="Group &lt; Ctrl + G &gt;" />
                            </tooltip>
                         </Button>
+                        <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
+                           <children>
+                              <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="image-button">
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#onHullOpperation" text="Hull">
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@hull.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </MenuItem>
+                                </items>
+                              </MenuButton>
+                           </children>
+                        </AnchorPane>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
