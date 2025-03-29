@@ -430,18 +430,6 @@
                            </tooltip>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
-                        <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
-                           <graphic>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@group.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Group &lt; Ctrl + G &gt;" />
-                           </tooltip>
-                        </Button>
                         <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
                            <children>
                               <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="image-button">
@@ -455,10 +443,31 @@
                                           </ImageView>
                                        </graphic>
                                     </MenuItem>
+                                    <MenuItem mnemonicParsing="false" onAction="#onIntersectOpperation" text="Intersect">
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@intersect.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </MenuItem>
                                 </items>
                               </MenuButton>
                            </children>
                         </AnchorPane>
+                        <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@group.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Group &lt; Ctrl + G &gt;" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

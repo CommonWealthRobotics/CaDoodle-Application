@@ -1077,19 +1077,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
-	public void onGroup(boolean hull) {
+	public void onGroup(boolean hull,boolean intersect) {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		if (selected.size() > 1) {
+		if (selected.size() > 1 || hull) {
 			new Thread(() -> {
-				Group setNames = new Group().setNames(selectedSnapshot());
-				setNames.setHull(hull);
+				Group groups = new Group().setNames(selectedSnapshot());
+				groups.setHull(hull);
+				groups.setIntersect(intersect);
 				try {
-					ap.addOp(setNames).join();
+					ap.addOp(groups).join();
 					selected.clear();
-					selected.add(setNames.getGroupID());
+					selected.add(groups.getGroupID());
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 				} catch (CadoodleConcurrencyException e) {
 					// Auto-generated catch block

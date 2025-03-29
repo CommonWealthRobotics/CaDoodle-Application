@@ -367,15 +367,22 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onGroup(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Group");
-		session.onGroup(false);
+		session.onGroup(false,false);
 		session.setKeyBindingFocus();
 	}
 	@FXML
 	void onHullOpperation(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.error("On Hull");
-		session.onGroup(true);
+		session.onGroup(true,false);
 		session.setKeyBindingFocus();
 	}
+	@FXML
+	void onIntersectOpperation(ActionEvent e) {
+		com.neuronrobotics.sdk.common.Log.error("On Intersect");
+		session.onGroup(false,true);
+		session.setKeyBindingFocus();
+	}
+	
 	@FXML
 	void onHideConnections(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error(" on Hide Physics Connections");
