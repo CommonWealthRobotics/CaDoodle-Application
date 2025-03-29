@@ -452,6 +452,15 @@
                                           </ImageView>
                                        </graphic>
                                     </MenuItem>
+                                    <MenuItem mnemonicParsing="false" onAction="#onXorOpperation" text="Xor">
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@xor.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </MenuItem>
                                 </items>
                                  <tooltip>
                                     <Tooltip text="Extra Group Options" />

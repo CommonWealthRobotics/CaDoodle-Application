@@ -190,7 +190,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
 			controls.setMode(SpriteDisplayMode.Mirror);
 			onMirror();
-		}else
+		} else
 			controls.setMode(SpriteDisplayMode.Default);
 		intitialization = false;
 		setUpParametrics(currentState, source);
@@ -297,15 +297,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					regenEvents.put(n.getName(), value);
 				}
 				for (String k : parameters) {
-					if (!k.contains(n.getName()) && ! k.contains("CaDoodle_File_Location"))
+					if (!k.contains(n.getName()) && !k.contains("CaDoodle_File_Location"))
 						continue;
 					Parameter para = CSGDatabase.get(k);
 					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
-						if(LengthParameter.class.isInstance(p)) {
-							//new Exception().printStackTrace();
-							System.out.println("Value Updating "+p.getName()+" to "+p.getMM());
+						if (LengthParameter.class.isInstance(p)) {
+							// new Exception().printStackTrace();
+							System.out.println("Value Updating " + p.getName() + " to " + p.getMM());
 						}
 						CaDoodleFile caDoodleFile = ap.get();
 						double percentInitialized = caDoodleFile.getPercentInitialized();
@@ -465,7 +465,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
 				for (String key : sortedList) {
-					if (key.contains("CaDoodle") &&( key.contains(sel.getName()) || key.contains("CaDoodle_File_Location") )  ) {
+					if (key.contains("CaDoodle")
+							&& (key.contains(sel.getName()) || key.contains("CaDoodle_File_Location"))) {
 						numCadParaams++;
 						String[] parts = key.split("_");
 						HBox thisLine = new HBox(5);
@@ -476,7 +477,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						parametrics.getChildren().add(thisLine);
 						Parameter para = CSGDatabase.get(key);
 						int width = 120;
-						
+
 						if (StringParameter.class.isInstance(para)) {
 							ArrayList<String> opts = para.getOptions();
 							if (opts.size() > 0) {
@@ -490,8 +491,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 									setUpTextBoxEnterData(thisLine, text, para, width);
 								}
 							}
-						}else {
-							setUpNumberChoices(thisLine, text,  para, width);
+						} else {
+							setUpNumberChoices(thisLine, text, para, width);
 						}
 					}
 				}
@@ -526,6 +527,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		updateControls();
 	}
+
 	private void setUpNumberField(HBox thisLine, String text, Parameter para, int width) {
 		ArrayList<String> options3 = para.getOptions();
 
@@ -549,12 +551,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		});
 	}
+
 	private void setUpNumberChoices(HBox thisLine, String text, Parameter para, int width) {
 
 		ArrayList<String> options2 = para.getOptions();
 		boolean limited = false;
 		if (options2.size() < 2) {
-			setUpNumberField(thisLine,text,para,width);
+			setUpNumberField(thisLine, text, para, width);
 			return;
 		} else
 			limited = true;
@@ -570,7 +573,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
-			String string =options.getSelectionModel().getSelectedItem().toString();
+			String string = options.getSelectionModel().getSelectedItem().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (isLimit) {
@@ -1077,7 +1080,54 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
-	public void onGroup(boolean hull,boolean intersect) {
+	public void onXor() {
+		if (ap.get().isOperationRunning()) {
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
+			return;
+		}
+		if (selected.size() > 1) {
+			new Thread(() -> {
+				try {
+					List<String> selectedSnapshot = selectedSnapshot();
+					Paste copy = new Paste().setNames(selectedSnapshot);
+					ap.addOp(copy).join();
+					ArrayList<String> n = new ArrayList<>(copy.getNamesAdded());
+					Group groups = new Group().setNames(n);
+					groups.setHull(false);
+					groups.setIntersect(true);
+					ap.addOp(groups).join();
+					String intersectName = groups.getGroupID();
+					ArrayList<String> names = new ArrayList<>();
+					names.add(intersectName);
+					ToHole th = new ToHole().setNames(names);
+					ap.addOp(th).join();
+					
+					for(int i=0;i<selectedSnapshot.size();i++) {
+						ArrayList<String> namesToDiff = new ArrayList<String>();
+						namesToDiff.add(intersectName);
+						namesToDiff.add(selectedSnapshot.get(i));
+						Group cutIntersect = new Group().setNames(namesToDiff);
+						ap.addOp(cutIntersect).join();
+
+					}
+					
+					selected.clear();
+					selected.add(groups.getGroupID());
+					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
+				} catch (CadoodleConcurrencyException e) {
+					// Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// Auto-generated catch block
+					e.printStackTrace();
+				}
+			}).start();
+		} else
+			updateControlsDisplayOfSelected();
+
+	}
+
+	public void onGroup(boolean hull, boolean intersect) {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
@@ -1249,18 +1299,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return new ArrayList<CSG>();
 		return ap.get().getCurrentState();
 	}
-	
+
 	public Bounds getSellectedBounds(List<CSG> incoming) {
-		return getBounds(incoming,ap.get().getWorkplane(),inWorkplaneBounds);
+		return getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
 	}
-	public Bounds getBounds(CSG incoming,TransformNR frame) {
-		return getBounds(Arrays.asList(incoming),frame,null);
+
+	public Bounds getBounds(CSG incoming, TransformNR frame) {
+		return getBounds(Arrays.asList(incoming), frame, null);
 	}
-	public Bounds getBounds(CSG incoming,TransformNR frame, HashMap<CSG, Bounds> cache) {
-		return getBounds(Arrays.asList(incoming),frame,cache);
+
+	public Bounds getBounds(CSG incoming, TransformNR frame, HashMap<CSG, Bounds> cache) {
+		return getBounds(Arrays.asList(incoming), frame, cache);
 	}
-	public Bounds getBounds(List<CSG> incoming,TransformNR frame, HashMap<CSG, Bounds> cache) {
-		if(cache==null)
+
+	public Bounds getBounds(List<CSG> incoming, TransformNR frame, HashMap<CSG, Bounds> cache) {
+		if (cache == null)
 			cache = new HashMap<>();
 		Vector3d min = null;
 		Vector3d max = null;
@@ -1555,6 +1608,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		return back;
 	}
+
 	public ArrayList<CSG> getSelectable() {
 		ArrayList<CSG> back = new ArrayList<CSG>();
 		for (CSG c : getCurrentState()) {
@@ -1566,6 +1620,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		return back;
 	}
+
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
 		inWorkplaneBounds.clear();

@@ -363,7 +363,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				engine.getFlyingCamera().getZoomDepth());
 		session.setKeyBindingFocus();
 	}
-
+//onXorOpperation
+	@FXML
+	void onXorOpperation(ActionEvent event) {
+		com.neuronrobotics.sdk.common.Log.error("On Xor");
+		session.onXor();
+		session.setKeyBindingFocus();
+	}
 	@FXML
 	void onGroup(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Group");
