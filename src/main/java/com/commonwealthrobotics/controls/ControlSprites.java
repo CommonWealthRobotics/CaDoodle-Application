@@ -57,7 +57,7 @@ public class ControlSprites {
 	private SelectionSession session;
 	private BowlerStudio3dEngine engine;
 	// private BowlerStudio3dEngine spriteEngine;
-	private ScaleSessionManager scaleSession;
+	private ResizeSessionManager scaleSession;
 	private RotationSessionManager rotationManager;
 	private AllignManager allign;
 	private MirrorSessionManager mirror;
@@ -194,7 +194,7 @@ public class ControlSprites {
 			updateLines();
 			// com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
 		};
-		scaleSession = new ScaleSessionManager(e, selection, updateLines, ap, session, workplaneOffset, up);
+		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, up);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(), scaleSession.leftFront.getMesh(), scaleSession.leftRear.getMesh(),
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, up.getMesh());

@@ -14,7 +14,7 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.transform.Affine;
 
-public class ScaleSessionManager {
+public class ResizeSessionManager {
 	ResizingHandle topCenter = null;
 	ResizingHandle rightFront = null;
 	ResizingHandle rightRear = null;
@@ -35,7 +35,7 @@ public class ScaleSessionManager {
 	private boolean scalingFlag=false;
 	private boolean locked;
 
-	public ScaleSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
+	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
 			ActiveProject ap, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
 		this.engine = engine;
 		if(engine==null)
@@ -156,7 +156,7 @@ public class ScaleSessionManager {
 					double startX = bounds.getTotalX();
 					double startY = bounds.getTotalY();
 					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-					double nowZ = tcC.getZ();
+					double nowZ = tcC.getZ()-bounds.getMinZ();
 					double scale =nowZ/ startZ;
 					double newXComp = (startX*scale-startX)/2;
 					double newYComp= (startY*scale-startY)/2;
