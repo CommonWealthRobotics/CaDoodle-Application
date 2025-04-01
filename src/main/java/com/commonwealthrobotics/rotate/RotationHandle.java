@@ -311,4 +311,8 @@ public class RotationHandle {
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
+
+	public boolean isFocused() {
+		return text.isFocused();
+	}
 }

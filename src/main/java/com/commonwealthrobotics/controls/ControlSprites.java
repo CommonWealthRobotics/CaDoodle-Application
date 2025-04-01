@@ -369,7 +369,8 @@ public class ControlSprites {
 			if (t.isFocused())
 				return true;
 		}
-		return false;
+		
+		return rotationManager.isFocused();
 	}
 
 	private void updateLines() {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
+import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
@@ -85,6 +86,14 @@ public class RotationSessionManager {
 		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
 			r.setSelected(false);
 		}
+	}
+
+	public boolean isFocused() {
+		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+			if(r.isFocused())
+				return true;
+		}
+		return false;
 	}
 
 }
