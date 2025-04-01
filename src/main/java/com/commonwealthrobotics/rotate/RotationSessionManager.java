@@ -20,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
 
 public class RotationSessionManager {
+	private  List<RotationHandle> AS_LIST;
 	RotationHandle az;
 	RotationHandle el;
 	RotationHandle tlt;
@@ -34,11 +35,12 @@ public class RotationSessionManager {
 		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
 		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
 		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
+		 AS_LIST = Arrays.asList(az,el,tlt);
 	}
 	
 	public List<Node> getElements(){
 		ArrayList<Node> result = new ArrayList<Node>(); 
-		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+		for(RotationHandle r: AS_LIST) {
 			result.add(r.handle);
 			result.add(r.controlCircle);
 			result.add(r.arc);
@@ -47,7 +49,7 @@ public class RotationSessionManager {
 		return result;
 	}
 	public void initialize() {
-		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+		for(RotationHandle r: AS_LIST) {
 			r.handle.setVisible(true);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
@@ -57,7 +59,7 @@ public class RotationSessionManager {
 
 	}
 	public void hide() {
-		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+		for(RotationHandle r: AS_LIST) {
 			r.handle.setVisible(false);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
@@ -83,13 +85,13 @@ public class RotationSessionManager {
 		this.viewRotation = viewRotation;
 	}
 	public void resetSelected() {
-		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+		for(RotationHandle r: AS_LIST) {
 			r.setSelected(false);
 		}
 	}
 
 	public boolean isFocused() {
-		for(RotationHandle r: Arrays.asList(az,el,tlt)) {
+		for(RotationHandle r: AS_LIST) {
 			if(r.isFocused())
 				return true;
 		}
