@@ -20,27 +20,30 @@ import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
 
 public class RotationSessionManager {
-	private  List<RotationHandle> AS_LIST;
-	RotationHandle az;
-	RotationHandle el;
-	RotationHandle tlt;
-
+	private List<RotationHandle> handles;
 	private Affine selection;
 	private Affine viewRotation = new Affine();
 	private ControlSprites controlSprites;
 
-	public RotationSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites, Affine workplaneOffset) {
+	public RotationSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites,
+			Affine workplaneOffset) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
-		 az= new RotationHandle(EulerAxis.azimuth,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
-		 el= new RotationHandle(EulerAxis.elevation,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
-		 tlt= new RotationHandle(EulerAxis.tilt,selection,getViewRotation(),this,ap,controlSprites,workplaneOffset);
-		 AS_LIST = Arrays.asList(az,el,tlt);
+		RotationHandle az;
+		RotationHandle el;
+		RotationHandle tlt;
+		az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap, controlSprites,
+				workplaneOffset);
+		el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap, controlSprites,
+				workplaneOffset);
+		tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap, controlSprites,
+				workplaneOffset);
+		handles = Arrays.asList(az, el, tlt);
 	}
-	
-	public List<Node> getElements(){
-		ArrayList<Node> result = new ArrayList<Node>(); 
-		for(RotationHandle r: AS_LIST) {
+
+	public List<Node> getElements() {
+		ArrayList<Node> result = new ArrayList<Node>();
+		for (RotationHandle r : handles) {
 			result.add(r.handle);
 			result.add(r.controlCircle);
 			result.add(r.arc);
@@ -48,8 +51,9 @@ public class RotationSessionManager {
 		}
 		return result;
 	}
+
 	public void initialize() {
-		for(RotationHandle r: AS_LIST) {
+		for (RotationHandle r : handles) {
 			r.handle.setVisible(true);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
@@ -58,23 +62,25 @@ public class RotationSessionManager {
 		}
 
 	}
+
 	public void hide() {
-		for(RotationHandle r: AS_LIST) {
+		for (RotationHandle r : handles) {
 			r.handle.setVisible(false);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
 			r.text.hide();
 		}
 	}
+
 	public void show() {
 		initialize();
-		//new RuntimeException().printStackTrace();
+		// new RuntimeException().printStackTrace();
 	}
+
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z,List<String> selectedCSG, Bounds b, TransformNR cf) {
-		this.az.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
-		this.el.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
-		this.tlt.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
+		for (RotationHandle r : handles)
+			r.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 	}
 
 	public Affine getViewRotation() {
@@ -84,15 +90,16 @@ public class RotationSessionManager {
 	public void setViewRotation(Affine viewRotation) {
 		this.viewRotation = viewRotation;
 	}
+
 	public void resetSelected() {
-		for(RotationHandle r: AS_LIST) {
+		for (RotationHandle r : handles) {
 			r.setSelected(false);
 		}
 	}
 
 	public boolean isFocused() {
-		for(RotationHandle r: AS_LIST) {
-			if(r.isFocused())
+		for (RotationHandle r : handles) {
+			if (r.isFocused())
 				return true;
 		}
 		return false;
