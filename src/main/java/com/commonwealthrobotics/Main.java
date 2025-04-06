@@ -51,6 +51,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 public class Main extends Application {
 	private static Thread loadDeps;
@@ -98,24 +104,85 @@ public class Main extends Application {
 //			root.setStyle("-fx-font-size: " + tmp + "pt");
 //		});
 //		FontSizeManager.setFontSize(12);
-		BowlerStudio.runLater(() -> {
+		//BowlerStudio.runLater(() -> {
 			try {
 				//CADoodle-Icon.png
 				Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
 				newStage.getIcons().add(loadAsset);
+				Image image1 = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
+				// or
+				Image image2 = new Image(Main.class.getResource("CADoodle-Icon.png").toExternalForm());
+				
+				newStage.getIcons().add(image1);
+				newStage.getIcons().add(image2);
+		        // Set X11 window properties for Linux
+				newStage.setTitle("CaDoodle");
+                
+                // These are the important settings for Linux/Ubuntu
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		});
+		//});
 		newStage.setMinWidth(900);
 		newStage.setMinHeight(600);
 		// SplashManager.renderSplashFrame(1, "Main Window Show");
 		FileSelectionFactory.setStage(newStage);
+		
 		newStage.show();
-
+		setupTray(newStage);
 		// getLoadDeps().start();
 	}
-
+    
+    private void setupTray(Stage stage) {
+        // First check if SystemTray is supported
+        if (!SystemTray.isSupported()) {
+            System.out.println("SystemTray is not supported");
+            return;
+        }
+        
+        try {
+            // Get the system tray
+            SystemTray tray = SystemTray.getSystemTray();
+            
+            // Load image for tray icon
+            String name = "CADoodle-Icon.png";
+			java.awt.Image image = ImageIO.read(Main.class.getResource(name));
+            
+            // Create a popup menu
+            PopupMenu popup = new PopupMenu();
+            
+            // Create menu items
+            MenuItem showItem = new MenuItem("Show");
+            showItem.addActionListener(e -> Platform.runLater(() -> {
+                stage.show();
+                stage.setIconified(false);
+                stage.toFront();
+            }));
+            
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.addActionListener(e -> {
+                Platform.exit();
+                System.exit(0);
+            });
+            
+            // Add items to popup menu
+            popup.add(showItem);
+            popup.addSeparator();
+            popup.add(exitItem);
+            
+            // Create tray icon
+            TrayIcon trayIcon = new TrayIcon(image, "CADoodle", popup);
+            trayIcon.setImageAutoSize(true);
+            
+            // Add icon to system tray
+            tray.add(trayIcon);
+            System.out.println("Setting tray icon to "+name);
+            
+        } catch (AWTException | IOException e) {
+            e.printStackTrace();
+        }
+    }
 	public static void main(String[] args) {
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
