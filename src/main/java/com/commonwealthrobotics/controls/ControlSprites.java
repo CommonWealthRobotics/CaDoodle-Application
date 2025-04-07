@@ -205,7 +205,7 @@ public class ControlSprites {
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
-			//com.neuronrobotics.sdk.common.Log.error("Typed position update");
+			System.err.println("Typed position update");
 			scaleSession.set(xdimen.getMostRecentValue(),ydimen.getMostRecentValue(),zdimen.getMostRecentValue());
 			updateCubes();
 			updateLines();
