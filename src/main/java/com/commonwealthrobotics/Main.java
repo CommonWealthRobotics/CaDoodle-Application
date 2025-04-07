@@ -134,55 +134,73 @@ public class Main extends Application {
 		// getLoadDeps().start();
 	}
     
-    private void setupTray(Stage stage) {
-        // First check if SystemTray is supported
-        if (!SystemTray.isSupported()) {
-            System.out.println("SystemTray is not supported");
-            return;
-        }
-        
-        try {
-            // Get the system tray
-            SystemTray tray = SystemTray.getSystemTray();
-            
-            // Load image for tray icon
-            String name = "CADoodle-Icon.png";
-			java.awt.Image image = ImageIO.read(Main.class.getResource(name));
-            
-            // Create a popup menu
-            PopupMenu popup = new PopupMenu();
-            
-            // Create menu items
-            MenuItem showItem = new MenuItem("Show");
-            showItem.addActionListener(e -> Platform.runLater(() -> {
-                stage.show();
-                stage.setIconified(false);
-                stage.toFront();
-            }));
-            
-            MenuItem exitItem = new MenuItem("Exit");
-            exitItem.addActionListener(e -> {
-                Platform.exit();
-                System.exit(0);
-            });
-            
-            // Add items to popup menu
-            popup.add(showItem);
-            popup.addSeparator();
-            popup.add(exitItem);
-            
-            // Create tray icon
-            TrayIcon trayIcon = new TrayIcon(image, "CADoodle", popup);
-            trayIcon.setImageAutoSize(true);
-            
-            // Add icon to system tray
-            tray.add(trayIcon);
-            System.out.println("Setting tray icon to "+name);
-            
-        } catch (AWTException | IOException e) {
-            e.printStackTrace();
-        }
-    }
+	private void setupTray(Stage stage) {
+	    // First check if SystemTray is supported
+	    if (!SystemTray.isSupported()) {
+	        System.out.println("SystemTray is not supported");
+	        return;
+	    }
+
+	    try {
+	        // Get the system tray
+	        SystemTray tray = SystemTray.getSystemTray();
+	        
+	        // Get tray icon size
+	        Dimension trayIconSize = tray.getTrayIconSize();
+	        
+	        // Load image for tray icon
+	        String name = "CADoodle-Icon.png";
+	        java.awt.Image originalImage = ImageIO.read(Main.class.getResource(name));
+	        
+	        // Create a transparent buffered image
+	        BufferedImage bufferedImage = new BufferedImage(
+	            trayIconSize.width, 
+	            trayIconSize.height, 
+	            BufferedImage.TYPE_INT_ARGB
+	        );
+	        
+	        // Get graphics context
+	        Graphics g = bufferedImage.getGraphics();
+	        
+	        // Draw the original image to the new one, preserving transparency
+	        g.drawImage(originalImage, 0, 0, trayIconSize.width-8, trayIconSize.height-8, null);
+	        g.dispose();
+
+	        // Create a popup menu
+	        PopupMenu popup = new PopupMenu();
+
+	        // Create menu items
+	        MenuItem showItem = new MenuItem("Show");
+	        showItem.addActionListener(e -> Platform.runLater(() -> {
+	            stage.show();
+	            stage.setIconified(false);
+	            stage.toFront();
+	        }));
+
+	        MenuItem exitItem = new MenuItem("Exit");
+	        exitItem.addActionListener(e -> {
+	            Platform.exit();
+	            System.exit(0);
+	        });
+
+	        // Add items to popup menu
+	        popup.add(showItem);
+	        popup.addSeparator();
+	        popup.add(exitItem);
+
+	        // Create tray icon with the buffered image that preserves transparency
+	        TrayIcon trayIcon = new TrayIcon(bufferedImage, "CADoodle", popup);
+
+	        // Add icon to system tray
+	        tray.add(trayIcon);
+	        System.out.println("Setting transparent tray icon to " + name);
+
+	    } catch (AWTException | IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	
 	public static void main(String[] args) {
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
