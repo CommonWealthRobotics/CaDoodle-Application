@@ -115,10 +115,6 @@ public class Main extends Application {
 				
 				newStage.getIcons().add(image1);
 				newStage.getIcons().add(image2);
-		        // Set X11 window properties for Linux
-				newStage.setTitle("CaDoodle");
-                
-                // These are the important settings for Linux/Ubuntu
 
 			} catch (Exception e) {
 				e.printStackTrace();
