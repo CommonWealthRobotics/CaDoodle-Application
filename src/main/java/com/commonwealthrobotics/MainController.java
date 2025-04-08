@@ -823,11 +823,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				boolean shiftDown = me.isShiftDown();
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
-				boolean ctrl = me.isControlDown();
+				boolean middle = me.isMiddleButtonDown();
+ 				boolean ctrl = me.isControlDown();
+ 				if(middle)
+ 					return true;
 				if ((shiftDown) && secondaryButtonDown)
 					return true;
 				if (ctrl && shiftDown && primaryButtonDown)
 					return true;
+				
 				return false;
 			}
 		});
