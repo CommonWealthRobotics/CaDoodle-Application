@@ -95,7 +95,7 @@ public class Main extends Application {
 			}).start();
 
 		});
-		
+
 //		FontSizeManager.addListener(fontNum ->
 //		{
 //			int tmp = fontNum - 10;
@@ -104,99 +104,95 @@ public class Main extends Application {
 //			root.setStyle("-fx-font-size: " + tmp + "pt");
 //		});
 //		FontSizeManager.setFontSize(12);
-		//BowlerStudio.runLater(() -> {
-			try {
-				//CADoodle-Icon.png
-				Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
-				newStage.getIcons().add(loadAsset);
-				Image image1 = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
-				// or
-				Image image2 = new Image(Main.class.getResource("CADoodle-Icon.png").toExternalForm());
-				
-				newStage.getIcons().add(image1);
-				newStage.getIcons().add(image2);
+		// BowlerStudio.runLater(() -> {
+		try {
+			// CADoodle-Icon.png
+			Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
+			newStage.getIcons().add(loadAsset);
+			Image image1 = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
+			// or
+			Image image2 = new Image(Main.class.getResource("CADoodle-Icon.png").toExternalForm());
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		//});
+			newStage.getIcons().add(image1);
+			newStage.getIcons().add(image2);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// });
 		newStage.setMinWidth(900);
 		newStage.setMinHeight(600);
 		// SplashManager.renderSplashFrame(1, "Main Window Show");
 		FileSelectionFactory.setStage(newStage);
-		
+
 		newStage.show();
 		setupTray(newStage);
 		// getLoadDeps().start();
 	}
-    
+
 	private void setupTray(Stage stage) {
-	    // First check if SystemTray is supported
-	    if (!SystemTray.isSupported()) {
-	        System.out.println("SystemTray is not supported");
-	        return;
-	    }
+		// First check if SystemTray is supported
+		if (!SystemTray.isSupported()) {
+			System.out.println("SystemTray is not supported");
+			return;
+		}
 
-	    try {
-	        // Get the system tray
-	        SystemTray tray = SystemTray.getSystemTray();
-	        
-	        // Get tray icon size
-	        Dimension trayIconSize = tray.getTrayIconSize();
-	        
-	        // Load image for tray icon
-	        String name = "CADoodle-Icon.png";
-	        java.awt.Image originalImage = ImageIO.read(Main.class.getResource(name));
-	        
-	        // Create a transparent buffered image
-	        BufferedImage bufferedImage = new BufferedImage(
-	            trayIconSize.width, 
-	            trayIconSize.height, 
-	            BufferedImage.TYPE_INT_ARGB
-	        );
-	        
-	        // Get graphics context
-	        Graphics g = bufferedImage.getGraphics();
-	        
-	        // Draw the original image to the new one, preserving transparency
-	        g.drawImage(originalImage, 0, 0, trayIconSize.width-8, trayIconSize.height-8, null);
-	        g.dispose();
+		try {
+			// Get the system tray
+			SystemTray tray = SystemTray.getSystemTray();
 
-	        // Create a popup menu
-	        PopupMenu popup = new PopupMenu();
+			// Get tray icon size
+			Dimension trayIconSize = tray.getTrayIconSize();
 
-	        // Create menu items
-	        MenuItem showItem = new MenuItem("Show");
-	        showItem.addActionListener(e -> Platform.runLater(() -> {
-	            stage.show();
-	            stage.setIconified(false);
-	            stage.toFront();
-	        }));
+			// Load image for tray icon
+			String name = "CADoodle-Icon.png";
+			java.awt.Image originalImage = ImageIO.read(Main.class.getResource(name));
 
-	        MenuItem exitItem = new MenuItem("Exit");
-	        exitItem.addActionListener(e -> {
-	            Platform.exit();
-	            System.exit(0);
-	        });
+			// Create a transparent buffered image
+			BufferedImage bufferedImage = new BufferedImage(trayIconSize.width, trayIconSize.height,
+					BufferedImage.TYPE_INT_ARGB);
 
-	        // Add items to popup menu
-	        popup.add(showItem);
-	        popup.addSeparator();
-	        popup.add(exitItem);
+			// Get graphics context
+			Graphics g = bufferedImage.getGraphics();
 
-	        // Create tray icon with the buffered image that preserves transparency
-	        TrayIcon trayIcon = new TrayIcon(bufferedImage, "CADoodle", popup);
+			// Draw the original image to the new one, preserving transparency
+			g.drawImage(originalImage, 0, 0, trayIconSize.width - 8, trayIconSize.height - 8, null);
+			g.dispose();
 
-	        // Add icon to system tray
-	        tray.add(trayIcon);
-	        System.out.println("Setting transparent tray icon to " + name);
+			// Create a popup menu
+			PopupMenu popup = new PopupMenu();
 
-	    } catch (AWTException | IOException e) {
-	        e.printStackTrace();
-	    }
+			// Create menu items
+			MenuItem showItem = new MenuItem("Show");
+			showItem.addActionListener(e -> Platform.runLater(() -> {
+				stage.show();
+				stage.setIconified(false);
+				stage.toFront();
+			}));
+
+			MenuItem exitItem = new MenuItem("Exit");
+			exitItem.addActionListener(e -> {
+				Platform.exit();
+				System.exit(0);
+			});
+
+			// Add items to popup menu
+			popup.add(showItem);
+			popup.addSeparator();
+			popup.add(exitItem);
+
+			// Create tray icon with the buffered image that preserves transparency
+			TrayIcon trayIcon = new TrayIcon(bufferedImage, "CADoodle", popup);
+
+			// Add icon to system tray
+			tray.add(trayIcon);
+			System.out.println("Setting transparent tray icon to " + name);
+
+		} catch (AWTException | IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
-	
+
 	public static void main(String[] args) {
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
@@ -205,13 +201,13 @@ public class Main extends Application {
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
-			System.out.println("Application at "+jarFile+" is "+(jarFile.exists()?"Found":"Missing!"));
+			System.out.println("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
+
 		}
-		
+
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
 			if (args.length != 0) {
@@ -225,19 +221,17 @@ public class Main extends Application {
 		Vector3d.setEXPORTEPSILON(1.0e-10);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
-		
+
 		PsudoSplash.setTextColor(Color.BLACK);
 		PsudoSplash.setVersionX(670);
 		PsudoSplash.setVersionY(120);
 
-		
 		PsudoSplash.setLogX(250);
 		PsudoSplash.setLogY(400);
-		
+
 		PsudoSplash.setMessageX(400);
 		PsudoSplash.setMessageY(250);
 
-		
 		SplashManager.renderSplashFrame(1, "Main Window Show");
 		setUpApprovalWindow();
 		ScriptingEngine.setAppName("CaDoodle");
@@ -251,33 +245,32 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		ensureGitAssetsArePresent();
-		//com.neuronrobotics.sdk.common.Log.enableErrorPrint();
+		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		launch();
 	}
 
 	private static void ensureGitAssetsArePresent() {
-		String gitassets=null;
+		String gitassets = null;
 		try {
-			//gitassets = AssetFactory.getGitSource();
+			// gitassets = AssetFactory.getGitSource();
 		} catch (Exception e) {
-			throw new RuntimeException (e);
+			throw new RuntimeException(e);
 		}
 		String paramsKey = "CaDoodle-Configs";
 		String objectKey = "currentVersion";
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "source").toString();
-		String nowVer  = StudioBuildInfo.getVersion();
-		System.out.println("Pervious version was "+lastVer+" and current version is "+nowVer);
+		String nowVer = StudioBuildInfo.getVersion();
+		System.out.println("Pervious version was " + lastVer + " and current version is " + nowVer);
 		boolean b = !lastVer.contentEquals(nowVer);
 		boolean contentEquals = nowVer.contentEquals("source");
 		boolean c = b || contentEquals;
-		if(c) {
+		if (c) {
 			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
-					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",
-					gitassets, Vitamins.getGitRepoDatabase(),
-					ShapesPallet.getGitULR());
+					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git", gitassets,
+					Vitamins.getGitRepoDatabase(), ShapesPallet.getGitULR());
 		}
 		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
 		Vitamins.loadAllScriptFiles();
@@ -349,8 +342,8 @@ public class Main extends Application {
 					}
 
 				}
-				if(isVis)
-					SplashManager.renderSplashFrame(0, "Downloading "+name);
+				if (isVis)
+					SplashManager.renderSplashFrame(0, "Downloading " + name);
 				return buttonType.equals(ButtonType.OK);
 			}
 
@@ -363,11 +356,12 @@ public class Main extends Application {
 					e.printStackTrace();
 				}
 			}
+
 			public void notifyOfFailure(String name) {
 				BowlerKernel.runLater(() -> {
 					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 					alert.setTitle("Message");
-					alert.setHeaderText("FAILED to install " + name + " plugin" );
+					alert.setHeaderText("FAILED to install " + name + " plugin");
 					Node root = alert.getDialogPane();
 					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 					stage.setOnCloseRequest(ev -> alert.hide());
