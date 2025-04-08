@@ -156,7 +156,7 @@ public class Main extends Application {
 			Graphics g = bufferedImage.getGraphics();
 
 			// Draw the original image to the new one, preserving transparency
-			g.drawImage(originalImage, 0, 0, trayIconSize.width - 8, trayIconSize.height - 8, null);
+			g.drawImage(originalImage, 0, 0, trayIconSize.width , trayIconSize.height , null);
 			g.dispose();
 
 			// Create a popup menu
