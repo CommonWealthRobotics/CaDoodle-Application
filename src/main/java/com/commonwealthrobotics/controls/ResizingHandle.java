@@ -43,6 +43,7 @@ public class ResizingHandle {
 	private PhongMaterial material;
 	private boolean selected = false;
 	private Affine workplaneOffset;
+	private boolean uniform =false;
 
 	// private Tooltip hover = new Tooltip();
 	/**
@@ -86,6 +87,7 @@ public class ResizingHandle {
 			com.neuronrobotics.sdk.common.Log.error("Corner selected");
 			onReset.run();
 			selected=true;
+			setUniform(event.isShiftDown());
 			onSelect.run();
 			setSelectedColor();
 		});
@@ -286,10 +288,19 @@ public class ResizingHandle {
 	public void resetSelected() {
 		resetColor();
 		selected=false;
+		setUniform(false);
 	}
 
 	public boolean isSelected() {
 		return selected;
+	}
+
+	public boolean isUniform() {
+		return uniform;
+	}
+
+	public void setUniform(boolean uniform) {
+		this.uniform = uniform;
 	}
 
 }

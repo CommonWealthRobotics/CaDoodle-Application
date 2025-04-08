@@ -32,13 +32,13 @@ public class ResizeSessionManager {
 	// private Affine workplaneOffset;
 	private TransformNR cf;
 	private ActiveProject ap;
-	private boolean scalingFlag=false;
+	private boolean scalingFlag = false;
 	private boolean locked;
 
-	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines,
-			ActiveProject ap, SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
+	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
+			SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
 		this.engine = engine;
-		if(engine==null)
+		if (engine == null)
 			throw new NullPointerException();
 		this.updateLines = updateLines;
 		// this.workplaneOffset = workplaneOffset;
@@ -49,29 +49,33 @@ public class ResizeSessionManager {
 			up.resetSelected();
 		};
 		topCenter = new ResizingHandle("topCenter", engine, selection, new Vector3d(0, 0, 1), workplaneOffset,
-				updateLines,onReset);
+				updateLines, onReset);
 		rightFront = new ResizingHandle("rightFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines,onReset);
+				updateLines, onReset);
 		rightRear = new ResizingHandle("rightRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines,onReset);
+				updateLines, onReset);
 		leftFront = new ResizingHandle("leftFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines,onReset);
-		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset, updateLines,onReset);
+				updateLines, onReset);
+		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
+				updateLines, onReset);
 
 		rightFront.manipulator.addEventListener(ev -> {
-			if(scalingFlag)return;
+			if (scalingFlag)
+				return;
 
-			scalingFlag=false;
+			scalingFlag = false;
 			if (beingUpdated == null)
 				beingUpdated = rightFront;
 			if (beingUpdated != rightFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+" rejected by "+rightFront);
+				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+				// rejected by "+rightFront);
 				return;
 			}
 			double x = rightRear.manipulator.getCurrentPose().getX();
 			double y = rightFront.manipulator.getCurrentPose().getY();
 			double z = rightRear.manipulator.getCurrentPose().getZ();
-			//com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + " z" + z);
+			// com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + "
+			// z" + z);
 			rightRear.manipulator.setInReferenceFrame(x, y, z);
 			x = rightFront.manipulator.getCurrentPose().getX();
 			y = leftFront.manipulator.getCurrentPose().getY();
@@ -80,14 +84,16 @@ public class ResizeSessionManager {
 			// com.neuronrobotics.sdk.common.Log.error("rightFront");
 		});
 		rightRear.manipulator.addEventListener(ev -> {
-			if(scalingFlag)return;
+			if (scalingFlag)
+				return;
 
-			scalingFlag=false;
+			scalingFlag = false;
 
 			if (beingUpdated == null)
 				beingUpdated = rightRear;
 			if (beingUpdated != rightRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+" rejected by "+rightRear);
+				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+				// rejected by "+rightRear);
 				return;
 			}
 			double x = rightFront.manipulator.getCurrentPose().getX();
@@ -101,14 +107,16 @@ public class ResizeSessionManager {
 			// com.neuronrobotics.sdk.common.Log.error("rightRear");
 		});
 		leftFront.manipulator.addEventListener(ev -> {
-			if(scalingFlag)return;
+			if (scalingFlag)
+				return;
 
-			scalingFlag=false;
+			scalingFlag = false;
 
 			if (beingUpdated == null)
 				beingUpdated = leftFront;
 			if (beingUpdated != leftFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+" rejected by "+leftFront);
+				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+				// rejected by "+leftFront);
 				return;
 			}
 			double x = leftRear.manipulator.getCurrentPose().getX();
@@ -121,13 +129,15 @@ public class ResizeSessionManager {
 			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftFront");
 		});
 		leftRear.manipulator.addEventListener(ev -> {
-			if(scalingFlag)return;
-			scalingFlag=false;
+			if (scalingFlag)
+				return;
+			scalingFlag = false;
 
 			if (beingUpdated == null)
 				beingUpdated = leftRear;
 			if (beingUpdated != leftRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+" rejected by "+leftRear);
+				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+				// rejected by "+leftRear);
 				return;
 			}
 
@@ -141,44 +151,20 @@ public class ResizeSessionManager {
 			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftRear");
 		});
 		topCenter.manipulator.addEventListener(ev -> {
-			scalingFlag=false;
+			scalingFlag = false;
 
 			if (beingUpdated == null)
 				beingUpdated = topCenter;
 			if (beingUpdated != topCenter) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+" rejected by "+topCenter);
+				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+				// rejected by "+topCenter);
 				return;
 			}
-			if(ev!=null)
-				if(ev.isShiftDown()) {
-					scalingFlag = true;
-					double startZ =bounds.getTotalZ();
-					double startX = bounds.getTotalX();
-					double startY = bounds.getTotalY();
+			if (ev != null)
+				if (ev.isShiftDown()) {
 					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-					double nowZ = tcC.getZ()-bounds.getMinZ();
-					double scale =nowZ/ startZ;
-					double newXComp = (startX*scale-startX)/2;
-					double newYComp= (startY*scale-startY)/2;
-					
-					double centerX = bounds.getCenterX();
-					double centerY = bounds.getCenterY();
-					//System.out.println("Center x:"+centerX+" centerY:"+centerY);
-					double z = leftRear.manipulator.getCurrentPose().getZ();
-					TransformNR rrC = rightRear.getCurrentInReferenceFrame();
-					TransformNR lfC = leftFront.getCurrentInReferenceFrame();
-					double x = (lfC.getX() - rrC.getX()) / 2 + rrC.getX();
-					double y = (lfC.getY() - rrC.getY()) / 2 + rrC.getY();
-					
-					double newX = -newXComp;
-					double newY = -newYComp;
-					double newX2 = +newXComp;
-					double newY2 = +newYComp;
-					rightRear.manipulator.setInReferenceFrame(newX, newY, z);
-					leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
-					rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
-					leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
-					//System.out.println("RE-Scaling whole object! "+scale);
+					uniformScalingZ(tcC);
+					// System.out.println("RE-Scaling whole object! "+scale);
 				}
 			BowlerStudio.runLater(() -> update());
 
@@ -234,6 +220,36 @@ public class ResizeSessionManager {
 		}
 	}
 
+	private void uniformScalingZ(TransformNR tcC) {
+		scalingFlag = true;
+		double startZ = bounds.getTotalZ();
+		double startX = bounds.getTotalX();
+		double startY = bounds.getTotalY();
+
+		double nowZ = tcC.getZ() - bounds.getMinZ();
+		double scale = nowZ / startZ;
+		double newXComp = (startX * scale - startX) / 2;
+		double newYComp = (startY * scale - startY) / 2;
+
+		double centerX = bounds.getCenterX();
+		double centerY = bounds.getCenterY();
+		// System.out.println("Center x:"+centerX+" centerY:"+centerY);
+		double z = leftRear.manipulator.getCurrentPose().getZ();
+		TransformNR rrC = rightRear.getCurrentInReferenceFrame();
+		TransformNR lfC = leftFront.getCurrentInReferenceFrame();
+		double x = (lfC.getX() - rrC.getX()) / 2 + rrC.getX();
+		double y = (lfC.getY() - rrC.getY()) / 2 + rrC.getY();
+
+		double newX = -newXComp;
+		double newY = -newYComp;
+		double newX2 = +newXComp;
+		double newY2 = +newYComp;
+		rightRear.manipulator.setInReferenceFrame(newX, newY, z);
+		leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
+		rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
+		leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
+	}
+
 	private void update() {
 		// if(beingUpdated!=null)
 		ResizingHandle beingUpdated2 = beingUpdated;
@@ -247,7 +263,8 @@ public class ResizeSessionManager {
 			topCenter.setInReferenceFrame(x, y, z);
 			beingUpdated = beingUpdated2;
 		} else {
-			// com.neuronrobotics.sdk.common.Log.error("Not updating center cube "+beingUpdated2);
+			// com.neuronrobotics.sdk.common.Log.error("Not updating center cube
+			// "+beingUpdated2);
 		}
 		updateLines.run();
 	}
@@ -274,11 +291,11 @@ public class ResizeSessionManager {
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
 
-		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z), cf,locked);
-		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z), cf,locked);
-		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z), cf,locked);
-		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z), cf,locked);
-		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z), cf,locked);
+		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z), cf, locked);
+		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, min.z), cf, locked);
+		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, min.z), cf, locked);
+		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, min.z), cf, locked);
+		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, min.z), cf, locked);
 		update();
 	}
 
@@ -297,12 +314,13 @@ public class ResizeSessionManager {
 	boolean rearSelected() {
 		return rightRear.isSelected() || leftRear.isSelected();
 	}
-	
+
 	public boolean zScaleSelected() {
 		return topCenter.isSelected();
 	}
+
 	public boolean xySelected() {
-		return leftSelected()||rightSelected();
+		return leftSelected() || rightSelected();
 	}
 
 	public Bounds getBounds() {
@@ -328,32 +346,36 @@ public class ResizeSessionManager {
 	}
 
 	public void set(double x, double y, double z) {
-		Bounds b= getBounds();
-		Vector3d c=b.getCenter();
-		com.neuronrobotics.sdk.common.Log.error("Resizing to "+x+" "+y+" "+z);
-		if(topCenter.isSelected()) {
+		Bounds b = getBounds();
+		Vector3d c = b.getCenter();
+		com.neuronrobotics.sdk.common.Log.error("Resizing to " + x + " " + y + " " + z);
+		if (topCenter.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("Z resize");
-			topCenter.manipulator.set (0, 0, z-b.getTotalZ());
+			topCenter.manipulator.set(0, 0, z - b.getTotalZ());
+			if (topCenter.isUniform()) {
+				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+				uniformScalingZ(tcC);
+			}
 			topCenter.manipulator.fireSave();
 		}
-		if(leftFront.isSelected()) {
+		if (leftFront.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("leftFront resize");
-			leftFront.manipulator.set (x-b.getTotalX(), (y-b.getTotalY()), 0);
+			leftFront.manipulator.set(x - b.getTotalX(), (y - b.getTotalY()), 0);
 			leftFront.manipulator.fireSave();
 		}
-		if(leftRear.isSelected()) {
+		if (leftRear.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("leftRear resize");
-			leftRear.manipulator.set (-(x-b.getTotalX()), (y-b.getTotalY()), 0);
+			leftRear.manipulator.set(-(x - b.getTotalX()), (y - b.getTotalY()), 0);
 			leftRear.manipulator.fireSave();
 		}
-		if(rightFront.isSelected()) {
+		if (rightFront.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("rightFront resize");
-			rightFront.manipulator.set (x-b.getTotalX(), -(y-b.getTotalY()), 0);
+			rightFront.manipulator.set(x - b.getTotalX(), -(y - b.getTotalY()), 0);
 			rightFront.manipulator.fireSave();
 		}
-		if(rightRear.isSelected()) {
+		if (rightRear.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("rightRear resize");
-			rightRear.manipulator.set (-(x-b.getTotalX()), -(y-b.getTotalY()), 0);
+			rightRear.manipulator.set(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
 			rightRear.manipulator.fireSave();
 		}
 	}
