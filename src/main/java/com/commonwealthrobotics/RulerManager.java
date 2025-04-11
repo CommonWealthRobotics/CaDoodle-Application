@@ -43,7 +43,7 @@ public class RulerManager {
 		}
 	}
 
-	public void setRulerGroup(Group rg,Affine ro) {
+	public void initialize(Group rg,Affine ro) {
 		this.rulerGroup = rg;
 		rulerOffset=ro;
 		rulerGroup.getTransforms().addAll(wp);

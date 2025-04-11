@@ -865,7 +865,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.addUserNode(linesGroupp);
 		Group rulerGroup = engine.getRulerGroup();
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-		ruler.setRulerGroup(rulerGroup,engine.getRulerOffset());
+		ruler.initialize(rulerGroup,engine.getRulerOffset());
 
 	}
 
