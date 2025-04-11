@@ -43,18 +43,31 @@ public class RulerManager {
 		}
 	}
 
-	public void setRulerGroup(Group rulerGroup) {
-		this.rulerGroup = rulerGroup;
-		rulerGroup.getTransforms().add(wp);
+	public void setRulerGroup(Group rg,Affine ro) {
+		this.rulerGroup = rg;
+		rulerOffset=ro;
+		rulerGroup.getTransforms().addAll(wp);
 		rulerGroup.getChildren().add(cancel);
 		BowlerStudio.runLater(()->cancel.setVisible(false));
 		cancel.setOnAction(ev->{
 			setActive(false);
+			
 		});
-		cancel.getTransforms().add(buttonLoc);
+		cancel.getTransforms().addAll(rulerOffset,buttonLoc);
 		BowlerStudio.runLater(()->TransformFactory.nrToAffine(
 				new TransformNR(-10,-30,1,RotationNR.getRotationY(180)),
 				buttonLoc));
+		
+		TransformNR rulerLocation = ap.get().getRulerLocation();
+		BowlerStudio.runLater(()->{
+			TransformFactory.nrToAffine(rulerLocation,rulerOffset);
+		});
+		if(Math.abs(rulerLocation.getX())>0.01 ||
+				Math.abs(rulerLocation.getY())>0.01 ||
+				Math.abs(rulerLocation.getZ())>0.01
+				) {
+			setActive(true);
+		}
 	}
 
 	public void setWP(TransformNR newWP) {
@@ -71,18 +84,12 @@ public class RulerManager {
 		this.active = active;
 		if(!active) {
 			BowlerStudio.runLater(()->TransformFactory.nrToAffine(new TransformNR(), wp));
+			BowlerStudio.runLater(()->TransformFactory.nrToAffine(new TransformNR(), rulerOffset));
+			ap.get().setRulerLocation(new TransformNR());
 		}else {
 			setWP(newWP);
 		}
 		BowlerStudio.runLater(()->cancel.setVisible(active));
-	}
-
-
-	public void initializeRulerOffset(Affine rulerOffset) {
-		this.rulerOffset = rulerOffset;
-		BowlerStudio.runLater(()->{
-			TransformFactory.nrToAffine(ap.get().getRulerLocation(),rulerOffset);
-		});
 	}
 
 }

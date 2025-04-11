@@ -849,7 +849,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			onChange(engine.getFlyingCamera());
 		});
 		createGroundPlane();
-		ruler.initializeRulerOffset(engine.getRulerOffset());
 	}
 
 	private void createGroundPlane() {
@@ -866,7 +865,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.addUserNode(linesGroupp);
 		Group rulerGroup = engine.getRulerGroup();
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-		ruler.setRulerGroup(rulerGroup);
+		ruler.setRulerGroup(rulerGroup,engine.getRulerOffset());
 
 	}
 
