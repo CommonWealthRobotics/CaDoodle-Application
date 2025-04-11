@@ -19,8 +19,7 @@ public class RulerManager {
 	private TransformNR newWP;
 	private Button cancel = new Button("X");
 	private ActiveProject ap;
-	
-	
+	private Affine rulerOffset;
 	
 	public RulerManager(ActiveProject ap) {
 		this.ap=ap;
@@ -76,6 +75,14 @@ public class RulerManager {
 			setWP(newWP);
 		}
 		BowlerStudio.runLater(()->cancel.setVisible(active));
+	}
+
+
+	public void initializeRulerOffset(Affine rulerOffset) {
+		this.rulerOffset = rulerOffset;
+		BowlerStudio.runLater(()->{
+			TransformFactory.nrToAffine(ap.get().getRulerLocation(),rulerOffset);
+		});
 	}
 
 }

@@ -674,7 +674,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-
+		
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage,advancedGroupMenu);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
@@ -786,7 +786,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				AnchorPane.setLeftAnchor(engine.getSubScene(), 0.0);
 				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
 			});
-
 		});
 		engine.setControlsMap(new IControlsMap() {
 
@@ -850,7 +849,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			onChange(engine.getFlyingCamera());
 		});
 		createGroundPlane();
-
+		ruler.initializeRulerOffset(engine.getRulerOffset());
 	}
 
 	private void createGroundPlane() {
