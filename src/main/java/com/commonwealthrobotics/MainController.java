@@ -510,6 +510,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onRuler(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
 		ruler.setActive(true);
+		ruler.startPick();
 		session.setKeyBindingFocus();
 	}
 

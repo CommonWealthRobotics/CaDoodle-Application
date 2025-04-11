@@ -51,7 +51,6 @@ public class RulerManager {
 		BowlerStudio.runLater(()->cancel.setVisible(false));
 		cancel.setOnAction(ev->{
 			setActive(false);
-			
 		});
 		cancel.getTransforms().addAll(rulerOffset,buttonLoc);
 		BowlerStudio.runLater(()->TransformFactory.nrToAffine(
@@ -90,6 +89,11 @@ public class RulerManager {
 			setWP(newWP);
 		}
 		BowlerStudio.runLater(()->cancel.setVisible(active));
+	}
+
+	public void startPick() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
