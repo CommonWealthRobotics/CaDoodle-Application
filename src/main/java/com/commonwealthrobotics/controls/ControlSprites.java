@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.allign.AllignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
+import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
@@ -104,7 +106,7 @@ public class ControlSprites {
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation manipulation,
-			ActiveProject ap) {
+			ActiveProject ap, RulerManager ruler) {
 		this.session = session;
 		if(e==null)
 			throw new NullPointerException();
@@ -232,12 +234,12 @@ public class ControlSprites {
 			updateCubes();
 			updateLines();
 		};
-		xdimen = new ThreedNumber( selection, workplaneOffset, dimChange);
-		ydimen = new ThreedNumber( selection, workplaneOffset, dimChange);
-		zdimen = new ThreedNumber( selection, workplaneOffset, dimChange);
-		xOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange);
-		yOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange);
-		zOffset = new ThreedNumber( selection, workplaneOffset, offsetZChange);
+		xdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.X,ruler);
+		ydimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.Y,ruler);
+		zdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.Z,ruler);
+		xOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange,TextFieldDimention.X,ruler);
+		yOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange,TextFieldDimention.Y,ruler);
+		zOffset = new ThreedNumber( selection, workplaneOffset, offsetZChange,TextFieldDimention.Z,ruler);
 		numbers = Arrays.asList(xdimen, ydimen, zdimen, xOffset, yOffset, zOffset);
 		for (ThreedNumber t : numbers)
 			allElems.add(t.get());

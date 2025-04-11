@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.numbers;
 
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -45,12 +46,15 @@ public class ThreedNumber {
 	private Affine resizeHandleLocation = new Affine();
 	private Runnable onSelect;
 	private Affine reorent;
+	private TextFieldDimention dim;
 	
-	public ThreedNumber( Affine move, Affine workplaneOffset, Runnable onSelect) {
+	public ThreedNumber( Affine move, Affine workplaneOffset, Runnable onSelect,
+			TextFieldDimention dim, RulerManager ruler) {
 		//this.session = session;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
 		this.onSelect = onSelect;
+		this.dim = dim;
 		// Set the preferred width to use computed size
 		textField.setPrefWidth(50);
 

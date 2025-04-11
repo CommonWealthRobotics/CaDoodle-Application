@@ -663,7 +663,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		ap.addListener(this);
-		session = new SelectionSession(engine, ap);
+		session = new SelectionSession(engine, ap,ruler);
 		sb = new SelectionBox(session, view3d, engine, ap);
 		try {
 			ap.loadActive();

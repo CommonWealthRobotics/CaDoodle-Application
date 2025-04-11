@@ -17,6 +17,7 @@ import java.util.Set;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.Main;
 import com.commonwealthrobotics.MainController;
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TexturedCSG;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
@@ -132,10 +133,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	private boolean showConstituants = false;
 	private MenuButton advancedGroupMenu;
+	private RulerManager ruler;
 
 	@SuppressWarnings("static-access")
-	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap) {
+	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
 		engine = e;
+		this.ruler = ruler;
 		setActiveProject(ap);
 		manipulation.addSaveListener(() -> {
 			if (intitialization)
@@ -1587,7 +1590,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setActiveProject(ActiveProject ap) {
 		if (this.ap == null) {
-			controls = new ControlSprites(this, engine, selection, manipulation, ap);
+			controls = new ControlSprites(this, engine, selection, manipulation, ap,ruler);
 			controls.setSnapGrid(size);
 		}
 		this.ap = ap;
