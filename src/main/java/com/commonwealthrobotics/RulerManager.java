@@ -1,5 +1,6 @@
 package com.commonwealthrobotics;
 
+import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -17,9 +18,30 @@ public class RulerManager {
 	private boolean active = false;
 	private TransformNR newWP;
 	private Button cancel = new Button("X");
+	private ActiveProject ap;
+	
+	
+	
+	public RulerManager(ActiveProject ap) {
+		this.ap=ap;
+		
+	}
 
 	public Group getRulerGroup() {
 		return rulerGroup;
+	}
+	
+	public double getOffset(TextFieldDimention dim) {
+		switch(dim) {
+		default:
+			return 0;
+		case X:
+			return ap.get().getRulerLocation().getX();
+		case Y:
+			return ap.get().getRulerLocation().getY();
+		case Z:
+			return ap.get().getRulerLocation().getZ();		
+		}
 	}
 
 	public void setRulerGroup(Group rulerGroup) {

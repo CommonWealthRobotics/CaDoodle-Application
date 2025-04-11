@@ -202,7 +202,7 @@ public class ControlSprites {
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, up.getMesh());
 		allElems.addAll(tmp);
 
-		setUpOpperationManagers(session, ap);
+		setUpOpperationManagers(session, ap,ruler);
 		allElems.addAll(allign.getElements());
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
@@ -234,9 +234,9 @@ public class ControlSprites {
 			updateCubes();
 			updateLines();
 		};
-		xdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.X,ruler);
-		ydimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.Y,ruler);
-		zdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.Z,ruler);
+		xdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.None,ruler);
+		ydimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.None,ruler);
+		zdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.None,ruler);
 		xOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange,TextFieldDimention.X,ruler);
 		yOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange,TextFieldDimention.Y,ruler);
 		zOffset = new ThreedNumber( selection, workplaneOffset, offsetZChange,TextFieldDimention.Z,ruler);
@@ -249,8 +249,8 @@ public class ControlSprites {
 
 	}
 
-	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap) {
-		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset);
+	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap,RulerManager ruler) {
+		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset,ruler);
 		allign = new AllignManager(session, selection, workplaneOffset);
 		mirror=new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}

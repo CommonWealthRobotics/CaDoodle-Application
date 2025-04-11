@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -26,18 +27,18 @@ public class RotationSessionManager {
 	private ControlSprites controlSprites;
 
 	public RotationSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites,
-			Affine workplaneOffset) {
+			Affine workplaneOffset,RulerManager ruler) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
 		RotationHandle az;
 		RotationHandle el;
 		RotationHandle tlt;
 		az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset);
+				workplaneOffset,ruler);
 		el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset);
+				workplaneOffset,ruler);
 		tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset);
+				workplaneOffset,ruler);
 		handles = Arrays.asList(az, el, tlt);
 	}
 

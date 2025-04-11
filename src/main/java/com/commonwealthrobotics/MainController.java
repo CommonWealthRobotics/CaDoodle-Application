@@ -76,9 +76,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionSession session = null;
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
-	private ActiveProject ap = null;
+	private ActiveProject ap = new ActiveProject();
 	private SelectionBox sb = null;
-	private RulerManager ruler = new RulerManager();
+	private RulerManager ruler = new RulerManager(ap);
 
 	/**
 	 * CaDoodle Model Classes
@@ -659,7 +659,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		ap = new ActiveProject();
+		
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		ap.addListener(this);
