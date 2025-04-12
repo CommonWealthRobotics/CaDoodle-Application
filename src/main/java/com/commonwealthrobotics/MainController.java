@@ -1117,7 +1117,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 27:// escape
 					workplane.cancle();
-					break;
+				break;
 				case 116:// t
 				case 84:
 					session.toggleTransparent();

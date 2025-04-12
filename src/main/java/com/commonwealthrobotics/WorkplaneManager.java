@@ -56,6 +56,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private ActiveProject ap;
 	private double increment = 1.0;
 	private IWorkplaneUpdate updater = null;
+	private Runnable onCancel;
 
 	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 
@@ -137,7 +138,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		active = false;
 		ground.setMouseTransparent(true);
 		ground.setVisible(false);
-
+		if(onCancel!=null) {
+			onCancel.run();
+			onCancel=null;
+		}
 	}
 
 	public void activate() {
@@ -167,13 +171,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Node intersectedNode = pickResult.getIntersectedNode();
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
+			onCancel=null;// non cancles bu instead completed
 			cancle();
 			ev.consume();
 			session.updateControls();
 			ground.setMouseTransparent(true);
 			wpPick.setMouseTransparent(true);
 			ground.setVisible(false);
-			
 			return;
 		}
 		if (ev.getEventType() == MouseEvent.MOUSE_MOVED || ev.getEventType() == MouseEvent.MOUSE_DRAGGED) {
@@ -213,7 +217,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				screenLocation = ap.get().getWorkplane().times(screenLocation);
 			}
 			setCurrentAbsolutePose(screenLocation);
-
+			
 		}
 	}
 
@@ -373,5 +377,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setUpdater(IWorkplaneUpdate updater) {
 		this.updater = updater;
+	}
+
+	public void onCancle(Runnable onCancel) {
+		this.onCancel = onCancel;	
 	}
 }

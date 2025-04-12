@@ -49,6 +49,7 @@ public class RulerManager {
 		rulerOffset=ro;
 		wp=wpUpstream;
 		rulerGroup.getChildren().add(cancel);
+		cancel.getTransforms().addAll(wp,ro);
 		BowlerStudio.runLater(()->cancel.setVisible(false));
 		cancel.setOnAction(ev->{
 			setActive(false);
@@ -107,6 +108,11 @@ public class RulerManager {
 			tmp.setRotation(new RotationNR());
 			TransformFactory.nrToAffine(tmp, rulerOffset);
 		});
+		workplane.onCancle(()->{
+			System.out.println("Canceling active ruler pick session");
+			cancle();
+		});
+		
 		workplane.setOnSelectEvent(()->{
 			if (workplane.isClicked()) {
 				System.out.println("Placing ruler");
