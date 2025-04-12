@@ -143,8 +143,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			onCancel=null;
 		}
 	}
-
 	public void activate() {
+		activate(true);
+	}
+	public void activate(boolean enableGroundPick) {
 		active = true;
 		tempory=false;
 		setClickOnGround(false);
@@ -153,7 +155,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		ground.addEventFilter(MouseEvent.ANY, this);
 		ground.setMouseTransparent(false);
 		wpPick.setMouseTransparent(false);
-		ground.setVisible(true);
+		ground.setVisible(enableGroundPick);
 		wpPick.addEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
 		if(meshes!=null)
@@ -171,7 +173,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Node intersectedNode = pickResult.getIntersectedNode();
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
-			onCancel=null;// non cancles bu instead completed
+			onCancel=null;// non cancles but instead completed
 			cancle();
 			ev.consume();
 			session.updateControls();
@@ -210,11 +212,16 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			TransformNR pureRot = new TransformNR(new RotationNR(angles[1], angles[0], angles[2]));
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = t.times(pureRot);
-			if(updater!=null) {
-				updater.setWorkplaneLocation(screenLocation);
-			}
+			
 			if (intersectedNode == wpPick) {
+				if(updater!=null) {
+					updater.setWorkplaneLocation(screenLocation);
+				}
 				screenLocation = ap.get().getWorkplane().times(screenLocation);
+			}else{
+				if(updater!=null) {
+					updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
+				}
 			}
 			setCurrentAbsolutePose(screenLocation);
 			
@@ -291,7 +298,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		return clicked;
 	}
 
-	public void pickPlane(Runnable r,RulerManager ruler) {
+	public void pickPlane(Runnable r,Runnable always,RulerManager ruler) {
 		double pointerLen = 10;
 		double pointerWidth = 2;
 		double pointerHeight = 20;
@@ -303,17 +310,19 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				.setColor(Color.YELLOWGREEN);
 		this.setIndicator(indicator, new Affine());
 		this.setOnSelectEvent(() -> {
-			if (!this.isClicked())
-				return;
-			if (this.isClickOnGround()) {
-				// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
-				ap.get().setWorkplane(new TransformNR());
-				ruler.cancle();
-			} else {
-				ap.get().setWorkplane(this.getCurrentAbsolutePose());
+			if (this.isClicked()) {
+				if (this.isClickOnGround()) {
+					// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
+					ap.get().setWorkplane(new TransformNR());
+					ruler.cancle();
+				} else {
+					ap.get().setWorkplane(this.getCurrentAbsolutePose());
+				}
+				placeWorkplaneVisualization();
+
+				r.run();
 			}
-			placeWorkplaneVisualization();
-			r.run();
+			always.run();
 		});
 		this.activate();
 	}

@@ -99,6 +99,7 @@ public class ControlSprites {
 	private boolean zmoving = false;
 	private ICaDoodleOpperation currentOp;
 	private ActiveProject ap;
+	private RulerManager ruler;
 
 	public void setSnapGrid(double size) {
 		zMove.setIncrement(size);
@@ -108,6 +109,7 @@ public class ControlSprites {
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation manipulation,
 			ActiveProject ap, RulerManager ruler) {
 		this.session = session;
+		this.ruler = ruler;
 		if(e==null)
 			throw new NullPointerException();
 		this.engine = e;
@@ -375,7 +377,7 @@ public class ControlSprites {
 		return rotationManager.isFocused();
 	}
 
-	private void updateLines() {
+	public void updateLines() {
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
@@ -470,9 +472,10 @@ public class ControlSprites {
 							|| (mode == SpriteDisplayMode.Default
 									&& MoveCenter.class.isInstance(currentOpperation) && currentOp!=currentOpperation);
 			if ( isThisADisplayMode && (!scaleSession.xySelected() && !scaleSession.zScaleSelected())) {
+				
 				if (!xymoving)
 					zOffset.show();
-				if (!zmoving) {
+				if (!zmoving && ruler.isActive()) {
 					xOffset.show();
 					yOffset.show();
 				}else {
@@ -538,8 +541,10 @@ public class ControlSprites {
 				for (DottedLine l : lines) {
 					l.setVisible(true);
 				}
-				xOffset.show();
-				yOffset.show();
+				if(ruler.isActive()) {
+					xOffset.show();
+					yOffset.show();
+				}
 				break;
 			case MoveZ:
 				for (DottedLine l : lines) {

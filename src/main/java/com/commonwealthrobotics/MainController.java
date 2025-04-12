@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import org.apache.sshd.common.util.OsUtils;
 
 import com.commonwealthrobotics.controls.SelectionSession;
+import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
@@ -510,7 +511,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onRuler(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
 		ruler.setActive(true);
-		ruler.startPick();
+		session.setMode(SpriteDisplayMode.PLACING);
+		ruler.startPick(()->{
+			session.setMode(SpriteDisplayMode.Default);
+		});
 		session.setKeyBindingFocus();
 	}
 
@@ -550,7 +554,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWOrkplane(ActionEvent event) {
-		workplane.pickPlane(() -> session.save(),ruler);
+		session.setMode(SpriteDisplayMode.PLACING);
+		workplane.pickPlane(() -> {
+			ruler.cancle();
+			session.save();
+		}, ()->{
+			session.setMode(SpriteDisplayMode.Default);
+		},
+		ruler);
 		session.setKeyBindingFocus();
 	}
 

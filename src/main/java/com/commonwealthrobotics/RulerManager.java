@@ -54,7 +54,7 @@ public class RulerManager {
 		cancel.setOnAction(ev->{
 			setActive(false);
 		});
-		cancel.getTransforms().addAll(rulerOffset,buttonLoc);
+		cancel.getTransforms().addAll(buttonLoc);
 		BowlerStudio.runLater(()->TransformFactory.nrToAffine(
 				new TransformNR(-10,-30,1,RotationNR.getRotationY(180)),
 				buttonLoc));
@@ -98,7 +98,7 @@ public class RulerManager {
 		BowlerStudio.runLater(()->cancel.setVisible(active));
 	}
 
-	public void startPick() {
+	public void startPick(Runnable onFinish) {
 		System.out.println("Start Pick for Ruler");
 		CSG csg = new Cylinder(0, 5,10,20).toCSG();
 		CSG csg2 = new Cylinder(2, 2,10,20).toCSG().movez(10);
@@ -111,16 +111,19 @@ public class RulerManager {
 		workplane.onCancle(()->{
 			System.out.println("Canceling active ruler pick session");
 			cancle();
+			onFinish.run();
 		});
 		
 		workplane.setOnSelectEvent(()->{
 			if (workplane.isClicked()) {
 				System.out.println("Placing ruler");
 				ap.get().setRulerLocation(TransformFactory.affineToNr(rulerOffset));
+			}else {
+				cancle();
 			}
+			onFinish.run();
 		});
-		
-		workplane.activate();
+		workplane.activate(false);
 	}
 
 	public void setWorkplane(WorkplaneManager workplane) {
