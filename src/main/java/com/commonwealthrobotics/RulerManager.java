@@ -14,7 +14,6 @@ import javafx.scene.transform.Affine;
 
 public class RulerManager {
 
-	private Group rulerGroup;
 	private Affine wp = new Affine();
 	private Affine buttonLoc = new Affine();
 	private boolean active = false;
@@ -29,9 +28,9 @@ public class RulerManager {
 		
 	}
 
-	public Group getRulerGroup() {
-		return rulerGroup;
-	}
+//	public Group getRulerGroup() {
+//		return rulerGroup;
+//	}
 	
 	public double getOffset(TextFieldDimention dim) {
 		switch(dim) {
@@ -46,10 +45,9 @@ public class RulerManager {
 		}
 	}
 
-	public void initialize(Group rg,Affine ro) {
-		this.rulerGroup = rg;
+	public void initialize(Group rulerGroup,Affine wpUpstream,Affine ro) {
 		rulerOffset=ro;
-		rulerGroup.getTransforms().addAll(wp);
+		wp=wpUpstream;
 		rulerGroup.getChildren().add(cancel);
 		BowlerStudio.runLater(()->cancel.setVisible(false));
 		cancel.setOnAction(ev->{
@@ -72,8 +70,13 @@ public class RulerManager {
 		}
 	}
 
-	public void setWP(TransformNR newWP) {
-		this.newWP = newWP;
+	public void setWP(TransformNR n) {
+		if (n==null)
+			return;
+		this.newWP = n.copy();
+//		newWP.setX(0);
+//		newWP.setY(0);
+//		newWP.setZ(0);
 		if(isActive())
 			BowlerStudio.runLater(()->TransformFactory.nrToAffine(newWP, wp));
 	}
@@ -107,9 +110,7 @@ public class RulerManager {
 		workplane.setOnSelectEvent(()->{
 			if (workplane.isClicked()) {
 				System.out.println("Placing ruler");
-				TransformNR tmp = workplane.getCurrentAbsolutePose().copy();
-				tmp.setRotation(new RotationNR());
-				ap.get().setRulerLocation(tmp);
+				ap.get().setRulerLocation(TransformFactory.affineToNr(rulerOffset));
 			}
 		});
 		
@@ -118,8 +119,12 @@ public class RulerManager {
 
 	public void setWorkplane(WorkplaneManager workplane) {
 		this.workplane = workplane;
-		// TODO Auto-generated method stub
 		
+	}
+
+	public void cancle() {
+		setActive(false);
+
 	}
 
 }

@@ -58,7 +58,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private IWorkplaneUpdate updater = null;
 
 	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
-		
+
 		this.ap = ap;
 		this.ground = ground;
 		this.engine = engine;
@@ -137,6 +137,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		active = false;
 		ground.setMouseTransparent(true);
 		ground.setVisible(false);
+
 	}
 
 	public void activate() {
@@ -205,6 +206,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			TransformNR pureRot = new TransformNR(new RotationNR(angles[1], angles[0], angles[2]));
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = t.times(pureRot);
+			if(updater!=null) {
+				updater.setWorkplaneLocation(screenLocation);
+			}
 			if (intersectedNode == wpPick) {
 				screenLocation = ap.get().getWorkplane().times(screenLocation);
 			}
@@ -259,9 +263,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
 		this.currentAbsolutePose = currentAbsolutePose;
-		if(updater!=null) {
-			updater.setWorkplaneLocation(currentAbsolutePose);
-		}
+
 		TransformFactory.nrToAffine(getCurrentAbsolutePose(), getWorkplaneLocation());
 	}
 
@@ -285,7 +287,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		return clicked;
 	}
 
-	public void pickPlane(Runnable r) {
+	public void pickPlane(Runnable r,RulerManager ruler) {
 		double pointerLen = 10;
 		double pointerWidth = 2;
 		double pointerHeight = 20;
@@ -302,6 +304,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			if (this.isClickOnGround()) {
 				// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
 				ap.get().setWorkplane(new TransformNR());
+				ruler.cancle();
 			} else {
 				ap.get().setWorkplane(this.getCurrentAbsolutePose());
 			}
