@@ -55,6 +55,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private boolean tempory;
 	private ActiveProject ap;
 	private double increment = 1.0;
+	private IWorkplaneUpdate updater = null;
 
 	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 		
@@ -118,6 +119,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void cancle() {
 		if (!active)
 			return;
+		updater=null;
 		ground.removeEventFilter(MouseEvent.ANY, this);
 		wpPick.removeEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneInOrigin());
@@ -170,6 +172,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			ground.setMouseTransparent(true);
 			wpPick.setMouseTransparent(true);
 			ground.setVisible(false);
+			
 			return;
 		}
 		if (ev.getEventType() == MouseEvent.MOUSE_MOVED || ev.getEventType() == MouseEvent.MOUSE_DRAGGED) {
@@ -256,6 +259,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
 		this.currentAbsolutePose = currentAbsolutePose;
+		if(updater!=null) {
+			updater.setWorkplaneLocation(currentAbsolutePose);
+		}
 		TransformFactory.nrToAffine(getCurrentAbsolutePose(), getWorkplaneLocation());
 	}
 
@@ -359,5 +365,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setWorkplaneLocation(Affine workplaneLocation) {
 		this.workplaneLocation = workplaneLocation;
+
+	}
+
+	public void setUpdater(IWorkplaneUpdate updater) {
+		this.updater = updater;
 	}
 }

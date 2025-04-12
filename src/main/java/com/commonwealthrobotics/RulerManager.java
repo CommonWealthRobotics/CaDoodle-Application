@@ -6,6 +6,8 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cylinder;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.transform.Affine;
@@ -20,6 +22,7 @@ public class RulerManager {
 	private Button cancel = new Button("X");
 	private ActiveProject ap;
 	private Affine rulerOffset;
+	private WorkplaneManager workplane;
 	
 	public RulerManager(ActiveProject ap) {
 		this.ap=ap;
@@ -92,6 +95,29 @@ public class RulerManager {
 	}
 
 	public void startPick() {
+		System.out.println("Start Pick for Ruler");
+		CSG csg = new Cylinder(0, 5,10,20).toCSG();
+		CSG csg2 = new Cylinder(2, 2,10,20).toCSG().movez(10);
+		workplane.setIndicator(csg.union(csg2), new Affine());
+		workplane.setUpdater(tf->{
+			TransformNR tmp = tf.copy();
+			tmp.setRotation(new RotationNR());
+			TransformFactory.nrToAffine(tmp, rulerOffset);
+		});
+		workplane.setOnSelectEvent(()->{
+			if (workplane.isClicked()) {
+				System.out.println("Placing ruler");
+				TransformNR tmp = workplane.getCurrentAbsolutePose().copy();
+				tmp.setRotation(new RotationNR());
+				ap.get().setRulerLocation(tmp);
+			}
+		});
+		
+		workplane.activate();
+	}
+
+	public void setWorkplane(WorkplaneManager workplane) {
+		this.workplane = workplane;
 		// TODO Auto-generated method stub
 		
 	}
