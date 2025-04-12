@@ -76,9 +76,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionSession session = null;
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
-	private ActiveProject ap = null;
+	private ActiveProject ap = new ActiveProject();
 	private SelectionBox sb = null;
-	private RulerManager ruler = new RulerManager();
+	private RulerManager ruler = new RulerManager(ap);
 
 	/**
 	 * CaDoodle Model Classes
@@ -510,6 +510,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onRuler(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
 		ruler.setActive(true);
+		ruler.startPick();
 		session.setKeyBindingFocus();
 	}
 
@@ -659,11 +660,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		ap = new ActiveProject();
+		
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		ap.addListener(this);
-		session = new SelectionSession(engine, ap);
+		session = new SelectionSession(engine, ap,ruler);
 		sb = new SelectionBox(session, view3d, engine, ap);
 		try {
 			ap.loadActive();
@@ -674,7 +675,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-
+		
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage,advancedGroupMenu);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
@@ -786,7 +787,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				AnchorPane.setLeftAnchor(engine.getSubScene(), 0.0);
 				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
 			});
-
 		});
 		engine.setControlsMap(new IControlsMap() {
 
@@ -850,7 +850,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			onChange(engine.getFlyingCamera());
 		});
 		createGroundPlane();
-
 	}
 
 	private void createGroundPlane() {
@@ -867,7 +866,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.addUserNode(linesGroupp);
 		Group rulerGroup = engine.getRulerGroup();
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-		ruler.setRulerGroup(rulerGroup);
+		ruler.initialize(rulerGroup,engine.getRulerOffset());
 
 	}
 

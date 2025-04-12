@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.MainController;
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.Quadrent;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
+import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -60,7 +62,8 @@ public class RotationHandle {
 	private ActiveProject ap;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
-			RotationSessionManager rotationSessionManager, ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
+			RotationSessionManager rotationSessionManager, ActiveProject ap, 
+			ControlSprites cs, Affine workplaneOffset,RulerManager ruler) {
 		this.axis = ax;
 		this.viewRotation = vr;
 		this.ap = ap;
@@ -75,7 +78,7 @@ public class RotationHandle {
 			flagSaveChange=true;
 			runSaveAndReset();
 		};
-		text=new ThreedNumber(translate,  workplaneOffset, onSelect);
+		text=new ThreedNumber(translate,  workplaneOffset, onSelect, TextFieldDimention.None, ruler);
 		text.get();
 		text.hide();
 		handle.setImage(rotateImage);

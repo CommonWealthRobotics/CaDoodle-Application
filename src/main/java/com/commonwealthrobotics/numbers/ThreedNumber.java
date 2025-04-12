@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.numbers;
 
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -45,12 +46,17 @@ public class ThreedNumber {
 	private Affine resizeHandleLocation = new Affine();
 	private Runnable onSelect;
 	private Affine reorent;
+	private TextFieldDimention dim;
+	private RulerManager ruler;
 	
-	public ThreedNumber( Affine move, Affine workplaneOffset, Runnable onSelect) {
+	public ThreedNumber( Affine move, Affine workplaneOffset, Runnable onSelect,
+			TextFieldDimention dim, RulerManager ruler) {
 		//this.session = session;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
 		this.onSelect = onSelect;
+		this.dim = dim;
+		this.ruler = ruler;
 		// Set the preferred width to use computed size
 		textField.setPrefWidth(50);
 
@@ -60,34 +66,6 @@ public class ThreedNumber {
 			onSelect.run();
 		};
 		textField.setOnAction(value);
-		UnaryOperator<TextFormatter.Change> filter = change -> {
-			String newText = change.getControlNewText();
-			if (newText.matches("-?\\d*(\\.\\d{0,2})?")) {
-				return change;
-			}
-			return null;
-		};
-
-		StringConverter<Double> converter = new StringConverter<Double>() {
-			@Override
-			public String toString(Double object) {
-				return formatValue(object);
-			}
-
-			@Override
-			public Double fromString(String string) {
-				if (string.isEmpty()) {
-					return 0.00;
-				}
-				try {
-					return format.parse(string).doubleValue();
-				} catch (ParseException e) {
-					return 0.00;
-				}
-			}
-		};
-		TextFormatter<Double> textFormatter = new TextFormatter<>(converter, getMostRecentValue(), filter);
-		//textField.setTextFormatter(textFormatter);
 		reorent = new Affine();
 		textField.getTransforms().add(move);
 		textField.getTransforms().add(resizeHandleLocation);
@@ -99,9 +77,7 @@ public class ThreedNumber {
 
 	}
 
-	private String formatValue(double value) {
-		return format.format(value);
-	}
+
 
 	private void validate() {
 		// Number set from event
@@ -112,7 +88,7 @@ public class ThreedNumber {
 			return;
 		}
 		try {
-			setMostRecentValue(Double.parseDouble(t));
+			setMostRecentValue(Double.parseDouble(t)+ruler.getOffset(dim));
 		} catch (NumberFormatException ex) {
 			setValue(getMostRecentValue());
 		}
@@ -120,7 +96,7 @@ public class ThreedNumber {
 
 	public void setValue(double v) {
 		textField.setOnAction(null);
-		textField.setText(format.format(v));
+		textField.setText(format.format(v-ruler.getOffset(dim)));
 		setMostRecentValue(v);
 		textField.setOnAction(value);
 		//validate();
