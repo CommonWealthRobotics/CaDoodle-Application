@@ -468,7 +468,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			File last = FileSelectionFactory.GetFile(currentFile, false, stl);
 			if (last != null) {
 				currentFile = last;
-				com.neuronrobotics.sdk.common.Log.error("Adding file " + last);
+				System.out.println("Adding file " + last);
 				AddFromFile toAdd = new AddFromFile().set(last);
 				session.addOp(toAdd);
 			}
