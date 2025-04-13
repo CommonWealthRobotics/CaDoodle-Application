@@ -45,7 +45,7 @@ public class RulerManager {
 		}
 	}
 
-	public void initialize(Group rulerGroup,Affine wpUpstream,Affine ro) {
+	public void initialize(Group rulerGroup,Affine wpUpstream,Affine ro, Runnable OnCancle) {
 		rulerOffset=ro;
 		wp=wpUpstream;
 		rulerGroup.getChildren().add(cancel);
@@ -53,6 +53,7 @@ public class RulerManager {
 		BowlerStudio.runLater(()->cancel.setVisible(false));
 		cancel.setOnAction(ev->{
 			setActive(false);
+			OnCancle.run();
 		});
 		cancel.getTransforms().addAll(buttonLoc);
 		BowlerStudio.runLater(()->TransformFactory.nrToAffine(
@@ -134,7 +135,6 @@ public class RulerManager {
 
 	public void cancle() {
 		setActive(false);
-
 	}
 
 }

@@ -513,7 +513,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ruler.setActive(true);
 		session.setMode(SpriteDisplayMode.PLACING);
 		ruler.startPick(()->{
-			session.setMode(SpriteDisplayMode.Default);
+			if(session.selectedSnapshot().size()>0)
+				session.setMode(SpriteDisplayMode.Default);
+			else
+				session.setMode(SpriteDisplayMode.Clear);
+			session.updateControls();
 		});
 		session.setKeyBindingFocus();
 	}
@@ -770,6 +774,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(500);
 				}
 				session.setKeyBindingFocus();
+				BowlerStudio.runLater(() -> cancel());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -876,7 +881,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroupp.getChildren().add(ground);
 		engine.addUserNode(linesGroupp);
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-		ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(),engine.getRulerOffset());
+		ruler.initialize(engine.getRulerGroup(), 
+				engine.getRulerInWorkplaneOffset(),
+				engine.getRulerOffset(),()->{
+					session.updateControls();
+				});
 
 	}
 
@@ -974,13 +983,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			resetArmed = true;
 			timeOfClick = System.currentTimeMillis();
 			if (isEventACancel(event)) {
-				System.out.println("Cancel event");
-				if (workplane.isTemporaryPlane()) {
-					activeProject.get().setWorkplane(new TransformNR());
-					workplane.placeWorkplaneVisualization();
-				}
-				session.clearSelection();
-				com.neuronrobotics.sdk.common.Log.error("Cancle");
+				cancel();
 			}
 
 			// System.out.println("Releses MainController");
@@ -1147,6 +1150,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			}
 		});
+	}
+
+	private void cancel() {
+		System.out.println("Cancel event");
+		if (workplane.isTemporaryPlane()) {
+			activeProject.get().setWorkplane(new TransformNR());
+			workplane.placeWorkplaneVisualization();
+		}
+		session.clearSelection();
 	}
 
 	public boolean isEventACancel(MouseEvent event) {

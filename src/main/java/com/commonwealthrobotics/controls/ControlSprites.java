@@ -83,7 +83,7 @@ public class ControlSprites {
 	private Scale scaleTF = new Scale();
 	private Affine selection;
 	private Manipulation zMove;
-	//private CaDoodleFile cadoodle;
+	// private CaDoodleFile cadoodle;
 	private Bounds b;
 	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
 	private TransformNR cf;
@@ -110,7 +110,7 @@ public class ControlSprites {
 			ActiveProject ap, RulerManager ruler) {
 		this.session = session;
 		this.ruler = ruler;
-		if(e==null)
+		if (e == null)
 			throw new NullPointerException();
 		this.engine = e;
 		this.selection = sel;
@@ -119,23 +119,35 @@ public class ControlSprites {
 		// this.xyMove = mov;
 		ap.addListener(new ICaDoodleStateUpdate() {
 			@Override
-			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {}			
+			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+			}
+
 			@Override
-			public void onSaveSuggestion() {}			
+			public void onSaveSuggestion() {
+			}
+
 			@Override
 			public void onInitializationDone() {
 				currentOp = ap.get().getCurrentOpperation();
 			}
+
 			@Override
-			public void onWorkplaneChange(TransformNR newWP) {}
+			public void onWorkplaneChange(TransformNR newWP) {
+			}
+
 			@Override
-			public void onInitializationStart() {}
+			public void onInitializationStart() {
+			}
+
 			@Override
-			public void onRegenerateDone() {}
+			public void onRegenerateDone() {
+			}
+
 			@Override
-			public void onRegenerateStart() {}
+			public void onRegenerateStart() {
+			}
 		});
-		
+
 		manipulation.addEventListener(ev -> {
 			xymoving = true;
 			zmoving = false;
@@ -152,8 +164,7 @@ public class ControlSprites {
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
 			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
-			Thread t = ap.addOp(
-					new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
+			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
 			try {
 				t.join();
 			} catch (InterruptedException exx) {
@@ -204,13 +215,13 @@ public class ControlSprites {
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, up.getMesh());
 		allElems.addAll(tmp);
 
-		setUpOpperationManagers(session, ap,ruler);
+		setUpOpperationManagers(session, ap, ruler);
 		allElems.addAll(allign.getElements());
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
 			System.err.println("Typed position update");
-			scaleSession.set(xdimen.getMostRecentValue(),ydimen.getMostRecentValue(),zdimen.getMostRecentValue());
+			scaleSession.set(xdimen.getMostRecentValue(), ydimen.getMostRecentValue(), zdimen.getMostRecentValue());
 			updateCubes();
 			updateLines();
 		};
@@ -218,9 +229,10 @@ public class ControlSprites {
 
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
-			double xOff = xOffset.getMostRecentValue() - min.x ;
-			double yOff = yOffset.getMostRecentValue() - min.y ;
-			//com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x="+ xOff+" y="+yOff);
+			double xOff = xOffset.getMostRecentValue() - min.x;
+			double yOff = yOffset.getMostRecentValue() - min.y;
+			// com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x="+ xOff+"
+			// y="+yOff);
 			manipulation.set(xOff, yOff, 0);
 			manipulation.fireSave();
 			updateCubes();
@@ -229,19 +241,19 @@ public class ControlSprites {
 		Runnable offsetZChange = () -> {
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
-			double manipDiff = zOffset.getMostRecentValue() -min.z; 
-			//com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
+			double manipDiff = zOffset.getMostRecentValue() - min.z;
+			// com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
 			zMove.set(0, 0, manipDiff);
 			zMove.fireSave();
 			updateCubes();
 			updateLines();
 		};
-		xdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.None,ruler);
-		ydimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.None,ruler);
-		zdimen = new ThreedNumber( selection, workplaneOffset, dimChange,TextFieldDimention.None,ruler);
-		xOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange,TextFieldDimention.X,ruler);
-		yOffset = new ThreedNumber( selection, workplaneOffset, offsetxyChange,TextFieldDimention.Y,ruler);
-		zOffset = new ThreedNumber( selection, workplaneOffset, offsetZChange,TextFieldDimention.Z,ruler);
+		xdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
+		ydimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
+		zdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
+		xOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimention.X, ruler);
+		yOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimention.Y, ruler);
+		zOffset = new ThreedNumber(selection, workplaneOffset, offsetZChange, TextFieldDimention.Z, ruler);
 		numbers = Arrays.asList(xdimen, ydimen, zdimen, xOffset, yOffset, zOffset);
 		for (ThreedNumber t : numbers)
 			allElems.add(t.get());
@@ -251,10 +263,10 @@ public class ControlSprites {
 
 	}
 
-	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap,RulerManager ruler) {
-		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset,ruler);
+	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
+		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset, ruler);
 		allign = new AllignManager(session, selection, workplaneOffset);
-		mirror=new MirrorSessionManager(selection, ap, this, workplaneOffset);
+		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
 	private void setUpUIComponennts() {
@@ -288,17 +300,20 @@ public class ControlSprites {
 
 		this.b = b;
 		if (!selectionLive) {
-			//TickToc.tic("!selectionLive");
+			// TickToc.tic("!selectionLive");
 			selectionLive = true;
 			BowlerStudio.runLater(() -> {
 				initialize();
+				for (ThreedNumber t : numbers) {
+					t.hide();
+				}
 			});
 		}
 		if (el < -90 || el > 90) {
-			//TickToc.tic("footprint.setVisible(false)");
+			// TickToc.tic("footprint.setVisible(false)");
 			footprint.setVisible(false);
 		} else {
-			//TickToc.tic("footprint.setVisible(true)");
+			// TickToc.tic("footprint.setVisible(true)");
 			footprint.setVisible(true);
 		}
 
@@ -310,41 +325,43 @@ public class ControlSprites {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		//TickToc.tic("cam up");
+		// TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
-		//TickToc.tic("rot update");
+		// TickToc.tic("rot update");
 		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
-		//TickToc.tic("cubes update");
+		// TickToc.tic("cubes update");
 		updateCubes();
-		//TickToc.tic("lines update");
+		// TickToc.tic("lines update");
 		updateLines();
-		if(session.isLocked() || session.isInOperationMode()) {
+		if (session.isLocked() || session.isInOperationMode()) {
 			up.hide();
 			rotationManager.hide();
 			scaleSession.hide();
-		}else {
+		} else {
 			up.show();
 			rotationManager.show();
-			//scaleSession.show();
+			// scaleSession.show();
 
 		}
 	}
 
-	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b) {
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
-		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,cf);
-		//TickToc.tic("alligned update");
+	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
+			double y, double z, List<String> selectedCSG, Bounds b) {
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+		// TickToc.tic("alligned update");
 		allign.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
 
 	public void initializeAllign(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
 		allign.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
-		
+
 	}
+
 	public void initializeMirror(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
-		mirror.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);	
+		mirror.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
 	}
+
 	public void cancelOperationMode() {
 		allign.cancel();
 		mirror.cancel();
@@ -356,16 +373,14 @@ public class ControlSprites {
 		rotationManager.initialize();
 		mirror.hide();
 		allign.hide();
-		for (ThreedNumber t : numbers) {
-			t.hide();
-		}
+
 	}
 
 	private void resetSelected() {
 		scaleSession.resetSelected();
 		up.resetSelected();
 		rotationManager.resetSelected();
-		
+
 	}
 
 	public boolean isFocused() {
@@ -373,7 +388,7 @@ public class ControlSprites {
 			if (t.isFocused())
 				return true;
 		}
-		
+
 		return rotationManager.isFocused();
 	}
 
@@ -448,11 +463,6 @@ public class ControlSprites {
 
 			zOffset.setValue(min.z + zMove.getCurrentPoseInReferenceFrame().getZ());
 
-			if (up.isSelected() && mode == SpriteDisplayMode.Default || mode == SpriteDisplayMode.MoveZ) {
-				zOffset.show();
-			} else {
-				zOffset.hide();
-			}
 			if (scaleSession.zScaleSelected() && mode == SpriteDisplayMode.Default
 					|| mode == SpriteDisplayMode.ResizeZ) {
 				zdimen.show();
@@ -469,22 +479,36 @@ public class ControlSprites {
 
 			ICaDoodleOpperation currentOpperation = ap.get().getCurrentOpperation();
 			boolean isThisADisplayMode = mode == SpriteDisplayMode.MoveZ || mode == SpriteDisplayMode.MoveXY
-							|| (mode == SpriteDisplayMode.Default
-									&& MoveCenter.class.isInstance(currentOpperation) && currentOp!=currentOpperation);
-			if ( isThisADisplayMode && (!scaleSession.xySelected() && !scaleSession.zScaleSelected())) {
-				
-				if (!xymoving)
+					|| (mode == SpriteDisplayMode.Default && MoveCenter.class.isInstance(currentOpperation)
+							&& currentOp != currentOpperation);
+			if (!ruler.isActive()) {
+				if (up.isSelected() && mode == SpriteDisplayMode.Default || mode == SpriteDisplayMode.MoveZ) {
 					zOffset.show();
-				if (!zmoving && ruler.isActive()) {
-					xOffset.show();
-					yOffset.show();
-				}else {
-					//com.neuronrobotics.sdk.common.Log.error("Z is moving");
+				} else {
+					zOffset.hide();
+				}
+
+				if (isThisADisplayMode && (!scaleSession.xySelected() && !scaleSession.zScaleSelected())) {
+
+					if (!xymoving)
+						zOffset.show();
+					if (!zmoving && ruler.isActive()) {
+						xOffset.show();
+						yOffset.show();
+					} else {
+						// com.neuronrobotics.sdk.common.Log.error("Z is moving");
+					}
+				} else {
+					xOffset.hide();
+					yOffset.hide();
+					zOffset.hide();
 				}
 			} else {
-				xOffset.hide();
-				yOffset.hide();
-				zOffset.hide();
+				if (session.selectedSnapshot().size() > 0) {
+					zOffset.show();
+					xOffset.show();
+					yOffset.show();
+				}
 			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
 
@@ -502,7 +526,7 @@ public class ControlSprites {
 	}
 
 	private void updateCubes() {
-		
+
 		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf, session.isLocked());
 	}
 
@@ -513,7 +537,7 @@ public class ControlSprites {
 		});
 		selectionLive = false;
 		resetSelected();
-		if(ap.get()!=null)
+		if (ap.get() != null)
 			currentOp = ap.get().getCurrentOpperation();
 	}
 
@@ -534,14 +558,22 @@ public class ControlSprites {
 			switch (this.mode) {
 			case Default:
 				initialize();
+				for (ThreedNumber t : numbers) {
+					t.hide();
+				}
 				allign.hide();
 				mirror.hide();
+				if (ruler.isActive()) {
+					xOffset.show();
+					yOffset.show();
+					zOffset.show();
+				}
 				return;
 			case MoveXY:
 				for (DottedLine l : lines) {
 					l.setVisible(true);
 				}
-				if(ruler.isActive()) {
+				if (ruler.isActive()) {
 					xOffset.show();
 					yOffset.show();
 				}
@@ -580,11 +612,14 @@ public class ControlSprites {
 					l.setVisible(true);
 				}
 				break;
-
+			case Clear:
+				// activate none
+				break;
 			}
 			updateLines();
 		});
 	}
+
 	public boolean mirrorIsActive() {
 		return mirror.isActive();
 	}
