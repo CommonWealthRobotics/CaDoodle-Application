@@ -86,7 +86,7 @@ repositories {
 		allowInsecureProtocol = true
 	}
 	maven {
-		url 'https://commonwealthrobotics.com/jcenter-mirror/'
+		url 'https://commonwealthrobotics.com/maven/'
 		allowInsecureProtocol = true
 	}
 }
