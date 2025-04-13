@@ -123,7 +123,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		updater=null;
 		ground.removeEventFilter(MouseEvent.ANY, this);
 		wpPick.removeEventFilter(MouseEvent.ANY, this);
-		wpPick.setVisible(isWorkplaneInOrigin());
+		wpPick.setVisible(isWorkplaneNotOrigin());
 		if(meshes!=null)
 		for (CSG key : meshes.keySet()) {
 			MeshView mv = meshes.get(key);
@@ -157,7 +157,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		wpPick.setMouseTransparent(false);
 		ground.setVisible(enableGroundPick);
 		wpPick.addEventFilter(MouseEvent.ANY, this);
-		wpPick.setVisible(isWorkplaneInOrigin());
+		wpPick.setVisible(isWorkplaneNotOrigin());
 		if(meshes!=null)
 		for (CSG key : meshes.keySet()) {
 			MeshView mv = meshes.get(key);
@@ -330,12 +330,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void placeWorkplaneVisualization() {
 		engine.placeGrid(ap.get().getWorkplane());
 		BowlerKernel.runLater(() -> {
-			wpPick.setVisible(isWorkplaneInOrigin());
+			wpPick.setVisible(isWorkplaneNotOrigin());
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
 		});
 	}
 
-	public boolean isWorkplaneInOrigin() {
+	public boolean isWorkplaneNotOrigin() {
 		TransformNR w = ap.get().getWorkplane();
 		double epsilon = 0.00001;
 		RotationNR r = w.getRotation();

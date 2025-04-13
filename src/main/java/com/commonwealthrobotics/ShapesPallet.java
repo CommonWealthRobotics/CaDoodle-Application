@@ -229,7 +229,7 @@ public class ShapesPallet {
 					}
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
-					boolean workplaneInOrigin = !workplane.isWorkplaneInOrigin();
+					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					System.out.println("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {

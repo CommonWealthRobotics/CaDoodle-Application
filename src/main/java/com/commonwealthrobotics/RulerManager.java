@@ -123,7 +123,7 @@ public class RulerManager {
 			}
 			onFinish.run();
 		});
-		boolean workplaneInOrigin = workplane.isWorkplaneInOrigin();
+		boolean workplaneInOrigin = workplane.isWorkplaneNotOrigin();
 		workplane.activate(!workplaneInOrigin);
 	}
 
