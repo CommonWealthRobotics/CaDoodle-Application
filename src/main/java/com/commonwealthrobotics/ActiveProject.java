@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.swing.filechooser.FileSystemView;
@@ -18,18 +19,25 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.WritableImage;
+import javafx.stage.Stage;
 
 public class ActiveProject implements ICaDoodleStateUpdate {
 
@@ -149,6 +157,50 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public CaDoodleFile loadActive() throws Exception  {
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);
+			fromFile.setAccept(new IAcceptPruneForward() {
+				private ButtonType buttonType = null;
+				@Override
+				public boolean accept() {
+					buttonType = null;
+					boolean isVis = SplashManager.isVisableSplash();
+					SplashManager.closeSplash();			
+					BowlerKernel.runLater(() -> {
+						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+						alert.setTitle("Message");
+						alert.setHeaderText("You made a change, this will erase the work you had done after this\nWould you like to continue?");
+						Node root = alert.getDialogPane();
+						Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+						stage.setOnCloseRequest(ev -> alert.hide());
+						FontSizeManager.addListener(fontNum -> {
+							int tmp = fontNum - 10;
+							if (tmp < 12)
+								tmp = 12;
+							root.setStyle("-fx-font-size: " + tmp + "pt");
+							alert.getDialogPane().applyCss();
+							alert.getDialogPane().layout();
+							stage.sizeToScene();
+						});
+						SplashManager.closeSplash();
+						Optional<ButtonType> result = alert.showAndWait();
+						buttonType = result.get();
+						alert.close();
+					});
+					
+					while (buttonType == null) {
+						try {
+							Thread.sleep(100);
+							SplashManager.closeSplash();
+						} catch (InterruptedException e) {
+							// Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					if (isVis)
+						SplashManager.renderSplashFrame(0, "Processing " );
+					return buttonType.equals(ButtonType.OK);
+				}
+			});
 			return fromFile;
 		}catch(Exception e) {
 			newProject();
@@ -262,7 +314,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", nf.getAbsolutePath());
 		return nf;
 	}
 	public boolean isDisableRegenerate() {

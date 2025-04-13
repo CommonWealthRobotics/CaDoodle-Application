@@ -336,6 +336,8 @@ public class Main extends Application {
 				while (buttonType == null) {
 					try {
 						Thread.sleep(100);
+
+						SplashManager.closeSplash();
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
 						e.printStackTrace();
