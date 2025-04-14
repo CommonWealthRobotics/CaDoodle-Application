@@ -134,6 +134,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean showConstituants = false;
 	private MenuButton advancedGroupMenu;
 	private RulerManager ruler;
+	private double max = 9999;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -547,6 +548,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			String string = options.getText().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
+				if(parseDouble>max ) {
+					parseDouble=max;
+					options.setText(max+"");
+				}
+				if(parseDouble<-max ) {
+					parseDouble=-max;
+					options.setText(-max+"");
+				}
 				System.out.println("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
 				options2.clear();
