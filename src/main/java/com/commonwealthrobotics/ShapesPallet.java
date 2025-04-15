@@ -189,7 +189,16 @@ public class ShapesPallet {
 		if(isSweep) {
 			try {
 				File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-				set=new Sweep().set(f).setPreventBoM(true);
+				Sweep s=new Sweep();
+				String ZPer = key.get("ZPer");
+				String Degrees = key.get("Degrees");
+				if( ZPer!=null) {
+					s.setDefz(Double.parseDouble(ZPer));
+				}
+				if(Degrees!=null)
+					s.setDefangle(Double.parseDouble(Degrees));
+				s.set(f).setPreventBoM(true);
+				set=s;
 			}catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -243,7 +252,16 @@ public class ShapesPallet {
 									if (isSweep) {
 										try {
 											File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-											setAddFromScript = new Sweep().set(f).setLocation(currentAbsolutePose);
+											Sweep s=new Sweep();
+											String ZPer = key.get("ZPer");
+											String Degrees = key.get("Degrees");
+											if( ZPer!=null) {
+												s.setDefz(Double.parseDouble(ZPer));
+											}
+											if(Degrees!=null)
+												s.setDefangle(Double.parseDouble(Degrees));
+											s.set(f).setPreventBoM(true).setLocation(currentAbsolutePose);
+											setAddFromScript=s;
 										} catch (Exception e) {
 											e.printStackTrace();
 											return;
