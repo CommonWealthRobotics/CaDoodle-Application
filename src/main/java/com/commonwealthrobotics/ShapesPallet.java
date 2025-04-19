@@ -309,7 +309,12 @@ public class ShapesPallet {
 		this.searchMode = searchMode;
 		if(searchMode) {
 			objectPallet.getChildren().clear();
+			searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+			    System.out.println("Text changed from: " + oldValue + " to: " + newValue);
+			    // Your code here
+			});
 		}
+		
 		BowlerStudio.runLater(() -> shapeCatagory.setDisable(searchMode));
 		onSetCatagory();
 	}
