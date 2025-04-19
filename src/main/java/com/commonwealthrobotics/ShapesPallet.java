@@ -67,7 +67,7 @@ public class ShapesPallet {
 	private HashMap<String, HashMap<String, String>> active = null;
 	private SelectionSession session;
 	private WorkplaneManager workplane;
-	private HashMap<Button, List<CSG>> referenceParts = new HashMap<>();
+	//private HashMap<Button, List<CSG>> referenceParts = new HashMap<>();
 	private ActiveProject ap;
 	private boolean threadRunning = false;
 	private boolean threadComplete = true;
@@ -148,7 +148,7 @@ public class ShapesPallet {
 				}
 				BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
 				Thread.sleep(30);
-				referenceParts.clear();
+				//referenceParts.clear();
 				for (int i = 0; i < orderedList.size() && threadRunning; i++) {
 					int col = i % 3;
 					int row = i / 3;
@@ -157,7 +157,7 @@ public class ShapesPallet {
 						continue;
 					com.neuronrobotics.sdk.common.Log.error("Placing " + names.get(key) + " at " + row + " , " + col);
 					try {
-						setupButton(names, key, col, row);
+						setupButton(names, key, col, row,current);
 
 					} catch (Throwable tx) {
 						tx.printStackTrace();
@@ -174,9 +174,8 @@ public class ShapesPallet {
 		t.start();
 	}
 
-	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row) {
+	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row,String typeOfShapes) {
 		// TODO cache images and STLs
-		String typeOfShapes = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
 		String sweep = key.get("sweep");
 		boolean isSweep = (sweep != null)? Boolean.parseBoolean(sweep):false;
 		String name = names.get(key);
@@ -184,58 +183,18 @@ public class ShapesPallet {
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
-		// new Thread(() -> {
-		AbstractAddFrom set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
-		if(isSweep) {
-			try {
-				File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-				Sweep s=new Sweep();
-				String ZPer = key.get("ZPer");
-				String Degrees = key.get("Degrees");
-				if( ZPer!=null) {
-					s.setDefz(Double.parseDouble(ZPer));
-				}
-				if(Degrees!=null)
-					s.setDefangle(Double.parseDouble(Degrees));
-				s.set(f).setPreventBoM(true);
-				set=s;
-			}catch(Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		List<CSG> so = set.process(new ArrayList<>());
-		for (CSG c : so) {
-			for (String s : c.getParameters()) {
-				CSGDatabase.delete(s);
-			}
-		}
-		if(isSweep)
-			try {
-				File file = set.getFile();
-				file.delete();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		referenceParts.put(button, so);
+		ShapePalletButtonResources resources = new ShapePalletButtonResources(key,typeOfShapes,name);
+		
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
-			if (typeOfShapes.toLowerCase().contains("vitamin"))
-				for (CSG c : so) {
-					c.setIsHole(false);
-				}
-			Image thumb = ThumbnailImage.get(so);
+			Image thumb = resources.getImage();
 			ImageView tIv = new ImageView(thumb);
 			tIv.setFitHeight(50);
 			tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {
-					List<CSG> ScriptObjects = referenceParts.get(button);
-					CSG indicator = ScriptObjects.get(0);
-					if (ScriptObjects.size() > 1) {
-						indicator = CSG.unionAll(ScriptObjects);
-					}
+					CSG indicator = resources.getIndicator();
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
