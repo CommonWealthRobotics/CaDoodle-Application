@@ -30,6 +30,7 @@ import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -48,6 +49,8 @@ import java.lang.reflect.Type;
 import java.nio.file.NoSuchFileException;
 
 public class ShapesPallet {
+	private static final String SEARCH_MODE = "Search Mode";
+
 	/**
 	 * Statics
 	 */
@@ -71,6 +74,7 @@ public class ShapesPallet {
 	private ActiveProject ap;
 	private boolean threadRunning = false;
 	private boolean threadComplete = true;
+	private boolean searchMode = false;
 
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
@@ -107,6 +111,8 @@ public class ShapesPallet {
 	}
 
 	public void onSetCatagory() {
+		if(searchMode)
+			return;
 		threadRunning = false;
 		Thread t = new Thread(() -> {
 			SplashManager.renderSplashFrame(50, "Loading Shapes");
@@ -124,6 +130,7 @@ public class ShapesPallet {
 			ap.setDisableRegenerate(true);
 			try {
 				String current = shapeCatagory.getSelectionModel().getSelectedItem();
+
 				com.neuronrobotics.sdk.common.Log.error("Selecting shapes from " + current);
 				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
 				active = nameToFile.get(current);
@@ -292,6 +299,19 @@ public class ShapesPallet {
 
 	public static String getGitULR() {
 		return gitULR;
+	}
+
+	public boolean isSearchMode() {
+		return searchMode;
+	}
+
+	public void setSearchMode(boolean searchMode, TextField searchField) {
+		this.searchMode = searchMode;
+		if(searchMode) {
+			objectPallet.getChildren().clear();
+		}
+		BowlerStudio.runLater(() -> shapeCatagory.setDisable(searchMode));
+		onSetCatagory();
 	}
 
 }

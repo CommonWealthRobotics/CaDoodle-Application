@@ -292,12 +292,13 @@
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints vgrow="ALWAYS" />
                           </rowConstraints>
                            <children>
-                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                              <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                              <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                                  <children>
                                     <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <content>
@@ -363,6 +364,16 @@
                                     <Tooltip text="Notes &lt; N &gt;" />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" styleClass="image-button" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@search.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <TextField fx:id="searchField" disable="true" maxWidth="128.0" prefHeight="26.0" prefWidth="128.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                      </children>

@@ -258,6 +258,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private AnchorPane AdvancedBooleanOpsMenuHolder;
 	@FXML
 	private MenuButton advancedGroupMenu;
+	@FXML
+	private TextField searchField;
+	@FXML // fx:id="zoomInButton"
+	private Button searchButton; // Value injected by FXMLLoader
 	
 	
 	
@@ -269,7 +273,21 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private int lastFrame = 0;
 	private File currentFile = null;
 	
-
+	@FXML
+	void onSearch(ActionEvent event) {
+		if(pallet==null)
+			return;
+		if(pallet.isSearchMode()) {
+			pallet.setSearchMode(false,searchField);
+		}else {
+			pallet.setSearchMode(true,searchField);
+		}
+		BowlerStudio.runLater(()->{
+			searchField.setDisable(!pallet.isSearchMode());
+		});
+		searchField.requestFocus();
+		//session.setKeyBindingFocus();
+	}
 
 	@FXML
 	void onAllign(ActionEvent event) {
