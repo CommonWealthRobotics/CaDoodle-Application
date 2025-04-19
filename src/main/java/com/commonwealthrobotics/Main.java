@@ -335,7 +335,7 @@ public class Main extends Application {
 
 				while (buttonType == null) {
 					try {
-						Thread.sleep(100);
+						Thread.sleep(20);
 
 						SplashManager.closeSplash();
 					} catch (InterruptedException e) {
