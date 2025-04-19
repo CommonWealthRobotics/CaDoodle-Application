@@ -314,8 +314,10 @@ public class ShapesPallet {
 		if(searchMode) {
 			objectPallet.getChildren().clear();
 			searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-				updateFromSearch(oldValue, newValue);
-				
+				updateFromSearch(searchField.getText());
+			});
+			searchField.setOnAction(ev->{
+				updateFromSearch(searchField.getText());
 			});
 		}
 		
@@ -323,14 +325,14 @@ public class ShapesPallet {
 		onSetCatagory();
 	}
 
-	private void updateFromSearch(String oldValue, String newValue) {
+	private void updateFromSearch(String newValue) {
 		if(searchThread!=null)
 			return;
 		objectPallet.getChildren().clear();
 		if(newValue.length()<2)
 			return;
 		searchThread = new Thread(()->{
-			System.out.println("Text changed from: " + oldValue + " to: " + newValue);
+			System.out.println("Text changed to: " + newValue);
 			int i=0;
 			HashSet<String> buttons =new HashSet<String>();
 			for(String current:nameToFile.keySet()) {
