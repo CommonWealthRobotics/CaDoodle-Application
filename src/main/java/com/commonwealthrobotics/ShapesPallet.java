@@ -16,6 +16,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
+import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
@@ -340,8 +341,12 @@ public class ShapesPallet {
 					if(i>15)
 						break;
 					HashMap<String, String> hashMap = active.get(name);
-					if(hashMap.get("plugin")!=null)
-						continue;
+					String string = hashMap.get("plugin");
+					if(string!=null) {
+						boolean b=DownloadManager.isDownloadedAlready(string);
+						if(!b)
+							continue;
+					}
 					if(buttons.contains(name))
 						continue;
 					buttons.add(name);
