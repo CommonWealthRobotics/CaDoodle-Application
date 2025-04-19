@@ -297,7 +297,7 @@
                               <RowConstraints vgrow="ALWAYS" />
                           </rowConstraints>
                            <children>
-                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" prefHeight="26.0" prefWidth="197.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                               <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                                  <children>
                                     <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
