@@ -272,30 +272,30 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public List<CaDoodleFile> getProjects() throws IOException {
-	    String directoryPath = getWorkingDir().getAbsolutePath();
-	    File dir = new File(directoryPath);
-	    List<CaDoodleFile> list = new ArrayList<>();
-	    
-	    File[] files = dir.listFiles();
-	    if (files != null) {
-	        for (File file : files) {
-	            if (file.isDirectory() && !file.equals(dir)) {
-	            	File[] contents = file.listFiles();
-	            	for(File f:contents) {
-	            		if(f.getName().toLowerCase().endsWith(".doodle")) {
-	            			try {
-								list.add(CaDoodleFile.fromFile(f,null,false));
+		String directoryPath = getWorkingDir().getAbsolutePath();
+		File dir = new File(directoryPath);
+		List<CaDoodleFile> list = new ArrayList<>();
+
+		File[] files = dir.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.isDirectory() && !file.equals(dir)) {
+					File[] contents = file.listFiles();
+					for (File f : contents) {
+						if (f.getName().toLowerCase().endsWith(".doodle")) {
+							try {
+								list.add(CaDoodleFile.fromFile(f, null, false));
 							} catch (Exception e) {
 								// Auto-generated catch block
 								e.printStackTrace();
 							}
-	            		}
-	            	}
-	            }
-	        }
-	    }
-	    
-	    return list;
+						}
+					}
+				}
+			}
+		}
+
+		return list;
 	}
 
 	public File newProject() throws IOException {
@@ -304,8 +304,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		String pathname = "Doodle-" +proj.size()+"-"+ nextRandomName;
 		File np = new File(getWorkingDir().getAbsolutePath() + delim() + pathname);
 		np.mkdirs();
+		System.out.println("New Doodle Directory "+np.getAbsolutePath());
 		File nf = new File(np.getAbsolutePath() + delim() + pathname+".doodle");
 		nf.createNewFile();
+		System.out.println("New Doodle File "+nf.getAbsolutePath());
 		try {
 			CaDoodleFile cf =setActiveProject(nf);
 			cf.setProjectName(nextRandomName);
