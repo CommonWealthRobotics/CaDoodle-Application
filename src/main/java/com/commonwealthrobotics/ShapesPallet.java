@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -76,6 +77,9 @@ public class ShapesPallet {
 	private boolean threadComplete = true;
 	private boolean searchMode = false;
 
+	private List<String> sortedList;
+	private Thread searchThread = null;
+
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
 		this.shapeCatagory = sc;
@@ -86,7 +90,7 @@ public class ShapesPallet {
 		// new Thread(() -> {
 		try {
 			ArrayList<String> files = ScriptingEngine.filesInGit(getGitULR());
-			List<String> sortedList = new ArrayList<>(files);
+			sortedList = new ArrayList<>(files);
 			Collections.sort(sortedList);
 			for (String f : sortedList) {
 				if (f.toLowerCase().endsWith(".json")) {
@@ -164,7 +168,7 @@ public class ShapesPallet {
 						continue;
 					com.neuronrobotics.sdk.common.Log.error("Placing " + names.get(key) + " at " + row + " , " + col);
 					try {
-						setupButton(names, key, col, row,current);
+						setupButton(names.get(key), key, col, row,current);
 
 					} catch (Throwable tx) {
 						tx.printStackTrace();
@@ -181,11 +185,10 @@ public class ShapesPallet {
 		t.start();
 	}
 
-	private Button setupButton(HashMap<Map, String> names, HashMap<String, String> key, int col, int row,String typeOfShapes) {
+	private Button setupButton(String name, HashMap<String, String> key, int col, int row,String typeOfShapes) {
 		// TODO cache images and STLs
 		String sweep = key.get("sweep");
 		boolean isSweep = (sweep != null)? Boolean.parseBoolean(sweep):false;
-		String name = names.get(key);
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
@@ -310,13 +313,52 @@ public class ShapesPallet {
 		if(searchMode) {
 			objectPallet.getChildren().clear();
 			searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-			    System.out.println("Text changed from: " + oldValue + " to: " + newValue);
-			    // Your code here
+				updateFromSearch(oldValue, newValue);
+				
 			});
 		}
 		
 		BowlerStudio.runLater(() -> shapeCatagory.setDisable(searchMode));
 		onSetCatagory();
+	}
+
+	private void updateFromSearch(String oldValue, String newValue) {
+		if(searchThread!=null)
+			return;
+		objectPallet.getChildren().clear();
+		if(newValue.length()<2)
+			return;
+		searchThread = new Thread(()->{
+			System.out.println("Text changed from: " + oldValue + " to: " + newValue);
+			int i=0;
+			HashSet<String> buttons =new HashSet<String>();
+			for(String current:nameToFile.keySet()) {
+				active = nameToFile.get(current);
+				if (active == null)
+					continue;
+				for(String name:active.keySet()) {
+					if(i>15)
+						break;
+					HashMap<String, String> hashMap = active.get(name);
+					if(hashMap.get("plugin")!=null)
+						continue;
+					if(buttons.contains(name))
+						continue;
+					buttons.add(name);
+					if (name.toLowerCase().contains(newValue.toLowerCase())) {
+						System.out.println("Matching "+current+" value "+name);
+						int col = i % 3;
+						int row = i / 3;
+						setupButton(name, hashMap, col, row,current);
+						i++;
+					}
+				}
+				if(i>15)
+					break;
+			}
+			searchThread=null;
+		});
+		searchThread.start();
 	}
 
 }
