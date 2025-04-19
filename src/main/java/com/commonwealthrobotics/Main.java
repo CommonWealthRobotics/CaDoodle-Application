@@ -244,7 +244,11 @@ public class Main extends Application {
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-		ensureGitAssetsArePresent();
+		try {
+			ensureGitAssetsArePresent();
+		}catch(Throwable t) {
+			t.printStackTrace();
+		}
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		launch();
