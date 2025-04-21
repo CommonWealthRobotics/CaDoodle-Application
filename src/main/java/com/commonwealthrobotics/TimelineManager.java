@@ -85,13 +85,13 @@ public class TimelineManager {
 	}
 
 	public void update(boolean clear) {
-		//new Exception().printStackTrace();
 		while (updating) {
 			try {
 				Thread.sleep(16);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return;
 			}
 			System.out.println("Start Waiting for timeline to finish");
 			new Exception().printStackTrace();
@@ -121,7 +121,6 @@ public class TimelineManager {
 						}).start();
 					});
 					File f = ap.get().getTimelineImageFile(i - 1);
-					// System.out.println("Laoding Image to timeline " + f.getAbsolutePath());
 					Image image = new Image(f.toURI().toString());
 					ImageView value = new ImageView(image);
 					ImageView toolimage = new ImageView(image);
@@ -138,7 +137,6 @@ public class TimelineManager {
 					tooltip.setContentDisplay(ContentDisplay.TOP);
 					toAdd.setTooltip(tooltip);
 					buttons.add(toAdd);
-					// if (i != 0)
 					timeline.getChildren().add(toAdd);
 					addrem = true;
 				} catch (Exception ex) {
@@ -165,9 +163,8 @@ public class TimelineManager {
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return;
 			}
-			// System.out.println("End Waiting for timeline to finish");
-			// new Exception().printStackTrace();
 		}
 	}
 
