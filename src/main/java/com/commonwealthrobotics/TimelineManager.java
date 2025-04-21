@@ -109,12 +109,18 @@ public class TimelineManager {
 					//System.out.println("Laoding Image to timeline " + f.getAbsolutePath());
 					Image image = new Image(f.toURI().toString());
 					ImageView value = new ImageView(image);
+					ImageView toolimage = new ImageView(image);
 					value.setFitHeight(80);
 					value.setFitWidth(80);
+					toolimage.setFitHeight(300);
+					toolimage.setFitWidth(300);
+
 					toAdd.getStyleClass().add("image-button");
 					toAdd.setContentDisplay(ContentDisplay.TOP);
 					toAdd.setGraphic(value);
 					Tooltip tooltip = new Tooltip(text);
+					tooltip.setGraphic(toolimage);
+					tooltip.setContentDisplay(ContentDisplay.TOP);
 					toAdd.setTooltip(tooltip);
 					buttons.add(toAdd);
 					timeline.getChildren().add(toAdd);
