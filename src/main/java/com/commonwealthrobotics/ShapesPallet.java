@@ -200,15 +200,15 @@ public class ShapesPallet {
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = resources.getImage();
-			ImageView tIv = new ImageView(thumb);
+			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50));
 			ImageView toolimage = new ImageView(thumb);
 			
 			toolimage.setFitHeight(300);
 			toolimage.setFitWidth(300);
 			hover.setGraphic(toolimage);
 			hover.setContentDisplay(ContentDisplay.TOP);
-			tIv.setFitHeight(50);
-			tIv.setFitWidth(50);
+//			tIv.setFitHeight(50);
+//			tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {
