@@ -146,6 +146,12 @@ public class ControlSprites {
 			@Override
 			public void onRegenerateStart() {
 			}
+
+			@Override
+			public void onTimelineUpdate() {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 
 		manipulation.addEventListener(ev -> {

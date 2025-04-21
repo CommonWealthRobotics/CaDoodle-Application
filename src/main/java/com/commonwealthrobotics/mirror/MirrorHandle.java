@@ -357,4 +357,10 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	public void onWorkplaneChange(TransformNR newWP) {
 		updateState();
 	}
+
+	@Override
+	public void onTimelineUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
 }

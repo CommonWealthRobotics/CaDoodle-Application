@@ -364,4 +364,14 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 	}
+	@Override
+	public void onTimelineUpdate() {
+		for (ICaDoodleStateUpdate l : listeners) {
+			try {
+				l.onTimelineUpdate();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

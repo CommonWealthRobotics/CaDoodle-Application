@@ -203,7 +203,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		intitialization = false;
 		setUpParametrics(currentState, source);
 		displayCurrent();
-		timeline.update();
 	}
 
 	private void myRegenerate(ICaDoodleOpperation source, IFileChangeListener l, File f) {
@@ -1706,6 +1705,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setMeshes(HashMap<CSG, MeshView> meshes) {
 		this.meshes = meshes;
+	}
+
+	@Override
+	public void onTimelineUpdate() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

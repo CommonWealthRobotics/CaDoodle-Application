@@ -1284,4 +1284,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// Auto-generated method stub
 
 	}
+
+	@Override
+	public void onTimelineUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
 }
