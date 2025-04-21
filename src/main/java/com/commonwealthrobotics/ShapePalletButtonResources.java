@@ -27,6 +27,7 @@ import eu.mihosoft.vrl.v3d.FileUtil;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public class ShapePalletButtonResources {
 	javafx.scene.image.Image image = null;
@@ -49,11 +50,13 @@ public class ShapePalletButtonResources {
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
 		if (imageFile.exists() && stlFile.exists()) {
 			indicator = Vitamins.get(stlFile);
+			indicator.setColor(Color.WHITE);
 			image = new Image(imageFile.toURI().toString());
 			return;
 		}
 		if(isPluginMissing) {
 			indicator=new Cube(20).toCSG().toZMin();
+			indicator.setColor(Color.WHITE);
 			image = new Image(ShapePalletButtonResources.class.getResourceAsStream("pluginMissing.png"));
 			return;
 		}
@@ -125,6 +128,7 @@ public class ShapePalletButtonResources {
 				indicator=indicator.dumbUnion(so.get(i));
 			}
 		}
+		indicator.setColor(Color.WHITE);
 		try {
 			FileUtil.write(Paths.get(stlFile.getAbsolutePath()),indicator.toStlString());
 			System.err.println("Indicator STL saved successfully to " + stlFile.getAbsolutePath());
