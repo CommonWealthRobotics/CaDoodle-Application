@@ -42,7 +42,7 @@ public class TimelineManager {
 			@Override
 			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
 				if (init)
-					update();
+					update(false);
 			}
 
 			@Override
@@ -57,8 +57,7 @@ public class TimelineManager {
 
 			@Override
 			public void onRegenerateDone() {
-				clear();
-				update();
+				update(true);
 			}
 
 			@Override
@@ -68,13 +67,13 @@ public class TimelineManager {
 
 			@Override
 			public void onInitializationDone() {
-				update();
+				update(false);
 				init = false;
 			}
 
 			@Override
 			public void onTimelineUpdate() {
-				update();
+				update(false);
 			}
 		});
 	}
@@ -85,7 +84,7 @@ public class TimelineManager {
 
 	}
 
-	public void update() {
+	public void update(boolean clear) {
 		//new Exception().printStackTrace();
 		while (updating) {
 			try {
@@ -101,12 +100,13 @@ public class TimelineManager {
 
 		BowlerStudio.runLater(() -> {
 			boolean addrem = false;
+			if(clear)
+				clear();
 			while ( ap.get().getCurrentIndex() < (buttons.size() - 1) && !ap.get().isForwardAvailible()) {
 				Button toRem = buttons.remove(buttons.size() - 1);
 				timeline.getChildren().remove(toRem);
 				addrem = true;
 			}
-			// clear();
 			ArrayList<ICaDoodleOpperation> opperations = ap.get().getOpperations();
 			int s=opperations.size();
 			for (int i = buttons.size(); i < Math.max(s,  ap.get().getCurrentIndex()); i++) {
@@ -173,13 +173,7 @@ public class TimelineManager {
 
 	public void clear() {
 		buttons.clear();
-		BowlerStudio.runLater(() -> timeline.getChildren().clear());
-		try {
-			Thread.sleep(16);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		timeline.getChildren().clear();
 	}
 
 }
