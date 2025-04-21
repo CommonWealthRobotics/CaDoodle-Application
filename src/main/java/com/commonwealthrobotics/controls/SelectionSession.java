@@ -19,6 +19,7 @@ import com.commonwealthrobotics.Main;
 import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TexturedCSG;
+import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
@@ -133,6 +134,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	private boolean showConstituants = false;
 	private MenuButton advancedGroupMenu;
+	private TimelineManager timeline;
 	private RulerManager ruler;
 	private double max = 9999;
 
@@ -201,7 +203,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		intitialization = false;
 		setUpParametrics(currentState, source);
 		displayCurrent();
-
+		timeline.update();
 	}
 
 	private void myRegenerate(ICaDoodleOpperation source, IFileChangeListener l, File f) {
@@ -676,7 +678,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, MenuButton advancedGroupMenu) {
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, MenuButton advancedGroupMenu, 
+			TimelineManager tm) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -689,6 +692,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
 		this.advancedGroupMenu = advancedGroupMenu;
+		this.timeline=tm;
 		setupSnapGrid();
 
 	}

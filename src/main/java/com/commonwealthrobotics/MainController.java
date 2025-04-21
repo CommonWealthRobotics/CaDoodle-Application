@@ -19,6 +19,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.FreecadLoader;
@@ -69,6 +70,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.control.ScrollPane;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
@@ -80,7 +82,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private ActiveProject activeProject = new ActiveProject();
 	private SelectionBox selectionBox = null;
 	private RulerManager ruler = new RulerManager(activeProject);
-
+	private TimelineManager tm = new TimelineManager(activeProject);
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -142,7 +144,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private HBox buttonBar;
 	@FXML // fx:id="drawrImage"
 	private ImageView drawrImage; // Value injected by FXMLLoader
-
+	@FXML // fx:id="drawrImage"
+	private ImageView timelineImage;
 	@FXML // fx:id="export"
 	private Button export; // Value injected by FXMLLoader
 
@@ -257,36 +260,42 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private AnchorPane AdvancedBooleanOpsMenuHolder;
 	@FXML
+	private AnchorPane timelineHolder;
+	@FXML
 	private MenuButton advancedGroupMenu;
 	@FXML
 	private TextField searchField;
 	@FXML // fx:id="zoomInButton"
 	private Button searchButton; // Value injected by FXMLLoader
-	
-	
-	
-	
+
+	@FXML // fx:id="drawerHolder"
+	private HBox timeline;
+
+	@FXML
+	private ScrollPane timelineScroll;
+
 	private ICaDoodleOpperation source;
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
 	private int lastFrame = 0;
 	private File currentFile = null;
-	
+	private boolean timelineOpen = true;
+
 	@FXML
 	void onSearch(ActionEvent event) {
-		if(pallet==null)
+		if (pallet == null)
 			return;
-		if(pallet.isSearchMode()) {
-			pallet.setSearchMode(false,searchField);
-		}else {
-			pallet.setSearchMode(true,searchField);
+		if (pallet.isSearchMode()) {
+			pallet.setSearchMode(false, searchField);
+		} else {
+			pallet.setSearchMode(true, searchField);
 		}
-		BowlerStudio.runLater(()->{
+		BowlerStudio.runLater(() -> {
 			searchField.setDisable(!pallet.isSearchMode());
 		});
 		searchField.requestFocus();
-		//session.setKeyBindingFocus();
+		// session.setKeyBindingFocus();
 	}
 
 	@FXML
@@ -349,6 +358,24 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
+	void timelineDrawerEvent(ActionEvent e) {
+		try {
+			timelineOpen = !timelineOpen;
+			if (timelineOpen) {
+				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
+				timelineHolder.getChildren().add(timelineScroll);
+			} else {
+				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+				timelineHolder.getChildren().remove(timelineScroll);
+			}
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleTimelineShow", timelineOpen);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		session.setKeyBindingFocus();
+	}
+
+	@FXML
 	void onDrawer(ActionEvent event) {
 		drawerOpen = !drawerOpen;
 		if (drawerOpen) {
@@ -378,10 +405,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		engine.focusOrentation(null, session.getFocusCenter(),
-				engine.getFlyingCamera().getZoomDepth());
+		engine.focusOrentation(null, session.getFocusCenter(), engine.getFlyingCamera().getZoomDepth());
 		session.setKeyBindingFocus();
 	}
+
 //onXorOpperation
 	@FXML
 	void onXorOpperation(ActionEvent event) {
@@ -389,25 +416,28 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.onXor();
 		session.setKeyBindingFocus();
 	}
+
 	@FXML
 	void onGroup(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Group");
-		session.onGroup(false,false);
+		session.onGroup(false, false);
 		session.setKeyBindingFocus();
 	}
+
 	@FXML
 	void onHullOpperation(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.error("On Hull");
-		session.onGroup(true,false);
+		session.onGroup(true, false);
 		session.setKeyBindingFocus();
 	}
+
 	@FXML
 	void onIntersectOpperation(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.error("On Intersect");
-		session.onGroup(false,true);
+		session.onGroup(false, true);
 		session.setKeyBindingFocus();
 	}
-	
+
 	@FXML
 	void onHideConnections(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error(" on Hide Physics Connections");
@@ -530,8 +560,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
 		ruler.setActive(true);
 		session.setMode(SpriteDisplayMode.PLACING);
-		ruler.startPick(()->{
-			if(session.selectedSnapshot().size()>0)
+		ruler.startPick(() -> {
+			if (session.selectedSnapshot().size() > 0)
 				session.setMode(SpriteDisplayMode.Default);
 			else
 				session.setMode(SpriteDisplayMode.Clear);
@@ -582,11 +612,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.save();
 			session.setMode(SpriteDisplayMode.Default);
 			session.updateControls();
-		}, ()->{
+		}, () -> {
 			session.setMode(SpriteDisplayMode.Default);
 			session.updateControls();
-		},
-		ruler);
+		}, ruler);
 		session.setKeyBindingFocus();
 	}
 
@@ -696,11 +725,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		
+
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		activeProject.addListener(this);
-		session = new SelectionSession(engine, activeProject,ruler);
+		session = new SelectionSession(engine, activeProject, ruler);
 		selectionBox = new SelectionBox(session, view3d, engine, activeProject);
 		try {
 			activeProject.loadActive();
@@ -711,9 +740,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		
+		tm.set(timelineScroll,timeline);
+
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage,advancedGroupMenu);
+				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,tm);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
@@ -737,6 +767,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 		setupCSGEngine();
 		SplashManager.setClosePreventer(() -> activeProject.get().getPercentInitialized() < 0.99);
+		timelineOpen = (boolean)ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
+		timeline.getChildren().clear();
+		if(!timelineOpen) {
+			timelineHolder.getChildren().remove(timelineScroll);
+			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+		}
 	}
 
 	private void setupCSGEngine() {
@@ -745,11 +781,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			int i = currentIndex + 1;
 			double percent = ((double) i) / ((double) finalIndex) * 100;
 			String name = "";
-			if(intermediateShape!=null)
-				name=intermediateShape.getName();
-			String x = name + " " + type.trim() + " " + String.format("%.1f", percent)
-					+ "% finished : " + i + " of " + finalIndex;
-			System.out.println("MainController.setupCSGEngine():: "+x);
+			if (intermediateShape != null)
+				name = intermediateShape.getName();
+			String x = name + " " + type.trim() + " " + String.format("%.1f", percent) + "% finished : " + i + " of "
+					+ finalIndex;
+			System.out.println("MainController.setupCSGEngine():: " + x);
 			if (isInitializing())
 				return;
 			try {
@@ -861,14 +897,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
 				boolean middle = me.isMiddleButtonDown();
- 				boolean ctrl = me.isControlDown();
- 				if(middle)
- 					return true;
+				boolean ctrl = me.isControlDown();
+				if (middle)
+					return true;
 				if ((shiftDown) && secondaryButtonDown)
 					return true;
 				if (ctrl && shiftDown && primaryButtonDown)
 					return true;
-				
+
 				return false;
 			}
 		});
@@ -902,11 +938,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroupp.getChildren().add(ground);
 		engine.addUserNode(linesGroupp);
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-		ruler.initialize(engine.getRulerGroup(), 
-				engine.getRulerInWorkplaneOffset(),
-				engine.getRulerOffset(),()->{
-					session.updateControls();
-				});
+		ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(), () -> {
+			session.updateControls();
+		});
 
 	}
 
@@ -995,7 +1029,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, activeProject, workplane);
 		workplane.placeWorkplaneVisualization();
 		selectionBox.setWorkplaneManager(workplane);
-		
+
 	}
 
 	private void setupEngineControls() {
@@ -1152,7 +1186,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 27:// escape
 					workplane.cancle();
-				break;
+					break;
 				case 116:// t
 				case 84:
 					session.toggleTransparent();
