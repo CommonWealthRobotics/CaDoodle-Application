@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
+import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
@@ -21,6 +22,7 @@ import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.FileUtil;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.embed.swing.SwingFXUtils;
@@ -33,6 +35,12 @@ public class ShapePalletButtonResources {
 	File stlFile = null;
 
 	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name) {
+		String string = key.get("plugin");
+
+		boolean isPluginMissing = false;
+		if(string!=null) {
+			isPluginMissing=!DownloadManager.isDownloadedAlready(string);
+		}
 		String absolutePath = ScriptingEngine.getWorkspace().getAbsolutePath() + delim() + "uicache";
 		File dir = new File(absolutePath);
 		if (!dir.exists())
@@ -42,6 +50,11 @@ public class ShapePalletButtonResources {
 		if (imageFile.exists() && stlFile.exists()) {
 			indicator = Vitamins.get(stlFile);
 			image = new Image(imageFile.toURI().toString());
+			return;
+		}
+		if(isPluginMissing) {
+			indicator=new Cube(20).toCSG().toZMin();
+			image = new Image(ShapePalletButtonResources.class.getResourceAsStream("pluginMissing.png"));
 			return;
 		}
 		String sweep = key.get("sweep");

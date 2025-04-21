@@ -190,6 +190,7 @@ public class ShapesPallet {
 	private Button setupButton(String name, HashMap<String, String> key, int col, int row,String typeOfShapes) {
 		// TODO cache images and STLs
 		String sweep = key.get("sweep");
+		
 		boolean isSweep = (sweep != null)? Boolean.parseBoolean(sweep):false;
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
@@ -350,12 +351,12 @@ public class ShapesPallet {
 					if(i>15)
 						break;
 					HashMap<String, String> hashMap = active.get(name);
-					String string = hashMap.get("plugin");
-					if(string!=null) {
-						boolean b=DownloadManager.isDownloadedAlready(string);
-						if(!b)
-							continue;
-					}
+//					String string = hashMap.get("plugin");
+//					if(string!=null) {
+//						boolean b=DownloadManager.isDownloadedAlready(string);
+//						if(!b)
+//							continue;
+//					}
 					if(buttons.contains(name))
 						continue;
 					buttons.add(name);
