@@ -10,7 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import javax.swing.filechooser.FileSystemView;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
@@ -29,6 +46,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -51,22 +69,23 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// this.listener = listener;
 
 	}
+
 	public Thread regenerateFrom(ICaDoodleOpperation source) {
-		if(disableRegenerate)
+		if (disableRegenerate)
 			return null;
 		Thread t = get().regenerateFrom(source);
-		if(t==null)
+		if (t == null)
 			return null;
-		new Thread(()->{
+		new Thread(() -> {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(t.isAlive()) {
-				while(!SplashManager.isVisableSplash()) {
-					SplashManager.renderSplashFrame((int)(get().getPercentInitialized()*100), " Re-Generating");
+			if (t.isAlive()) {
+				while (!SplashManager.isVisableSplash()) {
+					SplashManager.renderSplashFrame((int) (get().getPercentInitialized() * 100), " Re-Generating");
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
@@ -74,7 +93,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						e.printStackTrace();
 					}
 				}
-			}else {
+			} else {
 				return;
 			}
 			try {
@@ -87,22 +106,24 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		}).start();
 		return t;
 	}
+
 	public Thread addOp(ICaDoodleOpperation h) {
 		Thread t = get().addOpperation(h);
 		timeoutThread(h, t);
 		return t;
 	}
+
 	private void timeoutThread(ICaDoodleOpperation h, Thread t) {
-		new Thread(()->{
+		new Thread(() -> {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(t.isAlive()) {
-				SplashManager.renderSplashFrame(50, h.getType()+" running");
-			}else {
+			if (t.isAlive()) {
+				SplashManager.renderSplashFrame(50, h.getType() + " running");
+			} else {
 				return;
 			}
 			try {
@@ -114,6 +135,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			SplashManager.closeSplash();
 		}).start();
 	}
+
 	public ActiveProject clearListeners() {
 		listeners.clear();
 		return this;
@@ -141,52 +163,151 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private File getActiveProject() {
 		try {
-			Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile",
-					null);
-			if (object==null)
+			Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile", null);
+			if (object == null)
 				return newProject();
-			return new File(object
-					.toString());
+			return new File(object.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
-		} 
+		}
 
 	}
 
-	public CaDoodleFile loadActive() throws Exception  {
+	// Helper method to create styled option buttons with descriptions
+	private Node createOptionButton(String buttonText, String description, String tooltipText, EventHandler<ActionEvent> value) {
+		HBox buttonContainer = new HBox(5);
+		buttonContainer.setAlignment(Pos.CENTER_LEFT);
+
+		Button button = new Button(buttonText);
+		button.setMaxWidth(Double.MAX_VALUE);
+		button.setPrefHeight(40);
+		button.setOnAction(value);
+		//button.setStyle("-fx-font-weight: bold;");
+
+		Label descriptionLabel = new Label(description);
+		descriptionLabel.setWrapText(true);
+
+		buttonContainer.getChildren().addAll(button, descriptionLabel);
+
+		// Set tooltip
+		Tooltip tooltip = new Tooltip(tooltipText);
+		//tooltip.setShowDelay(Duration.millis(300));
+		button.setTooltip(tooltip);
+
+		// Create the final button that contains both the button and description
+		Button optionButton = new Button();
+		optionButton.setMaxWidth(Double.MAX_VALUE);
+		optionButton.setAlignment(Pos.CENTER_LEFT);
+		optionButton.setPadding(new Insets(10));
+
+		return buttonContainer;
+	}
+
+	public CaDoodleFile loadActive() throws Exception {
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);
 			fromFile.setAccept(new IAcceptPruneForward() {
-				private ButtonType buttonType = null;
+				private OperationResult operationResult = null;
+
 				@Override
-				public boolean accept() {
-					buttonType = null;
+				public OperationResult accept() {
+					operationResult = null;
 					boolean isVis = SplashManager.isVisableSplash();
-					SplashManager.closeSplash();			
+					SplashManager.closeSplash();
 					BowlerKernel.runLater(() -> {
 						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-						alert.setTitle("Message");
-						alert.setHeaderText("You made a change, this will erase the work you had done after this\nWould you like to continue?");
-						Node root = alert.getDialogPane();
-						Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+						alert.setTitle("Change Options");
+						alert.setHeaderText("You made a change. How would you like to proceed?");
+						alert.setContentText("Please select one of the following options:");
+
+						// Create custom buttons with specific labels
+						ButtonType eraseButton = new ButtonType("Erase");
+						ButtonType insertButton = new ButtonType("Insert");
+						ButtonType abortButton = new ButtonType("Abort change");
+
+						// Set the buttons for the alert
+						alert.getButtonTypes().setAll(eraseButton, insertButton, abortButton);
+
+						// Get the dialog pane to customize
+						DialogPane dialogPane = alert.getDialogPane();
+
+						// Create a VBox to hold descriptions and stack buttons vertically
+						VBox contentBox = new VBox(10);
+						contentBox.setPadding(new Insets(10, 10, 10, 10));
+
+						// Create labeled buttons with descriptions
+						Node eraseOptionBtn = createOptionButton("Erase",
+								"Replace subsequent work with this change.\nThis will remove any work you've done after this point.",
+								"Erase will prune the subsequent operations and replace them with this change.",
+								e -> {
+									this.operationResult= OperationResult.PRUNE;
+									alert.close();
+								});
+
+						Node insertOptionBtn = createOptionButton("Insert",
+								"Insert this change at the current position.\nYour subsequent work will be preserved.",
+								"Insert will add this operation at the current position while keeping subsequent operations.",
+								e -> {
+									this.operationResult= OperationResult.INSERT;
+									alert.close();
+								});
+
+						Node abortOptionBtn = createOptionButton("Abort change",
+								"Cancel this change and keep your work as is.",
+								"Abort will discard this change and maintain your current work.",
+								e -> {
+									this.operationResult= OperationResult.ABORT;
+									alert.close();
+								});
+
+						// Add buttons to the VBox
+						contentBox.getChildren().addAll(new Label("Choose how to handle your change:"), eraseOptionBtn,
+								insertOptionBtn, abortOptionBtn);
+
+						// Replace the default content with our custom content
+						dialogPane.setContent(contentBox);
+
+						// Get the root node and stage for styling
+						Node root = dialogPane;
+						Stage stage = (Stage) dialogPane.getScene().getWindow();
+
+						// Handle close request properly
 						stage.setOnCloseRequest(ev -> alert.hide());
+
+						// Set up font size management
 						FontSizeManager.addListener(fontNum -> {
 							int tmp = fontNum - 10;
 							if (tmp < 12)
 								tmp = 12;
 							root.setStyle("-fx-font-size: " + tmp + "pt");
-							alert.getDialogPane().applyCss();
-							alert.getDialogPane().layout();
+							dialogPane.applyCss();
+							dialogPane.layout();
 							stage.sizeToScene();
 						});
+
+						// Hide the default buttons as we're using custom ones
+						dialogPane.getButtonTypes().clear();
+						dialogPane.getButtonTypes().add(ButtonType.CANCEL); // Add a hidden button to make dialog work
+						Node buttonBar = dialogPane.lookup(".button-bar");
+						if (buttonBar != null) {
+							buttonBar.setVisible(false);
+							buttonBar.setManaged(false);
+						}
+
+
 						SplashManager.closeSplash();
-						Optional<ButtonType> result = alert.showAndWait();
-						buttonType = result.get();
+
+						// Show alert and wait for result
+						alert.showAndWait();
+
+						if(this.operationResult==null)
+							this.operationResult= OperationResult.ABORT;
+
 						alert.close();
 					});
-					
-					while (buttonType == null) {
+
+					while (operationResult == null) {
 						try {
 							Thread.sleep(100);
 							SplashManager.closeSplash();
@@ -197,12 +318,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 					}
 					if (isVis)
-						SplashManager.renderSplashFrame(0, "Processing " );
-					return buttonType.equals(ButtonType.OK);
+						SplashManager.renderSplashFrame(0, "Processing ");
+					return operationResult;
 				}
 			});
 			return fromFile;
-		}catch(Exception e) {
+		} catch (Exception e) {
 			newProject();
 			return fromFile;
 		}
@@ -265,8 +386,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public File getWorkingDir() {
-		String relative =ScriptingEngine.getWorkspace().getAbsolutePath();
-		File file = new File(relative + delim()  + "MyCaDoodleProjects" + delim());
+		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
+		File file = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		file.mkdirs();
 		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", file.getAbsolutePath()));
 	}
@@ -301,15 +422,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public File newProject() throws IOException {
 		List<CaDoodleFile> proj = getProjects();
 		String nextRandomName = RandomStringFactory.getNextRandomName();
-		String pathname = "Doodle-" +proj.size()+"-"+ nextRandomName;
+		String pathname = "Doodle-" + proj.size() + "-" + nextRandomName;
 		File np = new File(getWorkingDir().getAbsolutePath() + delim() + pathname);
 		np.mkdirs();
-		System.out.println("New Doodle Directory "+np.getAbsolutePath());
-		File nf = new File(np.getAbsolutePath() + delim() + pathname+".doodle");
+		System.out.println("New Doodle Directory " + np.getAbsolutePath());
+		File nf = new File(np.getAbsolutePath() + delim() + pathname + ".doodle");
 		nf.createNewFile();
-		System.out.println("New Doodle File "+nf.getAbsolutePath());
+		System.out.println("New Doodle File " + nf.getAbsolutePath());
 		try {
-			CaDoodleFile cf =setActiveProject(nf);
+			CaDoodleFile cf = setActiveProject(nf);
 			cf.setProjectName(nextRandomName);
 			cf.save();
 		} catch (Exception e) {
@@ -318,12 +439,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		}
 		return nf;
 	}
+
 	public boolean isDisableRegenerate() {
 		return disableRegenerate;
 	}
+
 	public void setDisableRegenerate(boolean disableRegenerate) {
 		this.disableRegenerate = disableRegenerate;
 	}
+
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
 		for (ICaDoodleStateUpdate l : listeners) {
@@ -334,6 +458,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 	}
+
 	@Override
 	public void onInitializationStart() {
 		for (ICaDoodleStateUpdate l : listeners) {
@@ -344,6 +469,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 	}
+
 	@Override
 	public void onRegenerateDone() {
 		for (ICaDoodleStateUpdate l : listeners) {
@@ -354,6 +480,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 	}
+
 	@Override
 	public void onRegenerateStart() {
 		for (ICaDoodleStateUpdate l : listeners) {
@@ -364,6 +491,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 	}
+
 	@Override
 	public void onTimelineUpdate() {
 		for (ICaDoodleStateUpdate l : listeners) {
