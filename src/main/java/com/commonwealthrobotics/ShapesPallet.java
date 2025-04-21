@@ -32,6 +32,7 @@ import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -200,6 +201,12 @@ public class ShapesPallet {
 			objectPallet.add(button, col, row);
 			Image thumb = resources.getImage();
 			ImageView tIv = new ImageView(thumb);
+			ImageView toolimage = new ImageView(thumb);
+			
+			toolimage.setFitHeight(300);
+			toolimage.setFitWidth(300);
+			hover.setGraphic(toolimage);
+			hover.setContentDisplay(ContentDisplay.TOP);
 			tIv.setFitHeight(50);
 			tIv.setFitWidth(50);
 			button.setGraphic(tIv);
