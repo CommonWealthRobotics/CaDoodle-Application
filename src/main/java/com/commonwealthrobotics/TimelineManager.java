@@ -68,6 +68,7 @@ public class TimelineManager {
 			@Override
 			public void onInitializationStart() {
 				init = true;
+				update(true);
 			}
 
 			@Override
