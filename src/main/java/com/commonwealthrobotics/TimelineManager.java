@@ -41,8 +41,8 @@ public class TimelineManager {
 
 			@Override
 			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
-				if (init)
-					update(false);
+//				if (init)
+//					update(false);
 			}
 
 			@Override
@@ -93,8 +93,8 @@ public class TimelineManager {
 				e.printStackTrace();
 				return;
 			}
-			System.out.println("Start Waiting for timeline to finish");
-			new Exception().printStackTrace();
+			//System.out.println("Start Waiting for timeline to finish");
+			//new Exception().printStackTrace();
 		}
 		updating = true;
 
@@ -157,15 +157,15 @@ public class TimelineManager {
 			else
 				updating = false;
 		});
-		while (updating) {
-			try {
-				Thread.sleep(16);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			}
-		}
+//		while (updating) {
+//			try {
+//				Thread.sleep(16);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				return;
+//			}
+//		}
 	}
 
 	public void clear() {
