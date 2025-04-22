@@ -71,14 +71,12 @@ public class TimelineManager {
 
 			@Override
 			public void onInitializationStart() {
-				init = true;
-				update(true);
+				update(false);
 			}
 
 			@Override
 			public void onInitializationDone() {
-				update(false);
-				init = false;
+				update(true);
 			}
 
 			@Override
