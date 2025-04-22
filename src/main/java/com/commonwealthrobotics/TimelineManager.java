@@ -149,16 +149,19 @@ public class TimelineManager {
 					int my = i;
 					ContextMenu contextMenu = new ContextMenu();
 					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-						if (event.getButton() == MouseButton.PRIMARY) {
-							int index = ap.get().getCurrentIndex() - 1;
-							Button button = buttons.get(index < 0 ? 0 : index);
-							contextMenu.hide();
-							if (button == toAdd)
-								return;
-							new Thread(() -> {
-								ap.get().moveToOpIndex(my);
-							}).start();
-						}
+						BowlerStudio.runLater(() -> {
+							if (event.getButton() == MouseButton.PRIMARY) {
+								int index = ap.get().getCurrentIndex() - 1;
+								Button button = buttons.get(index < 0 ? 0 : index);
+								contextMenu.hide();
+								if (button == toAdd)
+									return;
+								new Thread(() -> {
+									ap.get().moveToOpIndex(my);
+								}).start();
+							}
+						});
+		
 					});
 					File f = ap.get().getTimelineImageFile(i - 1);
 					Image image = new Image(f.toURI().toString());
@@ -196,19 +199,22 @@ public class TimelineManager {
 
 					// Add event handler for right-click
 					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-						if (event.getButton() == MouseButton.SECONDARY) {
-							// Show context menu where the mouse was clicked
-							contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
-							new Thread(()->{
-								try {
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								BowlerStudio.runLater(()->contextMenu.hide());
-							}).start();
-						}
+						BowlerStudio.runLater(() -> {
+							if (event.getButton() == MouseButton.SECONDARY) {
+								// Show context menu where the mouse was clicked
+								contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
+								new Thread(() -> {
+									try {
+										Thread.sleep(3000);
+									} catch (InterruptedException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									BowlerStudio.runLater(() -> contextMenu.hide());
+								}).start();
+							}
+						});
+
 					});
 //					toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, ex -> {
 //						contextMenu.hide();
