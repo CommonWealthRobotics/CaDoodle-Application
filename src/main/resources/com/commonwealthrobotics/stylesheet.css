@@ -43,10 +43,24 @@
 .image-button:focused {
     -fx-border-color: -logo-red; /* Blue border when focused */
 }
-
 .image-button:pressed {
     -fx-background-color: -logo-orange; /* Light gray background when pressed */
 }
+.image-button:hover {
+    -fx-background-color: -logo-yellow; /* the color you want when hovering */
+}
+
+.image-button-focus {
+    -fx-background-color: transparent;
+    -fx-border-width: 4px;
+    -fx-background-insets: 0;
+    -fx-border-color: -logo-red; /* Blue border when focused */
+}
+.image-button-focus:hover {
+    -fx-background-color: -logo-yellow; /* the color you want when hovering */
+}
+
+
 .grid-pane {
     -fx-grid-line-color: -logo-blue;
 }

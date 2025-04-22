@@ -14,6 +14,8 @@ import eu.mihosoft.vrl.v3d.CSG;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -21,6 +23,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -139,14 +143,22 @@ public class TimelineManager {
 			int s = opperations.size();
 			for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 				try {
-					ICaDoodleOpperation opp = opperations.get(i);
-					String text = (i + 1) + "\n" + opp.getType();
+					ICaDoodleOpperation op = opperations.get(i);
+					String text = (i + 1) + "\n" + op.getType();
 					Button toAdd = new Button(text);
 					int my = i;
-					toAdd.setOnAction(ev -> {
-						new Thread(() -> {
-							ap.get().moveToOpIndex(my);
-						}).start();
+					ContextMenu contextMenu = new ContextMenu();
+					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+						if (event.getButton() == MouseButton.PRIMARY) {
+							int index = ap.get().getCurrentIndex() - 1;
+							Button button = buttons.get(index < 0 ? 0 : index);
+							contextMenu.hide();
+							if (button == toAdd)
+								return;
+							new Thread(() -> {
+								ap.get().moveToOpIndex(my);
+							}).start();
+						}
 					});
 					File f = ap.get().getTimelineImageFile(i - 1);
 					Image image = new Image(f.toURI().toString());
@@ -168,15 +180,57 @@ public class TimelineManager {
 					buttons.add(toAdd);
 					timeline.getChildren().add(toAdd);
 					addrem = true;
+
+					// Create a delete menu item
+					MenuItem deleteItem = new MenuItem("Delete");
+					deleteItem.getStyleClass().add("image-button-focus");
+					deleteItem.setOnAction(event -> {
+						// Add your delete operation logic here
+						System.out.println("Delete operation triggered");
+						ap.get().deleteOperation(op);
+						// For example: removeOperation(); or deleteButton();
+					});
+
+					// Add the delete item to the context menu
+					contextMenu.getItems().add(deleteItem);
+
+					// Add event handler for right-click
+					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+						if (event.getButton() == MouseButton.SECONDARY) {
+							// Show context menu where the mouse was clicked
+							contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
+							new Thread(()->{
+								try {
+									Thread.sleep(3000);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								BowlerStudio.runLater(()->contextMenu.hide());
+							}).start();
+						}
+					});
+//					toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, ex -> {
+//						contextMenu.hide();
+//					});
+
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 			if (buttons.size() > 0) {
-				for (int i = 0; i < buttons.size(); i++)
-					buttons.get(i).setDisable(false);
 				int index = ap.get().getCurrentIndex() - 1;
-				buttons.get(index < 0 ? 0 : index).setDisable(true);
+				Button button = buttons.get(index < 0 ? 0 : index);
+				for (int i = 0; i < buttons.size(); i++) {
+					Button button2 = buttons.get(i);
+					button2.getStyleClass().clear();
+					if (button == button2)
+						continue;
+					button2.getStyleClass().add("image-button");
+				}
+				button.getStyleClass().add("image-button-focus");
+				// Create a context menu
+
 			}
 			if (addrem)
 				Platform.runLater(() -> {
