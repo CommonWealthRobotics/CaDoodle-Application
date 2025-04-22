@@ -40,45 +40,26 @@ public class TimelineManager {
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
 		ap.addListener(new ICaDoodleStateUpdate() {
-			boolean init = false;
-
 			@Override
-			public void onWorkplaneChange(TransformNR newWP) {
-				// TODO Auto-generated method stub
-
-			}
-
+			public void onWorkplaneChange(TransformNR newWP) {}
 			@Override
-			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
-//				if (init)
-//					update(false);
-			}
-
+			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {			}
 			@Override
-			public void onSaveSuggestion() {
-
-			}
-
+			public void onSaveSuggestion() {}
 			@Override
-			public void onRegenerateStart() {
-
-			}
-
+			public void onRegenerateStart() {}
 			@Override
 			public void onRegenerateDone() {
 				update(true);
 			}
-
 			@Override
 			public void onInitializationStart() {
 				update(false);
 			}
-
 			@Override
 			public void onInitializationDone() {
 				update(true);
 			}
-
 			@Override
 			public void onTimelineUpdate() {
 				update(false);
@@ -96,21 +77,16 @@ public class TimelineManager {
 		// Create a canvas with the target dimensions
 		Canvas canvas = new Canvas(targetWidth, targetHeight);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-
 		// Clear the canvas with a transparent background
 		gc.clearRect(0, 0, targetWidth, targetHeight);
-
 		// Draw the original image scaled to the target size
 		gc.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
-
 		// Create snapshot parameters to preserve transparency
 		SnapshotParameters params = new SnapshotParameters();
 		params.setFill(Color.TRANSPARENT);
-
 		// Create a new WritableImage from the canvas
 		WritableImage resizedImage = new WritableImage(targetWidth, targetHeight);
 		canvas.snapshot(params, resizedImage);
-
 		return resizedImage;
 	}
 
@@ -119,15 +95,11 @@ public class TimelineManager {
 			try {
 				Thread.sleep(16);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return;
 			}
-			// System.out.println("Start Waiting for timeline to finish");
-			// new Exception().printStackTrace();
 		}
 		updating = true;
-
 		BowlerStudio.runLater(() -> {
 			boolean addrem = false;
 			if (clear)
@@ -163,14 +135,10 @@ public class TimelineManager {
 					});
 					File f = ap.get().getTimelineImageFile(i - 1);
 					Image image = new Image(f.toURI().toString());
-
 					ImageView value = new ImageView(resizeImage(image, 80, 80));
 					ImageView toolimage = new ImageView(image);
-//					value.setFitHeight(80);
-//					value.setFitWidth(80);
 					toolimage.setFitHeight(300);
 					toolimage.setFitWidth(300);
-
 					toAdd.getStyleClass().add("image-button");
 					toAdd.setContentDisplay(ContentDisplay.TOP);
 					toAdd.setGraphic(value);
@@ -181,20 +149,14 @@ public class TimelineManager {
 					buttons.add(toAdd);
 					timeline.getChildren().add(toAdd);
 					addrem = true;
-
 					// Create a delete menu item
 					MenuItem deleteItem = new MenuItem("Delete");
 					deleteItem.getStyleClass().add("image-button-focus");
 					deleteItem.setOnAction(event -> {
-						// Add your delete operation logic here
-						System.out.println("Delete operation triggered");
 						ap.get().deleteOperation(op);
-						// For example: removeOperation(); or deleteButton();
 					});
-
 					// Add the delete item to the context menu
 					contextMenu.getItems().add(deleteItem);
-
 					// Add event handler for right-click
 					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 						BowlerStudio.runLater(() -> {
@@ -205,19 +167,13 @@ public class TimelineManager {
 									try {
 										Thread.sleep(3000);
 									} catch (InterruptedException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
 									BowlerStudio.runLater(() -> contextMenu.hide());
 								}).start();
 							}
 						});
-
 					});
-//					toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, ex -> {
-//						contextMenu.hide();
-//					});
-
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -234,7 +190,6 @@ public class TimelineManager {
 				}
 				button.getStyleClass().add("image-button-focus");
 				// Create a context menu
-
 			}
 			if (addrem)
 				Platform.runLater(() -> {
@@ -244,15 +199,6 @@ public class TimelineManager {
 			else
 				updating = false;
 		});
-//		while (updating) {
-//			try {
-//				Thread.sleep(16);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				return;
-//			}
-//		}
 	}
 
 	public void clear() {
