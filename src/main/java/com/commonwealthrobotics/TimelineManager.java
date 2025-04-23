@@ -43,7 +43,11 @@ public class TimelineManager {
 			@Override
 			public void onWorkplaneChange(TransformNR newWP) {}
 			@Override
-			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {			}
+			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+				if(file.isRegenerating())
+					return;
+				System.gc();
+			}
 			@Override
 			public void onSaveSuggestion() {}
 			@Override
@@ -51,6 +55,7 @@ public class TimelineManager {
 			@Override
 			public void onRegenerateDone() {
 				update(true);
+				System.gc();
 			}
 			@Override
 			public void onInitializationStart() {
@@ -59,6 +64,7 @@ public class TimelineManager {
 			@Override
 			public void onInitializationDone() {
 				update(true);
+				System.gc();
 			}
 			@Override
 			public void onTimelineUpdate() {
