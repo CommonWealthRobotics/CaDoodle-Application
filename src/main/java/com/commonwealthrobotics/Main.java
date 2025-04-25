@@ -213,9 +213,12 @@ public class Main extends Application {
 		if (args != null) {
 			if (args.length != 0) {
 				File f = new File(args[0]);
+				System.out.println("Passed In File at "+f.getAbsolutePath());
 				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
-				}
+					System.out.println("Passed In File Exists! ");
+				}else
+					System.out.println("Fail! Passed In File Does Not Exists! ");
 			}
 		}
 		Plane.setEPSILON(1.0e-9);
