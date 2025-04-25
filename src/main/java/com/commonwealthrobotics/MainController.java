@@ -740,7 +740,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		tm.set(timelineScroll,timeline);
+		tm.set(timelineScroll,timeline,session);
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,tm);
@@ -1060,24 +1060,27 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
+				double dist=1;
+				if(event.isShiftDown())
+					dist=10;
 				switch (event.getCode()) {
 				case UP:
 					if (event.isControlDown()) {
-						session.moveInCameraFrame(new TransformNR(0, 0, 1));
+						session.moveInCameraFrame(new TransformNR(0, 0, dist));
 					} else
-						session.moveInCameraFrame(new TransformNR(1, 0, 0));
+						session.moveInCameraFrame(new TransformNR(dist, 0, 0));
 					break;
 				case DOWN:
 					if (event.isControlDown()) {
-						session.moveInCameraFrame(new TransformNR(0, 0, -1));
+						session.moveInCameraFrame(new TransformNR(0, 0, -dist));
 					} else
-						session.moveInCameraFrame(new TransformNR(-1, 0, 0));
+						session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
 					break;
 				case LEFT:
-					session.moveInCameraFrame(new TransformNR(0, 1, 0));
+					session.moveInCameraFrame(new TransformNR(0, dist, 0));
 					break;
 				case RIGHT:
-					session.moveInCameraFrame(new TransformNR(0, -1, 0));
+					session.moveInCameraFrame(new TransformNR(0, -dist, 0));
 					break;
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());

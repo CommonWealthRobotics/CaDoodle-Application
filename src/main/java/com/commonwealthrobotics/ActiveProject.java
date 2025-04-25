@@ -49,6 +49,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.Node;
@@ -474,7 +475,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public void onRegenerateDone() {
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
+				//TickToc.tic("Start "+l.getClass());
 				l.onRegenerateDone();
+				//TickToc.tic("End "+l.getClass());
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}

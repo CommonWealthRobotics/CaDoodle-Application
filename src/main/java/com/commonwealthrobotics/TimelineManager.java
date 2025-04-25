@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
@@ -36,17 +37,21 @@ public class TimelineManager {
 	private ActiveProject ap;
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 	private boolean updating = false;
+	private SelectionSession session;
+	private boolean clear;
+	
+	private boolean updateNeeded=false;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
 		ap.addListener(new ICaDoodleStateUpdate() {
+			long timeSinceGC=0;
 			@Override
 			public void onWorkplaneChange(TransformNR newWP) {}
 			@Override
 			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
 				if(file.isRegenerating())
 					return;
-				System.gc();
 			}
 			@Override
 			public void onSaveSuggestion() {}
@@ -54,28 +59,29 @@ public class TimelineManager {
 			public void onRegenerateStart() {}
 			@Override
 			public void onRegenerateDone() {
-				update(true);
-				System.gc();
+				update(false);
 			}
+
 			@Override
 			public void onInitializationStart() {
 				update(false);
 			}
 			@Override
 			public void onInitializationDone() {
-				update(true);
-				System.gc();
+				update(false);
 			}
 			@Override
 			public void onTimelineUpdate() {
-				update(false);
+				new Exception().printStackTrace();
+				update(true);
 			}
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session) {
 		this.timelineScroll = timelineScroll;
 		this.timeline = timeline;
+		this.session = session;
 
 	}
 
@@ -96,15 +102,13 @@ public class TimelineManager {
 		return resizedImage;
 	}
 
-	public void update(boolean clear) {
-		while (updating) {
-			try {
-				Thread.sleep(16);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return;
-			}
-		}
+	private void update(boolean clear) {
+		//System.out.println("Timeline Update called");
+		this.clear = clear;
+		updateNeeded=true;
+		if(updating)
+			return;
+		updateNeeded=false;
 		updating = true;
 		BowlerStudio.runLater(() -> {
 			boolean addrem = false;
@@ -135,7 +139,9 @@ public class TimelineManager {
 								new Thread(() -> {
 									ap.get().moveToOpIndex(my);
 								}).start();
+								session.setKeyBindingFocus();
 							}
+							
 						});
 		
 					});
@@ -197,17 +203,25 @@ public class TimelineManager {
 				button.getStyleClass().add("image-button-focus");
 				// Create a context menu
 			}
+			//System.out.println("Timeline updated");
 			if (addrem)
 				Platform.runLater(() -> {
 					timelineScroll.setHvalue(1.0);
 					updating = false;
+					if(updateNeeded)
+						update(clear);
 				});
-			else
+			else {
 				updating = false;
+				if(updateNeeded)
+					update(clear);
+			}
+			
 		});
 	}
 
 	public void clear() {
+		System.out.println("Old Timeline buttons cleared");
 		buttons.clear();
 		timeline.getChildren().clear();
 	}
