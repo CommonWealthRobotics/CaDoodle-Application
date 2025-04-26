@@ -966,15 +966,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setCopyListToCurrentSelected() {
+		System.out.println("Copy Called");
 		copySetinternal = selectedSnapshot();
 	}
 
 	public void Duplicate() {
+		System.out.println("Duplicate called ");
 		new Thread(() -> performPaste(0, selectedSnapshot())).start();
 		;
 	}
 
 	public void onPaste() {
+		System.out.println("Paste called");
 		new Thread(() -> performPaste(20, copySetinternal)).start();
 		;
 
@@ -990,6 +993,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		copySet.clear();
 		try {
 			Paste paste = new Paste().setNames(copyTarget);
+			paste.setLocation(new TransformNR(distance, 0, 0));
 			ap.addOp(paste).join();
 			HashSet<String> namesAdded = paste.getNamesAdded();
 			ArrayList<String> namesBack = new ArrayList<String>();
@@ -997,10 +1001,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (c.isInGroup())
 					continue;
 				namesBack.add(c.getName());
-			}
-			if (distance > 0) {
-				MoveCenter mc = new MoveCenter().setNames(namesBack).setLocation(new TransformNR(distance, 0, 0));
-				ap.addOp(mc).join();
 			}
 			selectAll(namesAdded);
 			setCopyListToCurrentSelected();
