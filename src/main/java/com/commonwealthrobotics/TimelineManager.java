@@ -59,7 +59,7 @@ public class TimelineManager {
 			public void onRegenerateStart() {}
 			@Override
 			public void onRegenerateDone() {
-				update(false);
+				//update(false);
 			}
 
 			@Override
@@ -68,11 +68,11 @@ public class TimelineManager {
 			}
 			@Override
 			public void onInitializationDone() {
-				update(false);
+				//update(false);
 			}
 			@Override
 			public void onTimelineUpdate() {
-				new Exception().printStackTrace();
+				//new Exception().printStackTrace();
 				update(true);
 			}
 		});
@@ -129,6 +129,7 @@ public class TimelineManager {
 					int my = i;
 					ContextMenu contextMenu = new ContextMenu();
 					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+						session.setKeyBindingFocus();
 						BowlerStudio.runLater(() -> {
 							if (event.getButton() == MouseButton.PRIMARY) {
 								int index = ap.get().getCurrentIndex() - 1;
@@ -139,9 +140,20 @@ public class TimelineManager {
 								new Thread(() -> {
 									ap.get().moveToOpIndex(my);
 								}).start();
-								session.setKeyBindingFocus();
+								
 							}
-							
+							if (event.getButton() == MouseButton.SECONDARY) {
+								// Show context menu where the mouse was clicked
+								contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
+								new Thread(() -> {
+									try {
+										Thread.sleep(3000);
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
+									BowlerStudio.runLater(() -> contextMenu.hide());
+								}).start();
+							}
 						});
 		
 					});
@@ -165,27 +177,13 @@ public class TimelineManager {
 					MenuItem deleteItem = new MenuItem("Delete");
 					deleteItem.getStyleClass().add("image-button-focus");
 					deleteItem.setOnAction(event -> {
+						toAdd.setDisable(true);
+						buttons.remove(toAdd);
 						ap.get().deleteOperation(op);
 					});
 					// Add the delete item to the context menu
 					contextMenu.getItems().add(deleteItem);
 					// Add event handler for right-click
-					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-						BowlerStudio.runLater(() -> {
-							if (event.getButton() == MouseButton.SECONDARY) {
-								// Show context menu where the mouse was clicked
-								contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
-								new Thread(() -> {
-									try {
-										Thread.sleep(3000);
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									}
-									BowlerStudio.runLater(() -> contextMenu.hide());
-								}).start();
-							}
-						});
-					});
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

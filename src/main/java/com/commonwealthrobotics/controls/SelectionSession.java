@@ -1508,13 +1508,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
-					if (needsSave) {
+					if (needsSave && ap.get().timeSinceLastUpdate()>1000) {
 						System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
 						ap.save(ap.get());
 						needsSave = false;
 					}
 					try {
-						Thread.sleep(10000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
 						e.printStackTrace();
