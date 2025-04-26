@@ -59,16 +59,15 @@ public class TimelineManager {
 			public void onRegenerateStart() {}
 			@Override
 			public void onRegenerateDone() {
-				//update(false);
 			}
 
 			@Override
 			public void onInitializationStart() {
-				update(false);
+
 			}
 			@Override
 			public void onInitializationDone() {
-				//update(false);
+				update(false);
 			}
 			@Override
 			public void onTimelineUpdate() {
