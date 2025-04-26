@@ -70,9 +70,11 @@ public class TimelineManager {
 				update(false);
 			}
 			@Override
-			public void onTimelineUpdate() {
-				//new Exception().printStackTrace();
-				update(true);
+			public void onTimelineUpdate(int num) {
+				if(num>1)
+					update(true);
+				else if (num==1)
+					update(false);
 			}
 		});
 	}
@@ -178,6 +180,7 @@ public class TimelineManager {
 					deleteItem.setOnAction(event -> {
 						toAdd.setDisable(true);
 						buttons.remove(toAdd);
+						timeline.getChildren().remove(toAdd);
 						ap.get().deleteOperation(op);
 					});
 					// Add the delete item to the context menu
@@ -202,7 +205,7 @@ public class TimelineManager {
 			}
 			//System.out.println("Timeline updated");
 			if (addrem)
-				Platform.runLater(() -> {
+				BowlerStudio.runLater(java.time.Duration.ofMillis(100),() -> {
 					timelineScroll.setHvalue(1.0);
 					updating = false;
 					if(updateNeeded)
@@ -218,7 +221,7 @@ public class TimelineManager {
 	}
 
 	public void clear() {
-		System.out.println("Old Timeline buttons cleared");
+		//System.out.println("Old Timeline buttons cleared");
 		buttons.clear();
 		timeline.getChildren().clear();
 	}

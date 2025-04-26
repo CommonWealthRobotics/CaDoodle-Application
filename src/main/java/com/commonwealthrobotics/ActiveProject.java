@@ -496,10 +496,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate() {
+	public void onTimelineUpdate(int num) {
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
-				l.onTimelineUpdate();
+				l.onTimelineUpdate( num);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}

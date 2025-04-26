@@ -148,7 +148,7 @@ public class ControlSprites {
 			}
 
 			@Override
-			public void onTimelineUpdate() {
+			public void onTimelineUpdate(int num) {
 				// TODO Auto-generated method stub
 				
 			}
