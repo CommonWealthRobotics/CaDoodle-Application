@@ -9,6 +9,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
@@ -41,9 +42,11 @@ public class TimelineManager {
 	private boolean clear;
 	
 	private boolean updateNeeded=false;
+	private BowlerStudio3dEngine engine;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
+		
 		ap.addListener(new ICaDoodleStateUpdate() {
 			long timeSinceGC=0;
 			@Override
@@ -79,11 +82,11 @@ public class TimelineManager {
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session,BowlerStudio3dEngine engine) {
 		this.timelineScroll = timelineScroll;
 		this.timeline = timeline;
 		this.session = session;
-
+		this.engine = engine;
 	}
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
@@ -129,6 +132,7 @@ public class TimelineManager {
 					Button toAdd = new Button(text);
 					int my = i;
 					ContextMenu contextMenu = new ContextMenu();
+					List<CSG> state=ap.get().getStateAtOperation(op);
 					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 						session.setKeyBindingFocus();
 						BowlerStudio.runLater(() -> {
@@ -138,6 +142,8 @@ public class TimelineManager {
 								contextMenu.hide();
 								if (button == toAdd)
 									return;
+								for(CSG c:state)
+									engine.removeObject(c);
 								new Thread(() -> {
 									ap.get().moveToOpIndex(my);
 								}).start();
@@ -156,7 +162,22 @@ public class TimelineManager {
 								}).start();
 							}
 						});
-		
+					});
+					int myButtonIndex=i;
+					toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+						int index = ap.get().getCurrentIndex() - 1;
+						if(index!=myButtonIndex)
+							for(CSG c:state) {
+								if (c.isInGroup())
+									continue;
+								engine.addObject(c, null, 0.3,-1);
+							}
+					});
+					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+						int index = ap.get().getCurrentIndex() - 1;
+						if(index!=myButtonIndex)
+							for(CSG c:state)
+								engine.removeObject(c);
 					});
 					File f = ap.get().getTimelineImageFile(i - 1);
 					Image image = new Image(f.toURI().toString());

@@ -740,7 +740,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		tm.set(timelineScroll,timeline,session);
+		tm.set(timelineScroll,timeline,session,engine);
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,tm);
