@@ -170,7 +170,9 @@ public class TimelineManager {
 							for(CSG c:state) {
 								if (c.isInGroup())
 									continue;
-								engine.addObject(c, null, 0.3,-1);
+								if(c.isHide())
+									continue;
+								engine.addObject(c, null, 0.6,-1);
 							}
 					});
 					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
