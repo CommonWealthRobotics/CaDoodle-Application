@@ -392,7 +392,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void displayCSG(CSG c) {
-		MeshView meshView = c.getMesh();
+		MeshView meshView = c.newMesh();
 		if (c.isHole() && !c.isWireFrame()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
@@ -401,6 +401,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.setDrawMode(DrawMode.FILL);
 			meshView.setDepthTest(DepthTest.ENABLE);
 			meshView.setBlendMode(BlendMode.SRC_OVER);
+		}else {
+			PhongMaterial phongMaterial = (PhongMaterial) meshView.getMaterial();
+			Color diffuseColor = phongMaterial.getDiffuseColor();
+			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(),
+					1);
+			phongMaterial.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		}
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
@@ -1516,7 +1522,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						SplashManager.closeSplash();
 					}
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(200);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
 						e.printStackTrace();
