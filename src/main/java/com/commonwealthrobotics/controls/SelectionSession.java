@@ -802,6 +802,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void toggleTransparent() {
 		new Thread(() -> {
+			System.out.println("Toggel transparent");
 			ArrayList<ToSolid> toChange = new ArrayList<>();
 			for (Iterator<String> iterator = selected.iterator(); iterator.hasNext();) {
 				String s = iterator.next();
