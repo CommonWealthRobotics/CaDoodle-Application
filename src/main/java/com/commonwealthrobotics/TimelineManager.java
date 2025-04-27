@@ -72,7 +72,7 @@ public class TimelineManager {
 			}
 			@Override
 			public void onInitializationDone() {
-				update(false);
+				update(true);
 			}
 			@Override
 			public void onTimelineUpdate(int num) {
