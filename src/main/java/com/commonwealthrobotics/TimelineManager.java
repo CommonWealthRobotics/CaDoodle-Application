@@ -14,11 +14,13 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.application.Platform;
+import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -172,7 +174,7 @@ public class TimelineManager {
 									continue;
 								if(c.isHide())
 									continue;
-								engine.addObject(c, null, 0.6,-1);
+								engine.addObject(c, null, 0.6,1);
 							}
 					});
 					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
@@ -196,6 +198,10 @@ public class TimelineManager {
 					toAdd.setTooltip(tooltip);
 					buttons.add(toAdd);
 					timeline.getChildren().add(toAdd);
+					Separator verticalSeparator = new Separator();
+					verticalSeparator.setOrientation(Orientation.VERTICAL);
+					verticalSeparator.setPrefHeight(80); // Set height to 80 units
+					timeline.getChildren().add(verticalSeparator);
 					addrem = true;
 					// Create a delete menu item
 					MenuItem deleteItem = new MenuItem("Delete");
@@ -205,6 +211,14 @@ public class TimelineManager {
 						buttons.remove(toAdd);
 						timeline.getChildren().remove(toAdd);
 						ap.get().deleteOperation(op);
+						for(CSG c:state)
+							engine.removeObject(c);
+					});
+					deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+						int index = ap.get().getCurrentIndex() - 1;
+						if(index!=myButtonIndex)
+							for(CSG c:state)
+								engine.removeObject(c);
 					});
 					// Add the delete item to the context menu
 					contextMenu.getItems().add(deleteItem);
