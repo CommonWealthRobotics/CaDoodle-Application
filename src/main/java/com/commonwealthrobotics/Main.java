@@ -229,6 +229,7 @@ public class Main extends Application {
 					System.out.println("Passed In File Exists! ");
 					HashSet<String> externals =  Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());
+					Main.saveOptionalProjects(externals);
 				}else
 					System.out.println("Fail! Passed In File Does Not Exists! ");
 			}
@@ -270,7 +271,13 @@ public class Main extends Application {
 
 		launch();
 	}
-
+	public static void saveOptionalProjects(HashSet<String>state) {
+		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
+		l.clear();
+		l.addAll(state);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleExternalOptions", l);
+		ConfigurationDatabase.save();
+	}
 	public static HashSet<String> getOptionalProjects() {
 		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
 		HashSet<String> s= new HashSet<>();
