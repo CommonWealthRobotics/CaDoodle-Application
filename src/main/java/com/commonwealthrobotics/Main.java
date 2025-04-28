@@ -214,7 +214,8 @@ public class Main extends Application {
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
 			if (args.length != 0) {
-				File f = new File(args[0].replace('"', ' '));
+				String replace = args[0].replace('"', ' ');
+				File f = new File(replace);
 				System.out.println("Passed In File at "+f.getAbsolutePath());
 				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
