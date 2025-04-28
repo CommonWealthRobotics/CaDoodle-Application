@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -263,7 +264,10 @@ public class Main extends Application {
 	}
 
 	public static HashSet<String> getOptionalProjects() {
-		return (HashSet<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new HashSet<String>());
+		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
+		HashSet<String> s= new HashSet<>();
+		s.addAll(l);
+		return s;
 	}
 
 	private static void ensureGitAssetsArePresent() {
