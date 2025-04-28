@@ -217,6 +217,13 @@ public class Main extends Application {
 				String replace = args[0].replace('"', ' ');
 				File f = new File(replace);
 				System.out.println("Passed In File at "+f.getAbsolutePath());
+				for(String s:replace.split(" ")) {
+					if(s.toLowerCase().endsWith(".doodle")) {
+						File t=new File(s);
+						if(t.exists())
+							f=t;
+					}
+				}
 				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
 					System.out.println("Passed In File Exists! ");
