@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Optional;
 
 import javax.swing.filechooser.FileSystemView;
@@ -217,6 +218,8 @@ public class Main extends Application {
 				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
 					System.out.println("Passed In File Exists! ");
+					HashSet<String> externals =  Main.getOptionalProjects();
+					externals.add(f.getAbsolutePath());
 				}else
 					System.out.println("Fail! Passed In File Does Not Exists! ");
 			}
@@ -257,6 +260,10 @@ public class Main extends Application {
 		FontSizeManager.setFontSize(12);
 
 		launch();
+	}
+
+	public static HashSet<String> getOptionalProjects() {
+		return (HashSet<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new HashSet<String>());
 	}
 
 	private static void ensureGitAssetsArePresent() {

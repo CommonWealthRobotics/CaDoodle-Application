@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -416,7 +417,20 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				}
 			}
 		}
-
+		HashSet<String> externals =  Main.getOptionalProjects();
+		
+		for(String s:externals) {
+			File f = new File(s);
+			if(f.exists()) {
+				try {
+					list.add(CaDoodleFile.fromFile(f, null, false));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+			
 		return list;
 	}
 
