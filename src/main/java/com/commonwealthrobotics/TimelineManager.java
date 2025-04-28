@@ -195,7 +195,7 @@ public class TimelineManager {
 					Tooltip tooltip = new Tooltip(text);
 					tooltip.setGraphic(toolimage);
 					tooltip.setContentDisplay(ContentDisplay.TOP);
-					toAdd.setTooltip(tooltip);
+					//toAdd.setTooltip(tooltip);
 					buttons.add(toAdd);
 					timeline.getChildren().add(toAdd);
 					Separator verticalSeparator = new Separator();
