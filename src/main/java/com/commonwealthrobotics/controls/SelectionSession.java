@@ -406,6 +406,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Color diffuseColor = phongMaterial.getDiffuseColor();
 			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(),
 					1);
+			phongMaterial.setDiffuseColor(diffuseColor);
 			phongMaterial.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		}
 		meshView.setViewOrder(0);
@@ -705,6 +706,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.timeline=tm;
 		setupSnapGrid();
 
+	}
+	
+	public void clearAllignObjectCache() {
+		controls.clearAllign();
 	}
 
 	private void setupSnapGrid() {
@@ -1515,11 +1520,28 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
-					if (needsSave && ap.get().timeSinceLastUpdate()>5000) {
-						SplashManager.renderSplashFrame(50, "Saving File");
-						System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
-						ap.save(ap.get());
+					if (needsSave && ap.get().timeSinceLastUpdate()>1000) {
+						Thread t = new Thread(()->{
+							System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
+							ap.save(ap.get());
+						});
+						t.start();
 						needsSave = false;
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(t.isAlive()) {
+							SplashManager.renderSplashFrame(50, "Saving File");
+						}
+						try {
+							t.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						SplashManager.closeSplash();
 					}
 					try {

@@ -69,4 +69,9 @@ public class AllignRadioSet {
 			ah.recomputeOps();
 		}
 	}
+	public void clear() {
+		for(AllignHandle ah: asList) {
+			ah.clear();
+		}
+	}
 }

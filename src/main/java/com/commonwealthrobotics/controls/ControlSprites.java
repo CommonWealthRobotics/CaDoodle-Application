@@ -274,7 +274,9 @@ public class ControlSprites {
 		allign = new AllignManager(session, selection, workplaneOffset);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
-
+	public void clearAllign() {
+		allign.clear();
+	}
 	private void setUpUIComponennts() {
 		Group linesGroupp = new Group();
 		linesGroupp.setDepthTest(DepthTest.DISABLE);

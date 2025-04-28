@@ -297,17 +297,18 @@ public class AllignHandle {
 	}
 
 	public void recomputeOps() {
+		if (visualizationObjects != null) {
+			for (CSG c : visualizationObjects)
+				engine.removeUserNode(visualizers.get(c));
+			visualizationObjects.clear();
+		}
+		visualizationObjects = null;
+		if(opperation==null)
+			return;
 		Allignment x = opperation.x;
 		Allignment y = opperation.y;
 		Allignment z = opperation.z;
 		setMyOperation();
-
-		if (visualizationObjects != null) {
-			for (CSG obj : visualizationObjects) {
-				MeshView mv = visualizers.remove(obj);
-				engine.removeUserNode(mv);
-			}
-		}
 		visualizationObjects = opperation.process(toAllign);
 		for (CSG indicator : visualizationObjects) {
 			MeshView indicatorMesh = indicator.newMesh();
@@ -321,7 +322,7 @@ public class AllignHandle {
 				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 			} else {
 				Color c = indicator.getColor();
-				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
+				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
 				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 			}
 			indicatorMesh.setMaterial(material);
@@ -333,5 +334,9 @@ public class AllignHandle {
 		opperation.x = x;
 		opperation.y = y;
 		opperation.z = z;
+	}
+
+	public void clear() {
+		recomputeOps();
 	}
 }

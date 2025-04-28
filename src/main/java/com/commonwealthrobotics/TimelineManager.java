@@ -174,7 +174,7 @@ public class TimelineManager {
 									continue;
 								if(c.isHide())
 									continue;
-								engine.addObject(c, null, 0.6,1);
+								engine.addObject(c, null, 0.6);
 							}
 					});
 					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {

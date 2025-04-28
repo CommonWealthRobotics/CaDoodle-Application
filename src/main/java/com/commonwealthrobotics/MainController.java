@@ -1278,8 +1278,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onRegenerateDone() {
-		// Auto-generated method stub
-
+		session.clearAllignObjectCache();
 	}
 
 	@Override

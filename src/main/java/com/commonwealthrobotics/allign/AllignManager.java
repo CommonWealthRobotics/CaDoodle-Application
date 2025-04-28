@@ -65,7 +65,10 @@ public class AllignManager {
 		}
 		hide();
 	}
-
+	public void clear() {
+		for (AllignRadioSet r : AS_LIST) 
+			r.clear();
+	}
 	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c) {
 		this.screenW = w;
 		this.screenH = h;
