@@ -23,7 +23,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <AnchorPane fx:id="totalApplicationBackground" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -347,7 +346,7 @@
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@sketch.png" />
+                                                <Image url="@Sketcher.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
@@ -367,7 +366,7 @@
                                           <Tooltip text="Ruler Tool &lt; R &gt;" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="notesButton" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" GridPane.columnIndex="2">
+                                    <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" GridPane.columnIndex="2">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -576,6 +575,30 @@
                            </graphic>
                            <tooltip>
                               <Tooltip text="Cruse &lt; C &gt;" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="objectWorkplane" mnemonicParsing="false" onAction="#onObjectWorkplane" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@workplaneToObject.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Object Workplane &lt; E &gt;" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="dropToWorkplane" mnemonicParsing="false" onAction="#onDropToWorkplane" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@drop.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Drop To Workplane &lt; D &gt;" />
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />

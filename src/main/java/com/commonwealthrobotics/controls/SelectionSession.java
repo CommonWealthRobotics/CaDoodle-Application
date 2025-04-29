@@ -50,6 +50,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
@@ -137,6 +138,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private TimelineManager timeline;
 	private RulerManager ruler;
 	private double max = 9999;
+	private Button objectWorkplane;
+	private Button dropToWorkplane;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -442,7 +445,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		parametrics.getChildren().clear();
 		inWorkplaneBounds.clear();
 		if (selected.size() > 0) {
-
+			dropToWorkplane.setDisable(false);
+			objectWorkplane.setDisable(selected.size()!=1);
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = getSelectedCSG((String) selected.toArray()[0]);
@@ -690,7 +694,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, MenuButton advancedGroupMenu, 
-			TimelineManager tm) {
+			TimelineManager tm,
+			Button objectWorkplane,
+			Button dropToWorkplane) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -704,6 +710,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.lockImage = lockImage;
 		this.advancedGroupMenu = advancedGroupMenu;
 		this.timeline=tm;
+		this.objectWorkplane=objectWorkplane;
+		this.dropToWorkplane=dropToWorkplane;
 		setupSnapGrid();
 
 	}
@@ -918,6 +926,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				allignButton.setDisable(true);
 			if(advancedGroupMenu!=null)
 				advancedGroupMenu.setDisable(true);
+			if(dropToWorkplane!=null)
+				dropToWorkplane.setDisable(true);
+			if(objectWorkplane!=null)
+				objectWorkplane.setDisable(true);
 		});
 	}
 
@@ -1396,7 +1408,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		return new Bounds(min, max);
 	}
-
+	public void objectWorkplane() {
+	 System.out.println("Setting Object Workplane");
+	 
+	}
 	public void onDrop() {
 		com.neuronrobotics.sdk.common.Log.error("Drop to Workplane");
 		new Thread(() -> {
@@ -1769,5 +1784,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }
