@@ -47,6 +47,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICadoodleSaveStatusUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -209,6 +210,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public CaDoodleFile loadActive() throws Exception {
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);
+			fromFile.setSaveUpdate(new ICadoodleSaveStatusUpdate() {
+				
+				@Override
+				public void renderSplashFrame(int percent, String message) {
+					SplashManager.renderSplashFrame(percent, message);
+				}
+			});
 			fromFile.setAccept(new IAcceptPruneForward() {
 				private OperationResult operationResult = null;
 

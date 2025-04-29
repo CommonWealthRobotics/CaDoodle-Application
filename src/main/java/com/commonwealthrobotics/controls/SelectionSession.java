@@ -1521,6 +1521,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
 					if (needsSave && ap.get().timeSinceLastUpdate()>1000) {
+						ICadoodleSaveStatusUpdate saveDisplay = ap.get().getSaveUpdate();
+						ap.get().setSaveUpdate(null);
 						Thread t = new Thread(()->{
 							System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
 							ap.save(ap.get());
@@ -1533,8 +1535,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						ap.get().setSaveUpdate(saveDisplay);
 						if(t.isAlive()) {
-							SplashManager.renderSplashFrame(50, "Saving File");
+							SplashManager.renderSplashFrame(1, "Saving File");
 						}
 						try {
 							t.join();
