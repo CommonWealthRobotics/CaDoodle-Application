@@ -1075,7 +1075,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
 				double dist=1;
 				if(event.isShiftDown())
-					dist=10;
+					dist=3;
 				switch (event.getCode()) {
 				case UP:
 					if (event.isControlDown()) {
