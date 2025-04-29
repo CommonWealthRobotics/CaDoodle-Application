@@ -140,6 +140,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double max = 9999;
 	private Button objectWorkplane;
 	private Button dropToWorkplane;
+	private boolean isObjectWorkplane=false;
+	private TransformNR previousWP;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -445,7 +447,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		inWorkplaneBounds.clear();
 		if (selected.size() > 0) {
 			dropToWorkplane.setDisable(false);
-			objectWorkplane.setDisable(selected.size() != 1);
+			objectWorkplane.setDisable(selected.size() != 1);			
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = getSelectedCSG((String) selected.toArray()[0]);
@@ -1407,8 +1409,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void objectWorkplane() {
-		System.out.println("Setting Object Workplane");
-
+		if(selected.size()!=1 && !isObjectWorkplane)
+			return;
+		isObjectWorkplane = !isObjectWorkplane;
+		System.out.println("Setting Object Workplane "+isObjectWorkplane);
+		objectWorkplane.getStyleClass().clear();
+		if(isObjectWorkplane) {
+			CSG c = getSelectedCSG(selectedSnapshot().get(0));
+			TransformNR nrToCSG = TransformFactory.csgToNR( MoveCenter.getTotalOffset(c));
+			previousWP = ap.get().getWorkplane();
+			ap.get().setWorkplane(nrToCSG);
+			workplane.placeWorkplaneVisualization();
+			objectWorkplane.getStyleClass().add("image-button-focus");
+		}else {
+			ap.get().setWorkplane(previousWP);
+			workplane.placeWorkplaneVisualization();
+			objectWorkplane.getStyleClass().add("image-button");
+		}
+		updateControls();
 	}
 
 	public void onDrop() {

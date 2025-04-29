@@ -1196,6 +1196,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 101:// e
 				case 69:// E
+					System.err.println("Call Object WP toggle");
 					session.objectWorkplane();
 					break;
 				case 108:// l
