@@ -404,11 +404,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.setDrawMode(DrawMode.FILL);
 			meshView.setDepthTest(DepthTest.ENABLE);
 			meshView.setBlendMode(BlendMode.SRC_OVER);
-		}else {
+		} else {
 			PhongMaterial phongMaterial = (PhongMaterial) meshView.getMaterial();
 			Color diffuseColor = phongMaterial.getDiffuseColor();
-			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(),
-					1);
+			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(), 1);
 			phongMaterial.setDiffuseColor(diffuseColor);
 			phongMaterial.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		}
@@ -446,7 +445,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		inWorkplaneBounds.clear();
 		if (selected.size() > 0) {
 			dropToWorkplane.setDisable(false);
-			objectWorkplane.setDisable(selected.size()!=1);
+			objectWorkplane.setDisable(selected.size() != 1);
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = getSelectedCSG((String) selected.toArray()[0]);
@@ -521,7 +520,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				if (numCadParaams > 2) {
 					useButton = true;
-					//System.err.println("Using button for regeneration " + sel.getName());
+					// System.err.println("Using button for regeneration " + sel.getName());
 					parametrics.getChildren().add(regenerate);
 					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
 					if (value2 != null)
@@ -565,13 +564,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			String string = options.getText().toString();
 			try {
 				double parseDouble = Double.parseDouble(string);
-				if(parseDouble>max ) {
-					parseDouble=max;
-					options.setText(max+"");
+				if (parseDouble > max) {
+					parseDouble = max;
+					options.setText(max + "");
 				}
-				if(parseDouble<-max ) {
-					parseDouble=-max;
-					options.setText(-max+"");
+				if (parseDouble < -max) {
+					parseDouble = -max;
+					options.setText(-max + "");
 				}
 				System.out.println("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
@@ -693,10 +692,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, MenuButton advancedGroupMenu, 
-			TimelineManager tm,
-			Button objectWorkplane,
-			Button dropToWorkplane) {
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
+			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -709,13 +706,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
 		this.advancedGroupMenu = advancedGroupMenu;
-		this.timeline=tm;
-		this.objectWorkplane=objectWorkplane;
-		this.dropToWorkplane=dropToWorkplane;
+		this.timeline = tm;
+		this.objectWorkplane = objectWorkplane;
+		this.dropToWorkplane = dropToWorkplane;
 		setupSnapGrid();
 
 	}
-	
+
 	public void clearAllignObjectCache() {
 		controls.clearAllign();
 	}
@@ -924,11 +921,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				groupButton.setDisable(true);
 			if (allignButton != null)
 				allignButton.setDisable(true);
-			if(advancedGroupMenu!=null)
+			if (advancedGroupMenu != null)
 				advancedGroupMenu.setDisable(true);
-			if(dropToWorkplane!=null)
+			if (dropToWorkplane != null)
 				dropToWorkplane.setDisable(true);
-			if(objectWorkplane!=null)
+			if (objectWorkplane != null)
 				objectWorkplane.setDisable(true);
 		});
 	}
@@ -1154,14 +1151,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					names.add(intersectName);
 					ToHole th = new ToHole().setNames(names);
 					ap.addOp(th).join();
-					
-					for(int i=0;i<n.size();i++) {
+
+					for (int i = 0; i < n.size(); i++) {
 						String e = n.get(i);
 						ap.get();
-						CSG g= CaDoodleFile.getByName(ap.get().getCurrentState(), e);
-						if(g==null)
+						CSG g = CaDoodleFile.getByName(ap.get().getCurrentState(), e);
+						if (g == null)
 							continue;
-						if(g.isInGroup())
+						if (g.isInGroup())
 							continue;
 						ArrayList<String> namesToDiff = new ArrayList<String>();
 						namesToDiff.add(intersectName);
@@ -1170,7 +1167,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						ap.addOp(cutIntersect).join();
 
 					}
-					
+
 					selected.clear();
 					selected.add(groups.getGroupID());
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
@@ -1408,10 +1405,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		return new Bounds(min, max);
 	}
+
 	public void objectWorkplane() {
-	 System.out.println("Setting Object Workplane");
-	 
+		System.out.println("Setting Object Workplane");
+
 	}
+
 	public void onDrop() {
 		com.neuronrobotics.sdk.common.Log.error("Drop to Workplane");
 		new Thread(() -> {
@@ -1447,14 +1446,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (System.currentTimeMillis() - timeSinceLastMove > 2000 || m == null) {
 			m = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
 		}
-		MoveCenter mc=m;
+		MoveCenter mc = m;
 		if (ap.get().isOperationRunning()) {
 			TickToc.tic("Process running, bailing on new update");
 			return;
 		}
-		new Thread(()->{
+		new Thread(() -> {
 			timeSinceLastMove = System.currentTimeMillis();
-			//TickToc.setEnabled(true);
+			// TickToc.setEnabled(true);
 			TickToc.tic("Start");
 			RotationNR getCamerFrameGetRotation;
 			double currentRotZ;
@@ -1517,7 +1516,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TickToc.tic("save");
 					save();
 //					TickToc.toc();
-	//
+					//
 //					TickToc.setEnabled(false);
 					return;
 				}
@@ -1535,10 +1534,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
-					if (needsSave && ap.get().timeSinceLastUpdate()>1000) {
+					if (needsSave && ap.get().timeSinceLastUpdate() > 1000) {
 						ICadoodleSaveStatusUpdate saveDisplay = ap.get().getSaveUpdate();
 						ap.get().setSaveUpdate(null);
-						Thread t = new Thread(()->{
+						Thread t = new Thread(() -> {
 							System.out.println("Auto save " + ap.get().getSelf().getAbsolutePath());
 							ap.save(ap.get());
 						});
@@ -1551,7 +1550,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							e.printStackTrace();
 						}
 						ap.get().setSaveUpdate(saveDisplay);
-						if(t.isAlive()) {
+						if (t.isAlive()) {
 							SplashManager.renderSplashFrame(1, "Saving File");
 						}
 						try {
@@ -1674,7 +1673,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setActiveProject(ActiveProject ap) {
 		if (this.ap == null) {
-			controls = new ControlSprites(this, engine, selection, manipulation, ap,ruler);
+			controls = new ControlSprites(this, engine, selection, manipulation, ap, ruler);
 			controls.setSnapGrid(size);
 		}
 		this.ap = ap;
@@ -1782,9 +1781,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onTimelineUpdate(int num) {
 		// TODO Auto-generated method stub
-		
+
 	}
-
-
 
 }
