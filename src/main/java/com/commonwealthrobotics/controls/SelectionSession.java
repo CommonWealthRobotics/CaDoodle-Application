@@ -447,7 +447,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		inWorkplaneBounds.clear();
 		if (selected.size() > 0) {
 			dropToWorkplane.setDisable(false);
-			objectWorkplane.setDisable(selected.size() != 1);			
+			objectWorkplane.setDisable(selected.size() != 1);
+
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = getSelectedCSG((String) selected.toArray()[0]);
@@ -1744,7 +1745,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
 		inWorkplaneBounds.clear();
-		// clearSelection();
+		if(!workplane.isWorkplaneNotOrigin()) {
+			objectWorkplane.getStyleClass().clear();
+			objectWorkplane.getStyleClass().add("image-button");
+			isObjectWorkplane=false;
+		}
 	}
 
 	@Override
