@@ -7,10 +7,10 @@
    id="svg5821"
    sodipodi:version="0.32"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="workplane.svg"
+   sodipodi:docname="drop.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.1"
-   inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/Sketcher.png"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/drop.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -212,6 +212,17 @@
            style="fill:none;stroke:#020000;stroke-width:18.1305"
            d="m 1042.7592,1184.3107 127.6269,-0.541 3.7847,111.8143 -136.7072,0.072 z"
            sodipodi:nodetypes="ccccc" />
+        <rect
+           style="fill:#bb1f09;fill-opacity:1;stroke:#263d8c;stroke-width:16.5696;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1193"
+           width="258.8125"
+           height="260.64651"
+           x="986.85492"
+           y="1060.7543" />
+        <path
+           id="rect2814"
+           style="fill:#bb1f09;fill-opacity:1;stroke:#263d8c;stroke-width:18.1305;stroke-dasharray:none;stroke-opacity:1"
+           d="m 1109.9182,993.43492 v 54.51598 h 5.4688 v -54.51598 z m -25.5445,29.29988 -1.1994,1.028 20.8326,24.1167 1.1994,-1.0281 z m 55.8581,0.9995 -19.6474,20.6612 0.057,0.057 19.6474,-20.6612 z" />
       </g>
     </g>
   </g>

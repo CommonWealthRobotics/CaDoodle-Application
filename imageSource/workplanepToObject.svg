@@ -2,15 +2,15 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="64px"
-   height="64px"
+   width="77.625061"
+   height="78.035172"
    id="svg5821"
    sodipodi:version="0.32"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="workplane.svg"
+   sodipodi:docname="workplanepToObject.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.1"
-   inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/Sketcher.png"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/workplaneToObject.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -58,7 +58,7 @@
        gradientTransform="matrix(-1,0,0,1,2199.356,0)" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 32 : 1"
+       inkscape:vp_x="0 : 46.035172 : 1"
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_z="64 : 32 : 1"
        inkscape:persp3d-origin="32 : 21.333333 : 1"
@@ -104,8 +104,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.721444"
-     inkscape:cx="23.621532"
-     inkscape:cy="30.853416"
+     inkscape:cx="27.709119"
+     inkscape:cy="31.403668"
      inkscape:current-layer="g3360-3"
      showgrid="true"
      inkscape:document-units="px"
@@ -127,7 +127,9 @@
        empspacing="2"
        visible="true"
        enabled="true"
-       snapvisiblegridlinesonly="true" />
+       snapvisiblegridlinesonly="true"
+       originx="3.9928753"
+       originy="0.50021139" />
   </sodipodi:namedview>
   <metadata
      id="metadata5826">
@@ -137,7 +139,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>[wmayer]</dc:title>
@@ -169,7 +170,8 @@
   <g
      id="layer1"
      inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
+     inkscape:groupmode="layer"
+     transform="translate(3.9928753,0.50021139)">
     <g
        id="g3360"
        inkscape:export-filename="/home/yorik/Documents/Lab/Draft/icons/draft.png"
@@ -180,38 +182,45 @@
          id="g3360-3"
          inkscape:export-filename="/home/yorik/Documents/Lab/Draft/icons/draft.png"
          inkscape:export-xdpi="3.2478156"
-         inkscape:export-ydpi="3.2478156"
-         transform="translate(-2.96179e-7,2.9614273e-6)">
+         inkscape:export-ydpi="3.2478156">
         <path
            id="rect383"
            style="fill:none;stroke:#020000;stroke-width:18.1305;stroke-dasharray:none"
-           d="m 933.26368,1067.2591 352.76192,1.0125 39.2304,374.3704 H 886.19659 Z"
+           d="M 854.81675,1216.8874 1128.6524,994.50033 1395.8759,1259.6113 1055.848,1537.3778 Z"
            sodipodi:nodetypes="ccccc" />
         <path
            id="rect1036"
            style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 906.48751,1294.6121 130.89309,0.3457 -7.8142,147.3228 H 883.05835 Z"
+           d="m 977.9126,1409.8998 101.5884,-82.5405 87.1506,119.0372 -113.4626,92.6868 z"
            sodipodi:nodetypes="ccccc" />
         <path
            id="rect1039"
            style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 1174.6736,1295.3641 134.9786,-2.4154 15.0022,147.9155 -143.5965,0.2873 z"
+           d="m 1186.084,1240.817 103.0057,-87.2635 105.1956,105.0616 -111.0261,91.0674 z"
            sodipodi:nodetypes="ccccc" />
         <path
            id="rect1042"
            style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 932.03805,1067.5263 117.18395,-0.339 -7.1677,117.1278 -120.69485,-1.394 z"
+           d="m 854.03661,1217.8697 90.53819,-74.3977 68.5487,95.2437 -94.35355,75.2768 z"
            sodipodi:nodetypes="ccccc" />
         <path
            id="rect1044"
            style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 1164.7201,1068.0942 121.4244,1.0035 10.8021,114.6473 -127.4899,0.1167 z"
+           d="m 1034.5956,1071.1056 94.6715,-76.04073 80.8961,81.95433 -98.6602,80.7456 z"
            sodipodi:nodetypes="ccccc" />
         <path
            id="rect1046"
            style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 1042.7592,1184.3107 127.6269,-0.541 3.7847,111.8143 -136.7072,0.072 z"
+           d="m 1013.6666,1238.2664 98.4979,-81.1609 73.6693,84.1998 -105.8269,86.5422 z"
            sodipodi:nodetypes="ccccc" />
+        <rect
+           style="fill:#bb1f09;fill-opacity:1;stroke:#263d8c;stroke-width:16.5696;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1193"
+           width="258.8125"
+           height="260.64651"
+           x="-54.250622"
+           y="1476.7001"
+           transform="rotate(-39.245152)" />
       </g>
     </g>
   </g>
