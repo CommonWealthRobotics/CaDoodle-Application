@@ -1194,6 +1194,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 100:// d
 					session.onDrop();
 					break;
+				case 101:// e
+				case 69:// E
+					session.objectWorkplane();
+					break;
 				case 108:// l
 					session.onAllign();
 					break;
