@@ -158,7 +158,6 @@ public class RotationHandle {
 		};
 		handle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
-		handle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
 		arc.setFill(new Color(0.0, 0, 1, 0.5));
 

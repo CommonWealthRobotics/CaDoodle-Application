@@ -273,15 +273,28 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	private ScrollPane timelineScroll;
-
+	@FXML // fx:id="zoomInButton"
+	private Button objectWorkplane;
+	@FXML // fx:id="zoomInButton"
+	private Button dropToWorkplane;
 	private ICaDoodleOpperation source;
+	
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
 	private int lastFrame = 0;
 	private File currentFile = null;
 	private boolean timelineOpen = true;
-
+	
+	@FXML
+	void onDropToWorkplane(ActionEvent e) {
+		session.onDrop();
+	}
+	//onObjectWorkplane
+	@FXML
+	void onObjectWorkplane(ActionEvent e) {
+		session.objectWorkplane();
+	}
 	@FXML
 	void onSearch(ActionEvent event) {
 		if (pallet == null)
@@ -743,7 +756,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		tm.set(timelineScroll,timeline,session,engine);
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,tm);
+				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,tm,objectWorkplane,dropToWorkplane);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
@@ -1062,7 +1075,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
 				double dist=1;
 				if(event.isShiftDown())
-					dist=10;
+					dist=3;
 				switch (event.getCode()) {
 				case UP:
 					if (event.isControlDown()) {
@@ -1180,6 +1193,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 100:// d
 					session.onDrop();
+					break;
+				case 101:// e
+				case 69:// E
+					System.err.println("Call Object WP toggle");
+					session.objectWorkplane();
 					break;
 				case 108:// l
 					session.onAllign();

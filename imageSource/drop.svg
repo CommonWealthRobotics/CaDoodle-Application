@@ -7,10 +7,10 @@
    id="svg5821"
    sodipodi:version="0.32"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="workplane.svg"
+   sodipodi:docname="drop.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.1"
-   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/Sketcher.png"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/drop.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -106,7 +106,7 @@
      inkscape:zoom="12.721444"
      inkscape:cx="23.778747"
      inkscape:cy="30.932023"
-     inkscape:current-layer="g3360-3"
+     inkscape:current-layer="g3360"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
@@ -181,11 +181,11 @@
          inkscape:export-filename="/home/yorik/Documents/Lab/Draft/icons/draft.png"
          inkscape:export-xdpi="3.2478156"
          inkscape:export-ydpi="3.2478156"
-         transform="translate(-2.96179e-7,2.9614273e-6)">
+         transform="translate(3.7914963,2.3009408)">
         <path
            id="rect383"
-           style="fill:none;stroke:#020000;stroke-width:18.1305;stroke-dasharray:none"
-           d="m 933.26368,1067.2591 352.76192,1.0125 39.2304,374.3704 H 886.19659 Z"
+           style="fill:none;stroke:#020000;stroke-width:16.7752;stroke-dasharray:none"
+           d="m 932.70125,1122.9687 353.91305,0.864 39.3584,319.448 H 885.48057 Z"
            sodipodi:nodetypes="ccccc" />
         <path
            id="rect1036"
@@ -198,20 +198,21 @@
            d="m 1174.6736,1295.3641 134.9786,-2.4154 15.0022,147.9155 -143.5965,0.2873 z"
            sodipodi:nodetypes="ccccc" />
         <path
-           id="rect1042"
-           style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 932.03805,1067.5263 117.18395,-0.339 -7.1677,117.1278 -120.69485,-1.394 z"
-           sodipodi:nodetypes="ccccc" />
-        <path
-           id="rect1044"
-           style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 1164.7201,1068.0942 121.4244,1.0035 10.8021,114.6473 -127.4899,0.1167 z"
-           sodipodi:nodetypes="ccccc" />
-        <path
-           id="rect1046"
-           style="fill:none;stroke:#020000;stroke-width:18.1305"
-           d="m 1042.7592,1184.3107 127.6269,-0.541 3.7847,111.8143 -136.7072,0.072 z"
-           sodipodi:nodetypes="ccccc" />
+           id="rect2814"
+           style="fill:#bb1f09;fill-opacity:1;stroke:#263d8c;stroke-width:76.3254;stroke-dasharray:none;stroke-opacity:1"
+           d="m 1098.3855,997.94497 v 175.62443 h 30.0852 V 997.94497 Z m -140.52529,94.39033 -6.59815,3.3117 114.60434,77.6925 6.5981,-3.3121 z m 307.28659,3.2199 -108.0843,66.5605 0.3136,0.1836 108.0842,-66.5606 z" />
+      </g>
+      <g
+         inkscape:groupmode="layer"
+         id="layer2"
+         inkscape:label="Layer 2">
+        <rect
+           style="fill:#bb1f09;fill-opacity:1;stroke:#263d8c;stroke-width:14.362;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1193"
+           width="267.98581"
+           height="189.11638"
+           x="968.94641"
+           y="1198.7484" />
       </g>
     </g>
   </g>
