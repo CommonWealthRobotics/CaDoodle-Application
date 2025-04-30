@@ -429,7 +429,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		
 		for(String s:externals) {
 			File f = new File(s);
-			if(f.exists()) {
+			if(f.exists()&&f.getName().toLowerCase().endsWith(".doodle")) {
 				try {
 					list.add(CaDoodleFile.fromFile(f, null, false));
 				} catch (Exception e) {
