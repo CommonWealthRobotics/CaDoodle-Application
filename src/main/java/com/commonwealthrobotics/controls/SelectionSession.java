@@ -1750,6 +1750,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			objectWorkplane.getStyleClass().add("image-button");
 			isObjectWorkplane=false;
 		}
+		updateControls();
 	}
 
 	@Override
