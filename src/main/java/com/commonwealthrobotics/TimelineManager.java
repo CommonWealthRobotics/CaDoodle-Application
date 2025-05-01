@@ -12,6 +12,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
@@ -107,7 +108,26 @@ public class TimelineManager {
 		canvas.snapshot(params, resizedImage);
 		return resizedImage;
 	}
-
+	private boolean boundsSame(CSG one,CSG two) {
+		if(one==null||two==null)
+			return true;
+		return boundsSame(one.getBounds(), two.getBounds());
+	}
+	private boolean boundsSame(Bounds one, Bounds two) {
+		if(one.getMax().test(two.getMax(), 0.0001)) {
+			return true;
+		}
+		if(one.getMin().test(two.getMin(), 0.0001)) {
+			return true;
+		}
+		return false;
+	}
+	private CSG getSameName(CSG get, List<CSG> list) {
+		for(CSG c:list)
+			if(c.getName().contentEquals(get.getName()))
+				return c;
+		return null;
+	}
 	private void update(boolean clear) {
 		//System.out.println("Timeline Update called");
 		this.clear = clear;
@@ -135,6 +155,7 @@ public class TimelineManager {
 					int my = i;
 					ContextMenu contextMenu = new ContextMenu();
 					List<CSG> state=ap.get().getStateAtOperation(op);
+					List<CSG> previous = (i==0)?new ArrayList<CSG>():ap.get().getStateAtOperation(opperations.get(i-1));
 					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 						session.setKeyBindingFocus();
 						BowlerStudio.runLater(() -> {
@@ -174,7 +195,10 @@ public class TimelineManager {
 									continue;
 								if(c.isHide())
 									continue;
-								engine.addObject(c, null, 0.6);
+								CSG prev=getSameName(c, previous);
+								boolean b=boundsSame(prev, c);
+								if(!b||prev==null)
+									engine.addObject(c, null, b?0.4:1);
 							}
 					});
 					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
