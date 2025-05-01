@@ -197,6 +197,10 @@ public class TimelineManager {
 									continue;
 								CSG prev=getSameName(c, previous);
 								boolean b=boundsSame(prev, c);
+								if(prev!=null) {
+									if(prev.isHide() && !c.isHide())
+										b=false;
+								}
 								if(!b||prev==null)
 									engine.addObject(c, null, b?0.4:1);
 							}
