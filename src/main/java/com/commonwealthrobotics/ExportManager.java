@@ -112,7 +112,7 @@ public class ExportManager {
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
-		new Thread(() -> {
+		Thread t=new Thread(() -> {
 
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
@@ -163,7 +163,9 @@ public class ExportManager {
 			SplashManager.closeSplash();
 			CSG.setPreventNonManifoldTriangles(prev);
 			onFinish.run();
-		}).start();
+		});
+		t.setName("Export Thread");
+		t.start();
 	}
 	private void copyBom(File bomFile) {
 		Path source = bomFile.toPath();
