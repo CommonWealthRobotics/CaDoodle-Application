@@ -204,7 +204,7 @@ public class TimelineManager {
 										b=true;
 								}
 								if(b||prev==null)
-									engine.addObject(c, null, b?0.4:1);
+									engine.addObject(c, null, 0.4);
 							}
 					});
 					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
