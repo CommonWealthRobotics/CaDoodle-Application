@@ -196,12 +196,14 @@ public class TimelineManager {
 								if(c.isHide())
 									continue;
 								CSG prev=getSameName(c, previous);
-								boolean b=boundsSame(prev, c);
+								boolean b=!boundsSame(prev, c);
 								if(prev!=null) {
 									if(prev.isHide() && !c.isHide())
-										b=false;
+										b=true;
+									if(prev.isHole()!=c.isHole())
+										b=true;
 								}
-								if(!b||prev==null)
+								if(b||prev==null)
 									engine.addObject(c, null, b?0.4:1);
 							}
 					});
