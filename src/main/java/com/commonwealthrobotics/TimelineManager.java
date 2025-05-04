@@ -302,11 +302,12 @@ public class TimelineManager {
 			b.getStyleClass().clear();
 			if(sel==b) {
 				b.getStyleClass().add("image-button-focus");
-			}else
-				if(applyToMe)
-					b.getStyleClass().add("image-button-highlight");
-				else
-					b.getStyleClass().add("image-button");
+			}
+			if(applyToMe)
+				b.getStyleClass().add("image-button-highlight");
+			else
+				b.getStyleClass().add("image-button");
+
 
 		}
 	}

@@ -51,9 +51,6 @@
 }
 
 .image-button-focus {
-    -fx-background-color: transparent;
-    -fx-border-width: 4px;
-    -fx-background-insets: 0;
     -fx-border-color: -logo-red; /* Blue border when focused */
 }
 .image-button-focus:hover {
@@ -61,9 +58,7 @@
 }
 .image-button-highlight {
     -fx-background-color: -logo-yellow;
-    -fx-border-width: 4px;
     -fx-background-insets: 0;
-    -fx-border-color: transparent; /* Blue border when focused */
 }
 .image-button-highlight:hover {
     -fx-background-color: -logo-orange; /* the color you want when hovering */
