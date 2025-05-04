@@ -2,6 +2,7 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -257,19 +258,6 @@ public class TimelineManager {
 					ex.printStackTrace();
 				}
 			}
-			if (buttons.size() > 0) {
-				int index = ap.get().getCurrentIndex() - 1;
-				Button button = buttons.get(index < 0 ? 0 : index);
-				for (int i = 0; i < buttons.size(); i++) {
-					Button button2 = buttons.get(i);
-					button2.getStyleClass().clear();
-					if (button == button2)
-						continue;
-					button2.getStyleClass().add("image-button");
-				}
-				button.getStyleClass().add("image-button-focus");
-				// Create a context menu
-			}
 			//System.out.println("Timeline updated");
 			if (addrem)
 				BowlerStudio.runLater(java.time.Duration.ofMillis(100),() -> {
@@ -277,11 +265,13 @@ public class TimelineManager {
 					updating = false;
 					if(updateNeeded)
 						update(clear);
+					session.updateControlsDisplayOfSelected();
 				});
 			else {
 				updating = false;
 				if(updateNeeded)
 					update(clear);
+				session.updateControlsDisplayOfSelected();
 			}
 			
 		});
@@ -291,6 +281,32 @@ public class TimelineManager {
 		//System.out.println("Old Timeline buttons cleared");
 		buttons.clear();
 		timeline.getChildren().clear();
+	}
+
+	public void updateSelected(LinkedHashSet<String> selected) {
+		ArrayList<ICaDoodleOpperation> opperations = ap.get().getOpperations();
+		for(int i=0;i<opperations.size()&&i<buttons.size();i++) {
+			ICaDoodleOpperation op =opperations.get(i);
+			Button b=buttons.get(i);
+			boolean applyToMe=false;
+			int index = ap.get().getCurrentIndex() - 1;
+			Button sel = buttons.get(index < 0 ? 0 : index);
+			for(String s:op.getNames()) {
+				for(String p:selected) {
+					if(s.contentEquals(p))
+						applyToMe=true;
+				}
+			}
+			b.getStyleClass().clear();
+			if(sel==b) {
+				b.getStyleClass().add("image-button-focus");
+			}else
+				if(applyToMe)
+					b.getStyleClass().add("image-button-highlight");
+				else
+					b.getStyleClass().add("image-button");
+
+		}
 	}
 
 }

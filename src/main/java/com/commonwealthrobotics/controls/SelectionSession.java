@@ -442,9 +442,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	private void updateControlsDisplayOfSelected() {
+	public void updateControlsDisplayOfSelected() {
 		parametrics.getChildren().clear();
 		inWorkplaneBounds.clear();
+		timeline.updateSelected(selected);
 		if (selected.size() > 0) {
 			dropToWorkplane.setDisable(false);
 			objectWorkplane.setDisable(selected.size() != 1);
