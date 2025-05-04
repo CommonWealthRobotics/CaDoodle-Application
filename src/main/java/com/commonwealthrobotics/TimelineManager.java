@@ -290,6 +290,8 @@ public class TimelineManager {
 			Button b=buttons.get(i);
 			boolean applyToMe=false;
 			int index = ap.get().getCurrentIndex() - 1;
+			if(index>=buttons.size())
+				continue;
 			Button sel = buttons.get(index < 0 ? 0 : index);
 			for(String s:op.getNames()) {
 				for(String p:selected) {
