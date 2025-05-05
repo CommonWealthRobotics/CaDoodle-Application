@@ -196,7 +196,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// Set tooltip
 		Tooltip tooltip = new Tooltip(tooltipText);
 		//tooltip.setShowDelay(Duration.millis(300));
-		button.setTooltip(tooltip);
+		//button.setTooltip(tooltip);
 
 		// Create the final button that contains both the button and description
 		Button optionButton = new Button();
@@ -247,7 +247,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						contentBox.setPadding(new Insets(10, 10, 10, 10));
 
 						// Create labeled buttons with descriptions
-						Node eraseOptionBtn = createOptionButton("Erase",
+						Node eraseOptionBtn = createOptionButton("Continue From Here",
 								"Replace subsequent work with this change.\nThis will remove any work you've done after this point.",
 								"Erase will prune the subsequent operations and replace them with this change.",
 								e -> {
