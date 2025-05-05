@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -67,7 +68,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private CaDoodleFile fromFile;
 	// private ICaDoodleStateUpdate listener;
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
-
+	private boolean isAlwaysAccept=false;
+	private boolean isAlwaysInsert=false;
+	
 	public ActiveProject() {
 		// this.listener = listener;
 
@@ -178,7 +181,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	// Helper method to create styled option buttons with descriptions
-	private Node createOptionButton(String buttonText, String description, String tooltipText, EventHandler<ActionEvent> value) {
+	private HBox createOptionButton(CheckBox always,String buttonText, String description, String tooltipText, EventHandler<ActionEvent> value) {
 		HBox buttonContainer = new HBox(5);
 		buttonContainer.setAlignment(Pos.CENTER_LEFT);
 
@@ -192,7 +195,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		descriptionLabel.setWrapText(true);
 
 		buttonContainer.getChildren().addAll(button, descriptionLabel);
-
+		if(always!=null)
+			buttonContainer.getChildren().add(always);
 		// Set tooltip
 		Tooltip tooltip = new Tooltip(tooltipText);
 		//tooltip.setShowDelay(Duration.millis(300));
@@ -222,6 +226,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 				@Override
 				public OperationResult accept() {
+					if(isAlwaysAccept)
+						return OperationResult.PRUNE;
+					if(isAlwaysInsert)
+						return OperationResult.INSERT;
 					operationResult = null;
 					boolean isVis = SplashManager.isVisableSplash();
 					SplashManager.closeSplash();
@@ -245,9 +253,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						// Create a VBox to hold descriptions and stack buttons vertically
 						VBox contentBox = new VBox(10);
 						contentBox.setPadding(new Insets(10, 10, 10, 10));
+						CheckBox alwaysPrune =new CheckBox("Always Continue");
+						CheckBox alwaysInsert =new CheckBox("Always Insert");
+						alwaysInsert.setOnAction(e->alwaysPrune.setSelected(false));
+						alwaysPrune.setOnAction(e->alwaysInsert.setSelected(false));
 
 						// Create labeled buttons with descriptions
-						Node eraseOptionBtn = createOptionButton("Continue From Here",
+						HBox eraseOptionBtn = createOptionButton(null,"Continue From Here",
 								"Replace subsequent work with this change.\nThis will remove any work you've done after this point.",
 								"Erase will prune the subsequent operations and replace them with this change.",
 								e -> {
@@ -255,7 +267,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 									alert.close();
 								});
 
-						Node insertOptionBtn = createOptionButton("Insert",
+						HBox insertOptionBtn = createOptionButton(null,"Insert",
 								"Insert this change at the current position.\nYour subsequent work will be preserved.",
 								"Insert will add this operation at the current position while keeping subsequent operations.",
 								e -> {
@@ -263,7 +275,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 									alert.close();
 								});
 
-						Node abortOptionBtn = createOptionButton("Abort change",
+						HBox abortOptionBtn = createOptionButton(null,"Abort change",
 								"Cancel this change and keep your work as is.",
 								"Abort will discard this change and maintain your current work.",
 								e -> {
@@ -272,8 +284,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								});
 
 						// Add buttons to the VBox
-						contentBox.getChildren().addAll(new Label("Choose how to handle your change:"), eraseOptionBtn,
-								insertOptionBtn, abortOptionBtn);
+						contentBox.getChildren().addAll(new Label("Choose how to handle your change:"), eraseOptionBtn,alwaysPrune,
+								insertOptionBtn, alwaysInsert, abortOptionBtn);
 
 						// Replace the default content with our custom content
 						dialogPane.setContent(contentBox);
@@ -313,7 +325,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 						if(this.operationResult==null)
 							this.operationResult= OperationResult.ABORT;
-
+						isAlwaysAccept=alwaysPrune.isSelected();
+						isAlwaysInsert=alwaysInsert.isSelected();
 						alert.close();
 					});
 
