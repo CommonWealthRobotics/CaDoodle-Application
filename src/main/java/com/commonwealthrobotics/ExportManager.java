@@ -28,6 +28,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 
@@ -54,6 +55,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
+import java.io.*;
+import java.nio.file.*;
+import java.util.zip.*;
 
 public class ExportManager {
 	private static ActiveProject ap;
@@ -159,6 +163,13 @@ public class ExportManager {
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
 			copyBom(CaDoodleFile.getBillOfMaterials().getBomFile());
 			copyBom(CaDoodleFile.getBillOfMaterials().getBomCsv());
+			try {
+				zipDirectory(ap.get().getSelf().getParentFile(),
+						new File(exportDir.getAbsolutePath()+DownloadManager.delim()+name+"-source.zip"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			SplashManager.closeSplash();
 			CSG.setPreventNonManifoldTriangles(prev);
@@ -166,6 +177,24 @@ public class ExportManager {
 		});
 		t.setName("Export Thread");
 		t.start();
+	}
+
+	private static void zipDirectory(File sourceDir, File zipFile) throws IOException {
+		Path sourceDirPath=sourceDir.toPath();
+		Path zipFilePath = zipFile.toPath();
+		try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
+			Files.walk(sourceDirPath).filter(path -> !Files.isDirectory(path)).forEach(path -> {
+				ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
+				try {
+					zs.putNextEntry(zipEntry);
+					Files.copy(path, zs);
+					zs.closeEntry();
+				} catch (IOException e) {
+					System.err.println("Failed to zip file: " + path);
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 	private void copyBom(File bomFile) {
 		Path source = bomFile.toPath();
