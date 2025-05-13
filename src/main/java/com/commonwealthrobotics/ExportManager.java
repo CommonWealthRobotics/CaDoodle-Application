@@ -147,7 +147,7 @@ public class ExportManager {
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
 			if(exportDir==null)
 				return;
-			SplashManager.renderSplashFrame(50, " Exporting...");
+			SplashManager.renderSplashFrame(1, " Exporting...");
 			while(!SplashManager.isVisableSplash()) {
 				try {
 					Thread.sleep(100);
