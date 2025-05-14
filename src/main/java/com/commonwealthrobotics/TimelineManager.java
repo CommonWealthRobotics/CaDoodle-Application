@@ -287,6 +287,8 @@ public class TimelineManager {
 		ArrayList<ICaDoodleOpperation> opperations = ap.get().getOpperations();
 		for(int i=0;i<opperations.size()&&i<buttons.size();i++) {
 			ICaDoodleOpperation op =opperations.get(i);
+			if(op==null)
+				continue;
 			Button b=buttons.get(i);
 			boolean applyToMe=false;
 			int index = ap.get().getCurrentIndex() - 1;
