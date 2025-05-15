@@ -151,8 +151,11 @@ public class TimelineManager {
 			for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 				try {
 					ICaDoodleOpperation op = opperations.get(i);
+					if(op==null)
+						continue;
 					String text = (i + 1) + "\n" + op.getType();
 					Button toAdd = new Button(text);
+					buttons.add(toAdd);
 					int my = i;
 					ContextMenu contextMenu = new ContextMenu();
 					List<CSG> state=ap.get().getStateAtOperation(op);
@@ -227,7 +230,7 @@ public class TimelineManager {
 					tooltip.setGraphic(toolimage);
 					tooltip.setContentDisplay(ContentDisplay.TOP);
 					//toAdd.setTooltip(tooltip);
-					buttons.add(toAdd);
+
 					timeline.getChildren().add(toAdd);
 					Separator verticalSeparator = new Separator();
 					verticalSeparator.setOrientation(Orientation.VERTICAL);
