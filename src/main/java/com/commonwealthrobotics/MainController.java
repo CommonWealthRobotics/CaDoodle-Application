@@ -381,6 +381,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 				timelineHolder.getChildren().remove(timelineScroll);
 			}
+			tm.setOpenState(timelineOpen);
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleTimelineShow", timelineOpen);
 		} catch (Throwable t) {
 			t.printStackTrace();

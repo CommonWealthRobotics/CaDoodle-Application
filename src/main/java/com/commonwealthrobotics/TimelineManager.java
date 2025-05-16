@@ -317,4 +317,10 @@ public class TimelineManager {
 		}
 	}
 
+	public void setOpenState(boolean timelineOpen) {
+		ap.get().setTimelineVisable(timelineOpen);
+		if(timelineOpen)
+			session.save();
+	}
+
 }

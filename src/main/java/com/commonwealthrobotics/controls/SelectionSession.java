@@ -1564,13 +1564,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						t.start();
 						needsSave = false;
 						try {
-							Thread.sleep(100);
+							Thread.sleep(300);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						ap.get().setSaveUpdate(saveDisplay);
-						if (t.isAlive()) {
+						if (t.isAlive() && ap.get().isTimelineOpen()) {
 							SplashManager.renderSplashFrame(1, "Saving File");
 						}
 						try {
