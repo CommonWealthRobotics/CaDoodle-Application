@@ -71,11 +71,15 @@ public class ShapePalletButtonResources {
 				Sweep s = new Sweep();
 				String ZPer = key.get("ZPer");
 				String Degrees = key.get("Degrees");
+				String sprial = key.get("Spiral");
 				if (ZPer != null) {
 					s.setDefz(Double.parseDouble(ZPer));
 				}
 				if (Degrees != null)
 					s.setDefangle(Double.parseDouble(Degrees));
+				if(sprial!=null) {
+					s.setDefSpiral(Double.parseDouble(sprial));
+				}
 				s.set(f).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {

@@ -233,11 +233,15 @@ public class ShapesPallet {
 											Sweep s=new Sweep();
 											String ZPer = key.get("ZPer");
 											String Degrees = key.get("Degrees");
-											if( ZPer!=null) {
+											String sprial = key.get("Spiral");
+											if (ZPer != null) {
 												s.setDefz(Double.parseDouble(ZPer));
 											}
-											if(Degrees!=null)
+											if (Degrees != null)
 												s.setDefangle(Double.parseDouble(Degrees));
+											if(sprial!=null) {
+												s.setDefSpiral(Double.parseDouble(sprial));
+											}
 											s.set(f).setPreventBoM(true).setLocation(currentAbsolutePose);
 											setAddFromScript=s;
 										} catch (Exception e) {
