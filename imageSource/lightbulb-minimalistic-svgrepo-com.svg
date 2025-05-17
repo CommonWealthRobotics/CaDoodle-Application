@@ -9,8 +9,8 @@
    version="1.1"
    id="svg6"
    sodipodi:docname="lightbulb-minimalistic-svgrepo-com.svg"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   inkscape:export-filename="/home/hephaestus/git/CaDoodle-Application/src/main/resources/com/commonwealthrobotics/darkBulb.png"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/darkBulb.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -29,24 +29,26 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="0.8275"
-     inkscape:cx="400"
-     inkscape:cy="399.39577"
-     inkscape:window-width="1433"
-     inkscape:window-height="938"
+     inkscape:cx="401.81269"
+     inkscape:cy="400.60423"
+     inkscape:window-width="1737"
+     inkscape:window-height="1133"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg6" />
+     inkscape:current-layer="svg6"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <path
      fill-rule="evenodd"
      clip-rule="evenodd"
      d="m 5.19125,2.7519005 c 0,-0.018877 0.015111,-0.034178 0.03375,-0.034178 h 0.18 c 0.018639,0 0.03375,0.0153 0.03375,0.034178 0,0.018873 -0.015111,0.034177 -0.03375,0.034177 h -0.18 c -0.018639,0 -0.03375,-0.015305 -0.03375,-0.034177 z m 0.03,0.113922 c 0,-0.018878 0.015112,-0.034178 0.033751,-0.034178 h 0.119997 c 0.018639,0 0.03375,0.0153 0.03375,0.034178 C 5.4087485,2.8847 5.3936375,2.9 5.3749985,2.9 H 5.2550015 C 5.2363625,2.9 5.2212505,2.8847 5.22125,2.8658225 Z"
      fill="#1C274C"
      id="path2"
-     style="fill:#000000;fill-opacity:1;stroke-width:0.045" />
+     style="fill:#263d8c;fill-opacity:1;stroke-width:0.045" />
   <path
      d="m 5.1084761,2.5322735 0.049682,0.047358 C 5.1720966,2.5929155 5.18,2.6114375 5.18,2.630819 c 0,0.02912 0.02331,0.052727 0.052065,0.052727 h 0.16587 C 5.42669,2.683546 5.45,2.659939 5.45,2.630819 5.45,2.611438 5.4579,2.592916 5.471843,2.579632 L 5.521523,2.532274 C 5.590877,2.4656645 5.629604,2.378153 5.6299955,2.2871765 L 5.63,2.2833551 C 5.63,2.1279094 5.48897,2 5.315,2 5.1410305,2 5,2.1279094 5,2.2833551 l 3.2e-6,0.00382 c 3.906e-4,0.090977 0.039119,0.178488 0.1084729,0.245097 z"
      fill="#1C274C"
      id="path4"
-     style="fill:#000000;fill-opacity:1;stroke-width:0.045" />
+     style="fill:#263d8c;fill-opacity:1;stroke-width:0.045" />
 </svg>

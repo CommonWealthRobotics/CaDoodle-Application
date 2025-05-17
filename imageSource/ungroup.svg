@@ -7,8 +7,11 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg1"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    sodipodi:docname="ungroup.svg"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/ungroup.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,14 +27,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="0.62003367"
-     inkscape:cx="396.75265"
-     inkscape:cy="561.25984"
-     inkscape:window-width="1433"
-     inkscape:window-height="938"
+     inkscape:cx="399.17187"
+     inkscape:cy="562.06625"
+     inkscape:window-width="1737"
+     inkscape:window-height="1133"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer1"
+     showgrid="false" />
   <defs
      id="defs1" />
   <g
@@ -40,7 +44,7 @@
      id="layer1">
     <path
        id="rect1"
-       style="fill:#ffffff;stroke:#020000;stroke-width:10;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       style="fill:#ffffff;stroke:#263d8c;stroke-width:10;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
        d="M 29.160494 69.74458 L 29.160494 189.74914 L 66.46261 189.74914 A 68.823441 66.165581 0 0 0 134.11378 244.41299 A 68.823441 66.165581 0 0 0 202.93748 178.24752 A 68.823441 66.165581 0 0 0 153.01237 114.64365 L 153.01237 69.74458 L 29.160494 69.74458 z "
        inkscape:export-filename="rect1.png"
        inkscape:export-xdpi="96"
