@@ -137,8 +137,8 @@ public class ProjectManager {
 					b.getStyleClass().add("image-button");
 					b.setContentDisplay(ContentDisplay.TOP);
 					ImageView value = new ImageView(c.loadImageFromFile());
-					value.setFitWidth(60);
-					value.setFitHeight(60);
+					value.setFitWidth(80);
+					value.setFitHeight(80);
 					b.setGraphic(value);
 					VBox box = new VBox();
 
@@ -173,9 +173,16 @@ public class ProjectManager {
 					ap.setActiveProject(c.getSelf());
 				} else {
 					File sourceDir = c.getSelf().getParentFile();
-					File target = new File(sourceDir + "_copy");
+					File target = null;
+					int index=1;
+					do {
+						target = new File(sourceDir + "_copy_"+index);
+						index++;
+					}while(target.exists());
+					
 					copyDirectory(sourceDir.getAbsolutePath(),target.getAbsolutePath());
 					File doodle = new File(target.getAbsolutePath()+DownloadManager.delim()+c.getSelf().getName());
+
 					CaDoodleFile nf = CaDoodleFile.fromFile(doodle, null, false);
 					nf.setProjectName(c.getMyProjectName()+"_copy");
 					nf.setTimeCreated(System.currentTimeMillis());
