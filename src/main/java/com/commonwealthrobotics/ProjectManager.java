@@ -184,7 +184,7 @@ public class ProjectManager {
 					File doodle = new File(target.getAbsolutePath()+DownloadManager.delim()+c.getSelf().getName());
 
 					CaDoodleFile nf = CaDoodleFile.fromFile(doodle, null, false);
-					nf.setProjectName(c.getMyProjectName()+"_copy");
+					nf.setProjectName(c.getMyProjectName()+"_copy_"+index);
 					nf.setTimeCreated(System.currentTimeMillis());
 					nf.save();
 					ap.setActiveProject(doodle);
