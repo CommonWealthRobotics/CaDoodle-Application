@@ -8,16 +8,12 @@
     -my-primary-color: #3498db;
     -my-secondary-color: #2ecc71;
     
-    -my-background-color: -logo-Beige;
-    
 
-    -my-button-color:-logo-yellow;
+    -my-button-color:#f2c83d;
     
 
 }
-.label, .text-field, .text-area, .button {
-    -fx-text-fill: #263d8c;
-}
+
 
 .image-button {
     -fx-background-color: transparent;
@@ -26,42 +22,42 @@
     -fx-background-insets: 0;
 }
 .normal-button {
-    -fx-background-color: -my-button-color;
+    -fx-background-color: #f2c83d;
     -fx-background-insets: 0;
     -fx-border-width: 2px;
-     -fx-border-color: #bb1f09; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* Blue border when not focused */
     
 }
 .normal-button:focused {
 	-fx-border-width: 2px;
-    -fx-border-color: #bb1f09; /* Blue border when focused */
+    -fx-border-color: #bb1f09; /* red border when focused */
 }
 
 .normal-button:pressed {
-    -fx-background-color: -logo-orange; /* Light gray background when pressed */
+    -fx-background-color: #e7a436; /* Light gray background when pressed */
 }
 .image-button:focused {
     -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 .image-button:pressed {
-    -fx-background-color: -logo-orange; /* Light gray background when pressed */
+    -fx-background-color: #e7a436; /* Light gray background when pressed */
 }
 .image-button:hover {
-    -fx-background-color: -logo-yellow; /* the color you want when hovering */
+    -fx-background-color: #f2c83d; /* the color you want when hovering */
 }
 
 .image-button-focus {
     -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 .image-button-focus:hover {
-    -fx-background-color: -logo-yellow; /* the color you want when hovering */
+    -fx-background-color: #f2c83d; /* the color you want when hovering */
 }
 .image-button-highlight {
-    -fx-background-color: -logo-yellow;
+    -fx-background-color: #f2c83d;
     -fx-background-insets: 0;
 }
 .image-button-highlight:hover {
-    -fx-background-color: -logo-orange; /* the color you want when hovering */
+    -fx-background-color: #e7a436; /* the color you want when hovering */
 }
 
 .anchor-pane {
@@ -72,7 +68,7 @@
     -fx-wrap-text: true;
     -fx-pref-row-count: 5; /* Adjust as needed */
     -fx-pref-column-count: 20; /* Adjust as needed */
-    -fx-border-color: #bb1f09; /* Blue border when focused */
+
 }
 .vbox {
     -fx-spacing: 10; /* Sets 10px vertical space between children */
@@ -89,26 +85,26 @@
 }
 
 .scroll-pane {
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 
 .scroll-pane .scroll-bar:horizontal,
 .scroll-pane .scroll-bar:vertical {
-    -fx-background-color: #bb1f09;
+    -fx-background-color: #263d8c;
 }
 
 .scroll-pane .scroll-bar:horizontal .thumb,
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #bb1f09;
+    -fx-background-color: #f2c83d;
 }
 
 .scroll-pane .increment-button,
 .scroll-pane .decrement-button {
-    -fx-background-color: #bb1f09;
+    -fx-background-color: #f2c83d;
 }
 
 .scroll-pane .increment-arrow,
@@ -118,34 +114,34 @@
 
 .scroll-pane .scroll-bar:horizontal .track,
 .scroll-pane .scroll-bar:vertical .track {
-    -fx-background-color:-logo-yellow;
+    -fx-background-color:#263d8c;
 }
 
 .scroll-pane > .corner {
     -fx-background-color: #e0e0e0;
 }
 .separator {
-    -fx-background-color: #bb1f09;
+    -fx-background-color: #263d8c;
 }
 #controlBar{
 
     -fx-border-width: 2px;
-     -fx-border-color: #bb1f09; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* Blue border when focused */
 }
 #drawerArea{
 
     -fx-border-width: 2px;
-     -fx-border-color: #bb1f09; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* Blue border when focused */
 }
 #shapeConfigurationBox{
 
     -fx-border-width: 2px;
-     -fx-border-color: #bb1f09; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* Blue border when focused */
 }
 #fileNameBox{
 
     -fx-border-width: 2px;
-     -fx-border-color: #bb1f09; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* Blue border when focused */
 }
 #view3d {
     -fx-background-color:  radial-gradient(center 50% 50%, radius 30%, #D0D0D0 0%, -logo-Beige 90%);
@@ -155,49 +151,49 @@
     -fx-background-color: transparent;
 }
 #drawerArea {
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 #drawerGrid{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 #projectGrid{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 #totalApplicationBackground{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 #topBar{
-    -fx-background-color:  -my-background-color;
+    -fx-background-color:  #f4ede0;
 }
 #controlBar{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 #objectPallet{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 #shapeConfiguration{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 .titled-pane > .title {
-    -fx-background-color:  -my-button-color;
+    -fx-background-color:  #f2c83d;
 }
 #configurationGrid{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 
 #anchorPanForConfiguration{
-    -fx-background-color: -my-background-color;
+    -fx-background-color: #f4ede0;
 }
 
 
 
 #fileNameBox{
-       -fx-background-color: -my-button-color;
+       -fx-background-color: #f2c83d;
 }
 
 #shapeCatagory{
-       -fx-background-color: -my-button-color;
+       -fx-background-color: #f2c83d;
 }
 #snapGrid{
-       -fx-background-color: -my-button-color;
+       -fx-background-color: #f2c83d;
 }
