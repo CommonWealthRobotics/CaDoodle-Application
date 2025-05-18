@@ -540,12 +540,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		return extentions;
 	}
 	private Thread importAFile(File last) {
-		if(last.getName().toLowerCase().endsWith(".zip")) {
+		String lowerCase = last.getName().toLowerCase();
+		if(lowerCase.endsWith(".zip")) {
 			ap.loadFromZip(last);
 		}else {
 			boolean check = false;
-			for(String s:getExtention()) {
-				if(last.getName().toLowerCase().endsWith(s.toLowerCase())) {
+			ArrayList<String> extention = getExtention();
+			for(String s:extention) {
+				if(lowerCase.endsWith(s.substring(1).toLowerCase())) {
 					check=true;
 					break;
 				}
