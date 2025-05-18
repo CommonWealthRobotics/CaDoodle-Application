@@ -68,7 +68,7 @@
     -fx-wrap-text: true;
     -fx-pref-row-count: 5; /* Adjust as needed */
     -fx-pref-column-count: 20; /* Adjust as needed */
-
+    -fx-border-color: #263d8c; /* Blue border when focused */
 }
 .vbox {
     -fx-spacing: 10; /* Sets 10px vertical space between children */
@@ -99,7 +99,7 @@
 
 .scroll-pane .scroll-bar:horizontal .thumb,
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #f2c83d;
+    -fx-background-color: #263d8c;
 }
 
 .scroll-pane .increment-button,
@@ -114,7 +114,7 @@
 
 .scroll-pane .scroll-bar:horizontal .track,
 .scroll-pane .scroll-bar:vertical .track {
-    -fx-background-color:#263d8c;
+    -fx-background-color:#f2c83d;
 }
 
 .scroll-pane > .corner {
