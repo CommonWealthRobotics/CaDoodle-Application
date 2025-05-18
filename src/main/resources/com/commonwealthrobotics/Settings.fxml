@@ -33,13 +33,13 @@
          <children>
             <VBox styleClass="vbox" GridPane.rowIndex="2">
                <children>
-                  <RadioButton mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always Ask">
+                  <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always Ask">
                      <toggleGroup>
                         <ToggleGroup fx:id="insertStrat" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always Insert" toggleGroup="$insertStrat" />
-                  <RadioButton mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always Continue and Erase" toggleGroup="$insertStrat" />
+                  <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always Insert" toggleGroup="$insertStrat" />
+                  <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always Continue and Erase" toggleGroup="$insertStrat" />
                </children>
             </VBox>
             <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" prefWidth="430.0" styleClass="label" text="Always ask what I want to do with a popup window every time something is edited " GridPane.columnIndex="1" GridPane.rowIndex="2" />
