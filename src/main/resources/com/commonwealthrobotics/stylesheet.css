@@ -16,7 +16,7 @@
 
 }
 .label, .text-field, .text-area, .button {
-    -fx-text-fill: -logo-blue;
+    -fx-text-fill: #263d8c;
 }
 
 .image-button {
@@ -29,19 +29,19 @@
     -fx-background-color: -my-button-color;
     -fx-background-insets: 0;
     -fx-border-width: 2px;
-     -fx-border-color: -logo-blue; /* Blue border when focused */
+     -fx-border-color: #bb1f09; /* Blue border when focused */
     
 }
 .normal-button:focused {
 	-fx-border-width: 2px;
-    -fx-border-color: -logo-red; /* Blue border when focused */
+    -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 
 .normal-button:pressed {
     -fx-background-color: -logo-orange; /* Light gray background when pressed */
 }
 .image-button:focused {
-    -fx-border-color: -logo-red; /* Blue border when focused */
+    -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 .image-button:pressed {
     -fx-background-color: -logo-orange; /* Light gray background when pressed */
@@ -51,7 +51,7 @@
 }
 
 .image-button-focus {
-    -fx-border-color: -logo-red; /* Blue border when focused */
+    -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 .image-button-focus:hover {
     -fx-background-color: -logo-yellow; /* the color you want when hovering */
@@ -64,8 +64,27 @@
     -fx-background-color: -logo-orange; /* the color you want when hovering */
 }
 
+.anchor-pane {
+    -fx-background-color: #f4ede0; 
+}
+.text-field {
+    -fx-background-color: #f2c83d; 
+    -fx-wrap-text: true;
+    -fx-pref-row-count: 5; /* Adjust as needed */
+    -fx-pref-column-count: 20; /* Adjust as needed */
+}
+.vbox {
+    -fx-spacing: 10; /* Sets 10px vertical space between children */
+    -fx-padding: 10; /* Optional: adds padding inside the VBox */
+}
+
 .grid-pane {
-    -fx-grid-line-color: -logo-blue;
+    -fx-grid-line-color: #bb1f09;
+    -fx-background-color: #f4ede0; 
+    -fx-background-radius: 5.0;
+    -fx-padding: 10;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
 }
 
 .scroll-pane {
@@ -78,17 +97,17 @@
 
 .scroll-pane .scroll-bar:horizontal,
 .scroll-pane .scroll-bar:vertical {
-    -fx-background-color: -logo-blue;
+    -fx-background-color: #bb1f09;
 }
 
 .scroll-pane .scroll-bar:horizontal .thumb,
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: -logo-blue;
+    -fx-background-color: #bb1f09;
 }
 
 .scroll-pane .increment-button,
 .scroll-pane .decrement-button {
-    -fx-background-color: -logo-blue;
+    -fx-background-color: #bb1f09;
 }
 
 .scroll-pane .increment-arrow,
@@ -105,27 +124,27 @@
     -fx-background-color: #e0e0e0;
 }
 .separator {
-    -fx-background-color: -logo-blue;
+    -fx-background-color: #bb1f09;
 }
 #controlBar{
 
     -fx-border-width: 2px;
-     -fx-border-color: -logo-blue; /* Blue border when focused */
+     -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 #drawerArea{
 
     -fx-border-width: 2px;
-     -fx-border-color: -logo-blue; /* Blue border when focused */
+     -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 #shapeConfigurationBox{
 
     -fx-border-width: 2px;
-     -fx-border-color: -logo-blue; /* Blue border when focused */
+     -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 #fileNameBox{
 
     -fx-border-width: 2px;
-     -fx-border-color: -logo-blue; /* Blue border when focused */
+     -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 #view3d {
     -fx-background-color:  radial-gradient(center 50% 50%, radius 30%, #D0D0D0 0%, -logo-Beige 90%);
