@@ -18,7 +18,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="415.0" prefWidth="846.0" styleClass="anchor-pane" stylesheets="stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <GridPane layoutX="174.0" layoutY="-26.0" prefHeight="426.0" prefWidth="825.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane gridLinesVisible="true" layoutX="174.0" layoutY="-26.0" prefHeight="426.0" prefWidth="825.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
           <ColumnConstraints minWidth="10.0" />
           <ColumnConstraints hgrow="ALWAYS" />
@@ -42,16 +42,29 @@
                   <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always Continue and Erase" toggleGroup="$insertStrat" />
                </children>
             </VBox>
-            <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" prefWidth="430.0" styleClass="label" text="Always ask what I want to do with a popup window every time something is edited " GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" styleClass="label" text="Always ask what I want to do with a popup window every time something is edited " GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </TextField>
             <Label minHeight="-Infinity" text="Changes Made in Timeline" GridPane.rowIndex="1">
                <font>
                   <Font size="18.0" />
                </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </Label>
             <Label text="My Projects Location">
                <font>
                   <Font size="18.0" />
                </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
             </Label>
             <HBox GridPane.columnIndex="1">
                <children>
@@ -60,6 +73,9 @@
                         <String fx:value="image-button-focus" />
                         <String fx:value="image-button" />
                      </styleClass>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
                   </Button>
                   <TextField fx:id="workingDirPath" onAction="#onBrowse" HBox.hgrow="ALWAYS">
                      <HBox.margin>
@@ -67,13 +83,23 @@
                      </HBox.margin>
                   </TextField>
                </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
             </HBox>
             <Label text="Advance Mode" GridPane.rowIndex="3">
                <font>
                   <Font size="18.0" />
                </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
             </Label>
-            <CheckBox mnemonicParsing="false" text="Enable Advanced Features" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable Advanced Features" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </CheckBox>
          </children>
       </GridPane>
    </children>

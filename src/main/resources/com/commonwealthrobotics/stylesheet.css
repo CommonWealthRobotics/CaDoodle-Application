@@ -72,6 +72,7 @@
     -fx-wrap-text: true;
     -fx-pref-row-count: 5; /* Adjust as needed */
     -fx-pref-column-count: 20; /* Adjust as needed */
+    -fx-border-color: #bb1f09; /* Blue border when focused */
 }
 .vbox {
     -fx-spacing: 10; /* Sets 10px vertical space between children */
