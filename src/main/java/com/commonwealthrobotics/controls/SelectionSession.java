@@ -409,7 +409,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		} else {
 			PhongMaterial phongMaterial = (PhongMaterial) meshView.getMaterial();
 			Color diffuseColor = phongMaterial.getDiffuseColor();
-			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(), 1);
+			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(), diffuseColor.getOpacity());
 			phongMaterial.setDiffuseColor(diffuseColor);
 			phongMaterial.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		}
