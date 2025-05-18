@@ -4,6 +4,7 @@
 
 package com.commonwealthrobotics;
 
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -60,6 +61,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -79,10 +81,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionSession session = null;
 	private WorkplaneManager workplane;
 	private ShapesPallet pallet;
-	private ActiveProject activeProject = new ActiveProject();
+	private ActiveProject ap = new ActiveProject();
 	private SelectionBox selectionBox = null;
-	private RulerManager ruler = new RulerManager(activeProject);
-	private TimelineManager tm = new TimelineManager(activeProject);
+	private RulerManager ruler = new RulerManager(ap);
+	private TimelineManager tm = new TimelineManager(ap);
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -321,7 +323,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onRedo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Redo");
-		activeProject.get().forward();
+		ap.get().forward();
 		session.setKeyBindingFocus();
 	}
 
@@ -329,7 +331,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onUndo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Undo");
 		new Thread(() -> {
-			activeProject.get().back();
+			ap.get().back();
 			session.setKeyBindingFocus();
 		}).start();
 	}
@@ -413,7 +415,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.clearScreen();
 			session.clearSelection();
 		};
-		ExportManager.launch(session, activeProject, onFinish, onClear);
+		ExportManager.launch(session, ap, onFinish, onClear);
 		session.setKeyBindingFocus();
 	}
 
@@ -493,7 +495,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.clearScreen();
 			session.clearSelection();
 		};
-		ProjectManager.launch(activeProject, onFinish, onClear);
+		ProjectManager.launch(ap, onFinish, onClear);
 	}
 
 	@FXML
@@ -507,35 +509,55 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		com.neuronrobotics.sdk.common.Log.error("On Import");
 		new Thread(() -> {
 
-			ArrayList<String> extentions = new ArrayList<>();
-			// extentions.add("*");
-			for (String s : new StlLoader().getFileExtenetion())
-				extentions.add("*." + s);
-			for (String s : new SvgLoader().getFileExtenetion())
-				extentions.add("*." + s);
-			for (String s : new GroovyHelper().getFileExtenetion())
-				extentions.add("*." + s);
-			for (String s : new BlenderLoader().getFileExtenetion())
-				extentions.add("*." + s);
-			for (String s : new FreecadLoader().getFileExtenetion())
-				extentions.add("*." + s);
-			for (String s : new OpenSCADLoader().getFileExtenetion())
-				extentions.add("*." + s);
-			for (String s : new CaDoodleLoader().getFileExtenetion())
-				extentions.add("*." + s);
-
+			ArrayList<String> extentions =getExtention();
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
 			if (currentFile == null)
 				currentFile = new File(System.getProperty("user.home") + "/Desktop/");
 			File last = FileSelectionFactory.GetFile(currentFile, false, stl);
-			if (last != null) {
+			importAFile(last);
+			session.setKeyBindingFocus();
+		}).start();
+	}
+	private ArrayList<String> getExtention( ) {
+		ArrayList<String> extentions = new ArrayList<>();
+
+		// extentions.add("*");
+		for (String s : new StlLoader().getFileExtenetion())
+			extentions.add("*." + s);
+		for (String s : new SvgLoader().getFileExtenetion())
+			extentions.add("*." + s);
+		for (String s : new GroovyHelper().getFileExtenetion())
+			extentions.add("*." + s);
+		for (String s : new BlenderLoader().getFileExtenetion())
+			extentions.add("*." + s);
+		for (String s : new FreecadLoader().getFileExtenetion())
+			extentions.add("*." + s);
+		for (String s : new OpenSCADLoader().getFileExtenetion())
+			extentions.add("*." + s);
+		for (String s : new CaDoodleLoader().getFileExtenetion())
+			extentions.add("*." + s);
+		extentions.add("*.zip");
+		return extentions;
+	}
+	private Thread importAFile(File last) {
+		if(last.getName().toLowerCase().endsWith(".zip")) {
+			ap.loadFromZip(last);
+		}else {
+			boolean check = false;
+			for(String s:getExtention()) {
+				if(last.getName().toLowerCase().endsWith(s.toLowerCase())) {
+					check=true;
+					break;
+				}
+			}
+			if (last != null && check) {
 				currentFile = last;
 				System.out.println("Adding file " + last);
 				AddFromFile toAdd = new AddFromFile().set(last);
-				session.addOp(toAdd);
+				return session.addOp(toAdd);
 			}
-			session.setKeyBindingFocus();
-		}).start();
+		}
+		return null;
 	}
 
 	@FXML
@@ -651,7 +673,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void setName(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
-		activeProject.get().setProjectName(fileNameBox.getText());
+		ap.get().setProjectName(fileNameBox.getText());
 		session.setKeyBindingFocus();
 		session.save();
 	}
@@ -742,11 +764,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
-		activeProject.addListener(this);
-		session = new SelectionSession(engine, activeProject, ruler);
-		selectionBox = new SelectionBox(session, view3d, engine, activeProject);
+		ap.addListener(this);
+		session = new SelectionSession(engine, ap, ruler);
+		selectionBox = new SelectionBox(session, view3d, engine, ap);
 		try {
-			activeProject.loadActive();
+			ap.loadActive();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(2);
@@ -776,11 +798,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		fileNameBox.setOnKeyTyped(ev -> {
 			com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
-			activeProject.get().setProjectName(fileNameBox.getText());
+			ap.get().setProjectName(fileNameBox.getText());
 			session.save();
 		});
 		setupCSGEngine();
-		SplashManager.setClosePreventer(() -> activeProject.get().getPercentInitialized() < 0.99);
+		SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
 		timelineOpen = (boolean)ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
 		timeline.getChildren().clear();
 		if(!timelineOpen) {
@@ -837,7 +859,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				while (!SplashManager.isVisableSplash()) {
 					Thread.sleep(100);
 				}
-				activeProject.get().initialize();
+				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				while (SplashManager.isVisableSplash()) {
@@ -937,6 +959,39 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			onChange(engine.getFlyingCamera());
 		});
 		createGroundPlane();
+		// Handle drag over event
+		engine.getSubScene().setOnDragOver(event -> {
+			if (event.getGestureSource() != engine.getSubScene() && event.getDragboard().hasFiles()) {
+				event.acceptTransferModes(TransferMode.COPY);
+			}
+			event.consume();
+		});
+
+		// Handle drag dropped event
+		engine.getSubScene().setOnDragDropped(event -> {
+			Dragboard db = event.getDragboard();
+			if (db.hasFiles()) {
+				List<File> files = db.getFiles();
+				new Thread(()->{
+					for (File file : files) {
+						System.out.println("File dropped: " + file.getAbsolutePath());
+						// Process the file as needed
+						
+						Thread t=importAFile(file);
+						if(t!=null)
+							try {
+								t.join();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						
+					}
+				}).start();
+			}
+			event.setDropCompleted(true);
+			event.consume();
+		});
 	}
 
 	private void createGroundPlane() {
@@ -996,7 +1051,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
 		if (isInitializing()) {
-			int frame = (int) (100 * activeProject.get().getPercentInitialized());
+			int frame = (int) (100 * ap.get().getPercentInitialized());
 			if (frame - lastFrame > 5) {
 				lastFrame = frame;
 				SplashManager.renderSplashFrame(frame, "Initialize Model");
@@ -1005,8 +1060,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// com.neuronrobotics.sdk.common.Log.error("Displaying result of " +
 		// source.getType());
 		BowlerStudio.runLater(() -> {
-			redoButton.setDisable(!activeProject.get().isForwardAvailible());
-			undoButton.setDisable(!activeProject.get().isBackAvailible());
+			redoButton.setDisable(!ap.get().isForwardAvailible());
+			undoButton.setDisable(!ap.get().isBackAvailible());
 		});
 		session.onUpdate(currentState, source, fi);
 		if (session.isAnyHidden()) {
@@ -1031,16 +1086,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private boolean isInitializing() {
-		return activeProject.get().getPercentInitialized() < 0.9;
+		return ap.get().getPercentInitialized() < 0.9;
 	}
 
 	private void setCadoodleFile() {
 
-		workplane = new WorkplaneManager(activeProject, ground, engine, session);
+		workplane = new WorkplaneManager(ap, ground, engine, session);
 		ruler.setWorkplane(workplane);
-		ruler.setWP(activeProject.get().getWorkplane());
+		ruler.setWP(ap.get().getWorkplane());
 		session.setWorkplaneManager(workplane);
-		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, activeProject, workplane);
+		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, ap, workplane);
 		workplane.placeWorkplaneVisualization();
 		selectionBox.setWorkplaneManager(workplane);
 
@@ -1124,12 +1179,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 26:
 					com.neuronrobotics.sdk.common.Log.error("Undo");
 					workplane.cancle();
-					activeProject.get().back();
+					ap.get().back();
 					break;
 				case 121:
 				case 25:
 					com.neuronrobotics.sdk.common.Log.error("redo");
-					activeProject.get().forward();
+					ap.get().forward();
 					break;
 				case 103:
 				case 7:
@@ -1232,7 +1287,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void cancel() {
 		System.out.println("Cancel event");
 		if (workplane.isTemporaryPlane()) {
-			activeProject.get().setWorkplane(new TransformNR());
+			ap.get().setWorkplane(new TransformNR());
 			workplane.placeWorkplaneVisualization();
 		}
 		session.clearSelection();
@@ -1280,7 +1335,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onInitializationDone() {
 		BowlerStudio.runLater(() -> {
-			fileNameBox.setText(activeProject.get().getMyProjectName());
+			fileNameBox.setText(ap.get().getMyProjectName());
 		});
 	}
 

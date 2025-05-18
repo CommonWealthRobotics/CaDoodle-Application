@@ -1,16 +1,21 @@
 package com.commonwealthrobotics;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -539,5 +544,70 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void unzip(String zipFilePath, String destDir) throws IOException {
+		Path destPath = Paths.get(destDir);
+		if (Files.exists(destPath)) {
+			throw new IOException("Destination directory already exists: " + destDir);
+		}
+		Files.createDirectories(destPath);
+
+		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
+			ZipEntry zipEntry = zis.getNextEntry();
+			while (zipEntry != null) {
+				Path newPath = zipSlipProtect(zipEntry, destPath);
+				if (zipEntry.isDirectory()) {
+					Files.createDirectories(newPath);
+				} else {
+					if (newPath.getParent() != null) {
+						if (Files.notExists(newPath.getParent())) {
+							Files.createDirectories(newPath.getParent());
+						}
+					}
+					Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
+				}
+				zipEntry = zis.getNextEntry();
+			}
+			zis.closeEntry();
+		}
+	}
+
+	// Protects against Zip Slip vulnerability
+	private static Path zipSlipProtect(ZipEntry zipEntry, Path targetDir) throws IOException {
+		Path targetDirResolved = targetDir.resolve(zipEntry.getName());
+		Path normalizedPath = targetDirResolved.normalize();
+		if (!normalizedPath.startsWith(targetDir)) {
+			throw new IOException("Bad zip entry: " + zipEntry.getName());
+		}
+		return normalizedPath;
+	}
+
+
+	public void loadFromZip(File file) {
+		String name = file.getName().substring(0, file.getName().length()-4);
+		int index=0;
+		File targetDir = null;
+		do {
+			targetDir=new File(getWorkingDir()+delim()+name+"_"+index);
+			index++;
+		}while(targetDir.exists());
+		try {
+			unzip(file.getAbsolutePath(),targetDir.getAbsolutePath());
+			File[] files= targetDir.listFiles();
+			for(File f:files) {
+				if(f.getName().toLowerCase().endsWith(".doodle")) {
+					setActiveProject(f);
+					new Thread(()->	get().initialize()).start();
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
