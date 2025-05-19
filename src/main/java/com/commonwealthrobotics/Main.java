@@ -288,7 +288,7 @@ public class Main extends Application {
 	private static void ensureGitAssetsArePresent() {
 		String gitassets = null;
 		try {
-			// gitassets = AssetFactory.getGitSource();
+			gitassets = AssetFactory.getGitSource();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
