@@ -8,7 +8,7 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="group.svg"
+   sodipodi:docname="ungroup.svg"
    inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/group.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
@@ -42,26 +42,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <g
-       id="g1"
-       inkscape:export-filename="g1.png"
+    <path
+       id="rect1"
+       style="fill:#ffffff;stroke:#263d8c;stroke-width:10;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="M 29.160494 69.74458 L 29.160494 189.74914 L 66.46261 189.74914 A 68.823441 66.165581 0 0 0 134.11378 244.41299 A 68.823441 66.165581 0 0 0 202.93748 178.24752 A 68.823441 66.165581 0 0 0 153.01237 114.64365 L 153.01237 69.74458 L 29.160494 69.74458 z "
+       inkscape:export-filename="rect1.png"
        inkscape:export-xdpi="96"
-       inkscape:export-ydpi="96"
-       style="stroke-width:10;stroke-dasharray:none;stroke:#263d8c;stroke-opacity:1">
-      <rect
-         style="fill:#ffffff;stroke:#263d8c;stroke-width:10;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
-         id="rect1"
-         width="123.85168"
-         height="120.00449"
-         x="29.160595"
-         y="69.744392" />
-      <ellipse
-         style="fill:#ffffff;stroke:#263d8c;stroke-width:10;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
-         id="path1"
-         cx="134.11389"
-         cy="178.24734"
-         rx="68.823441"
-         ry="66.165581" />
-    </g>
+       inkscape:export-ydpi="96" />
   </g>
 </svg>
