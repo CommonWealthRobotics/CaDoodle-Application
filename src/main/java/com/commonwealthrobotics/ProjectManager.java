@@ -111,13 +111,7 @@ public class ProjectManager {
 		try {
 			List<CaDoodleFile> proj = ap.getProjects();
 			com.neuronrobotics.sdk.common.Log.error("Found " + proj.size() + " projects");
-			Collections.sort(proj, new Comparator<CaDoodleFile>() {
-				@Override
-				public int compare(CaDoodleFile c1, CaDoodleFile c2) {
-					// Compare in reverse order for newest first
-					return Long.compare(c2.getTimeCreated(), c1.getTimeCreated());
-				}
-			});
+
 			int offsetFromStartingButton =2;
 			for (int i = 0; i < proj.size(); i++) {
 				CaDoodleFile c = proj.get(i);
