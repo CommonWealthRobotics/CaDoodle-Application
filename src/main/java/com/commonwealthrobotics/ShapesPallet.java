@@ -57,13 +57,13 @@ public class ShapesPallet {
 	/**
 	 * Statics
 	 */
-			
+
 	private static String gitULR = "https://github.com/madhephaestus/CaDoodle-Example-Objects.git";
 
 	/**
 	 * Class variables
 	 */
-	
+
 	private ComboBox<String> shapeCatagory;
 	private GridPane objectPallet;
 	private HashMap<String, HashMap<String, HashMap<String, String>>> nameToFile = new HashMap<>();
@@ -73,7 +73,7 @@ public class ShapesPallet {
 	private HashMap<String, HashMap<String, String>> active = null;
 	private SelectionSession session;
 	private WorkplaneManager workplane;
-	//private HashMap<Button, List<CSG>> referenceParts = new HashMap<>();
+	// private HashMap<Button, List<CSG>> referenceParts = new HashMap<>();
 	private ActiveProject ap;
 	private boolean threadRunning = false;
 	private boolean threadComplete = true;
@@ -81,6 +81,7 @@ public class ShapesPallet {
 
 	private List<String> sortedList;
 	private Thread searchThread = null;
+	private ShapePalletMyDoodles mine;
 
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
@@ -89,11 +90,13 @@ public class ShapesPallet {
 		this.session = session;
 		ap = active;
 		workplane = workplane2;
+		mine = new ShapePalletMyDoodles(shapeCatagory, objectPallet, session, ap, workplane);
 		// new Thread(() -> {
 		try {
 			ArrayList<String> files = ScriptingEngine.filesInGit(getGitULR());
 			sortedList = new ArrayList<>(files);
 			Collections.sort(sortedList);
+			shapeCatagory.getItems().add(mine.getName());
 			for (String f : sortedList) {
 				if (f.toLowerCase().endsWith(".json")) {
 					String contents = ScriptingEngine.codeFromGit(getGitULR(), f)[0];
@@ -117,7 +120,7 @@ public class ShapesPallet {
 	}
 
 	public void onSetCatagory() {
-		if(searchMode)
+		if (searchMode)
 			return;
 		threadRunning = false;
 		Thread t = new Thread(() -> {
@@ -136,46 +139,49 @@ public class ShapesPallet {
 			ap.setDisableRegenerate(true);
 			try {
 				String current = shapeCatagory.getSelectionModel().getSelectedItem();
-
 				com.neuronrobotics.sdk.common.Log.error("Selecting shapes from " + current);
 				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
-				active = nameToFile.get(current);
-				if (active == null)
-					return;
-				ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
-				// store the name os the keys for labeling the hoverover later
-				HashMap<Map, String> names = new HashMap<>();
-				for (String key : active.keySet()) {
-					HashMap<String, String> hashMap = active.get(key);
-					String s = hashMap.get("order");
-					if (s != null) {
-						int index = Integer.parseInt(s);
-						com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
-						while (orderedList.size() <= index)
-							orderedList.add(null);
-						orderedList.set(index, hashMap);
-					} else {
-						orderedList.add(hashMap);
+				if (current.contentEquals(mine.getName())) {
+					mine.activate();
+				} else {
+					active = nameToFile.get(current);
+					if (active == null)
+						return;
+					ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
+					// store the name os the keys for labeling the hoverover later
+					HashMap<Map, String> names = new HashMap<>();
+					for (String key : active.keySet()) {
+						HashMap<String, String> hashMap = active.get(key);
+						String s = hashMap.get("order");
+						if (s != null) {
+							int index = Integer.parseInt(s);
+							com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
+							while (orderedList.size() <= index)
+								orderedList.add(null);
+							orderedList.set(index, hashMap);
+						} else {
+							orderedList.add(hashMap);
+						}
+						names.put(hashMap, key);
 					}
-					names.put(hashMap, key);
-				}
-				BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
-				Thread.sleep(30);
-				//referenceParts.clear();
-				for (int i = 0; i < orderedList.size() && threadRunning; i++) {
-					int col = i % 3;
-					int row = i / 3;
-					HashMap<String, String> key = orderedList.get(i);
-					if (key == null)
-						continue;
-					com.neuronrobotics.sdk.common.Log.error("Placing " + names.get(key) + " at " + row + " , " + col);
-					try {
-						setupButton(names.get(key), key, col, row,current);
-
-					} catch (Throwable tx) {
-						tx.printStackTrace();
+					BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
+					Thread.sleep(30);
+					// referenceParts.clear();
+					for (int i = 0; i < orderedList.size() && threadRunning; i++) {
+						int col = i % 3;
+						int row = i / 3;
+						HashMap<String, String> key = orderedList.get(i);
+						if (key == null)
+							continue;
+						com.neuronrobotics.sdk.common.Log
+								.error("Placing " + names.get(key) + " at " + row + " , " + col);
+						try {
+							setupButton(names.get(key), key, col, row, current);
+						} catch (Throwable tx) {
+							tx.printStackTrace();
+						}
+						// objectPallet.add(button, col, row);
 					}
-					// objectPallet.add(button, col, row);
 				}
 			} catch (Throwable tr) {
 				tr.printStackTrace();
@@ -187,23 +193,22 @@ public class ShapesPallet {
 		t.start();
 	}
 
-	private Button setupButton(String name, HashMap<String, String> key, int col, int row,String typeOfShapes) {
-		// TODO cache images and STLs
+	private Button setupButton(String name, HashMap<String, String> key, int col, int row, String typeOfShapes) {
 		String sweep = key.get("sweep");
-		
-		boolean isSweep = (sweep != null)? Boolean.parseBoolean(sweep):false;
+
+		boolean isSweep = (sweep != null) ? Boolean.parseBoolean(sweep) : false;
 		Tooltip hover = new Tooltip(name);
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
-		ShapePalletButtonResources resources = new ShapePalletButtonResources(key,typeOfShapes,name);
-		
+		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name);
+
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = resources.getImage();
 			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50));
 			ImageView toolimage = new ImageView(thumb);
-			
+
 			toolimage.setFitHeight(300);
 			toolimage.setFitWidth(300);
 			hover.setGraphic(toolimage);
@@ -230,7 +235,7 @@ public class ShapesPallet {
 									if (isSweep) {
 										try {
 											File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-											Sweep s=new Sweep();
+											Sweep s = new Sweep();
 											String ZPer = key.get("ZPer");
 											String Degrees = key.get("Degrees");
 											String sprial = key.get("Spiral");
@@ -239,11 +244,11 @@ public class ShapesPallet {
 											}
 											if (Degrees != null)
 												s.setDefangle(Double.parseDouble(Degrees));
-											if(sprial!=null) {
+											if (sprial != null) {
 												s.setDefSpiral(Double.parseDouble(sprial));
 											}
 											s.set(f).setPreventBoM(true).setLocation(currentAbsolutePose);
-											setAddFromScript=s;
+											setAddFromScript = s;
 										} catch (Exception e) {
 											e.printStackTrace();
 											return;
@@ -323,36 +328,36 @@ public class ShapesPallet {
 
 	public void setSearchMode(boolean searchMode, TextField searchField) {
 		this.searchMode = searchMode;
-		if(searchMode) {
+		if (searchMode) {
 			objectPallet.getChildren().clear();
 			searchField.textProperty().addListener((observable, oldValue, newValue) -> {
 				updateFromSearch(searchField.getText());
 			});
-			searchField.setOnAction(ev->{
+			searchField.setOnAction(ev -> {
 				updateFromSearch(searchField.getText());
 			});
 		}
-		
+
 		BowlerStudio.runLater(() -> shapeCatagory.setDisable(searchMode));
 		onSetCatagory();
 	}
 
 	private void updateFromSearch(String newValue) {
-		if(searchThread!=null)
+		if (searchThread != null)
 			return;
 		objectPallet.getChildren().clear();
-		if(newValue.length()<2)
+		if (newValue.length() < 2)
 			return;
-		searchThread = new Thread(()->{
+		searchThread = new Thread(() -> {
 			System.out.println("Text changed to: " + newValue);
-			int i=0;
-			HashSet<String> buttons =new HashSet<String>();
-			for(String current:nameToFile.keySet()) {
+			int i = 0;
+			HashSet<String> buttons = new HashSet<String>();
+			for (String current : nameToFile.keySet()) {
 				active = nameToFile.get(current);
 				if (active == null)
 					continue;
-				for(String name:active.keySet()) {
-					if(i>15)
+				for (String name : active.keySet()) {
+					if (i > 15)
 						break;
 					HashMap<String, String> hashMap = active.get(name);
 //					String string = hashMap.get("plugin");
@@ -361,21 +366,37 @@ public class ShapesPallet {
 //						if(!b)
 //							continue;
 //					}
-					if(buttons.contains(name))
+					if (buttons.contains(name))
 						continue;
 					buttons.add(name);
 					if (name.toLowerCase().contains(newValue.toLowerCase())) {
-						System.out.println("Matching "+current+" value "+name);
+						System.out.println("Matching " + current + " value " + name);
 						int col = i % 3;
 						int row = i / 3;
-						setupButton(name, hashMap, col, row,current);
+						setupButton(name, hashMap, col, row, current);
 						i++;
 					}
 				}
-				if(i>15)
+				if (i > 15)
 					break;
 			}
-			searchThread=null;
+			
+			try {
+				List<CaDoodleFile> proj = ap.getProjects();
+				for (int j=0; j < proj.size(); j++) {
+					if(proj.get(j).getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
+						int col = i % 3;
+						int row = i / 3;
+						mine.setupButton(proj.get(j), col, row);
+						i++;
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			searchThread = null;
 		});
 		searchThread.start();
 	}
