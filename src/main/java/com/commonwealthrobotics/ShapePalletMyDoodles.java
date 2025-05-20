@@ -63,12 +63,14 @@ public class ShapePalletMyDoodles {
 		BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
 		Thread.sleep(30);
 		List<CaDoodleFile> proj = ap.getProjects();
-		for (int i = 0; i < proj.size(); i++) {
+		int i=0;
+		for (int j = 0; j < proj.size(); j++) {
 			int col = i % 3;
 			int row = i / 3;
-			if(proj.get(i).getMyProjectName().contentEquals(ap.get().getMyProjectName()))
+			if(proj.get(j).getMyProjectName().contentEquals(ap.get().getMyProjectName()))
 			  continue;
-			setupButton(proj.get(i), col, row);
+			setupButton(proj.get(j), col, row);
+			i++;
 		}
 	}
 	
