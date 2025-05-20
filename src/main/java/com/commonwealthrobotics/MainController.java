@@ -618,6 +618,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onSettings(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Settings");
+		SettingsManager.launch();
 		session.setKeyBindingFocus();
 	}
 
