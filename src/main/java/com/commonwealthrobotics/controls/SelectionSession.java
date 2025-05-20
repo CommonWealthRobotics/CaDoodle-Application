@@ -142,6 +142,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button dropToWorkplane;
 	private boolean isObjectWorkplane=false;
 	private TransformNR previousWP;
+	private boolean advanced;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -950,7 +951,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				groupButton.setDisable(false);
 				allignButton.setDisable(false);
 			}
-			if (selectedCSG.size() > 0) {
+			if (selectedCSG.size() > 0 && advanced) {
 				advancedGroupMenu.setDisable(false);
 			}
 			if (isAGroupSelected()) {
@@ -1809,6 +1810,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onTimelineUpdate(int num) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setAdvancedMode(boolean advanced) {
+		this.advanced = advanced;
 	}
 
 }

@@ -84,13 +84,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private ActiveProject ap = new ActiveProject();
 	private SelectionBox selectionBox = null;
 	private RulerManager ruler = new RulerManager(ap);
-	private TimelineManager tm = new TimelineManager(ap);
+	private TimelineManager timelineManager = new TimelineManager(ap);
 	/**
 	 * CaDoodle Model Classes
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
-
+	@FXML // fx:id="Button"
+	private Button timelineButton;
 	@FXML // fx:id="stackPane"
 	private StackPane stackPane; // Value injected by FXMLLoader
 	@FXML // fx:id="allignButton"
@@ -280,23 +281,25 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;
 	private ICaDoodleOpperation source;
-	
+
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
 	private int lastFrame = 0;
 	private File currentFile = null;
 	private boolean timelineOpen = true;
-	
+
 	@FXML
 	void onDropToWorkplane(ActionEvent e) {
 		session.onDrop();
 	}
-	//onObjectWorkplane
+
+	// onObjectWorkplane
 	@FXML
 	void onObjectWorkplane(ActionEvent e) {
 		session.objectWorkplane();
 	}
+
 	@FXML
 	void onSearch(ActionEvent event) {
 		if (pallet == null)
@@ -375,20 +378,26 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void timelineDrawerEvent(ActionEvent e) {
 		try {
-			timelineOpen = !timelineOpen;
-			if (timelineOpen) {
-				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
-				timelineHolder.getChildren().add(timelineScroll);
-			} else {
-				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
-				timelineHolder.getChildren().remove(timelineScroll);
-			}
-			tm.setOpenState(timelineOpen);
+			setTimelineOpenState(!timelineOpen);
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleTimelineShow", timelineOpen);
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		session.setKeyBindingFocus();
+	}
+
+	private void setTimelineOpenState(boolean tm) {
+		if(tm==timelineOpen)
+			return;
+		if (tm) {
+			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
+			timelineHolder.getChildren().add(timelineScroll);
+		} else {
+			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+			timelineHolder.getChildren().remove(timelineScroll);
+		}
+		timelineOpen = tm;
+		timelineManager.setOpenState(tm);
 	}
 
 	@FXML
@@ -485,16 +494,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onHome(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("Open the Project Select UI");
 		// session.setKeyBindingFocus();
-		if (holeButton!=null)
+		if (holeButton != null)
 			homeButton.setDisable(true);
 		Runnable onFinish = () -> {
-			if(session!=null)
-			session.setKeyBindingFocus();
+			if (session != null)
+				session.setKeyBindingFocus();
 			com.neuronrobotics.sdk.common.Log.error("ProjectManager Close");
 			BowlerStudio.runLater(() -> homeButton.setDisable(false));
 		};
 		Runnable onClear = () -> {
-			if(session==null)
+			if (session == null)
 				return;
 			session.clearScreen();
 			session.clearSelection();
@@ -513,7 +522,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		com.neuronrobotics.sdk.common.Log.error("On Import");
 		new Thread(() -> {
 
-			ArrayList<String> extentions =getExtention();
+			ArrayList<String> extentions = getExtention();
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
 			if (currentFile == null)
 				currentFile = new File(System.getProperty("user.home") + "/Desktop/");
@@ -522,7 +531,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setKeyBindingFocus();
 		}).start();
 	}
-	private ArrayList<String> getExtention( ) {
+
+	private ArrayList<String> getExtention() {
 		ArrayList<String> extentions = new ArrayList<>();
 
 		// extentions.add("*");
@@ -543,16 +553,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		extentions.add("*.zip");
 		return extentions;
 	}
+
 	private Thread importAFile(File last) {
 		String lowerCase = last.getName().toLowerCase();
-		if(lowerCase.endsWith(".zip")) {
+		if (lowerCase.endsWith(".zip")) {
 			ap.loadFromZip(last);
-		}else {
+		} else {
 			boolean check = false;
 			ArrayList<String> extention = getExtention();
-			for(String s:extention) {
-				if(lowerCase.endsWith(s.substring(1).toLowerCase())) {
-					check=true;
+			for (String s : extention) {
+				if (lowerCase.endsWith(s.substring(1).toLowerCase())) {
+					check = true;
 					break;
 				}
 			}
@@ -768,7 +779,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-
+		assert timelineButton!=null:"Timeline button failed";
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		ap.addListener(this);
@@ -783,10 +794,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setUpNavigationCube();
 		setUp3dEngine();
 		setUpColorPicker();
-		tm.set(timelineScroll,timeline,session,engine);
+		timelineManager.set(timelineScroll, timeline, session, engine);
 
 		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,tm,objectWorkplane,dropToWorkplane);
+				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
+				objectWorkplane, dropToWorkplane);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
@@ -810,13 +822,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 		setupCSGEngine();
 		SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
-		timelineOpen = (boolean)ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
+		timelineOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
 		timeline.getChildren().clear();
-		if(!timelineOpen) {
+		if (!timelineOpen) {
 			timelineHolder.getChildren().remove(timelineScroll);
 			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 		}
-		boolean advanced = Boolean.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", ""+true).toString());
+		boolean advanced = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
 		setAdvancedMode(advanced);
 	}
 
@@ -981,20 +994,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			Dragboard db = event.getDragboard();
 			if (db.hasFiles()) {
 				List<File> files = db.getFiles();
-				new Thread(()->{
+				new Thread(() -> {
 					for (File file : files) {
 						System.out.println("File dropped: " + file.getAbsolutePath());
 						// Process the file as needed
-						
-						Thread t=importAFile(file);
-						if(t!=null)
+
+						Thread t = importAFile(file);
+						if (t != null)
 							try {
 								t.join();
 							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-						
+
 					}
 				}).start();
 			}
@@ -1138,9 +1150,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
 					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
-				double dist=1;
-				if(event.isShiftDown())
-					dist=3;
+				double dist = 1;
+				if (event.isShiftDown())
+					dist = 3;
 				switch (event.getCode()) {
 				case UP:
 					if (event.isControlDown()) {
@@ -1373,9 +1385,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onTimelineUpdate(int num) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
 	public void setAdvancedMode(boolean advanced) {
-		System.out.println("Advanced mode: "+advanced);
+		System.out.println("Advanced mode: " + advanced);
+		setTimelineOpenState(advanced);
+		session.setAdvancedMode(advanced);
+		BowlerStudio.runLater(()->{
+			timelineButton.setDisable(!advanced);
+			advancedGroupMenu.setDisable(!advanced);
+		});
+		
 	}
 }
