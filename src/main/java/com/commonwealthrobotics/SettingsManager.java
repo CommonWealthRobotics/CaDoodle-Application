@@ -4,6 +4,7 @@
 
 package com.commonwealthrobotics;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class SettingsManager {
@@ -55,9 +57,15 @@ public class SettingsManager {
 	@FXML // fx:id="workingDirPath"
 	private TextField workingDirPath; // Value injected by FXMLLoader
 
+	private static MainController mc;
+
 	@FXML
 	void onAdvancedMode(ActionEvent event) {
-		System.out.println("Advanced Mode "+advancedSelector.isSelected());
+		boolean selected = advancedSelector.isSelected();
+		System.out.println("Advanced Mode " + selected);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedMode", ""+selected);
+		mc.setAdvancedMode(selected);
+		ConfigurationDatabase.save();
 	}
 
 	@FXML
@@ -78,26 +86,47 @@ public class SettingsManager {
 		System.out.println("Insert");
 		setExplanationText(OperationResult.INSERT);
 	}
-	
+
 	private void setExplanationText(OperationResult result) {
-		switch(result) {
+		switch (result) {
 		case INSERT:
-			insertionExplanation.setText("Insert will add this operation at the current position while keeping subsequent operations.");
+			insertionExplanation.setText(
+					"Insert will add this operation at the current position while keeping subsequent operations.");
 			break;
 		case PRUNE:
-			insertionExplanation.setText("Replace subsequent work with this change.\\nThis will remove any work you've done after this point.");
+			insertionExplanation.setText(
+					"Replace subsequent work with this change.\nThis will remove any work you've done after this point.");
 			break;
 		case ASK:
-			insertionExplanation.setText("Always ask what I want to do with a popup window every time something is edited.");
+			insertionExplanation
+					.setText("Always ask what I want to do with a popup window every time something is edited.");
 			break;
 		}
-		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy",result.name());
+		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
+		ConfigurationDatabase.save();
 	}
-		
 
 	@FXML
 	void onBrowse(ActionEvent event) {
-		System.out.println("Browse For WOrking Location");
+		System.out.println("Browse For Working Location");
+		File start = new File(workingDirPath.getText());
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setTitle("Select a Directory");
+
+		// Set the initial directory
+		if (start.exists()) {
+			directoryChooser.setInitialDirectory(start);
+		}
+
+		// Show the dialog and get the selected directory
+		File selectedDirectory = directoryChooser.showDialog(stage);
+
+		if (selectedDirectory != null) {
+			System.out.println("Selected directory: " + selectedDirectory.getAbsolutePath());
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleWorkspace", selectedDirectory.getAbsolutePath());
+			workingDirPath.setText(selectedDirectory.getAbsolutePath());
+			ConfigurationDatabase.save();
+		}
 	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
@@ -112,25 +141,34 @@ public class SettingsManager {
 				: "fx:id=\"insertionExplanation\" was not injected: check your FXML file 'Settings.fxml'.";
 		assert workingDirPath != null
 				: "fx:id=\"workingDirPath\" was not injected: check your FXML file 'Settings.fxml'.";
-		OperationResult insertionStrat = OperationResult.fromString((String)ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy",OperationResult.ASK.name()));
-		if(insertionStrat==OperationResult.INSERT)
+		OperationResult insertionStrat = OperationResult.fromString(
+				(String) ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
+		if (insertionStrat == OperationResult.INSERT)
 			insertOpt.setSelected(true);
-		if(insertionStrat==OperationResult.PRUNE)
+		if (insertionStrat == OperationResult.PRUNE)
 			eraseOpt.setSelected(true);
 		setExplanationText(insertionStrat);
-	}
-	public static void main(String[] args) {
-		JavaFXInitializer.go();
-		BowlerStudio.runLater(()->launch());
-		
+		String dir = (String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", ActiveProject.getWorkingDir());
+		workingDirPath.setText(dir);
+		boolean advanced = Boolean.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", ""+true).toString());
+		mc.setAdvancedMode(advanced);
+		advancedSelector.setSelected(advanced);
 	}
 
-	public static void launch() {
+	public static void main(String[] args) {
+		JavaFXInitializer.go();
+		BowlerStudio.runLater(() -> launch(new MainController()));
+
+	}
+
+	public static void launch(MainController mc) {
+		SettingsManager.mc = mc;
 		try {
 			// Load the FXML file
 			System.out.println("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
-			FXMLLoader loader = new FXMLLoader(SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
-			//loader.setController(new SettingsManager());
+			FXMLLoader loader = new FXMLLoader(
+					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
+			// loader.setController(new SettingsManager());
 			Parent root = loader.load();
 			stage = new Stage();
 			stage.setTitle("CaDoodle Settings");

@@ -618,7 +618,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onSettings(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Settings");
-		SettingsManager.launch();
+		SettingsManager.launch(this);
 		session.setKeyBindingFocus();
 	}
 
@@ -812,6 +812,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			timelineHolder.getChildren().remove(timelineScroll);
 			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 		}
+		boolean advanced = Boolean.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", ""+true).toString());
+		
 	}
 
 	private void setupCSGEngine() {
@@ -1368,5 +1370,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public void onTimelineUpdate(int num) {
 		// TODO Auto-generated method stub
 		
+	}
+	public void setAdvancedMode(boolean advanced) {
+		System.out.println("Advanced mode: "+advanced);
 	}
 }

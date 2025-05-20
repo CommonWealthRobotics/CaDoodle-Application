@@ -412,7 +412,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		}
 	}
 
-	public File getWorkingDir() {
+	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		File file = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		file.mkdirs();
