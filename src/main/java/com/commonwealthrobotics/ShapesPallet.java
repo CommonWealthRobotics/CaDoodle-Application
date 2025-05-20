@@ -383,11 +383,11 @@ public class ShapesPallet {
 			
 			try {
 				List<CaDoodleFile> proj = ap.getProjects();
-				for (int j=0; j < proj.size(); j++) {
-					if(proj.get(j).getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
+				for (CaDoodleFile caDoodleFile : proj) {
+					if(caDoodleFile.getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
 						int col = i % 3;
 						int row = i / 3;
-						mine.setupButton(proj.get(j), col, row);
+						mine.setupButton(caDoodleFile, col, row);
 						i++;
 					}
 				}
