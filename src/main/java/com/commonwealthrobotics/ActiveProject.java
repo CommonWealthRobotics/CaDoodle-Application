@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -456,7 +458,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				}
 			}
 		}
-			
+		Collections.sort(list, new Comparator<CaDoodleFile>() {
+			@Override
+			public int compare(CaDoodleFile c1, CaDoodleFile c2) {
+				// Compare in reverse order for newest first
+				return Long.compare(c2.getTimeCreated(), c1.getTimeCreated());
+			}
+		});
 		return list;
 	}
 
