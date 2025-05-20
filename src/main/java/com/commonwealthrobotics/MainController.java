@@ -848,7 +848,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			try {
 				if (finalIndex > 50) {
-					if (percent > 95) {
+					if (percent > 99) {
 						SplashManager.closeSplash();
 					} else {
 						SplashManager.renderSplashFrame((int) percent, x);
