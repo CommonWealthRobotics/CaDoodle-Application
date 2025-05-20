@@ -9,6 +9,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 
 import eu.mihosoft.vrl.v3d.JavaFXInitializer;
 import javafx.event.ActionEvent;
@@ -61,17 +63,37 @@ public class SettingsManager {
 	@FXML
 	void onAlwaysAsk(ActionEvent event) {
 		System.out.println("Ask");
+		setExplanationText(OperationResult.ASK);
 	}
 
 	@FXML
 	void onAlwaysContinue(ActionEvent event) {
 		System.out.println("Continue");
+		setExplanationText(OperationResult.PRUNE);
+
 	}
 
 	@FXML
 	void onAlwaysInsert(ActionEvent event) {
 		System.out.println("Insert");
+		setExplanationText(OperationResult.INSERT);
 	}
+	
+	private void setExplanationText(OperationResult result) {
+		switch(result) {
+		case INSERT:
+			insertionExplanation.setText("Insert will add this operation at the current position while keeping subsequent operations.");
+			break;
+		case PRUNE:
+			insertionExplanation.setText("Replace subsequent work with this change.\\nThis will remove any work you've done after this point.");
+			break;
+		case ASK:
+			insertionExplanation.setText("Always ask what I want to do with a popup window every time something is edited.");
+			break;
+		}
+		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy",result.name());
+	}
+		
 
 	@FXML
 	void onBrowse(ActionEvent event) {
@@ -90,12 +112,17 @@ public class SettingsManager {
 				: "fx:id=\"insertionExplanation\" was not injected: check your FXML file 'Settings.fxml'.";
 		assert workingDirPath != null
 				: "fx:id=\"workingDirPath\" was not injected: check your FXML file 'Settings.fxml'.";
-
+		OperationResult insertionStrat = OperationResult.fromString((String)ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy",OperationResult.ASK.name()));
+		if(insertionStrat==OperationResult.INSERT)
+			insertOpt.setSelected(true);
+		if(insertionStrat==OperationResult.PRUNE)
+			eraseOpt.setSelected(true);
+		setExplanationText(insertionStrat);
 	}
 	public static void main(String[] args) {
 		JavaFXInitializer.go();
 		BowlerStudio.runLater(()->launch());
-		;
+		
 	}
 
 	public static void launch() {
@@ -105,14 +132,10 @@ public class SettingsManager {
 			FXMLLoader loader = new FXMLLoader(SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
 			//loader.setController(new SettingsManager());
 			Parent root = loader.load();
-
 			stage = new Stage();
 			stage.setTitle("CaDoodle Settings");
 			// Set the window to always be on top
 			stage.setAlwaysOnTop(true);
-			stage.setOnCloseRequest(event -> {
-				
-			});
 			// Set the scene
 			Scene scene = new Scene(root);
 			stage.setScene(scene);

@@ -75,8 +75,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private CaDoodleFile fromFile;
 	// private ICaDoodleStateUpdate listener;
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
-	private boolean isAlwaysAccept=false;
-	private boolean isAlwaysInsert=false;
+//	private boolean isAlwaysAccept=false;
+//	private boolean isAlwaysInsert=false;
 	
 	public ActiveProject() {
 		// this.listener = listener;
@@ -233,10 +233,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 				@Override
 				public OperationResult accept() {
-					if(isAlwaysAccept)
-						return OperationResult.PRUNE;
-					if(isAlwaysInsert)
-						return OperationResult.INSERT;
+					OperationResult insertionStrat = OperationResult.fromString((String)ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy",OperationResult.ASK.name()));
+					if(insertionStrat!=OperationResult.ASK)
+						return insertionStrat;
 					operationResult = null;
 					boolean isVis = SplashManager.isVisableSplash();
 					SplashManager.closeSplash();
@@ -291,8 +290,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								});
 
 						// Add buttons to the VBox
-						contentBox.getChildren().addAll(new Label("Choose how to handle your change:"), eraseOptionBtn,alwaysPrune,
-								insertOptionBtn, alwaysInsert, abortOptionBtn);
+						contentBox.getChildren().addAll(new Label("Choose how to handle your change: (Check the settings menue for default behavior)"), eraseOptionBtn,
+								insertOptionBtn, abortOptionBtn);
 
 						// Replace the default content with our custom content
 						dialogPane.setContent(contentBox);
@@ -332,8 +331,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 						if(this.operationResult==null)
 							this.operationResult= OperationResult.ABORT;
-						isAlwaysAccept=alwaysPrune.isSelected();
-						isAlwaysInsert=alwaysInsert.isSelected();
 						alert.close();
 					});
 
