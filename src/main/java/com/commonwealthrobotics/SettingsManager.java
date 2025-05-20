@@ -62,7 +62,6 @@ public class SettingsManager {
 	@FXML
 	void onAdvancedMode(ActionEvent event) {
 		boolean selected = advancedSelector.isSelected();
-		System.out.println("Advanced Mode " + selected);
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedMode", ""+selected);
 		mc.setAdvancedMode(selected);
 		ConfigurationDatabase.save();

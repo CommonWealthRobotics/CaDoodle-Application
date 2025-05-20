@@ -813,7 +813,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 		}
 		boolean advanced = Boolean.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", ""+true).toString());
-		
+		setAdvancedMode(advanced);
 	}
 
 	private void setupCSGEngine() {
