@@ -384,6 +384,8 @@ public class ShapesPallet {
 			try {
 				List<CaDoodleFile> proj = ap.getProjects();
 				for (CaDoodleFile caDoodleFile : proj) {
+					if(caDoodleFile.getMyProjectName().contentEquals(ap.get().getMyProjectName()))
+						continue;
 					if(caDoodleFile.getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
 						int col = i % 3;
 						int row = i / 3;

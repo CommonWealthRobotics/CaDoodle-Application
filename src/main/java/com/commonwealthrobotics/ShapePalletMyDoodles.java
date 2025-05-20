@@ -66,6 +66,8 @@ public class ShapePalletMyDoodles {
 		for (int i = 0; i < proj.size(); i++) {
 			int col = i % 3;
 			int row = i / 3;
+			if(proj.get(i).getMyProjectName().contentEquals(ap.get().getMyProjectName()))
+			  continue;
 			setupButton(proj.get(i), col, row);
 		}
 	}
@@ -73,6 +75,8 @@ public class ShapePalletMyDoodles {
 	
 
 	public Button setupButton(CaDoodleFile caDoodleFile, int col, int row) throws IOException {
+		if(caDoodleFile.getMyProjectName().contentEquals(ap.get().getMyProjectName()))
+			throw new RuntimeException("You can not reference yourself in a model");
 		String name = caDoodleFile.getMyProjectName();
 		
 		Tooltip hover = new Tooltip(name);
