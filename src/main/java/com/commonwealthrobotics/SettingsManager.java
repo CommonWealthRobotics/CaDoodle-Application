@@ -58,6 +58,7 @@ public class SettingsManager {
 	private TextField workingDirPath; // Value injected by FXMLLoader
 
 	private static MainController mc;
+	private static boolean changedDir=false;
 
 	@FXML
 	void onAdvancedMode(ActionEvent event) {
@@ -121,9 +122,13 @@ public class SettingsManager {
 		File selectedDirectory = directoryChooser.showDialog(stage);
 
 		if (selectedDirectory != null) {
-			System.out.println("Selected directory: " + selectedDirectory.getAbsolutePath());
-			ConfigurationDatabase.put("CaDoodle", "CaDoodleWorkspace", selectedDirectory.getAbsolutePath());
-			workingDirPath.setText(selectedDirectory.getAbsolutePath());
+			String absolutePath = selectedDirectory.getAbsolutePath();
+			System.out.println("Selected directory: " + absolutePath);
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleWorkspace", absolutePath);
+			if(!absolutePath.contentEquals(workingDirPath.getText())) {
+				changedDir=true;
+			}
+			workingDirPath.setText(absolutePath);
 			ConfigurationDatabase.save();
 		}
 	}
@@ -152,6 +157,7 @@ public class SettingsManager {
 		boolean advanced = Boolean.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", ""+true).toString());
 		mc.setAdvancedMode(advanced);
 		advancedSelector.setSelected(advanced);
+		changedDir=false;
 	}
 
 	public static void main(String[] args) {
@@ -176,6 +182,11 @@ public class SettingsManager {
 			// Set the scene
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
+			stage.setOnCloseRequest(event -> {
+				if(changedDir) {
+					mc.onHome(null);
+				}
+			});
 			// Show the new window
 			stage.show();
 		} catch (IOException e) {
