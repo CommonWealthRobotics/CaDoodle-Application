@@ -877,7 +877,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 //			}
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
-				SplashManager.renderSplashFrame(20, "Initialize Model");
+				SplashManager.renderSplashFrame(1, "Initialize Model");
 				while (!SplashManager.isVisableSplash()) {
 					Thread.sleep(100);
 				}
