@@ -690,7 +690,7 @@
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@CADoodle-Icon.png" />
+                                    <Image url="@CADoodleHome.png" />
                                  </image>
                               </ImageView>
                            </graphic>
