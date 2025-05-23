@@ -47,7 +47,7 @@ import javafx.scene.transform.Scale;
 
 public class ControlSprites {
 	private static final double SIZE_OF_DOT = 0.5;
-	private static final double NUMBER_OF_MM_PER_DOT = 2;
+	private static final double NUMBER_OF_MM_PER_DOT = 1;
 	private double screenW;
 	private double screenH;
 	private double zoom;
@@ -526,7 +526,7 @@ public class ControlSprites {
 			scaleTF.setX(viewScale);
 			scaleTF.setY(viewScale);
 			scaleTF.setZ(viewScale);
-			double dotscale = viewScale*5;
+			double dotscale = viewScale*7;
 			//System.out.println("Z distance = "+dotscale);
 			for (DottedLine l : lines) {
 				l.setScale(dotscale);
