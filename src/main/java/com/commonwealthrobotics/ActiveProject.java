@@ -58,6 +58,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICadoodleSaveStatusUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
+import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.TickToc;
 
@@ -219,6 +220,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public CaDoodleFile loadActive() throws Exception {
+		FileChangeWatcher.clearAll();
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);
 			fromFile.setSaveUpdate(new ICadoodleSaveStatusUpdate() {
