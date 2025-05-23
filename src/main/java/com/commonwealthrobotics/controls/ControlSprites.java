@@ -527,6 +527,8 @@ public class ControlSprites {
 			scaleTF.setY(viewScale);
 			scaleTF.setZ(viewScale);
 			double dotscale = viewScale*7;
+			if(dotscale>00.75)
+				dotscale=0.75;
 			//System.out.println("Z distance = "+dotscale);
 			for (DottedLine l : lines) {
 				l.setScale(dotscale);
