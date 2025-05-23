@@ -451,8 +451,9 @@ public class ControlSprites {
 			heightLine.setStartZ(min.z);
 			heightLine.setEndZ(max.z - lineEndOffsetZ);
 			double numberOffset = 20;
+			double viewScale = scaleSession.getViewScale();
 			TransformNR zHandleLoc = new TransformNR(center.x, center.y,
-					5 + max.z + (ResizingHandle.getSize() * scaleSession.getViewScale()));
+					5 + max.z + (ResizingHandle.getSize() * viewScale));
 			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
 					scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
 			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
@@ -522,9 +523,14 @@ public class ControlSprites {
 
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 
-			scaleTF.setX(scaleSession.getViewScale());
-			scaleTF.setY(scaleSession.getViewScale());
-			scaleTF.setZ(scaleSession.getViewScale());
+			scaleTF.setX(viewScale);
+			scaleTF.setY(viewScale);
+			scaleTF.setZ(viewScale);
+			double dotscale = viewScale*5;
+			System.out.println("Z distance = "+dotscale);
+			for (DottedLine l : lines) {
+				l.setScale(dotscale);
+			}
 		});
 
 	}
