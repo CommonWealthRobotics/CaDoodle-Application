@@ -74,7 +74,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
-	private CaDoodleFile fromFile;
+	private CaDoodleFile fromFile=null;
 	// private ICaDoodleStateUpdate listener;
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
 //	private boolean isAlwaysAccept=false;
@@ -221,6 +221,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public CaDoodleFile loadActive() throws Exception {
+		if(fromFile!=null) {
+			fromFile.close();
+			fromFile=null;
+		}
+		
 		FileChangeWatcher.clearAll();
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);
