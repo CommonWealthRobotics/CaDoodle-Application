@@ -58,7 +58,7 @@ public class ShapesPallet {
 	 * Statics
 	 */
 
-	private static String gitULR = "https://github.com/madhephaestus/CaDoodle-Example-Objects.git";
+	private static String gitULR = "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
 
 	/**
 	 * Class variables
