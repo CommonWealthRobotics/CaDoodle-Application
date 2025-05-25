@@ -248,7 +248,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		//System.out.println("Initialize Mirror "+ax);
 		op= new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
 		clearVisualizers();
-		
+		op.setCaDoodleFile(ap.get());
 		for(CSG indicator: op.process(ta)) {
 			MeshView indicatorMesh = indicator.newMesh();
 			indicatorMesh.setMouseTransparent(true);

@@ -271,7 +271,7 @@ public class ControlSprites {
 
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset, ruler);
-		allign = new AllignManager(session, selection, workplaneOffset);
+		allign = new AllignManager(session, selection, workplaneOffset,ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 	public void clearAllign() {

@@ -35,7 +35,7 @@ public class ShapePalletButtonResources {
 	File imageFile = null;
 	File stlFile = null;
 
-	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name) {
+	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name,ActiveProject ap) {
 		String string = key.get("plugin");
 
 		boolean isPluginMissing = false;
@@ -86,6 +86,7 @@ public class ShapePalletButtonResources {
 				ex.printStackTrace();
 			}
 		}
+		set.setCaDoodleFile(ap.get());
 		List<CSG> so = set.process(new ArrayList<>());
 		for (CSG c : so) {
 			for (String s : c.getParameters()) {

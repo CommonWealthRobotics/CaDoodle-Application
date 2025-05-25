@@ -201,7 +201,7 @@ public class ShapesPallet {
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
-		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name);
+		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name,ap);
 
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);

@@ -3,6 +3,7 @@ package com.commonwealthrobotics.allign;
 import java.util.HashMap;
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
@@ -57,11 +58,14 @@ public class AllignHandle {
 
 	private List<CSG> visualizationObjects;
 
-	public AllignHandle(Allignment set, Affine move, Affine workplaneOffset, Vector3d vector3d) {
+	private ActiveProject ap;
+
+	public AllignHandle(Allignment set, Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap) {
 		self = set;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
 		this.orentation = vector3d;
+		this.ap = ap;
 	}
 
 	public MeshView getHandle() {
@@ -309,6 +313,7 @@ public class AllignHandle {
 		Allignment y = opperation.y;
 		Allignment z = opperation.z;
 		setMyOperation();
+		opperation.setCaDoodleFile(ap.get());
 		visualizationObjects = opperation.process(toAllign);
 		for (CSG indicator : visualizationObjects) {
 			MeshView indicatorMesh = indicator.newMesh();
