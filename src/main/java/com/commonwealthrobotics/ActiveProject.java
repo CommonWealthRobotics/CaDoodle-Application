@@ -51,6 +51,7 @@ import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractCaDoodleFileAccepter;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
@@ -73,7 +74,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
-	private CaDoodleFile fromFile;
+	private CaDoodleFile fromFile=null;
 	// private ICaDoodleStateUpdate listener;
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
 //	private boolean isAlwaysAccept=false;
@@ -121,7 +122,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return t;
 	}
 
-	public Thread addOp(ICaDoodleOpperation h) {
+	public Thread addOp(AbstractCaDoodleFileAccepter h) {
 		Thread t = get().addOpperation(h);
 		timeoutThread(h, t);
 		return t;
@@ -220,6 +221,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public CaDoodleFile loadActive() throws Exception {
+		if(fromFile!=null) {
+			fromFile.close();
+			fromFile=null;
+		}
+		
 		FileChangeWatcher.clearAll();
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);

@@ -305,6 +305,7 @@ public class Main extends Application {
 					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
 					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git", gitassets,
+					"https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
 					Vitamins.getGitRepoDatabase(), ShapesPallet.getGitULR());
 		}
 		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
@@ -316,14 +317,6 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 
-//		try {
-//			ScriptingEngine.gitScriptRun("https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
-//					"MakeVitamins.groovy");
-//			System.exit(1);
-//		} catch (Exception e) {
-//			// Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 
 	private static void setUpApprovalWindow() {

@@ -899,7 +899,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return new TransformNR(boxes.getCenterX(), -boxes.getCenterY(), -boxes.getCenterZ());
 	}
 
-	public Thread addOp(ICaDoodleOpperation h) {
+	public Thread addOp(AbstractCaDoodleFileAccepter h) {
 		if (ap.get() == null)
 			return null;
 		if (ap.get().isOperationRunning()) {
@@ -1251,7 +1251,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		ICaDoodleOpperation op;
+		AbstractCaDoodleFileAccepter op;
 		if (isSelectedHidden()) {
 			op = new Show().setNames(selectedSnapshot());
 		} else {

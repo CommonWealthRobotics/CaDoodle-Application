@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.rotate.RotationHandle;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -40,11 +41,11 @@ public class AllignManager {
 	private TransformNR cf;
 	private Bounds b;
 
-	public AllignManager(SelectionSession session, Affine move, Affine workplaneOffset) {
+	public AllignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
 		this.session = session;
-		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0));
-		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0));
-		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1));
+		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);
+		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0),ap);
+		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1),ap);
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
 		for (AllignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.commonwealthrobotics.ActiveProject;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allignment;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -22,12 +23,12 @@ public class AllignRadioSet {
 	private String name;
 	private Vector3d vector3d;
 	private List<AllignHandle> asList;
-	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d){
+	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
 		this.name = name;
 		this.vector3d = vector3d;
-		positive = new AllignHandle(Allignment.positive,move,workplaneOffset,vector3d);
-		middle = new AllignHandle(Allignment.middle,move,workplaneOffset,vector3d);
-		negetive = new AllignHandle(Allignment.negative,move,workplaneOffset,vector3d);
+		positive = new AllignHandle(Allignment.positive,move,workplaneOffset,vector3d,ap);
+		middle = new AllignHandle(Allignment.middle,move,workplaneOffset,vector3d,ap);
+		negetive = new AllignHandle(Allignment.negative,move,workplaneOffset,vector3d,ap);
 		asList = Arrays.asList(positive,middle,negetive);
 
 	}
