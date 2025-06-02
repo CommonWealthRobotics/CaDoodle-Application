@@ -89,6 +89,11 @@ repositories {
 		url 'https://commonwealthrobotics.com/maven/'
 		allowInsecureProtocol = true
 	}
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'  }
+	//maven { url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'  }
+	maven { url 'https://oss.sonatype.org/content/repositories/releases/'  }
+	//com.neuronrobotics hosting point
+	maven { url 'https://oss.sonatype.org/content/repositories/staging/' }
 }
 
 java {
