@@ -18,6 +18,7 @@ import org.apache.sshd.common.util.OsUtils;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
+import com.commonwealthrobotics.networking.CaDoodleServer;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
@@ -85,6 +86,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionBox selectionBox = null;
 	private RulerManager ruler = new RulerManager(ap);
 	private TimelineManager timelineManager = new TimelineManager(ap);
+	private CaDoodleServer server= new CaDoodleServer();
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -890,6 +892,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 				session.setKeyBindingFocus();
 				BowlerStudio.runLater(() -> cancel());
+				System.out.println("Server connecting on "+server.getLocalIP());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
