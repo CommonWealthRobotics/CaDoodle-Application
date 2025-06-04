@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="415.0" prefWidth="846.0" styleClass="anchor-pane" stylesheets="stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane" stylesheets="stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <children>
-      <GridPane gridLinesVisible="true" layoutX="174.0" layoutY="-26.0" prefHeight="613.0" prefWidth="858.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="-198.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-12.0" AnchorPane.topAnchor="0.0">
+      <GridPane gridLinesVisible="true" layoutX="174.0" layoutY="-26.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
           <ColumnConstraints maxWidth="261.0" minWidth="10.0" prefWidth="246.0" />
           <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="567.0" prefWidth="582.0" />
