@@ -6,9 +6,6 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
@@ -25,45 +22,78 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 
 public class SettingsManager {
 
 	private static Stage stage;
-
-	@FXML // ResourceBundle that was given to the FXMLLoader
-	private ResourceBundle resources;
-
-	@FXML // URL location of the FXML file that was given to the FXMLLoader
-	private URL location;
-
-	@FXML // fx:id="advancedSelector"
-	private CheckBox advancedSelector; // Value injected by FXMLLoader
-
-	@FXML // fx:id="askOpt"
-	private RadioButton askOpt; // Value injected by FXMLLoader
-
-	@FXML // fx:id="eraseOpt"
-	private RadioButton eraseOpt; // Value injected by FXMLLoader
-
-	@FXML // fx:id="insertOpt"
-	private RadioButton insertOpt; // Value injected by FXMLLoader
-
-	@FXML // fx:id="insertStrat"
-	private ToggleGroup insertStrat; // Value injected by FXMLLoader
-
-	@FXML // fx:id="insertionExplanation"
-	private TextField insertionExplanation; // Value injected by FXMLLoader
-
-	@FXML // fx:id="workingDirPath"
-	private TextField workingDirPath; // Value injected by FXMLLoader
-
 	private static MainController mc;
-	private static boolean changedDir=false;
+	private static boolean changedDir = false;
+	@FXML
+	private CheckBox advancedSelector;
+
+	@FXML
+	private TextField apiKey;
+
+	@FXML
+	private RadioButton askOpt;
+
+	@FXML
+	private CheckBox connectServer;
+
+	@FXML
+	private RadioButton eraseOpt;
+
+	@FXML
+	private RadioButton insertOpt;
+
+	@FXML
+	private ToggleGroup insertStrat;
+
+	@FXML
+	private TextField insertionExplanation;
+
+	@FXML
+	private TextField ipaddressField;
+
+	@FXML
+	private TextField portField;
+
+	@FXML
+	private Label serverIPDisplay;
+
+	@FXML
+	private VBox serverStatusBox;
+
+	@FXML
+	private CheckBox startServerCheckbox;
+
+	@FXML
+	private TextField workingDirPath;
+
+	@FXML
+	void checkServerConfigs(KeyEvent event) {
+		try {
+			URL u= new URL(ser)
+		}
+	}
+
+	@FXML
+	void onConnectServer(ActionEvent event) {
+
+	}
+
+	@FXML
+	void onStartServer(ActionEvent event) {
+
+	}
 
 	@FXML
 	void onAdvancedMode(ActionEvent event) {
 		boolean selected = advancedSelector.isSelected();
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedMode", ""+selected);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedMode", "" + selected);
 		mc.setAdvancedMode(selected);
 		ConfigurationDatabase.save();
 	}
@@ -125,8 +155,8 @@ public class SettingsManager {
 			String absolutePath = selectedDirectory.getAbsolutePath();
 			System.out.println("Selected directory: " + absolutePath);
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleWorkspace", absolutePath);
-			if(!absolutePath.contentEquals(workingDirPath.getText())) {
-				changedDir=true;
+			if (!absolutePath.contentEquals(workingDirPath.getText())) {
+				changedDir = true;
 			}
 			workingDirPath.setText(absolutePath);
 			ConfigurationDatabase.save();
@@ -154,10 +184,11 @@ public class SettingsManager {
 		setExplanationText(insertionStrat);
 		String dir = (String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", ActiveProject.getWorkingDir());
 		workingDirPath.setText(dir);
-		boolean advanced = Boolean.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", ""+true).toString());
+		boolean advanced = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + true).toString());
 		mc.setAdvancedMode(advanced);
 		advancedSelector.setSelected(advanced);
-		changedDir=false;
+		changedDir = false;
 	}
 
 	public static void main(String[] args) {
@@ -183,7 +214,7 @@ public class SettingsManager {
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 			stage.setOnCloseRequest(event -> {
-				if(changedDir) {
+				if (changedDir) {
 					mc.onHome(null);
 				}
 			});
