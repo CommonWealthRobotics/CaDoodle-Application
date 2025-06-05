@@ -124,9 +124,9 @@ public class ExportManager {
 			String name = toSlug(ap.get().getMyProjectName());
 			int index = 1;
 			boolean prev = CSG.isPreventNonManifoldTriangles();
-			boolean selected = manifoldSTL.isSelected();
+			boolean manifold = manifoldSTL.isSelected();
 			for (CSG c : back) {
-				if (stl.isSelected() || selected) {
+				if (stl.isSelected() || manifold) {
 					c.addExportFormat("stl");
 				}
 				if (svg.isSelected()) {
@@ -159,7 +159,7 @@ public class ExportManager {
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
-			CSG.setPreventNonManifoldTriangles(selected);
+			CSG.setPreventNonManifoldTriangles(manifold);
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
 			copyBom(CaDoodleFile.getBillOfMaterials().getBomFile());
 			copyBom(CaDoodleFile.getBillOfMaterials().getBomCsv());
