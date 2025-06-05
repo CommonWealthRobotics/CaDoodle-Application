@@ -557,6 +557,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private Thread importAFile(File last) {
+		if(last==null)
+			return null;
 		String lowerCase = last.getName().toLowerCase();
 		if (lowerCase.endsWith(".zip")) {
 			ap.loadFromZip(last);
