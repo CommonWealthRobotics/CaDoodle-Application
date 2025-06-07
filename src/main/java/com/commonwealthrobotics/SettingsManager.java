@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
@@ -23,6 +26,8 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 
+import eu.mihosoft.vrl.v3d.CSGClient;
+import eu.mihosoft.vrl.v3d.CSGServer;
 import eu.mihosoft.vrl.v3d.JavaFXInitializer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -116,7 +121,7 @@ public class SettingsManager {
 			socket.close();
 			connectServer.setDisable(false);
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			// ex.printStackTrace();
 			connectServer.setDisable(true);
 			return;
 		}
@@ -124,7 +129,21 @@ public class SettingsManager {
 
 	@FXML
 	void onConnectServer(ActionEvent event) {
-
+		if (connectServer.isSelected()) {
+			String key = apiKey.getText();
+			Path tempFile;
+			try {
+				tempFile = Files.createTempFile("mytemp", ".txt");
+				Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
+				System.out.println("Opening Server Connection");
+				CSGClient.start(ipaddressField.getText(), Integer.parseInt(portField.getText()), tempFile.toFile());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Closing Server Connection");
+			CSGClient.close();
+		}
 	}
 
 	@FXML
@@ -231,6 +250,7 @@ public class SettingsManager {
 		mc.setAdvancedMode(advanced);
 		advancedSelector.setSelected(advanced);
 		changedDir = false;
+
 	}
 
 	public static void main(String[] args) {
