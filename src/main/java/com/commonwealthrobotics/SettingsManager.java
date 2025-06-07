@@ -6,13 +6,18 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -27,7 +32,10 @@ import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 
 import eu.mihosoft.vrl.v3d.CSGClient;
+import eu.mihosoft.vrl.v3d.CSGRequest;
+import eu.mihosoft.vrl.v3d.CSGResponse;
 import eu.mihosoft.vrl.v3d.CSGServer;
+import eu.mihosoft.vrl.v3d.ICSGClientEvent;
 import eu.mihosoft.vrl.v3d.JavaFXInitializer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,11 +52,12 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
-public class SettingsManager {
-
+public class SettingsManager implements ICSGClientEvent {
+	private static CSGServer server = null;
 	private static Stage stage;
 	private static MainController mc;
 	private static boolean changedDir = false;
+	private HashMap<CSGRequest, Label> active = new HashMap<>();
 	@FXML
 	private CheckBox advancedSelector;
 
@@ -81,7 +90,7 @@ public class SettingsManager {
 
 	@FXML
 	private Label serverIPDisplay;
-
+	private Label clientDisplay=new Label("No client");
 	@FXML
 	private VBox serverStatusBox;
 
@@ -129,26 +138,131 @@ public class SettingsManager {
 
 	@FXML
 	void onConnectServer(ActionEvent event) {
+		connectServer.setDisable(false);
 		if (connectServer.isSelected()) {
+
 			String key = apiKey.getText();
 			Path tempFile;
 			try {
-				tempFile = Files.createTempFile("mytemp", ".txt");
-				Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
+
 				System.out.println("Opening Server Connection");
-				CSGClient.start(ipaddressField.getText(), Integer.parseInt(portField.getText()), tempFile.toFile());
+				String text = ipaddressField.getText();
+				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + true);
+				ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
+				ConfigurationDatabase.put("CaDoodle", "CSGClientHost", text);
+				ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			System.out.println("Closing Server Connection");
-			CSGClient.close();
+			ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
 		}
+		if (clientStateSet()) {
+			clientDisplay.setText("Client is Connected!");
+			CSGClient.getClient().addListener(this);
+		} else {
+			connectServer.setSelected(false);
+			clientDisplay.setText("Server is missing");
+		}
+
+	}
+
+	public static boolean clientStateSet() {
+		boolean connect = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGClientConnect", "" + false).toString());
+		String key = ConfigurationDatabase.get("CaDoodle", "CSGClientKey", "").toString();
+		String host = ConfigurationDatabase.get("CaDoodle", "CSGClientHost", "").toString();
+		String port = ConfigurationDatabase.get("CaDoodle", "CSGClientPort", 3742).toString();
+		if (connect) {
+			try {
+				Path tempFile = Files.createTempFile("mytemp", ".txt");
+				Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
+				if (!CSGClient.isRunning())
+					CSGClient.start(host, Integer.parseInt(port), tempFile.toFile());
+				return true;
+			} catch (Exception ex) {
+				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
+			}
+		} else {
+			CSGClient.close();
+			System.out.println("Closing server connection");
+		}
+		return false;
+	}
+
+	public static boolean setServerState() {
+		boolean s = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGServerStart", "" + false).toString());
+		if (s) {
+			if (server == null) {
+				String key = ConfigurationDatabase.get("CaDoodle", "CSGClientKey", "").toString();
+				String port = ConfigurationDatabase.get("CaDoodle", "CSGClientPort", 3742).toString();
+				Path tempFile;
+				try {
+					tempFile = Files.createTempFile("mytemp", ".txt");
+					Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
+					server = new CSGServer(Integer.parseInt(port), tempFile.toFile());
+					new Thread(() -> {
+						try {
+							System.out.println("\n\nStarting CSG server\n\n");
+							server.start();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}).start();
+					return true;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		} else {
+			if (server != null)
+				try {
+					System.out.println("\n\nStopping CSG server\n\n");
+					server.stop();
+					server = null;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return false;
+	}
+
+	public String getLocalIP() {
+		String hostAddress = "127.0.0.1";
+		try (DatagramSocket socket = new DatagramSocket()) {
+			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+			hostAddress = socket.getLocalAddress().getHostAddress();
+			socket.close();
+		} catch (Exception e) {
+			try {
+				hostAddress = InetAddress.getLocalHost().getHostAddress();
+			} catch (UnknownHostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+		return hostAddress;
 	}
 
 	@FXML
 	void onStartServer(ActionEvent event) {
-
+		System.out.println("Start a server event");
+		ConfigurationDatabase.put("CaDoodle", "CSGServerStart", "" + startServerCheckbox.isSelected());
+		String key = apiKey.getText();
+		ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
+		ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
+		if (setServerState()) {
+			serverIPDisplay.setText("Server started " + getLocalIP());
+		} else {
+			serverIPDisplay.setText("Server closed");
+		}
 	}
 
 	@FXML
@@ -250,7 +364,25 @@ public class SettingsManager {
 		mc.setAdvancedMode(advanced);
 		advancedSelector.setSelected(advanced);
 		changedDir = false;
-
+		boolean connect = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGClientConnect", "" + false).toString());
+		String key = ConfigurationDatabase.get("CaDoodle", "CSGClientKey", "").toString();
+		String host = ConfigurationDatabase.get("CaDoodle", "CSGClientHost", "").toString();
+		String port = ConfigurationDatabase.get("CaDoodle", "CSGClientPort", 3742).toString();
+		ipaddressField.setText(host);
+		portField.setText(port);
+		apiKey.setText(key);
+		connectServer.setSelected(connect);
+		if (connect) {
+			onConnectServer(null);
+		}
+		boolean server = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGServerStart", "" + false).toString());
+		startServerCheckbox.setSelected(server);
+		connectServer.setDisable(false);
+		if(server)
+			serverIPDisplay.setText("Server started " + getLocalIP());
+		serverStatusBox.getChildren().add(clientDisplay);
 	}
 
 	public static void main(String[] args) {
@@ -279,6 +411,9 @@ public class SettingsManager {
 				if (changedDir) {
 					mc.onHome(null);
 				}
+				if (CSGClient.isRunning()) {
+					CSGClient.getClient().removeListener(loader.getController());
+				}
 			});
 			// Show the new window
 			stage.show();
@@ -286,5 +421,31 @@ public class SettingsManager {
 			e.printStackTrace();
 			// Handle the exception (e.g., show an error dialog)
 		}
+	}
+
+	@Override
+	public void toSend(CSGRequest request) {
+		Label l = new Label("Request " + request.getOperation());
+		active.put(request, l);
+		System.out.println(l.getText());
+		BowlerStudio.runLater(() -> {
+			serverStatusBox.getChildren().add(l);
+		});
+	}
+
+	@Override
+	public void response(CSGResponse response, CSGRequest request) {
+		Label label = active.get(request);
+		String value = "Request " + request.getOperation() + " result " + response.getOperation();
+		System.out.println(value);
+		BowlerStudio.runLater(() -> {
+			label.setText(value);
+		});
+		BowlerStudio.runLater(2000, () -> {
+			BowlerStudio.runLater(() -> {
+				active.remove(request);
+				serverStatusBox.getChildren().remove(label);
+			});
+		});
 	}
 }

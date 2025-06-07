@@ -531,7 +531,7 @@ public class ControlSprites {
 				dotscale=0.75;
 			if(dotscale<0.04)
 				dotscale=0.04;
-			System.out.println("Z distance = "+dotscale);
+			//System.out.println("Z distance = "+dotscale);
 			for (DottedLine l : lines) {
 				l.setScale(dotscale);
 			}

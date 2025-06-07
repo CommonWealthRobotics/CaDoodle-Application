@@ -86,7 +86,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionBox selectionBox = null;
 	private RulerManager ruler = new RulerManager(ap);
 	private TimelineManager timelineManager = new TimelineManager(ap);
-	private CaDoodleServer server= new CaDoodleServer();
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -812,6 +811,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// do this after setting up the session
 		setupEngineControls();
 		try {
+			SettingsManager.setServerState();
+			if(SettingsManager.clientStateSet()) {
+				System.out.println("Server connected, client running remote");
+			}
 			setCadoodleFile();
 			// Threaded load happens after UI opens
 			setupFile();
@@ -873,12 +876,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setupFile() {
 		new Thread(() -> {
-//			try {
-//				Thread.sleep(200);
-//			} catch (InterruptedException e) {
-//				// Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(1, "Initialize Model");
@@ -894,7 +892,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 				session.setKeyBindingFocus();
 				BowlerStudio.runLater(() -> cancel());
-				System.out.println("Server connecting on "+server.getLocalIP());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
