@@ -15,6 +15,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.CSGClient;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -248,13 +249,16 @@ public class SelectionBox {
 	public List<String> checkOverlap(CSG selection2) {
 		List<String> overlapping = new ArrayList<>();
 		ArrayList<CSG> visable = session.getSelectable();
+		CSGClient c= CSGClient.getClient();
+		if(c!=null)
+			CSGClient.setClient(null);
 		for (CSG key : visable) {
 			// Check if boxes overlap
 			if (key.touching(selection2)) {
 				overlapping.add(key.getName());
 			}
 		}
-
+		CSGClient.setClient(c);
 		// Return true if any overlaps found
 		return overlapping;
 	}
