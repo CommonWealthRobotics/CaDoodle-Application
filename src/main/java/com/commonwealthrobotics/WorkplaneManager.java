@@ -358,6 +358,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void setTemporaryPlane() {
 		tempory=true;
 	}
+	public void clearTemporaryPlane() {
+		tempory=false;
+	}
 	public boolean isTemporaryPlane() {
 		return tempory;
 	}

@@ -1312,6 +1312,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		if (workplane.isTemporaryPlane()) {
 			ap.get().setWorkplane(new TransformNR());
 			workplane.placeWorkplaneVisualization();
+			workplane.clearTemporaryPlane();
 		}
 		session.clearSelection();
 	}

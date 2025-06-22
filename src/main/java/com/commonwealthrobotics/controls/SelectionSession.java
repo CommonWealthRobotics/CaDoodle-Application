@@ -1552,6 +1552,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void save() {
 		// com.neuronrobotics.sdk.common.Log.error("Save Requested");
 		needsSave = true;
+		//new Exception("Auto-save called here").printStackTrace();
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
 				while (ap.isOpen()) {
@@ -1590,6 +1591,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 				}
 			});
+			autosaveThread.setName("Auto-save thread");
 			autosaveThread.start();
 		}
 	}
