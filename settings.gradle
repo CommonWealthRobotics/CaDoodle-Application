@@ -10,6 +10,7 @@ pluginManagement {
 
 include ':BowlerStudio:libraries:bowler-script-kernel'
 include ':BowlerStudio:libraries:bowler-script-kernel:java-bowler'
+include ':BowlerStudio:libraries:bowler-script-kernel:JCSG'
 include ':BowlerStudio:libraries:dockfx'
 include ':BowlerStudio:libraries:bowler-script-kernel:GithubPasswordManager:GithubPasswordManager'
 include ':BowlerStudio'

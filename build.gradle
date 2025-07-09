@@ -64,9 +64,8 @@ subprojects {
 		options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
 	}
 }
-
 subprojects { subproject ->
-	subproject.afterEvaluate {
+	subproject.afterEvaluate {		
 		if (subproject.plugins.hasPlugin('com.github.johnrengelman.shadow')) {
 			subproject.tasks.matching { it.name == 'shadowJar' }.all {
 				System.out.println("Disabling Shadowjar for "+it)
@@ -101,6 +100,7 @@ java {
 }
 
 dependencies {
+	implementation project(':BowlerStudio:libraries:bowler-script-kernel:JCSG')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:java-bowler')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:GithubPasswordManager:GithubPasswordManager')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel')
