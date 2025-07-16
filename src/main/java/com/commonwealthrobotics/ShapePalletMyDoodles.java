@@ -59,9 +59,14 @@ public class ShapePalletMyDoodles {
 		return "My Doodles";
 	}
 
-	public void activate() throws Exception{
+	public void activate() throws IOException {
 		BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
-		Thread.sleep(30);
+		try {
+			Thread.sleep(30);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		List<CaDoodleFile> proj = ap.getProjects();
 		int i=0;
 		for (int j = 0; j < proj.size(); j++) {
@@ -69,14 +74,18 @@ public class ShapePalletMyDoodles {
 			int row = i / 3;
 			if(proj.get(j).getMyProjectName().contentEquals(ap.get().getMyProjectName()))
 			  continue;
-			setupButton(proj.get(j), col, row);
-			i++;
+			try {
+				setupButton(proj.get(j), col, row);
+				i++;
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	
 	
 
-	public Button setupButton(CaDoodleFile caDoodleFile, int col, int row) throws IOException {
+	public Button setupButton(CaDoodleFile caDoodleFile, int col, int row) throws Exception {
 		if(caDoodleFile.getMyProjectName().contentEquals(ap.get().getMyProjectName()))
 			throw new RuntimeException("You can not reference yourself in a model");
 		String name = caDoodleFile.getMyProjectName();
@@ -91,7 +100,10 @@ public class ShapePalletMyDoodles {
 			CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
 			caDoodleFile.initialize();
 			caDoodleFile.save();
+			if(!caDoodleFile.getSTLThumbnailFile().exists())
+				throw new Exception("Failed to initialize model "+caDoodleFile.getMyProjectName());
 		}
+		
 		CSGDatabase.setInstance(instance);
 		CSG indicator = Vitamins.get(caDoodleFile.getSTLThumbnailFile());
 		BowlerStudio.runLater(() -> {

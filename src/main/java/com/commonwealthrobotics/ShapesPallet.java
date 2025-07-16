@@ -201,7 +201,7 @@ public class ShapesPallet {
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
-		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name,ap);
+		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
 
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
@@ -380,17 +380,21 @@ public class ShapesPallet {
 				if (i > 15)
 					break;
 			}
-			
+
 			try {
 				List<CaDoodleFile> proj = ap.getProjects();
 				for (CaDoodleFile caDoodleFile : proj) {
-					if(caDoodleFile.getMyProjectName().contentEquals(ap.get().getMyProjectName()))
+					if (caDoodleFile.getMyProjectName().contentEquals(ap.get().getMyProjectName()))
 						continue;
-					if(caDoodleFile.getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
+					if (caDoodleFile.getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
 						int col = i % 3;
 						int row = i / 3;
-						mine.setupButton(caDoodleFile, col, row);
-						i++;
+						try {
+							mine.setupButton(caDoodleFile, col, row);
+							i++;
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
 					}
 				}
 			} catch (IOException e) {
