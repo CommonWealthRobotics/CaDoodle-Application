@@ -214,10 +214,10 @@ public class TexturedCSG extends TexturedMesh {
 
 		return finalTransform;
 	}
-
-	private Polygon applyTransformToPolygon(Polygon polygon, Transform transform) {
-		return polygon.transformed(transform);
-	}
+//
+//	private Polygon applyTransformToPolygon(Polygon polygon, Transform transform) {
+//		return polygon.transformed(transform);
+//	}
 
 //    private Transform createTransform(Vector3d normal, Vector3d point) {
 //        // Normalize the normal vector
