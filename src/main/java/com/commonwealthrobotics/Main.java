@@ -234,8 +234,6 @@ public class Main extends Application {
 					System.out.println("Fail! Passed In File Does Not Exists! ");
 			}
 		}
-		Plane.setEPSILON(1.0e-9);
-		Vector3d.setEXPORTEPSILON(1.0e-10);
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
 
