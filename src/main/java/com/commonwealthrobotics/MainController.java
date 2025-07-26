@@ -853,11 +853,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			System.out.println("MainController.setupCSGEngine():: " + x);
 
 			try {
-				if (finalIndex > 3) {
+				if (finalIndex > 1) {
 					if (percent > 99.99) {
 						if(!isInitializing())SplashManager.closeSplash();
 					} else {
-						SplashManager.onLogUpdate( x);
+						int s = x.indexOf(' ');
+						SplashManager.onLogUpdate( x.substring(s, x.length()));
 					}
 				} else {
 					if(!isInitializing())SplashManager.closeSplash();
