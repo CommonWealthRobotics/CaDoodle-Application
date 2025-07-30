@@ -117,7 +117,6 @@ public class ExportManager {
 	void onExport(ActionEvent event) {
 		stage.close();
 		Thread t=new Thread(() -> {
-
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
 			ArrayList<CSG> back = session.getAllVisable();

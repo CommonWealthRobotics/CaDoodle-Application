@@ -1357,9 +1357,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentState() {
-		if (ap.get() == null)
+		CaDoodleFile caDoodleFile = ap.get();
+		if (caDoodleFile == null)
 			return new ArrayList<CSG>();
-		return ap.get().getCurrentState();
+		return caDoodleFile.getCurrentState();
 	}
 
 	public Bounds getSellectedBounds(List<CSG> incoming) {
@@ -1722,7 +1723,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public ArrayList<CSG> getAllVisable() {
 		ArrayList<CSG> back = new ArrayList<CSG>();
+		
 		for (CSG c : getCurrentState()) {
+			
 			if (c.isHide())
 				continue;
 			if (c.isInGroup())
