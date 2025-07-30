@@ -53,7 +53,7 @@ public class AllignManager {
 				setAllignemntSelected(true);
 				recompute(() -> {
 					ICaDoodleOpperation curOp = session.getCurrentOpperation();
-					if (curOp != opperation)
+					if (curOp != opperation && opperation!=null)
 						session.addOp(opperation);
 					else
 						session.regenerateCurrent();

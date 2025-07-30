@@ -315,7 +315,8 @@ public class AllignHandle {
 		setMyOperation();
 		opperation.setCaDoodleFile(ap.get());
 		visualizationObjects = opperation.process(toAllign);
-		for (CSG indicator : visualizationObjects) {
+		for (int i = 0; i < visualizationObjects.size(); i++) {
+			CSG indicator = visualizationObjects.get(i);
 			MeshView indicatorMesh = indicator.newMesh();
 			indicatorMesh.setMouseTransparent(true);
 			// indicatorMesh.getTransforms().addAll(workplaneOffset);
