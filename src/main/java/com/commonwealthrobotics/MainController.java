@@ -74,6 +74,8 @@ import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
@@ -91,6 +93,31 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
+	
+    @FXML
+    private Button RobotLabDrawer;
+
+    @FXML
+    private ImageView RobotLabDrawerImage;
+
+    @FXML
+    private AnchorPane RobotLabHolder;
+
+    @FXML
+    private Tab advancedTab;
+
+    @FXML
+    private Tab bodyTab;
+    @FXML
+    private Tab headTab;
+
+    @FXML
+    private Tab limbTab;
+    @FXML
+    private TabPane robotLabTabPane;
+    @FXML
+    private Tab toollTab;
+    
 	@FXML // fx:id="Button"
 	private Button timelineButton;
 	@FXML // fx:id="stackPane"
@@ -289,6 +316,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private int lastFrame = 0;
 	private File currentFile = null;
 	private boolean timelineOpen = true;
+	private boolean robotLabOpen=true;
 
 	@FXML
 	void onDropToWorkplane(ActionEvent e) {
@@ -386,7 +414,29 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.setKeyBindingFocus();
 	}
+	@FXML
+	void robotLabDrawerEvent(ActionEvent e) {
+		try {
+			setRobotLabOpenState(!robotLabOpen);
+			ConfigurationDatabase.put("CaDoodle", "robotLabOpen", robotLabOpen);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		session.setKeyBindingFocus();
 
+	}
+	private void setRobotLabOpenState(boolean tm) {
+		if(tm==robotLabOpen)
+			return;
+		if (tm) {
+			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-close.png")));
+			RobotLabHolder.getChildren().add(robotLabTabPane);
+		} else {
+			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
+			RobotLabHolder.getChildren().remove(robotLabTabPane);
+		}
+		robotLabOpen = tm;
+	}
 	private void setTimelineOpenState(boolean tm) {
 		if(tm==timelineOpen)
 			return;
@@ -830,7 +880,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setupCSGEngine();
 		SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
 		timelineOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
+		robotLabOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false);		
 		timeline.getChildren().clear();
+		//RobotLabDrawerImage
+		if (!robotLabOpen) {
+			RobotLabHolder.getChildren().remove(robotLabTabPane);
+			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
+		}
 		if (!timelineOpen) {
 			timelineHolder.getChildren().remove(timelineScroll);
 			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
@@ -1393,11 +1449,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public void setAdvancedMode(boolean advanced) {
 		System.out.println("Advanced mode: " + advanced);
-		setTimelineOpenState(advanced);
+		if(!advanced) {
+			setTimelineOpenState(false);
+			setRobotLabOpenState(false);
+		}
 		session.setAdvancedMode(advanced);
 		BowlerStudio.runLater(()->{
 			timelineButton.setDisable(!advanced);
 			advancedGroupMenu.setDisable(!advanced);
+			RobotLabDrawer.setDisable(!advanced);
 		});
 		
 	}

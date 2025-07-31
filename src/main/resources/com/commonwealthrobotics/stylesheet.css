@@ -1,20 +1,3 @@
-.root {
-    -logo-blue:#263d8c;
-	-logo-red:#bb1f09;
-	-logo-orange:#e7a436;
-	-logo-yellow:#f2c83d;
-	-logo-Beige:#f4ede0;
-	
-    -my-primary-color: #3498db;
-    -my-secondary-color: #2ecc71;
-    
-
-    -my-button-color:#f2c83d;
-    
-
-}
-
-
 .image-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -22,53 +5,53 @@
     -fx-background-insets: 0;
 }
 .normal-button {
-    -fx-background-color: #f2c83d;
+    -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-background-insets: 0;
     -fx-border-width: 2px;
-     -fx-border-color: #263d8c; /* Blue border when not focused */
+     -fx-border-color: #263d8c; /* logo-blue */
     
 }
 .normal-button:focused {
 	-fx-border-width: 2px;
-    -fx-border-color: #bb1f09; /* red border when focused */
+    -fx-border-color: #bb1f09; /* logo-red */
 }
 
 .normal-button:pressed {
-    -fx-background-color: #e7a436; /* Light gray background when pressed */
+    -fx-background-color: #e7a436; /* logo-orange */
 }
 .image-button:focused {
-    -fx-border-color: #bb1f09; /* Blue border when focused */
+    -fx-border-color: #bb1f09; /* logo-red */
 }
 .image-button:pressed {
-    -fx-background-color: #e7a436; /* Light gray background when pressed */
+    -fx-background-color: #e7a436; /* logo-orange */
 }
 .image-button:hover {
-    -fx-background-color: #f2c83d; /* the color you want when hovering */
+    -fx-background-color: #f2c83d; /* logo-yellow */
 }
 
 .image-button-focus {
-    -fx-border-color: #bb1f09; /* Blue border when focused */
+    -fx-border-color: #bb1f09; /* logo-red */
 }
 .image-button-focus:hover {
-    -fx-background-color: #f2c83d; /* the color you want when hovering */
+    -fx-background-color: #f2c83d; /* logo-yellow */
 }
 .image-button-highlight {
-    -fx-background-color: #f2c83d;
+    -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-background-insets: 0;
 }
 .image-button-highlight:hover {
-    -fx-background-color: #e7a436; /* the color you want when hovering */
+    -fx-background-color: #e7a436; /* logo-orange */
 }
 
 .anchor-pane {
-    -fx-background-color: #f4ede0; 
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 .text-field {
-    -fx-background-color: #f2c83d; 
+    -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-wrap-text: true;
     -fx-pref-row-count: 5; /* Adjust as needed */
     -fx-pref-column-count: 20; /* Adjust as needed */
-    -fx-border-color: #263d8c; /* Blue border when focused */
+    -fx-border-color: #263d8c; /* logo-blue */
 }
 .vbox {
     -fx-spacing: 10; /* Sets 10px vertical space between children */
@@ -76,8 +59,8 @@
 }
 
 .grid-pane {
-    -fx-grid-line-color: #bb1f09;
-    -fx-background-color: #f4ede0; 
+    -fx-grid-line-color: #bb1f09; /* logo-red */
+    -fx-background-color: #f4ede0; /* logo-beige */
     -fx-background-radius: 5.0;
     -fx-padding: 10;
     -fx-hgap: 10;
@@ -85,115 +68,351 @@
 }
 
 .scroll-pane {
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 
 .scroll-pane .scroll-bar:horizontal,
 .scroll-pane .scroll-bar:vertical {
-    -fx-background-color: #263d8c;
+    -fx-background-color: #263d8c; /* logo-blue */
 }
 
 .scroll-pane .scroll-bar:horizontal .thumb,
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #263d8c;
+    -fx-background-color: #263d8c; /* logo-blue */
 }
 
 .scroll-pane .increment-button,
 .scroll-pane .decrement-button {
-    -fx-background-color: #f2c83d;
+    -fx-background-color: #f2c83d; /* logo-yellow */
 }
 
 .scroll-pane .increment-arrow,
 .scroll-pane .decrement-arrow {
-    -fx-background-color: #606060;
+    -fx-background-color: #606060; /* gray */
 }
 
 .scroll-pane .scroll-bar:horizontal .track,
 .scroll-pane .scroll-bar:vertical .track {
-    -fx-background-color:#f2c83d;
+    -fx-background-color:#f2c83d; /* logo-yellow */
 }
 
 .scroll-pane > .corner {
-    -fx-background-color: #e0e0e0;
+    -fx-background-color: #e0e0e0; /* light-gray */
 }
 .separator {
-    -fx-background-color: #263d8c;
+    -fx-background-color: #263d8c; /* logo-blue */
 }
 #controlBar{
-
     -fx-border-width: 2px;
-     -fx-border-color: #263d8c; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* logo-blue */
 }
 #drawerArea{
-
     -fx-border-width: 2px;
-     -fx-border-color: #263d8c; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* logo-blue */
 }
 #shapeConfigurationBox{
-
     -fx-border-width: 2px;
-     -fx-border-color: #263d8c; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* logo-blue */
 }
 #fileNameBox{
-
     -fx-border-width: 2px;
-     -fx-border-color: #263d8c; /* Blue border when focused */
+     -fx-border-color: #263d8c; /* logo-blue */
 }
 #view3d {
-    -fx-background-color:  radial-gradient(center 50% 50%, radius 30%, #D0D0D0 0%, -logo-Beige 90%);
+    -fx-background-color:  radial-gradient(center 50% 50%, radius 30%, #D0D0D0 0%, #f4ede0 90%); /* light-gray to logo-beige */
 }
 
 #control3d {
     -fx-background-color: transparent;
 }
 #drawerArea {
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 #drawerGrid{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 #projectGrid{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 #totalApplicationBackground{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 #topBar{
-    -fx-background-color:  #f4ede0;
+    -fx-background-color:  #f4ede0; /* logo-beige */
 }
 #controlBar{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 #objectPallet{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 #shapeConfiguration{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 .titled-pane > .title {
-    -fx-background-color:  #f2c83d;
+    -fx-background-color:  #f2c83d; /* logo-yellow */
 }
 #configurationGrid{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 
 #anchorPanForConfiguration{
-    -fx-background-color: #f4ede0;
+    -fx-background-color: #f4ede0; /* logo-beige */
 }
 
-
-
 #fileNameBox{
-       -fx-background-color: #f2c83d;
+       -fx-background-color: #f2c83d; /* logo-yellow */
 }
 
 #shapeCatagory{
-       -fx-background-color: #f2c83d;
+       -fx-background-color: #f2c83d; /* logo-yellow */
 }
 #snapGrid{
-       -fx-background-color: #f2c83d;
+       -fx-background-color: #f2c83d; /* logo-yellow */
 }
+
+/* ===== TAB PANE STYLING ===== */
+
+/* Main tab pane container */
+.tab-pane {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+
+/* Tab header area (where tab titles are displayed) */
+.tab-pane .tab-header-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-padding: 5px;
+}
+
+/* Tab header background (the actual background behind tabs) */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* Control buttons area in tab header */
+.tab-pane .tab-header-area .control-buttons-tab {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* Individual tab headers */
+.tab-pane .tab {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-background-radius: 5px 5px 0px 0px;
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px 2px 0px 2px;
+    -fx-padding: 8px 16px;
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+/* Hover effect for tabs */
+.tab-pane .tab:hover {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-cursor: hand;
+}
+
+/* Selected tab styling */
+.tab-pane .tab:selected {
+    -fx-background-color: #e7a436; /* logo-orange */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px 2px 0px 2px;
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+/* Tab content area */
+.tab-pane .tab-content-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+    -fx-padding: 10px;
+}
+
+/* Tab label (text) */
+.tab-pane .tab .tab-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Tab close button */
+.tab-pane .tab .tab-close-button {
+    -fx-background-color: transparent;
+    -fx-shape: "M 0,0 H1 L 4,3 7,0 H8 V1 L 5,4 8,7 V8 H7 L 4,5 1,8 H0 V7 L 3,4 0,1 Z";
+    -fx-pref-width: 8px;
+    -fx-pref-height: 8px;
+    -fx-background-radius: 0;
+}
+
+.tab-pane .tab .tab-close-button:hover {
+    -fx-background-color: #bb1f09; /* logo-red */
+}
+
+/* Style anchor panes specifically when inside tab content */
+.tab-pane .tab-content-area .anchor-pane {
+    -fx-background-color: transparent;
+    -fx-border-width: 0px;
+    -fx-padding: 0px;
+}
+
+/* Primary theme using brand colors */
+.tab-pane.primary-theme {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.primary-theme .tab-header-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.primary-theme .tab {
+    -fx-background-color: #e7a436; /* logo-orange */
+    -fx-background-radius: 8px 8px 0px 0px;
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-text-fill: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+
+.tab-pane.primary-theme .tab:hover {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+}
+
+.tab-pane.primary-theme .tab:selected {
+    -fx-background-color: #3498db; /* my-primary-color */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+}
+
+.tab-pane.primary-theme .tab-content-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* Secondary theme */
+.tab-pane.secondary-theme {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.secondary-theme .tab-header-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.secondary-theme .tab {
+    -fx-background-color: #2ecc71; /* my-secondary-color */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+
+.tab-pane.secondary-theme .tab:hover {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+.tab-pane.secondary-theme .tab:selected {
+    -fx-background-color: #263d8c; /* logo-blue */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.secondary-theme .tab-content-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* Warning/alert theme */
+.tab-pane.warning-theme {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.warning-theme .tab-header-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.warning-theme .tab {
+    -fx-background-color: #e7a436; /* logo-orange */
+    -fx-text-fill: #263d8c; /* logo-blue */
+    -fx-border-color: #bb1f09; /* logo-red */
+    -fx-border-width: 2px;
+}
+
+.tab-pane.warning-theme .tab:selected {
+    -fx-background-color: #bb1f09; /* logo-red */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+}
+
+.tab-pane.warning-theme .tab-content-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* Small tabs */
+.tab-pane.small-tabs .tab {
+    -fx-padding: 4px 8px;
+    -fx-font-size: 12px;
+}
+
+/* Large tabs */
+.tab-pane.large-tabs .tab {
+    -fx-padding: 12px 24px;
+    -fx-font-size: 16px;
+}
+
+/* Interactive anchor pane that looks like a button */
+.anchor-pane.button-style {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-text-fill: #263d8c; /* logo-blue */
+    -fx-cursor: hand;
+    -fx-border-width: 2px;
+}
+
+.anchor-pane.button-style:hover {
+    -fx-background-color: #e7a436; /* logo-orange */
+}
+
+.anchor-pane.button-style:pressed {
+    -fx-background-color: #3498db; /* my-primary-color */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+}
+
+/* Light anchor pane variant */
+.anchor-pane.light {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-effect: dropshadow(three-pass-box, rgba(38,61,140,0.2), 5, 0, 0, 2); /* logo-blue with opacity */
+    -fx-border-width: 2px;
+}
+
+/* Primary colored anchor pane */
+.anchor-pane.primary {
+    -fx-background-color: #3498db; /* my-primary-color */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+    -fx-border-width: 2px;
+}
+
+/* Secondary colored anchor pane */
+.anchor-pane.secondary {
+    -fx-background-color: #2ecc71; /* my-secondary-color */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-text-fill: #f4ede0; /* logo-beige */
+    -fx-border-width: 2px;
+}
+
+/* Card style anchor pane */
+.anchor-pane.card-style {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(38,61,140,0.15), 10, 0, 0, 3); /* logo-blue with opacity */
+    -fx-border-width: 2px;
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-padding: 20px;
+}
+
+/* Warning/alert style anchor pane */
+.anchor-pane.warning {
+    -fx-background-color: #e7a436; /* logo-orange */
+    -fx-border-color: #bb1f09; /* logo-red */
+    -fx-text-fill: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+
+/* ===== AI MODEL ADDITIONS - Claude Sonnet 4 ===== */

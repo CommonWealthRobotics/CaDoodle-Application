@@ -10,6 +10,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
@@ -23,7 +25,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="511.0" prefWidth="906.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" prefWidth="908.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -39,6 +41,93 @@
                <children>
                   <HBox fx:id="drawerHolder" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" spacing="5.0" VBox.vgrow="ALWAYS">
                      <children>
+                        <AnchorPane fx:id="RobotLabHolder">
+                           <children>
+                              <TabPane fx:id="robotLabTabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <tabs>
+                                  <Tab fx:id="bodyTab">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <Label layoutX="149.0" layoutY="133.0" text="Coming Soon!" />
+                                             </children>
+                                          </AnchorPane>
+                                    </content>
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@robot-3.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Base of your robot" />
+                                       </tooltip>
+                                  </Tab>
+                                    <Tab fx:id="headTab" disable="true">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@Connected-Devices.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Head and Brain" />
+                                       </tooltip>
+                                    </Tab>
+                                  <Tab fx:id="limbTab" disable="true">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@Load-Limb-Arms.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Arms and Legs" />
+                                       </tooltip>
+                                  </Tab>
+                                    <Tab fx:id="toollTab" disable="true">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@Load-Limb-Fixed-Wheels.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Wheels and Hands " />
+                                       </tooltip>
+                                    </Tab>
+                                    <Tab fx:id="advancedTab" disable="true">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@Advanced-Configuration.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Advanced controls and features" />
+                                       </tooltip>
+                                    </Tab>
+                                </tabs>
+                              </TabPane>
+                           </children>
+                        </AnchorPane>
                         <StackPane minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" snapToPixel="false" HBox.hgrow="SOMETIMES">
                            <children>
                               <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" snapToPixel="false" />
@@ -224,7 +313,7 @@
                                                 <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="0.0" vgrow="ALWAYS" />
+                                              <RowConstraints minHeight="0.0" valignment="BOTTOM" vgrow="ALWAYS" />
                                             </rowConstraints>
                                              <children>
                                                 <AnchorPane fx:id="viewControlCubeHolder" prefHeight="300.0" prefWidth="300.0" />
@@ -274,6 +363,18 @@
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="Zoom Out &lt; - &gt;" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="RobotLabDrawer" alignment="BOTTOM_LEFT" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#robotLabDrawerEvent" styleClass="image-button" GridPane.rowIndex="5">
+                                                   <graphic>
+                                                      <ImageView fx:id="RobotLabDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@robot-close.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Timeline: Look at previous steps" />
                                                    </tooltip>
                                                 </Button>
                                              </children>
@@ -402,8 +503,8 @@
                                  <children>
                                     <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <Button mnemonicParsing="false" text="Button" />
-                                          <Button mnemonicParsing="false" text="Button" />
+                                          <Button mnemonicParsing="false" text="Placeholder" />
+                                          <Button mnemonicParsing="false" text="Placeholder" />
                                        </children>
                                        <padding>
                                           <Insets left="10.0" />
