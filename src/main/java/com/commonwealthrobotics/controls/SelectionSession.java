@@ -143,6 +143,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean isObjectWorkplane=false;
 	private TransformNR previousWP;
 	private boolean advanced;
+	private boolean robotLabOpen=true;
+	private Button robotLabDrawer;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -899,7 +901,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return new TransformNR(boxes.getCenterX(), -boxes.getCenterY(), -boxes.getCenterZ());
 	}
 
-	public Thread addOp(AbstractCaDoodleFileAccepter h) {
+	public Thread addOp(CaDoodleOperation h) {
 		if (ap.get() == null)
 			return null;
 		if (ap.get().isOperationRunning()) {
@@ -919,6 +921,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		BowlerStudio.runLater(() -> {
 			for (Button b : buttons) {
 				b.setDisable(true);
+			}
+			if(robotLabDrawer!=null) {
+				if(!robotLabOpen) {
+					robotLabDrawer.setDisable(true);
+				}
 			}
 			if (ungroupButton != null)
 				ungroupButton.setDisable(true);
@@ -953,6 +960,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			if (selectedCSG.size() > 0 && advanced) {
 				advancedGroupMenu.setDisable(false);
+				robotLabDrawer.setDisable(false);
 			}
 			if (isAGroupSelected()) {
 				ungroupButton.setDisable(false);
@@ -1251,7 +1259,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		AbstractCaDoodleFileAccepter op;
+		CaDoodleOperation op;
 		if (isSelectedHidden()) {
 			op = new Show().setNames(selectedSnapshot());
 		} else {
@@ -1529,7 +1537,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			ICaDoodleOpperation op = ap.get().getCurrentOpperation();
 			if (op == mc) {
-				if (compareLists(selectedSnapshot, mc.getNames())) {
+				if (compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
 					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
 					TickToc.tic("Update move here");
 					mc.setLocation(tf);
@@ -1616,7 +1624,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ICaDoodleOpperation op = ap.get().getCurrentOpperation();
 		if (MoveCenter.class.isInstance(op)) {
 			MoveCenter active = (MoveCenter) op;
-			if (compareLists(selectedSnapshot(), active.getNames())) {
+			if (compareLists(selectedSnapshot(), active.getNamesAddedInThisOperation())) {
 				return active;
 			}
 		}
@@ -1819,6 +1827,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setAdvancedMode(boolean advanced) {
 		this.advanced = advanced;
+	}
+
+	public boolean isRobotLabOpen() {
+		return robotLabOpen;
+	}
+
+	public void setRobotLabOpen(boolean robotLabOpen) {
+		this.robotLabOpen = robotLabOpen;
+	}
+
+	public void setRobotLabButton(Button robotLabDrawer) {
+		this.robotLabDrawer = robotLabDrawer;
+	}
+
+	public int numberSelected() {
+		return selected.size();
 	}
 
 }

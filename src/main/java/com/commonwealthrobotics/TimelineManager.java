@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractCaDoodleFileAccepter;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
@@ -147,7 +147,7 @@ public class TimelineManager {
 				timeline.getChildren().remove(toRem);
 				addrem = true;
 			}
-			ArrayList<AbstractCaDoodleFileAccepter> opperations = ap.get().getOpperations();
+			ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
 			int s = opperations.size();
 			for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 				try {
@@ -288,7 +288,7 @@ public class TimelineManager {
 	}
 
 	public void updateSelected(LinkedHashSet<String> selected) {
-		ArrayList<AbstractCaDoodleFileAccepter> opperations = ap.get().getOpperations();
+		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
 		for(int i=0;i<opperations.size()&&i<buttons.size();i++) {
 			ICaDoodleOpperation op =opperations.get(i);
 			if(op==null)
@@ -299,7 +299,7 @@ public class TimelineManager {
 			if(index>=buttons.size())
 				continue;
 			Button sel = buttons.get(index < 0 ? 0 : index);
-			for(String s:op.getNames()) {
+			for(String s:op.getNamesAddedInThisOperation()) {
 				for(String p:selected) {
 					if(s.contentEquals(p))
 						applyToMe=true;

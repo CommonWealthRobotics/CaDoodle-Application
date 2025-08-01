@@ -58,7 +58,7 @@ public class AllignManager {
 					else
 						session.regenerateCurrent();
 
-					List<String> names = opperation.getNames();
+					List<String> names = opperation.getNamesAddedInThisOperation();
 					session.selectAll(names);
 				});
 

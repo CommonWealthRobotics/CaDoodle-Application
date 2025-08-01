@@ -51,7 +51,7 @@ import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractCaDoodleFileAccepter;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
@@ -122,7 +122,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return t;
 	}
 
-	public Thread addOp(AbstractCaDoodleFileAccepter h) {
+	public Thread addOp(CaDoodleOperation h) {
 		Thread t = get().addOpperation(h);
 		timeoutThread(h, t);
 		return t;

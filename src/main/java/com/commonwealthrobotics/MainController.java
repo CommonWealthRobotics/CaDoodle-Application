@@ -19,6 +19,7 @@ import org.apache.sshd.common.util.OsUtils;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.networking.CaDoodleServer;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
@@ -88,6 +89,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionBox selectionBox = null;
 	private RulerManager ruler = new RulerManager(ap);
 	private TimelineManager timelineManager = new TimelineManager(ap);
+	private ICaDoodleOpperation source;
+
+	private boolean resetArmed;
+	private long timeOfClick;
+	private MeshView ground;
+	private int lastFrame = 0;
+	private File currentFile = null;
+	private boolean timelineOpen = true;
+	
 	/**
 	 * CaDoodle Model Classes
 	 */
@@ -308,15 +318,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;
-	private ICaDoodleOpperation source;
-
-	private boolean resetArmed;
-	private long timeOfClick;
-	private MeshView ground;
-	private int lastFrame = 0;
-	private File currentFile = null;
-	private boolean timelineOpen = true;
-	private boolean robotLabOpen=true;
+	
 
 	@FXML
 	void onDropToWorkplane(ActionEvent e) {
@@ -417,8 +419,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void robotLabDrawerEvent(ActionEvent e) {
 		try {
-			setRobotLabOpenState(!robotLabOpen);
-			ConfigurationDatabase.put("CaDoodle", "robotLabOpen", robotLabOpen);
+			setRobotLabOpenState(!session.isRobotLabOpen());
+			ConfigurationDatabase.put("CaDoodle", "robotLabOpen", session.isRobotLabOpen());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -426,7 +428,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	}
 	private void setRobotLabOpenState(boolean tm) {
-		if(tm==robotLabOpen)
+		if(tm==session.isRobotLabOpen())
 			return;
 		if (tm) {
 			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-close.png")));
@@ -434,8 +436,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		} else {
 			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
 			RobotLabHolder.getChildren().remove(robotLabTabPane);
+			
+			BowlerKernel.runLater(()->RobotLabDrawer.setDisable(session.numberSelected()==0));
+			
 		}
-		robotLabOpen = tm;
+		session.setRobotLabOpen(tm);
 	}
 	private void setTimelineOpenState(boolean tm) {
 		if(tm==timelineOpen)
@@ -853,6 +858,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
 				objectWorkplane, dropToWorkplane);
 		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
+		session.setRobotLabButton(RobotLabDrawer);
 		session.setGroup(groupButton);
 		session.setUngroup(ungroupButton);
 		session.setShowHideImage(showHideImage);
@@ -880,10 +886,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		setupCSGEngine();
 		SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
 		timelineOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
-		robotLabOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false);		
+		session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
 		timeline.getChildren().clear();
 		//RobotLabDrawerImage
-		if (!robotLabOpen) {
+		if (!session.isRobotLabOpen()) {
 			RobotLabHolder.getChildren().remove(robotLabTabPane);
 			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
 		}
