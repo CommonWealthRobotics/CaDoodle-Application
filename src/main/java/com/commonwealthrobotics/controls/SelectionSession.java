@@ -88,7 +88,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
-	// private ICaDoodleOpperation source;
+	// private CaDoodleOperation source;
 	private TitledPane shapeConfiguration;
 	private Accordion shapeConfigurationBox;
 	private AnchorPane shapeConfigurationHolder;
@@ -127,7 +127,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private VBox parametrics;
 	private ActiveProject ap = null;
-	private HashMap<ICaDoodleOpperation, FileChangeWatcher> myWatchers = new HashMap<>();
+	private HashMap<CaDoodleOperation, FileChangeWatcher> myWatchers = new HashMap<>();
 	private Button lockButton;
 	private ImageView lockImage;
 	private boolean useButton = false;
@@ -196,7 +196,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile f) {
+	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
 		TickToc.tic("Start On Update In Selected Session");
 		inWorkplaneBounds.clear();
 		// this.source = source;
@@ -216,7 +216,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	private void myRegenerate(ICaDoodleOpperation source, IFileChangeListener l, File f) {
+	private void myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
 		FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
 		if (fileChangeWatcher != null) {
 			fileChangeWatcher.close();
@@ -251,7 +251,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}).start();
 	}
 
-	private void setUpParametrics(List<CSG> currentState, ICaDoodleOpperation source) {
+	private void setUpParametrics(List<CSG> currentState, CaDoodleOperation source) {
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
 			// com.neuronrobotics.sdk.common.Log.error("Adding A op for "+s.getClass());
@@ -1535,7 +1535,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (String s : selectedSnapshot) {
 				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
 			}
-			ICaDoodleOpperation op = ap.get().getCurrentOpperation();
+			CaDoodleOperation op = ap.get().getCurrentOpperation();
 			if (op == mc) {
 				if (compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
 					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
@@ -1621,7 +1621,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private MoveCenter getActiveMove() {
-		ICaDoodleOpperation op = ap.get().getCurrentOpperation();
+		CaDoodleOperation op = ap.get().getCurrentOpperation();
 		if (MoveCenter.class.isInstance(op)) {
 			MoveCenter active = (MoveCenter) op;
 			if (compareLists(selectedSnapshot(), active.getNamesAddedInThisOperation())) {
@@ -1711,7 +1711,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.ap = ap;
 	}
 
-	public ICaDoodleOpperation getCurrentOpperation() {
+	public CaDoodleOperation getCurrentOpperation() {
 		return ap.get().getCurrentOpperation();
 	}
 

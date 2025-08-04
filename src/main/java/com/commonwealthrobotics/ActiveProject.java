@@ -54,7 +54,7 @@ import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICadoodleSaveStatusUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
@@ -85,7 +85,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	}
 
-	public Thread regenerateFrom(ICaDoodleOpperation source) {
+	public Thread regenerateFrom(CaDoodleOperation source) {
 		if (disableRegenerate)
 			return null;
 		Thread t = get().regenerateFrom(source);
@@ -128,7 +128,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return t;
 	}
 
-	private void timeoutThread(ICaDoodleOpperation h, Thread t) {
+	private void timeoutThread(CaDoodleOperation h, Thread t) {
 		new Thread(() -> {
 			try {
 				Thread.sleep(200);
@@ -388,7 +388,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
 				l.onUpdate(currentState, source, file);

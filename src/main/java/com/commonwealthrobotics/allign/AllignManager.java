@@ -11,7 +11,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.rotate.RotationHandle;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -52,7 +52,7 @@ public class AllignManager {
 				com.neuronrobotics.sdk.common.Log.error("AllignManager clicked");
 				setAllignemntSelected(true);
 				recompute(() -> {
-					ICaDoodleOpperation curOp = session.getCurrentOpperation();
+					CaDoodleOperation curOp = session.getCurrentOpperation();
 					if (curOp != opperation && opperation!=null)
 						session.addOp(opperation);
 					else

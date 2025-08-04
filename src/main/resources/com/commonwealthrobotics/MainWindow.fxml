@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -49,7 +50,26 @@
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <Label layoutX="149.0" layoutY="133.0" text="Coming Soon!" />
+                                                <VBox fx:id="baseRobotBox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <Button fx:id="makeRobotButton" alignment="CENTER" mnemonicParsing="false" onAction="#onMakeRobot" text="Make Robot">
+                                                         <styleClass>
+                                                            <String fx:value="image-button-focus" />
+                                                            <String fx:value="image-button" />
+                                                         </styleClass>
+                                                         <graphic>
+                                                            <ImageView fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@newRobot.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                         </padding>
+                                                      </Button>
+                                                   </children>
+                                                </VBox>
                                              </children>
                                           </AnchorPane>
                                     </content>

@@ -9,7 +9,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -57,7 +57,7 @@ public class TimelineManager {
 			@Override
 			public void onWorkplaneChange(TransformNR newWP) {}
 			@Override
-			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+			public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 				if(file.isRegenerating())
 					return;
 			}
@@ -151,7 +151,7 @@ public class TimelineManager {
 			int s = opperations.size();
 			for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 				try {
-					ICaDoodleOpperation op = opperations.get(i);
+					CaDoodleOperation op = opperations.get(i);
 					if(op==null)
 						continue;
 					String text = (i + 1) + "\n" + op.getType();
@@ -290,7 +290,7 @@ public class TimelineManager {
 	public void updateSelected(LinkedHashSet<String> selected) {
 		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
 		for(int i=0;i<opperations.size()&&i<buttons.size();i++) {
-			ICaDoodleOpperation op =opperations.get(i);
+			CaDoodleOperation op =opperations.get(i);
 			if(op==null)
 				continue;
 			Button b=buttons.get(i);

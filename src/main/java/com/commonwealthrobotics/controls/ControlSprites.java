@@ -18,7 +18,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -97,7 +97,7 @@ public class ControlSprites {
 	private Manipulation manipulation;
 	private boolean xymoving = false;
 	private boolean zmoving = false;
-	private ICaDoodleOpperation currentOp;
+	private CaDoodleOperation currentOp;
 	private ActiveProject ap;
 	private RulerManager ruler;
 
@@ -119,7 +119,7 @@ public class ControlSprites {
 		// this.xyMove = mov;
 		ap.addListener(new ICaDoodleStateUpdate() {
 			@Override
-			public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+			public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 			}
 
 			@Override
@@ -486,7 +486,7 @@ public class ControlSprites {
 				ydimen.hide();
 			}
 
-			ICaDoodleOpperation currentOpperation = ap.get().getCurrentOpperation();
+			CaDoodleOperation currentOpperation = ap.get().getCurrentOpperation();
 			boolean isThisADisplayMode = mode == SpriteDisplayMode.MoveZ || mode == SpriteDisplayMode.MoveXY
 					|| (mode == SpriteDisplayMode.Default && MoveCenter.class.isInstance(currentOpperation)
 							&& currentOp != currentOpperation);

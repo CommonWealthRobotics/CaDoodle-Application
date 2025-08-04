@@ -19,6 +19,7 @@ import org.apache.sshd.common.util.OsUtils;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.networking.CaDoodleServer;
+import com.commonwealthrobotics.robot.RobotLab;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
@@ -33,7 +34,7 @@ import com.neuronrobotics.bowlerstudio.scripting.StlLoader;
 import com.neuronrobotics.bowlerstudio.scripting.SvgLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.ICameraChangeListener;
@@ -89,8 +90,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private SelectionBox selectionBox = null;
 	private RulerManager ruler = new RulerManager(ap);
 	private TimelineManager timelineManager = new TimelineManager(ap);
-	private ICaDoodleOpperation source;
-
+	private CaDoodleOperation source;
+	private RobotLab robotLab;
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
@@ -103,6 +104,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
+	@FXML
+	private VBox baseRobotBox;
 	
     @FXML
     private Button RobotLabDrawer;
@@ -318,17 +321,25 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;
-	
 
+	@FXML
+	private Button makeRobotButton;
+	@FXML
+	void onMakeRobot(ActionEvent e) {
+		System.out.println("Make robot");
+		robotLab.makeRobot();
+	}
 	@FXML
 	void onDropToWorkplane(ActionEvent e) {
 		session.onDrop();
+		session.setKeyBindingFocus();
 	}
 
 	// onObjectWorkplane
 	@FXML
 	void onObjectWorkplane(ActionEvent e) {
 		session.objectWorkplane();
+		
 	}
 
 	@FXML
@@ -441,6 +452,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			
 		}
 		session.setRobotLabOpen(tm);
+		robotLab.setRobotLabOpenState(tm);
 	}
 	private void setTimelineOpenState(boolean tm) {
 		if(tm==timelineOpen)
@@ -842,6 +854,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.rebuild(true);
 		ap.addListener(this);
 		session = new SelectionSession(engine, ap, ruler);
+		robotLab= new RobotLab(session,ap,baseRobotBox,makeRobotButton);
 		selectionBox = new SelectionBox(session, view3d, engine, ap);
 		try {
 			ap.loadActive();
@@ -1134,7 +1147,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@Override
-	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile fi) {
+	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile fi) {
 		if (isInitializing()) {
 			int frame = (int) (100 * ap.get().getPercentInitialized());
 			if (frame - lastFrame > 5) {

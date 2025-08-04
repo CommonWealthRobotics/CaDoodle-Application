@@ -13,7 +13,7 @@ import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleOpperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Mirror;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrentation;
@@ -318,7 +318,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	@Override
-	public void onUpdate(List<CSG> currentState, ICaDoodleOpperation source, CaDoodleFile file) {
+	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 		// Auto-generated method stub
 		
 	}
