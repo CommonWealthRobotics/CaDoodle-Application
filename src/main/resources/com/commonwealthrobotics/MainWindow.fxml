@@ -25,6 +25,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" prefWidth="908.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -68,6 +69,43 @@
                                                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                          </padding>
                                                       </Button>
+                                                      <GridPane fx:id="RobotBasePanel">
+                                                        <columnConstraints>
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        </columnConstraints>
+                                                        <rowConstraints>
+                                                          <RowConstraints minHeight="40.0" vgrow="NEVER" />
+                                                          <RowConstraints minHeight="30.0" vgrow="NEVER" />
+                                                          <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                                                            <RowConstraints minHeight="30.0" vgrow="NEVER" />
+                                                            <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                                                        </rowConstraints>
+                                                         <padding>
+                                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                         </padding>
+                                                         <children>
+                                                            <Label text="This Is a Robot!" GridPane.columnIndex="1" />
+                                                            <ImageView fitHeight="40.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+                                                               <image>
+                                                                  <Image url="@robot-3.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                            <Label text="Controllers" textFill="#263d8c" GridPane.rowIndex="1">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <VBox fx:id="controllersVBox" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
+                                                            <VBox fx:id="capabilitiesVBox" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
+                                                            <Label text="Capabilities" textFill="#263d8c" GridPane.rowIndex="3">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </GridPane>
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -86,7 +124,49 @@
                                   </Tab>
                                     <Tab fx:id="headTab" disable="true">
                                        <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ScrollPane>
+                                                        <content>
+                                                          <AnchorPane minHeight="0.0" minWidth="0.0">
+                                                               <children>
+                                                                  <GridPane fx:id="controllerGrid">
+                                                                    <columnConstraints>
+                                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                    </columnConstraints>
+                                                                    <rowConstraints>
+                                                                      <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                                                                      <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                                                                      <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                                                                        <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                                                                    </rowConstraints>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </content>
+                                                      </ScrollPane>
+                                                      <GridPane fx:id="controllerFeaturesGrid">
+                                                        <columnConstraints>
+                                                          <ColumnConstraints hgrow="ALWAYS" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="77.0" minWidth="10.0" prefWidth="40.0" />
+                                                            <ColumnConstraints hgrow="ALWAYS" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="40.0" />
+                                                        </columnConstraints>
+                                                        <rowConstraints>
+                                                          <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        </rowConstraints>
+                                                         <children>
+                                                            <Label text="Provides" />
+                                                            <Label text="Consumes" GridPane.columnIndex="2" />
+                                                         </children>
+                                                      </GridPane>
+                                                   </children>
+                                                </VBox>
+                                             </children></AnchorPane>
                                        </content>
                                        <graphic>
                                           <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
