@@ -309,11 +309,11 @@ public class ShapesPallet {
 				session.setKeyBindingFocus();
 			});
 		});
-		try {
-			Thread.sleep(30);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(30);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 
 		return button;
 	}
