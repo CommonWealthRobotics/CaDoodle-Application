@@ -145,6 +145,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean advanced;
 	private boolean robotLabOpen=true;
 	private Button robotLabDrawer;
+	private Runnable updateRobotLab = null; 
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -360,7 +361,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						c.setIsWireFrame(false);
 					}
 					displayCSG(c);
-					if (c.isInGroup() || c.isHide()) {
+					if ((c.isInGroup() && !c.isAlwaysShow()) || c.isHide()) {
 						getMeshes().get(c).setMouseTransparent(true);
 					}
 				}
@@ -383,6 +384,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (workplane != null)
 				workplane.updateMeshes(getMeshes());
 			updateControlsDisplayOfSelected();
+			updateRobotLab.run();
 			setKeyBindingFocus();
 			TickToc.toc();
 			TickToc.setEnabled(false);
@@ -438,6 +440,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						selected.add(name);
 					}
 				}
+				updateRobotLab.run();
 				updateControlsDisplayOfSelected();
 				event.consume();
 			}
@@ -755,13 +758,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		cancelOperationModes();
 		selected.clear();
 		updateControlsDisplayOfSelected();
+		updateRobotLab.run();
 		setKeyBindingFocus();
 	}
 
 	public void selectAll(Iterable<String> names) {
 		selected.clear();
 		for (CSG c : getCurrentState()) {
-			if (c.isInGroup())
+			if ((c.isInGroup() && !c.isAlwaysShow()))
 				continue;
 			if (c.isHide())
 				continue;
@@ -775,19 +779,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			updateControlsDisplayOfSelected();
 		});
-
+		updateRobotLab.run();
 	}
 
 	public void selectAll() {
 		selected.clear();
 		for (CSG c : getCurrentState()) {
-			if (c.isInGroup())
+			if ((c.isInGroup() && !c.isAlwaysShow()))
 				continue;
 			if (c.isHide())
 				continue;
 			selected.add(c.getName());
 		}
 		updateControlsDisplayOfSelected();
+		updateRobotLab.run();
 	}
 
 	public void setKeyBindingFocus() {
@@ -1039,6 +1044,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			selectAll(namesAdded);
 			setCopyListToCurrentSelected();
 			BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
+			updateRobotLab.run();
 		} catch (CadoodleConcurrencyException | InterruptedException e) {
 			// Auto-generated catch block
 			e.printStackTrace();
@@ -1184,6 +1190,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					selected.clear();
 					selected.add(groups.getGroupID());
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
+					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
 					// Auto-generated catch block
 					e.printStackTrace();
@@ -1192,8 +1199,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					e.printStackTrace();
 				}
 			}).start();
-		} else
+		} else {
 			updateControlsDisplayOfSelected();
+			updateRobotLab.run();
+		}
 
 	}
 
@@ -1212,6 +1221,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					selected.clear();
 					selected.add(groups.getGroupID());
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
+					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
 					// Auto-generated catch block
 					e.printStackTrace();
@@ -1220,8 +1230,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					e.printStackTrace();
 				}
 			}).start();
-		} else
+		} else {
 			updateControlsDisplayOfSelected();
+			updateRobotLab.run();
+		}
 
 	}
 
@@ -1251,6 +1263,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			ap.addOp(new UnGroup().setNames(selectedSnapshot));
 		}
 		updateControlsDisplayOfSelected();
+		updateRobotLab.run();
 
 	}
 
@@ -1637,6 +1650,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void updateControls() {
 		onCameraChange(engine.getFlyingCamera());
+		
 	}
 
 	public void onCameraChange(VirtualCameraMobileBase camera) {
@@ -1736,7 +1750,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			
 			if (c.isHide())
 				continue;
-			if (c.isInGroup())
+			if ((c.isInGroup() && !c.isAlwaysShow()))
 				continue;
 			if (c.isHole())
 				continue;
@@ -1750,7 +1764,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : getCurrentState()) {
 			if (c.isHide())
 				continue;
-			if (c.isInGroup())
+			if ((c.isInGroup() && !c.isAlwaysShow()))
 				continue;
 			back.add(c);
 		}
@@ -1843,6 +1857,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public int numberSelected() {
 		return selected.size();
+	}
+
+	/**
+	 * @return the updateRobotLab
+	 */
+	public Runnable getUpdateRobotLab() {
+		return updateRobotLab;
+	}
+
+	/**
+	 * @param updateRobotLab the updateRobotLab to set
+	 */
+	public void setUpdateRobotLab(Runnable updateRobotLab) {
+		this.updateRobotLab = updateRobotLab;
 	}
 
 }
