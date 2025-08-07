@@ -17,6 +17,7 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.creature.ControllerFeatures;
 import com.neuronrobotics.bowlerstudio.creature.ControllerOption;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
@@ -40,6 +41,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Affine;
 
@@ -122,13 +124,78 @@ public class RobotLab {
 			if (controllers2.size() == 0) {
 				controllersVBox.getChildren().add(new Label("No controllers added yet"));
 
-			} else
+			} else {
+				ControllerFeatures combined=new ControllerFeatures();
+				ControllerFeatures consumed=new ControllerFeatures();
+				int num=1;
 				for (AddRobotController ac : controllers2) {
-					controllersVBox.getChildren().add(new Label(ac.getController().getType()));
+					ControllerOption controller = ac.getController();
+					combined.add(controller.getProvides());
+					consumed.add(controller.getConsumes());
+					controllersVBox.getChildren().add(new Label(num+" "+controller.getType()));
+					num++;
 				}
+//				servoChannels+=f.servoChannels;
+				makeLine("Servos",combined.getServoChannels(),consumed.getServoChannels());
+//				motorChannels+=f.motorChannels;
+				makeLine("Motors",combined.getMotorChannels(),consumed.getMotorChannels());
+//				analogSensorChannels+=f.analogSensorChannels;
+				makeLine("Analog",combined.getAnalogSensorChannels(),consumed.getAnalogSensorChannels());
+//				digitalSensorChannels+=f.digitalSensorChannels;
+				makeLine("Digital",combined.getDigitalSensorChannels(),consumed.getDigitalSensorChannels());
+//				cameras+=f.cameras;
+				makeLine("Camera",combined.getCameras(),consumed.getCameras());
+//				inertialSensors+=f.inertialSensors;
+				makeLine("Inertial",combined.getInertialSensors(),consumed.getInertialSensors());
+//				distanceSensors+=f.distanceSensors;
+				makeLine("Distance",combined.getDistanceSensors(),consumed.getDistanceSensors());
+//				pointCloudSensors+=f.pointCloudSensors;
+				makeLine("Point Cloud",combined.getPointCloudSensors(),consumed.getPointCloudSensors());
+//				getBatteryVoltage().addAll(f.getBatteryVoltage());
+				for(Double d:combined.getBatteryVoltage()) {
+					makeVoltage("Rail ",d,"volts"); 
+				}
+//				batteryPeakWatt+=f.batteryPeakWatt;
+				makeVoltage("Peak W ",combined.getBatteryPeakWatts(),"W"); 
+//				batteryWattHour+=f.batteryWattHour;
+				makeVoltage("Capacity ",combined.getBatteryWattHours(),"W-H"); 
+			}
 
 		});
 
+	}
+	private void makeVoltage(String l,double has,String type) {
+		if(has==0)
+			return;
+		HBox line = new HBox(10);
+		Label label = new Label(l);
+		label.setPrefWidth(70);
+		line.getChildren().add(label);
+		Label numHave = new Label(String.format("%.2f", has));
+		numHave.setPrefWidth(60);
+		line.getChildren().add(numHave);
+		Label used = new Label(type);
+		used.setPrefWidth(60);
+		line.getChildren().add(used);
+		capabilitiesVBox.getChildren().add(line);
+	}
+	private void makeLine(String l,int has,int usednum) {
+		if(has==0 && usednum==0)
+			return;
+		HBox line = new HBox(10);
+		Label label = new Label(l);
+		label.setPrefWidth(70);
+		line.getChildren().add(label);
+		Label numHave = new Label(has+"");
+		numHave.setPrefWidth(60);
+		line.getChildren().add(numHave);
+		Label used = new Label("Used");
+		used.setPrefWidth(60);
+		line.getChildren().add(used);
+		Label num = new Label(usednum+"");
+		num.setPrefWidth(60);
+		line.getChildren().add(num);
+		capabilitiesVBox.getChildren().add(line);
 	}
 
 	private void searchForBuilder() {
