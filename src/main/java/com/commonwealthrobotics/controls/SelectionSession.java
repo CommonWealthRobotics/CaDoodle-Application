@@ -347,7 +347,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void displayCurrent() {
 		@SuppressWarnings("unchecked")
-		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get());
+		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get(),true);
 		if (ap.get().isRegenerating()) {
 			return;
 		}
