@@ -302,7 +302,9 @@ public class Main extends Application {
 			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
-					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git", gitassets,
+					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",
+					"https://github.com/CommonWealthRobotics/BowlerStudioExampleRobots.git",
+					gitassets,
 					"https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
 					Vitamins.getGitRepoDatabase(), ShapesPallet.getGitULR());
 		}
