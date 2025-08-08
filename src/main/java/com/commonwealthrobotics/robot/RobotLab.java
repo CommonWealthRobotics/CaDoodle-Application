@@ -19,6 +19,7 @@ import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.creature.ControllerFeatures;
 import com.neuronrobotics.bowlerstudio.creature.ControllerOption;
+import com.neuronrobotics.bowlerstudio.creature.LimbOption;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
@@ -28,6 +29,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotController;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.MakeRobot;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -135,6 +137,19 @@ public class RobotLab {
 					controllersVBox.getChildren().add(new Label(num+" "+controller.getType()));
 					num++;
 				}
+				for(AddRobotLimb c:builder.getLimmbs()) {
+					LimbOption controller = c.getLimb();
+					combined.add(controller.getProvides());
+					consumed.add(controller.getConsumes());
+				}
+//				vexV5Motors += f.vexV5Motors;
+				makeLine("vexV5Motors",combined.getVexV5Motors(),consumed.getVexV5Motors());
+//				hiwonderBus += f.hiwonderBus;
+				makeLine("hiwonderBus",combined.getHiwonderBus(),consumed.getHiwonderBus());
+//				dynamixelBus += f.dynamixelBus;
+				makeLine("dynamixelBus",combined.getDynamixelBus(),consumed.getDynamixelBus());
+//				steppers += f.steppers;
+				makeLine("steppers",combined.getSteppers(),consumed.getSteppers());
 //				servoChannels+=f.servoChannels;
 				makeLine("Servos",combined.getServoChannels(),consumed.getServoChannels());
 //				motorChannels+=f.motorChannels;
@@ -261,7 +276,7 @@ public class RobotLab {
 				ControllerOption o = controllers.get(i);
 				int col = i % 3;
 				int row = i / 3;
-				setupButton(o, row, col);
+				setupAddControllerButton(o, row, col);
 				// System.out.println(o);
 			}
 		} catch (GitAPIException | IOException e) {
@@ -270,7 +285,7 @@ public class RobotLab {
 		}
 	}
 
-	private void setupButton(ControllerOption o, int col, int row) {
+	private void setupAddControllerButton(ControllerOption o, int col, int row) {
 		o.build(ap.get());
 		Tooltip hover = new Tooltip(o.getType());
 		Button button = new Button();
