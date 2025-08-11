@@ -124,8 +124,10 @@ public class RobotLab {
 			setupControllersPanel();
 			setupLimbsPanel();
 			setupTabs();
+			session.setupLimbManipulators(builder);
 		}).start();
 	}
+
 
 	private void setupMainPanel() {
 		BowlerStudio.runLater(() -> {

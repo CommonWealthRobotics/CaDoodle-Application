@@ -26,6 +26,7 @@ import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
@@ -188,6 +189,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
 		ap.addListener(this);
+	}
+	public void setupLimbManipulators(MobileBaseBuilder builder) {
+		
+		
 	}
 
 	public List<String> selectedSnapshot() {
@@ -1549,11 +1554,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
 			}
 			CaDoodleOperation op = ap.get().getCurrentOpperation();
+			mc.setLocation(tf);
 			if (op == mc) {
 				if (compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
 					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
 					TickToc.tic("Update move here");
-					mc.setLocation(tf);
+					//System.out.println("Update Operation "+tf);
 					TickToc.tic("regenerate");
 					regenerateCurrent();
 					TickToc.tic("save");
@@ -1564,9 +1570,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					return;
 				}
 			}
-			TickToc.tic("Add Move Operation ");
-			ap.addOp(mc);
-			TickToc.toc();
+			//System.out.println("Add Move Operation "+tf);
+			try {
+				ap.addOp(mc).join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			TickToc.setEnabled(false);
 		}).start();
 	}
