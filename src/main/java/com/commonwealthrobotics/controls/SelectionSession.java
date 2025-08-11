@@ -157,7 +157,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (intitialization)
 				return;
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
-			com.neuronrobotics.sdk.common.Log.error("Objects Moved! " + globalPose.toSimpleString());
+			//com.neuronrobotics.sdk.common.Log.error("Objects Moved! " + globalPose.toSimpleString());
 			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
 			try {
 				t.join();
@@ -487,6 +487,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			TransformFactory.nrToAffine(new TransformNR(), selection);
 			TransformFactory.nrToAffine(new TransformNR(), controls.getViewRotation());
+			boolean lockMove=false;
 			for (CSG c : getSelectedCSG(selectedSnapshot())) {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
@@ -494,7 +495,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (!isLocked())
 						meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
+				if(c.isMotionLock())
+					lockMove=true;
 			}
+			manipulation.setUnlocked(!lockMove);
 			shapeConfiguration.setText("Shape (" + selected.size() + ")");
 			if (selected.size() == 1) {
 				CSG sel = getSelectedCSG(selectedSnapshot()).get(0);
@@ -896,12 +900,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public TransformNR getFocusCenter() {
-		// TODO convert this to the bounds instead of performing a union on boxes
 		if (selected.size() == 0)
 			return new TransformNR();
-		Bounds b = getSellectedBounds();;
+		Bounds b = getSellectedBounds();
 
-		return new TransformNR(b.getCenterX(), -b.getCenterY(), -b.getCenterZ());
+		TransformNR tf = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
+		TransformNR wp = ap.get().getWorkplane();
+		return wp.times(tf);
 	}
 
 	public Thread addOp(CaDoodleOperation h) {

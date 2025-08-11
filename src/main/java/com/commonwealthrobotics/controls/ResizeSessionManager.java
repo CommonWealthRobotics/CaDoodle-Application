@@ -35,6 +35,7 @@ public class ResizeSessionManager {
 	private boolean scalingFlag = false;
 	private boolean locked;
 	private boolean resizeAllowed;
+	private boolean moveLock;
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
 			SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
@@ -218,10 +219,11 @@ public class ResizeSessionManager {
 		}
 	}
 
-	public void setResizeAllowed(boolean resizeAllowed) {
+	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
 		this.resizeAllowed = resizeAllowed;
+		this.moveLock = moveLock;
 		for (ResizingHandle c : controls)
-			c.setResizeAllowed(resizeAllowed);
+			c.setResizeAllowed(resizeAllowed,moveLock);
 	}
 
 	private void uniformScalingZ(TransformNR tcC) {
