@@ -25,6 +25,7 @@ public class RotationSessionManager {
 	private Affine selection;
 	private Affine viewRotation = new Affine();
 	private ControlSprites controlSprites;
+	private boolean moveLock;
 
 	public RotationSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites,
 			Affine workplaneOffset,RulerManager ruler) {
@@ -104,6 +105,13 @@ public class RotationSessionManager {
 				return true;
 		}
 		return false;
+	}
+
+	public void setLock(boolean moveLock) {
+		this.moveLock = moveLock;
+		for (RotationHandle r : handles) {
+			r.setLock(moveLock);
+		}
 	}
 
 }

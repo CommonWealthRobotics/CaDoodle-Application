@@ -60,6 +60,7 @@ public class RotationHandle {
 	private Affine viewRotation;
 	private ControlSprites controlSprites;
 	private ActiveProject ap;
+	private boolean moveLock=false;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
 			RotationSessionManager rotationSessionManager, ActiveProject ap, 
@@ -85,7 +86,8 @@ public class RotationHandle {
 		controlCircle.setImage(fullcircleImage);
 		controlCircle.setVisible(false);
 		handle.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
-			controlCircle.setVisible(true);
+			if(!moveLock)
+				controlCircle.setVisible(true);
 
 			handle.setImage(selectedImage);
 			com.neuronrobotics.sdk.common.Log.error("Entered " + axis);
@@ -101,10 +103,9 @@ public class RotationHandle {
 			startAngleFound = false;
 			com.neuronrobotics.sdk.common.Log.error("Handle clicked");
 			rotationSessionManager.initialize();
-
 			flagSaveChange = false;
 			controlSprites.setMode(SpriteDisplayMode.Rotating);
-			controlCircle.setVisible(true);
+			if(!moveLock)controlCircle.setVisible(true);
 			arc.setVisible(true);
 			handle.setVisible(true);
 			text.setValue(0);
@@ -176,7 +177,8 @@ public class RotationHandle {
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
 		});
-		ap.addOp(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
+		if(!moveLock)
+			ap.addOp(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
 	}
 
 	private void setSweepAngle(double c) {
@@ -316,5 +318,9 @@ public class RotationHandle {
 
 	public boolean isFocused() {
 		return text.isFocused();
+	}
+
+	public void setLock(boolean moveLock) {
+		this.moveLock = moveLock;
 	}
 }
