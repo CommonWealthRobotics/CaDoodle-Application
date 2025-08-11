@@ -31,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotController;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.MakeRobot;
+import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
@@ -57,21 +58,30 @@ public class RobotLab {
 	private TabPane robotLabTabPane;
 	private Tab bodyTab;
 	private Tab headTab;
-	private Tab limbTab;
-	private Tab toollTab;
 	private Tab advancedTab;
 	private GridPane robotBasePanel;
 	private GridPane controllerGrid;
 	private GridPane controllerFeaturesGrid;
 	private ArrayList<ControllerOption> controllers = null;
+	private ArrayList<LimbOption> limbOptions = null;
 	private WorkplaneManager workplane;
 	private VBox controllersVBox;
 	private VBox capabilitiesVBox;
+	private VBox optionProvide;
+	private VBox optionsConsume;
+	private GridPane wheelOptionGrid;
+	private GridPane legsOptionGrid;
+	private GridPane armsOptionGrid;
+	private VBox controllerConsumedBox;
+	private boolean controllersLoaded;
+	private boolean limmbsLoaded;
+	
 
 	public RobotLab(SelectionSession session, ActiveProject ap, VBox baseRobotBox, Button makeRobotButton,
-			TabPane robotLabTabPane, Tab bodyTab, Tab headTab, Tab limbTab, Tab toollTab, Tab advancedTab,
-			GridPane robotBasePanel, GridPane controllerGrid, GridPane controllerFeaturesGrid,
-			WorkplaneManager workplane, VBox controllersVBox, VBox capabilitiesVBox) {
+			TabPane robotLabTabPane, Tab bodyTab, Tab headTab, Tab advancedTab, GridPane robotBasePanel,
+			GridPane controllerGrid, GridPane controllerFeaturesGrid, WorkplaneManager workplane, VBox controllersVBox,
+			VBox controllerConsumedBox, VBox capabilitiesVBox, VBox optionProvide, VBox optionsConsume,
+			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid) {
 		this.session = session;
 		this.ap = ap;
 		this.baseRobotBox = baseRobotBox;
@@ -79,8 +89,9 @@ public class RobotLab {
 		this.robotLabTabPane = robotLabTabPane;
 		this.bodyTab = bodyTab;
 		this.headTab = headTab;
-		this.limbTab = limbTab;
-		this.toollTab = toollTab;
+		this.controllerConsumedBox = controllerConsumedBox;
+		this.optionProvide = optionProvide;
+		this.optionsConsume = optionsConsume;
 		this.advancedTab = advancedTab;
 		this.robotBasePanel = robotBasePanel;
 		this.controllerGrid = controllerGrid;
@@ -88,6 +99,9 @@ public class RobotLab {
 		this.workplane = workplane;
 		this.controllersVBox = controllersVBox;
 		this.capabilitiesVBox = capabilitiesVBox;
+		this.wheelOptionGrid = wheelOptionGrid;
+		this.legsOptionGrid = legsOptionGrid;
+		this.armsOptionGrid = armsOptionGrid;
 		session.setUpdateRobotLab(() -> {
 			builder = null;
 			updateDisplay();
@@ -108,6 +122,7 @@ public class RobotLab {
 			searchForBuilder();
 			setupMainPanel();
 			setupControllersPanel();
+			setupLimbsPanel();
 			setupTabs();
 		}).start();
 	}
@@ -116,6 +131,7 @@ public class RobotLab {
 		BowlerStudio.runLater(() -> {
 			controllersVBox.getChildren().clear();
 			capabilitiesVBox.getChildren().clear();
+			controllerConsumedBox.getChildren().clear();
 			if (builder == null) {
 				controllersVBox.getChildren().add(new Label("No Builder"));
 
@@ -127,64 +143,83 @@ public class RobotLab {
 				controllersVBox.getChildren().add(new Label("No controllers added yet"));
 
 			} else {
-				ControllerFeatures combined=new ControllerFeatures();
-				ControllerFeatures consumed=new ControllerFeatures();
-				int num=1;
+				ControllerFeatures combined = new ControllerFeatures();
+				ControllerFeatures consumed = new ControllerFeatures();
+				int num = 1;
 				for (AddRobotController ac : controllers2) {
 					ControllerOption controller = ac.getController();
 					combined.add(controller.getProvides());
 					consumed.add(controller.getConsumes());
-					controllersVBox.getChildren().add(new Label(num+" "+controller.getType()));
+					controllersVBox.getChildren().add(new Label(num + " " + controller.getType()));
 					num++;
 				}
-				for(AddRobotLimb c:builder.getLimmbs()) {
+				for (AddRobotLimb c : builder.getLimmbs()) {
 					LimbOption controller = c.getLimb();
 					combined.add(controller.getProvides());
 					consumed.add(controller.getConsumes());
 				}
-//				vexV5Motors += f.vexV5Motors;
-				makeLine("vexV5Motors",combined.getVexV5Motors(),consumed.getVexV5Motors());
-//				hiwonderBus += f.hiwonderBus;
-				makeLine("hiwonderBus",combined.getHiwonderBus(),consumed.getHiwonderBus());
-//				dynamixelBus += f.dynamixelBus;
-				makeLine("dynamixelBus",combined.getDynamixelBus(),consumed.getDynamixelBus());
-//				steppers += f.steppers;
-				makeLine("steppers",combined.getSteppers(),consumed.getSteppers());
-//				servoChannels+=f.servoChannels;
-				makeLine("Servos",combined.getServoChannels(),consumed.getServoChannels());
-//				motorChannels+=f.motorChannels;
-				makeLine("Motors",combined.getMotorChannels(),consumed.getMotorChannels());
-//				analogSensorChannels+=f.analogSensorChannels;
-				makeLine("Analog",combined.getAnalogSensorChannels(),consumed.getAnalogSensorChannels());
-//				digitalSensorChannels+=f.digitalSensorChannels;
-				makeLine("Digital",combined.getDigitalSensorChannels(),consumed.getDigitalSensorChannels());
-//				cameras+=f.cameras;
-				makeLine("Camera",combined.getCameras(),consumed.getCameras());
-//				inertialSensors+=f.inertialSensors;
-				makeLine("Inertial",combined.getInertialSensors(),consumed.getInertialSensors());
-//				distanceSensors+=f.distanceSensors;
-				makeLine("Distance",combined.getDistanceSensors(),consumed.getDistanceSensors());
-//				pointCloudSensors+=f.pointCloudSensors;
-				makeLine("Point Cloud",combined.getPointCloudSensors(),consumed.getPointCloudSensors());
-//				getBatteryVoltage().addAll(f.getBatteryVoltage());
-				for(Double d:combined.getBatteryVoltage()) {
-					makeVoltage("Rail ",d,"volts"); 
-				}
-//				batteryPeakWatt+=f.batteryPeakWatt;
-				makeVoltage("Peak W ",combined.getBatteryPeakWatts(),"W"); 
-//				batteryWattHour+=f.batteryWattHour;
-				makeVoltage("Capacity ",combined.getBatteryWattHours(),"W-H"); 
+
+				setFunctionalityToList(combined, consumed, capabilitiesVBox, controllerConsumedBox);
 			}
 
 		});
 
 	}
-	private void makeVoltage(String l,double has,String type) {
-		if(has==0)
+
+	private void setFunctionalityToList(ControllerFeatures provided, ControllerFeatures consumed, VBox provide,
+			VBox consume) {
+		if (provided == null)
+			provided = new ControllerFeatures();
+		if (consumed == null)
+			consumed = new ControllerFeatures();
+
+		// vexV5Motors += f.vexV5Motors;
+		makeLine("vexV5Motors", provided.getVexV5Motors(), consumed.getVexV5Motors(), provide, consume);
+		// hiwonderBus += f.hiwonderBus;
+		makeLine("hiwonderBus", provided.getHiwonderBus(), consumed.getHiwonderBus(), provide, consume);
+		// dynamixelBus += f.dynamixelBus;
+		makeLine("dynamixelBus", provided.getDynamixelBus(), consumed.getDynamixelBus(), provide, consume);
+		// steppers += f.steppers;
+		makeLine("steppers", provided.getSteppers(), consumed.getSteppers(), provide, consume);
+		// servoChannels+=f.servoChannels;
+		makeLine("Servos", provided.getServoChannels(), consumed.getServoChannels(), provide, consume);
+		// motorChannels+=f.motorChannels;
+		makeLine("Motors", provided.getMotorChannels(), consumed.getMotorChannels(), provide, consume);
+		// analogSensorChannels+=f.analogSensorChannels;
+		makeLine("Analog", provided.getAnalogSensorChannels(), consumed.getAnalogSensorChannels(), provide, consume);
+		// digitalSensorChannels+=f.digitalSensorChannels;
+		makeLine("Digital", provided.getDigitalSensorChannels(), consumed.getDigitalSensorChannels(), provide, consume);
+		// cameras+=f.cameras;
+		makeLine("Camera", provided.getCameras(), consumed.getCameras(), provide, consume);
+		// inertialSensors+=f.inertialSensors;
+		makeLine("Inertial", provided.getInertialSensors(), consumed.getInertialSensors(), provide, consume);
+		// distanceSensors+=f.distanceSensors;
+		makeLine("Distance", provided.getDistanceSensors(), consumed.getDistanceSensors(), provide, consume);
+		// pointCloudSensors+=f.pointCloudSensors;
+		makeLine("Point Cloud", provided.getPointCloudSensors(), consumed.getPointCloudSensors(), provide, consume);
+		// getBatteryVoltage().addAll(f.getBatteryVoltage());
+		for (Double d : provided.getBatteryVoltage()) {
+			makeVoltage("+Rail ", d, "volts", provide);
+		}
+		// batteryPeakWatt+=f.batteryPeakWatt;
+		makeVoltage("+Peak W ", provided.getBatteryPeakWatts(), "W", provide);
+		// batteryWattHour+=f.batteryWattHour;
+		makeVoltage("+Capacity ", provided.getBatteryWattHours(), "W-H", provide);
+		for (Double d : consumed.getBatteryVoltage()) {
+			makeVoltage("-Rail ", d, "volts", consume);
+		}
+		// batteryPeakWatt+=f.batteryPeakWatt;
+		makeVoltage("-Peak W ", consumed.getBatteryPeakWatts(), "W", consume);
+		// batteryWattHour+=f.batteryWattHour;
+		makeVoltage("-Capacity ", consumed.getBatteryWattHours(), "W-H", consume);
+	}
+
+	private void makeVoltage(String l, double has, String type, VBox provide) {
+		if (has == 0)
 			return;
 		HBox line = new HBox(10);
 		Label label = new Label(l);
-		label.setPrefWidth(70);
+		label.setPrefWidth(80);
 		line.getChildren().add(label);
 		Label numHave = new Label(String.format("%.2f", has));
 		numHave.setPrefWidth(60);
@@ -192,25 +227,29 @@ public class RobotLab {
 		Label used = new Label(type);
 		used.setPrefWidth(60);
 		line.getChildren().add(used);
-		capabilitiesVBox.getChildren().add(line);
+		provide.getChildren().add(line);
 	}
-	private void makeLine(String l,int has,int usednum) {
-		if(has==0 && usednum==0)
+
+	private void makeLine(String l, int has, int usednum, VBox provide, VBox consume) {
+		if (has == 0 && usednum == 0)
 			return;
 		HBox line = new HBox(10);
-		Label label = new Label(l);
-		label.setPrefWidth(70);
+		Label label = new Label("+" + l);
+		label.setPrefWidth(80);
 		line.getChildren().add(label);
-		Label numHave = new Label(has+"");
+		Label numHave = new Label(has + "");
 		numHave.setPrefWidth(60);
 		line.getChildren().add(numHave);
-		Label used = new Label("Used");
-		used.setPrefWidth(60);
+
+		provide.getChildren().add(line);
+		line = new HBox(10);
+		Label used = new Label("-" + l);
+		used.setPrefWidth(80);
 		line.getChildren().add(used);
-		Label num = new Label(usednum+"");
+		Label num = new Label(usednum + "");
 		num.setPrefWidth(60);
 		line.getChildren().add(num);
-		capabilitiesVBox.getChildren().add(line);
+		consume.getChildren().add(line);
 	}
 
 	private void searchForBuilder() {
@@ -247,8 +286,6 @@ public class RobotLab {
 				if (baseRobotBox.getChildren().contains(robotBasePanel))
 					baseRobotBox.getChildren().remove(robotBasePanel);
 				headTab.setDisable(true);
-				limbTab.setDisable(true);
-				toollTab.setDisable(true);
 				advancedTab.setDisable(true);
 				if (!value)
 					robotLabTabPane.getSelectionModel().select(bodyTab);
@@ -260,14 +297,67 @@ public class RobotLab {
 				if (!baseRobotBox.getChildren().contains(robotBasePanel))
 					baseRobotBox.getChildren().add(robotBasePanel);
 				headTab.setDisable(false);
-				limbTab.setDisable(false);
-				toollTab.setDisable(false);
 				advancedTab.setDisable(false);
 			}
 		});
 	}
 
+	private void setupLimbsPanel() {
+		if(limmbsLoaded)
+			return;
+		limmbsLoaded=true;
+		try {
+			if (limbOptions == null)
+				limbOptions = LimbOption.getOptions();
+			ArrayList<LimbOption> arms = new ArrayList<LimbOption>();
+			ArrayList<LimbOption> legs = new ArrayList<LimbOption>();
+			ArrayList<LimbOption> wheels = new ArrayList<LimbOption>();
+			for (LimbOption o : limbOptions) {
+				switch (o.getType()) {
+				case arm:
+				case flap:
+				case hand:
+				case head:
+					arms.add(o);
+					break;
+				case leg:
+					legs.add(o);
+					break;
+				case steerable:
+				case wheel:
+					wheels.add(o);
+					break;
+				}
+				//break;
+			}
+			setupLimbOption(arms, armsOptionGrid);
+			setupLimbOption(legs, legsOptionGrid);
+			setupLimbOption(wheels, wheelOptionGrid);
+		} catch (GitAPIException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void setupLimbOption(ArrayList<LimbOption> arms, GridPane armsOptionGrid2) {
+		
+		BowlerStudio.runLater(() -> {
+			armsOptionGrid2.getChildren().clear();
+		});
+
+		for (int i = 0; i < arms.size(); i++) {
+			LimbOption o = arms.get(i);
+			int col = i % 3;
+			int row = i / 3;
+			setupAddLimbButton(o, row, col,armsOptionGrid2);
+		}
+
+	}
+
 	private void setupControllersPanel() {
+		if(controllersLoaded)
+			return;
+		controllersLoaded=true;
 		try {
 			if (controllers == null)
 				controllers = ControllerOption.getOptions();
@@ -285,12 +375,106 @@ public class RobotLab {
 		}
 	}
 
+	private void setupAddLimbButton(LimbOption o, int row, int col, GridPane armsOptionGrid2) {
+		try {
+			o.build(ap.get());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Tooltip hover = new Tooltip(o.getName() + " "+o.getType());
+		Button button = new Button(o.getName());
+		button.setTooltip(hover);
+		button.getStyleClass().add("image-button");
+		button.setOnMouseEntered(event -> {
+			optionProvide.getChildren().clear();
+			optionsConsume.getChildren().clear();
+			setFunctionalityToList(o.getProvides(), o.getConsumes(), optionProvide, optionsConsume);
+		});
+
+		// Action when mouse exits the button
+		button.setOnMouseExited(event -> {
+			optionProvide.getChildren().clear();
+			optionsConsume.getChildren().clear();
+		});
+		BowlerStudio.runLater(() -> {
+			armsOptionGrid2.add(button, col, row);
+			Image thumb = o.getImage();
+			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60));
+			ImageView toolimage = new ImageView(thumb);
+
+			toolimage.setFitHeight(300);
+			toolimage.setFitWidth(300);
+			hover.setGraphic(toolimage);
+			hover.setContentDisplay(ContentDisplay.TOP);
+//			tIv.setFitHeight(50);
+//			tIv.setFitWidth(50);
+			button.setGraphic(tIv);
+			button.setOnMousePressed(ev -> {
+				new Thread(() -> {
+					CSG indicator = o.getIndicator();
+					session.setMode(SpriteDisplayMode.PLACING);
+					workplane.setIndicator(indicator, new Affine());
+					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
+					System.out.println("Is Workplane set " + workplaneInOrigin);
+					workplane.setOnSelectEvent(() -> {
+						new Thread(() -> {
+							session.setMode(SpriteDisplayMode.Default);
+							if (workplane.isClicked())
+								try {
+									TransformNR currentAbsolutePose =workplane.getCurrentAbsolutePose().times( LimbOption.LimbRotationOffset);
+									AddRobotLimb add = new AddRobotLimb().setLimb(o).setLocation(currentAbsolutePose)
+											.setNames(session.selectedSnapshot());
+									ap.addOp(add).join();
+
+									HashSet<String> namesAdded = add.getNamesAdded();
+									ArrayList<String> namesBack = new ArrayList<String>();
+									namesBack.addAll(namesAdded);
+//
+									session.selectAll(namesAdded);
+									if (!workplane.isClicked())
+										return;
+									if (workplane.isClickOnGround()) {
+										ap.get().setWorkplane(new TransformNR());
+									} else {
+										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+									}
+									workplane.placeWorkplaneVisualization();
+									if (workplaneInOrigin)
+										workplane.setTemporaryPlane();
+								} catch (CadoodleConcurrencyException e) {
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+
+						}).start();
+					});
+					workplane.activate();
+
+				}).start();
+				session.setKeyBindingFocus();
+			});
+		});
+	}
+
 	private void setupAddControllerButton(ControllerOption o, int col, int row) {
 		o.build(ap.get());
 		Tooltip hover = new Tooltip(o.getType());
 		Button button = new Button();
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
+		button.setOnMouseEntered(event -> {
+			optionProvide.getChildren().clear();
+			optionsConsume.getChildren().clear();
+			setFunctionalityToList(o.getProvides(), o.getConsumes(), optionProvide, optionsConsume);
+		});
+
+		// Action when mouse exits the button
+		button.setOnMouseExited(event -> {
+			optionProvide.getChildren().clear();
+			optionsConsume.getChildren().clear();
+		});
 		BowlerStudio.runLater(() -> {
 			controllerGrid.add(button, col, row);
 			Image thumb = o.getImage();
