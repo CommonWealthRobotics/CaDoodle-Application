@@ -102,7 +102,7 @@ public class RotationHandle {
 			rotationStarted = true;
 			startAngleFound = false;
 			com.neuronrobotics.sdk.common.Log.error("Handle clicked");
-			rotationSessionManager.initialize();
+			rotationSessionManager.initialize(cs.getSession().moveLock());
 			flagSaveChange = false;
 			controlSprites.setMode(SpriteDisplayMode.Rotating);
 			if(!moveLock)controlCircle.setVisible(true);

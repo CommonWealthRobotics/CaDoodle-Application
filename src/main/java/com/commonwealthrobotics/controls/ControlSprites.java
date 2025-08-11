@@ -349,9 +349,12 @@ public class ControlSprites {
 			rotationManager.hide();
 			scaleSession.hide();
 		} else {
-			if (session.moveLock()) {
+			if (!session.moveLock()) {
 				up.show();
-				rotationManager.show();
+				rotationManager.show(session.moveLock());
+			}else {
+				up.hide();
+				rotationManager.hide();
 			}
 			// scaleSession.show();
 
@@ -383,7 +386,7 @@ public class ControlSprites {
 	private void initialize() {
 		for (Node r : allElems)
 			r.setVisible(true);
-		rotationManager.initialize();
+		rotationManager.initialize(session.moveLock());
 		mirror.hide();
 		allign.hide();
 
@@ -658,5 +661,9 @@ public class ControlSprites {
 
 	public boolean allignIsActive() {
 		return allign.isActive();
+	}
+
+	public SelectionSession getSession() {
+		return session;
 	}
 }

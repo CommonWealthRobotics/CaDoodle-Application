@@ -54,9 +54,9 @@ public class RotationSessionManager {
 		return result;
 	}
 
-	public void initialize() {
+	public void initialize(boolean b) {
 		for (RotationHandle r : handles) {
-			r.handle.setVisible(true);
+			r.handle.setVisible(!b);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
 			r.text.hide();
@@ -74,8 +74,8 @@ public class RotationSessionManager {
 		}
 	}
 
-	public void show() {
-		initialize();
+	public void show(boolean lock) {
+		initialize(lock);
 		// new RuntimeException().printStackTrace();
 	}
 
