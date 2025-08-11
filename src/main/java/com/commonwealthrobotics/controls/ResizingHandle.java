@@ -44,6 +44,7 @@ public class ResizingHandle {
 	private boolean selected = false;
 	private Affine workplaneOffset;
 	private boolean uniform =false;
+	private boolean resizeAllowed;
 
 	// private Tooltip hover = new Tooltip();
 	/**
@@ -109,7 +110,11 @@ public class ResizingHandle {
 	}
 
 	private void resetColor() {
-		material.setDiffuseColor(new Color(1, 1, 1, 1));
+		if(isResizeAllowed())
+			material.setDiffuseColor(new Color(1, 1, 1, 1));
+		else
+			material.setDiffuseColor(new Color(0, 1, 1, 1));
+
 	}
 
 	public TransformNR getParametric() {
@@ -301,6 +306,14 @@ public class ResizingHandle {
 
 	public void setUniform(boolean uniform) {
 		this.uniform = uniform;
+	}
+
+	public boolean isResizeAllowed() {
+		return resizeAllowed;
+	}
+
+	public void setResizeAllowed(boolean resizeAllowed) {
+		this.resizeAllowed = resizeAllowed;
 	}
 
 }

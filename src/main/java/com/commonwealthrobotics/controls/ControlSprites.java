@@ -339,6 +339,13 @@ public class ControlSprites {
 		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		// TickToc.tic("cubes update");
 		updateCubes();
+		boolean lockSize=false;
+		for(CSG sel:session.getCurrentStateSelected()) {
+			if(sel.isNoScale()) {
+				lockSize=true;
+			}
+		}
+		scaleSession.setResizeAllowed(!lockSize);
 		// TickToc.tic("lines update");
 		updateLines();
 		if (session.isLocked() || session.isInOperationMode()) {

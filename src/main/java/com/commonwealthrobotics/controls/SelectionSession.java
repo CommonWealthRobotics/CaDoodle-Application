@@ -1419,7 +1419,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Affine af = csg.getManipulator();
 				if(af!=null) {
 					TransformNR afNR = TransformFactory.affineToNr(af);
-					inverse = TransformFactory.nrToCSG(frame.times(afNR.inverse())).inverse();
+					inverse = TransformFactory.nrToCSG(afNR.inverse().times(frame)).inverse();
 				}
 				cache.put(csg, csg.transformed(inverse).getBounds());
 			}

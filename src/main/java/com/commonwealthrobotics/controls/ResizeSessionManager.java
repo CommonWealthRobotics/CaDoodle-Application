@@ -34,6 +34,7 @@ public class ResizeSessionManager {
 	private ActiveProject ap;
 	private boolean scalingFlag = false;
 	private boolean locked;
+	private boolean resizeAllowed;
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
 			SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
@@ -199,25 +200,28 @@ public class ResizeSessionManager {
 //					throw new RuntimeException("The control points of the corners must be at the same Z value \n"
 //							+ lfC.toSimpleString() + "\n" + rrC.toSimpleString());
 //				}
+
 				Resize setResize = new Resize().setNames(sel.selectedSnapshot())
 						// .setDebugger(engine)
 						.setWorkplane(wp).setResize(tcC, lfC, rrC);
-				Thread t = ap.addOp(setResize);
-				try {
-					t.join();
-				} catch (InterruptedException e) {
-					// Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					Thread.sleep(32);
-				} catch (InterruptedException e) {
-					// Auto-generated catch block
-					e.printStackTrace();
+				if (resizeAllowed) {
+					Thread t = ap.addOp(setResize);
+					try {
+						t.join();
+					} catch (InterruptedException e) {
+						// Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				BowlerStudio.runLater(() -> threeDTarget());
 			});
 		}
+	}
+
+	public void setResizeAllowed(boolean resizeAllowed) {
+		this.resizeAllowed = resizeAllowed;
+		for (ResizingHandle c : controls)
+			c.setResizeAllowed(resizeAllowed);
 	}
 
 	private void uniformScalingZ(TransformNR tcC) {
