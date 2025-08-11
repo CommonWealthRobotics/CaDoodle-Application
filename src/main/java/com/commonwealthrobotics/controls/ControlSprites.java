@@ -150,7 +150,7 @@ public class ControlSprites {
 			@Override
 			public void onTimelineUpdate(int num) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
@@ -271,12 +271,14 @@ public class ControlSprites {
 
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset, ruler);
-		allign = new AllignManager(session, selection, workplaneOffset,ap);
+		allign = new AllignManager(session, selection, workplaneOffset, ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
+
 	public void clearAllign() {
 		allign.clear();
 	}
+
 	private void setUpUIComponennts() {
 		Group linesGroupp = new Group();
 		linesGroupp.setDepthTest(DepthTest.DISABLE);
@@ -347,8 +349,10 @@ public class ControlSprites {
 			rotationManager.hide();
 			scaleSession.hide();
 		} else {
-			up.show();
-			rotationManager.show();
+			if (session.moveLock()) {
+				up.show();
+				rotationManager.show();
+			}
 			// scaleSession.show();
 
 		}
@@ -527,12 +531,12 @@ public class ControlSprites {
 			scaleTF.setX(viewScale);
 			scaleTF.setY(viewScale);
 			scaleTF.setZ(viewScale);
-			double dotscale = viewScale*7;
-			if(dotscale>00.75)
-				dotscale=0.75;
-			if(dotscale<0.04)
-				dotscale=0.04;
-			//System.out.println("Z distance = "+dotscale);
+			double dotscale = viewScale * 7;
+			if (dotscale > 00.75)
+				dotscale = 0.75;
+			if (dotscale < 0.04)
+				dotscale = 0.04;
+			// System.out.println("Z distance = "+dotscale);
 			for (DottedLine l : lines) {
 				l.setScale(dotscale);
 			}
@@ -545,16 +549,16 @@ public class ControlSprites {
 	}
 
 	private void updateCubes() {
-		boolean lockSize=false;
-		boolean moveLock = false;
-		for(CSG sel:session.getCurrentStateSelected()) {
-			if(sel.isNoScale()) {
-				lockSize=true;
+		boolean lockSize = false;
+		boolean moveLock = session.moveLock();
+		for (CSG sel : session.getCurrentStateSelected()) {
+			if (sel.isNoScale()) {
+				lockSize = true;
 			}
-			if(sel.isMotionLock())
-				moveLock=true;
 		}
-		scaleSession.setResizeAllowed(!lockSize,moveLock);
+		zMove.setUnlocked(!moveLock);
+		scaleSession.setResizeAllowed(!lockSize, moveLock);
+		rotationManager.setLock(moveLock);
 		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf, session.isLocked());
 	}
 
