@@ -899,16 +899,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// TODO convert this to the bounds instead of performing a union on boxes
 		if (selected.size() == 0)
 			return new TransformNR();
-		CSG boxes = null;
-		for (String c : selected) {
-			CSG s = getSelectedCSG(c);
-			if (boxes == null)
-				boxes = s.getBoundingBox();
-			else
-				boxes = boxes.union(s.getBoundingBox());
-		}
+		Bounds b = getSellectedBounds();;
 
-		return new TransformNR(boxes.getCenterX(), -boxes.getCenterY(), -boxes.getCenterZ());
+		return new TransformNR(b.getCenterX(), -b.getCenterY(), -b.getCenterZ());
 	}
 
 	public Thread addOp(CaDoodleOperation h) {
@@ -1388,7 +1381,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return new ArrayList<CSG>();
 		return caDoodleFile.getCurrentState();
 	}
-
+	public List<CSG> getCurrentStateSelected() {
+		ArrayList<CSG> back= new ArrayList<CSG>();
+		for(CSG c:getCurrentState()) {
+			for(String s:selected) {
+				if(c.getName().contentEquals(s))
+					back.add(c);
+			}
+		}
+		return back;
+	}
+	public Bounds getSellectedBounds() {
+		return getSellectedBounds(getCurrentStateSelected());
+	}
 	public Bounds getSellectedBounds(List<CSG> incoming) {
 		return getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
 	}
@@ -1411,6 +1416,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG csg : incoming) {
 			if (cache.get(csg) == null) {
 				Transform inverse = TransformFactory.nrToCSG(frame).inverse();
+				Affine af = csg.getManipulator();
+				if(af!=null) {
+					TransformNR afNR = TransformFactory.affineToNr(af);
+					inverse = TransformFactory.nrToCSG(frame.times(afNR.inverse())).inverse();
+				}
 				cache.put(csg, csg.transformed(inverse).getBounds());
 			}
 			Bounds b = cache.get(csg);
