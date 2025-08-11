@@ -306,6 +306,7 @@ public class Main extends Application {
 					"https://github.com/CommonWealthRobotics/BowlerStudioExampleRobots.git",
 					gitassets,
 					"https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
+					"https://github.com/madhephaestus/carl-the-hexapod.git",
 					Vitamins.getGitRepoDatabase(), ShapesPallet.getGitULR());
 		}
 		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
