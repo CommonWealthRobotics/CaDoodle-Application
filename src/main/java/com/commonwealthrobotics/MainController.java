@@ -124,12 +124,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private Tab headTab;
 
-	@FXML
-	private Tab limbTab;
+
 	@FXML
 	private TabPane robotLabTabPane;
-	@FXML
-	private Tab toollTab;
+
 
 	@FXML // fx:id="Button"
 	private Button timelineButton;
@@ -333,8 +331,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="drawerHolder"
 	private VBox controllersVBox;
 	@FXML // fx:id="drawerHolder"
+	private VBox controllerConsumedBox;
+	@FXML // fx:id="drawerHolder"
 	private VBox capabilitiesVBox;
-	
+	@FXML // fx:id="drawerHolder"
+	private VBox optionProvide;
+	@FXML // fx:id="drawerHolder"
+	private VBox optionsConsume;
+	@FXML
+	private GridPane wheelOptionGrid;
+	@FXML
+	private GridPane legsOptionGrid;
+	@FXML
+	private GridPane armsOptionGrid;
 	
 	@FXML
 	void onMakeRobot(ActionEvent e) {
@@ -865,7 +874,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"zoomInButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert zoomOutButton != null
 				: "fx:id=\"zoomOutButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert timelineButton != null : "Timeline button failed";
+		assert timelineButton != null : "optionProvide button failed";
+		assert optionProvide != null : "Timeline button failed";
+		assert optionsConsume != null : "optionsConsume button failed";
 		engine = new BowlerStudio3dEngine("CAD window");
 		engine.rebuild(true);
 		ap.addListener(this);
@@ -1214,9 +1225,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, ap, workplane);
 		workplane.placeWorkplaneVisualization();
 		selectionBox.setWorkplaneManager(workplane);
-		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab, limbTab,
-				toollTab, advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane,
-				controllersVBox,capabilitiesVBox);
+		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab, advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane,
+				controllersVBox,controllerConsumedBox,capabilitiesVBox,
+				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid);
 
 	}
 

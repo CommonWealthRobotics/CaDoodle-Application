@@ -27,7 +27,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" prefWidth="908.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -49,7 +49,7 @@
                                 <tabs>
                                   <Tab fx:id="bodyTab">
                                     <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                      <AnchorPane minHeight="0.0" minWidth="0.0">
                                              <children>
                                                 <VBox fx:id="baseRobotBox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -71,9 +71,9 @@
                                                       </Button>
                                                       <GridPane fx:id="RobotBasePanel">
                                                         <columnConstraints>
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
                                                           <RowConstraints minHeight="40.0" vgrow="NEVER" />
@@ -97,8 +97,17 @@
                                                                   <Font name="System Bold" size="16.0" />
                                                                </font>
                                                             </Label>
-                                                            <VBox fx:id="controllersVBox" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-                                                            <VBox fx:id="capabilitiesVBox" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
+                                                            <HBox GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+                                                               <children>
+                                                                  <VBox fx:id="controllersVBox" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
+                                                               <children>
+                                                                  <VBox fx:id="capabilitiesVBox" HBox.hgrow="ALWAYS" />
+                                                                  <VBox fx:id="controllerConsumedBox" HBox.hgrow="ALWAYS" />
+                                                               </children>
+                                                            </HBox>
                                                             <Label text="Capabilities" textFill="#263d8c" GridPane.rowIndex="3">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
@@ -124,10 +133,15 @@
                                   </Tab>
                                     <Tab fx:id="headTab" disable="true">
                                        <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                          <AnchorPane minHeight="0.0" minWidth="0.0">
                                              <children>
-                                                <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
+                                                      <Label text="Controllers" textFill="#263d8c">
+                                                         <font>
+                                                            <Font name="System Bold" size="16.0" />
+                                                         </font>
+                                                      </Label>
                                                       <ScrollPane>
                                                         <content>
                                                           <AnchorPane minHeight="0.0" minWidth="0.0">
@@ -139,29 +153,96 @@
                                                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                                     </columnConstraints>
                                                                     <rowConstraints>
-                                                                      <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                                                                      <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                                                                      <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                                                                        <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                                                                      <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
                                                                     </rowConstraints>
                                                                   </GridPane>
                                                                </children>
                                                             </AnchorPane>
                                                         </content>
                                                       </ScrollPane>
+                                                      <Label text="Arms" textFill="#263d8c">
+                                                         <font>
+                                                            <Font name="System Bold" size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ScrollPane>
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0">
+                                                               <children>
+                                                                  <GridPane fx:id="armsOptionGrid">
+                                                                     <columnConstraints>
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                     </columnConstraints>
+                                                                     <rowConstraints>
+                                                                        <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                                                                     </rowConstraints>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </ScrollPane>
+                                                      <Label text="Legs" textFill="#263d8c">
+                                                         <font>
+                                                            <Font name="System Bold" size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ScrollPane>
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0">
+                                                               <children>
+                                                                  <GridPane fx:id="legsOptionGrid">
+                                                                     <columnConstraints>
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                     </columnConstraints>
+                                                                     <rowConstraints>
+                                                                        <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                                                                     </rowConstraints>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </ScrollPane>
+                                                      <Label text="Wheels" textFill="#263d8c">
+                                                         <font>
+                                                            <Font name="System Bold" size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ScrollPane>
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0">
+                                                               <children>
+                                                                  <GridPane fx:id="wheelOptionGrid">
+                                                                     <columnConstraints>
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                     </columnConstraints>
+                                                                     <rowConstraints>
+                                                                        <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                                                                     </rowConstraints>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </ScrollPane>
                                                       <GridPane fx:id="controllerFeaturesGrid">
                                                         <columnConstraints>
                                                           <ColumnConstraints hgrow="ALWAYS" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="77.0" minWidth="10.0" prefWidth="40.0" />
                                                             <ColumnConstraints hgrow="ALWAYS" />
-                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="40.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
                                                           <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints vgrow="ALWAYS" />
                                                         </rowConstraints>
                                                          <children>
                                                             <Label text="Provides" />
-                                                            <Label text="Consumes" GridPane.columnIndex="2" />
+                                                            <Label text="Consumes" GridPane.columnIndex="1" />
+                                                            <VBox fx:id="optionProvide" prefWidth="100.0" GridPane.rowIndex="1" />
+                                                            <VBox fx:id="optionsConsume" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                          </children>
                                                       </GridPane>
                                                    </children>
@@ -171,42 +252,12 @@
                                        <graphic>
                                           <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@Connected-Devices.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Head and Brain" />
-                                       </tooltip>
-                                    </Tab>
-                                  <Tab fx:id="limbTab" disable="true">
-                                    <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                    </content>
-                                       <graphic>
-                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
                                                 <Image url="@Load-Limb-Arms.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Arms and Legs" />
-                                       </tooltip>
-                                  </Tab>
-                                    <Tab fx:id="toollTab" disable="true">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                       </content>
-                                       <graphic>
-                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@Load-Limb-Fixed-Wheels.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Wheels and Hands " />
+                                          <Tooltip text="Head and Brain" />
                                        </tooltip>
                                     </Tab>
                                     <Tab fx:id="advancedTab" disable="true">
