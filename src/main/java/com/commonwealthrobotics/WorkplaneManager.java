@@ -41,6 +41,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private MeshView ground;
 	private MeshView wpPick;
 	private HashMap<CSG, MeshView> meshes;
+	private HashMap<MeshView,CSG> meshesReverseLookup;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
 	private MeshView indicatorMesh;
@@ -114,7 +115,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void updateMeshes(HashMap<CSG, MeshView> meshes) {
 		this.meshes = meshes;
-
+		meshesReverseLookup=new HashMap<MeshView, CSG>();
+		for(CSG c:meshes.keySet()) {
+			meshesReverseLookup.put(meshes.get(c), c);
+		}
 	}
 
 	public void cancle() {
@@ -199,8 +203,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			
 			TransformNR screenLocation;
 			double[] angles = new double[] { 0, 0, 0 };
+			Affine manipulator =new Affine();
 			if (intersectedNode instanceof MeshView) {
 				MeshView meshView = (MeshView) intersectedNode;
+				CSG source = meshesReverseLookup.get(meshView);
+				if(source!=null)
+					if(source.getManipulator()!=null)
+						manipulator=source.getManipulator();
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
 				int faceIndex = pickResult.getIntersectedFace();
@@ -209,9 +218,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				else
 					com.neuronrobotics.sdk.common.Log.error("Error face index came back: " + faceIndex);
 			}
+			TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
 			TransformNR pureRot = new TransformNR(new RotationNR(angles[1], angles[0], angles[2]));
 			TransformNR t = new TransformNR(x, y, z);
-			screenLocation = t.times(pureRot);
+			screenLocation = manipulatorNR.times(t.times(pureRot));
 			
 			if (intersectedNode == wpPick) {
 				if(updater!=null) {
