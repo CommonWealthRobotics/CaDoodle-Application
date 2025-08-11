@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.sshd.common.session.Session;
+
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.Main;
 import com.commonwealthrobotics.MainController;
@@ -194,7 +196,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		
 		
 	}
-
+	public boolean moveLock() {
+		boolean moveLock = false;
+		for(CSG sel:getCurrentStateSelected()) {
+			if(sel.isMotionLock()||sel.isInGroup())
+				moveLock=true;
+		}
+		return moveLock;
+	}
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
 		s.addAll(selected);
@@ -487,7 +496,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			TransformFactory.nrToAffine(new TransformNR(), selection);
 			TransformFactory.nrToAffine(new TransformNR(), controls.getViewRotation());
-			boolean lockMove=false;
+			boolean lockMove=moveLock();
 			for (CSG c : getSelectedCSG(selectedSnapshot())) {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
@@ -495,8 +504,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (!isLocked())
 						meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
-				if(c.isMotionLock())
-					lockMove=true;
 			}
 			manipulation.setUnlocked(!lockMove);
 			shapeConfiguration.setText("Shape (" + selected.size() + ")");
@@ -1062,6 +1069,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// new RuntimeException("Cruse called with nothing selected").printStackTrace();
 			return;
 		}
+		if(moveLock())
+			return;
 		com.neuronrobotics.sdk.common.Log.error("On Cruse");
 		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
 		CSG indicator = selectedCSG.get(0);
@@ -1476,6 +1485,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onDrop() {
 		com.neuronrobotics.sdk.common.Log.error("Drop to Workplane");
+		if(moveLock())
+			return;
 		new Thread(() -> {
 			TransformNR wp = ap.get().getWorkplane();
 			Transform t = TransformFactory.nrToCSG(wp);
@@ -1501,6 +1512,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selected.size() == 0) {
 			return;
 		}
+		if(moveLock())
+			return;
 		TransformNR wp = ap.get().getWorkplane();
 		// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
 		TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
