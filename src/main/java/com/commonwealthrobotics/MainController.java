@@ -463,7 +463,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setRobotLabOpenState(boolean tm) {
-		tm=false;
+		//tm=false;
 		if (tm == session.isRobotLabOpen())
 			return;
 		if (tm) {
