@@ -416,3 +416,33 @@
 }
 
 /* ===== AI MODEL ADDITIONS - Claude Sonnet 4 ===== */
+
+/* Root application background - beige */
+.root {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* All text should be blue */
+.label {
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+/* Progress bar styling - yellow background, blue progress */
+.progress-bar {
+    -fx-background-color: #f2c83d; /* logo-yellow background */
+    -fx-border-color: #263d8c; /* logo-blue border */
+    -fx-border-width: 2px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: #263d8c; /* logo-blue progress fill */
+    -fx-background-radius: 2px;
+    -fx-padding: 0.25em;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #f2c83d; /* logo-yellow track */
+    -fx-background-radius: 2px;
+}
