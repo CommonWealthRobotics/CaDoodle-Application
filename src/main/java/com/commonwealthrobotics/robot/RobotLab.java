@@ -108,7 +108,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
-		manager=new LimbControlManager(engine);
+		manager=new LimbControlManager(engine,session);
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
@@ -131,7 +131,7 @@ public class RobotLab {
 			setupControllersPanel();
 			setupLimbsPanel();
 			setupTabs();
-			
+			manager.update();
 		}).start();
 	}
 

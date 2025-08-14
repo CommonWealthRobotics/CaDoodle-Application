@@ -14,11 +14,12 @@ public class MoveUpArrow {
 	private MeshView mesh;
 	private boolean selected;
 	private PhongMaterial material = new PhongMaterial();
+	private Color color = Color.BLACK;;
 
 	public MoveUpArrow(Affine selection, Affine workplaneOffset, Affine moveUpLocation, Scale scaleTF,
 			EventHandler<MouseEvent> eventHandler, Runnable onSelect, Runnable onReset) {
 		CSG setColor = new Cylinder(ResizingHandle.getSize() / 2, 0, ResizingHandle.getSize()).toCSG()
-				.setColor(Color.BLACK);
+				.setColor(getColor());
 		mesh = setColor.getMesh();
 		mesh.getTransforms().add(selection);
 		mesh.getTransforms().add(workplaneOffset);
@@ -48,7 +49,11 @@ public class MoveUpArrow {
 	}
 
 	private void resetColor() {
-		material.setDiffuseColor(Color.BLACK);
+		material.setDiffuseColor(getColor());
+	}
+	private Color getColor() {
+		
+		return color;
 	}
 	public void resetSelected() {
 		resetColor();
@@ -68,6 +73,13 @@ public class MoveUpArrow {
 
 	public void show() {
 		mesh.setVisible(true);
+	}
+	/**
+	 * @param color the color to set
+	 */
+	public void setColor(Color color) {
+		this.color = color;
+		resetColor() ;
 	}
 
 }

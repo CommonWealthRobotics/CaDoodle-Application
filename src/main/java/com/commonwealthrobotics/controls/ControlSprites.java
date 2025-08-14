@@ -106,7 +106,7 @@ public class ControlSprites {
 		scaleSession.setSnapGrid(size);
 	}
 
-	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation manipulation,
+	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
 			ActiveProject ap, RulerManager ruler) {
 		this.session = session;
 		this.ruler = ruler;
@@ -114,7 +114,7 @@ public class ControlSprites {
 			throw new NullPointerException();
 		this.engine = e;
 		this.selection = sel;
-		this.manipulation = manipulation;
+		this.manipulation = m;
 		this.ap = ap;
 		// this.xyMove = mov;
 		ap.addListener(new ICaDoodleStateUpdate() {
