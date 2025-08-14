@@ -44,6 +44,7 @@ import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
 import javafx.event.ActionEvent;
@@ -1232,6 +1233,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab, advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane,
 				controllersVBox,controllerConsumedBox,capabilitiesVBox,
 				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid,engine);
+		BowlerStudio.runLater(() -> {
+			onChange(engine.getFlyingCamera());
+		});
+		session.setLimbs(robotLab.getManager());
 
 	}
 
@@ -1427,6 +1432,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.clearSelection();
 		robotLab.onCancel();
+		BowlerStudio.runLater(() -> {
+			onChange(engine.getFlyingCamera());
+		});
 	}
 
 	public boolean isEventACancel(MouseEvent event) {
@@ -1461,6 +1469,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double screenH = engine.getSubScene().getHeight();
 		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 		selectionBox.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
+
 	}
 
 	@Override
