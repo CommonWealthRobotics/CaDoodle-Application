@@ -12,6 +12,7 @@ import com.commonwealthrobotics.allign.AllignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.commonwealthrobotics.numbers.ThreedNumber;
+import com.commonwealthrobotics.robot.LimbControlManager;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -270,7 +271,9 @@ public class ControlSprites {
 	}
 
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
-		rotationManager = new RotationSessionManager(selection, ap, this, workplaneOffset, ruler);
+		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler,(tf)->{
+			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot()));
+		});
 		allign = new AllignManager(session, selection, workplaneOffset, ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
@@ -563,6 +566,12 @@ public class ControlSprites {
 		scaleSession.setResizeAllowed(!lockSize, moveLock);
 		rotationManager.setLock(moveLock);
 		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf, session.isLocked());
+		List<String> selectedSnapshot = session.selectedSnapshot();
+		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
+		if (selectedCSG.size() == 0)
+			return;
+		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
+		session.getLimbs().threeDTarget(screenW, screenH, zoom, cf, session.isLocked());
 	}
 
 	public void clearSelection() {
@@ -666,4 +675,6 @@ public class ControlSprites {
 	public SelectionSession getSession() {
 		return session;
 	}
+
+
 }
