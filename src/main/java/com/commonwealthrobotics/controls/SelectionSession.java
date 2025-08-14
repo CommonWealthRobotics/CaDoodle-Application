@@ -23,6 +23,7 @@ import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TexturedCSG;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.robot.LimbControlManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -148,7 +149,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean advanced;
 	private boolean robotLabOpen=true;
 	private Button robotLabDrawer;
-	private Runnable updateRobotLab = null; 
+	private Runnable updateRobotLab = null;
+	private LimbControlManager limbs; 
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -167,13 +169,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// Auto-generated catch block
 				ex.printStackTrace();
 			}
-			controls.setMode(SpriteDisplayMode.Default);
+			getControls().setMode(SpriteDisplayMode.Default);
 
 		});
 		manipulation.addEventListener(ev -> {
 			if (intitialization)
 				return;
-			controls.setMode(SpriteDisplayMode.MoveXY);
+			getControls().setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(() -> updateControls());
 		});
 		Manipulation.setUi(new IInteractiveUIElementProvider() {
@@ -210,17 +212,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
 		TickToc.tic("Start On Update In Selected Session");
-		inWorkplaneBounds.clear();
+		clearBoundsCache();
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
 		if (isAllignActive() && Allign.class.isInstance(source))
-			controls.setMode(SpriteDisplayMode.Allign);
+			getControls().setMode(SpriteDisplayMode.Allign);
 		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
-			controls.setMode(SpriteDisplayMode.Mirror);
+			getControls().setMode(SpriteDisplayMode.Mirror);
 			onMirror();
 		} else
-			controls.setMode(SpriteDisplayMode.Default);
+			getControls().setMode(SpriteDisplayMode.Default);
 		intitialization = false;
 		setUpParametrics(currentState, source);
 		displayCurrent();
@@ -461,7 +463,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void updateControlsDisplayOfSelected() {
 		parametrics.getChildren().clear();
-		inWorkplaneBounds.clear();
+		clearBoundsCache();
 		timeline.updateSelected(selected);
 		if (selected.size() > 0) {
 			dropToWorkplane.setDisable(false);
@@ -486,18 +488,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
-					meshView.getTransforms().remove(controls.getViewRotation());
+					meshView.getTransforms().remove(getControls().getViewRotation());
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 
 			}
 			TransformFactory.nrToAffine(new TransformNR(), selection);
-			TransformFactory.nrToAffine(new TransformNR(), controls.getViewRotation());
+			TransformFactory.nrToAffine(new TransformNR(), getControls().getViewRotation());
 			boolean lockMove=moveLock();
 			for (CSG c : getSelectedCSG(selectedSnapshot())) {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
-					meshView.getTransforms().addAll(controls.getViewRotation(), selection);
+					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
 					if (!isLocked())
 						meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
@@ -561,16 +563,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
-					meshView.getTransforms().remove(controls.getViewRotation());
+					meshView.getTransforms().remove(getControls().getViewRotation());
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
 			// com.neuronrobotics.sdk.common.Log.error("None selected");
 			shapeConfigurationHolder.getChildren().clear();
 			hideButtons();
-			controls.clearSelection();
+			getControls().clearSelection();
 		}
 		updateControls();
+	}
+
+	public void clearBoundsCache() {
+		inWorkplaneBounds.clear();
 	}
 
 	private void setUpNumberField(HBox thisLine, String text, Parameter para, int width) {
@@ -737,7 +743,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearAllignObjectCache() {
-		controls.clearAllign();
+		getControls().clearAllign();
 	}
 
 	private void setupSnapGrid() {
@@ -1343,42 +1349,42 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onAllign() {
-		if (controls == null)
+		if (getControls() == null)
 			return;
 		new Thread(() -> {
-			controls.setMode(SpriteDisplayMode.Allign);
+			getControls().setMode(SpriteDisplayMode.Allign);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
-			controls.initializeAllign(selectedCSG, b, getMeshes());
+			getControls().initializeAllign(selectedCSG, b, getMeshes());
 		}).start();
 
 	}
 
 	public void onMirror() {
-		if (controls == null)
+		if (getControls() == null)
 			return;
 		new Thread(() -> {
-			controls.setMode(SpriteDisplayMode.Mirror);
+			getControls().setMode(SpriteDisplayMode.Mirror);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
-			controls.initializeMirror(selectedCSG, b, getMeshes());
+			getControls().initializeMirror(selectedCSG, b, getMeshes());
 		}).start();
 	}
 
 	public boolean isFocused() {
-		return controls.isFocused();
+		return getControls().isFocused();
 	}
 
 	public void cancelOperationModes() {
-		if (controls == null)
+		if (getControls() == null)
 			return;
 		if (isAllignActive()) {
-			controls.setMode(SpriteDisplayMode.Default);
+			getControls().setMode(SpriteDisplayMode.Default);
 		}
 		if (isMirrorActive()) {
-			controls.setMode(SpriteDisplayMode.Default);
+			getControls().setMode(SpriteDisplayMode.Default);
 		}
-		controls.cancelOperationMode();
+		getControls().cancelOperationMode();
 
 	}
 
@@ -1710,7 +1716,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		if (ap.get() == null || controls == null)
+		if (ap.get() == null || getControls() == null)
 			return;
 
 		List<String> selectedSnapshot = selectedSnapshot();
@@ -1721,7 +1727,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 //		TickToc.tic("Start bounds");
 		Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 //		TickToc.tic("bounds made");
-		controls.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds);
+		getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds);
+		
 //		TickToc.toc();
 //		TickToc.setEnabled(false);
 	}
@@ -1733,8 +1740,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setSnapGrid(double size) {
 		this.size = size;
 		manipulation.setIncrement(size);
-		if (controls != null)
-			controls.setSnapGrid(size);
+		if (getControls() != null)
+			getControls().setSnapGrid(size);
 		workplane.setIncrement(size);
 	}
 
@@ -1754,8 +1761,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setActiveProject(ActiveProject ap) {
 		if (this.ap == null) {
-			controls = new ControlSprites(this, engine, selection, manipulation, ap, ruler);
-			controls.setSnapGrid(size);
+			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler));
+			getControls().setSnapGrid(size);
 		}
 		this.ap = ap;
 	}
@@ -1775,7 +1782,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setMode(SpriteDisplayMode placing) {
-		controls.setMode(placing);
+		getControls().setMode(placing);
 	}
 
 	public ArrayList<CSG> getAllVisable() {
@@ -1808,7 +1815,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
-		inWorkplaneBounds.clear();
+		clearBoundsCache();
 		if(!workplane.isWorkplaneNotOrigin()) {
 			objectWorkplane.getStyleClass().clear();
 			objectWorkplane.getStyleClass().add("image-button");
@@ -1853,11 +1860,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private boolean isMirrorActive() {
-		return controls.mirrorIsActive();
+		return getControls().mirrorIsActive();
 	}
 
 	private boolean isAllignActive() {
-		return controls.allignIsActive();
+		return getControls().allignIsActive();
 	}
 
 	public HashMap<CSG, MeshView> getMeshes() {
@@ -1906,6 +1913,34 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	 */
 	public void setUpdateRobotLab(Runnable updateRobotLab) {
 		this.updateRobotLab = updateRobotLab;
+	}
+
+	/**
+	 * @return the controls
+	 */
+	public ControlSprites getControls() {
+		return controls;
+	}
+
+	/**
+	 * @param controls the controls to set
+	 */
+	public void setControls(ControlSprites controls) {
+		this.controls = controls;
+	}
+
+	/**
+	 * @return the limbs
+	 */
+	public LimbControlManager getLimbs() {
+		return limbs;
+	}
+
+	/**
+	 * @param limbs the limbs to set
+	 */
+	public void setLimbs(LimbControlManager limbs) {
+		this.limbs = limbs;
 	}
 
 }
