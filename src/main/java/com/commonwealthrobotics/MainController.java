@@ -761,7 +761,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onWOrkplane(ActionEvent event) {
 		session.setMode(SpriteDisplayMode.PLACING);
 		workplane.pickPlane(() -> {
-			ruler.cancle();
+			ruler.cancel();
 			session.save();
 			session.setMode(SpriteDisplayMode.Default);
 			session.updateControls();
@@ -1221,7 +1221,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setCadoodleFile() {
-
+		// All this needs to be instantiated after the engine is created
 		workplane = new WorkplaneManager(ap, ground, engine, session);
 		ruler.setWorkplane(workplane);
 		ruler.setWP(ap.get().getWorkplane());
@@ -1231,7 +1231,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		selectionBox.setWorkplaneManager(workplane);
 		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab, advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane,
 				controllersVBox,controllerConsumedBox,capabilitiesVBox,
-				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid);
+				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid,engine);
 
 	}
 
@@ -1312,7 +1312,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				case 122:
 				case 26:
 					com.neuronrobotics.sdk.common.Log.error("Undo");
-					workplane.cancle();
+					workplane.cancel();
 					ap.get().back();
 					break;
 				case 121:
@@ -1396,7 +1396,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.onCruse();
 					break;
 				case 27:// escape
-					workplane.cancle();
+					workplane.cancel();
 					break;
 				case 116:// t
 				case 84:
@@ -1426,6 +1426,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			workplane.clearTemporaryPlane();
 		}
 		session.clearSelection();
+		robotLab.onCancel();
 	}
 
 	public boolean isEventACancel(MouseEvent event) {

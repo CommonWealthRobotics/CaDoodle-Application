@@ -31,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotController;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.MakeRobot;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -75,13 +76,13 @@ public class RobotLab {
 	private VBox controllerConsumedBox;
 	private boolean controllersLoaded;
 	private boolean limmbsLoaded;
-	
+	private LimbControlManager manager;
 
 	public RobotLab(SelectionSession session, ActiveProject ap, VBox baseRobotBox, Button makeRobotButton,
 			TabPane robotLabTabPane, Tab bodyTab, Tab headTab, Tab advancedTab, GridPane robotBasePanel,
 			GridPane controllerGrid, GridPane controllerFeaturesGrid, WorkplaneManager workplane, VBox controllersVBox,
 			VBox controllerConsumedBox, VBox capabilitiesVBox, VBox optionProvide, VBox optionsConsume,
-			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid) {
+			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid,BowlerStudio3dEngine engine) {
 		this.session = session;
 		this.ap = ap;
 		this.baseRobotBox = baseRobotBox;
@@ -107,6 +108,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
+		manager=new LimbControlManager(engine);
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
@@ -114,7 +116,12 @@ public class RobotLab {
 			updateDisplay();
 		} else {
 			builder = null;
+			manager.hide();
 		}
+	}
+	
+	public void onCancel() {
+		manager.hide();
 	}
 
 	public void updateDisplay() {
@@ -124,7 +131,7 @@ public class RobotLab {
 			setupControllersPanel();
 			setupLimbsPanel();
 			setupTabs();
-			session.setupLimbManipulators(builder);
+			
 		}).start();
 	}
 

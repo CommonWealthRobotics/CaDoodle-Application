@@ -192,10 +192,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
 		ap.addListener(this);
 	}
-	public void setupLimbManipulators(MobileBaseBuilder builder) {
-		
-		
-	}
+
 	public boolean moveLock() {
 		boolean moveLock = false;
 		for(CSG sel:getCurrentStateSelected()) {

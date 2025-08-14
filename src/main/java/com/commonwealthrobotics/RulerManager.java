@@ -111,7 +111,7 @@ public class RulerManager {
 		});
 		workplane.onCancle(()->{
 			System.out.println("Canceling active ruler pick session");
-			cancle();
+			cancel();
 			onFinish.run();
 		});
 		
@@ -120,7 +120,7 @@ public class RulerManager {
 				System.out.println("Placing ruler");
 				ap.get().setRulerLocation(TransformFactory.affineToNr(rulerOffset));
 			}else {
-				cancle();
+				cancel();
 			}
 			onFinish.run();
 		});
@@ -133,7 +133,7 @@ public class RulerManager {
 		
 	}
 
-	public void cancle() {
+	public void cancel() {
 		setActive(false);
 	}
 

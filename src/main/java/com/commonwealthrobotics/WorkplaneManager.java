@@ -121,7 +121,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		}
 	}
 
-	public void cancle() {
+	public void cancel() {
 		if (!active)
 			return;
 		updater=null;
@@ -178,7 +178,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
 			onCancel=null;// non cancles but instead completed
-			cancle();
+			cancel();
 			ev.consume();
 			session.updateControls();
 			ground.setMouseTransparent(true);
@@ -324,7 +324,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if (this.isClickOnGround()) {
 					// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
 					ap.get().setWorkplane(new TransformNR());
-					ruler.cancle();
+					ruler.cancel();
 				} else {
 					ap.get().setWorkplane(this.getCurrentAbsolutePose());
 				}
