@@ -254,6 +254,9 @@ public class SelectionBox {
 			CSGClient.setClient(null);
 		for (CSG key : visable) {
 			// Check if boxes overlap
+			if(key.hasManipulator()) {
+				key=key.transformed(TransformFactory.affineToCSG(key.getManipulator()));
+			}
 			if (key.touching(selection2)) {
 				overlapping.add(key.getName());
 			}
