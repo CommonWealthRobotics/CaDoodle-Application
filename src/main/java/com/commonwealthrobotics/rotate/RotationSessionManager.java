@@ -7,39 +7,34 @@ import java.util.List;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.ControlSprites;
-import com.commonwealthrobotics.numbers.ThreedNumber;
-import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
-import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
 
 public class RotationSessionManager {
 	private List<RotationHandle> handles;
 	private Affine selection;
 	private Affine viewRotation = new Affine();
-	private ControlSprites controlSprites;
+	private SelectionSession controlSprites;
 	private boolean moveLock;
 
-	public RotationSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites,
-			Affine workplaneOffset,RulerManager ruler) {
+	public RotationSessionManager(Affine selection, ActiveProject ap, SelectionSession controlSprites,
+			Affine workplaneOffset,RulerManager ruler,IOnRotateDone done) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
 		RotationHandle az;
 		RotationHandle el;
 		RotationHandle tlt;
 		az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset,ruler);
+				workplaneOffset,ruler,done);
 		el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset,ruler);
+				workplaneOffset,ruler,done);
 		tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset,ruler);
+				workplaneOffset,ruler,done);
 		handles = Arrays.asList(az, el, tlt);
 	}
 

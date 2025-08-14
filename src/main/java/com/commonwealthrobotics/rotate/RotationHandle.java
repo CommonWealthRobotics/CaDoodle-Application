@@ -7,13 +7,14 @@ import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.Quadrent;
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
+//import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -53,23 +54,25 @@ public class RotationHandle {
 	private double az;
 	private TransformNR rotAtCenter;
 	private boolean flagSaveChange = false;
-	private List<String> selectedCSG;
+	//private List<String> selectedCSG;
 	private boolean startAngleFound;
 	public ThreedNumber text;
 	private boolean selected = false;
 	private Affine viewRotation;
-	private ControlSprites controlSprites;
+	private SelectionSession controlSprites;
 	private ActiveProject ap;
 	private boolean moveLock=false;
+	private IOnRotateDone done;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
 			RotationSessionManager rotationSessionManager, ActiveProject ap, 
-			ControlSprites cs, Affine workplaneOffset,RulerManager ruler) {
+			SelectionSession cs, Affine workplaneOffset,RulerManager ruler,IOnRotateDone done) {
 		this.axis = ax;
 		this.viewRotation = vr;
 		this.ap = ap;
 	
 		this.controlSprites = cs;
+		this.done = done;
 		
 		Runnable onSelect = ()->{
 			double mostRecentValue = text.getMostRecentValue();
@@ -102,7 +105,7 @@ public class RotationHandle {
 			rotationStarted = true;
 			startAngleFound = false;
 			com.neuronrobotics.sdk.common.Log.error("Handle clicked");
-			rotationSessionManager.initialize(cs.getSession().moveLock());
+			rotationSessionManager.initialize(cs.moveLock());
 			flagSaveChange = false;
 			controlSprites.setMode(SpriteDisplayMode.Rotating);
 			if(!moveLock)controlCircle.setVisible(true);
@@ -177,8 +180,9 @@ public class RotationHandle {
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
 		});
-		if(!moveLock)
-			ap.addOp(new MoveCenter().setLocation(toUpdate).setNames(selectedCSG));
+		if(!moveLock) {
+			done.toUpdate(toUpdate);
+		}
 	}
 
 	private void setSweepAngle(double c) {
@@ -229,7 +233,7 @@ public class RotationHandle {
 		double numberOffset = 20;
 
 		this.az = az;
-		this.selectedCSG = selectedCSG;
+		//this.selectedCSG = selectedCSG;
 		double totx = b.getMax().x - b.getMin().x;
 		double toty = b.getMax().y - b.getMin().y;
 		double totz = b.getMax().z - b.getMin().z;
