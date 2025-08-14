@@ -14,6 +14,7 @@ import org.eclipse.jgit.api.errors.TransportException;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -108,7 +109,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
-		manager=new LimbControlManager(engine,session);
+		setManager(new LimbControlManager(engine,session,ap));
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
@@ -116,12 +117,12 @@ public class RobotLab {
 			updateDisplay();
 		} else {
 			builder = null;
-			manager.hide();
+			getManager().hide();
 		}
 	}
 	
 	public void onCancel() {
-		manager.hide();
+		getManager().hide();
 	}
 
 	public void updateDisplay() {
@@ -131,10 +132,10 @@ public class RobotLab {
 			setupControllersPanel();
 			setupLimbsPanel();
 			setupTabs();
-			manager.update();
+			getManager().update(builder);
+			
 		}).start();
 	}
-
 
 	private void setupMainPanel() {
 		BowlerStudio.runLater(() -> {
@@ -556,6 +557,20 @@ public class RobotLab {
 				throw new RuntimeException("Failed to create robot!");
 			updateDisplay();
 		}).start();
+	}
+
+	/**
+	 * @return the manager
+	 */
+	public LimbControlManager getManager() {
+		return manager;
+	}
+
+	/**
+	 * @param manager the manager to set
+	 */
+	public void setManager(LimbControlManager manager) {
+		this.manager = manager;
 	}
 
 }
