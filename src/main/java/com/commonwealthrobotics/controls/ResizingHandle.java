@@ -27,6 +27,7 @@ import javafx.scene.transform.Scale;
 
 public class ResizingHandle {
 
+	private double baseSize = 0.75;
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
 	private static final double size = 10;
@@ -46,21 +47,15 @@ public class ResizingHandle {
 	private boolean uniform =false;
 	private boolean resizeAllowed;
 	private boolean moveLock;
+	private Color myColor =null;
 
 	// private Tooltip hover = new Tooltip();
-	/**
-	 * Creates a new instance of Rectangle with the given size and fill.
-	 * 
-	 * @param name
-	 * @param vector3d
-	 * @param workplaneOffset
-	 * 
-	 * @param width           width of the rectangle
-	 * @param height          height of the rectangle
-	 * @param fill            determines how to fill the interior of the rectangle
-	 */
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
+		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset,new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin());
+	}
+	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
+			Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
 		this.name = name;
 		this.workplaneOffset = workplaneOffset;
 		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
@@ -71,11 +66,10 @@ public class ResizingHandle {
 			throw new NullPointerException();
 		this.engine = engine;
 		camera = engine.getFlyingCamera().getCamera();
-		CSG cube = new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin();
-		mesh = cube.getMesh();
+		mesh = shape.getMesh();
 		material = new PhongMaterial();
 		resetColor();
-		mesh.setCullFace(CullFace.NONE);
+		mesh.setCullFace(CullFace.BACK);
 		// material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		mesh.setMaterial(material);
 		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
@@ -111,7 +105,11 @@ public class ResizingHandle {
 	}
 
 	private void resetColor() {
-		material.setDiffuseColor(new Color(isResizeAllowed()?1:0, moveLock?0:1, 1, 1));
+		material.setDiffuseColor(currentColor());
+	}
+
+	private Color currentColor() {
+		return myColor==null?new Color(isResizeAllowed()?1:0, moveLock?0:1, 1, 1):myColor;
 	}
 
 	public TransformNR getParametric() {
@@ -214,7 +212,7 @@ public class ResizingHandle {
 		double distance = Math.sqrt(x * x + y * y + z * z);
 
 		// Define a base scale and distance
-		double baseScale = 0.75;
+		double baseScale = getBaseSize();
 		double baseDistance = 1000.0;
 
 		// Calculate the scale factor
@@ -235,10 +233,14 @@ public class ResizingHandle {
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
 			TransformFactory.nrToAffine(pureRot ,cameraOrent);
-			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
+			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});
 
 		// hover.setText(name +" "+getCurrentInReferenceFrame()) ;
+	}
+
+	private double getBaseSize() {
+		return baseSize;
 	}
 	
 	public void hide() {
@@ -314,6 +316,29 @@ public class ResizingHandle {
 		this.moveLock = moveLock;
 		manipulator.setUnlocked( resizeAllowed) ;
 		resetColor();
+	}
+
+	/**
+	 * @return the myColor
+	 */
+	public Color getMyColor() {
+		return myColor;
+	}
+
+	/**
+	 * @param myColor the myColor to set
+	 */
+	public void setMyColor(Color myColor) {
+		this.myColor = myColor;
+		resetColor();
+	}
+
+	/**
+	 * @param baseSize the baseSize to set
+	 */
+	public void setBaseSize(double baseSize) {
+		this.baseSize = baseSize;
+		
 	}
 
 }
