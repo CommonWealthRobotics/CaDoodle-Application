@@ -594,7 +594,7 @@
                                           </ScrollPane>
                                        </children>
                                     </AnchorPane>
-                                    <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWOrkplane" styleClass="image-button">
+                                    <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWorkplane" styleClass="image-button">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>

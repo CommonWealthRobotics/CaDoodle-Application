@@ -758,7 +758,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
-	void onWOrkplane(ActionEvent event) {
+	void onWorkplane(ActionEvent event) {
 		session.setMode(SpriteDisplayMode.PLACING);
 		workplane.pickPlane(() -> {
 			ruler.cancel();
@@ -1364,7 +1364,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			} else {
 				switch ((int) character.charAt(0)) {
 				case 119:// w
-					onWOrkplane(null);
+					onWorkplane(null);
 					break;
 				case 45:// -
 					onZoomOut(null);
