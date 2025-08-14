@@ -48,6 +48,7 @@ public class ResizingHandle {
 	private boolean resizeAllowed;
 	private boolean moveLock;
 	private Color myColor =null;
+	private Color highlightColor=new Color(1, 0, 0, 1);
 
 	// private Tooltip hover = new Tooltip();
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
@@ -101,7 +102,7 @@ public class ResizingHandle {
 	}
 
 	private void setSelectedColor() {
-		material.setDiffuseColor(new Color(1, 0, 0, 1));
+		material.setDiffuseColor(highlightColor);
 	}
 
 	private void resetColor() {
@@ -328,8 +329,9 @@ public class ResizingHandle {
 	/**
 	 * @param myColor the myColor to set
 	 */
-	public void setMyColor(Color myColor) {
+	public void setMyColor(Color myColor, Color highlightColor) {
 		this.myColor = myColor;
+		this.highlightColor = highlightColor;
 		resetColor();
 	}
 
