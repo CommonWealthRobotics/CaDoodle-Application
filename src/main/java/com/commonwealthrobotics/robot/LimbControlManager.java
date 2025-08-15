@@ -11,6 +11,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
+import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.DHParameterKinematics;
@@ -44,18 +45,14 @@ public class LimbControlManager {
 	ResizingHandle base = null;
 	ResizingHandle tip = null;
 	ResizingHandle elbow = null;
-	
+	Affine workplaneOffset=new Affine();
 	List<Node> handles;
+	private ActiveProject ap;
 	public LimbControlManager(BowlerStudio3dEngine engine,SelectionSession session,ActiveProject ap) {
 		this.engine = engine;
 		this.session = session;
+		this.ap = ap;
 		sprites = session.getControls();
-		tip=new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), baseSelection, ()->{
-			updateLines();
-		}, ()->{
-			onReset();
-		}, new Cylinder(5,1).toCSG());
-		
 		Runnable r = () ->{
 			// add the operation and reset\
 			update(builder);
@@ -72,6 +69,11 @@ public class LimbControlManager {
 			BowlerStudio.runLater(()->	session.updateControls());
 		};
 		
+		tip=new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset, ()->{
+			updateLines();
+		}, ()->{
+			onReset();
+		}, new Cylinder(5,1).toCSG());
 		tip.setMyColor(Color.PINK,Color.TEAL);
 		tip.setBaseSize(1.25);
 		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
@@ -81,7 +83,7 @@ public class LimbControlManager {
 			RotationNR nr= base2.getRotation();
 			TransformNR tf = new TransformNR(base2.getX(),base2.getY(),base2.getZ()).times( tip.manipulator.getCurrentPose());
 			tf.setRotation(nr);
-			mod.setTip(tf.copy());
+			mod.setTip(tf);
 			System.out.println("Moving "+tf.toSimpleString());
 			try {
 				limb.setDesiredTaskSpaceTransform(tf, 0);
@@ -92,7 +94,8 @@ public class LimbControlManager {
 			builder.getCadManager().render();
 		});
 		tip.manipulator.addSaveListener(r);
-		base=new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), baseSelection, ()->{
+		
+		base=new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset, ()->{
 			updateLines();
 		}, ()->{
 			onReset();
@@ -106,7 +109,8 @@ public class LimbControlManager {
 			RotationNR nr= base2.getRotation();
 			TransformNR tf = new TransformNR(base2.getX(),base2.getY(),base2.getZ()).times( base.manipulator.getCurrentPose());
 			tf.setRotation(nr);
-			mod.setBase(tf.copy());
+			tf =  ap.get().getWorkplane().times(tf);
+			mod.setBase(tf);
 			System.out.println("Moving "+tf.toSimpleString());
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
@@ -152,9 +156,13 @@ public class LimbControlManager {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
 		if(limb==null)
 			return;
-		base.threeDTarget(screenW, screenH, zoom, limb.getRobotToFiducialTransform(), cf, locked);
-		tip.threeDTarget(screenW, screenH, zoom, limb.getCurrentTaskSpaceTransform(), cf, locked);
-
+		TransformNR workplane = ap.get().getWorkplane();
+		base.threeDTarget(screenW, screenH, zoom,workplane.inverse().times( limb.getRobotToFiducialTransform()), cf, locked);
+		tip.threeDTarget(screenW, screenH, zoom, workplane.inverse().times( limb.getCurrentTaskSpaceTransform()), cf, locked);
+		BowlerStudio.runLater(()->{
+			TransformFactory.nrToAffine(workplane, workplaneOffset);
+		});
+		
 	}
 	public void update(MobileBaseBuilder builder) {
 		this.builder = builder;
