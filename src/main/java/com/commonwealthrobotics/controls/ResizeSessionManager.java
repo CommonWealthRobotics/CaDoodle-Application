@@ -38,7 +38,7 @@ public class ResizeSessionManager {
 	private boolean moveLock;
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
-			SelectionSession sel, Affine workplaneOffset, MoveUpArrow up) {
+			SelectionSession s, Affine workplaneOffset, MoveUpArrow up) {
 		this.engine = engine;
 		if (engine == null)
 			throw new NullPointerException();
@@ -202,7 +202,7 @@ public class ResizeSessionManager {
 //							+ lfC.toSimpleString() + "\n" + rrC.toSimpleString());
 //				}
 
-				Resize setResize = new Resize().setNames(sel.selectedSnapshot())
+				Resize setResize = new Resize().setNames(s.selectedSnapshot())
 						// .setDebugger(engine)
 						.setWorkplane(wp).setResize(tcC, lfC, rrC);
 				if (resizeAllowed) {
