@@ -1232,7 +1232,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		selectionBox.setWorkplaneManager(workplane);
 		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab, advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane,
 				controllersVBox,controllerConsumedBox,capabilitiesVBox,
-				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid,engine);
+				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid,engine,ruler);
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
 		});
