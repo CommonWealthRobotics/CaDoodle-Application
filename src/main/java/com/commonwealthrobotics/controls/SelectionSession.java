@@ -38,6 +38,7 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.bowlerstudio.util.IFileChangeListener;
+import com.neuronrobotics.sdk.addons.kinematics.DHParameterKinematics;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.TickToc;
@@ -1423,6 +1424,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return getBounds(Arrays.asList(incoming), frame, cache);
 	}
 
+	public Bounds getBounds(DHParameterKinematics limb) {
+		ArrayList<CSG> parts = new ArrayList<CSG>();
+		for(CSG c:getCurrentState()) {
+			if(c.getLimbName().isPresent()) {
+				if(c.getLimbName().get().contentEquals(limb.getScriptingName())) {
+					parts.add(c);
+				}
+			}
+		}
+		return getSellectedBounds(parts);
+	}
 	public Bounds getBounds(List<CSG> incoming, TransformNR frame, HashMap<CSG, Bounds> cache) {
 		if (cache == null)
 			cache = new HashMap<>();
@@ -1942,5 +1954,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;
 	}
+
 
 }
