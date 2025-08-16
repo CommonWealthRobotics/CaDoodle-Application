@@ -246,9 +246,9 @@ public class LimbControlManager {
 
 	public void update(MobileBaseBuilder builder) {
 		this.builder = builder;
+		hide();
 		if (builder == null) {
 			limb = null;
-			hide();
 			return;
 		}
 		for (CSG c : session.getCurrentStateSelected()) {
