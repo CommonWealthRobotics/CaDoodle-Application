@@ -207,6 +207,7 @@ public class LimbControlManager {
 		mod.setUndo(true);
 		onReset();
 		rotationManager.show(false);
+		System.out.println("\n\nShowing Limb "+limb.getScriptingName());
 	}
 
 	public void hide() {
@@ -251,9 +252,7 @@ public class LimbControlManager {
 
 	public void update(MobileBaseBuilder builder) {
 		this.builder = builder;
-		if (builder == null) {
-			limb = null;
-		} else
+		if (builder != null) 
 			for (CSG c : session.getCurrentStateSelected()) {
 				if (c.getLimbName().isPresent()) {
 					String name = c.getLimbName().get();
@@ -263,6 +262,7 @@ public class LimbControlManager {
 				}
 
 			}
+		limb = null;
 		hide();
 	}
 
