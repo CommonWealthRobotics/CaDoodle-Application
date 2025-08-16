@@ -108,5 +108,9 @@ public class RotationSessionManager {
 			r.setLock(moveLock);
 		}
 	}
-
+	public void setMoving(IOnRotateMoving moving) {
+		for (RotationHandle r : handles) {
+			r.setMoving(moving);
+		}
+	}
 }

@@ -63,6 +63,7 @@ public class RotationHandle {
 	private ActiveProject ap;
 	private boolean moveLock=false;
 	private IOnRotateDone done;
+	private IOnRotateMoving moving = null;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
 			RotationSessionManager rotationSessionManager, ActiveProject ap, 
@@ -193,12 +194,16 @@ public class RotationHandle {
 		// divide the angle in 2 and aply it twice avaoids Euler singularities
 		TransformNR update = new TransformNR(new RotationNR(axis, -c / 2));
 		TransformNR pureRot = update.times(update);
+		if(moving!=null) {
+			moving.toUpdate(pureRot);
+		}
 		TransformNR wp = ap.get().getWorkplane();
 		TransformNR center = wp.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
 		rotAtCenter = center.times(pureRot.times(center.inverse()));
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(rotAtCenter, viewRotation);
 		});
+		
 	}
 
 	private double getAngle(MouseEvent event) {
@@ -326,5 +331,13 @@ public class RotationHandle {
 
 	public void setLock(boolean moveLock) {
 		this.moveLock = moveLock;
+	}
+
+	public IOnRotateMoving getMoving() {
+		return moving;
+	}
+
+	public void setMoving(IOnRotateMoving moving) {
+		this.moving = moving;
 	}
 }
