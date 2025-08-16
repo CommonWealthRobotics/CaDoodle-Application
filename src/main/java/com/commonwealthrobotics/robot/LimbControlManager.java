@@ -198,6 +198,8 @@ public class LimbControlManager {
 	public void show(DHParameterKinematics limb) {
 		this.limb = limb;
 		b = session.getBounds(limb);
+		if(b==null)
+			throw new RuntimeException("Limb has no parts");
 		selectedCSG = session.selectedSnapshot();
 		mod = new ModifyLimb().setLimb(limb).setNames(session.selectedSnapshot());
 		base.show();
@@ -208,9 +210,11 @@ public class LimbControlManager {
 	}
 
 	public void hide() {
-		base.hide();
-		tip.hide();
-		rotationManager.hide();
+		BowlerStudio.runLater(() -> {
+			base.hide();
+			tip.hide();
+			rotationManager.hide();
+		});
 	}
 
 	private void updateControls() {
@@ -222,7 +226,7 @@ public class LimbControlManager {
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
-		if (limb == null)
+		if (limb == null) 
 			return;
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
@@ -237,6 +241,7 @@ public class LimbControlManager {
 		if (tip.manipulator.getState() == DragState.IDLE)
 			tip.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
 					locked);
+		
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(workplane, workplaneOffset);
@@ -246,20 +251,19 @@ public class LimbControlManager {
 
 	public void update(MobileBaseBuilder builder) {
 		this.builder = builder;
-		hide();
 		if (builder == null) {
 			limb = null;
-			return;
-		}
-		for (CSG c : session.getCurrentStateSelected()) {
-			if (c.getLimbName().isPresent()) {
-				String name = c.getLimbName().get();
-				DHParameterKinematics kin = builder.getMobileBase().getLimbByName(name);
-				show(kin);
-				return;
-			}
+		} else
+			for (CSG c : session.getCurrentStateSelected()) {
+				if (c.getLimbName().isPresent()) {
+					String name = c.getLimbName().get();
+					DHParameterKinematics kin = builder.getMobileBase().getLimbByName(name);
+					show(kin);
+					return;
+				}
 
-		}
+			}
+		hide();
 	}
 
 }
