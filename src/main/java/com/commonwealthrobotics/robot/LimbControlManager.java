@@ -12,6 +12,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
+import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation.DragState;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -57,10 +58,13 @@ public class LimbControlManager {
 	private ActiveProject ap;
 	private Bounds b;
 	private List<String> selectedCSG;
+	private VirtualCameraMobileBase camera;
 
 	public LimbControlManager(BowlerStudio3dEngine engine, SelectionSession session, ActiveProject ap,
 			RulerManager ruler) {
 		this.engine = engine;
+		camera = engine.getFlyingCamera();
+
 		this.session = session;
 		this.ap = ap;
 		sprites = session.getControls();
@@ -106,6 +110,7 @@ public class LimbControlManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			updateControls();
 			builder.getCadManager().render();
 		});
 		tip.manipulator.addSaveListener(r);
@@ -126,7 +131,8 @@ public class LimbControlManager {
 			TransformNR baseAtStaartTF = mod.getBase().copy();
 			// System.out.println("from "+base2.toSimpleString());
 			RotationNR nr = baseAtStaartTF.getRotation();
-			TransformNR translateOnly = new TransformNR(baseAtStaartTF.getX(), baseAtStaartTF.getY(), baseAtStaartTF.getZ());
+			TransformNR translateOnly = new TransformNR(baseAtStaartTF.getX(), baseAtStaartTF.getY(),
+					baseAtStaartTF.getZ());
 			TransformNR tf = translateOnly.times(base.manipulator.getCurrentPoseInReferenceFrame());
 			tf.setRotation(nr);
 			mod.setBase(tf);
@@ -134,6 +140,7 @@ public class LimbControlManager {
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
 			builder.getCadManager().render();
+			updateControls();
 		});
 		base.manipulator.addSaveListener(r);
 
@@ -142,6 +149,7 @@ public class LimbControlManager {
 		});
 		rotationManager.setMoving(toUpdate -> {
 			try {
+
 				BowlerStudio.runLater(() -> {
 					session.setMode(SpriteDisplayMode.Clear);
 				});
@@ -156,6 +164,7 @@ public class LimbControlManager {
 				limb.setRobotToFiducialTransform(baseAtStartTF);
 				mod.setTip(limb.getCurrentTaskSpaceTransform());
 				builder.getCadManager().render();
+				updateControls();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -204,20 +213,30 @@ public class LimbControlManager {
 		rotationManager.hide();
 	}
 
+	private void updateControls() {
+		double zoom = camera.getZoomDepth();
+		double screenW = engine.getSubScene().getWidth();
+		double screenH = engine.getSubScene().getHeight();
+		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
+		threeDTarget(screenW, screenH, zoom, cf, false);
+	}
+
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
 		if (limb == null)
 			return;
-		VirtualCameraMobileBase camera = engine.getFlyingCamera();
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
 		double x = camera.getGlobalX();
 		double y = camera.getGlobalY();
 		double z = camera.getGlobalZ();
 		TransformNR workplane = ap.get().getWorkplane();
-		base.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getRobotToFiducialTransform()), cf,
-				locked);
-		tip.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
-				locked);
+		if (base.manipulator.getState() == DragState.IDLE)
+			base.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getRobotToFiducialTransform()), cf,
+					locked);
+
+		if (tip.manipulator.getState() == DragState.IDLE)
+			tip.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
+					locked);
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(workplane, workplaneOffset);
