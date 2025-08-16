@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.ControlSprites;
@@ -83,7 +84,7 @@ public class RobotLab {
 			TabPane robotLabTabPane, Tab bodyTab, Tab headTab, Tab advancedTab, GridPane robotBasePanel,
 			GridPane controllerGrid, GridPane controllerFeaturesGrid, WorkplaneManager workplane, VBox controllersVBox,
 			VBox controllerConsumedBox, VBox capabilitiesVBox, VBox optionProvide, VBox optionsConsume,
-			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid,BowlerStudio3dEngine engine) {
+			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid,BowlerStudio3dEngine engine,RulerManager ruler) {
 		this.session = session;
 		this.ap = ap;
 		this.baseRobotBox = baseRobotBox;
@@ -109,7 +110,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
-		setManager(new LimbControlManager(engine,session,ap));
+		setManager(new LimbControlManager(engine,session,ap,ruler));
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
