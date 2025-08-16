@@ -590,11 +590,12 @@ public class ControlSprites {
 	}
 
 	public void setMode(SpriteDisplayMode mode) {
+		
 		if (mode == this.mode)
 			return;
 		this.mode = mode;
 		com.neuronrobotics.sdk.common.Log.error("Mode Set to " + mode);
-		// new Exception().printStackTrace();
+		// new Exception("Mode Set to "+mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default);
@@ -657,10 +658,22 @@ public class ControlSprites {
 				}
 				break;
 			case Clear:
-				// activate none
+				for (ThreedNumber t : numbers) {
+					t.hide();
+				}
+				allign.hide();
+				mirror.hide();
+				for (DottedLine l : lines) {
+					l.setVisible(false);
+				}
+				up.hide();
+				footprint.setVisible(false);
+				zOffset.hide();
+				scaleSession.hide();
 				break;
 			}
-			updateLines();
+			if(mode!=SpriteDisplayMode.Clear)
+				updateLines();
 		});
 	}
 
