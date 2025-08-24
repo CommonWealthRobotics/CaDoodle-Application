@@ -43,14 +43,16 @@ public class LimbControlManager {
 	private SelectionSession session;
 	private ControlSprites sprites;
 	private MobileBaseBuilder builder;
-	private Affine baseSelection = new Affine();
 	private ModifyLimb mod;
 //	private Manipulation tipManip = new Manipulation(baseSelection, new Vector3d(1, 1, 0), new TransformNR());
 //	private EventHandler<MouseEvent> tipMouseMover = tipManip.getMouseEvents();
 //	private Manipulation baseManip = new Manipulation(baseSelection, new Vector3d(1, 1, 0), new TransformNR());
 //	private EventHandler<MouseEvent> baseMouseMover = baseManip.getMouseEvents();
-	ResizingHandle base = null;
-	ResizingHandle tip = null;
+	//ResizingHandle base = null;
+	//ResizingHandle tip = null;
+	
+	ArmPointManipulator baseManipulator;
+	ArmPointManipulator tipManipulator;
 	ResizingHandle elbow = null;
 	RotationSessionManager rotationManager;
 	Affine workplaneOffset = new Affine();
@@ -84,15 +86,13 @@ public class LimbControlManager {
 			BowlerStudio.runLater(() -> session.updateControls());
 		};
 
-		tip = new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset, () -> {
-			updateLines();
-		}, () -> {
+		Runnable onReset = () -> {
 			onReset();
-		}, new Cylinder(5, 1).toCSG());
-		tip.setMyColor(Color.PINK, Color.TEAL);
-		tip.setBaseSize(1.25);
-		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
-		tip.manipulator.addEventListener(ev -> {
+		};
+		Runnable onSelect = () -> {
+			updateControls();
+		};
+		tipManipulator = new ArmPointManipulator(r,ev -> {
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
@@ -100,7 +100,7 @@ public class LimbControlManager {
 			// System.out.println("from "+base2.toSimpleString());
 			RotationNR nr = base2.getRotation();
 			TransformNR tf = new TransformNR(base2.getX(), base2.getY(), base2.getZ())
-					.times(tip.manipulator.getCurrentPoseInReferenceFrame());
+					.times(tipManipulator.getCurrentPoseInReferenceFrame());
 			tf.setRotation(nr);
 			mod.setTip(tf);
 			// System.out.println("Moving "+tf.toSimpleString());
@@ -111,20 +111,9 @@ public class LimbControlManager {
 				e.printStackTrace();
 			}
 			updateControls();
-			builder.getCadManager().render();
-		});
-		tip.manipulator.addSaveListener(r);
-
-		base = new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset, () -> {
-			updateLines();
-		}, () -> {
-			onReset();
-		}, new Cylinder(5, 1).toCSG());
-		base.setMyColor(Color.PINK, Color.TEAL);
-		base.setBaseSize(1.25);
-		base.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
-		base.manipulator.addEventListener(ev -> {
-			// new Exception().printStackTrace();
+		},ap,engine,workplaneOffset,onSelect, onReset);
+		
+		baseManipulator = new ArmPointManipulator(r,ev -> {
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
@@ -133,18 +122,18 @@ public class LimbControlManager {
 			RotationNR nr = baseAtStaartTF.getRotation();
 			TransformNR translateOnly = new TransformNR(baseAtStaartTF.getX(), baseAtStaartTF.getY(),
 					baseAtStaartTF.getZ());
-			TransformNR tf = translateOnly.times(base.manipulator.getCurrentPoseInReferenceFrame());
+			TransformNR tf = translateOnly.times(baseManipulator.getCurrentPoseInReferenceFrame());
 			tf.setRotation(nr);
 			mod.setBase(tf);
 			// System.out.println("Moving "+tf.toSimpleString());
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
-			builder.getCadManager().render();
 			updateControls();
-		});
-		base.manipulator.addSaveListener(r);
+		},ap,engine,workplaneOffset,onSelect,onReset);
+		
 
-		rotationManager = new RotationSessionManager(baseSelection, ap, session, workplaneOffset, ruler, (tf) -> {
+
+		rotationManager = new RotationSessionManager(new Affine(), ap, session, workplaneOffset, ruler, (tf) -> {
 			r.run();
 		});
 		rotationManager.setMoving(toUpdate -> {
@@ -163,14 +152,15 @@ public class LimbControlManager {
 				// System.out.println("Moving "+tf.toSimpleString());
 				limb.setRobotToFiducialTransform(baseAtStartTF);
 				mod.setTip(limb.getCurrentTaskSpaceTransform());
-				builder.getCadManager().render();
 				updateControls();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
 
-		handles = new ArrayList<>(Arrays.asList(base.getMesh(), tip.getMesh()));
+		handles = new ArrayList<>();
+		handles.addAll(tipManipulator.getMesh());
+		handles.addAll(baseManipulator.getMesh());	
 		handles.addAll(rotationManager.getElements());
 		hide();
 		for (Node n : handles) {
@@ -184,15 +174,9 @@ public class LimbControlManager {
 
 	private void onReset() {
 		System.out.println("Reset Limb Controller");
-		base.resetSelected();
-		base.manipulator.reset();
-		tip.resetSelected();
-		tip.manipulator.reset();
-	}
 
-	private void updateLines() {
-		// TODO Auto-generated method stub
-
+		baseManipulator.onReset();
+		tipManipulator.onReset();
 	}
 
 	public void show(DHParameterKinematics limb) {
@@ -202,8 +186,9 @@ public class LimbControlManager {
 			throw new RuntimeException("Limb has no parts");
 		selectedCSG = session.selectedSnapshot();
 		mod = new ModifyLimb().setLimb(limb).setNames(session.selectedSnapshot());
-		base.show();
-		tip.show();
+		baseManipulator.show();
+		tipManipulator.show();
+
 		mod.setUndo(true);
 		onReset();
 		rotationManager.show(false);
@@ -212,8 +197,8 @@ public class LimbControlManager {
 
 	public void hide() {
 		BowlerStudio.runLater(() -> {
-			base.hide();
-			tip.hide();
+			baseManipulator.hide();
+			tipManipulator.hide();
 			rotationManager.hide();
 		});
 	}
@@ -224,6 +209,7 @@ public class LimbControlManager {
 		double screenH = engine.getSubScene().getHeight();
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		threeDTarget(screenW, screenH, zoom, cf, false);
+		builder.getCadManager().render();
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
@@ -235,12 +221,12 @@ public class LimbControlManager {
 		double y = camera.getGlobalY();
 		double z = camera.getGlobalZ();
 		TransformNR workplane = ap.get().getWorkplane();
-		if (base.manipulator.getState() == DragState.IDLE)
-			base.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getRobotToFiducialTransform()), cf,
+		if (baseManipulator.getState() == DragState.IDLE)
+			baseManipulator.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getRobotToFiducialTransform()), cf,
 					locked);
 
-		if (tip.manipulator.getState() == DragState.IDLE)
-			tip.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
+		if (tipManipulator.getState() == DragState.IDLE)
+			tipManipulator.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
 					locked);
 		
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);

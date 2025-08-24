@@ -961,17 +961,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			try {
 				if (finalIndex > 1) {
-					if (percent > 99.99) {
-						if (!isInitializing())
-							SplashManager.closeSplash();
-					} else {
+//					if (percent > 99.99) {
+//						if (!isInitializing())
+//							SplashManager.closeSplash();
+//					} else {
 						int s = x.indexOf(' ');
 						SplashManager.onLogUpdate(x.substring(s, x.length()));
-					}
-				} else {
-					if (!isInitializing())
-						SplashManager.closeSplash();
-				}
+					//}
+				} 
+//				else {
+//					if (!isInitializing())
+//						SplashManager.closeSplash();
+//				}
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
