@@ -125,10 +125,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private Tab headTab;
 
-
 	@FXML
 	private TabPane robotLabTabPane;
-
 
 	@FXML // fx:id="Button"
 	private Button timelineButton;
@@ -345,7 +343,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private GridPane legsOptionGrid;
 	@FXML
 	private GridPane armsOptionGrid;
-	
+
 	@FXML
 	void onMakeRobot(ActionEvent e) {
 		System.out.println("Make robot");
@@ -464,7 +462,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setRobotLabOpenState(boolean tm) {
-		//tm=false;
+		// tm=false;
 		if (tm == session.isRobotLabOpen())
 			return;
 		if (tm) {
@@ -526,8 +524,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onFitView(ActionEvent event) {
 		TransformNR scale = session.getFocusCenter();
-		engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ())
-				, 
+		engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
 				engine.getFlyingCamera().getZoomDepth());
 		session.setKeyBindingFocus();
 	}
@@ -886,7 +883,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.rebuild(true);
 		ap.addListener(this);
 		session = new SelectionSession(engine, ap, ruler);
-		
+
 		selectionBox = new SelectionBox(session, view3d, engine, ap);
 		try {
 			ap.loadActive();
@@ -957,25 +954,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				name = intermediateShape.getName();
 			String x = name + " " + type.trim() + " " + String.format("%.1f", percent) + "% finished : " + i + " of "
 					+ finalIndex;
-			System.out.println("MainController.setupCSGEngine():: " + x);
-
-			try {
-				if (finalIndex > 1) {
-//					if (percent > 99.99) {
-//						if (!isInitializing())
-//							SplashManager.closeSplash();
-//					} else {
-						int s = x.indexOf(' ');
-						SplashManager.onLogUpdate(x.substring(s, x.length()));
-					//}
-				} 
-//				else {
-//					if (!isInitializing())
-//						SplashManager.closeSplash();
-//				}
-
-			} catch (Exception ex) {
-				ex.printStackTrace();
+			if (SplashManager.isVisableSplash()) {
+				System.out.println("MainController.setupCSGEngine():: " + x);
+				int s = x.indexOf(' ');
+				SplashManager.onLogUpdate(x.substring(s, x.length()));
 			}
 		});
 	}
@@ -996,10 +978,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				ap.get().initialize();
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
-				while (SplashManager.isVisableSplash()) {
+				do {
+					Thread.sleep(100);
 					SplashManager.closeSplash();
-					Thread.sleep(500);
-				}
+				} while (SplashManager.isVisableSplash());
 				session.setKeyBindingFocus();
 				BowlerStudio.runLater(() -> cancel());
 			} catch (Exception e) {
@@ -1231,9 +1213,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, ap, workplane);
 		workplane.placeWorkplaneVisualization();
 		selectionBox.setWorkplaneManager(workplane);
-		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab, advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane,
-				controllersVBox,controllerConsumedBox,capabilitiesVBox,
-				optionProvide,optionsConsume,wheelOptionGrid,legsOptionGrid,armsOptionGrid,engine,ruler);
+		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab,
+				advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane, controllersVBox,
+				controllerConsumedBox, capabilitiesVBox, optionProvide, optionsConsume, wheelOptionGrid, legsOptionGrid,
+				armsOptionGrid, engine, ruler);
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
 		});
