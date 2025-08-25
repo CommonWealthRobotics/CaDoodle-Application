@@ -62,6 +62,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.TickToc;
+import com.neuronrobotics.video.OSUtil;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.Node;
@@ -422,9 +423,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
-		File file = new File(relative + delim() + "MyCaDoodleProjects" + delim());
-		file.mkdirs();
-		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", file.getAbsolutePath()));
+		if(!OSUtil.isOSX()) {
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
+		}
+		File defaultFIle = new File(relative + delim() + "MyCaDoodleProjects" + delim());
+		defaultFIle.mkdirs();
+		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", defaultFIle.getAbsolutePath()));
 	}
 
 	public List<CaDoodleFile> getProjects() throws IOException {
