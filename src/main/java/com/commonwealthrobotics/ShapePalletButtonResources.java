@@ -49,6 +49,7 @@ public class ShapePalletButtonResources {
 			dir.mkdirs();
 		imageFile = new File(absolutePath + delim() + typeOfShapes + name + ".png");
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
+		// https://github.com/CommonWealthRobotics/CaDoodle-Application/issues/69
 		if(!OSUtil.isWindows())
 			if (imageFile.exists() && stlFile.exists()) {
 				try {
