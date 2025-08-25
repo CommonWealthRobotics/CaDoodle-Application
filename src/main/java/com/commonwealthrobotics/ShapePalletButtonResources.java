@@ -50,16 +50,16 @@ public class ShapePalletButtonResources {
 		imageFile = new File(absolutePath + delim() + typeOfShapes + name + ".png");
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
 		// https://github.com/CommonWealthRobotics/CaDoodle-Application/issues/69
-		if(!OSUtil.isWindows())
+		//if(!OSUtil.isWindows())
 			if (imageFile.exists() && stlFile.exists()) {
 				try {
 					indicator = Vitamins.get(stlFile);
 					indicator.setColor(Color.WHITE);
 					image = new Image(imageFile.toURI().toString());
+					return;
 				}catch(Throwable t) {
 					t.printStackTrace();
 				}
-				return;
 			}
 		if(isPluginMissing) {
 			indicator=new Cube(20).toCSG().toZMin();
