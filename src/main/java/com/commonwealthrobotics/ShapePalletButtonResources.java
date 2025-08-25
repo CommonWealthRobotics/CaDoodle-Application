@@ -18,6 +18,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
+import com.neuronrobotics.video.OSUtil;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
@@ -48,16 +49,17 @@ public class ShapePalletButtonResources {
 			dir.mkdirs();
 		imageFile = new File(absolutePath + delim() + typeOfShapes + name + ".png");
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
-		if (imageFile.exists() && stlFile.exists()) {
-			try {
-				indicator = Vitamins.get(stlFile);
-				indicator.setColor(Color.WHITE);
-				image = new Image(imageFile.toURI().toString());
-			}catch(Throwable t) {
-				t.printStackTrace();
+		if(!OSUtil.isWindows())
+			if (imageFile.exists() && stlFile.exists()) {
+				try {
+					indicator = Vitamins.get(stlFile);
+					indicator.setColor(Color.WHITE);
+					image = new Image(imageFile.toURI().toString());
+				}catch(Throwable t) {
+					t.printStackTrace();
+				}
+				return;
 			}
-			return;
-		}
 		if(isPluginMissing) {
 			indicator=new Cube(20).toCSG().toZMin();
 			indicator.setColor(Color.WHITE);
