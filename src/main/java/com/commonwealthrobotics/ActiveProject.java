@@ -423,7 +423,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
-		if(!OSUtil.isOSX()) {
+		if(OSUtil.isWindows()) {
 			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
 		}
 		File defaultFIle = new File(relative + delim() + "MyCaDoodleProjects" + delim());

@@ -49,9 +49,13 @@ public class ShapePalletButtonResources {
 		imageFile = new File(absolutePath + delim() + typeOfShapes + name + ".png");
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
 		if (imageFile.exists() && stlFile.exists()) {
-			indicator = Vitamins.get(stlFile);
-			indicator.setColor(Color.WHITE);
-			image = new Image(imageFile.toURI().toString());
+			try {
+				indicator = Vitamins.get(stlFile);
+				indicator.setColor(Color.WHITE);
+				image = new Image(imageFile.toURI().toString());
+			}catch(Throwable t) {
+				t.printStackTrace();
+			}
 			return;
 		}
 		if(isPluginMissing) {
