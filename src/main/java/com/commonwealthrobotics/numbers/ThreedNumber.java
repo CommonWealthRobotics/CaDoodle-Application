@@ -11,6 +11,7 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
@@ -20,6 +21,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 import javafx.util.StringConverter;
 import java.text.DecimalFormat;
@@ -30,15 +35,14 @@ public class ThreedNumber {
 	private double screenH;
 	private double zoom;
 	private TransformNR cf;
-	//private SelectionSession session;
+	// private SelectionSession session;
 	private Affine move;
 	private Affine workplaneOffset;
 	private TextField textField = new TextField("20.00");
 	private TransformNR positionPin;
-	private EventHandler<ActionEvent> value;
 	private double mostRecentValue = 20;
 	private final DecimalFormat format = new DecimalFormat("#0.000");
-	
+
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
@@ -48,10 +52,60 @@ public class ThreedNumber {
 	private Affine reorent;
 	private TextFieldDimention dim;
 	private RulerManager ruler;
-	
-	public ThreedNumber( Affine move, Affine workplaneOffset, Runnable onSelect,
-			TextFieldDimention dim, RulerManager ruler) {
-		//this.session = session;
+	private boolean lockout = false;
+	private static HashMap<ThreedNumber, Long> lastPressed = new HashMap<>();
+	private static Thread timeout = null;
+	private static final long timeoutTime = 5000;
+
+	private static void startThread() {
+		if (timeout == null) {
+			timeout = new Thread(() -> {
+				while (true) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						return;
+					}
+					boolean focused = false;
+
+					Set<ThreedNumber> keySet = lastPressed.keySet();
+					for (ThreedNumber threedNumber : keySet) {
+						if (threedNumber.isFocused()) {
+							//focused = true;
+						}
+					}
+					ArrayList<ThreedNumber>torem=new ArrayList<>();
+					ArrayList<ThreedNumber>tocheck=new ArrayList<>(keySet);
+					for (ThreedNumber key : tocheck) {
+						if (focused) {
+							lastPressed.put(key, System.currentTimeMillis()+timeoutTime);
+						} else {
+							long val = lastPressed.get(key);
+							if ((System.currentTimeMillis() - val) > timeoutTime) {
+								key.runEnter();
+								torem.add(key);
+								System.out.println(key + " cleared on " + val);
+							}
+						}
+					}
+					for(ThreedNumber key:torem)
+						lastPressed.remove(key);
+
+				}
+
+			});
+			timeout.start();
+		}
+	}
+
+	public void clearTimeout() {
+		lastPressed.remove(this);
+	}
+
+	public ThreedNumber(Affine move, Affine workplaneOffset, Runnable onSelect, TextFieldDimention dim,
+			RulerManager ruler) {
+		startThread();
+		// this.session = session;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
 		this.onSelect = onSelect;
@@ -61,11 +115,19 @@ public class ThreedNumber {
 		textField.setPrefWidth(50);
 
 		textField.prefWidthProperty().bind(textField.textProperty().length().multiply(8).add(20));
-		value = event -> {
-			validate();
-			onSelect.run();
-		};
-		textField.setOnAction(value);
+		textField.setOnKeyPressed(event -> {
+			if (lockout)
+				return;
+			if (event.getCode() == KeyCode.ENTER) {
+				runEnter();
+				event.consume(); // prevent parent from stealing the event
+				return;
+			}
+			long timeMillis = System.currentTimeMillis();
+			System.out.println(this + " set on " + timeMillis);
+
+			lastPressed.put(this, timeMillis);
+		});
 		reorent = new Affine();
 		textField.getTransforms().add(move);
 		textField.getTransforms().add(resizeHandleLocation);
@@ -77,33 +139,37 @@ public class ThreedNumber {
 
 	}
 
+	public boolean isFocused() {
+		return textField.isFocused();
+	}
 
+	private void runEnter() {
+		validate();
+		BowlerStudio.runLater(onSelect::run);
+		clearTimeout();
+	}
 
 	private void validate() {
 		// Number set from event
 		String t = textField.getText();
-		//com.neuronrobotics.sdk.common.Log.error(" Validating string "+t);
+		// com.neuronrobotics.sdk.common.Log.error(" Validating string "+t);
 		if (t.length() == 0) {
 			// empty string, do nothing
 			return;
 		}
 		try {
-			setMostRecentValue(Double.parseDouble(t)+ruler.getOffset(dim));
+			setMostRecentValue(Double.parseDouble(t) + ruler.getOffset(dim));
 		} catch (NumberFormatException ex) {
 			setValue(getMostRecentValue());
 		}
 	}
 
 	public void setValue(double v) {
-		textField.setOnAction(null);
-		textField.setText(format.format(v-ruler.getOffset(dim)));
+		lockout = true;
+		textField.setText(format.format(v - ruler.getOffset(dim)));
 		setMostRecentValue(v);
-		textField.setOnAction(value);
-		//validate();
-	}
-
-	public boolean isFocused() {
-		return textField.isFocused();
+		lockout = false;
+		// validate();
 	}
 
 	public Node get() {
@@ -124,9 +190,9 @@ public class ThreedNumber {
 		this.zoom = zo;
 		this.positionPin = positionPin;
 		this.cf = c;
-		if(c==null)
+		if (c == null)
 			return;
-		
+
 		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
 		// Calculate the vector from camera to target
 		double x = positionPin.getX() - cf.getX();
@@ -146,15 +212,16 @@ public class ThreedNumber {
 		// Clamp the scale factor to a reasonable range
 		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
 
-		setScale(scaleFactor*1.25);
+		setScale(scaleFactor * 1.25);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
 		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
-		TransformNR pr=wp.inverse().times(pureRot);
+		TransformNR pr = wp.inverse().times(pureRot);
 
-		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+"
+		// scale "+scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(new TransformNR(10,5,0,new RotationNR(0,180,0)),reorent);	
+			TransformFactory.nrToAffine(new TransformNR(10, 5, 0, new RotationNR(0, 180, 0)), reorent);
 
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
@@ -163,6 +230,7 @@ public class ThreedNumber {
 			TransformFactory.nrToAffine(positionPin.setRotation(new RotationNR()), location);
 		});
 	}
+
 	public double getScale() {
 		return scale;
 	}
@@ -170,14 +238,16 @@ public class ThreedNumber {
 	public void setScale(double scale) {
 		this.scale = scale;
 	}
+
 	public double getMostRecentValue() {
 		validate();
 		return mostRecentValue;
 	}
 
 	public void setMostRecentValue(double mostRecentValue) {
-		//new Exception().printStackTrace();
-		//com.neuronrobotics.sdk.common.Log.error("internal number set to "+mostRecentValue);
+		// new Exception().printStackTrace();
+		// com.neuronrobotics.sdk.common.Log.error("internal number set to
+		// "+mostRecentValue);
 
 		this.mostRecentValue = mostRecentValue;
 	}
