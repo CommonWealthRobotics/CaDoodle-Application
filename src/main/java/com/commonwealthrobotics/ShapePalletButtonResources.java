@@ -30,12 +30,91 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class ShapePalletButtonResources {
 	javafx.scene.image.Image image = null;
 	CSG indicator = null;
 	File imageFile = null;
 	File stlFile = null;
 
+	
+	    
+	    public static Path getAppDataDirectory(String appName) {
+	        String os = System.getProperty("os.name").toLowerCase();
+	        
+	        if (os.contains("win")) {
+	            return getWindowsAppData(appName);
+	        } else if (os.contains("mac")) {
+	            return getMacAppData(appName);
+	        } else {
+	            return getLinuxAppData(appName);
+	        }
+	    }
+	    
+	    public static Path getWindowsAppData(String appName) {
+	        // Try LOCALAPPDATA first (safe, never synced to OneDrive)
+	        String localAppData = System.getenv("LOCALAPPDATA");
+	        if (localAppData != null && !localAppData.isEmpty()) {
+	            return Paths.get(localAppData, appName);
+	        }
+
+	        // Next try APPDATA
+	        String appData = System.getenv("APPDATA");
+	        if (appData != null && !appData.isEmpty()) {
+	            return ensureNoOneDrive(Paths.get(appData), appName);
+	        }
+
+	        // Fallback to user.home
+	        String userHome = System.getProperty("user.home");
+	        Path homePath = Paths.get(userHome);
+	        homePath = stripOneDrive(homePath); // sanitize
+	        return homePath.resolve("AppData").resolve("Local").resolve(appName);
+	    }
+
+	    private static Path ensureNoOneDrive(Path path, String appName) {
+	        Path sanitized = stripOneDrive(path);
+	        return sanitized.resolve(appName);
+	    }
+
+	    private static Path stripOneDrive(Path path) {
+	        // Look for "OneDrive" component in the path and cut everything after it
+	        for (int i = 0; i < path.getNameCount(); i++) {
+	            if (path.getName(i).toString().equalsIgnoreCase("OneDrive")) {
+	                // Return path up to but not including "OneDrive"
+	                return path.getRoot().resolve(path.subpath(0, i));
+	            }
+	        }
+	        return path;
+	    }
+	    
+	    private static Path getMacAppData(String appName) {
+	        String userHome = System.getProperty("user.home");
+	        return Paths.get(userHome, "Library", "Application Support", appName);
+	    }
+	    
+	    private static Path getLinuxAppData(String appName) {
+	        // Follow XDG Base Directory Specification
+	        String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
+	        if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
+	            return Paths.get(xdgConfigHome, appName);
+	        }
+	        
+	        String userHome = System.getProperty("user.home");
+	        return Paths.get(userHome, ".config", appName);
+	    }
+	    
+	    public static void ensureDirectoryExists(Path directory) {
+	        try {
+	            Files.createDirectories(directory);
+	        } catch (IOException e) {
+	            throw new RuntimeException("Failed to create app data directory: " + directory, e);
+	        }
+	    }
+	
 	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name,ActiveProject ap) {
 		String string = key.get("plugin");
 
@@ -43,7 +122,7 @@ public class ShapePalletButtonResources {
 		if(string!=null) {
 			isPluginMissing=!DownloadManager.isDownloadedAlready(string);
 		}
-		String absolutePath = ScriptingEngine.getWorkspace().getAbsolutePath() + delim() + "uicache";
+		String absolutePath =  getAppDataDirectory("CaDoodleUICache").toString();;
 		File dir = new File(absolutePath);
 		if (!dir.exists())
 			dir.mkdirs();

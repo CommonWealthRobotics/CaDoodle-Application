@@ -66,31 +66,22 @@ public class ThreedNumber {
 					} catch (InterruptedException e) {
 						return;
 					}
-					boolean focused = false;
+					if (lastPressed.size() > 0) {
 
-					Set<ThreedNumber> keySet = lastPressed.keySet();
-					for (ThreedNumber threedNumber : keySet) {
-						if (threedNumber.isFocused()) {
-							//focused = true;
-						}
-					}
-					ArrayList<ThreedNumber>torem=new ArrayList<>();
-					ArrayList<ThreedNumber>tocheck=new ArrayList<>(keySet);
-					for (ThreedNumber key : tocheck) {
-						if (focused) {
-							lastPressed.put(key, System.currentTimeMillis()+timeoutTime);
-						} else {
+						ArrayList<ThreedNumber> torem = new ArrayList<>();
+						ArrayList<ThreedNumber> tocheck = new ArrayList<>(lastPressed.keySet());
+						for (ThreedNumber key : tocheck) {
 							long val = lastPressed.get(key);
 							if ((System.currentTimeMillis() - val) > timeoutTime) {
 								key.runEnter();
 								torem.add(key);
-								System.out.println(key + " cleared on " + val);
+								// System.out.println(key + " cleared on " + val);
 							}
-						}
-					}
-					for(ThreedNumber key:torem)
-						lastPressed.remove(key);
 
+						}
+						for (ThreedNumber key : torem)
+							lastPressed.remove(key);
+					}
 				}
 
 			});
@@ -124,7 +115,7 @@ public class ThreedNumber {
 				return;
 			}
 			long timeMillis = System.currentTimeMillis();
-			System.out.println(this + " set on " + timeMillis);
+			// System.out.println(this + " set on " + timeMillis);
 
 			lastPressed.put(this, timeMillis);
 		});
