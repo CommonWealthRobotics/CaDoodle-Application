@@ -433,6 +433,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public List<CaDoodleFile> getProjects() throws IOException {
 		String directoryPath = getWorkingDir().getAbsolutePath();
+		System.err.println("Loading workspace from "+directoryPath);
 		File dir = new File(directoryPath);
 		List<CaDoodleFile> list = new ArrayList<>();
 
