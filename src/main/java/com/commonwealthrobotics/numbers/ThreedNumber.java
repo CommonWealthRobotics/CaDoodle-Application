@@ -110,7 +110,9 @@ public class ThreedNumber {
 			if (lockout)
 				return;
 			if (event.getCode() == KeyCode.ENTER) {
-				runEnter();
+				new Thread(()->{
+					runEnter();
+				}).start();
 				event.consume(); // prevent parent from stealing the event
 				return;
 			}
@@ -135,8 +137,9 @@ public class ThreedNumber {
 	}
 
 	private void runEnter() {
+		BowlerStudio.runLater(this::hide);
 		validate();
-		BowlerStudio.runLater(onSelect::run);
+		onSelect.run();
 		clearTimeout();
 	}
 

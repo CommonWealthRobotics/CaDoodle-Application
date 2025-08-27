@@ -31,6 +31,7 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.application.Platform;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -200,8 +201,7 @@ public class ControlSprites {
 		});
 
 		up = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(), () -> {
-			updateCubes();
-			updateLines();
+			updateLinesAndCubes();
 		}, () -> scaleSession.resetSelected());
 		lines = Arrays.asList(frontLine, backLine, leftLine, rightLine, heightLine);
 		for (DottedLine l : lines) {
@@ -229,8 +229,7 @@ public class ControlSprites {
 		Runnable dimChange = () -> {
 			System.err.println("Typed position update");
 			scaleSession.set(xdimen.getMostRecentValue(), ydimen.getMostRecentValue(), zdimen.getMostRecentValue());
-			updateCubes();
-			updateLines();
+			updateLinesAndCubes();
 		};
 		Runnable offsetxyChange = () -> {
 
@@ -242,8 +241,7 @@ public class ControlSprites {
 			// y="+yOff);
 			manipulation.set(xOff, yOff, 0);
 			manipulation.fireSave();
-			updateCubes();
-			updateLines();
+			updateLinesAndCubes();
 		};
 		Runnable offsetZChange = () -> {
 			this.bounds = scaleSession.getBounds();
@@ -252,8 +250,7 @@ public class ControlSprites {
 			// com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
 			zMove.set(0, 0, manipDiff);
 			zMove.fireSave();
-			updateCubes();
-			updateLines();
+			updateLinesAndCubes();
 		};
 		xdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
 		ydimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
@@ -270,8 +267,15 @@ public class ControlSprites {
 
 	}
 
+	private void updateLinesAndCubes() {
+		Platform.runLater(() -> {
+			updateCubes();
+			updateLines();
+		});
+	}
+
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
-		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler,(tf)->{
+		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot()));
 		});
 		allign = new AllignManager(session, selection, workplaneOffset, ap);
@@ -342,11 +346,7 @@ public class ControlSprites {
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		// TickToc.tic("rot update");
 		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
-		// TickToc.tic("cubes update");
-		updateCubes();
-
-		// TickToc.tic("lines update");
-		updateLines();
+		updateLinesAndCubes();
 		if (session.isLocked() || session.isInOperationMode()) {
 			up.hide();
 			rotationManager.hide();
@@ -355,7 +355,7 @@ public class ControlSprites {
 			if (!session.moveLock()) {
 				up.show();
 				rotationManager.show(session.moveLock());
-			}else {
+			} else {
 				up.hide();
 				rotationManager.hide();
 			}
@@ -590,7 +590,7 @@ public class ControlSprites {
 	}
 
 	public void setMode(SpriteDisplayMode mode) {
-		
+
 		if (mode == this.mode)
 			return;
 		this.mode = mode;
@@ -672,7 +672,7 @@ public class ControlSprites {
 				scaleSession.hide();
 				break;
 			}
-			if(mode!=SpriteDisplayMode.Clear)
+			if (mode != SpriteDisplayMode.Clear)
 				updateLines();
 		});
 	}
@@ -688,6 +688,5 @@ public class ControlSprites {
 	public SelectionSession getSession() {
 		return session;
 	}
-
 
 }
