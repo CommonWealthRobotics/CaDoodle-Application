@@ -33,7 +33,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </opaqueInsets>
          <children>
-            <CheckBox fx:id="stl" contentDisplay="TOP" mnemonicParsing="false" onAction="#fstl" selected="true" text="Fast STL" GridPane.halignment="CENTER">
+            <CheckBox fx:id="stl" contentDisplay="TOP" mnemonicParsing="false" onAction="#fstl" text="Fast STL" GridPane.halignment="CENTER">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -79,7 +79,7 @@
                   </ImageView>
                </graphic>
             </CheckBox>
-            <CheckBox fx:id="manifoldSTL" contentDisplay="TOP" mnemonicParsing="false" onAction="#mstl" text="Manifold STL" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+            <CheckBox fx:id="manifoldSTL" contentDisplay="TOP" mnemonicParsing="false" onAction="#mstl" selected="true" text="Manifold STL" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
