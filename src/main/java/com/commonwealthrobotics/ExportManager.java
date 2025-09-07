@@ -160,8 +160,8 @@ public class ExportManager {
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
-			copyBom(CaDoodleFile.getBillOfMaterials().getBomFile());
-			copyBom(CaDoodleFile.getBillOfMaterials().getBomCsv());
+			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomFile());
+			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomCsv());
 			try {
 				zipDirectory(ap.get().getSelf().getParentFile(),
 						new File(exportDir.getAbsolutePath()+DownloadManager.delim()+name+"-source.zip"));
