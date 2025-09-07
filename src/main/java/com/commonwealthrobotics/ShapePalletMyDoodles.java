@@ -131,7 +131,9 @@ public class ShapePalletMyDoodles {
 							if (workplane.isClicked())
 								try {
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-									AbstractAddFrom setAddFromScript = new AddFromFile().set(caDoodleFile.getSelf())
+									AddFromFile addFromFile = new AddFromFile();
+									addFromFile.setCaDoodleFile(ap.get());
+									AbstractAddFrom setAddFromScript = addFromFile.set(caDoodleFile.getSelf())
 											.setLocation(currentAbsolutePose);
 									ap.addOp(setAddFromScript).join();
 									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
