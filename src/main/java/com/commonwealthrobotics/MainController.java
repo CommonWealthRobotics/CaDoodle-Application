@@ -667,7 +667,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (last != null && check) {
 				currentFile = last;
 				System.out.println("Adding file " + last);
-				AddFromFile toAdd = new AddFromFile().set(last);
+				AddFromFile addFromFile = new AddFromFile();
+				AddFromFile toAdd = addFromFile.set(last,ap.get());
 				return session.addOp(toAdd);
 			}
 		}

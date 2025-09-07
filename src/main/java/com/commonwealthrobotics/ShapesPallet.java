@@ -260,7 +260,8 @@ public class ShapesPallet {
 										if (Boolean.parseBoolean(string)) {
 											try {
 												File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
-												setAddFromScript = new AddFromFile().set(f)
+												AddFromFile addFromFile = new AddFromFile();
+												setAddFromScript = addFromFile.set(f,ap.get())
 														.setLocation(currentAbsolutePose);
 											} catch (InvalidRemoteException e) {
 												//
