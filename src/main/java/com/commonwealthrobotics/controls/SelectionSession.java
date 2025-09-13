@@ -749,7 +749,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setupSnapGrid() {
-		List<Number> grids = Arrays.asList(0.1, 0.25, 0.5, 1, 2, (25.4 / 8.0), 5, (25.4 / 4.0), 10);
+		List<Number> grids = Arrays.asList(0.1, 0.25, 0.5, 1, 2, (25.4 / 8.0), 5, (25.4 / 4.0),8, 10);
 		HashMap<String, Double> map = new HashMap<>();
 		String starting = String.format("%.2f", currentGrid);
 		map.put("Off", 0.001);
