@@ -1417,6 +1417,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.clearSelection();
 		robotLab.onCancel();
+		session.setMode(SpriteDisplayMode.Default);
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
 		});
