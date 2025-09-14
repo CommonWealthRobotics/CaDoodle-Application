@@ -749,19 +749,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setupSnapGrid() {
-		List<Number> grids = Arrays.asList(0.1, 0.25, 0.5, 1, 2, (25.4 / 8.0), 5, (25.4 / 4.0),8, 10);
+		List<String> grids = Arrays.asList(
+				String.format("%.3f",0.1)+" mm",
+				String.format("%.3f",0.25)+" mm", 
+				String.format("%.3f",0.5)+" mm",
+				String.format("%.3f",1.0)+" mm", 
+				String.format("%.3f",2.0)+" mm", 
+				String.format("%.3f",(25.4 / 8.0))+" mm (1/8th inch)", 
+				String.format("%.3f",5.0)+" mm", 
+				String.format("%.3f",(25.4 / 4.0))+" mm (1/4 inch)",
+				String.format("%.3f",8.0)+" mm (Brick)", 
+				String.format("%.3f",10.0)+" mm",
+				String.format("%.3f",20.0)+" mm");
+		
 		HashMap<String, Double> map = new HashMap<>();
-		String starting = String.format("%.2f", currentGrid);
 		map.put("Off", 0.001);
 		this.snapGrid.getItems().add("Off");
-		for (Number n : grids) {
-			String result = String.format("%.2f", n.doubleValue());
-			String key = result + " mm";
+		for (String s : grids) {
+			Number n = Double.parseDouble(s.split(" ")[0]);
+			String key = s;
 			map.put(key, n.doubleValue());
 			this.snapGrid.getItems().add(key);
 		}
+		for(String key:map.keySet()) {
+			Double num = map.get(key);
+			if(Math.abs(currentGrid - num.doubleValue()) < 0.001) {
+				snapGrid.getSelectionModel().select(key);
+				break;
+			}
+		}
 
-		snapGrid.getSelectionModel().select(starting + " mm");
+		
 
 		this.snapGrid.setOnAction(event -> {
 			String selected = this.snapGrid.getSelectionModel().getSelectedItem();
