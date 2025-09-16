@@ -213,25 +213,27 @@ public class Main extends Application {
 
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
-			if (args.length != 0) {
-				String replace = args[0].replace('"', ' ');
+			for(String filename:args) {
+				String replace = filename.replace('"', ' ');
+				System.out.println("Got value: "+replace);
 				File f = new File(replace);
 				System.out.println("Passed In File at "+f.getAbsolutePath());
-				for(String s:replace.split(" ")) {
-					if(s.toLowerCase().endsWith(".doodle")) {
-						File t=new File(s);
-						if(t.exists())
-							f=t;
+			
+				if(replace.toLowerCase().endsWith(".doodle")) {
+					File t=new File(replace);
+					if(t.exists()) {
+						f=t;	
+						if (f.exists()) {
+							ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
+							System.out.println("Passed In File Exists! ");
+							HashSet<String> externals =  Main.getOptionalProjects();
+							externals.add(f.getAbsolutePath());
+							Main.saveOptionalProjects(externals);
+						}else
+							System.out.println("Fail! Passed In File Does Not Exists! ");
 					}
 				}
-				if (f.exists()) {
-					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
-					System.out.println("Passed In File Exists! ");
-					HashSet<String> externals =  Main.getOptionalProjects();
-					externals.add(f.getAbsolutePath());
-					Main.saveOptionalProjects(externals);
-				}else
-					System.out.println("Fail! Passed In File Does Not Exists! ");
+
 			}
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
