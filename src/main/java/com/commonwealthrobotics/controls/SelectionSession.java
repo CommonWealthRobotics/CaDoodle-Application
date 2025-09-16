@@ -455,7 +455,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						selected.add(name);
 					}
 				}
-				setMode(SpriteDisplayMode.Default);
+				if(getMode()!=SpriteDisplayMode.Allign)
+					setMode(SpriteDisplayMode.Default);
 				updateRobotLab.run();
 				updateControlsDisplayOfSelected();
 				event.consume();
@@ -1816,6 +1817,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onInitializationDone() {
 		// Auto-generated method stub
 
+	}
+	public SpriteDisplayMode getMode() {
+		return getControls().getMode();
 	}
 
 	public void setMode(SpriteDisplayMode placing) {
