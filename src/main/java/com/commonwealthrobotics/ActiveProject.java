@@ -2,6 +2,7 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -182,7 +183,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile", null);
 			if (object == null)
 				return newProject();
-			return new File(object.toString());
+			String string = object.toString();
+			System.out.println("Laoding file "+string);
+			File file = new File(string);
+			if(file.exists())
+				return file;
+			throw new FileNotFoundException();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
