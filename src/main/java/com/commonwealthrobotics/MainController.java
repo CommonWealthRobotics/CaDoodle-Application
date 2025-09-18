@@ -1409,7 +1409,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void cancel() {
-		System.out.println("Cancel event");
+		System.out.println("MainController:Cancel event");
+		session.setMode(SpriteDisplayMode.Default);
 		if (workplane.isTemporaryPlane()) {
 			ap.get().setWorkplane(new TransformNR());
 			workplane.placeWorkplaneVisualization();
@@ -1417,7 +1418,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.clearSelection();
 		robotLab.onCancel();
-		session.setMode(SpriteDisplayMode.Default);
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
 		});
