@@ -91,7 +91,7 @@ public class ProjectManager {
 			ap.get().initialize();
 		} catch (IOException e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		stage.close();
 		onFinish.run();
@@ -154,7 +154,7 @@ public class ProjectManager {
 			}
 		} catch (IOException e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
@@ -188,7 +188,7 @@ public class ProjectManager {
 				onFinish.run();
 			} catch (Exception e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}).start();
 	}
@@ -270,7 +270,7 @@ public class ProjectManager {
 			// Show the new window
 			stage.show();
 		} catch (IOException e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 			// Handle the exception (e.g., show an error dialog)
 		}
 	}

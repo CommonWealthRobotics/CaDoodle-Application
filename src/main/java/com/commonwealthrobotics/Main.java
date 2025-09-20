@@ -120,7 +120,7 @@ public class Main extends Application {
 			newStage.getIcons().add(image2);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		// });
 		newStage.setMinWidth(900);
@@ -192,7 +192,7 @@ public class Main extends Application {
 			System.out.println("Setting transparent tray icon to " + name);
 
 		} catch (AWTException | IOException e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
@@ -207,7 +207,7 @@ public class Main extends Application {
 			System.out.println("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 
 		}
 
@@ -257,7 +257,7 @@ public class Main extends Application {
 			PasswordManager.setupAnyonmous();
 		} catch (IOException e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		try {
 			ensureGitAssetsArePresent();
@@ -315,7 +315,7 @@ public class Main extends Application {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 
 	}
@@ -369,7 +369,7 @@ public class Main extends Application {
 						SplashManager.closeSplash();
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
-						e.printStackTrace();
+						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 
 				}
@@ -384,7 +384,7 @@ public class Main extends Application {
 					BowlerStudio.openExternalWebpage(new URL(url));
 				} catch (MalformedURLException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
 

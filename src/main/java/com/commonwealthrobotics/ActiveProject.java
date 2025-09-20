@@ -97,7 +97,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			if (t.isAlive()) {
 				while (!SplashManager.isVisableSplash()) {
@@ -106,7 +106,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
-						e.printStackTrace();
+						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
 			} else {
@@ -116,7 +116,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				t.join();
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			SplashManager.closeSplash();
 		}).start();
@@ -135,7 +135,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			if (t.isAlive()) {
 				SplashManager.renderSplashFrame(50, h.getType() + " running");
@@ -146,7 +146,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				t.join();
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			SplashManager.closeSplash();
 		}).start();
@@ -184,7 +184,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				return newProject();
 			return new File(object.toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
+			
 			throw new RuntimeException(e);
 		}
 
@@ -349,7 +350,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 							SplashManager.closeSplash();
 						} catch (InterruptedException e) {
 							// Auto-generated catch block
-							e.printStackTrace();
+							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 
 					}
@@ -371,7 +372,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			cf.save();
 		} catch (IOException e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
@@ -394,7 +395,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onUpdate(currentState, source, file);
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -405,7 +406,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onSaveSuggestion();
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -416,7 +417,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onInitializationDone();
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -448,7 +449,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								list.add(CaDoodleFile.fromFile(f, null, false));
 							} catch (Exception e) {
 								// Auto-generated catch block
-								e.printStackTrace();
+								com.neuronrobotics.sdk.common.Log.error(e);
 							}
 						}
 					}
@@ -464,7 +465,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					list.add(CaDoodleFile.fromFile(f, null, false));
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
 		}
@@ -494,7 +495,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			cf.save();
 		} catch (Exception e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		return nf;
 	}
@@ -513,7 +514,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onWorkplaneChange(newWP);
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -524,7 +525,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onInitializationStart();
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -537,7 +538,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				l.onRegenerateDone();
 				//TickToc.tic("End "+l.getClass());
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -548,7 +549,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onRegenerateStart();
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -559,7 +560,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				l.onTimelineUpdate( num);
 			} catch (Throwable e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 	}
@@ -621,10 +622,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		
 	}

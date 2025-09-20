@@ -65,7 +65,7 @@ public class ShapePalletMyDoodles {
 			Thread.sleep(30);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		List<CaDoodleFile> proj = ap.getProjects();
 		int i=0;
@@ -151,9 +151,9 @@ public class ShapePalletMyDoodles {
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
 						}).start();
@@ -167,7 +167,7 @@ public class ShapePalletMyDoodles {
 		try {
 			Thread.sleep(30);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		return button;
 	}

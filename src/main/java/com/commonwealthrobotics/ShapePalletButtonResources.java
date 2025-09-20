@@ -114,7 +114,7 @@ public class ShapePalletButtonResources {
 				file.delete();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		// referenceParts.put(button, so);
 		BowlerStudio.runLater(() -> {
@@ -130,7 +130,7 @@ public class ShapePalletButtonResources {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
 		BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
@@ -140,7 +140,7 @@ public class ShapePalletButtonResources {
 		} catch (IOException e) {
 			// com.neuronrobotics.sdk.common.Log.error("Error saving image: " +
 			// e.getMessage());
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		indicator = so.get(0);
 		if (so.size() > 1) {
@@ -154,7 +154,7 @@ public class ShapePalletButtonResources {
 			System.err.println("Indicator STL saved successfully to " + stlFile.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 

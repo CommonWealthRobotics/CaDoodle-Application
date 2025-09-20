@@ -249,7 +249,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				t.join();
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOpperation(), ap.get());
 			if (f != null && l != null) {
@@ -260,7 +260,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					w.addIFileChangeListener(l);
 				} catch (IOException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
 		}).start();
@@ -296,7 +296,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						w.addIFileChangeListener(l);
 					} catch (IOException e) {
 						// Auto-generated catch block
-						e.printStackTrace();
+						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
 			} catch (NoSuchFileException ex) {
@@ -893,7 +893,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					addOp(solid).join();
 				} catch (InterruptedException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
 		}).start();
@@ -1080,7 +1080,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateRobotLab.run();
 		} catch (CadoodleConcurrencyException | InterruptedException e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 
 	}
@@ -1228,10 +1228,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				} catch (InterruptedException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}).start();
 		} else {
@@ -1259,10 +1259,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				} catch (InterruptedException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}).start();
 		} else {
@@ -1534,7 +1534,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					op.join();// wait for the move of this object to finish
 				} catch (InterruptedException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 
 				}
 			}
@@ -1637,7 +1637,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				ap.addOp(mc).join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			TickToc.setEnabled(false);
 		}).start();
@@ -1663,7 +1663,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							Thread.sleep(300);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 						ap.get().setSaveUpdate(saveDisplay);
 						if (t.isAlive() && ap.get().isTimelineOpen()) {
@@ -1673,7 +1673,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							t.join();
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 						SplashManager.closeSplash();
 					}
@@ -1681,7 +1681,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						Thread.sleep(200);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
-						e.printStackTrace();
+						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
 			});

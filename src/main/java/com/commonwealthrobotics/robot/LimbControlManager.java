@@ -80,7 +80,7 @@ public class LimbControlManager {
 				ap.addOp(myMod).join();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			session.clearBoundsCache();
 			BowlerStudio.runLater(() -> session.updateControls());
@@ -108,7 +108,7 @@ public class LimbControlManager {
 				limb.setDesiredTaskSpaceTransform(tf, 0);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			updateControls();
 		},ap,engine,workplaneOffset,onSelect, onReset);

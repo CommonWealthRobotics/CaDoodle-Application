@@ -152,7 +152,7 @@ public class ExportManager {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
@@ -167,7 +167,7 @@ public class ExportManager {
 						new File(exportDir.getAbsolutePath()+DownloadManager.delim()+name+"-source.zip"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 
 			SplashManager.closeSplash();
@@ -190,7 +190,7 @@ public class ExportManager {
 					zs.closeEntry();
 				} catch (IOException e) {
 					System.err.println("Failed to zip file: " + path);
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			});
 		}
@@ -202,7 +202,7 @@ public class ExportManager {
 			Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			// Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
@@ -241,7 +241,7 @@ public class ExportManager {
 			// Show the new window
 			stage.show();
 		} catch (IOException e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 			// Handle the exception (e.g., show an error dialog)
 		}
 	}

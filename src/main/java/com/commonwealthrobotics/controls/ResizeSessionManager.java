@@ -180,7 +180,7 @@ public class ResizeSessionManager {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
 					// Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Saving from "+c);
 				TransformNR wp = ap.get().getWorkplane().copy();
@@ -211,7 +211,7 @@ public class ResizeSessionManager {
 						t.join();
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
-						e.printStackTrace();
+						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
 				BowlerStudio.runLater(() -> threeDTarget());

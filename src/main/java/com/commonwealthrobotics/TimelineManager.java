@@ -184,7 +184,7 @@ public class TimelineManager {
 									try {
 										Thread.sleep(3000);
 									} catch (InterruptedException e) {
-										e.printStackTrace();
+										com.neuronrobotics.sdk.common.Log.error(e);
 									}
 									BowlerStudio.runLater(() -> contextMenu.hide());
 								}).start();

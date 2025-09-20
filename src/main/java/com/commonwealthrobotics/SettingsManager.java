@@ -152,7 +152,7 @@ public class SettingsManager implements ICSGClientEvent {
 				ConfigurationDatabase.put("CaDoodle", "CSGClientHost", text);
 				ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
 			} catch (Exception e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		} else {
 			System.out.println("Closing Server Connection");
@@ -209,13 +209,13 @@ public class SettingsManager implements ICSGClientEvent {
 							server.start();
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 					}).start();
 					return true;
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 
 			}
@@ -227,7 +227,7 @@ public class SettingsManager implements ICSGClientEvent {
 					server = null;
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 		}
 		return false;
@@ -418,7 +418,7 @@ public class SettingsManager implements ICSGClientEvent {
 			// Show the new window
 			stage.show();
 		} catch (IOException e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 			// Handle the exception (e.g., show an error dialog)
 		}
 	}

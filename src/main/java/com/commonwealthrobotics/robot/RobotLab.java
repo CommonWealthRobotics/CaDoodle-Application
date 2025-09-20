@@ -346,7 +346,7 @@ public class RobotLab {
 			setupLimbOption(wheels, wheelOptionGrid);
 		} catch (GitAPIException | IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
@@ -382,7 +382,7 @@ public class RobotLab {
 			}
 		} catch (GitAPIException | IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
@@ -391,7 +391,7 @@ public class RobotLab {
 			o.build(ap.get());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		Tooltip hover = new Tooltip(o.getName() + " "+o.getType());
 		Button button = new Button(o.getName());
@@ -454,9 +454,9 @@ public class RobotLab {
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
 						}).start();
@@ -532,9 +532,9 @@ public class RobotLab {
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
 						}).start();

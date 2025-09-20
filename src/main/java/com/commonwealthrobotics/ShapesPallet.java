@@ -111,7 +111,7 @@ public class ShapesPallet {
 			}
 		} catch (Exception e) {
 			//
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
 		BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
@@ -131,7 +131,7 @@ public class ShapesPallet {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					//
-					e.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
 			threadComplete = false;
@@ -250,7 +250,7 @@ public class ShapesPallet {
 											s.set(f).setPreventBoM(true).setLocation(currentAbsolutePose);
 											setAddFromScript = s;
 										} catch (Exception e) {
-											e.printStackTrace();
+											com.neuronrobotics.sdk.common.Log.error(e);
 											return;
 										}
 									}
@@ -265,13 +265,13 @@ public class ShapesPallet {
 														.setLocation(currentAbsolutePose);
 											} catch (InvalidRemoteException e) {
 												//
-												e.printStackTrace();
+												com.neuronrobotics.sdk.common.Log.error(e);
 											} catch (TransportException e) {
-												e.printStackTrace();
+												com.neuronrobotics.sdk.common.Log.error(e);
 											} catch (GitAPIException e) {
-												e.printStackTrace();
+												com.neuronrobotics.sdk.common.Log.error(e);
 											} catch (IOException e) {
-												e.printStackTrace();
+												com.neuronrobotics.sdk.common.Log.error(e);
 											}
 										}
 									}
@@ -297,9 +297,9 @@ public class ShapesPallet {
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
 								} catch (CadoodleConcurrencyException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
 						}).start();
@@ -313,7 +313,7 @@ public class ShapesPallet {
 //		try {
 //			Thread.sleep(30);
 //		} catch (InterruptedException e) {
-//			e.printStackTrace();
+//			com.neuronrobotics.sdk.common.Log.error(e);
 //		}
 
 		return button;
@@ -400,7 +400,7 @@ public class ShapesPallet {
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 
 			searchThread = null;

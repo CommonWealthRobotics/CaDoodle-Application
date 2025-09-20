@@ -123,7 +123,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 				ap.addOp(op).join();
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			updateState();
 		}).start();

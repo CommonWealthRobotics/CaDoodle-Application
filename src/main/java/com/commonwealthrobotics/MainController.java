@@ -889,7 +889,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 			ap.loadActive();
 		} catch (Exception e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 			System.exit(2);
 		}
 		setUpNavigationCube();
@@ -918,7 +918,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			// Threaded load happens after UI opens
 			setupFile();
 		} catch (Exception e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 			System.exit(1);
 		}
 		fileNameBox.setOnKeyTyped(ev -> {
@@ -986,7 +986,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				session.setKeyBindingFocus();
 				BowlerStudio.runLater(() -> cancel());
 			} catch (Exception e) {
-				e.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}).start();
 
@@ -1099,7 +1099,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 							try {
 								t.join();
 							} catch (InterruptedException e) {
-								e.printStackTrace();
+								com.neuronrobotics.sdk.common.Log.error(e);
 							}
 
 					}
