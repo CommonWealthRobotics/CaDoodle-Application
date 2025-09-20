@@ -97,13 +97,13 @@ public class LimbControlManager {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
 			TransformNR base2 = mod.getTip().copy();
-			// System.out.println("from "+base2.toSimpleString());
+			// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 			RotationNR nr = base2.getRotation();
 			TransformNR tf = new TransformNR(base2.getX(), base2.getY(), base2.getZ())
 					.times(tipManipulator.getCurrentPoseInReferenceFrame());
 			tf.setRotation(nr);
 			mod.setTip(tf);
-			// System.out.println("Moving "+tf.toSimpleString());
+			// com.neuronrobotics.sdk.common.Log.debug("Moving "+tf.toSimpleString());
 			try {
 				limb.setDesiredTaskSpaceTransform(tf, 0);
 			} catch (Exception e) {
@@ -118,14 +118,14 @@ public class LimbControlManager {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
 			TransformNR baseAtStaartTF = mod.getBase().copy();
-			// System.out.println("from "+base2.toSimpleString());
+			// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 			RotationNR nr = baseAtStaartTF.getRotation();
 			TransformNR translateOnly = new TransformNR(baseAtStaartTF.getX(), baseAtStaartTF.getY(),
 					baseAtStaartTF.getZ());
 			TransformNR tf = translateOnly.times(baseManipulator.getCurrentPoseInReferenceFrame());
 			tf.setRotation(nr);
 			mod.setBase(tf);
-			// System.out.println("Moving "+tf.toSimpleString());
+			// com.neuronrobotics.sdk.common.Log.debug("Moving "+tf.toSimpleString());
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
 			updateControls();
@@ -143,13 +143,13 @@ public class LimbControlManager {
 					session.setMode(SpriteDisplayMode.Clear);
 				});
 				TransformNR baseAtStartTF = mod.getBase().copy();
-				// System.out.println("from "+base2.toSimpleString());
+				// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 				RotationNR nr = baseAtStartTF.getRotation();
 				TransformNR rotOnly = new TransformNR(nr);
 				TransformNR tf = toUpdate.times(rotOnly);
 				baseAtStartTF.setRotation(tf.getRotation());
 				mod.setBase(baseAtStartTF);
-				// System.out.println("Moving "+tf.toSimpleString());
+				// com.neuronrobotics.sdk.common.Log.debug("Moving "+tf.toSimpleString());
 				limb.setRobotToFiducialTransform(baseAtStartTF);
 				mod.setTip(limb.getCurrentTaskSpaceTransform());
 				updateControls();
@@ -173,7 +173,7 @@ public class LimbControlManager {
 	}
 
 	private void onReset() {
-		System.out.println("Reset Limb Controller");
+		com.neuronrobotics.sdk.common.Log.debug("Reset Limb Controller");
 
 		baseManipulator.onReset();
 		tipManipulator.onReset();
@@ -192,7 +192,7 @@ public class LimbControlManager {
 		mod.setUndo(true);
 		onReset();
 		rotationManager.show(false);
-		System.out.println("\n\nShowing Limb "+limb.getScriptingName());
+		com.neuronrobotics.sdk.common.Log.debug("\n\nShowing Limb "+limb.getScriptingName());
 	}
 
 	public void hide() {

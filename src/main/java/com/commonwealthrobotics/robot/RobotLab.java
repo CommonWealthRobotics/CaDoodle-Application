@@ -378,7 +378,7 @@ public class RobotLab {
 				int col = i % 3;
 				int row = i / 3;
 				setupAddControllerButton(o, row, col);
-				// System.out.println(o);
+				// com.neuronrobotics.sdk.common.Log.debug(o);
 			}
 		} catch (GitAPIException | IOException e) {
 			// TODO Auto-generated catch block
@@ -427,7 +427,7 @@ public class RobotLab {
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
-					System.out.println("Is Workplane set " + workplaneInOrigin);
+					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {
 							session.setMode(SpriteDisplayMode.Default);
@@ -505,7 +505,7 @@ public class RobotLab {
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
-					System.out.println("Is Workplane set " + workplaneInOrigin);
+					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {
 							session.setMode(SpriteDisplayMode.Default);

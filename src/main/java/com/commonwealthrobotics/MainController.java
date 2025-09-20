@@ -346,7 +346,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onMakeRobot(ActionEvent e) {
-		System.out.println("Make robot");
+		com.neuronrobotics.sdk.common.Log.debug("Make robot");
 		robotLab.makeRobot();
 	}
 
@@ -666,7 +666,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			if (last != null && check) {
 				currentFile = last;
-				System.out.println("Adding file " + last);
+				com.neuronrobotics.sdk.common.Log.debug("Adding file " + last);
 				AddFromFile addFromFile = new AddFromFile();
 				AddFromFile toAdd = addFromFile.set(last,ap.get());
 				return session.addOp(toAdd);
@@ -912,7 +912,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 			SettingsManager.setServerState();
 			if (SettingsManager.clientStateSet()) {
-				System.out.println("Server connected, client running remote");
+				com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
 			}
 			setCadoodleFile();
 			// Threaded load happens after UI opens
@@ -956,7 +956,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			String x = name + " " + type.trim() + " " + String.format("%.1f", percent) + "% finished : " + i + " of "
 					+ finalIndex;
 			if (SplashManager.isVisableSplash()) {
-				System.out.println("MainController.setupCSGEngine():: " + x);
+				com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);
 				int s = x.indexOf(' ');
 				SplashManager.onLogUpdate(x.substring(s, x.length()));
 			}
@@ -1091,7 +1091,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				List<File> files = db.getFiles();
 				new Thread(() -> {
 					for (File file : files) {
-						System.out.println("File dropped: " + file.getAbsolutePath());
+						com.neuronrobotics.sdk.common.Log.debug("File dropped: " + file.getAbsolutePath());
 						// Process the file as needed
 
 						Thread t = importAFile(file);
@@ -1234,7 +1234,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				cancel();
 			}
 
-			// System.out.println("Releses MainController");
+			// com.neuronrobotics.sdk.common.Log.debug("Releses MainController");
 		});
 
 //		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
@@ -1345,9 +1345,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						System.err.println("CTRL+ Raw char value: " + (int) rawChar);
+						com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
 					} else {
-						System.err.println("No character data available (probably a non-character key)");
+						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
 					}
 					break;
 				}
@@ -1376,7 +1376,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 101:// e
 				case 69:// E
-					System.err.println("Call Object WP toggle");
+					com.neuronrobotics.sdk.common.Log.error("Call Object WP toggle");
 					session.objectWorkplane();
 					break;
 				case 108:// l
@@ -1398,9 +1398,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				default:
 					if (!character.isEmpty()) {
 						char rawChar = character.charAt(0);
-						System.err.println("Raw char value: " + (int) rawChar + " : " + character);
+						com.neuronrobotics.sdk.common.Log.error("Raw char value: " + (int) rawChar + " : " + character);
 					} else {
-						System.err.println("No character data available (probably a non-character key)");
+						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
 					}
 					break;
 				}
@@ -1409,7 +1409,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void cancel() {
-		System.out.println("Cancel event");
+		com.neuronrobotics.sdk.common.Log.debug("Cancel event");
 		if (workplane.isTemporaryPlane()) {
 			ap.get().setWorkplane(new TransformNR());
 			workplane.placeWorkplaneVisualization();
@@ -1499,7 +1499,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	public void setAdvancedMode(boolean advanced) {
-		System.out.println("Advanced mode: " + advanced);
+		com.neuronrobotics.sdk.common.Log.debug("Advanced mode: " + advanced);
 		if (!advanced) {
 			setTimelineOpenState(false);
 			setRobotLabOpenState(false);

@@ -189,7 +189,7 @@ public class ExportManager {
 					Files.copy(path, zs);
 					zs.closeEntry();
 				} catch (IOException e) {
-					System.err.println("Failed to zip file: " + path);
+					com.neuronrobotics.sdk.common.Log.error("Failed to zip file: " + path);
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			});

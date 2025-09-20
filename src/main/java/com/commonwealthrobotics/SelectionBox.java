@@ -124,7 +124,7 @@ public class SelectionBox {
 			yStart = event.getY();
 			xLeft = xStart;
 			yTop = yStart;
-			System.out.println("Select Box Started x=" + xStart + " y=" + yStart);
+			com.neuronrobotics.sdk.common.Log.debug("Select Box Started x=" + xStart + " y=" + yStart);
 			rect.setX(xStart);
 			rect.setY(yStart);
 			rect.setVisible(true);
@@ -149,7 +149,7 @@ public class SelectionBox {
 		// Auto-generated method stub
 		double width = Math.abs(event.getX() - xStart);
 		double height = Math.abs(event.getY() - yStart);
-		// System.out.println("Select Box Dragging x="+xEnd+" y="+yEnd);
+		// com.neuronrobotics.sdk.common.Log.debug("Select Box Dragging x="+xEnd+" y="+yEnd);
 		if (event.getX() < xStart) {
 			xLeft = event.getX();
 			rect.setX(event.getX());
@@ -274,7 +274,7 @@ public class SelectionBox {
 		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
 			if(event.getSource()!=getSelectionPlane())
 				return;
-			System.out.println("Selection Box Background Click ");
+			com.neuronrobotics.sdk.common.Log.debug("Selection Box Background Click ");
 			start=true;
 			value.handle(event);
 		});

@@ -136,7 +136,7 @@ public class ShapePalletButtonResources {
 		BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 		try {
 			ImageIO.write(bufferedImage, "png", imageFile);
-			System.err.println("Thumbnail saved successfully to " + imageFile.getAbsolutePath());
+			com.neuronrobotics.sdk.common.Log.error("Thumbnail saved successfully to " + imageFile.getAbsolutePath());
 		} catch (IOException e) {
 			// com.neuronrobotics.sdk.common.Log.error("Error saving image: " +
 			// e.getMessage());
@@ -151,7 +151,7 @@ public class ShapePalletButtonResources {
 		indicator.setColor(Color.WHITE);
 		try {
 			FileUtil.write(Paths.get(stlFile.getAbsolutePath()), indicator.toStlString());
-			System.err.println("Indicator STL saved successfully to " + stlFile.getAbsolutePath());
+			com.neuronrobotics.sdk.common.Log.error("Indicator STL saved successfully to " + stlFile.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);

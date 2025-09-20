@@ -75,7 +75,7 @@ public class ThreedNumber {
 							if ((System.currentTimeMillis() - val) > timeoutTime) {
 								key.runEnter();
 								torem.add(key);
-								// System.out.println(key + " cleared on " + val);
+								// com.neuronrobotics.sdk.common.Log.debug(key + " cleared on " + val);
 							}
 
 						}
@@ -117,7 +117,7 @@ public class ThreedNumber {
 				return;
 			}
 			long timeMillis = System.currentTimeMillis();
-			// System.out.println(this + " set on " + timeMillis);
+			// com.neuronrobotics.sdk.common.Log.debug(this + " set on " + timeMillis);
 
 			lastPressed.put(this, timeMillis);
 		});

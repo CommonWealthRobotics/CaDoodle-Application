@@ -117,7 +117,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	private void setMyOperation() {
-		//System.out.println("\n\nRun Mirror on " + ax);
+		//com.neuronrobotics.sdk.common.Log.debug("\n\nRun Mirror on " + ax);
 		new Thread(()->{
 			try {
 				ap.addOp(op).join();
@@ -131,7 +131,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double xI, double yI,
 			double zI, List<String> selectedCSG, Bounds b, TransformNR cf) {
-		//System.out.println("Mirror Handle "+ax+" Updated");
+		//com.neuronrobotics.sdk.common.Log.debug("Mirror Handle "+ax+" Updated");
 		this.screenW = screenW;
 		this.screenH = screenH;
 		this.zoom = zoom;
@@ -245,7 +245,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	public void updateState() {
-		//System.out.println("Initialize Mirror "+ax);
+		//com.neuronrobotics.sdk.common.Log.debug("Initialize Mirror "+ax);
 		op= new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
 		clearVisualizers();
 		op.setCaDoodleFile(ap.get());

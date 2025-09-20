@@ -120,7 +120,7 @@ public class ProjectManager {
 				String formattedDateTime = formatter.format(instant);
 				int row = (i + offsetFromStartingButton) / 4;
 				int col = (i + offsetFromStartingButton) % 4;
-				System.out.println(
+				com.neuronrobotics.sdk.common.Log.debug(
 						"File " + c.getMyProjectName() + " on " + formattedDateTime + " row=" + row + " col=" + col);
 
 				BowlerStudio.runLater(() -> {
@@ -240,11 +240,11 @@ public class ProjectManager {
 					Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
 				}
 			} catch (IOException e) {
-				System.err.println("Error copying " + sourcePath + ": " + e.getMessage());
+				com.neuronrobotics.sdk.common.Log.error("Error copying " + sourcePath + ": " + e.getMessage());
 			}
 		});
 
-		System.out.println("Directory copied successfully from " + sourceDirectoryPath + " to " + targetDirectoryPath);
+		com.neuronrobotics.sdk.common.Log.debug("Directory copied successfully from " + sourceDirectoryPath + " to " + targetDirectoryPath);
 	}
 
 	public static void launch(ActiveProject ap, Runnable onFinish, Runnable clearScreen) {

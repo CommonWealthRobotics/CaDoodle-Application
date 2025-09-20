@@ -222,7 +222,7 @@ public class ShapesPallet {
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
-					System.out.println("Is Workplane set " + workplaneInOrigin);
+					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {
 							session.setMode(SpriteDisplayMode.Default);
@@ -350,7 +350,7 @@ public class ShapesPallet {
 		if (newValue.length() < 2)
 			return;
 		searchThread = new Thread(() -> {
-			System.out.println("Text changed to: " + newValue);
+			com.neuronrobotics.sdk.common.Log.debug("Text changed to: " + newValue);
 			int i = 0;
 			HashSet<String> buttons = new HashSet<String>();
 			for (String current : nameToFile.keySet()) {
@@ -371,7 +371,7 @@ public class ShapesPallet {
 						continue;
 					buttons.add(name);
 					if (name.toLowerCase().contains(newValue.toLowerCase())) {
-						System.out.println("Matching " + current + " value " + name);
+						com.neuronrobotics.sdk.common.Log.debug("Matching " + current + " value " + name);
 						int col = i % 3;
 						int row = i / 3;
 						setupButton(name, hashMap, col, row, current);

@@ -166,7 +166,7 @@ public class ResizeSessionManager {
 				if (ev.isShiftDown()) {
 					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
 					uniformScalingZ(tcC);
-					// System.out.println("RE-Scaling whole object! "+scale);
+					// com.neuronrobotics.sdk.common.Log.debug("RE-Scaling whole object! "+scale);
 				}
 			BowlerStudio.runLater(() -> update());
 
@@ -239,7 +239,7 @@ public class ResizeSessionManager {
 
 		double centerX = bounds.getCenterX();
 		double centerY = bounds.getCenterY();
-		// System.out.println("Center x:"+centerX+" centerY:"+centerY);
+		// com.neuronrobotics.sdk.common.Log.debug("Center x:"+centerX+" centerY:"+centerY);
 		double z = leftRear.manipulator.getCurrentPose().getZ();
 		TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 		TransformNR lfC = leftFront.getCurrentInReferenceFrame();

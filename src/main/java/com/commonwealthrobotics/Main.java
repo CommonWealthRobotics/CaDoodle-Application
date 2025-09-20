@@ -136,7 +136,7 @@ public class Main extends Application {
 	private void setupTray(Stage stage) {
 		// First check if SystemTray is supported
 		if (!SystemTray.isSupported()) {
-			System.out.println("SystemTray is not supported");
+			com.neuronrobotics.sdk.common.Log.debug("SystemTray is not supported");
 			return;
 		}
 
@@ -189,7 +189,7 @@ public class Main extends Application {
 
 			// Add icon to system tray
 			tray.add(trayIcon);
-			System.out.println("Setting transparent tray icon to " + name);
+			com.neuronrobotics.sdk.common.Log.debug("Setting transparent tray icon to " + name);
 
 		} catch (AWTException | IOException e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
@@ -204,7 +204,7 @@ public class Main extends Application {
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
-			System.out.println("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
+			com.neuronrobotics.sdk.common.Log.debug("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
@@ -216,7 +216,7 @@ public class Main extends Application {
 			if (args.length != 0) {
 				String replace = args[0].replace('"', ' ');
 				File f = new File(replace);
-				System.out.println("Passed In File at "+f.getAbsolutePath());
+				com.neuronrobotics.sdk.common.Log.debug("Passed In File at "+f.getAbsolutePath());
 				for(String s:replace.split(" ")) {
 					if(s.toLowerCase().endsWith(".doodle")) {
 						File t=new File(s);
@@ -226,12 +226,12 @@ public class Main extends Application {
 				}
 				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
-					System.out.println("Passed In File Exists! ");
+					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
 					HashSet<String> externals =  Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());
 					Main.saveOptionalProjects(externals);
 				}else
-					System.out.println("Fail! Passed In File Does Not Exists! ");
+					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
 			}
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
@@ -294,7 +294,7 @@ public class Main extends Application {
 		String objectKey = "currentVersion";
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "source").toString();
 		String nowVer = StudioBuildInfo.getVersion();
-		System.out.println("Pervious version was " + lastVer + " and current version is " + nowVer);
+		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
 		boolean b = !lastVer.contentEquals(nowVer);
 		boolean contentEquals = nowVer.contentEquals("source");
 		boolean c = b || contentEquals;

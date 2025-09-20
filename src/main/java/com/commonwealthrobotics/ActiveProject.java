@@ -434,7 +434,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public List<CaDoodleFile> getProjects() throws IOException {
 		String directoryPath = getWorkingDir().getAbsolutePath();
-		System.err.println("Loading workspace from "+directoryPath);
+		com.neuronrobotics.sdk.common.Log.error("Loading workspace from "+directoryPath);
 		File dir = new File(directoryPath);
 		List<CaDoodleFile> list = new ArrayList<>();
 
@@ -485,10 +485,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		String pathname = "Doodle-" + proj.size() + "-" + nextRandomName;
 		File np = new File(getWorkingDir().getAbsolutePath() + delim() + pathname);
 		np.mkdirs();
-		System.out.println("New Doodle Directory " + np.getAbsolutePath());
+		com.neuronrobotics.sdk.common.Log.debug("New Doodle Directory " + np.getAbsolutePath());
 		File nf = new File(np.getAbsolutePath() + delim() + pathname + ".doodle");
 		nf.createNewFile();
-		System.out.println("New Doodle File " + nf.getAbsolutePath());
+		com.neuronrobotics.sdk.common.Log.debug("New Doodle File " + nf.getAbsolutePath());
 		try {
 			CaDoodleFile cf = setActiveProject(nf);
 			cf.setProjectName(nextRandomName);

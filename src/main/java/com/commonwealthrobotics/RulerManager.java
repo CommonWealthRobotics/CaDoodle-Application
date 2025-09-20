@@ -100,7 +100,7 @@ public class RulerManager {
 	}
 
 	public void startPick(Runnable onFinish) {
-		System.out.println("Start Pick for Ruler");
+		com.neuronrobotics.sdk.common.Log.debug("Start Pick for Ruler");
 		CSG csg = new Cylinder(0, 5,10,20).toCSG();
 		CSG csg2 = new Cylinder(2, 2,10,20).toCSG().movez(10);
 		workplane.setIndicator(csg.union(csg2), new Affine());
@@ -110,14 +110,14 @@ public class RulerManager {
 			TransformFactory.nrToAffine(tmp, rulerOffset);
 		});
 		workplane.onCancle(()->{
-			System.out.println("Canceling active ruler pick session");
+			com.neuronrobotics.sdk.common.Log.debug("Canceling active ruler pick session");
 			cancel();
 			onFinish.run();
 		});
 		
 		workplane.setOnSelectEvent(()->{
 			if (workplane.isClicked()) {
-				System.out.println("Placing ruler");
+				com.neuronrobotics.sdk.common.Log.debug("Placing ruler");
 				ap.get().setRulerLocation(TransformFactory.affineToNr(rulerOffset));
 			}else {
 				cancel();

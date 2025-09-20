@@ -131,7 +131,7 @@ public class TimelineManager {
 		return null;
 	}
 	private void update(boolean clear) {
-		//System.out.println("Timeline Update called");
+		//com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
 		this.clear = clear;
 		updateNeeded=true;
 		if(updating)
@@ -262,7 +262,7 @@ public class TimelineManager {
 					ex.printStackTrace();
 				}
 			}
-			//System.out.println("Timeline updated");
+			//com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
 			if (addrem)
 				BowlerStudio.runLater(java.time.Duration.ofMillis(100),() -> {
 					timelineScroll.setHvalue(1.0);
@@ -282,7 +282,7 @@ public class TimelineManager {
 	}
 
 	public void clear() {
-		//System.out.println("Old Timeline buttons cleared");
+		//com.neuronrobotics.sdk.common.Log.debug("Old Timeline buttons cleared");
 		buttons.clear();
 		timeline.getChildren().clear();
 	}

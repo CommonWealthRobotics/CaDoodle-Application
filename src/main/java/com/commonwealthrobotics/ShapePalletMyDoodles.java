@@ -124,7 +124,7 @@ public class ShapePalletMyDoodles {
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
-					System.out.println("Is Workplane set " + workplaneInOrigin);
+					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
 						new Thread(() -> {
 							session.setMode(SpriteDisplayMode.Default);

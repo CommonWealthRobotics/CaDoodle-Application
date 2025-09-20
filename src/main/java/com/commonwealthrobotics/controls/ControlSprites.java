@@ -227,7 +227,7 @@ public class ControlSprites {
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
-			System.err.println("Typed position update");
+			com.neuronrobotics.sdk.common.Log.error("Typed position update");
 			scaleSession.set(xdimen.getMostRecentValue(), ydimen.getMostRecentValue(), zdimen.getMostRecentValue());
 			updateLinesAndCubes();
 		};
@@ -542,7 +542,7 @@ public class ControlSprites {
 				dotscale = 0.75;
 			if (dotscale < 0.04)
 				dotscale = 0.04;
-			// System.out.println("Z distance = "+dotscale);
+			// com.neuronrobotics.sdk.common.Log.debug("Z distance = "+dotscale);
 			for (DottedLine l : lines) {
 				l.setScale(dotscale);
 			}

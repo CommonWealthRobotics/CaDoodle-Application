@@ -145,7 +145,7 @@ public class SettingsManager implements ICSGClientEvent {
 			Path tempFile;
 			try {
 
-				System.out.println("Opening Server Connection");
+				com.neuronrobotics.sdk.common.Log.debug("Opening Server Connection");
 				String text = ipaddressField.getText();
 				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + true);
 				ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
@@ -155,7 +155,7 @@ public class SettingsManager implements ICSGClientEvent {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		} else {
-			System.out.println("Closing Server Connection");
+			com.neuronrobotics.sdk.common.Log.debug("Closing Server Connection");
 			ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
 		}
 		if (clientStateSet()) {
@@ -186,7 +186,7 @@ public class SettingsManager implements ICSGClientEvent {
 			}
 		} else {
 			CSGClient.close();
-			System.out.println("Closing server connection");
+			com.neuronrobotics.sdk.common.Log.debug("Closing server connection");
 		}
 		return false;
 	}
@@ -205,7 +205,7 @@ public class SettingsManager implements ICSGClientEvent {
 					server = new CSGServer(Integer.parseInt(port), tempFile.toFile());
 					new Thread(() -> {
 						try {
-							System.out.println("\n\nStarting CSG server\n\n");
+							com.neuronrobotics.sdk.common.Log.debug("\n\nStarting CSG server\n\n");
 							server.start();
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -222,7 +222,7 @@ public class SettingsManager implements ICSGClientEvent {
 		} else {
 			if (server != null)
 				try {
-					System.out.println("\n\nStopping CSG server\n\n");
+					com.neuronrobotics.sdk.common.Log.debug("\n\nStopping CSG server\n\n");
 					server.stop();
 					server = null;
 				} catch (IOException e) {
@@ -253,7 +253,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onStartServer(ActionEvent event) {
-		System.out.println("Start a server event");
+		com.neuronrobotics.sdk.common.Log.debug("Start a server event");
 		ConfigurationDatabase.put("CaDoodle", "CSGServerStart", "" + startServerCheckbox.isSelected());
 		String key = apiKey.getText();
 		ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
@@ -275,20 +275,20 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onAlwaysAsk(ActionEvent event) {
-		System.out.println("Ask");
+		com.neuronrobotics.sdk.common.Log.debug("Ask");
 		setExplanationText(OperationResult.ASK);
 	}
 
 	@FXML
 	void onAlwaysContinue(ActionEvent event) {
-		System.out.println("Continue");
+		com.neuronrobotics.sdk.common.Log.debug("Continue");
 		setExplanationText(OperationResult.PRUNE);
 
 	}
 
 	@FXML
 	void onAlwaysInsert(ActionEvent event) {
-		System.out.println("Insert");
+		com.neuronrobotics.sdk.common.Log.debug("Insert");
 		setExplanationText(OperationResult.INSERT);
 	}
 
@@ -313,7 +313,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onBrowse(ActionEvent event) {
-		System.out.println("Browse For Working Location");
+		com.neuronrobotics.sdk.common.Log.debug("Browse For Working Location");
 		File start = new File(workingDirPath.getText());
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		directoryChooser.setTitle("Select a Directory");
@@ -328,7 +328,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 		if (selectedDirectory != null) {
 			String absolutePath = selectedDirectory.getAbsolutePath();
-			System.out.println("Selected directory: " + absolutePath);
+			com.neuronrobotics.sdk.common.Log.debug("Selected directory: " + absolutePath);
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleWorkspace", absolutePath);
 			if (!absolutePath.contentEquals(workingDirPath.getText())) {
 				changedDir = true;
@@ -395,7 +395,7 @@ public class SettingsManager implements ICSGClientEvent {
 		SettingsManager.mc = mc;
 		try {
 			// Load the FXML file
-			System.out.println("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
+			com.neuronrobotics.sdk.common.Log.debug("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
 			FXMLLoader loader = new FXMLLoader(
 					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
 			// loader.setController(new SettingsManager());
@@ -427,7 +427,7 @@ public class SettingsManager implements ICSGClientEvent {
 	public void toSend(CSGRequest request) {
 		Label l = new Label("Request " + request.getOperation());
 		active.put(request, l);
-		System.out.println(l.getText());
+		com.neuronrobotics.sdk.common.Log.debug(l.getText());
 		BowlerStudio.runLater(() -> {
 			serverStatusBox.getChildren().add(l);
 		});
@@ -437,7 +437,7 @@ public class SettingsManager implements ICSGClientEvent {
 	public void response(CSGResponse response, CSGRequest request) {
 		Label label = active.get(request);
 		String value = "Request " + request.getOperation() + " result " + response.getOperation();
-		System.out.println(value);
+		com.neuronrobotics.sdk.common.Log.debug(value);
 		BowlerStudio.runLater(() -> {
 			label.setText(value);
 		});
