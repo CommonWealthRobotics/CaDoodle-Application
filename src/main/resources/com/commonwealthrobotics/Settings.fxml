@@ -18,7 +18,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane" stylesheets="stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <children>
-      <GridPane gridLinesVisible="true" layoutX="174.0" layoutY="-26.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="-14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="-14.0">
         <columnConstraints>
           <ColumnConstraints maxWidth="261.0" minWidth="10.0" prefWidth="246.0" />
           <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="567.0" prefWidth="582.0" />
@@ -28,6 +28,7 @@
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="8.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
@@ -102,7 +103,7 @@
                   <Insets left="10.0" />
                </padding>
             </CheckBox>
-            <Label text="Run A Server" GridPane.rowIndex="5">
+            <Label text="Run A Server" GridPane.rowIndex="6">
                <padding>
                   <Insets left="10.0" />
                </padding>
@@ -110,7 +111,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label text="Connect To A Server" GridPane.rowIndex="4">
+            <Label text="Connect To A Server" GridPane.rowIndex="5">
                <font>
                   <Font size="18.0" />
                </font>
@@ -118,12 +119,12 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="startServerCheckbox" mnemonicParsing="false" onAction="#onStartServer" text="Start Server" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <CheckBox fx:id="startServerCheckbox" mnemonicParsing="false" onAction="#onStartServer" text="Start Server" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </CheckBox>
-            <VBox fx:id="serverStatusBox" GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <VBox fx:id="serverStatusBox" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <children>
                   <Label fx:id="serverIPDisplay" text="Server Not Started">
                      <padding>
@@ -132,7 +133,7 @@
                   </Label>
                </children>
             </VBox>
-            <GridPane hgap="5.0" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <GridPane hgap="5.0" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
@@ -159,6 +160,15 @@
                   <Insets right="10.0" top="10.0" />
                </padding>
             </GridPane>
+            <Label text="Default Number of Sides" GridPane.rowIndex="4">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="numberOfSides" onAction="#onNumberOfSides" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>

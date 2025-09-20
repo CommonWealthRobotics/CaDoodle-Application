@@ -30,6 +30,7 @@ import javax.net.ssl.X509TrustManager;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
+import com.sun.tools.sjavac.Log;
 
 import eu.mihosoft.vrl.v3d.CSGClient;
 import eu.mihosoft.vrl.v3d.CSGRequest;
@@ -84,7 +85,8 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private TextField ipaddressField;
-
+	@FXML
+	private TextField numberOfSides;
 	@FXML
 	private TextField portField;
 
@@ -310,7 +312,17 @@ public class SettingsManager implements ICSGClientEvent {
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
 	}
-
+	@FXML
+	public void onNumberOfSides(ActionEvent event) {
+		String text = numberOfSides.getText();
+		try {
+			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides",Integer.parseInt(text));
+			ConfigurationDatabase.save();
+		}catch(NumberFormatException ex) {
+			Log.error(ex);
+			numberOfSides.setText("16");
+		}
+	}
 	@FXML
 	void onBrowse(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("Browse For Working Location");
@@ -383,6 +395,7 @@ public class SettingsManager implements ICSGClientEvent {
 		if(server)
 			serverIPDisplay.setText("Server started " + getLocalIP());
 		serverStatusBox.getChildren().add(clientDisplay);
+		numberOfSides.setText(ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", 16).toString());
 	}
 
 	public static void main(String[] args) {
@@ -432,7 +445,7 @@ public class SettingsManager implements ICSGClientEvent {
 			serverStatusBox.getChildren().add(l);
 		});
 	}
-
+	
 	@Override
 	public void response(CSGResponse response, CSGRequest request) {
 		Label label = active.get(request);
