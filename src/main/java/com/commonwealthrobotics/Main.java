@@ -197,10 +197,23 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
+		Log.disablePrint();
+		
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
+		File logfile = new File(file.getAbsolutePath()+delim()+"cadoodleLog.txt");
+		if(logfile.exists())
+			logfile.delete();
+		try {
+			logfile.createNewFile();
+			Log.enableDebugPrint(true);
+			Log.setFile(logfile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
