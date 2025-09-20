@@ -30,7 +30,7 @@ import javax.net.ssl.X509TrustManager;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
-import com.sun.tools.sjavac.Log;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSGClient;
 import eu.mihosoft.vrl.v3d.CSGRequest;
@@ -316,8 +316,21 @@ public class SettingsManager implements ICSGClientEvent {
 	public void onNumberOfSides(ActionEvent event) {
 		String text = numberOfSides.getText();
 		try {
-			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides",Integer.parseInt(text));
+			int int1 = Integer.parseInt(text);
+			if(int1>200) {
+				Log.error("Fault can not set that number "+int1);
+				numberOfSides.setText("200");
+				int1=200;
+			}
+			if(int1<3) {
+				Log.error("Fault can not set that number "+int1);
+				numberOfSides.setText("3");
+				int1=3;
+			}
+			Log.debug("Setting Default Number of sides to "+int1);
+			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides",text);
 			ConfigurationDatabase.save();
+			
 		}catch(NumberFormatException ex) {
 			Log.error(ex);
 			numberOfSides.setText("16");
@@ -395,7 +408,16 @@ public class SettingsManager implements ICSGClientEvent {
 		if(server)
 			serverIPDisplay.setText("Server started " + getLocalIP());
 		serverStatusBox.getChildren().add(clientDisplay);
-		numberOfSides.setText(ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", 16).toString());
+		String string = ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", "16").toString();
+
+		try {
+			int numberOfSidesInt = Integer.parseInt(string);
+			numberOfSides.setText(string);
+		}catch(Exception ex) {
+			Log.error(ex);
+			numberOfSides.setText("16");
+			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "16");
+		}
 	}
 
 	public static void main(String[] args) {
@@ -408,6 +430,7 @@ public class SettingsManager implements ICSGClientEvent {
 		SettingsManager.mc = mc;
 		try {
 			// Load the FXML file
+			
 			com.neuronrobotics.sdk.common.Log.debug("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
 			FXMLLoader loader = new FXMLLoader(
 					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
