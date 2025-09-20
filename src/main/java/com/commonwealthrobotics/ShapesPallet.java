@@ -247,7 +247,7 @@ public class ShapesPallet {
 											if (sprial != null) {
 												s.setDefSpiral(Double.parseDouble(sprial));
 											}
-											s.set(f).setPreventBoM(true).setLocation(currentAbsolutePose);
+											s.set(f,ap.get()).setPreventBoM(true).setLocation(currentAbsolutePose);
 											setAddFromScript = s;
 										} catch (Exception e) {
 											com.neuronrobotics.sdk.common.Log.error(e);

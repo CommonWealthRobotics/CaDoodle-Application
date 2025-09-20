@@ -95,7 +95,7 @@ public class ShapePalletButtonResources {
 				if (sprial != null) {
 					s.setDefSpiral(Double.parseDouble(sprial));
 				}
-				s.set(f).setPreventBoM(true);
+				s.set(f,null).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
 				ex.printStackTrace();
