@@ -210,6 +210,7 @@ public class Main extends Application {
 			logfile.createNewFile();
 			Log.enableDebugPrint(true);
 			Log.setFile(logfile);
+			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -231,21 +232,21 @@ public class Main extends Application {
 				all+=filename+" ";
 			}
 			String replace = all.replace('"', ' ').trim();
-			System.out.println("Got value: "+replace);
+			com.neuronrobotics.sdk.common.Log.debug("Got value: "+replace);
 			File f = new File(replace);
-			System.out.println("Passed In File at "+f.getAbsolutePath());
+			com.neuronrobotics.sdk.common.Log.debug("Passed In File at "+f.getAbsolutePath());
 			if(replace.toLowerCase().endsWith(".doodle")) {
 				if(f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
-					System.out.println("Passed In File Exists! ");
+					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
 					HashSet<String> externals =  Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());
 					Main.saveOptionalProjects(externals);
 					
 				}else
-					System.out.println("Fail! Passed In File Does Not Exists! ");
+					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
 			}else
-				System.out.println("Not a doodle file "+replace.toLowerCase());
+				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file "+replace.toLowerCase());
 				
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
