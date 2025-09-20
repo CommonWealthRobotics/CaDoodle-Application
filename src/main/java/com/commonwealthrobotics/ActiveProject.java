@@ -184,7 +184,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			if (object == null)
 				return newProject();
 			String string = object.toString();
-			System.out.println("Laoding file "+string);
+			com.neuronrobotics.sdk.common.Log.debug("Loading file "+string);
 			File file = new File(string);
 			if(file.exists())
 				return file;
