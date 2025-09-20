@@ -29,6 +29,7 @@ import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
@@ -454,7 +455,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						selected.add(name);
 					}
 				}
-				setMode(SpriteDisplayMode.Default);
+				if(getMode()!=SpriteDisplayMode.Allign)
+					setMode(SpriteDisplayMode.Default);
 				updateRobotLab.run();
 				updateControlsDisplayOfSelected();
 				event.consume();
@@ -667,7 +669,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setUpFileBox(HBox thisLine, String text, Parameter para, int width, File file) {
 		// Button tf = new Button(new File(para.getStrValue()).getName());
-		ExternalEditorController ec = new ExternalEditorController(file, new CheckBox());
+		ExternalEditorController ec = new ExternalEditorController(file, new CheckBox(),()->{
+			if(file.getName().endsWith("doodle")) {
+				ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile",ap.get().getSelf().getAbsolutePath());
+				ConfigurationDatabase.save();
+			}
+		});
 		Node tf = ec.getControl();
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
@@ -1810,6 +1817,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onInitializationDone() {
 		// Auto-generated method stub
 
+	}
+	public SpriteDisplayMode getMode() {
+		return getControls().getMode();
 	}
 
 	public void setMode(SpriteDisplayMode placing) {

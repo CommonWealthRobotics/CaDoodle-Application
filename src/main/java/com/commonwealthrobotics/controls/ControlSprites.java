@@ -594,7 +594,7 @@ public class ControlSprites {
 		if (mode == this.mode)
 			return;
 		this.mode = mode;
-		com.neuronrobotics.sdk.common.Log.error("Mode Set to " + mode);
+		System.out.println("Mode Set to " + mode);
 		// new Exception("Mode Set to "+mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
