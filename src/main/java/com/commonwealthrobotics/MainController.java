@@ -18,7 +18,6 @@ import org.apache.sshd.common.util.OsUtils;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
-import com.commonwealthrobotics.networking.CaDoodleServer;
 import com.commonwealthrobotics.robot.RobotLab;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
