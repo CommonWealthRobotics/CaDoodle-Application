@@ -420,8 +420,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		MeshView meshView = c.newMesh();
 		if (c.isHole() && !c.isWireFrame()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
-			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-			pm.setSpecularColor(new Color(1, 1, 1, 0.75));
+			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
+			pm.setSpecularColor(new Color(1, 1, 1, 0.15));
 			meshView.setCullFace(CullFace.NONE);
 			meshView.setDrawMode(DrawMode.FILL);
 			meshView.setDepthTest(DepthTest.ENABLE);
