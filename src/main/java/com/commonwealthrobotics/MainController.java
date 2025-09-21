@@ -667,7 +667,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				currentFile = last;
 				com.neuronrobotics.sdk.common.Log.debug("Adding file " + last);
 				AddFromFile addFromFile = new AddFromFile();
-				AddFromFile toAdd = addFromFile.set(last,ap.get());
+				AddFromFile toAdd = addFromFile.set(last, ap.get());
 				return session.addOp(toAdd);
 			}
 		}
@@ -879,69 +879,75 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert timelineButton != null : "optionProvide button failed";
 		assert optionProvide != null : "Timeline button failed";
 		assert optionsConsume != null : "optionsConsume button failed";
-		engine = new BowlerStudio3dEngine("CAD window");
-		engine.rebuild(true);
-		ap.addListener(this);
-		session = new SelectionSession(engine, ap, ruler);
-
-		selectionBox = new SelectionBox(session, view3d, engine, ap);
 		try {
-			ap.loadActive();
-		} catch (Exception e) {
-			com.neuronrobotics.sdk.common.Log.error(e);
-			System.exit(2);
-		}
-		setUpNavigationCube();
-		setUp3dEngine();
-		setUpColorPicker();
-		timelineManager.set(timelineScroll, timeline, session, engine);
+			engine = new BowlerStudio3dEngine("CAD window");
+			engine.rebuild(true);
+			ap.addListener(this);
+			session = new SelectionSession(engine, ap, ruler);
 
-		session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-				engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
-				objectWorkplane, dropToWorkplane);
-		session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
-		session.setRobotLabButton(RobotLabDrawer);
-		session.setGroup(groupButton);
-		session.setUngroup(ungroupButton);
-		session.setShowHideImage(showHideImage);
-
-		session.setAllignButton(allignButton);
-		// do this after setting up the session
-		setupEngineControls();
-		try {
-			SettingsManager.setServerState();
-			if (SettingsManager.clientStateSet()) {
-				com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
+			selectionBox = new SelectionBox(session, view3d, engine, ap);
+			try {
+				ap.loadActive();
+			} catch (Exception e) {
+				com.neuronrobotics.sdk.common.Log.error(e);
+				System.exit(2);
 			}
-			setCadoodleFile();
-			// Threaded load happens after UI opens
-			setupFile();
+			setUpNavigationCube();
+			setUp3dEngine();
+			setUpColorPicker();
+			timelineManager.set(timelineScroll, timeline, session, engine);
+
+			session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
+					engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,
+					timelineManager, objectWorkplane, dropToWorkplane);
+			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
+			session.setRobotLabButton(RobotLabDrawer);
+			session.setGroup(groupButton);
+			session.setUngroup(ungroupButton);
+			session.setShowHideImage(showHideImage);
+
+			session.setAllignButton(allignButton);
+			// do this after setting up the session
+			setupEngineControls();
+			try {
+				SettingsManager.setServerState();
+				if (SettingsManager.clientStateSet()) {
+					com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
+				}
+				setCadoodleFile();
+				// Threaded load happens after UI opens
+				setupFile();
+			} catch (Exception e) {
+				com.neuronrobotics.sdk.common.Log.error(e);
+				System.exit(1);
+			}
+			fileNameBox.setOnKeyTyped(ev -> {
+				com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
+				ap.get().setProjectName(fileNameBox.getText());
+				session.save();
+			});
+			setupCSGEngine();
+			SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
+			timelineOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
+			session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
+			timeline.getChildren().clear();
+			// RobotLabDrawerImage
+			if (!session.isRobotLabOpen()) {
+				RobotLabHolder.getChildren().remove(robotLabTabPane);
+				RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
+			}
+			if (!timelineOpen) {
+				timelineHolder.getChildren().remove(timelineScroll);
+				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+			}
+			boolean advanced = Boolean
+					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
+			setAdvancedMode(advanced);
 		} catch (Exception e) {
+			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 			com.neuronrobotics.sdk.common.Log.error(e);
 			System.exit(1);
 		}
-		fileNameBox.setOnKeyTyped(ev -> {
-			com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
-			ap.get().setProjectName(fileNameBox.getText());
-			session.save();
-		});
-		setupCSGEngine();
-		SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
-		timelineOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
-		session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
-		timeline.getChildren().clear();
-		// RobotLabDrawerImage
-		if (!session.isRobotLabOpen()) {
-			RobotLabHolder.getChildren().remove(robotLabTabPane);
-			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
-		}
-		if (!timelineOpen) {
-			timelineHolder.getChildren().remove(timelineScroll);
-			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
-		}
-		boolean advanced = Boolean
-				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
-		setAdvancedMode(advanced);
 	}
 
 	private void setupCSGEngine() {
@@ -1346,7 +1352,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						char rawChar = character.charAt(0);
 						com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
 					} else {
-						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
+						com.neuronrobotics.sdk.common.Log
+								.error("No character data available (probably a non-character key)");
 					}
 					break;
 				}
@@ -1399,7 +1406,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						char rawChar = character.charAt(0);
 						com.neuronrobotics.sdk.common.Log.error("Raw char value: " + (int) rawChar + " : " + character);
 					} else {
-						com.neuronrobotics.sdk.common.Log.error("No character data available (probably a non-character key)");
+						com.neuronrobotics.sdk.common.Log
+								.error("No character data available (probably a non-character key)");
 					}
 					break;
 				}
