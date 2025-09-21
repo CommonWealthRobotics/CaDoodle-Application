@@ -443,7 +443,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setTimelineOpenState(!timelineOpen);
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleTimelineShow", timelineOpen);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(t);
 		}
 		session.setKeyBindingFocus();
 	}
@@ -454,7 +454,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setRobotLabOpenState(!session.isRobotLabOpen());
 			ConfigurationDatabase.put("CaDoodle", "robotLabOpen", session.isRobotLabOpen());
 		} catch (Throwable t) {
-			t.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(t);
 		}
 		session.setKeyBindingFocus();
 

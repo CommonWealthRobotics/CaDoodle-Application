@@ -132,7 +132,7 @@ public class SettingsManager implements ICSGClientEvent {
 			socket.close();
 			connectServer.setDisable(false);
 		} catch (Exception ex) {
-			// ex.printStackTrace();
+			// com.neuronrobotics.sdk.common.Log.error(e);;
 			connectServer.setDisable(true);
 			return;
 		}
@@ -246,7 +246,7 @@ public class SettingsManager implements ICSGClientEvent {
 				hostAddress = InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e1);
 			}
 		}
 

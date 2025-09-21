@@ -66,7 +66,7 @@ public class ShapePalletButtonResources {
 				image = new Image(imageFile.toURI().toString());
 				return;
 			} catch (Throwable t) {
-				t.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(t);
 			}
 		}
 		if (isPluginMissing) {
@@ -98,7 +98,7 @@ public class ShapePalletButtonResources {
 				s.set(f,null).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(ex);;
 			}
 		}
 		set.setCaDoodleFile(ap.get());

@@ -177,7 +177,7 @@ public class ControlSprites {
 				t.join();
 			} catch (InterruptedException exx) {
 				// Auto-generated catch block
-				exx.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(exx);
 			}
 			zMove.set(0, 0, 0);
 			BowlerKernel.runLater(() -> {

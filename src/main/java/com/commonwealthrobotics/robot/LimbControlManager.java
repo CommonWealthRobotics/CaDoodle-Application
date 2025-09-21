@@ -154,7 +154,7 @@ public class LimbControlManager {
 				mod.setTip(limb.getCurrentTaskSpaceTransform());
 				updateControls();
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(ex);;
 			}
 		});
 

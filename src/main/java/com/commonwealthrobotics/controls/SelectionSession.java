@@ -169,7 +169,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				t.join();
 			} catch (InterruptedException ex) {
 				// Auto-generated catch block
-				ex.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(e);;
 			}
 			getControls().setMode(SpriteDisplayMode.Default);
 
@@ -609,7 +609,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				para.setMM(parseDouble);
 				options2.clear();
 			} catch (Throwable t) {
-				t.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(t);
 				options.setText(para.getMM() + "");
 			}
 		});
@@ -650,7 +650,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.debug("Setting new value " + parseDouble);
 				para.setMM(parseDouble);
 			} catch (Throwable t) {
-				t.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(t);
 				options.getSelectionModel().select(para.getMM() + "");
 			}
 		});

@@ -178,13 +178,13 @@ public class ShapesPallet {
 						try {
 							setupButton(names.get(key), key, col, row, current);
 						} catch (Throwable tx) {
-							tx.printStackTrace();
+							com.neuronrobotics.sdk.common.Log.error(tx);
 						}
 						// objectPallet.add(button, col, row);
 					}
 				}
 			} catch (Throwable tr) {
-				tr.printStackTrace();
+				com.neuronrobotics.sdk.common.Log.error(tr);
 			}
 			ap.setDisableRegenerate(false);
 			threadComplete = true;
@@ -394,7 +394,7 @@ public class ShapesPallet {
 							mine.setupButton(caDoodleFile, col, row);
 							i++;
 						} catch (Exception ex) {
-							ex.printStackTrace();
+							com.neuronrobotics.sdk.common.Log.error(ex);;
 						}
 					}
 				}

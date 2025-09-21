@@ -213,7 +213,7 @@ public class Main extends Application {
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
@@ -277,7 +277,7 @@ public class Main extends Application {
 		try {
 			ensureGitAssetsArePresent();
 		}catch(Throwable t) {
-			t.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(t);
 		}
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);

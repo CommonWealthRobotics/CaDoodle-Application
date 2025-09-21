@@ -259,7 +259,7 @@ public class TimelineManager {
 					contextMenu.getItems().add(deleteItem);
 					// Add event handler for right-click
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					com.neuronrobotics.sdk.common.Log.error(ex);;
 				}
 			}
 			//com.neuronrobotics.sdk.common.Log.debug("Timeline updated");

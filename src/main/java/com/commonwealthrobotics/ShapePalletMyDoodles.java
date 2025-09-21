@@ -78,7 +78,7 @@ public class ShapePalletMyDoodles {
 				setupButton(proj.get(j), col, row);
 				i++;
 			}catch(Exception ex) {
-				//ex.printStackTrace();
+				//com.neuronrobotics.sdk.common.Log.error(e);;
 			}
 		}
 	}
