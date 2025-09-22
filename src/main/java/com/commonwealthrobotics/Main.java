@@ -7,6 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -63,6 +64,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	private static Thread loadDeps;
+	public static UncaughtExceptionHandler hand;
 
 	@Override
 	public void start(Stage newStage) throws Exception {
@@ -211,6 +213,17 @@ public class Main extends Application {
 			Log.enableDebugPrint(true);
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
+			hand = new UncaughtExceptionHandler() {
+				@Override
+				public void uncaughtException(Thread t, Throwable e) {
+					com.neuronrobotics.sdk.common.Log.error("Uncaught exception in "+t);
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			};
+			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
+			Platform.runLater(()->{
+				Thread.setDefaultUncaughtExceptionHandler(Main.hand);
+			});
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);

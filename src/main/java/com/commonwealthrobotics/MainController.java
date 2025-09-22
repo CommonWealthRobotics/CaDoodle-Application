@@ -615,7 +615,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onImport(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Import");
 		new Thread(() -> {
-
+			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			ArrayList<String> extentions = getExtention();
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
 			if (currentFile == null)
@@ -974,7 +974,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setupFile() {
 		new Thread(() -> {
-
+			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(1, "Initialize Model");
@@ -1095,6 +1095,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (db.hasFiles()) {
 				List<File> files = db.getFiles();
 				new Thread(() -> {
+					Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 					for (File file : files) {
 						com.neuronrobotics.sdk.common.Log.debug("File dropped: " + file.getAbsolutePath());
 						// Process the file as needed
