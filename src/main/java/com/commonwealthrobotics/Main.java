@@ -225,6 +225,9 @@ public class Main extends Application {
 				Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			});
 			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				Log.flush();
+			}));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
