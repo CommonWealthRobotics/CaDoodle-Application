@@ -95,7 +95,8 @@ public class Main extends Application {
 		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
 			new Thread(() -> {
-				Log.error("CaDoodle Exiting");
+				Log.error("CaDoodle Exiting CLean");
+				Log.flush();
 				System.exit(0);
 			}).start();
 
@@ -178,6 +179,7 @@ public class Main extends Application {
 			MenuItem exitItem = new MenuItem("Exit");
 			exitItem.addActionListener(e -> {
 				Platform.exit();
+				Log.flush();
 				System.exit(0);
 			});
 

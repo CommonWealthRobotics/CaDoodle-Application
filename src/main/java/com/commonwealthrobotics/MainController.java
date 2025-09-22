@@ -42,6 +42,7 @@ import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -890,6 +891,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				ap.loadActive();
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
+				Log.flush();
 				System.exit(2);
 			}
 			setUpNavigationCube();
