@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -232,7 +233,7 @@ public class RobotLab {
 		Label label = new Label(l);
 		label.setPrefWidth(80);
 		line.getChildren().add(label);
-		Label numHave = new Label(String.format("%.2f", has));
+		Label numHave = new Label(String.format(Locale.US,"%.2f", has));
 		numHave.setPrefWidth(60);
 		line.getChildren().add(numHave);
 		Label used = new Label(type);

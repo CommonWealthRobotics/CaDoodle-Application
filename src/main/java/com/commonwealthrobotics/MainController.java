@@ -12,6 +12,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.sshd.common.util.OsUtils;
@@ -960,7 +961,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			String name = "";
 			if (intermediateShape != null)
 				name = intermediateShape.getName();
-			String x = name + " " + type.trim() + " " + String.format("%.1f", percent) + "% finished : " + i + " of "
+			String x = name + " " + type.trim() + " " + String.format(Locale.US,"%.1f", percent) + "% finished : " + i + " of "
 					+ finalIndex;
 			if (SplashManager.isVisableSplash()) {
 				com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.sshd.common.session.Session;
@@ -480,7 +481,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			Color value = set.getColor();
 			colorPicker.setValue(value);
-			String hexColor = String.format("#%02X%02X%02X", (int) (value.getRed() * 255),
+			String hexColor = String.format(Locale.US,"#%02X%02X%02X", (int) (value.getRed() * 255),
 					(int) (value.getGreen() * 255), (int) (value.getBlue() * 255));
 
 			String style = String.format(" -fx-background-color: %s;", hexColor);
@@ -757,17 +758,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setupSnapGrid() {
 		List<String> grids = Arrays.asList(
-				String.format("%.3f",0.1)+" mm",
-				String.format("%.3f",0.25)+" mm", 
-				String.format("%.3f",0.5)+" mm",
-				String.format("%.3f",1.0)+" mm", 
-				String.format("%.3f",2.0)+" mm", 
-				String.format("%.3f",(25.4 / 8.0))+" mm (1/8th inch)", 
-				String.format("%.3f",5.0)+" mm", 
-				String.format("%.3f",(25.4 / 4.0))+" mm (1/4 inch)",
-				String.format("%.3f",8.0)+" mm (Brick)", 
-				String.format("%.3f",10.0)+" mm",
-				String.format("%.3f",20.0)+" mm");
+				String.format(Locale.US,"%.3f",0.1)+" mm",
+				String.format(Locale.US,"%.3f",0.25)+" mm", 
+				String.format(Locale.US,"%.3f",0.5)+" mm",
+				String.format(Locale.US,"%.3f",1.0)+" mm", 
+				String.format(Locale.US,"%.3f",2.0)+" mm", 
+				String.format(Locale.US,"%.3f",(25.4 / 8.0))+" mm (1/8th inch)", 
+				String.format(Locale.US,"%.3f",5.0)+" mm", 
+				String.format(Locale.US,"%.3f",(25.4 / 4.0))+" mm (1/4 inch)",
+				String.format(Locale.US,"%.3f",8.0)+" mm (Brick)", 
+				String.format(Locale.US,"%.3f",10.0)+" mm",
+				String.format(Locale.US,"%.3f",20.0)+" mm");
 		
 		HashMap<String, Double> map = new HashMap<>();
 		map.put("Off", 0.001);
