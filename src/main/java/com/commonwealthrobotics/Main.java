@@ -79,7 +79,7 @@ public class Main extends Application {
 		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
 				.getHeight();
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-		com.neuronrobotics.sdk.common.Log.error("Screen " + sw + "x" + sh);
+		com.neuronrobotics.sdk.common.Log.debug("Screen " + sw + "x" + sh);
 		sw = primaryScreenBounds.getWidth();
 		sh = primaryScreenBounds.getHeight();
 		double w;
@@ -213,6 +213,7 @@ public class Main extends Application {
 		try {
 			logfile.createNewFile();
 			Log.enableDebugPrint(true);
+			//Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
 			hand = new UncaughtExceptionHandler() {

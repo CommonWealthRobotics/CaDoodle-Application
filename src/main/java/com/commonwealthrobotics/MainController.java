@@ -964,7 +964,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			String x = name + " " + type.trim() + " " + String.format(Locale.US,"%.1f", percent) + "% finished : " + i + " of "
 					+ finalIndex;
 			if (SplashManager.isVisableSplash()) {
-				com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);
+				//com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);
 				int s = x.indexOf(' ');
 				SplashManager.onLogUpdate(x.substring(s, x.length()));
 			}

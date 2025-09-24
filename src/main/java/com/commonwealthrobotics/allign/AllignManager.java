@@ -151,11 +151,11 @@ public class AllignManager {
 
 	public void cancel() {
 
-		com.neuronrobotics.sdk.common.Log.error("Allign canceled here");
+		com.neuronrobotics.sdk.common.Log.debug("Allign canceled here");
 		if (isActive()) {
 			this.toAllign.clear();
 			if (isAllignemntSelected()) {
-				com.neuronrobotics.sdk.common.Log.error("Add op " + opperation);
+				com.neuronrobotics.sdk.common.Log.debug("Add op " + opperation);
 			}
 			opperation = null;
 		}

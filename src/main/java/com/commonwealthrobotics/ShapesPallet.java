@@ -139,7 +139,7 @@ public class ShapesPallet {
 			ap.setDisableRegenerate(true);
 			try {
 				String current = shapeCatagory.getSelectionModel().getSelectedItem();
-				com.neuronrobotics.sdk.common.Log.error("Selecting shapes from " + current);
+				com.neuronrobotics.sdk.common.Log.debug("Selecting shapes from " + current);
 				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
 				if (current.contentEquals(mine.getName())) {
 					mine.activate();
@@ -155,7 +155,7 @@ public class ShapesPallet {
 						String s = hashMap.get("order");
 						if (s != null) {
 							int index = Integer.parseInt(s);
-							com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
+							//com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
 							while (orderedList.size() <= index)
 								orderedList.add(null);
 							orderedList.set(index, hashMap);
@@ -173,8 +173,8 @@ public class ShapesPallet {
 						HashMap<String, String> key = orderedList.get(i);
 						if (key == null)
 							continue;
-						com.neuronrobotics.sdk.common.Log
-								.error("Placing " + names.get(key) + " at " + row + " , " + col);
+//						com.neuronrobotics.sdk.common.Log
+//								.error("Placing " + names.get(key) + " at " + row + " , " + col);
 						try {
 							setupButton(names.get(key), key, col, row, current);
 						} catch (Throwable tx) {

@@ -314,7 +314,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (n == null)
 					continue;
 				String name = s.getName();
-				com.neuronrobotics.sdk.common.Log.error("Adding Listeners for " + name);
+				//com.neuronrobotics.sdk.common.Log.error("Adding Listeners for " + name);
 				// new Exception().printStackTrace();
 				Set<String> parameters = n.getParameters();
 				IFileChangeListener myL = l;
@@ -335,7 +335,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (!k.contains(n.getName()) && !k.contains("CaDoodle_File_Location"))
 						continue;
 					Parameter para = CSGDatabase.get(k);
-					com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
+					//com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
 					CSGDatabase.clearParameterListeners(k);
 					CSGDatabase.addParameterListener(k, (name1, p) -> {
 						if (LengthParameter.class.isInstance(p)) {
