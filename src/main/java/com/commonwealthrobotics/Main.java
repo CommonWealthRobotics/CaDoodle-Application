@@ -95,7 +95,7 @@ public class Main extends Application {
 		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
 			new Thread(() -> {
-				Log.error("CaDoodle Exiting CLean");
+				Log.debug("CaDoodle Exiting CLean");
 				Log.flush();
 				System.exit(0);
 			}).start();
@@ -132,7 +132,7 @@ public class Main extends Application {
 		FileSelectionFactory.setStage(newStage);
 
 		newStage.show();
-		setupTray(newStage);
+		//setupTray(newStage);
 		// getLoadDeps().start();
 	}
 
