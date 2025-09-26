@@ -94,7 +94,7 @@ public class RotationHandle {
 				controlCircle.setVisible(true);
 
 			handle.setImage(selectedImage);
-			com.neuronrobotics.sdk.common.Log.error("Entered " + axis);
+			com.neuronrobotics.sdk.common.Log.info("Entered " + axis);
 		});
 		handle.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
 			handle.setImage(rotateImage);
@@ -105,7 +105,7 @@ public class RotationHandle {
 			selected=true;
 			rotationStarted = true;
 			startAngleFound = false;
-			com.neuronrobotics.sdk.common.Log.error("Handle clicked");
+			com.neuronrobotics.sdk.common.Log.info("Handle clicked");
 			rotationSessionManager.initialize(cs.moveLock());
 			flagSaveChange = false;
 			controlSprites.setMode(SpriteDisplayMode.Rotating);
