@@ -335,11 +335,11 @@ public class Main extends Application {
 		}
 		String paramsKey = "CaDoodle-Configs";
 		String objectKey = "currentVersion";
-		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "source").toString();
-		String nowVer = StudioBuildInfo.getVersion();
+		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
+		String nowVer = ""+StudioBuildInfo.getBuildVersion();
 		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
 		boolean b = !lastVer.contentEquals(nowVer);
-		boolean contentEquals = nowVer.contentEquals("source");
+		boolean contentEquals = nowVer.contentEquals("0");
 		boolean c = b || contentEquals;
 		if (c) {
 			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
