@@ -294,11 +294,16 @@ public class Main extends Application {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		try {
-			ensureGitAssetsArePresent();
-		}catch(Throwable t) {
-			com.neuronrobotics.sdk.common.Log.error(t);
+		if(PasswordManager.hasNetwork()) {
+			try {
+				ensureGitAssetsArePresent();
+			}catch(Throwable t) {
+				com.neuronrobotics.sdk.common.Log.error(t);
+			}
+		}else {
+			SplashManager.renderSplashFrame(2, "No Network");
 		}
+
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		
@@ -319,6 +324,9 @@ public class Main extends Application {
 	}
 
 	private static void ensureGitAssetsArePresent() {
+
+		
+		SplashManager.renderSplashFrame(2, "Downloading...");
 		String gitassets = null;
 		try {
 			gitassets = AssetFactory.getGitSource();

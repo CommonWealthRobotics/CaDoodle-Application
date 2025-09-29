@@ -980,7 +980,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
-				SplashManager.renderSplashFrame(1, "Initialize Model");
+				SplashManager.renderSplashFrame(3, "Initialize Model");
 				while (!SplashManager.isVisableSplash()) {
 					Thread.sleep(100);
 				}
