@@ -43,6 +43,7 @@ import com.neuronrobotics.bowlerstudio.util.IFileChangeListener;
 import com.neuronrobotics.sdk.addons.kinematics.DHParameterKinematics;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
@@ -332,7 +333,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					regenEvents.put(n.getName(), value);
 				}
 				for (String k : parameters) {
-					if (!k.contains(n.getName()) && !k.contains("CaDoodle_File_Location"))
+					if (!k.contains(n.getName()) )
 						continue;
 					Parameter para = CSGDatabase.get(k);
 					//com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
@@ -518,7 +519,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				int numCadParaams = 0;
 				for (String key : sortedList) {
 					if (key.contains("CaDoodle")
-							&& (key.contains(sel.getName()) || key.contains("CaDoodle_File_Location"))) {
+							&& (key.contains(sel.getName().split("_")[0]))) {
 						numCadParaams++;
 						String[] parts = key.split("_");
 						HBox thisLine = new HBox(5);
@@ -544,7 +545,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								}
 							}
 						} else {
-							setUpNumberChoices(thisLine, text, para, width);
+							if (para!=null)
+								setUpNumberChoices(thisLine, text, para, width);
+							else
+								Log.error("Failed to set parameter in UI "+key);
 						}
 					}
 				}
