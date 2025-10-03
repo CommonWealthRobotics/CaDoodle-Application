@@ -762,19 +762,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setupSnapGrid() {
 		List<String> grids = Arrays.asList(
-				String.format(Locale.US,"%.3f",0.1)+" mm",
-				String.format(Locale.US,"%.3f",0.25)+" mm", 
-				String.format(Locale.US,"%.3f",0.5)+" mm",
-				String.format(Locale.US,"%.3f",1.0)+" mm", 
-				String.format(Locale.US,"%.3f",2.0)+" mm", 
-				String.format(Locale.US,"%.3f",(25.4 / 8.0))+" mm (1/8th inch)", 
-				String.format(Locale.US,"%.3f",5.0)+" mm", 
-				String.format(Locale.US,"%.3f",(25.4 / 4.0))+" mm (1/4 inch)",
-				String.format(Locale.US,"%.3f",8.0)+" mm (Brick)", 
-				String.format(Locale.US,"%.3f",10.0)+" mm",
-				String.format(Locale.US,"%.3f",(25.4 / 2.0))+" mm (1/2 inch)",
-				String.format(Locale.US,"%.3f",20.0)+" mm",
-				String.format(Locale.US,"%.3f",(25.4 ))+" mm (1 inch)"
+				String.format(Locale.US,"%.4f",0.1)+" mm",
+				String.format(Locale.US,"%.4f",0.25)+" mm", 
+				String.format(Locale.US,"%.4f",0.5)+" mm",
+				String.format(Locale.US,"%.4f",1.0)+" mm", 
+				String.format(Locale.US,"%.4f",(25.4 / 16.0))+" mm (1/16th inch)", 
+				String.format(Locale.US,"%.4f",2.0)+" mm", 
+				String.format(Locale.US,"%.4f",(25.4 / 8.0))+" mm (1/8th inch)", 
+				String.format(Locale.US,"%.4f",5.0)+" mm", 
+				String.format(Locale.US,"%.4f",(25.4 / 4.0))+" mm (1/4 inch)",
+				String.format(Locale.US,"%.4f",8.0)+" mm (Brick)", 
+				String.format(Locale.US,"%.4f",10.0)+" mm",
+				String.format(Locale.US,"%.4f",(25.4 / 2.0))+" mm (1/2 inch)",
+				String.format(Locale.US,"%.4f",20.0)+" mm",
+				String.format(Locale.US,"%.4f",(25.4 ))+" mm (1 inch)"
 				);
 		
 		HashMap<String, Double> map = new HashMap<>();
