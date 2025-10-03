@@ -773,7 +773,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				String.format(Locale.US,"%.3f",8.0)+" mm (Brick)", 
 				String.format(Locale.US,"%.3f",10.0)+" mm",
 				String.format(Locale.US,"%.3f",(25.4 / 2.0))+" mm (1/2 inch)",
-				String.format(Locale.US,"%.3f",20.0)+" mm");
+				String.format(Locale.US,"%.3f",20.0)+" mm",
+				String.format(Locale.US,"%.3f",(25.4 ))+" mm (1 inch)"
+				);
 		
 		HashMap<String, Double> map = new HashMap<>();
 		map.put("Off", 0.001);
