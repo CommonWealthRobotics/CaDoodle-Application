@@ -244,7 +244,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// new Exception().printStackTrace();
 		new Thread(() -> {
-			CSGDatabase.saveDatabase();
+			ap.get().getCsgDBinstance().saveDatabase();
 			Thread t = ap.regenerateFrom(source);
 			if (t == null)
 				return;
@@ -335,10 +335,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				for (String k : parameters) {
 					if (!k.contains(n.getName()) )
 						continue;
-					Parameter para = CSGDatabase.get(k);
+					Parameter para = ap.get().getCsgDBinstance().get(k);
 					//com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " + nameString);
-					CSGDatabase.clearParameterListeners(k);
-					CSGDatabase.addParameterListener(k, (name1, p) -> {
+					ap.get().getCsgDBinstance().clearParameterListeners(k);
+					ap.get().getCsgDBinstance().addParameterListener(k, (name1, p) -> {
 						if (LengthParameter.class.isInstance(p)) {
 							// new Exception().printStackTrace();
 							com.neuronrobotics.sdk.common.Log.debug("Value Updating " + p.getName() + " to " + p.getMM());
@@ -528,7 +528,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						e.setMinWidth(50);
 						thisLine.getChildren().add(e);
 						parametrics.getChildren().add(thisLine);
-						Parameter para = CSGDatabase.get(key);
+						Parameter para = ap.get().getCsgDBinstance().get(key);
 						int width = 120;
 
 						if (StringParameter.class.isInstance(para)) {

@@ -105,7 +105,7 @@ public class ShapePalletButtonResources {
 		List<CSG> so = set.process(new ArrayList<>());
 		for (CSG c : so) {
 			for (String s : c.getParameters(ap.get().getCsgDBinstance())) {
-				CSGDatabase.delete(s);
+				ap.get().getCsgDBinstance().delete(s);
 			}
 		}
 		if (isSweep)
