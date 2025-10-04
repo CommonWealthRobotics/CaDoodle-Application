@@ -104,7 +104,7 @@ public class ShapePalletButtonResources {
 		set.setCaDoodleFile(ap.get());
 		List<CSG> so = set.process(new ArrayList<>());
 		for (CSG c : so) {
-			for (String s : c.getParameters()) {
+			for (String s : c.getParameters(ap.get().getCsgDBinstance())) {
 				CSGDatabase.delete(s);
 			}
 		}

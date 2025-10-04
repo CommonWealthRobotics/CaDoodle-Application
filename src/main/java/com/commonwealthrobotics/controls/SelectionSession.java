@@ -317,7 +317,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				String name = s.getName();
 				//com.neuronrobotics.sdk.common.Log.error("Adding Listeners for " + name);
 				// new Exception().printStackTrace();
-				Set<String> parameters = n.getParameters();
+				Set<String> parameters = n.getParameters(ap.get().getCsgDBinstance());
 				IFileChangeListener myL = l;
 				File myFile = f;
 				if (parameters.size() > 0 && regenEvents.get(n.getName()) == null) {
@@ -514,7 +514,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			shapeConfiguration.setText("Shape (" + selected.size() + ")");
 			if (selected.size() == 1) {
 				CSG sel = getSelectedCSG(selectedSnapshot()).get(0);
-				List<String> sortedList = new ArrayList<>(sel.getParameters());
+				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
 				for (String key : sortedList) {
