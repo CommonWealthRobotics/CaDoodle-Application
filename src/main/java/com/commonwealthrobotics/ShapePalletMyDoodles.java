@@ -105,7 +105,7 @@ public class ShapePalletMyDoodles {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 
-		CSGDatabaseInstance instance = CSGDatabase.getInstance();
+		CSGDatabaseInstance instance =caDoodleFile.getCsgDBinstance();
 		if (!caDoodleFile.getSTLThumbnailFile().exists()) {
 //			Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
 //			CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
