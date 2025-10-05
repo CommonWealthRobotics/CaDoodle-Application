@@ -70,6 +70,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
@@ -154,7 +155,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean robotLabOpen=true;
 	private Button robotLabDrawer;
 	private Runnable updateRobotLab = null;
-	private LimbControlManager limbs; 
+	private LimbControlManager limbs;
+	private ProgressIndicator memUsage; 
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -231,7 +233,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		setUpParametrics(currentState, source);
 		displayCurrent();
 		TickToc.tic("Finish On Update In Selected Session");
+		updateMemoryDisplay();
 
+	}
+
+	public void updateMemoryDisplay() {
+		double value = ((double)CaDoodleFile.getFreeMemory())/100.0;
+		Log.debug("Mem="+value);
+		memUsage.setProgress(value);
+		if(value>0.5&&value<0.75) {
+			
+		}
 	}
 
 	private void myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
@@ -736,7 +748,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
-			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane) {
+			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane, ProgressIndicator memUsage) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -752,6 +764,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.timeline = tm;
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
+		this.memUsage = memUsage;
 		setupSnapGrid();
 
 	}

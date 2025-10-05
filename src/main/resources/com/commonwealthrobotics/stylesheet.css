@@ -442,7 +442,5 @@
     -fx-padding: 0.25em;
 }
 
-.progress-bar > .track {
-    -fx-background-color: #f2c83d; /* logo-yellow track */
-    -fx-background-radius: 2px;
-}
+
+
