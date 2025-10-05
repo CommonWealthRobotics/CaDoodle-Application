@@ -45,26 +45,35 @@ public class TimelineManager {
 	private boolean updating = false;
 	private SelectionSession session;
 	private boolean clear;
-	
-	private boolean updateNeeded=false;
+
+	private boolean updateNeeded = false;
 	private BowlerStudio3dEngine engine;
+	private boolean addrem;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
-		
+
 		ap.addListener(new ICaDoodleStateUpdate() {
-			long timeSinceGC=0;
+			long timeSinceGC = 0;
+
 			@Override
-			public void onWorkplaneChange(TransformNR newWP) {}
+			public void onWorkplaneChange(TransformNR newWP) {
+			}
+
 			@Override
 			public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
-				if(file.isRegenerating())
+				if (file.isRegenerating())
 					return;
 			}
+
 			@Override
-			public void onSaveSuggestion() {}
+			public void onSaveSuggestion() {
+			}
+
 			@Override
-			public void onRegenerateStart() {}
+			public void onRegenerateStart() {
+			}
+
 			@Override
 			public void onRegenerateDone() {
 			}
@@ -73,21 +82,23 @@ public class TimelineManager {
 			public void onInitializationStart() {
 
 			}
+
 			@Override
 			public void onInitializationDone() {
 				update(true);
 			}
+
 			@Override
 			public void onTimelineUpdate(int num) {
-				if(num>1)
+				if (num > 1)
 					update(true);
-				else if (num==1)
+				else if (num == 1)
 					update(false);
 			}
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session,BowlerStudio3dEngine engine) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine) {
 		this.timelineScroll = timelineScroll;
 		this.timeline = timeline;
 		this.session = session;
@@ -110,36 +121,40 @@ public class TimelineManager {
 		canvas.snapshot(params, resizedImage);
 		return resizedImage;
 	}
-	private boolean boundsSame(CSG one,CSG two) {
-		if(one==null||two==null)
+
+	private boolean boundsSame(CSG one, CSG two) {
+		if (one == null || two == null)
 			return true;
 		return boundsSame(one.getBounds(), two.getBounds());
 	}
+
 	private boolean boundsSame(Bounds one, Bounds two) {
-		if(one.getMax().test(two.getMax(), 0.0001)) {
+		if (one.getMax().test(two.getMax(), 0.0001)) {
 			return true;
 		}
-		if(one.getMin().test(two.getMin(), 0.0001)) {
+		if (one.getMin().test(two.getMin(), 0.0001)) {
 			return true;
 		}
 		return false;
 	}
+
 	private CSG getSameName(CSG get, List<CSG> list) {
-		for(CSG c:list)
-			if(c.getName().contentEquals(get.getName()))
+		for (CSG c : list)
+			if (c.getName().contentEquals(get.getName()))
 				return c;
 		return null;
 	}
+
 	private void update(boolean clear) {
-		//com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
+		// com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
 		this.clear = clear;
-		updateNeeded=true;
-		if(updating)
+		updateNeeded = true;
+		if (updating)
 			return;
-		updateNeeded=false;
+		updateNeeded = false;
 		updating = true;
-		BowlerStudio.runLater(() -> {
-			boolean addrem = false;
+		new Thread(() -> {
+			addrem = false;
 			if (clear)
 				clear();
 			while (ap.get().getCurrentIndex() < (buttons.size() - 1) && !ap.get().isForwardAvailible()) {
@@ -152,175 +167,182 @@ public class TimelineManager {
 			for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 				try {
 					CaDoodleOperation op = opperations.get(i);
-					if(op==null)
+					List<CSG> state = ap.get().getStateAtOperation(op);
+					if (op == null)
 						continue;
-					String text = (i + 1) + "\n" + op.getType();
-					Button toAdd = new Button(text);
-					buttons.add(toAdd);
-					int my = i;
-					ContextMenu contextMenu = new ContextMenu();
-					List<CSG> state=ap.get().getStateAtOperation(op);
-					List<CSG> previous = (i==0)?new ArrayList<CSG>():ap.get().getStateAtOperation(opperations.get(i-1));
-					toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-						session.setKeyBindingFocus();
-						BowlerStudio.runLater(() -> {
-							if (event.getButton() == MouseButton.PRIMARY) {
-								int index = ap.get().getCurrentIndex() - 1;
-								Button button = buttons.get(index < 0 ? 0 : index);
-								contextMenu.hide();
-								if (button == toAdd)
-									return;
-								for(CSG c:state)
-									engine.removeObject(c);
-								new Thread(() -> {
-									ap.get().moveToOpIndex(my);
-								}).start();
-								
-							}
-							if (event.getButton() == MouseButton.SECONDARY) {
-								// Show context menu where the mouse was clicked
-								contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
-								new Thread(() -> {
-									try {
-										Thread.sleep(3000);
-									} catch (InterruptedException e) {
-										com.neuronrobotics.sdk.common.Log.error(e);
-									}
-									BowlerStudio.runLater(() -> contextMenu.hide());
-								}).start();
-							}
-						});
-					});
-					int myButtonIndex=i;
-					toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-						int index = ap.get().getCurrentIndex() - 1;
-						if(index!=myButtonIndex)
-							for(CSG c:state) {
-								if (c.isInGroup())
-									continue;
-								if(c.isHide())
-									continue;
-								CSG prev=getSameName(c, previous);
-								boolean b=!boundsSame(prev, c);
-								if(prev!=null) {
-									if(prev.isHide() && !c.isHide())
-										b=true;
-									if(prev.isHole()!=c.isHole())
-										b=true;
-								}
-								if(b||prev==null)
-									engine.addObject(c, null, 0.4);
-							}
-					});
-					toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-						int index = ap.get().getCurrentIndex() - 1;
-						if(index!=myButtonIndex)
-							for(CSG c:state)
-								engine.removeObject(c);
-					});
-					File f = ap.get().getTimelineImageFile(i - 1);
-					Image image = new Image(f.toURI().toString());
-					ImageView value = new ImageView(resizeImage(image, 80, 80));
-					ImageView toolimage = new ImageView(image);
-					toolimage.setFitHeight(300);
-					toolimage.setFitWidth(300);
-					toAdd.getStyleClass().add("image-button");
-					toAdd.setContentDisplay(ContentDisplay.TOP);
-					toAdd.setGraphic(value);
-					Tooltip tooltip = new Tooltip(text);
-					tooltip.setGraphic(toolimage);
-					tooltip.setContentDisplay(ContentDisplay.TOP);
-					//toAdd.setTooltip(tooltip);
+					int myIndex=i;
+					BowlerStudio.runLater(() -> {
+						String text = (myIndex + 1) + "\n" + op.getType();
+						Button toAdd = new Button(text);
+						buttons.add(toAdd);
+						int my = myIndex;
+						ContextMenu contextMenu = new ContextMenu();
+						List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
+								: ap.get().getStateAtOperation(opperations.get(myIndex - 1));
+						toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+							session.setKeyBindingFocus();
+							BowlerStudio.runLater(() -> {
+								if (event.getButton() == MouseButton.PRIMARY) {
+									int index = ap.get().getCurrentIndex() - 1;
+									Button button = buttons.get(index < 0 ? 0 : index);
+									contextMenu.hide();
+									if (button == toAdd)
+										return;
+									for (CSG c : state)
+										engine.removeObject(c);
+									new Thread(() -> {
+										ap.get().moveToOpIndex(my);
+									}).start();
 
-					timeline.getChildren().add(toAdd);
-					Separator verticalSeparator = new Separator();
-					verticalSeparator.setOrientation(Orientation.VERTICAL);
-					verticalSeparator.setPrefHeight(80); // Set height to 80 units
-					timeline.getChildren().add(verticalSeparator);
-					addrem = true;
-					// Create a delete menu item
-					MenuItem deleteItem = new MenuItem("Delete");
-					deleteItem.getStyleClass().add("image-button-focus");
-					deleteItem.setOnAction(event -> {
-						toAdd.setDisable(true);
-						buttons.remove(toAdd);
-						timeline.getChildren().remove(toAdd);
-						ap.get().deleteOperation(op);
-						for(CSG c:state)
-							engine.removeObject(c);
-					});
-					deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-						int index = ap.get().getCurrentIndex() - 1;
-						if(index!=myButtonIndex)
-							for(CSG c:state)
+								}
+								if (event.getButton() == MouseButton.SECONDARY) {
+									// Show context menu where the mouse was clicked
+									contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
+									new Thread(() -> {
+										try {
+											Thread.sleep(3000);
+										} catch (InterruptedException e) {
+											com.neuronrobotics.sdk.common.Log.error(e);
+										}
+										BowlerStudio.runLater(() -> contextMenu.hide());
+									}).start();
+								}
+							});
+						});
+						int myButtonIndex = myIndex;
+						toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+							int index = ap.get().getCurrentIndex() - 1;
+							if (index != myButtonIndex)
+								for (CSG c : state) {
+									if (c.isInGroup())
+										continue;
+									if (c.isHide())
+										continue;
+									CSG prev = getSameName(c, previous);
+									boolean b = !boundsSame(prev, c);
+									if (prev != null) {
+										if (prev.isHide() && !c.isHide())
+											b = true;
+										if (prev.isHole() != c.isHole())
+											b = true;
+									}
+									if (b || prev == null)
+										engine.addObject(c, null, 0.4);
+								}
+						});
+						toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+							int index = ap.get().getCurrentIndex() - 1;
+							if (index != myButtonIndex)
+								for (CSG c : state)
+									engine.removeObject(c);
+						});
+						File f = ap.get().getTimelineImageFile(myIndex - 1);
+						Image image = new Image(f.toURI().toString());
+						ImageView value = new ImageView(resizeImage(image, 80, 80));
+						ImageView toolimage = new ImageView(image);
+						toolimage.setFitHeight(300);
+						toolimage.setFitWidth(300);
+						toAdd.getStyleClass().add("image-button");
+						toAdd.setContentDisplay(ContentDisplay.TOP);
+						toAdd.setGraphic(value);
+						Tooltip tooltip = new Tooltip(text);
+						tooltip.setGraphic(toolimage);
+						tooltip.setContentDisplay(ContentDisplay.TOP);
+						// toAdd.setTooltip(tooltip);
+
+						timeline.getChildren().add(toAdd);
+						Separator verticalSeparator = new Separator();
+						verticalSeparator.setOrientation(Orientation.VERTICAL);
+						verticalSeparator.setPrefHeight(80); // Set height to 80 units
+						timeline.getChildren().add(verticalSeparator);
+						addrem = true;
+						// Create a delete menu item
+						MenuItem deleteItem = new MenuItem("Delete");
+						deleteItem.getStyleClass().add("image-button-focus");
+						deleteItem.setOnAction(event -> {
+							toAdd.setDisable(true);
+							buttons.remove(toAdd);
+							timeline.getChildren().remove(toAdd);
+							ap.get().deleteOperation(op);
+							for (CSG c : state)
 								engine.removeObject(c);
+						});
+						deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+							int index = ap.get().getCurrentIndex() - 1;
+							if (index != myButtonIndex)
+								for (CSG c : state)
+									engine.removeObject(c);
+						});
+						// Add the delete item to the context menu
+						contextMenu.getItems().add(deleteItem);
+						timelineScroll.setHvalue(1.0);
 					});
-					// Add the delete item to the context menu
-					contextMenu.getItems().add(deleteItem);
 					// Add event handler for right-click
 				} catch (Exception ex) {
-					com.neuronrobotics.sdk.common.Log.error(ex);;
+					com.neuronrobotics.sdk.common.Log.error(ex);
+					;
 				}
 			}
-			//com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
+			// com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
 			if (addrem)
-				BowlerStudio.runLater(java.time.Duration.ofMillis(100),() -> {
+				BowlerStudio.runLater(java.time.Duration.ofMillis(100), () -> {
 					timelineScroll.setHvalue(1.0);
 					updating = false;
-					if(updateNeeded)
+					if (updateNeeded)
 						update(clear);
 					session.updateControlsDisplayOfSelected();
 				});
 			else {
 				updating = false;
-				if(updateNeeded)
+				if (updateNeeded)
 					update(clear);
-				session.updateControlsDisplayOfSelected();
+				BowlerStudio.runLater(()->session.updateControlsDisplayOfSelected());
 			}
-			
-		});
+
+		}).start();
 	}
 
 	public void clear() {
-		//com.neuronrobotics.sdk.common.Log.debug("Old Timeline buttons cleared");
-		buttons.clear();
-		timeline.getChildren().clear();
+		// com.neuronrobotics.sdk.common.Log.debug("Old Timeline buttons cleared");
+		BowlerStudio.runLater(()->{
+			buttons.clear();
+			timeline.getChildren().clear();
+		});
 	}
 
 	public void updateSelected(LinkedHashSet<String> selected) {
 		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
-		for(int i=0;i<opperations.size()&&i<buttons.size();i++) {
-			CaDoodleOperation op =opperations.get(i);
-			if(op==null)
+		for (int i = 0; i < opperations.size() && i < buttons.size(); i++) {
+			CaDoodleOperation op = opperations.get(i);
+			if (op == null)
 				continue;
-			Button b=buttons.get(i);
-			boolean applyToMe=false;
+			Button b = buttons.get(i);
+			boolean applyToMe = false;
 			int index = ap.get().getCurrentIndex() - 1;
-			if(index>=buttons.size())
+			if (index >= buttons.size())
 				continue;
 			Button sel = buttons.get(index < 0 ? 0 : index);
-			for(String s:op.getNamesAddedInThisOperation()) {
-				for(String p:selected) {
-					if(s.contentEquals(p))
-						applyToMe=true;
+			for (String s : op.getNamesAddedInThisOperation()) {
+				for (String p : selected) {
+					if (s.contentEquals(p))
+						applyToMe = true;
 				}
 			}
 			b.getStyleClass().clear();
-			if(sel==b) {
+			if (sel == b) {
 				b.getStyleClass().add("image-button-focus");
 			}
-			if(applyToMe)
+			if (applyToMe)
 				b.getStyleClass().add("image-button-highlight");
 			else
 				b.getStyleClass().add("image-button");
-
 
 		}
 	}
 
 	public void setOpenState(boolean timelineOpen) {
 		ap.get().setTimelineVisable(timelineOpen);
-		if(timelineOpen)
+		if (timelineOpen)
 			session.save();
 	}
 
