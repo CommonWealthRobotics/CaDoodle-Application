@@ -435,7 +435,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (c.isHole() && !c.isWireFrame()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
-			pm.setSpecularColor(new Color(1, 1, 1, 0.15));
+			pm.setSpecularColor(new Color(0.55, 0.55, 0.55, 1));
 			meshView.setCullFace(CullFace.NONE);
 			meshView.setDrawMode(DrawMode.FILL);
 			meshView.setDepthTest(DepthTest.ENABLE);
@@ -445,7 +445,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Color diffuseColor = phongMaterial.getDiffuseColor();
 			diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(), diffuseColor.getOpacity());
 			phongMaterial.setDiffuseColor(diffuseColor);
-			phongMaterial.setSpecularColor(javafx.scene.paint.Color.WHITE);
+			double red = diffuseColor.getRed()+0.1;
+			double green = diffuseColor.getGreen()+0.1;
+			double blue = diffuseColor.getBlue()+0.1;
+			phongMaterial.setSpecularColor(Color.color(red>1?1:red, green>1?1:green, blue>1?1:blue, diffuseColor.getOpacity()));
 		}
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
