@@ -159,7 +159,7 @@ public class TimelineManager {
 				clear();
 			while (ap.get().getCurrentIndex() < (buttons.size() - 1) && !ap.get().isForwardAvailible()) {
 				Button toRem = buttons.remove(buttons.size() - 1);
-				timeline.getChildren().remove(toRem);
+				BowlerStudio.runLater(() -> timeline.getChildren().remove(toRem));
 				addrem = true;
 			}
 			ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
