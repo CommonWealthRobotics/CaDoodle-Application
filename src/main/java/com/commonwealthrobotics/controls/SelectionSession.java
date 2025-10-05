@@ -239,7 +239,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void updateMemoryDisplay() {
 		double value = ((double)CaDoodleFile.getFreeMemory())/100.0;
-		Log.debug("Mem="+value);
+		Log.info("Mem="+value);
 		memUsage.setProgress(value);
 		if(value>0.5&&value<0.75) {
 			

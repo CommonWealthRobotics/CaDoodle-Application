@@ -166,6 +166,7 @@ public class TimelineManager {
 					clear();
 			}else {
 				timeline=new GridPane();
+		        baseBox.getChildren().add(timeline);
 			}
 		       // Configure columns (all same width)
 			int buttonSize=80;
@@ -176,7 +177,7 @@ public class TimelineManager {
 	        // Center the entire GridPane content
 			timeline.setAlignment(Pos.CENTER);
 	        timeline.setGridLinesVisible(true); // Shows grid lines for debuggin
-	        baseBox.getChildren().add(timeline);
+
 	       // baseBox.setMaxWidth(opperations.size() * (buttonSize+space));
 	        timelineScroll.setHvalue(1.0);
 
