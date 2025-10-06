@@ -79,25 +79,25 @@ public class TimelineManager {
 
 			@Override
 			public void onRegenerateStart(CaDoodleOperation source) {
-				boolean started = false;
 				ArrayList<CaDoodleOperation> ops = ap.get().getOpperations();
-				for(int i=0;i<ops.size();i++) {
-					if(ops.get(i).equals(source))
-						started=true;
-					if(started) {
-						Button b = buttons.remove(i);
-						BowlerStudio.runLater(() -> timeline.getChildren().remove(b));
-					}
+				ArrayList<Button> toRem= new ArrayList<Button>();
+				for(int i=Math.max(0, ap.get().getCurrentIndex());i<buttons.size();i++) {
+					Button b = buttons.get(i);
+					toRem.add(b);
+					BowlerStudio.runLater(() -> timeline.getChildren().remove(b));
 				}
+				buttons.removeAll(toRem);
 			}
 
 			@Override
 			public void onRegenerateDone() {
+				//update(false);
 			}
 
 			@Override
 			public void onInitializationStart() {
-
+				buttons.clear();
+				BowlerStudio.runLater(() -> timeline.getChildren().clear());
 			}
 
 			@Override
