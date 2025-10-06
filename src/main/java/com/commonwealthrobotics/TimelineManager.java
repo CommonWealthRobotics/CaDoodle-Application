@@ -55,6 +55,7 @@ public class TimelineManager {
 	private boolean updateNeeded = false;
 	private BowlerStudio3dEngine engine;
 	private boolean addrem;
+	private boolean firstTime;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -91,6 +92,16 @@ public class TimelineManager {
 
 			@Override
 			public void onInitializationDone() {
+				BowlerStudio.runLater(() -> {
+					if (timeline != null) {
+						if (clear)
+							clear();
+						baseBox.getChildren().remove(timeline);
+					}
+					timeline = new GridPane();
+					baseBox.getChildren().add(timeline);
+				});
+				firstTime = true;
 				update(true);
 			}
 
@@ -159,31 +170,25 @@ public class TimelineManager {
 			return;
 		updating = true;
 		updateNeeded = false;
+
 		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
 		BowlerStudio.runLater(() -> {
-			if(timeline!=null) {
-				if (clear)
-					clear();
-			}else {
-				timeline=new GridPane();
-		        baseBox.getChildren().add(timeline);
-			}
-		       // Configure columns (all same width)
-			int buttonSize=80;
-			int space =20;
-			timeline.setHgap(space/2); // Horizontal gap between columns
+
+			// Configure columns (all same width)
+			int buttonSize = 80;
+			int space = 20;
+			timeline.setHgap(space / 2); // Horizontal gap between columns
 			timeline.setVgap(space); // Vertical gap between rows
-	        
-	        // Center the entire GridPane content
+
+			// Center the entire GridPane content
 			timeline.setAlignment(Pos.CENTER);
-	        timeline.setGridLinesVisible(true); // Shows grid lines for debuggin
+			timeline.setGridLinesVisible(true); // Shows grid lines for debuggin
 
-	       // baseBox.setMaxWidth(opperations.size() * (buttonSize+space));
-	        timelineScroll.setHvalue(1.0);
-
+			// baseBox.setMaxWidth(opperations.size() * (buttonSize+space));
+			// timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)opperations.size()));
 
 			new Thread(() -> {
-				while(ap.get().isRegenerating() || !ap.get().isInitialized()) {
+				while (ap.get().isRegenerating() || !ap.get().isInitialized()) {
 					try {
 						Thread.sleep(100);
 						Log.debug("Waifting for timeline to update");
@@ -212,6 +217,8 @@ public class TimelineManager {
 									: ap.get().getStateAtOperation(opperations.get(myIndex - 1));
 							toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 								session.setKeyBindingFocus();
+								if (ap.get().isRegenerating() || !ap.get().isInitialized())
+									return;
 								BowlerStudio.runLater(() -> {
 									if (event.getButton() == MouseButton.PRIMARY) {
 										int index = ap.get().getCurrentIndex() - 1;
@@ -281,16 +288,18 @@ public class TimelineManager {
 							tooltip.setContentDisplay(ContentDisplay.TOP);
 							// toAdd.setTooltip(tooltip);
 
-							timeline.add(toAdd,myIndex,0);
+							timeline.add(toAdd, myIndex, 0);
 							Separator verticalSeparator = new Separator();
 							verticalSeparator.setOrientation(Orientation.VERTICAL);
 							verticalSeparator.setPrefHeight(buttonSize); // Set height to 80 units
-							//timeline.getChildren().add(verticalSeparator);
+							// timeline.getChildren().add(verticalSeparator);
 							addrem = true;
 							// Create a delete menu item
 							MenuItem deleteItem = new MenuItem("Delete");
 							deleteItem.getStyleClass().add("image-button-focus");
 							deleteItem.setOnAction(event -> {
+								if (ap.get().isRegenerating() || !ap.get().isInitialized())
+									return;
 								toAdd.setDisable(true);
 								buttons.remove(toAdd);
 								timeline.getChildren().remove(toAdd);
@@ -306,7 +315,7 @@ public class TimelineManager {
 							});
 							// Add the delete item to the context menu
 							contextMenu.getItems().add(deleteItem);
-							
+
 						});
 						// Add event handler for right-click
 					} catch (Exception ex) {
@@ -317,7 +326,10 @@ public class TimelineManager {
 				// com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
 				if (addrem)
 					BowlerStudio.runLater(java.time.Duration.ofMillis(100), () -> {
-						timelineScroll.setHvalue(1.0);
+						if (firstTime) {
+							//timelineScroll.setHvalue(1.0);
+							timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)opperations.size()));
+						}
 						updating = false;
 						if (updateNeeded)
 							update(clear);
@@ -339,7 +351,7 @@ public class TimelineManager {
 
 		buttons.clear();
 		timeline.getChildren().clear();
-		
+
 	}
 
 	public void updateSelected(LinkedHashSet<String> selected) {
