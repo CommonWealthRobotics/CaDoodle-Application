@@ -146,7 +146,7 @@ public class ControlSprites {
 			}
 
 			@Override
-			public void onRegenerateStart() {
+			public void onRegenerateStart(CaDoodleOperation source) {
 			}
 
 			@Override

@@ -1499,7 +1499,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@Override
-	public void onRegenerateStart() {
+	public void onRegenerateStart(CaDoodleOperation source) {
 		// Auto-generated method stub
 
 	}

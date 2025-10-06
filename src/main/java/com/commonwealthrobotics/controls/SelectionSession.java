@@ -1906,7 +1906,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onRegenerateStart() {
+	public void onRegenerateStart(CaDoodleOperation source) {
 		// com.neuronrobotics.sdk.common.Log.debug("Disable parametrics ");
 
 		BowlerStudio.runLater(() -> parametrics.setDisable(true));
