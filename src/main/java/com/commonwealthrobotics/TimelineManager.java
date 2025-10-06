@@ -327,8 +327,8 @@ public class TimelineManager {
 				if (addrem)
 					BowlerStudio.runLater(java.time.Duration.ofMillis(100), () -> {
 						if (firstTime) {
-							//timelineScroll.setHvalue(1.0);
-							timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)opperations.size()));
+							timelineScroll.setHvalue(1.0);
+							//timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)opperations.size()));
 						}
 						updating = false;
 						if (updateNeeded)
