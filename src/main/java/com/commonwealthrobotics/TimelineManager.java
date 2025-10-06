@@ -209,10 +209,10 @@ public class TimelineManager {
 			if (timeline != null) {
 				if (clear)
 					clear();
-				baseBox.getChildren().remove(timeline);
+			}else {
+				timeline = new GridPane();
+				baseBox.getChildren().add(timeline);
 			}
-			timeline = new GridPane();
-			baseBox.getChildren().add(timeline);
 
 			// Configure columns (all same width)
 			int buttonSize = 80;
