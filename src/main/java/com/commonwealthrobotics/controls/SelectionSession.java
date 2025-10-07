@@ -256,7 +256,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// new Exception().printStackTrace();
 		new Thread(() -> {
-			ap.get().getCsgDBinstance().saveDatabase();
+			try {
+				ap.get().getCsgDBinstance().saveDatabase();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Thread t = ap.regenerateFrom(source);
 			if (t == null)
 				return;
