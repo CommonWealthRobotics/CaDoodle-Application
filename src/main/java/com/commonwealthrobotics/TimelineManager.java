@@ -97,7 +97,8 @@ public class TimelineManager {
 			@Override
 			public void onInitializationStart() {
 				buttons.clear();
-				BowlerStudio.runLater(() -> timeline.getChildren().clear());
+				if(timeline!=null)
+					BowlerStudio.runLater(() -> timeline.getChildren().clear());
 			}
 
 			@Override

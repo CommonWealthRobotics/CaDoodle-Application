@@ -61,7 +61,7 @@ public class ShapePalletButtonResources {
 		// if(!OSUtil.isWindows())
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
-				indicator = Vitamins.get(stlFile);
+				indicator = Vitamins.get(ap.get().getCsgDBinstance(),stlFile);
 				indicator.setColor(Color.WHITE);
 				image = new Image(imageFile.toURI().toString());
 				return;
