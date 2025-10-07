@@ -313,7 +313,7 @@ public class TimelineManager {
 												b = true;
 										}
 										if (b || prev == null)
-											engine.addObject(c, null, 0.4);
+											engine.addObject(c, null, 0.4, ap.get().getCsgDBinstance());
 									}
 							});
 							toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
