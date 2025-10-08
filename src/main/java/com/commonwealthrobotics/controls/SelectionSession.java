@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.sshd.common.session.Session;
 
@@ -94,7 +96,7 @@ import javafx.scene.transform.Affine;
 
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
-
+    ExecutorService executor = Executors.newFixedThreadPool(5);
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	// private CaDoodleOperation source;
@@ -491,6 +493,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		parametrics.getChildren().clear();
 		clearBoundsCache();
 		timeline.updateSelected(selected);
+		
+		executor.submit(()->{
+			List<CSG> cs = getCurrentState();
+			BowlerStudio.runLater(() -> UpdateUIControls(cs));
+		});
+	}
+
+	private void UpdateUIControls(List<CSG> cs) {
 		if (selected.size() > 0) {
 			dropToWorkplane.setDisable(false);
 			objectWorkplane.setDisable(selected.size() != 1);
@@ -510,7 +520,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			showButtons();
 			updateShowHideButton();
 			updateLockButton();
-			for (CSG c : getCurrentState()) {
+			for (CSG c : cs) {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
@@ -588,7 +598,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}
 		} else {
-			for (CSG c : getCurrentState()) {
+			for (CSG c : cs) {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
@@ -1788,15 +1798,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<String> selectedSnapshot = selectedSnapshot();
-		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
-		if (selectedCSG.size() == 0)
-			return;
-//		TickToc.setEnabled(true);
-//		TickToc.tic("Start bounds");
-		Bounds sellectedBounds = getSellectedBounds(selectedCSG);
-//		TickToc.tic("bounds made");
-		getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds);
-		
+		executor.submit(()->{
+			List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
+			if (selectedCSG.size() == 0)
+				return;
+			BowlerStudio.runLater(()->{
+//				TickToc.setEnabled(true);
+//				TickToc.tic("Start bounds");
+				Bounds sellectedBounds = getSellectedBounds(selectedCSG);
+//				TickToc.tic("bounds made");
+				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds);
+				
+			});
+			
+		});
+
 //		TickToc.toc();
 //		TickToc.setEnabled(false);
 	}

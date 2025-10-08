@@ -1302,7 +1302,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 			String character = event.getCharacter();
-
+			if(character.isEmpty())
+				return;
 			// You can still use the key code for non-character keys
 			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
 			if (event.isControlDown() || (OsUtils.isOSX() ? event.isMetaDown() : event.isControlDown())) {

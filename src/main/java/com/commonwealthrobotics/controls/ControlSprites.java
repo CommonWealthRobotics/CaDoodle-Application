@@ -268,10 +268,14 @@ public class ControlSprites {
 	}
 
 	private void updateLinesAndCubes() {
-		Platform.runLater(() -> {
-			updateCubes();
-			updateLines();
-		});
+		new Thread(()->{
+			List<CSG> selectedCSG = ap.get().getSelect(session.selectedSnapshot());
+			List<CSG> cur=session.getCurrentStateSelected();
+			Platform.runLater(() -> {
+				updateCubes(selectedCSG,cur);
+				updateLines();
+			});
+		}).start();
 	}
 
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
@@ -554,10 +558,10 @@ public class ControlSprites {
 		return rotationManager.getViewRotation();
 	}
 
-	private void updateCubes() {
+	private void updateCubes(List<CSG> selectedCSG,List<CSG> currentState) {
 		boolean lockSize = false;
 		boolean moveLock = session.moveLock();
-		for (CSG sel : session.getCurrentStateSelected()) {
+		for (CSG sel : currentState) {
 			if (sel.isNoScale()) {
 				lockSize = true;
 			}
@@ -567,7 +571,6 @@ public class ControlSprites {
 		rotationManager.setLock(moveLock);
 		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf, session.isLocked());
 		List<String> selectedSnapshot = session.selectedSnapshot();
-		List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
 		if (selectedCSG.size() == 0)
 			return;
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
