@@ -1808,13 +1808,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 //				TickToc.tic("bounds made");
 				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds);
-				
+//				TickToc.toc();
+//				TickToc.setEnabled(false);
 			});
 			
 		});
 
-//		TickToc.toc();
-//		TickToc.setEnabled(false);
 	}
 
 //	public void setCadoodle(ActiveProject ap) {
