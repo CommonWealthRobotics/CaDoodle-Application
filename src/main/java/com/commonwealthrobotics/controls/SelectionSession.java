@@ -258,7 +258,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		com.neuronrobotics.sdk.common.Log.error("Regenerating from CaDoodle " + source);
 
 		// new Exception().printStackTrace();
-		new Thread(() -> {
+		getExecutor().submit(() -> {
 			try {
 				ap.get().getCsgDBinstance().saveDatabase();
 			} catch (Exception e) {
@@ -286,7 +286,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
-		}).start();
+		});
 	}
 
 	private void setUpParametrics(List<CSG> currentState, CaDoodleOperation source) {
@@ -368,13 +368,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						boolean regenerating = caDoodleFile.isRegenerating();
 						if (regenerating || percentInitialized < 1)
 							return;
-						new Thread(() -> {
+						getExecutor().submit(() -> {
 							if (useButton) {
 								BowlerStudio.runLater(() -> regenerate.setDisable(false));
 							} else {
 								myRegenerate(source, myL, myFile);
 							}
-						}).start();
+						});
 
 					});
 				}
@@ -911,7 +911,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void toggleTransparent() {
-		new Thread(() -> {
+		getExecutor().submit(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Toggel transparent");
 			ArrayList<ToSolid> toChange = new ArrayList<>();
 			for (Iterator<CSG> iterator = selected.iterator(); iterator.hasNext();) {
@@ -945,7 +945,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
-		}).start();
+		});
 	}
 
 	public boolean isSelectedTransparent() {
@@ -1091,13 +1091,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void Duplicate() {
 		com.neuronrobotics.sdk.common.Log.debug("Duplicate called ");
-		new Thread(() -> performPaste(0, selectedSnapshot())).start();
+		getExecutor().submit(() -> performPaste(0, selectedSnapshot()));
 		;
 	}
 
 	public void onPaste() {
 		com.neuronrobotics.sdk.common.Log.debug("Paste called");
-		new Thread(() -> performPaste(20, copySetinternal)).start();
+		getExecutor().submit(() -> performPaste(20, copySetinternal));
 		;
 
 	}
@@ -1243,7 +1243,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		}
 		if (selected.size() > 1) {
-			new Thread(() -> {
+			getExecutor().submit(() -> {
 				try {
 					List<String> selectedSnapshot = selectedSnapshot();
 					Paste copy = new Paste().setNames(selectedSnapshot);
@@ -1287,7 +1287,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					// Auto-generated catch block
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
-			}).start();
+			});
 		} else {
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
@@ -1301,7 +1301,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		}
 		if (selected.size() > 1 || hull) {
-			new Thread(() -> {
+			getExecutor().submit(() -> {
 				Group groups = new Group().setNames(selectedSnapshot());
 				groups.setHull(hull);
 				groups.setIntersect(intersect);
@@ -1319,7 +1319,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					// Auto-generated catch block
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
-			}).start();
+			});
 		} else {
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
@@ -1426,24 +1426,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onAllign() {
 		if (getControls() == null)
 			return;
-		new Thread(() -> {
+		getExecutor().submit(() -> {
 			getControls().setMode(SpriteDisplayMode.Allign);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
 			getControls().initializeAllign(selectedCSG, b, getMeshes());
-		}).start();
+		});
 
 	}
 
 	public void onMirror() {
 		if (getControls() == null)
 			return;
-		new Thread(() -> {
+		getExecutor().submit(() -> {
 			getControls().setMode(SpriteDisplayMode.Mirror);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
 			getControls().initializeMirror(selectedCSG, b, getMeshes());
-		}).start();
+		});
 	}
 
 	public boolean isFocused() {
@@ -1597,9 +1597,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		});
 
-		new Thread(() -> {
 
-		}).start();
 	}
 
 	public void moveInCameraFrame(TransformNR stateUnitVectorTmp) {
@@ -1716,7 +1714,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (needsSave && ap.get().timeSinceLastUpdate() > 1000) {
 						ICadoodleSaveStatusUpdate saveDisplay = ap.get().getSaveUpdate();
 						ap.get().setSaveUpdate(null);
-						Thread t = new Thread(() -> {
+						Thread t=new Thread(() -> {
 							com.neuronrobotics.sdk.common.Log.debug("Auto save " + ap.get().getSelf().getAbsolutePath());
 							ap.save(ap.get());
 						});
