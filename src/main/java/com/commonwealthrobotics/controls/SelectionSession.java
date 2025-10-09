@@ -96,7 +96,7 @@ import javafx.scene.transform.Affine;
 
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
-    ExecutorService executor = Executors.newFixedThreadPool(5);
+    private ExecutorService executor = Executors.newFixedThreadPool(5);
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	// private CaDoodleOperation source;
@@ -106,7 +106,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private GridPane configurationGrid;
 	private AnchorPane control3d;
 	private BowlerStudio3dEngine engine;
-	private LinkedHashSet<String> selected = new LinkedHashSet<>();
+	private LinkedHashSet<CSG> selected = new LinkedHashSet<>();
 	private ColorPicker colorPicker;
 	private ComboBox<String> snapGrid;
 	private double currentGrid = 1.0;
@@ -205,7 +205,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public boolean moveLock() {
 		boolean moveLock = false;
-		for(CSG sel:getCurrentStateSelected()) {
+		for(CSG sel:selected) {
 			if(sel.isMotionLock()||sel.isInGroup())
 				moveLock=true;
 		}
@@ -213,7 +213,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 	public List<String> selectedSnapshot() {
 		ArrayList<String> s = new ArrayList<String>();
-		s.addAll(selected);
+		for( CSG c:selected)
+			s.add(c.getName());
 		return s;
 	}
 
@@ -387,6 +388,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (ap.get().isRegenerating()) {
 			return;
 		}
+		List<CSG> currentState = getCurrentState();
 		BowlerStudio.runLater(() -> {
 			clearScreen();
 			if (isShowConstituants()) {
@@ -405,11 +407,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				for (CSG c : process) {
 					displayCSG(c);
 				}
-			ArrayList<String> toRemove = new ArrayList<String>();
-			for (String s : selected) {
+			ArrayList<CSG> toRemove = new ArrayList<>();
+			for (CSG s : selected) {
 				boolean exists = false;
-				for (CSG c : getCurrentState()) {
-					if (c.getName().contentEquals(s) && !c.isInGroup())
+				for (CSG c : currentState) {
+					if (c.getName().contentEquals(s.getName()) && !c.isInGroup())
 						exists = true;
 				}
 				if (!exists) {
@@ -460,10 +462,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		getMeshes().put(c, meshView);
-		setUpControls(meshView, c.getName());
+		setUpControls(meshView, c);
 	}
 
-	private void setUpControls(MeshView meshView, String name) {
+	private void setUpControls(MeshView meshView, CSG name) {
 		if (name == null)
 			throw new RuntimeException("Name can not be null");
 		meshView.setOnMousePressed(event -> {
@@ -494,7 +496,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		clearBoundsCache();
 		timeline.updateSelected(selected);
 		
-		executor.submit(()->{
+		getExecutor().submit(()->{
 			List<CSG> cs = getCurrentState();
 			BowlerStudio.runLater(() -> UpdateUIControls(cs));
 		});
@@ -507,7 +509,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
-			CSG set = getSelectedCSG((String) selected.toArray()[0]);
+			CSG set = ((CSG) selected.toArray()[0]);
 			if (set == null)
 				return;
 			Color value = set.getColor();
@@ -857,7 +859,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			for (String s : names)
 				if (s.contentEquals(c.getName())) {
-					selected.add(c.getName());
+					selected.add(c);
 					break;
 				}
 		}
@@ -875,7 +877,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			if (c.isHide())
 				continue;
-			selected.add(c.getName());
+			selected.add(c);
 		}
 		updateControlsDisplayOfSelected();
 		updateRobotLab.run();
@@ -894,8 +896,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selected.size() == 0)
 			return;
 		boolean isSilid = true;
-		for (String s : selected) {
-			CSG selectedCSG = getSelectedCSG(s);
+		for (CSG s : selected) {
+			CSG selectedCSG = s;
 			if (selectedCSG != null)
 				if (selectedCSG.isHole()) {
 					isSilid = false;
@@ -912,9 +914,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		new Thread(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Toggel transparent");
 			ArrayList<ToSolid> toChange = new ArrayList<>();
-			for (Iterator<String> iterator = selected.iterator(); iterator.hasNext();) {
-				String s = iterator.next();
-				CSG c = getSelectedCSG(s);
+			for (Iterator<CSG> iterator = selected.iterator(); iterator.hasNext();) {
+				CSG s = iterator.next();
+				CSG c = s;
 				if (!c.isHole()) {
 					MeshView mesh = getMeshes().get(c);
 					if (mesh == null)
@@ -948,7 +950,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public boolean isSelectedTransparent() {
 		double opacity = 0;
-		for (CSG c : getSelectedCSG(selected)) {
+		for (CSG c : selected) {
 			if (!c.isHole())
 				opacity += ((PhongMaterial) c.getMesh().getMaterial()).getDiffuseColor().getOpacity();
 		}
@@ -965,8 +967,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selected.size() == 0)
 			return;
 		boolean isSilid = false;
-		for (String s : selected) {
-			if (!getSelectedCSG(s).isHole()) {
+		for (CSG s : selected) {
+			if (!s.isHole()) {
 				isSilid = true;
 			}
 		}
@@ -1034,8 +1036,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				b.setDisable(false);
 			}
 			int unlockedSelected = 0;
-			List<CSG> selectedCSG = getSelectedCSG(selected);
-			for (CSG c : selectedCSG) {
+			for (CSG c : selected) {
 				if (!c.isLock())
 					unlockedSelected++;
 			}
@@ -1043,7 +1044,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				groupButton.setDisable(false);
 				allignButton.setDisable(false);
 			}
-			if (selectedCSG.size() > 0 && advanced) {
+			if (selected.size() > 0 && advanced) {
 				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
 			}
@@ -1054,8 +1055,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private boolean isAGroupSelected() {
-		for (String s : selected) {
-			CSG c = getSelectedCSG(s);
+		for (CSG c : selected) {
 			if (c != null) {
 				if (c.isGroupResult()) {
 					return true;
@@ -1139,53 +1139,59 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// new RuntimeException("Cruse called with nothing selected").printStackTrace();
 			return;
 		}
-		if(moveLock())
-			return;
-		com.neuronrobotics.sdk.common.Log.error("On Cruse");
-		List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
-		CSG indicator = selectedCSG.get(0);
-		if (selectedCSG.size() > 1) {
-			indicator = CSG.unionAll(selectedCSG);
-		}
-		List<String> seleectedNames = selectedSnapshot();
-		TransformNR o = new TransformNR(RotationNR.getRotationZ(90));
+		getExecutor().submit(()->{
+			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
+			List<CSG> cur=getCurrentStateSelected();
+			Platform.runLater(() -> {
+				if(!moveLock()) {
+					com.neuronrobotics.sdk.common.Log.error("On Cruse");
+					CSG indicator = selectedCSG.get(0);
+					if (selectedCSG.size() > 1) {
+						indicator = CSG.unionAll(selectedCSG);
+					}
+					List<String> seleectedNames = selectedSnapshot();
+					TransformNR o = new TransformNR(RotationNR.getRotationZ(90));
 
-		TransformNR g = o.times(wp.inverse());
-		Transform tf = TransformFactory.nrToCSG(g);
-		Bounds bounds = indicator.transformed(tf).getBounds();
-		Vector3d center = bounds.getCenter();
-		TransformNR b = new TransformNR(-center.x, -center.y, -bounds.getMin().z);
-		g = b.times(g);
+					TransformNR g = o.times(wp.inverse());
+					Transform tf = TransformFactory.nrToCSG(g);
+					Bounds bounds = indicator.transformed(tf).getBounds();
+					Vector3d center = bounds.getCenter();
+					TransformNR b = new TransformNR(-center.x, -center.y, -bounds.getMin().z);
+					g = b.times(g);
 
-		Affine gemoAffine = new Affine();
-		TransformNR copy = g.copy();
-		BowlerKernel.runLater(() -> {
-			TransformFactory.nrToAffine(copy, gemoAffine);
-		});
-
-		for (CSG c : selectedCSG) {
-			MeshView meshView = getMeshes().get(c);
-			if (meshView != null)
-				BowlerKernel.runLater(() -> {
-					meshView.setVisible(false);
-				});
-		}
-		workplane.setIndicator(indicator, gemoAffine);
-		workplane.setOnSelectEvent(() -> {
-			for (CSG c : selectedCSG) {
-				MeshView meshView = getMeshes().get(c);
-				if (meshView != null)
+					Affine gemoAffine = new Affine();
+					TransformNR copy = g.copy();
 					BowlerKernel.runLater(() -> {
-						meshView.setVisible(true);
+						TransformFactory.nrToAffine(copy, gemoAffine);
 					});
-			}
-			if (workplane.isClicked()) {
-				TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
-				ap.addOp(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
-			}
+
+					for (CSG c : selectedCSG) {
+						MeshView meshView = getMeshes().get(c);
+						if (meshView != null)
+							BowlerKernel.runLater(() -> {
+								meshView.setVisible(false);
+							});
+					}
+					workplane.setIndicator(indicator, gemoAffine);
+					workplane.setOnSelectEvent(() -> {
+						for (CSG c : selectedCSG) {
+							MeshView meshView = getMeshes().get(c);
+							if (meshView != null)
+								BowlerKernel.runLater(() -> {
+									meshView.setVisible(true);
+								});
+						}
+						if (workplane.isClicked()) {
+							TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
+							ap.addOp(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+						}
+					});
+					workplane.setCurrentAbsolutePose(copy.inverse());
+					workplane.activate();
+					}
+			});
 		});
-		workplane.setCurrentAbsolutePose(copy.inverse());
-		workplane.activate();
+
 	}
 
 	public void lockToggle() {
@@ -1247,6 +1253,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					groups.setHull(false);
 					groups.setIntersect(true);
 					ap.addOp(groups).join();
+					List<CSG> results = ap.get().getCurrentState();
 					String intersectName = groups.getGroupID();
 					ArrayList<String> names = new ArrayList<>();
 					names.add(intersectName);
@@ -1270,7 +1277,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 
 					selected.clear();
-					selected.add(groups.getGroupID());
+					selected.addAll(results);
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
@@ -1300,8 +1307,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				groups.setIntersect(intersect);
 				try {
 					ap.addOp(groups).join();
+					List<CSG> got = ap.get().getCurrentState();
 					selected.clear();
-					selected.add(groups.getGroupID());
+					selected.addAll(got);
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
@@ -1324,14 +1332,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
-		ArrayList<String> toSelect = new ArrayList<String>();
+		ArrayList<CSG> toSelect = new ArrayList<>();
 		for (CSG c : getSelectedCSG(selectedSnapshot())) {
 			if (c.isGroupResult()) {
 				String name = c.getName();
 				for (CSG inG : getCurrentState()) {
 					if (inG.isInGroup()) {
 						if (inG.checkGroupMembership(name)) {
-							toSelect.add(inG.getName());
+							toSelect.add(inG);
 						}
 					}
 				}
@@ -1468,8 +1476,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public List<CSG> getCurrentStateSelected() {
 		ArrayList<CSG> back= new ArrayList<CSG>();
 		for(CSG c:getCurrentState()) {
-			for(String s:selected) {
-				if(c.getName().contentEquals(s))
+			for(CSG s:selected) {
+				if(c.getName().contentEquals(s.getName()))
 					back.add(c);
 			}
 		}
@@ -1566,14 +1574,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onDrop() {
 		com.neuronrobotics.sdk.common.Log.error("Drop to Workplane");
-		if(moveLock())
-			return;
-		new Thread(() -> {
+		getExecutor().submit(()->{
+			List<CSG> sel = ap.get().getSelect(selectedSnapshot());
+			if(moveLock())
+				return;
+			List<CSG> cur=getCurrentStateSelected();
 			TransformNR wp = ap.get().getWorkplane();
 			Transform t = TransformFactory.nrToCSG(wp);
 			// Run a down move for each object, since each will move a different amount
 			// based on its own bottom
-			for (CSG c : getSelectedCSG(selectedSnapshot())) {
+			for (CSG c :sel) {
 				double downMove = -c.transformed(t.inverse()).getMinZ();
 				TransformNR location = wp.times(new TransformNR(0, 0, downMove)).times(wp.inverse());
 				Thread op = ap.addOp(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName())));
@@ -1585,6 +1595,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				}
 			}
+		});
+
+		new Thread(() -> {
+
 		}).start();
 	}
 
@@ -1593,22 +1607,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selected.size() == 0) {
 			return;
 		}
-		if(moveLock())
-			return;
-		TransformNR wp = ap.get().getWorkplane();
-		// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
-		TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
+		getExecutor().submit(()->{
+			if(moveLock())
+				return;
+			TransformNR wp = ap.get().getWorkplane();
+			// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
+			TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
 
-		MoveCenter m = getActiveMove();
-		if (System.currentTimeMillis() - timeSinceLastMove > 2000 || m == null) {
-			m = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
-		}
-		MoveCenter mc = m;
-		if (ap.get().isOperationRunning()) {
-			TickToc.tic("Process running, bailing on new update");
-			return;
-		}
-		new Thread(() -> {
+			MoveCenter m = getActiveMove();
+			if (System.currentTimeMillis() - timeSinceLastMove > 2000 || m == null) {
+				m = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
+			}
+			MoveCenter mc = m;
+			if (ap.get().isOperationRunning()) {
+				TickToc.tic("Process running, bailing on new update");
+				return;
+			}
 			timeSinceLastMove = System.currentTimeMillis();
 			// TickToc.setEnabled(true);
 			TickToc.tic("Start");
@@ -1687,7 +1701,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			TickToc.setEnabled(false);
-		}).start();
+
+		});
+	
 	}
 
 	public void save() {
@@ -1798,7 +1814,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<String> selectedSnapshot = selectedSnapshot();
-		executor.submit(()->{
+		getExecutor().submit(()->{
 			List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
 			if (selectedCSG.size() == 0)
 				return;
@@ -2027,6 +2043,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	 */
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;
+	}
+
+	public ExecutorService getExecutor() {
+		return executor;
+	}
+
+	public void setExecutor(ExecutorService executor) {
+		this.executor = executor;
 	}
 
 

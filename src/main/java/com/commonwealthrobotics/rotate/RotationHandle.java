@@ -22,6 +22,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -59,7 +60,7 @@ public class RotationHandle {
 	public ThreedNumber text;
 	private boolean selected = false;
 	private Affine viewRotation;
-	private SelectionSession controlSprites;
+	private SelectionSession session;
 	private ActiveProject ap;
 	private boolean moveLock=false;
 	private IOnRotateDone done;
@@ -72,7 +73,7 @@ public class RotationHandle {
 		this.viewRotation = vr;
 		this.ap = ap;
 	
-		this.controlSprites = cs;
+		this.session = cs;
 		this.done = done;
 		
 		Runnable onSelect = ()->{
@@ -108,7 +109,7 @@ public class RotationHandle {
 			com.neuronrobotics.sdk.common.Log.info("Handle clicked");
 			rotationSessionManager.initialize(cs.moveLock());
 			flagSaveChange = false;
-			controlSprites.setMode(SpriteDisplayMode.Rotating);
+			session.setMode(SpriteDisplayMode.Rotating);
 			if(!moveLock)controlCircle.setVisible(true);
 			arc.setVisible(true);
 			handle.setVisible(true);
@@ -173,7 +174,7 @@ public class RotationHandle {
 	}
 
 	private void runSaveAndReset() {
-		controlSprites.setMode(SpriteDisplayMode.Default);
+		session.setMode(SpriteDisplayMode.Default);
 		controlCircle.setVisible(false);
 		arc.setVisible(false);
 		selected=false;

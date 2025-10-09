@@ -398,7 +398,7 @@ public class TimelineManager {
 
 	}
 
-	public void updateSelected(LinkedHashSet<String> selected) {
+	public void updateSelected(LinkedHashSet<CSG> selected) {
 		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
 		for (int i = 0; i < opperations.size() && i < buttons.size(); i++) {
 			CaDoodleOperation op = opperations.get(i);
@@ -411,8 +411,8 @@ public class TimelineManager {
 				continue;
 			Button sel = buttons.get(index < 0 ? 0 : index);
 			for (String s : op.getNamesAddedInThisOperation()) {
-				for (String p : selected) {
-					if (s.contentEquals(p))
+				for (CSG p : selected) {
+					if (s.contentEquals(p.getName()))
 						applyToMe = true;
 				}
 			}

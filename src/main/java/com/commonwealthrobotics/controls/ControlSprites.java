@@ -268,14 +268,14 @@ public class ControlSprites {
 	}
 
 	private void updateLinesAndCubes() {
-		new Thread(()->{
+		session.getExecutor().submit(()->{
 			List<CSG> selectedCSG = ap.get().getSelect(session.selectedSnapshot());
 			List<CSG> cur=session.getCurrentStateSelected();
 			Platform.runLater(() -> {
 				updateCubes(selectedCSG,cur);
 				updateLines();
 			});
-		}).start();
+		});
 	}
 
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
@@ -363,6 +363,7 @@ public class ControlSprites {
 				up.hide();
 				rotationManager.hide();
 			}
+
 			// scaleSession.show();
 
 		}
