@@ -74,3 +74,15 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 **Right click on this file and Debug as Java Application**
 
 <img src="docs/images/15.png" width="600" alt="Image 15">
+
+**Add the following:**
+
+```
+ -Dprism.forceGPU=true -XX:MaxRAMPercentage=90.0 --add-exports javafx.graphics/com.sun.javafx.css=ALL-UNNAMED --add-exports javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.util=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED --add-opens javafx.graphics/javafx.scene=ALL-UNNAMED 
+ 
+ ```
+ 
+ **to Debug->Debug Configurations->Java Application -> Cadoodle Main -> Arguments -> VM Arguments**
+ 
+ <img src="docs/images/16.png" width="600" alt="Image 16">
+ <img src="docs/images/17.png" width="600" alt="Image 17">
