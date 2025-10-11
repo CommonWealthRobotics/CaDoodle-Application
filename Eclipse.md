@@ -57,7 +57,7 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 
 <img src="docs/images/11.png" width="600" alt="Image 11">
 
-**Go to Java->Compiler->Errors/Warnings->Deprecated and Restricted and set Forbidden Reference to ignore **
+**Go to Java->Compiler->Errors/Warnings->Deprecated and Restricted and set Forbidden Reference to ignore**
 
 <img src="docs/images/12.png" width="600" alt="Image 12">
 
