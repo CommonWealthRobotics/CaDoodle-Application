@@ -12,13 +12,13 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 
 <img src="docs/images/1.png" width="600" alt="Image 1">
 
-**Select gradel ane press next**
+**Select gradel and press next**
 
 <img src="docs/images/2.png" width="600" alt="Image 2">
 
-**Enter where you downloaded the sources in the build step and press next **
+**Enter where you downloaded the sources in the build step and press next**
 
-**DO NOT press finish **
+**DO NOT press finish**
 
 
 <img src="docs/images/3.png" width="600" alt="Image 3">
