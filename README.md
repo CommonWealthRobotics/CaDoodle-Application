@@ -33,15 +33,9 @@ bash  build.sh
 
 ```
 
-# Eclipse setup
+# Eclipse instructions
 
-Make sure you have run build FIRST. 
-
-Download This specific version of Eclipse 
-
-https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
-
-
+[Eclipse setup Instructions Here](Eclipse.md)
 
 # Icons 
 
