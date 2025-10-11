@@ -23,7 +23,7 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 
 <img src="docs/images/3.png" width="600" alt="Image 3">
 
-**Use custom configuration and set the Java Home to where the build script put the JVM**
+**Override workspace settings and set the Java Home to where the build script put the JVM**
 
 <img src="docs/images/4.png" width="600" alt="Image 4">
 
