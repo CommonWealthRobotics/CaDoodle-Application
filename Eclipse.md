@@ -33,38 +33,38 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 
 ## Once and only once per workspace, configure Eclipse
 
-**Image 6 - Description here**
+**If you import and the build has build errors like this, you may have not yet configured eclipse**
 
 <img src="docs/images/6.png" width="600" alt="Image 6">
 
-**Image 7 - Description here**
+**Go to Window->Preferences**
 
 <img src="docs/images/7.png" width="600" alt="Image 7">
 
-**Image 8 - Description here**
+**Go to the Java->Installed JREs**
 
 <img src="docs/images/8.png" width="600" alt="Image 8">
 
-**Image 9 - Description here**
+**Click Add... and select Standard VM and press next**
 
 <img src="docs/images/9.png" width="600" alt="Image 9">
 
-**Image 10 - Description here**
+**Enter the directory where the build script extracted the JVM and hit finish.**
 
 <img src="docs/images/10.png" width="600" alt="Image 10">
 
-**Image 11 - Description here**
+**Set the JVM you added as default and delete any others**
 
 <img src="docs/images/11.png" width="600" alt="Image 11">
 
-**Image 12 - Description here**
+**Go to Java->Compiler->Errors/Warnings->Deprecated and Restricted and set Forbidden Reference to ignore **
 
 <img src="docs/images/12.png" width="600" alt="Image 12">
 
-**Image 13 - Description here**
+**got to Java->Compiler->Building->Build Path Problems and set incompatable required binaries to Ignore**
 
 <img src="docs/images/13.png" width="600" alt="Image 13">
 
-**Image 14 - Description here**
+**Go to Java->Compiler and set Compiler compliance level to 1.8**
 
 <img src="docs/images/14.png" width="600" alt="Image 14">
