@@ -59,6 +59,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
@@ -224,8 +225,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="mirronButton"
 	private Button mirronButton; // Value injected by FXMLLoader
 
-	@FXML // fx:id="model"
-	private Button model; // Value injected by FXMLLoader
 
 	@FXML // fx:id="notesButton"
 	private Button notesButton; // Value injected by FXMLLoader
@@ -239,8 +238,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private VBox parametrics;
 
-	@FXML // fx:id="physicsButton"
-	private Button physicsButton; // Value injected by FXMLLoader
+//	@FXML // fx:id="physicsButton"
+//	private Button physicsButton; // Value injected by FXMLLoader
 
 	@FXML // fx:id="redoButton"
 	private Button redoButton; // Value injected by FXMLLoader
@@ -344,6 +343,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private GridPane legsOptionGrid;
 	@FXML
 	private GridPane armsOptionGrid;
+    @FXML
+    private ProgressIndicator memUsage;
 
 	@FXML
 	void onMakeRobot(ActionEvent e) {
@@ -689,23 +690,23 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setKeyBindingFocus();
 	}
 
-	@FXML
-	void onModeling(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Select Modeling View");
-		session.setKeyBindingFocus();
-	}
+//	@FXML
+//	void onModeling(ActionEvent event) {
+//		com.neuronrobotics.sdk.common.Log.error("Select Modeling View");
+//		session.setKeyBindingFocus();
+//	}
 
 	@FXML
 	void onNotesClick(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Notes");
 		session.setKeyBindingFocus();
 	}
-
-	@FXML
-	void onPhysics(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Physics Mode Selected");
-		session.setKeyBindingFocus();
-	}
+//
+//	@FXML
+//	void onPhysics(ActionEvent event) {
+//		com.neuronrobotics.sdk.common.Log.error("On Physics Mode Selected");
+//		session.setKeyBindingFocus();
+//	}
 
 	@FXML
 	void onRuler(ActionEvent event) {
@@ -839,13 +840,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"lockUnlockTooltip\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert mirronButton != null
 				: "fx:id=\"mirronButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert model != null : "fx:id=\"model\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert notesButton != null : "fx:id=\"notesButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert objectPallet != null
 				: "fx:id=\"objectPallet\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert pasteButton != null : "fx:id=\"pasteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert physicsButton != null
-				: "fx:id=\"physicsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+//		assert physicsButton != null
+//				: "fx:id=\"physicsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert redoButton != null : "fx:id=\"redoButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert rulerButton != null : "fx:id=\"rulerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert settingsButton != null
@@ -902,7 +902,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 					engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,
-					timelineManager, objectWorkplane, dropToWorkplane);
+					timelineManager, objectWorkplane, dropToWorkplane,memUsage);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
@@ -968,6 +968,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				int s = x.indexOf(' ');
 				SplashManager.onLogUpdate(x.substring(s, x.length()));
 			}
+			session.updateMemoryDisplay();
 		});
 	}
 
@@ -1301,7 +1302,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 			String character = event.getCharacter();
-
+			if(character.isEmpty())
+				return;
 			// You can still use the key code for non-character keys
 			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
 			if (event.isControlDown() || (OsUtils.isOSX() ? event.isMetaDown() : event.isControlDown())) {
@@ -1498,7 +1500,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@Override
-	public void onRegenerateStart() {
+	public void onRegenerateStart(CaDoodleOperation source) {
 		// Auto-generated method stub
 
 	}

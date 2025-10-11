@@ -61,7 +61,7 @@ public class ShapePalletButtonResources {
 		// if(!OSUtil.isWindows())
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
-				indicator = Vitamins.get(stlFile);
+				indicator = Vitamins.get(ap.get().getCsgDBinstance(),stlFile);
 				indicator.setColor(Color.WHITE);
 				image = new Image(imageFile.toURI().toString());
 				return;
@@ -104,8 +104,8 @@ public class ShapePalletButtonResources {
 		set.setCaDoodleFile(ap.get());
 		List<CSG> so = set.process(new ArrayList<>());
 		for (CSG c : so) {
-			for (String s : c.getParameters()) {
-				CSGDatabase.delete(s);
+			for (String s : c.getParameters(ap.get().getCsgDBinstance())) {
+				ap.get().getCsgDBinstance().delete(s);
 			}
 		}
 		if (isSweep)
@@ -122,7 +122,7 @@ public class ShapePalletButtonResources {
 				for (CSG c : so) {
 					c.setIsHole(false);
 				}
-			image = ThumbnailImage.get(so);
+			image = ThumbnailImage.get(ap.get().getCsgDBinstance(),so);
 
 		});
 		while (image == null) {

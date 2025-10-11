@@ -348,7 +348,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	@Override
-	public void onRegenerateStart() {
+	public void onRegenerateStart(CaDoodleOperation source) {
 		// Auto-generated method stub
 		
 	}

@@ -105,7 +105,7 @@ public class ShapePalletMyDoodles {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 
-		CSGDatabaseInstance instance = CSGDatabase.getInstance();
+		CSGDatabaseInstance instance =caDoodleFile.getCsgDBinstance();
 		if (!caDoodleFile.getSTLThumbnailFile().exists()) {
 //			Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
 //			CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
@@ -115,7 +115,7 @@ public class ShapePalletMyDoodles {
 //			if (!caDoodleFile.getSTLThumbnailFile().exists())
 				throw new Exception("Failed to initialize model " + caDoodleFile.getMyProjectName());
 		}
-		CSG indicator = Vitamins.get(caDoodleFile.getSTLThumbnailFile());
+		CSG indicator = Vitamins.get(instance,caDoodleFile.getSTLThumbnailFile());
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = caDoodleFile.loadImageFromFile();

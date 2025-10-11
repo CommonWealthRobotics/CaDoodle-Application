@@ -550,10 +550,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onRegenerateStart() {
+	public void onRegenerateStart(CaDoodleOperation source) {
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
-				l.onRegenerateStart();
+				l.onRegenerateStart(source);
 			} catch (Throwable e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
