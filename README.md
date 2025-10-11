@@ -33,6 +33,16 @@ bash  build.sh
 
 ```
 
+# Eclipse setup
+
+Make sure you have run build FIRST. 
+
+Download This specific version of Eclipse 
+
+https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
+
+
+
 # Icons 
 
 https://www.svgrepo.com/collection/solar-bold-icons/
