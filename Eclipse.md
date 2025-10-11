@@ -68,3 +68,9 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 **Go to Java->Compiler and set Compiler compliance level to 1.8**
 
 <img src="docs/images/14.png" width="600" alt="Image 14">
+
+## Run CaDoodle
+
+**Right click on this file and Debug as Java Application**
+
+<img src="docs/images/15.png" width="600" alt="Image 15">

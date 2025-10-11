@@ -37,6 +37,10 @@ bash  build.sh
 
 [Eclipse setup Instructions Here](Eclipse.md)
 
+**Right click on this file and Debug as Java Application**
+
+<img src="docs/images/15.png" width="600" alt="Image 15">
+
 # Icons 
 
 https://www.svgrepo.com/collection/solar-bold-icons/
