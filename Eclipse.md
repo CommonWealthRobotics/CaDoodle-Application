@@ -61,7 +61,7 @@ https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio/releases
 
 <img src="docs/images/12.png" width="600" alt="Image 12">
 
-**got to Java->Compiler->Building->Build Path Problems and set incompatable required binaries to Ignore**
+**got to Java->Compiler->Building->Build Path Problems and set incompatible required binaries to Ignore**
 
 <img src="docs/images/13.png" width="600" alt="Image 13">
 
