@@ -216,6 +216,7 @@ public class Main extends Application {
 			//Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
+			
 			hand = new UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
