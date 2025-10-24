@@ -178,23 +178,16 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return loadActive();
 	}
 
-	private File getActiveProject() {
-		try {
-			Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile", null);
-			if (object == null)
-				return newProject();
-			String string = object.toString();
-			com.neuronrobotics.sdk.common.Log.debug("Loading file "+string);
-			File file = new File(string);
-			if(file.exists())
-				return file;
-			throw new FileNotFoundException();
-		} catch (Exception e) {
-			com.neuronrobotics.sdk.common.Log.error(e);
-			
-			throw new RuntimeException(e);
-		}
-
+	private File getActiveProject() throws Exception {
+		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile", null);
+		if (object == null)
+			return newProject();
+		String string = object.toString();
+		com.neuronrobotics.sdk.common.Log.debug("Loading file "+string);
+		File file = new File(string);
+		if(file.exists())
+			return file;
+		return newProject();
 	}
 
 	// Helper method to create styled option buttons with descriptions
@@ -373,7 +366,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public void save(CaDoodleFile cf) {
-		cf.setSelf(getActiveProject());
+		try {
+			cf.setSelf(getActiveProject());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			com.neuronrobotics.sdk.common.Log.error(e);
+		}
 		try {
 			cf.save();
 		} catch (IOException e) {

@@ -197,6 +197,8 @@ public class TimelineManager {
 	}
 
 	private void update(boolean clear) {
+		if( baseBox==null)
+			return;
 		// com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
 		this.clear = clear;
 		updateNeeded = true;
@@ -206,6 +208,7 @@ public class TimelineManager {
 		updateNeeded = false;
 
 		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
+
 		BowlerStudio.runLater(() -> {
 			if (timeline != null) {
 				if (clear)
