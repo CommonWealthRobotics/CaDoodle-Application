@@ -587,7 +587,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (numCadParaams > 2) {
 					useButton = true;
 					// com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " + sel.getName());
-					parametrics.getChildren().add(regenerate);
+					if(!parametrics.getChildren().contains(regenerate))
+						parametrics.getChildren().add(regenerate);
 					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
 					if (value2 != null)
 						regenerate.setOnAction(value2);
