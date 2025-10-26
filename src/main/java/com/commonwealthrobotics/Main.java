@@ -94,12 +94,8 @@ public class Main extends Application {
 			newStage.setTitle(title);
 		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
-			new Thread(() -> {
-				Log.debug("CaDoodle Exiting CLean");
-				Log.flush();
-				System.exit(0);
-			}).start();
 
+			System.exit(0);
 		});
 
 //		FontSizeManager.addListener(fontNum ->
@@ -179,7 +175,7 @@ public class Main extends Application {
 			MenuItem exitItem = new MenuItem("Exit");
 			exitItem.addActionListener(e -> {
 				Platform.exit();
-				Log.flush();
+
 				System.exit(0);
 			});
 
@@ -229,8 +225,8 @@ public class Main extends Application {
 			});
 			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				Log.debug("CaDoodle Exiting CLean");
 				Log.flush();
-				System.exit(0);
 			}));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
