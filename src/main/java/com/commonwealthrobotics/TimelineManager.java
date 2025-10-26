@@ -56,6 +56,7 @@ public class TimelineManager {
 	private BowlerStudio3dEngine engine;
 	private boolean addrem;
 	private boolean firstTime;
+	private boolean timelineOpen;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -197,6 +198,7 @@ public class TimelineManager {
 	}
 
 	private void update(boolean clear) {
+		ap.get().setTimelineVisable(timelineOpen);
 		if( baseBox==null)
 			return;
 		// com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
@@ -432,7 +434,7 @@ public class TimelineManager {
 	}
 
 	public void setOpenState(boolean timelineOpen) {
-		ap.get().setTimelineVisable(timelineOpen);
+		this.timelineOpen = timelineOpen;
 		if (timelineOpen)
 			session.save();
 	}
