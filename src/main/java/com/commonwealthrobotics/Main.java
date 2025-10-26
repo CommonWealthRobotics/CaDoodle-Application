@@ -230,6 +230,7 @@ public class Main extends Application {
 			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.flush();
+				System.exit(0);
 			}));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
