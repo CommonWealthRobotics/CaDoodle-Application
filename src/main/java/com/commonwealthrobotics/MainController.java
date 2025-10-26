@@ -996,7 +996,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(100);
 					SplashManager.closeSplash();
 				} while (SplashManager.isVisableSplash());
-				session.setKeyBindingFocus();
+				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
 				BowlerStudio.runLater(() -> cancel());
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);

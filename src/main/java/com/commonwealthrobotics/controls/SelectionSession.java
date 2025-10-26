@@ -698,8 +698,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
 			para.setStrValue(tf.getText());
-			// CSGDatabase.saveDatabase();
-			// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
 		});
 		thisLine.getChildren().add(tf);
 		thisLine.setMinWidth(width);
@@ -852,6 +850,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void selectAll(Iterable<String> names) {
+		getExecutor().submit(() -> {
 		selected.clear();
 		for (CSG c : getCurrentState()) {
 			if ((c.isInGroup() && !c.isAlwaysShow()))
@@ -869,9 +868,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateControlsDisplayOfSelected();
 		});
 		updateRobotLab.run();
+		});
 	}
 
 	public void selectAll() {
+		getExecutor().submit(() -> {
 		selected.clear();
 		for (CSG c : getCurrentState()) {
 			if ((c.isInGroup() && !c.isAlwaysShow()))
@@ -880,8 +881,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			selected.add(c);
 		}
-		updateControlsDisplayOfSelected();
+		BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 		updateRobotLab.run();
+		});
 	}
 
 	public void setKeyBindingFocus() {
@@ -894,6 +896,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setToSolid() {
+		getExecutor().submit(() -> {
 		if (selected.size() == 0)
 			return;
 		boolean isSilid = true;
@@ -908,6 +911,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;// all solid
 		ToSolid h = new ToSolid().setNames(selectedSnapshot());
 		addOp(h);
+		});
 
 	}
 
@@ -1711,6 +1715,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		//new Exception("Auto-save called here").printStackTrace();
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
+				while(!ap.get().isInitialized()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				while (ap.isOpen()) {
 					if (needsSave && ap.get().timeSinceLastUpdate() > 1000) {
 						ICadoodleSaveStatusUpdate saveDisplay = ap.get().getSaveUpdate();
