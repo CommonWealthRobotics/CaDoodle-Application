@@ -569,7 +569,12 @@ public class RobotLab {
 			MakeRobot mr = new MakeRobot();
 			mr.setNames(session.selectedSnapshot());
 
-			ap.addOp(mr);
+			try {
+				ap.addOp(mr).join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			builder = ap.get().getRobots().get(mr.getName());
 			if (builder == null)
 				throw new RuntimeException("Failed to create robot!");
