@@ -159,6 +159,7 @@ public class ExportManager {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
+			SplashManager.renderSplashFrame(90, "Zipping Project Source");
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
 			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomFile());
 			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomCsv());
