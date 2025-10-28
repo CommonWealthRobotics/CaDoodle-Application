@@ -159,8 +159,9 @@ public class ExportManager {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
-			SplashManager.renderSplashFrame(90, "Zipping Project Source");
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
+			SplashManager.onLogUpdate("");
+			SplashManager.renderSplashFrame(50, "Zipping Project Source");
 			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomFile());
 			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomCsv());
 			try {
@@ -183,11 +184,17 @@ public class ExportManager {
 		Path sourceDirPath=sourceDir.toPath();
 		Path zipFilePath = zipFile.toPath();
 		try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
-			Files.walk(sourceDirPath).filter(path -> !Files.isDirectory(path)).forEach(path -> {
+			Files.walk(sourceDirPath)
+			.filter(path -> !Files.isDirectory(path))
+		    .filter(path -> !path.toString().endsWith(".csg"))
+		    .filter(path -> !path.toString().endsWith(".png"))
+			.forEach(path -> {
+				
 				ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
 				try {
 					zs.putNextEntry(zipEntry);
 					Files.copy(path, zs);
+					SplashManager.onLogUpdate("zip "+path.getFileName());
 					zs.closeEntry();
 				} catch (IOException e) {
 					com.neuronrobotics.sdk.common.Log.error("Failed to zip file: " + path);
