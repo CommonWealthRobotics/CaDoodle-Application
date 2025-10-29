@@ -512,10 +512,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onExport(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Export");
+		com.neuronrobotics.sdk.common.Log.debug("On Export");
 		Runnable onFinish = () -> {
 			session.setKeyBindingFocus();
-			com.neuronrobotics.sdk.common.Log.error("ExportManager Close");
+			com.neuronrobotics.sdk.common.Log.debug("ExportManager Close");
 		};
 		Runnable onClear = () -> {
 			session.clearScreen();

@@ -31,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.event.ActionEvent;
@@ -147,14 +148,20 @@ public class ExportManager {
 			if(exportDir==null)
 				return;
 			SplashManager.renderSplashFrame(1, " Exporting...");
-			while(!SplashManager.isVisableSplash()) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// Auto-generated catch block
-					com.neuronrobotics.sdk.common.Log.error(e);
-				}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+//			while(!SplashManager.isVisableSplash()) {
+//				try {
+//					Thread.sleep(100);
+//				} catch (InterruptedException e) {
+//					// Auto-generated catch block
+//					com.neuronrobotics.sdk.common.Log.error(e);
+//				}
+//			}
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
@@ -162,8 +169,9 @@ public class ExportManager {
 			BowlerKernel.processReturnedObjectsStart(back, exportDir);
 			SplashManager.onLogUpdate("");
 			SplashManager.renderSplashFrame(50, "Zipping Project Source");
-			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomFile());
-			copyBom(CaDoodleFile.getBillOfMaterials(ap.get()).getBomCsv());
+			//ap.get().updateBoM() ;
+			copyBom(ap.get().getBomFile());
+			copyBom(ap.get().getBomCsv());
 			try {
 				zipDirectory(ap.get().getSelf().getParentFile(),
 						new File(exportDir.getAbsolutePath()+DownloadManager.delim()+name+"-source.zip"));
@@ -207,6 +215,7 @@ public class ExportManager {
 		Path source = bomFile.toPath();
 		Path destination=new File(exportDir.getAbsolutePath()+"/"+bomFile.getName()).toPath();
 		try {
+			Log.debug("Copy from "+source.toString()+" \nto "+destination.toString());
 			Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			// Auto-generated catch block
