@@ -50,8 +50,8 @@ public class ShapePalletButtonResources {
 		if (string != null) {
 			isPluginMissing = !DownloadManager.isDownloadedAlready(string);
 		}
-		String absolutePath = ConfigurationDatabase.getAppDataDirectory().toString();
-		;
+		//String absolutePath = ConfigurationDatabase.getAppDataDirectory().toString();
+		String absolutePath = ScriptingEngine.getWorkspace().getAbsolutePath() + delim() + "uicache";
 		File dir = new File(absolutePath);
 		if (!dir.exists())
 			dir.mkdirs();
@@ -95,7 +95,7 @@ public class ShapePalletButtonResources {
 				if (sprial != null) {
 					s.setDefSpiral(Double.parseDouble(sprial));
 				}
-				s.set(f,null).setPreventBoM(true);
+				s.set(f,ap.get()).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
 				com.neuronrobotics.sdk.common.Log.error(ex);;
