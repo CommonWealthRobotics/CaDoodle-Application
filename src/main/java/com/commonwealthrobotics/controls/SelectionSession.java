@@ -534,7 +534,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			TransformFactory.nrToAffine(new TransformNR(), selection);
 			TransformFactory.nrToAffine(new TransformNR(), getControls().getViewRotation());
 			boolean lockMove=moveLock();
-			for (CSG c : getSelectedCSG(selectedSnapshot())) {
+			List<String> selectedSnapshot = selectedSnapshot();
+			for (CSG c : getSelectedCSG(selectedSnapshot)) {
 				MeshView meshView = getMeshes().get(c);
 				if (meshView != null) {
 					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
@@ -544,8 +545,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			manipulation.setUnlocked(!lockMove);
 			shapeConfiguration.setText("Shape (" + selected.size() + ")");
-			if (selected.size() == 1) {
-				CSG sel = getSelectedCSG(selectedSnapshot()).get(0);
+			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
+			if (selectedSnapshot.size() == 1  && csgs.size()>0) {
+				CSG sel = csgs.get(0);
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
