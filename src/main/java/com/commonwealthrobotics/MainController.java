@@ -527,9 +527,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		TransformNR scale = session.getFocusCenter();
-		engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-				engine.getFlyingCamera().getZoomDepth());
+		session.getExecutor().submit(()->{
+			TransformNR scale = session.getFocusCenter();
+			engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+					engine.getFlyingCamera().getZoomDepth());
+		});
 		session.setKeyBindingFocus();
 	}
 

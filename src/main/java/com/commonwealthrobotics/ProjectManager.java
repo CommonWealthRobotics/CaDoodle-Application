@@ -164,15 +164,17 @@ public class ProjectManager {
 						if (event.getButton() == MouseButton.PRIMARY) {
 							openProject(c);
 						}
-						contextMenu.show(b, event.getScreenX(), event.getScreenY());
-						new Thread(() -> {
-							try {
-								Thread.sleep(3000);
-							} catch (InterruptedException ex) {
-								com.neuronrobotics.sdk.common.Log.error(ex);
-							}
-							BowlerStudio.runLater(() -> contextMenu.hide());
-						}).start();
+						if (event.getButton() == MouseButton.SECONDARY) {
+							contextMenu.show(b, event.getScreenX(), event.getScreenY());
+							new Thread(() -> {
+								try {
+									Thread.sleep(3000);
+								} catch (InterruptedException ex) {
+									com.neuronrobotics.sdk.common.Log.error(ex);
+								}
+								BowlerStudio.runLater(() -> contextMenu.hide());
+							}).start();
+						}
 					});
 
 					b.getStyleClass().add("image-button");
