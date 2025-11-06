@@ -445,7 +445,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		File[] files = dir.listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.isDirectory() && !file.equals(dir)) {
+				if (file.isDirectory() && !file.equals(dir) && !file.getName().startsWith(".")) {
 					File[] contents = file.listFiles();
 					for (File f : contents) {
 						if (f.getName().toLowerCase().endsWith(".doodle")) {
