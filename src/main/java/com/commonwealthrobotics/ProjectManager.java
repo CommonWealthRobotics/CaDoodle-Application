@@ -118,8 +118,15 @@ public class ProjectManager {
 
 	private void loadFiles() {
 		try {
-			List<CaDoodleFile> proj = ap.getProjects();
-			com.neuronrobotics.sdk.common.Log.error("Found " + proj.size() + " projects");
+			List<CaDoodleFile> proj1 = ap.getProjects();
+			com.neuronrobotics.sdk.common.Log.error("Found " + proj1.size() + " projects");
+			ArrayList<CaDoodleFile> proj = new ArrayList<CaDoodleFile>();
+			for(CaDoodleFile cf:proj1) {
+				if(cf.isIgnore()) {
+					continue;
+				}
+				proj.add(cf);
+			}
 
 			int offsetFromStartingButton = 2;
 			for (int i = 0; i < proj.size(); i++) {
@@ -144,14 +151,7 @@ public class ProjectManager {
 					deleteItem.setOnAction(event -> {
 						box.getChildren().remove(b);
 						box.getChildren().remove(e);
-						 Path source = c.getSelf().getParentFile().toPath();
-						 try {
-							Path sibling = source.resolveSibling("."+c.getSelf().getParentFile().getName());
-							Log.debug("Renaming "+source+'\n'+sibling);
-							Files.move(source, sibling);
-						} catch (IOException e1) {
-							com.neuronrobotics.sdk.common.Log.error(e1);
-						}
+						c.setIgnore();
 					});
 					deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
 						BowlerStudio.runLater(() -> contextMenu.hide());
