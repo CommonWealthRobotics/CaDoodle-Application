@@ -152,26 +152,33 @@ public class ResizeSessionManager {
 		    BowlerStudio.runLater(() -> update());
 		});
 		leftRear.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-			scalingFlag = false;
+		    if (scalingFlag)
+		        return;
+		    scalingFlag = false;
 
-			if (beingUpdated == null)
-				beingUpdated = leftRear;
-			if (beingUpdated != leftRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+leftRear);
-				return;
-			}
+		    if (beingUpdated == null)
+		        beingUpdated = leftRear;
+		    if (beingUpdated != leftRear) {
+		        return;
+		    }
 
-			double x = leftFront.manipulator.getCurrentPose().getX();
-			double y = leftRear.manipulator.getCurrentPose().getY();
-			double z = leftRear.manipulator.getCurrentPose().getZ();
-			leftFront.manipulator.setInReferenceFrame(x, y, z);
-			x = leftRear.manipulator.getCurrentPose().getX();
-			y = rightRear.manipulator.getCurrentPose().getY();
-			rightRear.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftRear");
+		    // Existing synchronization logic
+		    double x = leftFront.manipulator.getCurrentPose().getX();
+		    double y = leftRear.manipulator.getCurrentPose().getY();
+		    double z = leftRear.manipulator.getCurrentPose().getZ();
+		    leftFront.manipulator.setInReferenceFrame(x, y, z);
+		    x = leftRear.manipulator.getCurrentPose().getX();
+		    y = rightRear.manipulator.getCurrentPose().getY();
+		    rightRear.manipulator.setInReferenceFrame(x, y, z);
+		    
+		    // Check for SHIFT
+		    if (ev != null && ev.isShiftDown()) {
+		        ResizingHandle anchor = getOppositeCorner(leftRear);
+		        TransformNR draggedPos = leftRear.getCurrentInReferenceFrame();
+		        uniformScalingXY(leftRear, anchor, draggedPos);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
 		topCenter.manipulator.addEventListener(ev -> {
 			scalingFlag = false;
