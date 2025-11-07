@@ -298,6 +298,23 @@ public class ResizeSessionManager {
 	    updateNonDraggedCorners(draggedHandle, anchorHandle);
 	}
 	
+	private void updateNonDraggedCorners(ResizingHandle draggedHandle, ResizingHandle anchorHandle) {
+	    TransformNR draggedPos = draggedHandle.getCurrentInReferenceFrame();
+	    TransformNR anchorPos = anchorHandle.getCurrentInReferenceFrame();
+	    double z = draggedPos.getZ();
+	    
+	    // Update the two corners that aren't being dragged or anchored
+	    if ((draggedHandle == leftRear && anchorHandle == rightFront) ||
+	        (draggedHandle == rightFront && anchorHandle == leftRear)) {
+	        leftFront.manipulator.setInReferenceFrame(draggedPos.getX(), anchorPos.getY(), z);
+	        rightRear.manipulator.setInReferenceFrame(anchorPos.getX(), draggedPos.getY(), z);
+	    } else if ((draggedHandle == leftFront && anchorHandle == rightRear) ||
+	               (draggedHandle == rightRear && anchorHandle == leftFront)) {
+	        leftRear.manipulator.setInReferenceFrame(draggedPos.getX(), anchorPos.getY(), z);
+	        rightFront.manipulator.setInReferenceFrame(anchorPos.getX(), draggedPos.getY(), z);
+	    }
+	}
+	
 	private ResizingHandle getOppositeCorner(ResizingHandle handle) {
 	    if (handle == leftRear) return rightFront;
 	    if (handle == rightFront) return leftRear;
