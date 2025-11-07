@@ -63,9 +63,6 @@ public class ResizeSessionManager {
 				updateLines, onReset);
 
 		rightFront.manipulator.addEventListener(ev -> {
-		    if (scalingFlag)
-		        return;
-		    
 		    scalingFlag = false;
 		    if (beingUpdated == null)
 		        beingUpdated = rightFront;
@@ -73,12 +70,11 @@ public class ResizeSessionManager {
 		        return;
 		    }
 		    
-		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        TransformNR draggedPos = rightFront.getCurrentInReferenceFrame();
 		        uniformScalingXY(rightFront, draggedPos);
 		    } else {
-		        // Normal synchronization logic (only when SHIFT not held)
+		        // Normal synchronization logic
 		        double x = rightRear.manipulator.getCurrentPose().getX();
 		        double y = rightFront.manipulator.getCurrentPose().getY();
 		        double z = rightRear.manipulator.getCurrentPose().getZ();
@@ -92,9 +88,6 @@ public class ResizeSessionManager {
 		});
 
 		rightRear.manipulator.addEventListener(ev -> {
-		    if (scalingFlag)
-		        return;
-		    
 		    scalingFlag = false;
 		    if (beingUpdated == null)
 		        beingUpdated = rightRear;
@@ -102,12 +95,11 @@ public class ResizeSessionManager {
 		        return;
 		    }
 		    
-		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        TransformNR draggedPos = rightRear.getCurrentInReferenceFrame();
 		        uniformScalingXY(rightRear, draggedPos);
 		    } else {
-		        // Normal synchronization logic (only when SHIFT not held)
+		        // Normal synchronization logic
 		        double x = rightFront.manipulator.getCurrentPose().getX();
 		        double y = rightRear.manipulator.getCurrentPose().getY();
 		        double z = rightFront.manipulator.getCurrentPose().getZ();
@@ -121,9 +113,6 @@ public class ResizeSessionManager {
 		});
 
 		leftFront.manipulator.addEventListener(ev -> {
-		    if (scalingFlag)
-		        return;
-		    
 		    scalingFlag = false;
 		    if (beingUpdated == null)
 		        beingUpdated = leftFront;
@@ -131,12 +120,11 @@ public class ResizeSessionManager {
 		        return;
 		    }
 		    
-		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        TransformNR draggedPos = leftFront.getCurrentInReferenceFrame();
 		        uniformScalingXY(leftFront, draggedPos);
 		    } else {
-		        // Normal synchronization logic (only when SHIFT not held)
+		        // Normal synchronization logic
 		        double x = leftRear.manipulator.getCurrentPose().getX();
 		        double y = leftFront.manipulator.getCurrentPose().getY();
 		        double z = leftFront.manipulator.getCurrentPose().getZ();
@@ -150,9 +138,6 @@ public class ResizeSessionManager {
 		});
 
 		leftRear.manipulator.addEventListener(ev -> {
-		    if (scalingFlag)
-		        return;
-		    
 		    scalingFlag = false;
 		    if (beingUpdated == null)
 		        beingUpdated = leftRear;
@@ -160,12 +145,11 @@ public class ResizeSessionManager {
 		        return;
 		    }
 		    
-		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        TransformNR draggedPos = leftRear.getCurrentInReferenceFrame();
 		        uniformScalingXY(leftRear, draggedPos);
 		    } else {
-		        // Normal synchronization logic (only when SHIFT not held)
+		        // Normal synchronization logic
 		        double x = leftFront.manipulator.getCurrentPose().getX();
 		        double y = leftRear.manipulator.getCurrentPose().getY();
 		        double z = leftRear.manipulator.getCurrentPose().getZ();
@@ -178,26 +162,26 @@ public class ResizeSessionManager {
 		    BowlerStudio.runLater(() -> update());
 		});
 
-		topCenter.manipulator.addEventListener(ev -> {
-		    if (scalingFlag)
-		        return;
-		    
-		    scalingFlag = false;
-		    if (beingUpdated == null)
-		        beingUpdated = topCenter;
-		    if (beingUpdated != topCenter) {
-		        return;
-		    }
-		    
-		    // Check for SHIFT to maintain aspect ratio
-		    if (ev != null && ev.isShiftDown()) {
-		        TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-		        uniformScalingZ(tcC);
-		    }
-		    // Note: topCenter has no "else" because it has no synchronization logic
-		    
-		    BowlerStudio.runLater(() -> update());
-		});
+        topCenter.manipulator.addEventListener(ev -> {
+            scalingFlag = false;
+
+            if (beingUpdated == null)
+                beingUpdated = topCenter;
+            if (beingUpdated != topCenter) {
+                // com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+                // rejected by "+topCenter);
+                return;
+            }
+            if (ev != null)
+                if (ev.isShiftDown()) {
+                    TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+                    uniformScalingZ(tcC);
+                    // com.neuronrobotics.sdk.common.Log.debug("RE-Scaling whole object! "+scale);
+                }
+            BowlerStudio.runLater(() -> update());
+
+            // com.neuronrobotics.sdk.common.Log.error("topCenter");
+        });
 		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
 		for (ResizingHandle c : controls) {
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
