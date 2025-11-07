@@ -82,7 +82,7 @@ public class ResizeSessionManager {
 		    y = leftFront.manipulator.getCurrentPose().getY();
 		    leftFront.manipulator.setInReferenceFrame(x, y, z);
 		    
-		    // Check for SHIFT
+		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        ResizingHandle anchor = getOppositeCorner(rightFront);
 		        TransformNR draggedPos = rightFront.getCurrentInReferenceFrame();
@@ -112,7 +112,7 @@ public class ResizeSessionManager {
 		    y = leftRear.manipulator.getCurrentPose().getY();
 		    leftRear.manipulator.setInReferenceFrame(x, y, z);
 		    
-		    // Check for SHIFT
+		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        ResizingHandle anchor = getOppositeCorner(rightRear);
 		        TransformNR draggedPos = rightRear.getCurrentInReferenceFrame();
@@ -142,7 +142,7 @@ public class ResizeSessionManager {
 		    y = rightFront.manipulator.getCurrentPose().getY();
 		    rightFront.manipulator.setInReferenceFrame(x, y, z);
 		    
-		    // Check for SHIFT
+		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        ResizingHandle anchor = getOppositeCorner(leftFront);
 		        TransformNR draggedPos = leftFront.getCurrentInReferenceFrame();
@@ -171,7 +171,7 @@ public class ResizeSessionManager {
 		    y = rightRear.manipulator.getCurrentPose().getY();
 		    rightRear.manipulator.setInReferenceFrame(x, y, z);
 		    
-		    // Check for SHIFT
+		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
 		        ResizingHandle anchor = getOppositeCorner(leftRear);
 		        TransformNR draggedPos = leftRear.getCurrentInReferenceFrame();
