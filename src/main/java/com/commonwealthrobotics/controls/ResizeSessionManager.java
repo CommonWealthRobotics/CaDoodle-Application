@@ -63,28 +63,33 @@ public class ResizeSessionManager {
 				updateLines, onReset);
 
 		rightFront.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
+		    if (scalingFlag)
+		        return;
 
-			scalingFlag = false;
-			if (beingUpdated == null)
-				beingUpdated = rightFront;
-			if (beingUpdated != rightFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+rightFront);
-				return;
-			}
-			double x = rightRear.manipulator.getCurrentPose().getX();
-			double y = rightFront.manipulator.getCurrentPose().getY();
-			double z = rightRear.manipulator.getCurrentPose().getZ();
-			// com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + "
-			// z" + z);
-			rightRear.manipulator.setInReferenceFrame(x, y, z);
-			x = rightFront.manipulator.getCurrentPose().getX();
-			y = leftFront.manipulator.getCurrentPose().getY();
-			leftFront.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update());
-			// com.neuronrobotics.sdk.common.Log.error("rightFront");
+		    scalingFlag = false;
+		    if (beingUpdated == null)
+		        beingUpdated = rightFront;
+		    if (beingUpdated != rightFront) {
+		        return;
+		    }
+		    
+		    // Existing synchronization logic
+		    double x = rightRear.manipulator.getCurrentPose().getX();
+		    double y = rightFront.manipulator.getCurrentPose().getY();
+		    double z = rightRear.manipulator.getCurrentPose().getZ();
+		    rightRear.manipulator.setInReferenceFrame(x, y, z);
+		    x = rightFront.manipulator.getCurrentPose().getX();
+		    y = leftFront.manipulator.getCurrentPose().getY();
+		    leftFront.manipulator.setInReferenceFrame(x, y, z);
+		    
+		    // Check for SHIFT
+		    if (ev != null && ev.isShiftDown()) {
+		        ResizingHandle anchor = getOppositeCorner(rightFront);
+		        TransformNR draggedPos = rightFront.getCurrentInReferenceFrame();
+		        uniformScalingXY(rightFront, anchor, draggedPos);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
 		rightRear.manipulator.addEventListener(ev -> {
 			if (scalingFlag)
