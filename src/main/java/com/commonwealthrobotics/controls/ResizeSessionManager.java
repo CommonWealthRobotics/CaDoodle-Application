@@ -284,61 +284,55 @@ public class ResizeSessionManager {
 		leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
 	}
 	
-	private void uniformScalingXY(ResizingHandle draggedHandle, ResizingHandle anchorHandle, TransformNR draggedPos) {
+	private void uniformScalingXY(ResizingHandle draggedHandle, TransformNR draggedPos) {
 	    scalingFlag = true;
-	    
-	    // Get current bounds from handle positions
-	    bounds = getBounds();
 	    
 	    // Store original bounds on first call
 	    if (originalBounds == null) {
-	        originalBounds = bounds;
+	        originalBounds = getBounds();
 	    }
 	    
-	    double originalX = originalBounds.getTotalX();
-	    double originalY = originalBounds.getTotalY();
-	    double originalZ = originalBounds.getTotalZ();
-	    
+	    // Get the anchor handle
+	    ResizingHandle anchorHandle = getOppositeCorner(draggedHandle);
 	    TransformNR anchorPos = anchorHandle.getCurrentInReferenceFrame();
 	    
-	    // Calculate new dimensions from anchor to dragged position
-	    double newX = Math.abs(draggedPos.getX() - anchorPos.getX());
-	    double newY = Math.abs(draggedPos.getY() - anchorPos.getY());
+	    // Calculate scale from user's drag (not from getBounds which might be synced already)
+	    double nowX = Math.abs(draggedPos.getX() - anchorPos.getX());
+	    double nowY = Math.abs(draggedPos.getY() - anchorPos.getY());
+	    double startX = originalBounds.getTotalX();
+	    double startY = originalBounds.getTotalY();
 	    
-	    // Calculate scale factors
-	    double scaleX = newX / originalX;
-	    double scaleY = newY / originalY;
-	    
-	    // Use maximum scale to maintain one dimension precisely
+	    double scaleX = nowX / startX;
+	    double scaleY = nowY / startY;
 	    double scale = Math.max(scaleX, scaleY);
 	    
-	    // Calculate new Z based on uniform scale
-	    double newZ = originalZ * scale;
-	    double zOffset = newZ - bounds.getTotalZ();
+	    // Calculate and apply new Z
+	    double startZ = originalBounds.getTotalZ();
+	    double newZ = startZ * scale;
+	    double zOffset = newZ - getBounds().getTotalZ();
 	    
-	    // Apply Z scaling
 	    topCenter.manipulator.set(0, 0, zOffset);
-	    
-	    // Reposition the other two corners to maintain rectangular shape
-	    // The dragged corner and anchor corner are already positioned correctly
-	    // Just need to update the other two corners
-	    updateNonDraggedCorners(draggedHandle, anchorHandle);
 	}
 	
-	private void updateNonDraggedCorners(ResizingHandle draggedHandle, ResizingHandle anchorHandle) {
-	    TransformNR draggedPos = draggedHandle.getCurrentInReferenceFrame();
-	    TransformNR anchorPos = anchorHandle.getCurrentInReferenceFrame();
-	    double z = draggedPos.getZ();
+	private void updateCorners(ResizingHandle draggedHandle, 
+	                          double newDraggedX, double newDraggedY, double z) {
+	    // Get anchor handle and position internally
+	    ResizingHandle anchorHandle = getOppositeCorner(draggedHandle);
+	    double anchorX = anchorHandle.getCurrentInReferenceFrame().getX();
+	    double anchorY = anchorHandle.getCurrentInReferenceFrame().getY();
 	    
-	    // Update the two corners that aren't being dragged or anchored
+	    // Reposition the dragged corner first
+	    draggedHandle.manipulator.setInReferenceFrame(newDraggedX, newDraggedY, z);
+	    
+	    // Position the other two corners
 	    if ((draggedHandle == leftRear && anchorHandle == rightFront) ||
 	        (draggedHandle == rightFront && anchorHandle == leftRear)) {
-	        leftFront.manipulator.setInReferenceFrame(draggedPos.getX(), anchorPos.getY(), z);
-	        rightRear.manipulator.setInReferenceFrame(anchorPos.getX(), draggedPos.getY(), z);
+	        leftFront.manipulator.setInReferenceFrame(newDraggedX, anchorY, z);
+	        rightRear.manipulator.setInReferenceFrame(anchorX, newDraggedY, z);
 	    } else if ((draggedHandle == leftFront && anchorHandle == rightRear) ||
 	               (draggedHandle == rightRear && anchorHandle == leftFront)) {
-	        leftRear.manipulator.setInReferenceFrame(draggedPos.getX(), anchorPos.getY(), z);
-	        rightFront.manipulator.setInReferenceFrame(anchorPos.getX(), draggedPos.getY(), z);
+	        leftRear.manipulator.setInReferenceFrame(newDraggedX, anchorY, z);
+	        rightFront.manipulator.setInReferenceFrame(anchorX, newDraggedY, z);
 	    }
 	}
 	
