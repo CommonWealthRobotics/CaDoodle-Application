@@ -84,9 +84,8 @@ public class ResizeSessionManager {
 		    
 		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
-		        ResizingHandle anchor = getOppositeCorner(rightFront);
 		        TransformNR draggedPos = rightFront.getCurrentInReferenceFrame();
-		        uniformScalingXY(rightFront, anchor, draggedPos);
+		        uniformScalingXY(rightFront, draggedPos);
 		    }
 		    
 		    BowlerStudio.runLater(() -> update());
@@ -114,9 +113,8 @@ public class ResizeSessionManager {
 		    
 		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
-		        ResizingHandle anchor = getOppositeCorner(rightRear);
 		        TransformNR draggedPos = rightRear.getCurrentInReferenceFrame();
-		        uniformScalingXY(rightRear, anchor, draggedPos);
+		        uniformScalingXY(rightRear, draggedPos);
 		    }
 		    
 		    BowlerStudio.runLater(() -> update());
@@ -144,9 +142,8 @@ public class ResizeSessionManager {
 		    
 		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
-		        ResizingHandle anchor = getOppositeCorner(leftFront);
 		        TransformNR draggedPos = leftFront.getCurrentInReferenceFrame();
-		        uniformScalingXY(leftFront, anchor, draggedPos);
+		        uniformScalingXY(leftFront, draggedPos);
 		    }
 		    
 		    BowlerStudio.runLater(() -> update());
@@ -173,9 +170,8 @@ public class ResizeSessionManager {
 		    
 		    // Check for SHIFT to maintain aspect ratio
 		    if (ev != null && ev.isShiftDown()) {
-		        ResizingHandle anchor = getOppositeCorner(leftRear);
 		        TransformNR draggedPos = leftRear.getCurrentInReferenceFrame();
-		        uniformScalingXY(leftRear, anchor, draggedPos);
+		        uniformScalingXY(leftRear, draggedPos);
 		    }
 		    
 		    BowlerStudio.runLater(() -> update());
