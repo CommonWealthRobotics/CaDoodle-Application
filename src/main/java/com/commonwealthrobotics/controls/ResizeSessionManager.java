@@ -36,6 +36,7 @@ public class ResizeSessionManager {
 	private boolean locked;
 	private boolean resizeAllowed;
 	private boolean moveLock;
+	private Bounds originalBounds = null;
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
 			SelectionSession s, Affine workplaneOffset, MoveUpArrow up) {
