@@ -122,26 +122,34 @@ public class ResizeSessionManager {
 		    BowlerStudio.runLater(() -> update());
 		});
 		leftFront.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
+		    if (scalingFlag)
+		        return;
 
-			scalingFlag = false;
+		    scalingFlag = false;
 
-			if (beingUpdated == null)
-				beingUpdated = leftFront;
-			if (beingUpdated != leftFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+leftFront);
-				return;
-			}
-			double x = leftRear.manipulator.getCurrentPose().getX();
-			double y = leftFront.manipulator.getCurrentPose().getY();
-			double z = leftFront.manipulator.getCurrentPose().getZ();
-			leftRear.manipulator.setInReferenceFrame(x, y, z);
-			x = leftFront.manipulator.getCurrentPose().getX();
-			y = rightFront.manipulator.getCurrentPose().getY();
-			rightFront.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftFront");
+		    if (beingUpdated == null)
+		        beingUpdated = leftFront;
+		    if (beingUpdated != leftFront) {
+		        return;
+		    }
+		    
+		    // Existing synchronization logic
+		    double x = leftRear.manipulator.getCurrentPose().getX();
+		    double y = leftFront.manipulator.getCurrentPose().getY();
+		    double z = leftFront.manipulator.getCurrentPose().getZ();
+		    leftRear.manipulator.setInReferenceFrame(x, y, z);
+		    x = leftFront.manipulator.getCurrentPose().getX();
+		    y = rightFront.manipulator.getCurrentPose().getY();
+		    rightFront.manipulator.setInReferenceFrame(x, y, z);
+		    
+		    // Check for SHIFT
+		    if (ev != null && ev.isShiftDown()) {
+		        ResizingHandle anchor = getOppositeCorner(leftFront);
+		        TransformNR draggedPos = leftFront.getCurrentInReferenceFrame();
+		        uniformScalingXY(leftFront, anchor, draggedPos);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
 		leftRear.manipulator.addEventListener(ev -> {
 			if (scalingFlag)
