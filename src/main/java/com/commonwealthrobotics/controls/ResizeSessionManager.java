@@ -292,7 +292,7 @@ public class ResizeSessionManager {
 	    
 	    // Store original bounds on first call
 	    if (originalBounds == null) {
-	        originalBounds = new Bounds(bounds.getMin(), bounds.getMax());
+	        originalBounds = bounds;
 	    }
 	    
 	    double originalX = originalBounds.getTotalX();
