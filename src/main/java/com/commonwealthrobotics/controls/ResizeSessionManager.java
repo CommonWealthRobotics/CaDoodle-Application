@@ -256,6 +256,55 @@ public class ResizeSessionManager {
 		rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
 		leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
 	}
+	
+	private void uniformScalingXY(ResizingHandle draggedHandle, ResizingHandle anchorHandle, TransformNR draggedPos) {
+	    scalingFlag = true;
+	    
+	    // Get current bounds from handle positions
+	    bounds = getBounds();
+	    
+	    // Store original bounds on first call
+	    if (originalBounds == null) {
+	        originalBounds = new Bounds(bounds.getMin(), bounds.getMax());
+	    }
+	    
+	    double originalX = originalBounds.getTotalX();
+	    double originalY = originalBounds.getTotalY();
+	    double originalZ = originalBounds.getTotalZ();
+	    
+	    TransformNR anchorPos = anchorHandle.getCurrentInReferenceFrame();
+	    
+	    // Calculate new dimensions from anchor to dragged position
+	    double newX = Math.abs(draggedPos.getX() - anchorPos.getX());
+	    double newY = Math.abs(draggedPos.getY() - anchorPos.getY());
+	    
+	    // Calculate scale factors
+	    double scaleX = newX / originalX;
+	    double scaleY = newY / originalY;
+	    
+	    // Use maximum scale to maintain one dimension precisely
+	    double scale = Math.max(scaleX, scaleY);
+	    
+	    // Calculate new Z based on uniform scale
+	    double newZ = originalZ * scale;
+	    double zOffset = newZ - bounds.getTotalZ();
+	    
+	    // Apply Z scaling
+	    topCenter.manipulator.set(0, 0, zOffset);
+	    
+	    // Reposition the other two corners to maintain rectangular shape
+	    // The dragged corner and anchor corner are already positioned correctly
+	    // Just need to update the other two corners
+	    updateNonDraggedCorners(draggedHandle, anchorHandle);
+	}
+	
+	private ResizingHandle getOppositeCorner(ResizingHandle handle) {
+	    if (handle == leftRear) return rightFront;
+	    if (handle == rightFront) return leftRear;
+	    if (handle == leftFront) return rightRear;
+	    if (handle == rightRear) return leftFront;
+	    return null; // Should never happen
+	}
 
 	private void update() {
 		// if(beingUpdated!=null)
