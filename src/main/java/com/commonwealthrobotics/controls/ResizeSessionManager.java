@@ -296,22 +296,38 @@ public class ResizeSessionManager {
 	    ResizingHandle anchorHandle = getOppositeCorner(draggedHandle);
 	    TransformNR anchorPos = anchorHandle.getCurrentInReferenceFrame();
 	    
-	    // Calculate scale from user's drag (not from getBounds which might be synced already)
+	    // Calculate scale from user's drag
 	    double nowX = Math.abs(draggedPos.getX() - anchorPos.getX());
 	    double nowY = Math.abs(draggedPos.getY() - anchorPos.getY());
 	    double startX = originalBounds.getTotalX();
 	    double startY = originalBounds.getTotalY();
+	    double startZ = originalBounds.getTotalZ();
 	    
 	    double scaleX = nowX / startX;
 	    double scaleY = nowY / startY;
 	    double scale = Math.max(scaleX, scaleY);
 	    
-	    // Calculate and apply new Z
-	    double startZ = originalBounds.getTotalZ();
+	    // Calculate new dimensions with uniform scale
+	    double newX = startX * scale;
+	    double newY = startY * scale;
 	    double newZ = startZ * scale;
-	    double zOffset = newZ - getBounds().getTotalZ();
 	    
-	    topCenter.manipulator.set(0, 0, zOffset);
+	    // Get current Z
+	    double z = draggedPos.getZ();
+	    
+	    // Calculate new dragged corner position from anchor
+	    double deltaX = newX * (draggedPos.getX() > anchorPos.getX() ? 1 : -1);
+	    double deltaY = newY * (draggedPos.getY() > anchorPos.getY() ? 1 : -1);
+	    double newDraggedX = anchorPos.getX() + deltaX;
+	    double newDraggedY = anchorPos.getY() + deltaY;
+	    
+	    // Reposition all XY corners
+	    updateCorners(draggedHandle, newDraggedX, newDraggedY, z);
+	    
+	    // Apply Z scale
+	    double newTopZ = originalBounds.getMinZ() + newZ;
+	    Vector3d center = getBounds().getCenter();
+	    topCenter.setInReferenceFrame(center.x, center.y, newTopZ);
 	}
 	
 	private void updateCorners(ResizingHandle draggedHandle, 
