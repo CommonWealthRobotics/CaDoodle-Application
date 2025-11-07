@@ -440,6 +440,7 @@ public class ResizeSessionManager {
 	}
 
 	public void resetSelected() {
+		originalBounds = null; // reset var that exists to help maintain aspect ratios
 		for (ResizingHandle c : controls) {
 			c.resetSelected();
 		}
