@@ -287,26 +287,36 @@ public class ResizeSessionManager {
 	    
 	    double scaleX = nowX / startX;
 	    double scaleY = nowY / startY;
+	    
+	    // Use the LARGER scale (user is dragging more in that direction)
 	    double scale = Math.max(scaleX, scaleY);
 	    
-	    // Calculate new dimensions with uniform scale
-	    double newX = startX * scale;
-	    double newY = startY * scale;
-	    double newZ = startZ * scale;
+	    // Let the user drag freely in the dominant direction
+	    // Constrain the other direction to maintain uniform scale
+	    double newDraggedX, newDraggedY;
+	    
+	    if (scaleX > scaleY) {
+	        // User is dragging more in X - let X follow cursor, constrain Y
+	        newDraggedX = draggedPos.getX();  // Use actual drag position
+	        double newY = startY * scale;
+	        double deltaY = newY * (draggedPos.getY() > anchorPos.getY() ? 1 : -1);
+	        newDraggedY = anchorPos.getY() + deltaY;
+	    } else {
+	        // User is dragging more in Y - let Y follow cursor, constrain X
+	        newDraggedY = draggedPos.getY();  // Use actual drag position
+	        double newX = startX * scale;
+	        double deltaX = newX * (draggedPos.getX() > anchorPos.getX() ? 1 : -1);
+	        newDraggedX = anchorPos.getX() + deltaX;
+	    }
 	    
 	    // Get current Z
 	    double z = draggedPos.getZ();
-	    
-	    // Calculate new dragged corner position from anchor
-	    double deltaX = newX * (draggedPos.getX() > anchorPos.getX() ? 1 : -1);
-	    double deltaY = newY * (draggedPos.getY() > anchorPos.getY() ? 1 : -1);
-	    double newDraggedX = anchorPos.getX() + deltaX;
-	    double newDraggedY = anchorPos.getY() + deltaY;
 	    
 	    // Reposition all XY corners
 	    updateCorners(draggedHandle, newDraggedX, newDraggedY, z);
 	    
 	    // Apply Z scale
+	    double newZ = startZ * scale;
 	    double newTopZ = originalBounds.getMinZ() + newZ;
 	    Vector3d center = getBounds().getCenter();
 	    topCenter.setInReferenceFrame(center.x, center.y, newTopZ);
