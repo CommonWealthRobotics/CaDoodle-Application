@@ -339,7 +339,7 @@ public class Main extends Application {
 		boolean contentEquals = nowVer.contentEquals("0");
 		boolean c = b || contentEquals;
 		if (c) {
-			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
+			BowlerStudio.ensureUpdated(true,"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
 					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",
