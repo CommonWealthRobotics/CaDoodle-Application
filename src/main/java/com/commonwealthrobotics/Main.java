@@ -303,7 +303,7 @@ public class Main extends Application {
 
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
-		
+		CSG.setUseGPU(false);
 		launch();
 	}
 	public static void saveOptionalProjects(HashSet<String>state) {
