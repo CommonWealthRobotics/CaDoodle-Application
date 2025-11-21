@@ -96,7 +96,7 @@ import javafx.scene.transform.Affine;
 
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
-    private ExecutorService executor = Executors.newFixedThreadPool(5);
+    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	// private CaDoodleOperation source;
@@ -170,7 +170,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			//com.neuronrobotics.sdk.common.Log.error("Objects Moved! " + globalPose.toSimpleString());
-			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot()));
+			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose)
+					.setNames(selectedSnapshot(),ap.get()));
 			try {
 				t.join();
 			} catch (InterruptedException ex) {
@@ -1190,7 +1191,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 						if (workplane.isClicked()) {
 							TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
-							ap.addOp(new MoveCenter().setNames(seleectedNames).setLocation(finalLocation));
+							ap.addOp(new MoveCenter().setNames(seleectedNames,ap.get()).setLocation(finalLocation));
 						}
 					});
 					workplane.setCurrentAbsolutePose(copy.inverse());
@@ -1593,7 +1594,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (CSG c :sel) {
 				double downMove = -c.transformed(t.inverse()).getMinZ();
 				TransformNR location = wp.times(new TransformNR(0, 0, downMove)).times(wp.inverse());
-				Thread op = ap.addOp(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName())));
+				Thread op = ap.addOp(new MoveCenter().setLocation(location)
+						.setNames(Arrays.asList(c.getName()),ap.get()));
 				try {
 					op.join();// wait for the move of this object to finish
 				} catch (InterruptedException e) {
@@ -1621,7 +1623,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			MoveCenter m = getActiveMove();
 			if (System.currentTimeMillis() - timeSinceLastMove > 2000 || m == null) {
-				m = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot());// force a new move event
+				m = new MoveCenter().setLocation(new TransformNR())
+						.setNames(selectedSnapshot(),ap.get());// force a new move event
 			}
 			MoveCenter mc = m;
 			if (ap.get().isOperationRunning()) {
@@ -2057,7 +2060,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;
 	}
-
+	public void submit(Runnable r) {
+		executor.submit(r);
+	}
 	public ExecutorService getExecutor() {
 		return executor;
 	}

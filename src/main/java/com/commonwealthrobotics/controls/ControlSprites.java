@@ -172,7 +172,8 @@ public class ControlSprites {
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
 			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
-			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot()));
+			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose.copy())
+					.setNames(session.selectedSnapshot(),ap.get()));
 			try {
 				t.join();
 			} catch (InterruptedException exx) {
@@ -280,7 +281,7 @@ public class ControlSprites {
 
 	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
-			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot()));
+			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
 		});
 		allign = new AllignManager(session, selection, workplaneOffset, ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);

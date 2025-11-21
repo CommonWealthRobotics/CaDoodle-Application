@@ -37,6 +37,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.MakeRobot;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.control.Button;
@@ -80,12 +81,14 @@ public class RobotLab {
 	private boolean controllersLoaded;
 	private boolean limmbsLoaded;
 	private LimbControlManager manager;
+	private boolean updating;
 
 	public RobotLab(SelectionSession session, ActiveProject ap, VBox baseRobotBox, Button makeRobotButton,
 			TabPane robotLabTabPane, Tab bodyTab, Tab headTab, Tab advancedTab, GridPane robotBasePanel,
 			GridPane controllerGrid, GridPane controllerFeaturesGrid, WorkplaneManager workplane, VBox controllersVBox,
 			VBox controllerConsumedBox, VBox capabilitiesVBox, VBox optionProvide, VBox optionsConsume,
-			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid,BowlerStudio3dEngine engine,RulerManager ruler) {
+			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid, BowlerStudio3dEngine engine,
+			RulerManager ruler) {
 		this.session = session;
 		this.ap = ap;
 		this.baseRobotBox = baseRobotBox;
@@ -111,7 +114,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
-		setManager(new LimbControlManager(engine,session,ap,ruler));
+		setManager(new LimbControlManager(engine, session, ap, ruler));
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
@@ -122,37 +125,35 @@ public class RobotLab {
 			getManager().hide();
 		}
 	}
-	
+
 	public void onCancel() {
 		getManager().hide();
 	}
 
 	public void updateDisplay() {
-		new Thread(() -> {
-			while(ap.get()==null) {
-				try {
+		if (updating)
+			return;
+		updating = true;
+		session.submit(() -> {
+			try {
+				while (ap.get() == null) {
 					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-			}
-			while(!ap.get().isInitialized()) {
-				try {
+				while (!ap.get().isInitialized()) {
 					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+				searchForBuilder();
+				setupMainPanel();
+				setupControllersPanel();
+				setupLimbsPanel();
+				setupTabs();
+				getManager().update(builder);
+			} catch (Exception e) {
+				Log.error(e);
 			}
-			searchForBuilder();
-			setupMainPanel();
-			setupControllersPanel();
-			setupLimbsPanel();
-			setupTabs();
-			getManager().update(builder);
-			
-		}).start();
+			updating = false;
+		});
+
 	}
 
 	private void setupMainPanel() {
@@ -249,7 +250,7 @@ public class RobotLab {
 		Label label = new Label(l);
 		label.setPrefWidth(80);
 		line.getChildren().add(label);
-		Label numHave = new Label(String.format(Locale.US,"%.2f", has));
+		Label numHave = new Label(String.format(Locale.US, "%.2f", has));
 		numHave.setPrefWidth(60);
 		line.getChildren().add(numHave);
 		Label used = new Label(type);
@@ -331,9 +332,9 @@ public class RobotLab {
 	}
 
 	private void setupLimbsPanel() {
-		if(limmbsLoaded)
+		if (limmbsLoaded)
 			return;
-		limmbsLoaded=true;
+		limmbsLoaded = true;
 		try {
 			if (limbOptions == null)
 				limbOptions = LimbOption.getOptions();
@@ -356,7 +357,7 @@ public class RobotLab {
 					wheels.add(o);
 					break;
 				}
-				//break;
+				// break;
 			}
 			setupLimbOption(arms, armsOptionGrid);
 			setupLimbOption(legs, legsOptionGrid);
@@ -368,7 +369,7 @@ public class RobotLab {
 	}
 
 	private void setupLimbOption(ArrayList<LimbOption> arms, GridPane armsOptionGrid2) {
-		
+
 		BowlerStudio.runLater(() -> {
 			armsOptionGrid2.getChildren().clear();
 		});
@@ -377,15 +378,15 @@ public class RobotLab {
 			LimbOption o = arms.get(i);
 			int col = i % 3;
 			int row = i / 3;
-			setupAddLimbButton(o, row, col,armsOptionGrid2);
+			setupAddLimbButton(o, row, col, armsOptionGrid2);
 		}
 
 	}
 
 	private void setupControllersPanel() {
-		if(controllersLoaded)
+		if (controllersLoaded)
 			return;
-		controllersLoaded=true;
+		controllersLoaded = true;
 		try {
 			if (controllers == null)
 				controllers = ControllerOption.getOptions();
@@ -410,7 +411,7 @@ public class RobotLab {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		Tooltip hover = new Tooltip(o.getName() + " "+o.getType());
+		Tooltip hover = new Tooltip(o.getName() + " " + o.getType());
 		Button button = new Button(o.getName());
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
@@ -439,18 +440,19 @@ public class RobotLab {
 //			tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
-				new Thread(() -> {
+				session.submit(() -> {
 					CSG indicator = o.getIndicator();
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
-						new Thread(() -> {
+						session.submit(() -> {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
-									TransformNR currentAbsolutePose =workplane.getCurrentAbsolutePose().times( LimbOption.LimbRotationOffset);
+									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose()
+											.times(LimbOption.LimbRotationOffset);
 									AddRobotLimb add = new AddRobotLimb().setLimb(o).setLocation(currentAbsolutePose)
 											.setNames(session.selectedSnapshot());
 									ap.addOp(add).join();
@@ -476,11 +478,11 @@ public class RobotLab {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
-						}).start();
+						});
 					});
 					workplane.activate();
 
-				}).start();
+				});
 				session.setKeyBindingFocus();
 			});
 		});
@@ -517,14 +519,14 @@ public class RobotLab {
 //			tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
-				new Thread(() -> {
+				session.submit(() -> {
 					CSG indicator = o.getIndicator();
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
-						new Thread(() -> {
+						session.submit(() -> {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
@@ -554,18 +556,18 @@ public class RobotLab {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
-						}).start();
+						});
 					});
 					workplane.activate();
 
-				}).start();
+				});
 				session.setKeyBindingFocus();
 			});
 		});
 	}
 
 	public void makeRobot() {
-		new Thread(() -> {
+		session.submit(() -> {
 			MakeRobot mr = new MakeRobot();
 			mr.setNames(session.selectedSnapshot());
 
@@ -579,7 +581,7 @@ public class RobotLab {
 			if (builder == null)
 				throw new RuntimeException("Failed to create robot!");
 			updateDisplay();
-		}).start();
+		});
 	}
 
 	/**
