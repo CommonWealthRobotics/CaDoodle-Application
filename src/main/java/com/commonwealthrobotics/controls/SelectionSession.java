@@ -1914,7 +1914,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			if (c.isHole())
 				continue;
-			back.add(c);
+			back.add(c.clone());
 		}
 		return back;
 	}
