@@ -26,7 +26,10 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.sdk.common.Log;
 
+import eu.mihosoft.vrl.v3d.CSG;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,8 +40,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -68,18 +75,20 @@ public class ProjectManager {
 	private static Runnable onFinish;
 
 	private static Runnable clearScreen;
+
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(" MMM d \n h:mm a")
 			.withZone(ZoneId.systemDefault());
 	private boolean copy = false;
 
-	private Button currentFileButton=null;
+	private Button currentFileButton = null;
 
 	@FXML
 	void onCopyProject(ActionEvent event) {
+		clearScreen.run();
 		copy = true;
 		copyDoodle.setDisable(true);
 		newDoodle.setDisable(true);
-		if(currentFileButton!=null)
+		if (currentFileButton != null)
 			BowlerStudio.runLater(() -> currentFileButton.requestFocus());
 	}
 
@@ -109,10 +118,17 @@ public class ProjectManager {
 
 	private void loadFiles() {
 		try {
-			List<CaDoodleFile> proj = ap.getProjects();
-			com.neuronrobotics.sdk.common.Log.error("Found " + proj.size() + " projects");
+			List<CaDoodleFile> proj1 = ap.getProjects();
+			com.neuronrobotics.sdk.common.Log.error("Found " + proj1.size() + " projects");
+			ArrayList<CaDoodleFile> proj = new ArrayList<CaDoodleFile>();
+			for(CaDoodleFile cf:proj1) {
+				if(cf.isIgnore()) {
+					continue;
+				}
+				proj.add(cf);
+			}
 
-			int offsetFromStartingButton =2;
+			int offsetFromStartingButton = 2;
 			for (int i = 0; i < proj.size(); i++) {
 				CaDoodleFile c = proj.get(i);
 				long time = c.getTimeCreated();
@@ -125,30 +141,62 @@ public class ProjectManager {
 
 				BowlerStudio.runLater(() -> {
 					Button b = new Button(c.getMyProjectName());
-					b.setOnAction(ev -> {
-						openProject(c);
+					Label e = new Label(formattedDateTime);
+					VBox box = new VBox();
+
+					ContextMenu contextMenu = new ContextMenu();
+					// Create a delete menu item
+					MenuItem deleteItem = new MenuItem("Delete");
+					deleteItem.getStyleClass().add("image-button-focus");
+					deleteItem.setOnAction(event -> {
+						box.getChildren().remove(b);
+						box.getChildren().remove(e);
+						c.setIgnore();
 					});
+					deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+						BowlerStudio.runLater(() -> contextMenu.hide());
+					});
+					// Add the delete item to the context menu
+					contextMenu.getItems().add(deleteItem);
+
+					b.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+						contextMenu.hide();
+						if (event.getButton() == MouseButton.PRIMARY) {
+							openProject(c);
+						}
+						if (event.getButton() == MouseButton.SECONDARY) {
+							contextMenu.show(b, event.getScreenX(), event.getScreenY());
+							new Thread(() -> {
+								try {
+									Thread.sleep(3000);
+								} catch (InterruptedException ex) {
+									com.neuronrobotics.sdk.common.Log.error(ex);
+								}
+								BowlerStudio.runLater(() -> contextMenu.hide());
+							}).start();
+						}
+					});
+
 					b.getStyleClass().add("image-button");
 					b.setContentDisplay(ContentDisplay.TOP);
 					ImageView value = new ImageView(c.loadImageFromFile());
 					value.setFitWidth(80);
 					value.setFitHeight(80);
 					b.setGraphic(value);
-					VBox box = new VBox();
 
 					box.getChildren().add(b);
-					box.getChildren().add(new Label(formattedDateTime));
+					box.getChildren().add(e);
 
 					box.setAlignment(Pos.CENTER); // This centers the contents of the HBox
 					b.setAlignment(Pos.CENTER); // This centers the contents of the HBox
 					projectGrid.add(box, col, row);
 					GridPane.setHalignment(b, HPos.CENTER); // Horizontal center alignment
 					GridPane.setValignment(b, VPos.CENTER); //
-					if(c.getMyProjectName().contentEquals(ap.get().getMyProjectName())) {
+					if (c.getMyProjectName().contentEquals(ap.get().getMyProjectName())) {
 						b.requestFocus();
 						currentFileButton = b;
 					}
-					
+
 				});
 
 			}
@@ -161,24 +209,27 @@ public class ProjectManager {
 	private void openProject(CaDoodleFile c) {
 		new Thread(() -> {
 			try {
-				BowlerStudio.runLater(() -> stage.close());
+				BowlerStudio.runLater(() -> {
+					stage.close();
+					clearScreen.run();
+				});
 				SplashManager.renderSplashFrame(50, "Initialize");
 				if (!copy) {
 					ap.setActiveProject(c.getSelf());
 				} else {
 					File sourceDir = c.getSelf().getParentFile();
 					File target = null;
-					int index=1;
+					int index = 1;
 					do {
-						target = new File(sourceDir + "_copy_"+index);
+						target = new File(sourceDir + "_copy_" + index);
 						index++;
-					}while(target.exists());
-					
-					copyDirectory(sourceDir.getAbsolutePath(),target.getAbsolutePath());
-					File doodle = new File(target.getAbsolutePath()+DownloadManager.delim()+c.getSelf().getName());
+					} while (target.exists());
+
+					copyDirectory(sourceDir.getAbsolutePath(), target.getAbsolutePath());
+					File doodle = new File(target.getAbsolutePath() + DownloadManager.delim() + c.getSelf().getName());
 
 					CaDoodleFile nf = CaDoodleFile.fromFile(doodle, null, false);
-					nf.setProjectName(c.getMyProjectName()+"_copy_"+index);
+					nf.setProjectName(c.getMyProjectName() + "_copy_" + index);
 					nf.setTimeCreated(System.currentTimeMillis());
 					nf.save();
 					ap.setActiveProject(doodle);
@@ -244,10 +295,11 @@ public class ProjectManager {
 			}
 		});
 
-		com.neuronrobotics.sdk.common.Log.debug("Directory copied successfully from " + sourceDirectoryPath + " to " + targetDirectoryPath);
+		com.neuronrobotics.sdk.common.Log
+				.debug("Directory copied successfully from " + sourceDirectoryPath + " to " + targetDirectoryPath);
 	}
 
-	public static void launch(ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
+	public static void launch( ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
 		ProjectManager.ap = ap;
 		ProjectManager.onFinish = onFinish;
 		ProjectManager.clearScreen = clearScreen;

@@ -206,10 +206,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			Affine manipulator =new Affine();
 			if (intersectedNode instanceof MeshView) {
 				MeshView meshView = (MeshView) intersectedNode;
-				CSG source = meshesReverseLookup.get(meshView);
-				if(source!=null)
-					if(source.getManipulator()!=null)
-						manipulator=source.getManipulator();
+				if(meshesReverseLookup!=null) {
+					CSG source = meshesReverseLookup.get(meshView);
+					if(source!=null)
+						if(source.getManipulator()!=null)
+							manipulator=source.getManipulator();
+				}
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
 				int faceIndex = pickResult.getIntersectedFace();

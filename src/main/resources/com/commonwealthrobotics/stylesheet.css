@@ -46,8 +46,54 @@
 .anchor-pane {
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+.text-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+/* TextField styling */
 .text-field {
-    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+
+/* TextArea styling */
+.text-area {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 2px;
+}
+
+/* TextArea content region */
+.text-area .content {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* TextArea viewport */
+.text-area .viewport {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* TextArea scroll pane overrides */
+.text-area .scroll-pane {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+/* TextArea scroll bar track (this might be the yellow culprit) */
+.text-area .scroll-bar:horizontal .track,
+.text-area .scroll-bar:vertical .track {
+    -fx-background-color: #f4ede0; /* logo-beige instead of yellow */
+}
+.text-area .content {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}
+.text-field {
+    -fx-background-color: #f4ede0; /* logo-beige */
     -fx-wrap-text: true;
     -fx-pref-row-count: 5; /* Adjust as needed */
     -fx-pref-column-count: 20; /* Adjust as needed */
@@ -119,6 +165,7 @@
      -fx-border-color: #263d8c; /* logo-blue */
 }
 #fileNameBox{
+    -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-width: 2px;
      -fx-border-color: #263d8c; /* logo-blue */
 }
@@ -165,7 +212,7 @@
 }
 
 #fileNameBox{
-       -fx-background-color: #f2c83d; /* logo-yellow */
+       -fx-background-color: #f4ede0; /* logo-beige */
 }
 
 #shapeCatagory{

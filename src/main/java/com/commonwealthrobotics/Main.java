@@ -94,12 +94,8 @@ public class Main extends Application {
 			newStage.setTitle(title);
 		newStage.setOnCloseRequest(event -> {
 			Platform.exit();
-			new Thread(() -> {
-				Log.debug("CaDoodle Exiting CLean");
-				Log.flush();
-				System.exit(0);
-			}).start();
 
+			System.exit(0);
 		});
 
 //		FontSizeManager.addListener(fontNum ->
@@ -179,7 +175,7 @@ public class Main extends Application {
 			MenuItem exitItem = new MenuItem("Exit");
 			exitItem.addActionListener(e -> {
 				Platform.exit();
-				Log.flush();
+
 				System.exit(0);
 			});
 
@@ -230,6 +226,7 @@ public class Main extends Application {
 			});
 			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				Log.debug("CaDoodle Exiting CLean");
 				Log.flush();
 			}));
 		} catch (IOException e) {
@@ -307,7 +304,7 @@ public class Main extends Application {
 
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
-		
+		CSG.setUseGPU(false);
 		launch();
 	}
 	public static void saveOptionalProjects(HashSet<String>state) {
@@ -343,7 +340,7 @@ public class Main extends Application {
 		boolean contentEquals = nowVer.contentEquals("0");
 		boolean c = b || contentEquals;
 		if (c) {
-			BowlerStudio.ensureUpdated("https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
+			BowlerStudio.ensureUpdated(true,"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
 					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
 					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
 					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",

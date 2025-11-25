@@ -391,17 +391,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onRedo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Redo");
-		ap.get().forward();
+		session.getExecutor().submit(()->{
+			ap.get().forward();	
+		});
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUndo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Undo");
-		new Thread(() -> {
+		session.getExecutor().submit(() -> {
 			ap.get().back();
 			session.setKeyBindingFocus();
-		}).start();
+		});
 	}
 
 	@FXML
@@ -510,10 +512,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onExport(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Export");
+		com.neuronrobotics.sdk.common.Log.debug("On Export");
 		Runnable onFinish = () -> {
 			session.setKeyBindingFocus();
-			com.neuronrobotics.sdk.common.Log.error("ExportManager Close");
+			com.neuronrobotics.sdk.common.Log.debug("ExportManager Close");
 		};
 		Runnable onClear = () -> {
 			session.clearScreen();
@@ -525,9 +527,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		TransformNR scale = session.getFocusCenter();
-		engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-				engine.getFlyingCamera().getZoomDepth());
+		session.getExecutor().submit(()->{
+			TransformNR scale = session.getFocusCenter();
+			engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+					engine.getFlyingCamera().getZoomDepth());
+		});
 		session.setKeyBindingFocus();
 	}
 
@@ -602,8 +606,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		Runnable onClear = () -> {
 			if (session == null)
 				return;
-			session.clearScreen();
 			session.clearSelection();
+			session.clearScreen();
+			session.getControls().clearSelection();
+			session.getControls().setMode(SpriteDisplayMode.Default);
 		};
 		ProjectManager.launch(ap, onFinish, onClear);
 	}
@@ -617,7 +623,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onImport(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Import");
-		new Thread(() -> {
+		session.getExecutor().submit(() -> {
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			ArrayList<String> extentions = getExtention();
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
@@ -626,7 +632,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			File last = FileSelectionFactory.GetFile(currentFile, false, stl);
 			importAFile(last);
 			session.setKeyBindingFocus();
-		}).start();
+		});
 	}
 
 	private ArrayList<String> getExtention() {
@@ -943,6 +949,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				timelineHolder.getChildren().remove(timelineScroll);
 				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 			}
+			timelineManager.setOpenState(timelineOpen);
+
 			boolean advanced = Boolean
 					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
 			setAdvancedMode(advanced);
@@ -977,7 +985,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setupFile() {
-		new Thread(() -> {
+		session.getExecutor().submit(() -> {
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
@@ -992,12 +1000,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(100);
 					SplashManager.closeSplash();
 				} while (SplashManager.isVisableSplash());
-				session.setKeyBindingFocus();
+				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
 				BowlerStudio.runLater(() -> cancel());
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-		}).start();
+		});
 
 	}
 
@@ -1098,7 +1106,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			Dragboard db = event.getDragboard();
 			if (db.hasFiles()) {
 				List<File> files = db.getFiles();
-				new Thread(() -> {
+				session.getExecutor().submit(() -> {
 					Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 					for (File file : files) {
 						com.neuronrobotics.sdk.common.Log.debug("File dropped: " + file.getAbsolutePath());
@@ -1113,7 +1121,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 							}
 
 					}
-				}).start();
+				});
 			}
 			event.setDropCompleted(true);
 			event.consume();
