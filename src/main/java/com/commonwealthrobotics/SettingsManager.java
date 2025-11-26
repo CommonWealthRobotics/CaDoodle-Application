@@ -428,10 +428,6 @@ public class SettingsManager implements ICSGClientEvent {
 
 	public static void launch(MainController mc) {
 		SettingsManager.mc = mc;
-		if (stage != null && stage.isShowing()) {
-			stage.toFront();
-			return;
-		}
 		try {
 			// Load the FXML file
 			
