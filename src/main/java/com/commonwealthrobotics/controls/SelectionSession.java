@@ -1636,13 +1636,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			TickToc.tic("Start");
 			RotationNR getCamerFrameGetRotation;
 			double currentRotZ;
-			Quadrent quad;
+			Quadrant quad;
 			TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
 			camerFrame = camerFrame.times(frameOffset);
 			getCamerFrameGetRotation = camerFrame.getRotation();
 			double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuthRadians());
-			quad = Quadrent.getQuad(toDegrees);
-			currentRotZ = Quadrent.QuadrentToAngle(quad);
+			quad = Quadrant.getQuad(toDegrees);
+			currentRotZ = Quadrant.QuadrantToAngle(quad);
 
 			TransformNR orentationOffset = new TransformNR(0, 0, 0, new RotationNR(0, currentRotZ - 90, 0));
 			TransformNR frame = new TransformNR();// BowlerStudio.getTargetFrame() ;
