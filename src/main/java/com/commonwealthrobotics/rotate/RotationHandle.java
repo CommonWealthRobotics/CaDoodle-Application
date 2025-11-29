@@ -6,7 +6,7 @@ import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.controls.ControlSprites;
-import com.commonwealthrobotics.controls.Quadrent;
+import com.commonwealthrobotics.controls.Quadrant;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.numbers.TextFieldDimention;
@@ -246,7 +246,7 @@ public class RotationHandle {
 		double rA = 1, rB = 1;
 		double pinLocx = 0, pinLocy = 0, pinLocz = 0;
 		TransformNR positionPin = new TransformNR();
-		Quadrent q = Quadrent.getQuad(-az);
+		Quadrant q = Quadrant.getQuad(-az);
 		rotationStarted = false;
 		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
 		RotationNR axisOrent = new RotationNR();
@@ -257,7 +257,7 @@ public class RotationHandle {
 			pinLocx = center.x;
 			pinLocy = center.y;
 			pinLocz = min.z;
-			axisOrent = RotationNR.getRotationZ(Quadrent.QuadrentToAngle(q) + 180);
+			axisOrent = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(q) + 180);
 			
 			break;
 		case elevation:

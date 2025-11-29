@@ -1,21 +1,21 @@
 package com.commonwealthrobotics.controls;
 
-public enum Quadrent {
+public enum Quadrant {
 	first, second, third, fourth;
 	
-	public static Quadrent getQuad(double angle) {
+	public static Quadrant getQuad(double angle) {
 		if (angle > 45 && angle <= 135)
-			return Quadrent.first;
+			return Quadrant.first;
 		if (angle > 135 || angle <= (-135))
-			return Quadrent.second;
+			return Quadrant.second;
 		if (angle > -135 && angle <= -45)
-			return Quadrent.third;
+			return Quadrant.third;
 		if (angle > -45 && angle <= 45)
-			return Quadrent.fourth;
+			return Quadrant.fourth;
 		throw new RuntimeException("Impossible nummber! " + angle);
 	}
 
-	public static double QuadrentToAngle(Quadrent q) {
+	public static double QuadrantToAngle(Quadrant q) {
 		switch (q) {
 		case first:
 			return 90;
