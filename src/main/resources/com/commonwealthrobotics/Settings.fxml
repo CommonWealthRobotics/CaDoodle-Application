@@ -18,31 +18,31 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane" stylesheets="stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <children>
-      <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="-14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="-14.0">
+      <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0">
         <columnConstraints>
-          <ColumnConstraints maxWidth="261.0" minWidth="10.0" prefWidth="246.0" />
+          <ColumnConstraints maxWidth="261.0" minWidth="230.0" prefWidth="246.0" />
           <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="567.0" prefWidth="582.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" vgrow="NEVER" />
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="8.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="8.0"  vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+            <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
             <VBox styleClass="vbox" GridPane.rowIndex="2">
                <children>
-                  <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always Ask">
+                  <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always ask">
                      <toggleGroup>
                         <ToggleGroup fx:id="insertStrat" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always Insert" toggleGroup="$insertStrat" />
-                  <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always Continue and Erase" toggleGroup="$insertStrat" />
+                  <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always insert" toggleGroup="$insertStrat" />
+                  <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always continue and erase" toggleGroup="$insertStrat" />
                </children>
             </VBox>
             <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" styleClass="label" text="Always ask what I want to do with a popup window every time something is edited " GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
@@ -50,7 +50,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </TextField>
-            <Label minHeight="-Infinity" text="Changes Made in Timeline" GridPane.rowIndex="1">
+            <Label minHeight="-Infinity" text="Changes made in timeline" GridPane.rowIndex="1">
                <font>
                   <Font size="18.0" />
                </font>
@@ -61,7 +61,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <Label text="My Projects Location">
+            <Label text="Projects location">
                <font>
                   <Font size="18.0" />
                </font>
@@ -69,16 +69,15 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <HBox GridPane.columnIndex="1">
+            <HBox GridPane.columnIndex="1" alignment="CENTER_LEFT">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onBrowse" text="Browse...">
+                  <Button mnemonicParsing="false" onAction="#onBrowse" text="Browse..."
+                     style="-fx-background-color: #d0d0d0; -fx-text-fill: black; -fx-border-color: black !important;
+                     -fx-border-width: 1 !important; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
                      <styleClass>
                         <String fx:value="image-button-focus" />
                         <String fx:value="image-button" />
                      </styleClass>
-                     <padding>
-                        <Insets left="10.0" />
-                     </padding>
                   </Button>
                   <TextField fx:id="workingDirPath" onAction="#onBrowse" HBox.hgrow="ALWAYS">
                      <HBox.margin>
@@ -90,7 +89,7 @@
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <Label text="Advance Mode" GridPane.rowIndex="3">
+            <Label text="Advance mode" GridPane.rowIndex="3">
                <font>
                   <Font size="18.0" />
                </font>
@@ -98,12 +97,12 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable Advanced Features" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable advanced features" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </CheckBox>
-            <Label text="Run A Server" GridPane.rowIndex="6">
+            <Label text="Run a server" GridPane.rowIndex="6">
                <padding>
                   <Insets left="10.0" />
                </padding>
@@ -111,7 +110,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label text="Connect To A Server" GridPane.rowIndex="5">
+            <Label text="Connect to a server" GridPane.rowIndex="5">
                <font>
                   <Font size="18.0" />
                </font>
@@ -119,14 +118,14 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="startServerCheckbox" mnemonicParsing="false" onAction="#onStartServer" text="Start Server" GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <CheckBox fx:id="startServerCheckbox" mnemonicParsing="false" onAction="#onStartServer" text="Start server" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </CheckBox>
             <VBox fx:id="serverStatusBox" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <children>
-                  <Label fx:id="serverIPDisplay" text="Server Not Started">
+                  <Label fx:id="serverIPDisplay" text="Server not started">
                      <padding>
                         <Insets left="10.0" />
                      </padding>
@@ -152,7 +151,7 @@
                   <Label text="API Key" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="ipaddressField" onKeyTyped="#checkServerConfigs" promptText="127.0.0.1" GridPane.columnIndex="3" />
                   <TextField fx:id="portField" onKeyTyped="#checkServerConfigs" text="3742" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <TextField fx:id="apiKey" onKeyTyped="#checkServerConfigs" promptText="API Key Here" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <TextField fx:id="apiKey" onKeyTyped="#checkServerConfigs" promptText="API key here" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                   <Label text="Connect" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <CheckBox fx:id="connectServer" disable="true" mnemonicParsing="false" onAction="#onConnectServer" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                </children>
@@ -160,7 +159,7 @@
                   <Insets right="10.0" top="10.0" />
                </padding>
             </GridPane>
-            <Label text="Default Number of Sides" GridPane.rowIndex="4">
+            <Label text="Default number of sides" GridPane.rowIndex="4">
                <font>
                   <Font size="18.0" />
                </font>
