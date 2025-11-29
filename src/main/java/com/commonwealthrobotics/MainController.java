@@ -166,8 +166,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="copyButton"
 	private Button copyButton; // Value injected by FXMLLoader
 
-	@FXML // fx:id="cruseButton"
-	private Button cruseButton; // Value injected by FXMLLoader
+	@FXML // fx:id="cruiseButton"
+	private Button cruiseButton; // Value injected by FXMLLoader
 
 	@FXML // fx:id="deleteButton"
 	private Button deleteButton; // Value injected by FXMLLoader
@@ -437,8 +437,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
-	void onCruse(ActionEvent event) {
-		session.onCruse();
+	void onCruise(ActionEvent event) {
+		session.onCruise();
 		session.setKeyBindingFocus();
 	}
 
@@ -819,7 +819,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert copyButton != null : "fx:id=\"copyButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert cruseButton != null : "fx:id=\"cruseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert cruiseButton != null : "fx:id=\"cruiseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert deleteButton != null
 				: "fx:id=\"deleteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert drawerArea != null : "fx:id=\"drawerArea\" was not injected: check your FXML file 'MainWindow.fxml'.";
@@ -909,7 +909,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 					engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,
 					timelineManager, objectWorkplane, dropToWorkplane,memUsage);
-			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruseButton);
+			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
 			session.setUngroup(ungroupButton);
@@ -1403,7 +1403,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.onAllign();
 					break;
 				case 99:// c
-					session.onCruse();
+					session.onCruise();
 					break;
 				case 27:// escape
 					workplane.cancel();

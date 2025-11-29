@@ -1140,11 +1140,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	public void onCruse() {
+	public void onCruise() {
 		TransformNR wp = ap.get().getWorkplane();
 		List<String> selectedSnapshot = selectedSnapshot();
 		if (selectedSnapshot.size() == 0) {
-			// new RuntimeException("Cruse called with nothing selected").printStackTrace();
+			// new RuntimeException("Cruise called with nothing selected").printStackTrace();
 			return;
 		}
 		getExecutor().submit(()->{
@@ -1152,7 +1152,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			List<CSG> cur=getCurrentStateSelected();
 			Platform.runLater(() -> {
 				if(!moveLock()) {
-					com.neuronrobotics.sdk.common.Log.error("On Cruse");
+					com.neuronrobotics.sdk.common.Log.error("On Cruise");
 					CSG indicator = selectedCSG.get(0);
 					if (selectedCSG.size() > 1) {
 						indicator = CSG.unionAll(selectedCSG);

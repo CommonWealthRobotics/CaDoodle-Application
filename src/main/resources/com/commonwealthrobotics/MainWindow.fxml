@@ -819,7 +819,7 @@
                               <Tooltip text="Mirror &lt; M &gt;" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="cruseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruse" styleClass="image-button">
+                        <Button fx:id="cruiseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruise" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -828,7 +828,7 @@
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Cruse &lt; C &gt;" />
+                              <Tooltip text="Cruise &lt; C &gt;" />
                            </tooltip>
                         </Button>
                         <Button fx:id="objectWorkplane" mnemonicParsing="false" onAction="#onObjectWorkplane" styleClass="image-button">
