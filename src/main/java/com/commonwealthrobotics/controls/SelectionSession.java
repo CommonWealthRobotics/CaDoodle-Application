@@ -226,7 +226,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
-		if (isAllignActive() && Allign.class.isInstance(source))
+		if (isAllignActive() && Align.class.isInstance(source))
 			getControls().setMode(SpriteDisplayMode.Allign);
 		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
 			getControls().setMode(SpriteDisplayMode.Mirror);
@@ -1498,15 +1498,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return getSellectedBounds(getCurrentStateSelected());
 	}
 	public Bounds getSellectedBounds(List<CSG> incoming) {
-		return Allign.getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
+		return Align.getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
 	}
 
 	public Bounds getBounds(CSG incoming, TransformNR frame) {
-		return Allign.getBounds(Arrays.asList(incoming), frame, null);
+		return Align.getBounds(Arrays.asList(incoming), frame, null);
 	}
 
 	public Bounds getBounds(CSG incoming, TransformNR frame, HashMap<CSG, Bounds> cache) {
-		return Allign.getBounds(Arrays.asList(incoming), frame, cache);
+		return Align.getBounds(Arrays.asList(incoming), frame, cache);
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) {

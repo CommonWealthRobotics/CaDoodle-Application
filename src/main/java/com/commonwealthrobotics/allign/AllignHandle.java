@@ -6,8 +6,8 @@ import java.util.List;
 import com.commonwealthrobotics.ActiveProject;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allignment;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Alignment;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -30,7 +30,7 @@ public class AllignHandle {
 	private HashMap<CSG, MeshView> visualizers = new HashMap<>();
 	private double scale;
 
-	public Allignment self;
+	public Alignment self;
 	private MeshView mesh;
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
@@ -41,9 +41,9 @@ public class AllignHandle {
 
 	private Vector3d orentation;
 
-	private Allign opperation;
+	private Align opperation;
 
-	private List<CSG> toAllign;
+	private List<CSG> toAlign;
 
 	private List<String> selected;
 
@@ -60,7 +60,7 @@ public class AllignHandle {
 
 	private ActiveProject ap;
 
-	public AllignHandle(Allignment set, Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap) {
+	public AllignHandle(Alignment set, Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap) {
 		self = set;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
@@ -269,11 +269,11 @@ public class AllignHandle {
 		this.scale = scale;
 	}
 
-	public void initialize(Allign opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
+	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAlign, List<String> selected) {
 		this.opperation = opperation;
 		// Auto-generated method stub
 		this.engine = engine;
-		this.toAllign = toAllign;
+		this.toAlign = toAlign;
 		this.selected = selected;
 		reset();
 	}
@@ -309,12 +309,12 @@ public class AllignHandle {
 		visualizationObjects = null;
 		if(opperation==null)
 			return;
-		Allignment x = opperation.x;
-		Allignment y = opperation.y;
-		Allignment z = opperation.z;
+		Alignment x = opperation.x;
+		Alignment y = opperation.y;
+		Alignment z = opperation.z;
 		setMyOperation();
 		opperation.setCaDoodleFile(ap.get());
-		visualizationObjects = opperation.process(toAllign);
+		visualizationObjects = opperation.process(toAlign);
 		for (int i = 0; i < visualizationObjects.size(); i++) {
 			CSG indicator = visualizationObjects.get(i);
 			MeshView indicatorMesh = indicator.newMesh();

@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allignment;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Alignment;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -26,9 +26,9 @@ public class AllignRadioSet {
 	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
 		this.name = name;
 		this.vector3d = vector3d;
-		positive = new AllignHandle(Allignment.positive,move,workplaneOffset,vector3d,ap);
-		middle = new AllignHandle(Allignment.middle,move,workplaneOffset,vector3d,ap);
-		negetive = new AllignHandle(Allignment.negative,move,workplaneOffset,vector3d,ap);
+		positive = new AllignHandle(Alignment.positive,move,workplaneOffset,vector3d,ap);
+		middle = new AllignHandle(Alignment.middle,move,workplaneOffset,vector3d,ap);
+		negetive = new AllignHandle(Alignment.negative,move,workplaneOffset,vector3d,ap);
 		asList = Arrays.asList(positive,middle,negetive);
 
 	}
@@ -44,7 +44,7 @@ public class AllignRadioSet {
 		}
 		return result;
 	}
-	public void initialize(Allign opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
+	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
 		for(AllignHandle r: asList) {
 			r.initialize(opperation,engine,toAllign,selected);
 		}

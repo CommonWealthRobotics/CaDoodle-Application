@@ -10,7 +10,7 @@ import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.rotate.RotationHandle;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -29,8 +29,8 @@ public class AllignManager {
 	AllignRadioSet frontBack;
 	AllignRadioSet leftRight;
 	AllignRadioSet upDown;
-	Allign opperation = null;
-	private ArrayList<CSG> toAllign = new ArrayList<CSG>();
+	Align opperation = null;
+	private ArrayList<CSG> toAlign = new ArrayList<CSG>();
 	private SelectionSession session;
 	private boolean allignemntSelected = false;
 	private HashMap<CSG, MeshView> meshes;
@@ -51,8 +51,8 @@ public class AllignManager {
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
 		for (AllignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {
-				com.neuronrobotics.sdk.common.Log.error("AllignManager clicked");
-				setAllignemntSelected(true);
+				com.neuronrobotics.sdk.common.Log.error("AlignManager clicked");
+				setAlignemntSelected(true);
 				recompute(() -> {
 					CaDoodleOperation curOp = session.getCurrentOpperation();
 					if (curOp != opperation && opperation!=null)
@@ -98,8 +98,8 @@ public class AllignManager {
 		return result;
 	}
 
-	public ArrayList<CSG> getToAllign() {
-		return toAllign;
+	public ArrayList<CSG> getToAlign() {
+		return toAlign;
 	}
 
 	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
@@ -109,19 +109,19 @@ public class AllignManager {
 			BowlerStudio.runLater(()->n.setVisible(true));
 			;
 		}
-		this.toAllign.clear();
+		this.toAlign.clear();
 		for (CSG c : ta)
-			this.toAllign.add(c);
-		opperation = new Allign().setNames(selected).setWorkplane(session.getWorkplane());
+			this.toAlign.add(c);
+		opperation = new Align().setNames(selected).setWorkplane(session.getWorkplane());
 		opperation.setBounds(boundNames);
 
-		com.neuronrobotics.sdk.common.Log.error("Allign manager reinitialized");
-		setAllignemntSelected(false);
+		com.neuronrobotics.sdk.common.Log.error("Align manager reinitialized");
+		setAlignemntSelected(false);
 		for (AllignRadioSet r : AS_LIST) {
-			r.initialize(opperation, engine, toAllign, selected);
+			r.initialize(opperation, engine, toAlign, selected);
 		}
 		recompute(null);
-		for (CSG c : toAllign) {
+		for (CSG c : toAlign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if(opperation==null)
@@ -146,21 +146,21 @@ public class AllignManager {
 	}
 
 	public boolean isActive() {
-		return toAllign.size() > 1;
+		return toAlign.size() > 1;
 	}
 
 	public void cancel() {
 
-		com.neuronrobotics.sdk.common.Log.debug("Allign canceled here");
+		com.neuronrobotics.sdk.common.Log.debug("Align canceled here");
 		if (isActive()) {
-			this.toAllign.clear();
-			if (isAllignemntSelected()) {
+			this.toAlign.clear();
+			if (isAlignemntSelected()) {
 				com.neuronrobotics.sdk.common.Log.debug("Add op " + opperation);
 			}
 			opperation = null;
 		}
 		hide();
-		for (CSG c : toAllign) {
+		for (CSG c : toAlign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = events.remove(c);
 			mv.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
@@ -176,12 +176,12 @@ public class AllignManager {
 		}
 	}
 
-	public boolean isAllignemntSelected() {
+	public boolean isAlignemntSelected() {
 		return allignemntSelected;
 	}
 
-	public void setAllignemntSelected(boolean allignemntSelected) {
-		// new Exception("Allignment selected set to
+	public void setAlignemntSelected(boolean allignemntSelected) {
+		// new Exception("Alignment selected set to
 		// "+allignemntSelected).printStackTrace();
 		this.allignemntSelected = allignemntSelected;
 	}
