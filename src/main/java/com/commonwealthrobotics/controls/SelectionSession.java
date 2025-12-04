@@ -1436,9 +1436,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		getExecutor().submit(() -> {
 			getControls().setMode(SpriteDisplayMode.Allign);
-			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
-			Bounds b = getSellectedBounds(selectedCSG);
-			getControls().initializeAllign(selectedCSG, b, getMeshes());
+//			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+//			Bounds b = getSellectedBounds(selectedCSG);
+//			getControls().initializeAllign(selectedCSG, b, getMeshes());
+			List<String> selectedSnapshot = selectedSnapshot();
+			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
+			getControls().initializeAllign(selectedCSG, selectedSnapshot, getMeshes());
 		});
 
 	}
@@ -1495,15 +1498,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return getSellectedBounds(getCurrentStateSelected());
 	}
 	public Bounds getSellectedBounds(List<CSG> incoming) {
-		return getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
+		return Allign.getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
 	}
 
 	public Bounds getBounds(CSG incoming, TransformNR frame) {
-		return getBounds(Arrays.asList(incoming), frame, null);
+		return Allign.getBounds(Arrays.asList(incoming), frame, null);
 	}
 
 	public Bounds getBounds(CSG incoming, TransformNR frame, HashMap<CSG, Bounds> cache) {
-		return getBounds(Arrays.asList(incoming), frame, cache);
+		return Allign.getBounds(Arrays.asList(incoming), frame, cache);
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) {
@@ -1517,47 +1520,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		return getSellectedBounds(parts);
 	}
-	public Bounds getBounds(List<CSG> incoming, TransformNR frame, HashMap<CSG, Bounds> cache) {
-		if (cache == null)
-			cache = new HashMap<>();
-		Vector3d min = null;
-		Vector3d max = null;
-		// TickToc.tic("getSellectedBounds "+incoming.size());
 
-		for (CSG csg : incoming) {
-			if (cache.get(csg) == null) {
-				Transform inverse = TransformFactory.nrToCSG(frame).inverse();
-				Affine af = csg.getManipulator();
-				if(af!=null) {
-					TransformNR afNR = TransformFactory.affineToNr(af);
-					inverse = TransformFactory.nrToCSG(afNR.inverse().times(frame)).inverse();
-				}
-				cache.put(csg, csg.transformed(inverse).getBounds());
-			}
-			Bounds b = cache.get(csg);
-			Vector3d min2 = b.getMin().clone();
-			Vector3d max2 = b.getMax().clone();
-			if (min == null)
-				min = min2;
-			if (max == null)
-				max = max2;
-			if (min2.x < min.x)
-				min.x = min2.x;
-			if (min2.y < min.y)
-				min.y = min2.y;
-			if (min2.z < min.z)
-				min.z = min2.z;
-			if (max.x < max2.x)
-				max.x = max2.x;
-			if (max.y < max2.y)
-				max.y = max2.y;
-			if (max.z < max2.z)
-				max.z = max2.z;
-			// TickToc.tic("Bounds for "+c.getName());
-		}
-
-		return new Bounds(min, max);
-	}
 
 	public void objectWorkplane() {
 		if(selected.size()!=1 && !isObjectWorkplane)

@@ -378,8 +378,8 @@ public class ControlSprites {
 		allign.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
 
-	public void initializeAllign(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
-		allign.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
+	public void initializeAllign(List<CSG> toAllign, List<String> boundNames, HashMap<CSG, MeshView> meshes) {
+		allign.initialize(boundNames, engine, toAllign, session.selectedSnapshot(), meshes);
 
 	}
 

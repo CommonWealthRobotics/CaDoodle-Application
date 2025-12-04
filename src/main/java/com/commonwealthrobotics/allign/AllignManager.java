@@ -40,9 +40,11 @@ public class AllignManager {
 	private double zoom;
 	private TransformNR cf;
 	private Bounds b;
+	private ActiveProject ap;
 
 	public AllignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
 		this.session = session;
+		this.ap = ap;
 		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);
 		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0),ap);
 		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1),ap);
@@ -82,7 +84,7 @@ public class AllignManager {
 
 	private void updateHandles() {
 		if(opperation!=null)
-			b = opperation.getBounds();
+			b = opperation.getBounds(ap.get().getCurrentState());
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
@@ -100,7 +102,7 @@ public class AllignManager {
 		return toAllign;
 	}
 
-	public void initialize(Bounds b, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
+	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
 			HashMap<CSG, MeshView> meshes) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
@@ -111,7 +113,7 @@ public class AllignManager {
 		for (CSG c : ta)
 			this.toAllign.add(c);
 		opperation = new Allign().setNames(selected).setWorkplane(session.getWorkplane());
-		opperation.setBounds(b);
+		opperation.setBounds(boundNames);
 
 		com.neuronrobotics.sdk.common.Log.error("Allign manager reinitialized");
 		setAllignemntSelected(false);
@@ -124,9 +126,7 @@ public class AllignManager {
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if(opperation==null)
 					return;
-				
-				Bounds bounds = session.getSellectedBounds(Arrays.asList(c));
-				opperation.setBounds(bounds);
+				opperation.setBounds(Arrays.asList(c.getName()));
 				recompute(null);
 				updateHandles();
 			};
