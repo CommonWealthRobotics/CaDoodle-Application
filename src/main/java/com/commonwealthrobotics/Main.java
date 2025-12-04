@@ -292,15 +292,18 @@ public class Main extends Application {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		if(PasswordManager.hasNetwork()) {
-			try {
-				ensureGitAssetsArePresent();
-			}catch(Throwable t) {
-				com.neuronrobotics.sdk.common.Log.error(t);
+
+		new Thread(() -> {
+			if (PasswordManager.hasNetwork()) {
+				try {
+					ensureGitAssetsArePresent();
+				} catch (Throwable t) {
+					com.neuronrobotics.sdk.common.Log.error(t);
+				}
+			} else {
+				com.neuronrobotics.sdk.common.Log.error("No Network");
 			}
-		}else {
-			SplashManager.renderSplashFrame(2, "No Network");
-		}
+		}, "cadoodle-assets-loader").start();
 
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
