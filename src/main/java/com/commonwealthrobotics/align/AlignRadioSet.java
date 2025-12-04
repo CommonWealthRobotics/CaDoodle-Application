@@ -1,12 +1,12 @@
-package com.commonwealthrobotics.allign;
+package com.commonwealthrobotics.align;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allign;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Allignment;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Alignment;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -16,19 +16,19 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
-public class AllignRadioSet {
-	AllignHandle positive=null;
-	AllignHandle middle =null;
-	AllignHandle negetive=null;
+public class AlignRadioSet {
+	AlignHandle positive=null;
+	AlignHandle middle =null;
+	AlignHandle negetive=null;
 	private String name;
 	private Vector3d vector3d;
-	private List<AllignHandle> asList;
-	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
+	private List<AlignHandle> asList;
+	public AlignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
 		this.name = name;
 		this.vector3d = vector3d;
-		positive = new AllignHandle(Allignment.positive,move,workplaneOffset,vector3d,ap);
-		middle = new AllignHandle(Allignment.middle,move,workplaneOffset,vector3d,ap);
-		negetive = new AllignHandle(Allignment.negative,move,workplaneOffset,vector3d,ap);
+		positive = new AlignHandle(Alignment.positive,move,workplaneOffset,vector3d,ap);
+		middle = new AlignHandle(Alignment.middle,move,workplaneOffset,vector3d,ap);
+		negetive = new AlignHandle(Alignment.negative,move,workplaneOffset,vector3d,ap);
 		asList = Arrays.asList(positive,middle,negetive);
 
 	}
@@ -39,26 +39,26 @@ public class AllignRadioSet {
 	}
 	public List<Node> getElements(){
 		ArrayList<Node> result = new ArrayList<Node>(); 
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			result.add(r.getHandle());
 		}
 		return result;
 	}
-	public void initialize(Allign opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
-		for(AllignHandle r: asList) {
-			r.initialize(opperation,engine,toAllign,selected);
+	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAlign, List<String> selected) {
+		for(AlignHandle r: asList) {
+			r.initialize(opperation,engine,toAlign,selected);
 		}
 	}
 	public void hide() {
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			r.hide();
 		}
 	}
 	public void setOnClickCallback(Runnable onClick) {
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			r.setOnClickCallback(()->{
 				com.neuronrobotics.sdk.common.Log.error("Radio group click ");
-				for(AllignHandle ah: asList) {
+				for(AlignHandle ah: asList) {
 					ah.reset();
 				}
 				onClick.run();
@@ -66,12 +66,12 @@ public class AllignRadioSet {
 		}
 	}
 	public void recomputeOps() {
-		for(AllignHandle ah: asList) {
+		for(AlignHandle ah: asList) {
 			ah.recomputeOps();
 		}
 	}
 	public void clear() {
-		for(AllignHandle ah: asList) {
+		for(AlignHandle ah: asList) {
 			ah.clear();
 		}
 	}

@@ -115,7 +115,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button groupButton;
 	private ImageView showHideImage;
 	private List<String> copySetinternal;
-	private Button allignButton;
+	private Button alignButton;
 	private long timeSinceLastMove = System.currentTimeMillis();
 	private double screenW;
 	private double screenH;
@@ -226,8 +226,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
-		if (isAllignActive() && Allign.class.isInstance(source))
-			getControls().setMode(SpriteDisplayMode.Allign);
+		if (isAlignActive() && Align.class.isInstance(source))
+			getControls().setMode(SpriteDisplayMode.Align);
 		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
 			getControls().setMode(SpriteDisplayMode.Mirror);
 			onMirror();
@@ -482,7 +482,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						selected.add(name);
 					}
 				}
-				if(getMode()!=SpriteDisplayMode.Allign)
+				if(getMode()!=SpriteDisplayMode.Align)
 					setMode(SpriteDisplayMode.Default);
 				updateRobotLab.run();
 				updateControlsDisplayOfSelected();
@@ -791,8 +791,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	public void clearAllignObjectCache() {
-		getControls().clearAllign();
+	public void clearAlignObjectCache() {
+		getControls().clearAlign();
 	}
 
 	private void setupSnapGrid() {
@@ -1026,8 +1026,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				ungroupButton.setDisable(true);
 			if (groupButton != null)
 				groupButton.setDisable(true);
-			if (allignButton != null)
-				allignButton.setDisable(true);
+			if (alignButton != null)
+				alignButton.setDisable(true);
 			if (advancedGroupMenu != null)
 				advancedGroupMenu.setDisable(true);
 			if (dropToWorkplane != null)
@@ -1050,7 +1050,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
-				allignButton.setDisable(false);
+				alignButton.setDisable(false);
 			}
 			if (selected.size() > 0 && advanced) {
 				advancedGroupMenu.setDisable(false);
@@ -1431,14 +1431,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.showHideImage = showHideImage;
 	}
 
-	public void onAllign() {
+	public void onAlign() {
 		if (getControls() == null)
 			return;
 		getExecutor().submit(() -> {
-			getControls().setMode(SpriteDisplayMode.Allign);
+			getControls().setMode(SpriteDisplayMode.Align);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b = getSellectedBounds(selectedCSG);
-			getControls().initializeAllign(selectedCSG, b, getMeshes());
+			getControls().initializeAlign(selectedCSG, b, getMeshes());
 		});
 
 	}
@@ -1461,7 +1461,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void cancelOperationModes() {
 		if (getControls() == null)
 			return;
-		if (isAllignActive()) {
+		if (isAlignActive()) {
 			getControls().setMode(SpriteDisplayMode.Default);
 		}
 		if (isMirrorActive()) {
@@ -1471,8 +1471,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	public void setAllignButton(Button allignButton) {
-		this.allignButton = allignButton;
+	public void setAlignButton(Button alignButton) {
+		this.alignButton = alignButton;
 	}
 
 	public List<CSG> getCurrentState() {
@@ -1974,15 +1974,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public boolean isInOperationMode() {
 
-		return isAllignActive() || isMirrorActive();
+		return isAlignActive() || isMirrorActive();
 	}
 
 	private boolean isMirrorActive() {
 		return getControls().mirrorIsActive();
 	}
 
-	private boolean isAllignActive() {
-		return getControls().allignIsActive();
+	private boolean isAlignActive() {
+		return getControls().alignIsActive();
 	}
 
 	public HashMap<CSG, MeshView> getMeshes() {

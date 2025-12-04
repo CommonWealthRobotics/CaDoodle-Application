@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.allign.AllignManager;
+import com.commonwealthrobotics.align.AlignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.commonwealthrobotics.numbers.ThreedNumber;
@@ -63,7 +63,7 @@ public class ControlSprites {
 	// private BowlerStudio3dEngine spriteEngine;
 	private ResizeSessionManager scaleSession;
 	private RotationSessionManager rotationManager;
-	private AllignManager allign;
+	private AlignManager align;
 	private MirrorSessionManager mirror;
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
 	// private Rectangle bottomDimentions = new Rectangle(100,100,new
@@ -224,7 +224,7 @@ public class ControlSprites {
 		allElems.addAll(tmp);
 
 		setUpOpperationManagers(session, ap, ruler);
-		allElems.addAll(allign.getElements());
+		allElems.addAll(align.getElements());
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
@@ -283,12 +283,12 @@ public class ControlSprites {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
 		});
-		allign = new AllignManager(session, selection, workplaneOffset, ap);
+		align = new AlignManager(session, selection, workplaneOffset, ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
-	public void clearAllign() {
-		allign.clear();
+	public void clearAlign() {
+		align.clear();
 	}
 
 	private void setUpUIComponennts() {
@@ -374,21 +374,21 @@ public class ControlSprites {
 			double y, double z, List<String> selectedCSG, Bounds b) {
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
-		// TickToc.tic("alligned update");
-		allign.threeDTarget(screenW, screenH, zoom, b, cf);
+		// TickToc.tic("aligned update");
+		align.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
 
-	public void initializeAllign(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
-		allign.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
+	public void initializeAlign(List<CSG> toAlign, Bounds b, HashMap<CSG, MeshView> meshes) {
+		align.initialize(b, engine, toAlign, session.selectedSnapshot(), meshes);
 
 	}
 
-	public void initializeMirror(List<CSG> toAllign, Bounds b, HashMap<CSG, MeshView> meshes) {
-		mirror.initialize(b, engine, toAllign, session.selectedSnapshot(), meshes);
+	public void initializeMirror(List<CSG> toAlign, Bounds b, HashMap<CSG, MeshView> meshes) {
+		mirror.initialize(b, engine, toAlign, session.selectedSnapshot(), meshes);
 	}
 
 	public void cancelOperationMode() {
-		allign.cancel();
+		align.cancel();
 		mirror.cancel();
 	}
 
@@ -397,7 +397,7 @@ public class ControlSprites {
 			r.setVisible(true);
 		rotationManager.initialize(session.moveLock());
 		mirror.hide();
-		allign.hide();
+		align.hide();
 
 	}
 
@@ -611,7 +611,7 @@ public class ControlSprites {
 				for (ThreedNumber t : numbers) {
 					t.hide();
 				}
-				allign.hide();
+				align.hide();
 				mirror.hide();
 				if (ruler.isActive()) {
 					xOffset.show();
@@ -646,7 +646,7 @@ public class ControlSprites {
 				break;
 			case Rotating:
 				break;
-			case Allign:
+			case Align:
 				for (DottedLine l : lines) {
 					l.setVisible(true);
 				}
@@ -666,7 +666,7 @@ public class ControlSprites {
 				for (ThreedNumber t : numbers) {
 					t.hide();
 				}
-				allign.hide();
+				align.hide();
 				mirror.hide();
 				for (DottedLine l : lines) {
 					l.setVisible(false);
@@ -686,8 +686,8 @@ public class ControlSprites {
 		return mirror.isActive();
 	}
 
-	public boolean allignIsActive() {
-		return allign.isActive();
+	public boolean alignIsActive() {
+		return align.isActive();
 	}
 
 	public SelectionSession getSession() {

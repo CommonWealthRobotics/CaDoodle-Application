@@ -795,16 +795,16 @@
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="40.0" />
-                        <Button fx:id="allignButton" mnemonicParsing="false" onAction="#onAllign" styleClass="image-button">
+                        <Button fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@allign.png" />
+                                    <Image url="@align.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Allign &lt; L &gt;" />
+                              <Tooltip text="Align &lt; L &gt;" />
                            </tooltip>
                         </Button>
                         <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">

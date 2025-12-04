@@ -226,7 +226,7 @@ public class Main extends Application {
 			});
 			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				Log.debug("CaDoodle Exiting CLean");
+				Log.debug("CaDoodle Exiting Clean");
 				Log.flush();
 			}));
 		} catch (IOException e) {
@@ -335,7 +335,7 @@ public class Main extends Application {
 		String objectKey = "currentVersion";
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 		String nowVer = ""+StudioBuildInfo.getSDKVersion();
-		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
+		com.neuronrobotics.sdk.common.Log.debug("Previous version was " + lastVer + " and current version is " + nowVer);
 		boolean b = !lastVer.contentEquals(nowVer);
 		boolean contentEquals = nowVer.contentEquals("0");
 		boolean c = b || contentEquals;
