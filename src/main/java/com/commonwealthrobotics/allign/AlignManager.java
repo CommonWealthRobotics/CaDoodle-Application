@@ -25,10 +25,10 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
 public class AlignManager {
-	private static List<AllignRadioSet> AS_LIST = null;
-	AllignRadioSet frontBack;
-	AllignRadioSet leftRight;
-	AllignRadioSet upDown;
+	private static List<AlignRadioSet> AS_LIST = null;
+	AlignRadioSet frontBack;
+	AlignRadioSet leftRight;
+	AlignRadioSet upDown;
 	Align opperation = null;
 	private ArrayList<CSG> toAlign = new ArrayList<CSG>();
 	private SelectionSession session;
@@ -45,11 +45,11 @@ public class AlignManager {
 	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
 		this.session = session;
 		this.ap = ap;
-		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);
-		leftRight = new AllignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0),ap);
-		upDown = new AllignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1),ap);
+		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);
+		leftRight = new AlignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0),ap);
+		upDown = new AlignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1),ap);
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
-		for (AllignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {
 				com.neuronrobotics.sdk.common.Log.error("AlignManager clicked");
 				setAlignemntSelected(true);
@@ -69,7 +69,7 @@ public class AlignManager {
 		hide();
 	}
 	public void clear() {
-		for (AllignRadioSet r : AS_LIST) 
+		for (AlignRadioSet r : AS_LIST) 
 			r.clear();
 	}
 	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c) {
@@ -92,7 +92,7 @@ public class AlignManager {
 
 	public List<Node> getElements() {
 		ArrayList<Node> result = new ArrayList<Node>();
-		for (AllignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST) {
 			result.addAll(r.getElements());
 		}
 		return result;
@@ -117,7 +117,7 @@ public class AlignManager {
 
 		com.neuronrobotics.sdk.common.Log.error("Align manager reinitialized");
 		setAlignemntSelected(false);
-		for (AllignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST) {
 			r.initialize(opperation, engine, toAlign, selected);
 		}
 		recompute(null);
@@ -137,7 +137,7 @@ public class AlignManager {
 
 	private void recompute(Runnable r) {
 		new Thread(() -> {
-			for (AllignRadioSet rs : AS_LIST) {
+			for (AlignRadioSet rs : AS_LIST) {
 				rs.recomputeOps();
 			}
 			if (r != null)
@@ -168,7 +168,7 @@ public class AlignManager {
 	}
 
 	public void hide() {
-		for (AllignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST) {
 			r.hide();
 		}
 		for (Node n : getElements()) {

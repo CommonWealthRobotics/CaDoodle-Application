@@ -16,14 +16,14 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
-public class AllignRadioSet {
+public class AlignRadioSet {
 	AlignHandle positive=null;
 	AlignHandle middle =null;
 	AlignHandle negetive=null;
 	private String name;
 	private Vector3d vector3d;
 	private List<AlignHandle> asList;
-	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
+	public AlignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
 		this.name = name;
 		this.vector3d = vector3d;
 		positive = new AlignHandle(Alignment.positive,move,workplaneOffset,vector3d,ap);
