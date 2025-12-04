@@ -24,7 +24,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
-public class AllignHandle {
+public class AlignHandle {
 	private BowlerStudio3dEngine engine;
 
 	private HashMap<CSG, MeshView> visualizers = new HashMap<>();
@@ -60,7 +60,7 @@ public class AllignHandle {
 
 	private ActiveProject ap;
 
-	public AllignHandle(Alignment set, Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap) {
+	public AlignHandle(Alignment set, Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap) {
 		self = set;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;

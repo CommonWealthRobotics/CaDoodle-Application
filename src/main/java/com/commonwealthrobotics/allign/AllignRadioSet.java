@@ -17,18 +17,18 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 public class AllignRadioSet {
-	AllignHandle positive=null;
-	AllignHandle middle =null;
-	AllignHandle negetive=null;
+	AlignHandle positive=null;
+	AlignHandle middle =null;
+	AlignHandle negetive=null;
 	private String name;
 	private Vector3d vector3d;
-	private List<AllignHandle> asList;
+	private List<AlignHandle> asList;
 	public AllignRadioSet(String name,Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap){
 		this.name = name;
 		this.vector3d = vector3d;
-		positive = new AllignHandle(Alignment.positive,move,workplaneOffset,vector3d,ap);
-		middle = new AllignHandle(Alignment.middle,move,workplaneOffset,vector3d,ap);
-		negetive = new AllignHandle(Alignment.negative,move,workplaneOffset,vector3d,ap);
+		positive = new AlignHandle(Alignment.positive,move,workplaneOffset,vector3d,ap);
+		middle = new AlignHandle(Alignment.middle,move,workplaneOffset,vector3d,ap);
+		negetive = new AlignHandle(Alignment.negative,move,workplaneOffset,vector3d,ap);
 		asList = Arrays.asList(positive,middle,negetive);
 
 	}
@@ -39,26 +39,26 @@ public class AllignRadioSet {
 	}
 	public List<Node> getElements(){
 		ArrayList<Node> result = new ArrayList<Node>(); 
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			result.add(r.getHandle());
 		}
 		return result;
 	}
 	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			r.initialize(opperation,engine,toAllign,selected);
 		}
 	}
 	public void hide() {
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			r.hide();
 		}
 	}
 	public void setOnClickCallback(Runnable onClick) {
-		for(AllignHandle r: asList) {
+		for(AlignHandle r: asList) {
 			r.setOnClickCallback(()->{
 				com.neuronrobotics.sdk.common.Log.error("Radio group click ");
-				for(AllignHandle ah: asList) {
+				for(AlignHandle ah: asList) {
 					ah.reset();
 				}
 				onClick.run();
@@ -66,12 +66,12 @@ public class AllignRadioSet {
 		}
 	}
 	public void recomputeOps() {
-		for(AllignHandle ah: asList) {
+		for(AlignHandle ah: asList) {
 			ah.recomputeOps();
 		}
 	}
 	public void clear() {
-		for(AllignHandle ah: asList) {
+		for(AlignHandle ah: asList) {
 			ah.clear();
 		}
 	}
