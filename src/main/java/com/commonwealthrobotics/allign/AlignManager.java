@@ -24,7 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
-public class AllignManager {
+public class AlignManager {
 	private static List<AllignRadioSet> AS_LIST = null;
 	AllignRadioSet frontBack;
 	AllignRadioSet leftRight;
@@ -42,7 +42,7 @@ public class AllignManager {
 	private Bounds b;
 	private ActiveProject ap;
 
-	public AllignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
+	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
 		this.session = session;
 		this.ap = ap;
 		frontBack = new AllignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);

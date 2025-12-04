@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.allign.AllignManager;
+import com.commonwealthrobotics.allign.AlignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.TextFieldDimention;
 import com.commonwealthrobotics.numbers.ThreedNumber;
@@ -63,7 +63,7 @@ public class ControlSprites {
 	// private BowlerStudio3dEngine spriteEngine;
 	private ResizeSessionManager scaleSession;
 	private RotationSessionManager rotationManager;
-	private AllignManager allign;
+	private AlignManager allign;
 	private MirrorSessionManager mirror;
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
 	// private Rectangle bottomDimentions = new Rectangle(100,100,new
@@ -283,7 +283,7 @@ public class ControlSprites {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
 		});
-		allign = new AllignManager(session, selection, workplaneOffset, ap);
+		allign = new AlignManager(session, selection, workplaneOffset, ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
