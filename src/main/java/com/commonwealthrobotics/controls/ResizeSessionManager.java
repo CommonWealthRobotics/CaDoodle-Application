@@ -36,6 +36,7 @@ public class ResizeSessionManager {
 	private boolean locked;
 	private boolean resizeAllowed;
 	private boolean moveLock;
+	private Bounds originalBounds = null;
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
 			SelectionSession s, Affine workplaneOffset, MoveUpArrow up) {
@@ -62,116 +63,125 @@ public class ResizeSessionManager {
 				updateLines, onReset);
 
 		rightFront.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-
-			scalingFlag = false;
-			if (beingUpdated == null)
-				beingUpdated = rightFront;
-			if (beingUpdated != rightFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+rightFront);
-				return;
-			}
-			double x = rightRear.manipulator.getCurrentPose().getX();
-			double y = rightFront.manipulator.getCurrentPose().getY();
-			double z = rightRear.manipulator.getCurrentPose().getZ();
-			// com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + "
-			// z" + z);
-			rightRear.manipulator.setInReferenceFrame(x, y, z);
-			x = rightFront.manipulator.getCurrentPose().getX();
-			y = leftFront.manipulator.getCurrentPose().getY();
-			leftFront.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update());
-			// com.neuronrobotics.sdk.common.Log.error("rightFront");
+		    scalingFlag = false;
+		    if (beingUpdated == null)
+		        beingUpdated = rightFront;
+		    if (beingUpdated != rightFront) {
+		        return;
+		    }
+		    
+		    if (ev != null && ev.isShiftDown()) {
+		        TransformNR draggedPos = rightFront.getCurrentInReferenceFrame();
+		        uniformScalingXY(rightFront, draggedPos);
+		    } else {
+		        // Normal synchronization logic
+		        double x = rightRear.manipulator.getCurrentPose().getX();
+		        double y = rightFront.manipulator.getCurrentPose().getY();
+		        double z = rightRear.manipulator.getCurrentPose().getZ();
+		        rightRear.manipulator.setInReferenceFrame(x, y, z);
+		        x = rightFront.manipulator.getCurrentPose().getX();
+		        y = leftFront.manipulator.getCurrentPose().getY();
+		        leftFront.manipulator.setInReferenceFrame(x, y, z);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
+
 		rightRear.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-
-			scalingFlag = false;
-
-			if (beingUpdated == null)
-				beingUpdated = rightRear;
-			if (beingUpdated != rightRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+rightRear);
-				return;
-			}
-			double x = rightFront.manipulator.getCurrentPose().getX();
-			double y = rightRear.manipulator.getCurrentPose().getY();
-			double z = rightFront.manipulator.getCurrentPose().getZ();
-			rightFront.manipulator.setInReferenceFrame(x, y, z);
-			x = rightRear.manipulator.getCurrentPose().getX();
-			y = leftRear.manipulator.getCurrentPose().getY();
-			leftRear.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update());
-			// com.neuronrobotics.sdk.common.Log.error("rightRear");
+		    scalingFlag = false;
+		    if (beingUpdated == null)
+		        beingUpdated = rightRear;
+		    if (beingUpdated != rightRear) {
+		        return;
+		    }
+		    
+		    if (ev != null && ev.isShiftDown()) {
+		        TransformNR draggedPos = rightRear.getCurrentInReferenceFrame();
+		        uniformScalingXY(rightRear, draggedPos);
+		    } else {
+		        // Normal synchronization logic
+		        double x = rightFront.manipulator.getCurrentPose().getX();
+		        double y = rightRear.manipulator.getCurrentPose().getY();
+		        double z = rightFront.manipulator.getCurrentPose().getZ();
+		        rightFront.manipulator.setInReferenceFrame(x, y, z);
+		        x = rightRear.manipulator.getCurrentPose().getX();
+		        y = leftRear.manipulator.getCurrentPose().getY();
+		        leftRear.manipulator.setInReferenceFrame(x, y, z);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
+
 		leftFront.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-
-			scalingFlag = false;
-
-			if (beingUpdated == null)
-				beingUpdated = leftFront;
-			if (beingUpdated != leftFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+leftFront);
-				return;
-			}
-			double x = leftRear.manipulator.getCurrentPose().getX();
-			double y = leftFront.manipulator.getCurrentPose().getY();
-			double z = leftFront.manipulator.getCurrentPose().getZ();
-			leftRear.manipulator.setInReferenceFrame(x, y, z);
-			x = leftFront.manipulator.getCurrentPose().getX();
-			y = rightFront.manipulator.getCurrentPose().getY();
-			rightFront.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftFront");
+		    scalingFlag = false;
+		    if (beingUpdated == null)
+		        beingUpdated = leftFront;
+		    if (beingUpdated != leftFront) {
+		        return;
+		    }
+		    
+		    if (ev != null && ev.isShiftDown()) {
+		        TransformNR draggedPos = leftFront.getCurrentInReferenceFrame();
+		        uniformScalingXY(leftFront, draggedPos);
+		    } else {
+		        // Normal synchronization logic
+		        double x = leftRear.manipulator.getCurrentPose().getX();
+		        double y = leftFront.manipulator.getCurrentPose().getY();
+		        double z = leftFront.manipulator.getCurrentPose().getZ();
+		        leftRear.manipulator.setInReferenceFrame(x, y, z);
+		        x = leftFront.manipulator.getCurrentPose().getX();
+		        y = rightFront.manipulator.getCurrentPose().getY();
+		        rightFront.manipulator.setInReferenceFrame(x, y, z);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
+
 		leftRear.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-			scalingFlag = false;
-
-			if (beingUpdated == null)
-				beingUpdated = leftRear;
-			if (beingUpdated != leftRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+leftRear);
-				return;
-			}
-
-			double x = leftFront.manipulator.getCurrentPose().getX();
-			double y = leftRear.manipulator.getCurrentPose().getY();
-			double z = leftRear.manipulator.getCurrentPose().getZ();
-			leftFront.manipulator.setInReferenceFrame(x, y, z);
-			x = leftRear.manipulator.getCurrentPose().getX();
-			y = rightRear.manipulator.getCurrentPose().getY();
-			rightRear.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftRear");
+		    scalingFlag = false;
+		    if (beingUpdated == null)
+		        beingUpdated = leftRear;
+		    if (beingUpdated != leftRear) {
+		        return;
+		    }
+		    
+		    if (ev != null && ev.isShiftDown()) {
+		        TransformNR draggedPos = leftRear.getCurrentInReferenceFrame();
+		        uniformScalingXY(leftRear, draggedPos);
+		    } else {
+		        // Normal synchronization logic
+		        double x = leftFront.manipulator.getCurrentPose().getX();
+		        double y = leftRear.manipulator.getCurrentPose().getY();
+		        double z = leftRear.manipulator.getCurrentPose().getZ();
+		        leftFront.manipulator.setInReferenceFrame(x, y, z);
+		        x = leftRear.manipulator.getCurrentPose().getX();
+		        y = rightRear.manipulator.getCurrentPose().getY();
+		        rightRear.manipulator.setInReferenceFrame(x, y, z);
+		    }
+		    
+		    BowlerStudio.runLater(() -> update());
 		});
-		topCenter.manipulator.addEventListener(ev -> {
-			scalingFlag = false;
 
-			if (beingUpdated == null)
-				beingUpdated = topCenter;
-			if (beingUpdated != topCenter) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+topCenter);
-				return;
-			}
-			if (ev != null)
-				if (ev.isShiftDown()) {
-					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-					uniformScalingZ(tcC);
-					// com.neuronrobotics.sdk.common.Log.debug("RE-Scaling whole object! "+scale);
-				}
-			BowlerStudio.runLater(() -> update());
+        topCenter.manipulator.addEventListener(ev -> {
+            scalingFlag = false;
 
-			// com.neuronrobotics.sdk.common.Log.error("topCenter");
-		});
+            if (beingUpdated == null)
+                beingUpdated = topCenter;
+            if (beingUpdated != topCenter) {
+                // com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
+                // rejected by "+topCenter);
+                return;
+            }
+            if (ev != null)
+                if (ev.isShiftDown()) {
+                    TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+                    uniformScalingZ(tcC);
+                    // com.neuronrobotics.sdk.common.Log.debug("RE-Scaling whole object! "+scale);
+                }
+            BowlerStudio.runLater(() -> update());
+
+            // com.neuronrobotics.sdk.common.Log.error("topCenter");
+        });
 		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
 		for (ResizingHandle c : controls) {
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
@@ -254,6 +264,92 @@ public class ResizeSessionManager {
 		leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
 		rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
 		leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
+	}
+	
+	private void uniformScalingXY(ResizingHandle draggedHandle, TransformNR draggedPos) {
+	    scalingFlag = true;
+	    
+	    // Store original bounds on first call
+	    if (originalBounds == null) {
+	        originalBounds = getBounds();
+	    }
+	    
+	    // Get the anchor handle
+	    ResizingHandle anchorHandle = getOppositeCorner(draggedHandle);
+	    TransformNR anchorPos = anchorHandle.getCurrentInReferenceFrame();
+	    
+	    // Calculate scale from user's drag
+	    double nowX = Math.abs(draggedPos.getX() - anchorPos.getX());
+	    double nowY = Math.abs(draggedPos.getY() - anchorPos.getY());
+	    double startX = originalBounds.getTotalX();
+	    double startY = originalBounds.getTotalY();
+	    double startZ = originalBounds.getTotalZ();
+	    
+	    double scaleX = nowX / startX;
+	    double scaleY = nowY / startY;
+	    
+	    // Use the LARGER scale (user is dragging more in that direction)
+	    double scale = Math.max(scaleX, scaleY);
+	    
+	    // Let the user drag freely in the dominant direction
+	    // Constrain the other direction to maintain uniform scale
+	    double newDraggedX, newDraggedY;
+	    
+	    if (scaleX > scaleY) {
+	        // User is dragging more in X - let X follow cursor, constrain Y
+	        newDraggedX = draggedPos.getX();  // Use actual drag position
+	        double newY = startY * scale;
+	        double deltaY = newY * (draggedPos.getY() > anchorPos.getY() ? 1 : -1);
+	        newDraggedY = anchorPos.getY() + deltaY;
+	    } else {
+	        // User is dragging more in Y - let Y follow cursor, constrain X
+	        newDraggedY = draggedPos.getY();  // Use actual drag position
+	        double newX = startX * scale;
+	        double deltaX = newX * (draggedPos.getX() > anchorPos.getX() ? 1 : -1);
+	        newDraggedX = anchorPos.getX() + deltaX;
+	    }
+	    
+	    // Get current Z
+	    double z = draggedPos.getZ();
+	    
+	    // Reposition all XY corners
+	    updateCorners(draggedHandle, newDraggedX, newDraggedY, z);
+	    
+	    // Apply Z scale
+	    double newZ = startZ * scale;
+	    double newTopZ = originalBounds.getMinZ() + newZ;
+	    Vector3d center = getBounds().getCenter();
+	    topCenter.setInReferenceFrame(center.x, center.y, newTopZ);
+	}
+	
+	private void updateCorners(ResizingHandle draggedHandle, 
+	                          double newDraggedX, double newDraggedY, double z) {
+	    // Get anchor handle and position internally
+	    ResizingHandle anchorHandle = getOppositeCorner(draggedHandle);
+	    double anchorX = anchorHandle.getCurrentInReferenceFrame().getX();
+	    double anchorY = anchorHandle.getCurrentInReferenceFrame().getY();
+	    
+	    // Reposition the dragged corner first
+	    draggedHandle.manipulator.setInReferenceFrame(newDraggedX, newDraggedY, z);
+	    
+	    // Position the other two corners
+	    if ((draggedHandle == leftRear && anchorHandle == rightFront) ||
+	        (draggedHandle == rightFront && anchorHandle == leftRear)) {
+	        leftFront.manipulator.setInReferenceFrame(newDraggedX, anchorY, z);
+	        rightRear.manipulator.setInReferenceFrame(anchorX, newDraggedY, z);
+	    } else if ((draggedHandle == leftFront && anchorHandle == rightRear) ||
+	               (draggedHandle == rightRear && anchorHandle == leftFront)) {
+	        leftRear.manipulator.setInReferenceFrame(newDraggedX, anchorY, z);
+	        rightFront.manipulator.setInReferenceFrame(anchorX, newDraggedY, z);
+	    }
+	}
+	
+	private ResizingHandle getOppositeCorner(ResizingHandle handle) {
+	    if (handle == leftRear) return rightFront;
+	    if (handle == rightFront) return leftRear;
+	    if (handle == leftFront) return rightRear;
+	    if (handle == rightRear) return leftFront;
+	    return null; // Should never happen
 	}
 
 	private void update() {
@@ -346,6 +442,7 @@ public class ResizeSessionManager {
 	}
 
 	public void resetSelected() {
+		originalBounds = null; // reset var that exists to help maintain aspect ratios
 		for (ResizingHandle c : controls) {
 			c.resetSelected();
 		}
