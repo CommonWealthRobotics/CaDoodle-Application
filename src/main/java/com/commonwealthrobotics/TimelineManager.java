@@ -286,7 +286,7 @@ public class TimelineManager {
 										}).start();
 
 									}
-									if (event.getButton() == MouseButton.SECONDARY) {
+									if (event.getButton() == MouseButton.SECONDARY && myIndex>0) {
 										// Show context menu where the mouse was clicked
 										contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
 										new Thread(() -> {
