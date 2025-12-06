@@ -36,6 +36,7 @@ public class ResizeSessionManager {
 	private boolean locked;
 	private boolean resizeAllowed;
 	private boolean moveLock;
+	private Bounds originalBounds = null;
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
 			SelectionSession s, Affine workplaneOffset, MoveUpArrow up) {
@@ -62,120 +63,255 @@ public class ResizeSessionManager {
 				updateLines, onReset);
 
 		rightFront.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-
-			scalingFlag = false;
 			if (beingUpdated == null)
 				beingUpdated = rightFront;
-			if (beingUpdated != rightFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+rightFront);
+			if (beingUpdated != rightFront)
+				return;
+			if (scalingFlag) { // cancel one recursive call
+				scalingFlag = false;
 				return;
 			}
-			double x = rightRear.manipulator.getCurrentPose().getX();
-			double y = rightFront.manipulator.getCurrentPose().getY();
-			double z = rightRear.manipulator.getCurrentPose().getZ();
-			// com.neuronrobotics.sdk.common.Log.error("rightRear Move x" + x + " y" + y + "
-			// z" + z);
-			rightRear.manipulator.setInReferenceFrame(x, y, z);
-			x = rightFront.manipulator.getCurrentPose().getX();
-			y = leftFront.manipulator.getCurrentPose().getY();
-			leftFront.manipulator.setInReferenceFrame(x, y, z);
+
+			// Uniform scaling with shift key
+			if (ev != null && ev.isShiftDown()) {
+				if (originalBounds == null)
+					originalBounds = getBounds();
+
+				double original_x = originalBounds.getTotalX();
+				double original_y = originalBounds.getTotalY();
+				double original_diagonal = Math.hypot(original_x, original_y);
+
+				// Mouse offset from manipulator
+				double mouseX =   rightFront.getCurrentInReferenceFrame().getX() - originalBounds.getMaxX(); // Front
+				double mouseY = - rightFront.getCurrentInReferenceFrame().getY() + originalBounds.getMinY(); // Right
+				double scale = (mouseX * original_x + mouseY * original_y) / (original_diagonal * original_diagonal);
+
+				double rawNewX = original_x * (1.0 + scale); // Snap X-dimension to grid
+				double gridNewX = Math.round(rawNewX / size) * size;
+				double difference_x = Math.abs(rawNewX - gridNewX); 
+
+				double rawNewY = original_y * (1.0 + scale); // Snap Y-dimension to grid
+				double gridNewY = Math.round(rawNewY / size) * size;
+				double difference_y = Math.abs(rawNewY - gridNewY); 
+				double gridScale;
+				
+				if (difference_x < difference_y)
+				  gridScale = (gridNewX / original_x) - 1.0;
+				else
+				  gridScale = (gridNewY / original_y) - 1.0;
+
+				scalingFlag = true;
+				rightFront.manipulator.setInReferenceFrame(original_x * gridScale, -original_y * gridScale, 0); 
+				rightRear.manipulator.setInReferenceFrame (0,					   -original_y * gridScale, 0);
+				leftFront.manipulator.setInReferenceFrame (original_x * gridScale, 0					  , 0);
+				topCenter.setInReferenceFrame (0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * (gridScale + 1));
+
+			} else {
+				// Unconstraint resizing path
+				double x = rightRear.manipulator.getCurrentPose().getX();
+				double y = rightFront.manipulator.getCurrentPose().getY();
+				double z = rightRear.manipulator.getCurrentPose().getZ();
+				rightRear.manipulator.setInReferenceFrame(x, y, z);
+				x = rightFront.manipulator.getCurrentPose().getX();
+				y = leftFront.manipulator.getCurrentPose().getY();
+				leftFront.manipulator.setInReferenceFrame(x, y, z);
+			}
+			
 			BowlerStudio.runLater(() -> update());
-			// com.neuronrobotics.sdk.common.Log.error("rightFront");
 		});
+
 		rightRear.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-
-			scalingFlag = false;
-
 			if (beingUpdated == null)
 				beingUpdated = rightRear;
-			if (beingUpdated != rightRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+rightRear);
+			if (beingUpdated != rightRear)
+				return;
+			if (scalingFlag) {
+				scalingFlag = false;
 				return;
 			}
-			double x = rightFront.manipulator.getCurrentPose().getX();
-			double y = rightRear.manipulator.getCurrentPose().getY();
-			double z = rightFront.manipulator.getCurrentPose().getZ();
-			rightFront.manipulator.setInReferenceFrame(x, y, z);
-			x = rightRear.manipulator.getCurrentPose().getX();
-			y = leftRear.manipulator.getCurrentPose().getY();
-			leftRear.manipulator.setInReferenceFrame(x, y, z);
+
+			if (ev != null && ev.isShiftDown()) {
+				// Uniform scaling
+				if (originalBounds == null)
+					originalBounds = getBounds();
+
+				double original_x = originalBounds.getTotalX();
+				double original_y = originalBounds.getTotalY();
+				double original_diagonal = Math.hypot(original_x, original_y);
+
+				// Mouse offset from manipulator
+				double mouseX = -rightRear.getCurrentInReferenceFrame().getX() + originalBounds.getMinX(); // Rear
+				double mouseY = -rightRear.getCurrentInReferenceFrame().getY() + originalBounds.getMinY(); // Right
+				double scale = (mouseX * original_x + mouseY * original_y) / (original_diagonal * original_diagonal);
+
+				double rawNewX = original_x * (1.0 + scale); // Snap X-dimension to grid
+				double gridNewX = Math.round(rawNewX / size) * size;
+				double difference_x = Math.abs(rawNewX - gridNewX); 
+
+				double rawNewY = original_y * (1.0 + scale); // Snap Y-dimension to grid
+				double gridNewY = Math.round(rawNewY / size) * size;
+				double difference_y = Math.abs(rawNewY - gridNewY); 
+				double gridScale;
+				
+				if (difference_x < difference_y)
+				  gridScale = (gridNewX / original_x) - 1.0;
+				else
+				  gridScale = (gridNewY / original_y) - 1.0;
+
+				scalingFlag = true; // Set to true to prevent recursive call
+				rightRear.manipulator.setInReferenceFrame(-original_x * gridScale, -original_y * gridScale, 0); 
+				rightFront.manipulator.setInReferenceFrame(0,					   -original_y * gridScale, 0);
+				leftRear.manipulator.setInReferenceFrame  (-original_x * gridScale, 0					  , 0);
+				topCenter.setInReferenceFrame (0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * (gridScale + 1));
+			} else {
+				double x = rightFront.manipulator.getCurrentPose().getX();
+				double y = rightRear.manipulator.getCurrentPose().getY();
+				double z = rightFront.manipulator.getCurrentPose().getZ();
+				rightFront.manipulator.setInReferenceFrame(x, y, z);
+				x = rightRear.manipulator.getCurrentPose().getX();
+				y = leftRear.manipulator.getCurrentPose().getY();
+				leftRear.manipulator.setInReferenceFrame(x, y, z);
+			}
+
 			BowlerStudio.runLater(() -> update());
-			// com.neuronrobotics.sdk.common.Log.error("rightRear");
 		});
+
 		leftFront.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-
-			scalingFlag = false;
-
 			if (beingUpdated == null)
 				beingUpdated = leftFront;
-			if (beingUpdated != leftFront) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+leftFront);
+			if (beingUpdated != leftFront)
+				return;
+			if (scalingFlag) {
+				scalingFlag = false;
 				return;
 			}
-			double x = leftRear.manipulator.getCurrentPose().getX();
-			double y = leftFront.manipulator.getCurrentPose().getY();
-			double z = leftFront.manipulator.getCurrentPose().getZ();
-			leftRear.manipulator.setInReferenceFrame(x, y, z);
-			x = leftFront.manipulator.getCurrentPose().getX();
-			y = rightFront.manipulator.getCurrentPose().getY();
-			rightFront.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftFront");
-		});
-		leftRear.manipulator.addEventListener(ev -> {
-			if (scalingFlag)
-				return;
-			scalingFlag = false;
 
+			if (ev != null && ev.isShiftDown()) {
+				// Uniform scaling
+				if (originalBounds == null)
+					originalBounds = getBounds();
+
+				double original_x = originalBounds.getTotalX();
+				double original_y = originalBounds.getTotalY();
+				double original_diagonal = Math.hypot(original_x, original_y);
+
+				// Mouse offset from manipulator
+				double mouseX = leftFront.getCurrentInReferenceFrame().getX() - originalBounds.getMaxX(); // Front
+				double mouseY = leftFront.getCurrentInReferenceFrame().getY() - originalBounds.getMaxY(); // Left
+				double scale = (mouseX * original_x + mouseY * original_y) / (original_diagonal * original_diagonal);
+
+				double rawNewX = original_x * (1.0 + scale); // Snap X-dimension to grid
+				double gridNewX = Math.round(rawNewX / size) * size;
+				double difference_x = Math.abs(rawNewX - gridNewX); 
+
+				double rawNewY = original_y * (1.0 + scale); // Snap Y-dimension to grid
+				double gridNewY = Math.round(rawNewY / size) * size;
+				double difference_y = Math.abs(rawNewY - gridNewY); 
+				double gridScale;
+				
+				if (difference_x < difference_y)
+				  gridScale = (gridNewX / original_x) - 1.0;
+				else
+				  gridScale = (gridNewY / original_y) - 1.0;
+
+				scalingFlag = true; // Set to true to prevent recursive call
+				leftFront.manipulator.setInReferenceFrame (original_x * gridScale, original_y * gridScale, 0);
+				rightFront.manipulator.setInReferenceFrame(original_x * gridScale, 0,					  0); 
+				leftRear.manipulator.setInReferenceFrame (0,					   original_y * gridScale, 0);
+				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * (gridScale + 1));
+			} else {
+				double x = leftRear.manipulator.getCurrentPose().getX();
+				double y = leftFront.manipulator.getCurrentPose().getY();
+				double z = leftFront.manipulator.getCurrentPose().getZ();
+				leftRear.manipulator.setInReferenceFrame(x, y, z);
+				x = leftFront.manipulator.getCurrentPose().getX();
+				y = rightFront.manipulator.getCurrentPose().getY();
+				rightFront.manipulator.setInReferenceFrame(x, y, z);
+			}
+			
+			BowlerStudio.runLater(() -> update());
+		});
+
+		leftRear.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = leftRear;
-			if (beingUpdated != leftRear) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+leftRear);
+			if (beingUpdated != leftRear)
+				return;
+			if (scalingFlag) {
+				scalingFlag = false;
 				return;
 			}
 
-			double x = leftFront.manipulator.getCurrentPose().getX();
-			double y = leftRear.manipulator.getCurrentPose().getY();
-			double z = leftRear.manipulator.getCurrentPose().getZ();
-			leftFront.manipulator.setInReferenceFrame(x, y, z);
-			x = leftRear.manipulator.getCurrentPose().getX();
-			y = rightRear.manipulator.getCurrentPose().getY();
-			rightRear.manipulator.setInReferenceFrame(x, y, z);
-			BowlerStudio.runLater(() -> update()); // com.neuronrobotics.sdk.common.Log.error("leftRear");
-		});
-		topCenter.manipulator.addEventListener(ev -> {
-			scalingFlag = false;
+			if (ev != null && ev.isShiftDown()) {
+				// Uniform scaling
+				if (originalBounds == null)
+					originalBounds = getBounds();
 
+				double original_x = originalBounds.getTotalX();
+				double original_y = originalBounds.getTotalY();
+				double original_diagonal = Math.hypot(original_x, original_y);
+
+				// Mouse offset from manipulator
+				double mouseX = -leftRear.getCurrentInReferenceFrame().getX() + originalBounds.getMinX(); // Rear
+				double mouseY =  leftRear.getCurrentInReferenceFrame().getY() - originalBounds.getMaxY(); // Left
+				double scale = (mouseX * original_x + mouseY * original_y) / (original_diagonal * original_diagonal);
+
+				double rawNewX = original_x * (1.0 + scale); // Snap X-dimension to grid
+				double gridNewX = Math.round(rawNewX / size) * size;
+				double difference_x = Math.abs(rawNewX - gridNewX); 
+
+				double rawNewY = original_y * (1.0 + scale); // Snap Y-dimension to grid
+				double gridNewY = Math.round(rawNewY / size) * size;
+				double difference_y = Math.abs(rawNewY - gridNewY); 
+				double gridScale;
+				
+				if (difference_x < difference_y)
+				  gridScale = (gridNewX / original_x) - 1.0;
+				else
+				  gridScale = (gridNewY / original_y) - 1.0;
+
+				scalingFlag = true; // Set to true to prevent recursive call
+				leftRear.manipulator.setInReferenceFrame (-original_x * gridScale, original_y * gridScale, 0);
+				leftFront.manipulator.setInReferenceFrame(0,					   original_y * gridScale, 0);			  
+				rightRear.manipulator.setInReferenceFrame(-original_x * gridScale, 0					 , 0);
+				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * (gridScale + 1));
+			} else {
+				double x = leftFront.manipulator.getCurrentPose().getX();
+				double y = leftRear.manipulator.getCurrentPose().getY();
+				double z = leftRear.manipulator.getCurrentPose().getZ();
+				leftFront.manipulator.setInReferenceFrame(x, y, z);
+				x = leftRear.manipulator.getCurrentPose().getX();
+				y = rightRear.manipulator.getCurrentPose().getY();
+				rightRear.manipulator.setInReferenceFrame(x, y, z);
+			}
+
+			BowlerStudio.runLater(() -> update());
+		});
+
+		topCenter.manipulator.addEventListener(ev -> {
 			if (beingUpdated == null)
 				beingUpdated = topCenter;
-			if (beingUpdated != topCenter) {
-				// com.neuronrobotics.sdk.common.Log.error("Motion from "+beingUpdated+"
-				// rejected by "+topCenter);
+			if (beingUpdated != topCenter)
+				return;
+			if (scalingFlag) {
+				scalingFlag = false;
 				return;
 			}
+
 			if (ev != null)
 				if (ev.isShiftDown()) {
 					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
 					uniformScalingZ(tcC);
-					// com.neuronrobotics.sdk.common.Log.debug("RE-Scaling whole object! "+scale);
 				}
 			BowlerStudio.runLater(() -> update());
-
-			// com.neuronrobotics.sdk.common.Log.error("topCenter");
 		});
+
 		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
 		for (ResizingHandle c : controls) {
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 			c.manipulator.addSaveListener(() -> {
+				if (beingUpdated != c)
+					return;
 				try {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
@@ -196,7 +332,6 @@ public class ResizeSessionManager {
 				for (ResizingHandle ctrl : controls) {
 					ctrl.manipulator.set(0, 0, 0);
 				}
-				beingUpdated = null;
 //				if (Math.abs(lfC.getZ() - rrC.getZ()) > 0.00001) {
 //					throw new RuntimeException("The control points of the corners must be at the same Z value \n"
 //							+ lfC.toSimpleString() + "\n" + rrC.toSimpleString());
@@ -214,6 +349,7 @@ public class ResizeSessionManager {
 						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
+				beingUpdated = null;
 				BowlerStudio.runLater(() -> threeDTarget());
 			});
 		}
@@ -227,7 +363,6 @@ public class ResizeSessionManager {
 	}
 
 	private void uniformScalingZ(TransformNR tcC) {
-		scalingFlag = true;
 		double startZ = bounds.getTotalZ();
 		double startX = bounds.getTotalX();
 		double startY = bounds.getTotalY();
@@ -250,10 +385,11 @@ public class ResizeSessionManager {
 		double newY = -newYComp;
 		double newX2 = +newXComp;
 		double newY2 = +newYComp;
+		scalingFlag = true;
 		rightRear.manipulator.setInReferenceFrame(newX, newY, z);
-		leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
-		rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
-		leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
+        leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
+        rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
+        leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
 	}
 
 	private void update() {
@@ -346,6 +482,7 @@ public class ResizeSessionManager {
 	}
 
 	public void resetSelected() {
+		originalBounds = null; // reset var that exists to help maintain aspect ratios
 		for (ResizingHandle c : controls) {
 			c.resetSelected();
 		}
