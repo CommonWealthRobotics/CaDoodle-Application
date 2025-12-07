@@ -30,6 +30,7 @@ import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
+import javafx.scene.DepthTest;
 
 public class SelectionBox {
 
@@ -131,10 +132,11 @@ public class SelectionBox {
 			rect.setFill(Color.TRANSPARENT);
 			rect.setStroke(Color.RED);
 			rect.setStrokeWidth(2);
-			rect.getStrokeDashArray().addAll(5.0, 5.0);
+			rect.getStrokeDashArray().setAll(5.0, 5.0);
 			rect.setWidth(0);
 			rect.setHeight(0);
 			rect.setViewOrder(-2);
+			rect.setDepthTest(DepthTest.DISABLE);
 
 			//show.clear();
 			HashMap<CSG, MeshView> meshes = session.getMeshes();
@@ -193,7 +195,7 @@ public class SelectionBox {
 //			ap.get().setWorkplane(cf);
 //			workplane.placeWorkplaneVisualization();
 
-			Bounds sel = new Bounds(new Vector3d(xLeft, yTop, 0), new Vector3d(xLeft + width, yTop + width));
+			Bounds sel = new Bounds(new Vector3d(xLeft, yTop, 0), new Vector3d(xLeft + width, yTop + height));
 			Transform boxFrame = TransformFactory.nrToCSG(getBoxFrame());
 //			if(selection!=null)
 //				BowlerStudio.runLater(()-> engine.removeObject(selection));
