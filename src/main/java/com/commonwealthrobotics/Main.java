@@ -68,26 +68,9 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		// SplashManager.renderSplashFrame(1, "Main Window Load");
-
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
 		loader.setController(new MainController(stage));
 		Parent root = loader.load();
-
-//		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
-//				.getWidth();
-//		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
-//				.getHeight();
-//		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-//		com.neuronrobotics.sdk.common.Log.debug("Screen " + sw + "x" + sh);
-//		sw = primaryScreenBounds.getWidth();
-//		sh = primaryScreenBounds.getHeight();
-//		double w;
-//		double h;
-//		w = sw - 60;
-//		h = sh - 60;
-//
-//		Scene scene = new Scene(root, w, h, true, SceneAntialiasing.BALANCED);
 		
 		// Get JavaFX screen bounds (this already accounts for taskbars, etc.)
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
@@ -118,15 +101,6 @@ public class Main extends Application {
 			System.exit(0);
 		});
 
-//		FontSizeManager.addListener(fontNum ->
-//		{
-//			int tmp = fontNum - 10;
-//			if (tmp < 12)
-//				tmp = 12;
-//			root.setStyle("-fx-font-size: " + tmp + "pt");
-//		});
-//		FontSizeManager.setFontSize(12);
-		// BowlerStudio.runLater(() -> {
 		try {
 			// CADoodle-Icon.png
 			Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
@@ -141,15 +115,9 @@ public class Main extends Application {
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		// });
-//		stage.setMinWidth(900);
-//		stage.setMinHeight(600);
-		// SplashManager.renderSplashFrame(1, "Main Window Show");
 		FileSelectionFactory.setStage(stage);
 
 		stage.show();
-		//setupTray(newStage);
-		// getLoadDeps().start();
 	}
 
 	private void setupTray(Stage stage) {
