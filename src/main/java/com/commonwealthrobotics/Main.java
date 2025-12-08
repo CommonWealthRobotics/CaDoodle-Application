@@ -71,7 +71,7 @@ public class Main extends Application {
 		// SplashManager.renderSplashFrame(1, "Main Window Load");
 
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
-		loader.setController(new MainController());
+		loader.setController(new MainController(newStage));
 		Parent root = loader.load();
 
 		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()

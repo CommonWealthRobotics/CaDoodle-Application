@@ -347,6 +347,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private GridPane armsOptionGrid;
     @FXML
     private ProgressIndicator memUsage;
+	private Stage newStage;
+
+	public MainController(Stage newStage) {
+		this.newStage = newStage;
+	}
 
 	@FXML
 	void onMakeRobot(ActionEvent e) {
@@ -1006,7 +1011,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				BowlerStudio.runLater(() -> cancel());
 				// JavaFX startup freeze workaround
 				BowlerStudio.runLater(() -> {
-					Stage s = (Stage) engine.getSubScene().getScene().getWindow();
+					Stage s = newStage!=null?newStage:(Stage) engine.getSubScene().getScene().getWindow();
 					double h = s.getHeight();
 					s.setHeight(h - 1);
 					BowlerStudio.runLater(() -> s.setHeight(h));
