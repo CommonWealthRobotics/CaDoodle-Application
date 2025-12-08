@@ -7,6 +7,8 @@ package com.commonwealthrobotics;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
@@ -1031,6 +1033,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
 			});
 		});
+        
+        // JavaFX startup freeze workaround
+        Platform.runLater(() -> {
+             Stage s = (Stage) engine.getSubScene().getScene().getWindow();
+             double h = s.getHeight();
+             s.setHeight(h + 1);
+        });
+        
 		engine.setControlsMap(new IControlsMap() {
 
 			@Override
