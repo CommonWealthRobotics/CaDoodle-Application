@@ -1004,6 +1004,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				} while (SplashManager.isVisableSplash());
 				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
 				BowlerStudio.runLater(() -> cancel());
+				// JavaFX startup freeze workaround
+				BowlerStudio.runLater(() -> {
+					Stage s = (Stage) engine.getSubScene().getScene().getWindow();
+					double h = s.getHeight();
+					s.setHeight(h - 1);
+					BowlerStudio.runLater(() -> s.setHeight(h));
+				});
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
@@ -1033,14 +1040,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
 			});
 		});
-        
-        // JavaFX startup freeze workaround
-        Platform.runLater(() -> {
-             Stage s = (Stage) engine.getSubScene().getScene().getWindow();
-             double h = s.getHeight();
-             s.setHeight(h + 1);
-        });
-        
+
 		engine.setControlsMap(new IControlsMap() {
 
 			@Override
