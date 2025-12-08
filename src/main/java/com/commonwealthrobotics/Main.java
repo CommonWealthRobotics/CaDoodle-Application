@@ -102,9 +102,6 @@ public class Main extends Application {
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 
-		// Set stage bounds directly
-		stage.setX(50);
-		stage.setY(50);
 		stage.setWidth(w);
 		stage.setHeight(h);
 
