@@ -12,7 +12,7 @@ jobs:
     - name: Install libraries
       run: |
           sudo apt update
-          sudo apt install zip
+          sudo apt install libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev libgtk2.0-0 zip
     - name: Checkout
       uses: actions/checkout@v1
       with:
