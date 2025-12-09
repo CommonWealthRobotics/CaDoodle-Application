@@ -9,6 +9,10 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
     steps:
+    - name: Install libraries
+      run: |
+          sudo apt update
+          sudo apt install zip
     - name: Checkout
       uses: actions/checkout@v1
       with:
@@ -44,10 +48,6 @@ jobs:
 
     - name: Download Bowler kernel into CI
       run: wget https://github.com/CommonWealthRobotics/bowler-script-kernel/releases/latest/download/bowler-kernel.jar
-    - name: Install libraries
-      run: |
-          sudo apt update
-          sudo apt install libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev libgtk2.0-0 zip
     - name: start xvfb
       run:
         Xvfb :0 &
