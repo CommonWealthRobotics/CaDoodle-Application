@@ -50,7 +50,6 @@ jobs:
 
     - name: Zip Results
       run zip -r gitcache.zip ~/Documents/bowler-workspace/gitcache/
-   
     
     
     - name: After JDK download, list directory contnts
