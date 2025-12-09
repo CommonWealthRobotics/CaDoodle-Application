@@ -330,17 +330,6 @@ public class Main extends Application {
 			} catch (Exception e) {
 				Log.error(e);
 			}
-//			BowlerKernel.ensureUpdated(true,"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
-//					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
-//					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
-//					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",
-//					"https://github.com/CommonWealthRobotics/BowlerStudioExampleRobots.git",
-//					AssetFactory.getGitSource(),
-//					"https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
-//					"https://github.com/madhephaestus/carl-the-hexapod.git",
-//					Vitamins.getGitRepoDatabase(), 
-//					"https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git");
-//			Vitamins.loadAllScriptFiles();
 		}
 		try {
 			AssetFactory.loadAllAssets();
