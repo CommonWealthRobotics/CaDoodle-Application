@@ -7,6 +7,8 @@ package com.commonwealthrobotics;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
@@ -345,6 +347,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private GridPane armsOptionGrid;
     @FXML
     private ProgressIndicator memUsage;
+	private Stage newStage;
+
+	public MainController(Stage newStage) {
+		this.newStage = newStage;
+	}
 
 	@FXML
 	void onMakeRobot(ActionEvent e) {
@@ -1002,6 +1009,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				} while (SplashManager.isVisableSplash());
 				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
 				BowlerStudio.runLater(() -> cancel());
+				// JavaFX startup freeze workaround
+				BowlerStudio.runLater(() -> {
+					Stage s = newStage!=null?newStage:(Stage) engine.getSubScene().getScene().getWindow();
+					double h = s.getHeight();
+					s.setHeight(h - 1);
+					BowlerStudio.runLater(() -> s.setHeight(h));
+				});
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
@@ -1031,6 +1045,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
 			});
 		});
+
 		engine.setControlsMap(new IControlsMap() {
 
 			@Override

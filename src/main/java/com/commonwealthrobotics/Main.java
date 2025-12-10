@@ -67,69 +67,57 @@ public class Main extends Application {
 	public static UncaughtExceptionHandler hand;
 
 	@Override
-	public void start(Stage newStage) throws Exception {
-		// SplashManager.renderSplashFrame(1, "Main Window Load");
-
+	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
-		loader.setController(new MainController());
+		loader.setController(new MainController(stage));
 		Parent root = loader.load();
-
-		double sw = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
-				.getWidth();
-		double sh = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode()
-				.getHeight();
+		
+		// Get JavaFX screen bounds (this already accounts for taskbars, etc.)
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-		com.neuronrobotics.sdk.common.Log.debug("Screen " + sw + "x" + sh);
-		sw = primaryScreenBounds.getWidth();
-		sh = primaryScreenBounds.getHeight();
-		double w;
-		double h;
-		w = sw - 40;
-		h = sh - 40;
 
-		Scene scene = new Scene(root, w, h, true, SceneAntialiasing.BALANCED);
-		newStage.setScene(scene);
+		double sw = primaryScreenBounds.getWidth();
+		double sh = primaryScreenBounds.getHeight();
+
+		// Create a smaller buffer to account for window decorations
+		double w = sw ;  // Increased margin
+		double h = sh ;
+
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+
+		stage.setWidth(w);
+		stage.setHeight(h);
+
+		// Explicitly disable fullscreen/maximized
+		stage.setFullScreen(false);
+		stage.setMaximized(false);
+		
 		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
-		if (newStage != null)
-			newStage.setTitle(title);
-		newStage.setOnCloseRequest(event -> {
+		if (stage != null)
+			stage.setTitle(title);
+		stage.setOnCloseRequest(event -> {
 			Platform.exit();
 
 			System.exit(0);
 		});
 
-//		FontSizeManager.addListener(fontNum ->
-//		{
-//			int tmp = fontNum - 10;
-//			if (tmp < 12)
-//				tmp = 12;
-//			root.setStyle("-fx-font-size: " + tmp + "pt");
-//		});
-//		FontSizeManager.setFontSize(12);
-		// BowlerStudio.runLater(() -> {
 		try {
 			// CADoodle-Icon.png
 			Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
-			newStage.getIcons().add(loadAsset);
+			stage.getIcons().add(loadAsset);
 			Image image1 = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
 			// or
 			Image image2 = new Image(Main.class.getResource("CADoodle-Icon.png").toExternalForm());
 
-			newStage.getIcons().add(image1);
-			newStage.getIcons().add(image2);
+			stage.getIcons().add(image1);
+			stage.getIcons().add(image2);
 
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		// });
-		newStage.setMinWidth(900);
-		newStage.setMinHeight(600);
-		// SplashManager.renderSplashFrame(1, "Main Window Show");
-		FileSelectionFactory.setStage(newStage);
+		FileSelectionFactory.setStage(stage);
 
-		newStage.show();
-		//setupTray(newStage);
-		// getLoadDeps().start();
+		stage.show();
 	}
 
 	private void setupTray(Stage stage) {

@@ -422,7 +422,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 	public static void main(String[] args) {
 		JavaFXInitializer.go();
-		BowlerStudio.runLater(() -> launch(new MainController()));
+		BowlerStudio.runLater(() -> launch(new MainController(null)));
 
 	}
 
