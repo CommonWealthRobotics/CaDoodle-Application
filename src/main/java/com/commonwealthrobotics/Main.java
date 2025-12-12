@@ -42,6 +42,7 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -353,7 +354,7 @@ public class Main extends Application {
 		if (c) {			
 			// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
 			try {
-				ScriptingEngine.gitScriptRun(null,
+				ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
 						"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
 						"loadGit.groovy");
 			} catch (Exception e) {
