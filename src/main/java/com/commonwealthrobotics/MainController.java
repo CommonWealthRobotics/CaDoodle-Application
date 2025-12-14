@@ -355,6 +355,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		this.newStage = newStage;
 	}
 
+
+	@FXML
+	void openHomePage(ActionEvent ae) {
+		try {
+			java.awt.Desktop.getDesktop().browse(new java.net.URI("https://cadoodlecad.com"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@FXML
 	void onMakeRobot(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.debug("Make robot");
