@@ -313,15 +313,8 @@ public class Main extends Application {
 	}
 
 	private static void ensureGitAssetsArePresent() {
-
 		
 		SplashManager.renderSplashFrame(2, "Downloading...");
-		String gitassets = null;
-		try {
-			gitassets = AssetFactory.getGitSource();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 		String paramsKey = "CaDoodle-Configs";
 		String objectKey = "currentVersion";
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
@@ -329,27 +322,24 @@ public class Main extends Application {
 		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
 		boolean b = !lastVer.contentEquals(nowVer);
 		boolean contentEquals = nowVer.contentEquals("0");
-		boolean c = b || contentEquals;
+		boolean c = b || contentEquals;ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
+		
 		if (c) {
-			BowlerStudio.ensureUpdated(true,"https://github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio.git",
-					"https://github.com/CommonWealthRobotics/freecad-bowler-cli.git",
-					"https://github.com/CommonWealthRobotics/blender-bowler-cli.git",
-					"https://github.com/kennetek/gridfinity-rebuilt-openscad.git",
-					"https://github.com/CommonWealthRobotics/BowlerStudioExampleRobots.git",
-					gitassets,
-					"https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
-					"https://github.com/madhephaestus/carl-the-hexapod.git",
-					Vitamins.getGitRepoDatabase(), ShapesPallet.getGitULR());
+			// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
+			try {
+				ScriptingEngine.gitScriptRun(null,
+						"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
+						"loadGit.groovy");
+			} catch (Exception e) {
+				Log.error(e);
+			}
 		}
-		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
-		Vitamins.loadAllScriptFiles();
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-
 	}
 
 	private static void setUpApprovalWindow() {

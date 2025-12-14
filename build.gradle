@@ -176,6 +176,14 @@ shadowJar {
 	archiveVersion.set('')
 	zip64 true
 	mergeServiceFiles()
+
+	exclude '**/*.pdb'  
+
+	eachFile { file ->
+		if (file.path.endsWith('.pdb')) {
+			file.exclude()
+		}
+	}
 }
 jar {
 	jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
