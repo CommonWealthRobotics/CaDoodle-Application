@@ -70,6 +70,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 
 public class ActiveProject implements ICaDoodleStateUpdate {
@@ -299,7 +301,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								});
 
 						// Add buttons to the VBox
-						contentBox.getChildren().addAll(new Label("Choose how to handle your change: (Check the settings menue for default behavior)"), eraseOptionBtn,
+						contentBox.getChildren().addAll(new Label("Choose how to handle your change: (Check the settings menu for default behavior)"), eraseOptionBtn,
 								insertOptionBtn, abortOptionBtn);
 
 						// Replace the default content with our custom content
