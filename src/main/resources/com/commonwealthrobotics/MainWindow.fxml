@@ -283,7 +283,7 @@
                         </AnchorPane>
                         <StackPane minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" snapToPixel="false" HBox.hgrow="SOMETIMES">
                            <children>
-                              <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" snapToPixel="false" />
+                              <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" snapToPixel="false" style="-fx-background-color: transparent" />
                               <AnchorPane fx:id="layerHolder" pickOnBounds="false">
                                  <children>
                                     <GridPane fx:id="buttonGrid" pickOnBounds="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
