@@ -243,7 +243,7 @@ public class Main extends Application {
 			com.neuronrobotics.sdk.common.Log.debug("Passed In File at "+f.getAbsolutePath());
 			if(replace.toLowerCase().endsWith(".doodle")) {
 				if(f.exists()) {
-					ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
+					ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
 					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
 					HashSet<String> externals =  Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());

@@ -710,7 +710,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// Button tf = new Button(new File(para.getStrValue()).getName());
 		ExternalEditorController ec = new ExternalEditorController(file, new CheckBox(),()->{
 			if(file.getName().endsWith("doodle")) {
-				ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile",ap.get().getSelf().getAbsolutePath());
+				ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", ap.get().getSelf().getAbsolutePath());
 				ConfigurationDatabase.save();
 			}
 		});
