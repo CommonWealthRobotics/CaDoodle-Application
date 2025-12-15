@@ -355,13 +355,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		this.newStage = newStage;
 	}
 
-
 	@FXML
 	void openHomePage(ActionEvent ae) {
 		try {
 			java.awt.Desktop.getDesktop().browse(new java.net.URI("https://cadoodlecad.com"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
 
