@@ -174,12 +174,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if (fromFile != null) {
 			fromFile.removeListener(this);
 		}
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleacriveFile", f.getAbsolutePath());
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
 		return loadActive();
 	}
 
 	private File getActiveProject() throws Exception {
 		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile", null);
+		if (object == null) // Fix legacy typo, try again with corrected spelling
+			object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
+
 		if (object == null)
 			return newProject();
 		String string = object.toString();
@@ -299,7 +302,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								});
 
 						// Add buttons to the VBox
-						contentBox.getChildren().addAll(new Label("Choose how to handle your change: (Check the settings menue for default behavior)"), eraseOptionBtn,
+						contentBox.getChildren().addAll(new Label("Choose how to handle your change: (Check the settings menu for default behavior)"), eraseOptionBtn,
 								insertOptionBtn, abortOptionBtn);
 
 						// Replace the default content with our custom content
@@ -431,9 +434,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if(OSUtil.isWindows()) {
 			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
 		}
-		File defaultFIle = new File(relative + delim() + "MyCaDoodleProjects" + delim());
-		defaultFIle.mkdirs();
-		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", defaultFIle.getAbsolutePath()));
+		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
+		defaultFile.mkdirs();
+		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", defaultFile.getAbsolutePath()));
 	}
 
 	public List<CaDoodleFile> getProjects() throws IOException {
