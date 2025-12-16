@@ -115,7 +115,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button groupButton;
 	private ImageView showHideImage;
 	private List<String> copySetinternal;
-	private Button allignButton;
+	private Button alignButton;
 	private long timeSinceLastMove = System.currentTimeMillis();
 	private double screenW;
 	private double screenH;
@@ -226,8 +226,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
-		if (isAllignActive() && Align.class.isInstance(source))
-			getControls().setMode(SpriteDisplayMode.Allign);
+		if (isAlignActive() && Align.class.isInstance(source))
+			getControls().setMode(SpriteDisplayMode.Align);
 		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
 			getControls().setMode(SpriteDisplayMode.Mirror);
 			onMirror();
@@ -482,7 +482,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						selected.add(name);
 					}
 				}
-				if(getMode()!=SpriteDisplayMode.Allign)
+				if(getMode()!=SpriteDisplayMode.Align)
 					setMode(SpriteDisplayMode.Default);
 				updateRobotLab.run();
 				updateControlsDisplayOfSelected();
@@ -791,26 +791,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	public void clearAllignObjectCache() {
-		getControls().clearAllign();
+	public void clearAlignObjectCache() {
+		getControls().clearAlign();
 	}
 
 	private void setupSnapGrid() {
 		List<String> grids = Arrays.asList(
-				String.format(Locale.US,"%.4f",0.1)+" mm",
-				String.format(Locale.US,"%.4f",0.25)+" mm", 
-				String.format(Locale.US,"%.4f",0.5)+" mm",
-				String.format(Locale.US,"%.4f",1.0)+" mm", 
-				String.format(Locale.US,"%.4f",(25.4 / 16.0))+" mm (1/16th inch)", 
-				String.format(Locale.US,"%.4f",2.0)+" mm", 
-				String.format(Locale.US,"%.4f",(25.4 / 8.0))+" mm (1/8th inch)", 
-				String.format(Locale.US,"%.4f",5.0)+" mm", 
-				String.format(Locale.US,"%.4f",(25.4 / 4.0))+" mm (1/4 inch)",
-				String.format(Locale.US,"%.4f",8.0)+" mm (Brick)", 
-				String.format(Locale.US,"%.4f",10.0)+" mm",
-				String.format(Locale.US,"%.4f",(25.4 / 2.0))+" mm (1/2 inch)",
-				String.format(Locale.US,"%.4f",20.0)+" mm",
-				String.format(Locale.US,"%.4f",(25.4 ))+" mm (1 inch)"
+				String.format(Locale.US, "%.1f mm", 0.1000),
+				String.format(Locale.US, "%.2f mm", 0.2500), 
+				String.format(Locale.US, "%.1f mm", 0.5000),
+				String.format(Locale.US, "%.1f mm", 1.0000), 
+				String.format(Locale.US, "%.4f mm 1/16 in", 25.4 / 16.0), 
+				String.format(Locale.US, "%.1f mm", 2.0000), 
+				String.format(Locale.US, "%.1f mm 1/8 in",  25.4 /  8.0), 
+				String.format(Locale.US, "%.1f mm", 5.0000), 
+				String.format(Locale.US, "%.2f mm 1/4 in",  25.4 /  4.0),
+				String.format(Locale.US, "%.1f mm Brick", 8.0000), 
+				String.format(Locale.US, "%.1f mm", 10.000),
+				String.format(Locale.US, "%.1f mm 1/2 in",  25.4 /  2.0),
+				String.format(Locale.US, "%.1f mm", 20.000),
+				String.format(Locale.US, "%.1f mm 1 in",     25.4)
 				);
 		
 		HashMap<String, Double> map = new HashMap<>();
@@ -1026,8 +1026,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				ungroupButton.setDisable(true);
 			if (groupButton != null)
 				groupButton.setDisable(true);
-			if (allignButton != null)
-				allignButton.setDisable(true);
+			if (alignButton != null)
+				alignButton.setDisable(true);
 			if (advancedGroupMenu != null)
 				advancedGroupMenu.setDisable(true);
 			if (dropToWorkplane != null)
@@ -1050,7 +1050,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
-				allignButton.setDisable(false);
+				alignButton.setDisable(false);
 			}
 			if (selected.size() > 0 && advanced) {
 				advancedGroupMenu.setDisable(false);
@@ -1431,17 +1431,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.showHideImage = showHideImage;
 	}
 
-	public void onAllign() {
+	public void onAlign() {
 		if (getControls() == null)
 			return;
 		getExecutor().submit(() -> {
-			getControls().setMode(SpriteDisplayMode.Allign);
+			getControls().setMode(SpriteDisplayMode.Align);
 //			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 //			Bounds b = getSellectedBounds(selectedCSG);
-//			getControls().initializeAllign(selectedCSG, b, getMeshes());
+//			getControls().initializeAlign(selectedCSG, b, getMeshes());
 			List<String> selectedSnapshot = selectedSnapshot();
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
-			getControls().initializeAllign(selectedCSG, selectedSnapshot, getMeshes());
+			getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes());
 		});
 
 	}
@@ -1464,7 +1464,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void cancelOperationModes() {
 		if (getControls() == null)
 			return;
-		if (isAllignActive()) {
+		if (isAlignActive()) {
 			getControls().setMode(SpriteDisplayMode.Default);
 		}
 		if (isMirrorActive()) {
@@ -1474,8 +1474,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	public void setAllignButton(Button allignButton) {
-		this.allignButton = allignButton;
+	public void setAlignButton(Button alignButton) {
+		this.alignButton = alignButton;
 	}
 
 	public List<CSG> getCurrentState() {
@@ -1937,15 +1937,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public boolean isInOperationMode() {
 
-		return isAllignActive() || isMirrorActive();
+		return isAlignActive() || isMirrorActive();
 	}
 
 	private boolean isMirrorActive() {
 		return getControls().mirrorIsActive();
 	}
 
-	private boolean isAllignActive() {
-		return getControls().allignIsActive();
+	private boolean isAlignActive() {
+		return getControls().alignIsActive();
 	}
 
 	public HashMap<CSG, MeshView> getMeshes() {

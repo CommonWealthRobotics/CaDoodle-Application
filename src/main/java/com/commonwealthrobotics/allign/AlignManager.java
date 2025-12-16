@@ -1,4 +1,4 @@
-package com.commonwealthrobotics.allign;
+package com.commonwealthrobotics.align;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class AlignManager {
 	Align opperation = null;
 	private ArrayList<CSG> toAlign = new ArrayList<CSG>();
 	private SelectionSession session;
-	private boolean allignemntSelected = false;
+	private boolean alignemntSelected = false;
 	private HashMap<CSG, MeshView> meshes;
 	private HashMap<CSG, EventHandler<? super MouseEvent>> events = new HashMap<CSG, EventHandler<? super MouseEvent>>();
 	private double screenW;
@@ -177,12 +177,12 @@ public class AlignManager {
 	}
 
 	public boolean isAlignemntSelected() {
-		return allignemntSelected;
+		return alignemntSelected;
 	}
 
-	public void setAlignemntSelected(boolean allignemntSelected) {
+	public void setAlignemntSelected(boolean alignemntSelected) {
 		// new Exception("Alignment selected set to
-		// "+allignemntSelected).printStackTrace();
-		this.allignemntSelected = allignemntSelected;
+		// "+alignemntSelected).printStackTrace();
+		this.alignemntSelected = alignemntSelected;
 	}
 }

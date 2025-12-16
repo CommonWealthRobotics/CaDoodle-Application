@@ -1,4 +1,4 @@
-package com.commonwealthrobotics.allign;
+package com.commonwealthrobotics.align;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,7 @@ public class AlignHandle {
 	private Scale scaleTF = new Scale();
 	private Affine move;
 	private Affine workplaneOffset;
-	private Affine allignLoc = new Affine();
+	private Affine alignLoc = new Affine();
 
 	private Vector3d orentation;
 
@@ -105,7 +105,7 @@ public class AlignHandle {
 				setMyOperation();
 			};
 			mesh.getTransforms().add(move);
-			mesh.getTransforms().add(allignLoc);
+			mesh.getTransforms().add(alignLoc);
 			mesh.getTransforms().add(workplaneOffset);
 			mesh.getTransforms().add(location);
 			mesh.getTransforms().add(cameraOrent);
