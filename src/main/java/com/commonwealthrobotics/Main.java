@@ -237,14 +237,14 @@ public class Main extends Application {
 				Log.debug("Git Cache zip exists "+zipGitCache);
 				File workingDir = ScriptingEngine.getWorkspace();
 				String workingGitCache = workingDir.getAbsolutePath()+delim()+"gitcache";
-				if(!new File(workingGitCache).exists()) {
-					Log.debug("Local GitCahe is missing: "+workingGitCache);
-					try {
-						unzip(file2, workingGitCache);
-					} catch (Exception e) {
-						Log.error(e);
-					}
+				//if(!new File(workingGitCache).exists()) {
+				//Log.debug("Local GitCahe is missing: "+workingGitCache);
+				try {
+					unzip(file2, workingGitCache);
+				} catch (Exception e) {
+					Log.error(e);
 				}
+				//}
 			}
 		} catch (IOException e) {
 			Log.error(e);
