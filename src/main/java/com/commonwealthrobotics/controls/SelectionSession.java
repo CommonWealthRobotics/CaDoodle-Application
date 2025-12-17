@@ -796,21 +796,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setupSnapGrid() {
+        double inch = 25.4; // 1 inch is 25.4mm
 		List<String> grids = Arrays.asList(
 				String.format(Locale.US, "%.1f mm", 0.1000),
 				String.format(Locale.US, "%.2f mm", 0.2500), 
 				String.format(Locale.US, "%.1f mm", 0.5000),
 				String.format(Locale.US, "%.1f mm", 1.0000), 
-				String.format(Locale.US, "%.4f mm 1/16 in", 25.4 / 16.0), 
+				String.format(Locale.US, "%.4f mm 1/16 inch", inch / 16.0), 
 				String.format(Locale.US, "%.1f mm", 2.0000), 
-				String.format(Locale.US, "%.1f mm 1/8 in",  25.4 /  8.0), 
+				String.format(Locale.US, "%.3f mm 1/8 inch",  inch /  8.0), 
 				String.format(Locale.US, "%.1f mm", 5.0000), 
-				String.format(Locale.US, "%.2f mm 1/4 in",  25.4 /  4.0),
+				String.format(Locale.US, "%.2f mm 1/4 inch",  inch /  4.0),
 				String.format(Locale.US, "%.1f mm Brick", 8.0000), 
 				String.format(Locale.US, "%.1f mm", 10.000),
-				String.format(Locale.US, "%.1f mm 1/2 in",  25.4 /  2.0),
+				String.format(Locale.US, "%.1f mm 1/2 inch",  inch /  2.0),
 				String.format(Locale.US, "%.1f mm", 20.000),
-				String.format(Locale.US, "%.1f mm 1 in",     25.4)
+				String.format(Locale.US, "%.1f mm 1 inch",    inch)
 				);
 		
 		HashMap<String, Double> map = new HashMap<>();
