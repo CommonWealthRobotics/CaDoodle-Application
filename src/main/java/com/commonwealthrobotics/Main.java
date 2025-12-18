@@ -67,7 +67,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	private static Thread loadDeps;
 	public static UncaughtExceptionHandler hand;
-
+	private static final String paramsKey = "CaDoodle-Configs";
+	private static final String objectKey = "currentVersion";
 	@Override
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
@@ -245,6 +246,23 @@ public class Main extends Application {
 					Log.error(e);
 				}
 				//}
+			}else {
+				String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
+				String nowVer = ""+StudioBuildInfo.getSDKVersion();
+				boolean b = !lastVer.contentEquals(nowVer);
+				boolean contentEquals = nowVer.contentEquals("0");
+				boolean c = b || contentEquals;
+				
+				if (c) {			
+					// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
+					try {
+						ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
+								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
+								"loadGit.groovy");
+					} catch (Exception e) {
+						Log.error(e);
+					}
+				}
 			}
 		} catch (IOException e) {
 			Log.error(e);
@@ -340,27 +358,13 @@ public class Main extends Application {
 	private static void ensureGitAssetsArePresent() {
 		
 		SplashManager.renderSplashFrame(2, "Downloading...");
-		String paramsKey = "CaDoodle-Configs";
-		String objectKey = "currentVersion";
+
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 		String nowVer = ""+StudioBuildInfo.getSDKVersion();
 	
 		
 		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
-		boolean b = !lastVer.contentEquals(nowVer);
-		boolean contentEquals = nowVer.contentEquals("0");
-		boolean c = b || contentEquals;ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
-		
-		if (c) {			
-			// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
-			try {
-				ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
-						"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
-						"loadGit.groovy");
-			} catch (Exception e) {
-				Log.error(e);
-			}
-		}
+		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {
