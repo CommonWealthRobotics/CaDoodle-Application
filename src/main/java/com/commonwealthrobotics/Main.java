@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -65,7 +67,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	private static Thread loadDeps;
 	public static UncaughtExceptionHandler hand;
-
+	private static final String paramsKey = "CaDoodle-Configs";
+	private static final String objectKey = "currentVersion";
 	@Override
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
@@ -221,6 +224,50 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
+		//String currentVersionString = StudioBuildInfo.getVersion();
+		String bindir = System.getProperty("user.home") + delim()+"bin"+ delim()+"CaDoodle-ApplicationInstall"+ delim();
+		String myVersionFileString = bindir + "currentversion.txt";
+//		File myVersionFile = new File(myVersionFileString);
+//		File bindirFile = new File(bindir);
+		try {
+			String myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
+			String currentVersionDir = bindir+myVersionString+delim();
+			String zipGitCache = currentVersionDir+"gitcache.zip";
+			File file2 = new File(zipGitCache);
+			if(file2.exists()) {
+				Log.debug("Git Cache zip exists "+zipGitCache);
+				File workingDir = ScriptingEngine.getWorkspace();
+				String workingGitCache = workingDir.getAbsolutePath()+delim()+"gitcache";
+				//if(!new File(workingGitCache).exists()) {
+				//Log.debug("Local GitCahe is missing: "+workingGitCache);
+				try {
+					unzip(file2, workingGitCache);
+				} catch (Exception e) {
+					Log.error(e);
+				}
+				//}
+			}else {
+				String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
+				String nowVer = ""+StudioBuildInfo.getSDKVersion();
+				boolean b = !lastVer.contentEquals(nowVer);
+				boolean contentEquals = nowVer.contentEquals("0");
+				boolean c = b || contentEquals;
+				
+				if (c) {			
+					// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
+					try {
+						ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
+								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
+								"loadGit.groovy");
+					} catch (Exception e) {
+						Log.error(e);
+					}
+				}
+			}
+		} catch (IOException e) {
+			Log.error(e);
+		}
+		
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
@@ -228,7 +275,6 @@ public class Main extends Application {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
-
 		}
 
 		BowlerKernel.setKernelMode(false);
@@ -312,25 +358,13 @@ public class Main extends Application {
 	private static void ensureGitAssetsArePresent() {
 		
 		SplashManager.renderSplashFrame(2, "Downloading...");
-		String paramsKey = "CaDoodle-Configs";
-		String objectKey = "currentVersion";
+
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 		String nowVer = ""+StudioBuildInfo.getSDKVersion();
-		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
-		boolean b = !lastVer.contentEquals(nowVer);
-		boolean contentEquals = nowVer.contentEquals("0");
-		boolean c = b || contentEquals;ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
+	
 		
-		if (c) {
-			// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
-			try {
-				ScriptingEngine.gitScriptRun(null,
-						"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
-						"loadGit.groovy");
-			} catch (Exception e) {
-				Log.error(e);
-			}
-		}
+		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
+		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
 		try {
 			AssetFactory.loadAllAssets();
 		} catch (Exception e) {

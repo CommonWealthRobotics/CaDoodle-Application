@@ -79,7 +79,7 @@ public class ShapePalletMyDoodles {
 		for (int j = 0; j < proj.size(); j++) {
 			int col = i % 3;
 			int row = i / 3;
-			if (proj.get(j).getMyProjectName().contentEquals(ap.get().getMyProjectName()))
+			if (proj.get(j).getMyProjectName().contentEquals(ap.get().getMyProjectName()) || proj.get(j).isIgnore())
 				continue;
 			try {
 				buttons.add(setupButton(proj.get(j), col, row));
