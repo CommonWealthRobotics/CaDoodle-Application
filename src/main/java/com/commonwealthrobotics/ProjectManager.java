@@ -97,7 +97,9 @@ public class ProjectManager {
 		clearScreen.run();
 		try {
 			ap.newProject();
-			ap.get().initialize();
+			new Thread(()->{
+				ap.get().initialize();
+			}).start();
 		} catch (IOException e) {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
