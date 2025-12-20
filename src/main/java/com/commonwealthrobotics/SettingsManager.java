@@ -20,7 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -30,6 +32,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.ibm.icu.impl.TimeZoneGenericNames.Pattern;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
@@ -116,10 +119,11 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private RadioButton pinToVersion;
-    @FXML
-    private ComboBox<String> versionOptions;
+	@FXML
+	private ComboBox<String> versionOptions;
 	private File pinFile;
-    
+	private String myVersionFileString;
+
 	@FXML
 	void onPinVersion(ActionEvent event) {
 		Log.debug("onPinVersion");
@@ -134,7 +138,14 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onPinVersionSelect(ActionEvent event) {
-		Log.debug("onPinVersionSelect");
+		String selectedItem = versionOptions.getSelectionModel().getSelectedItem();
+		Log.debug("onPinVersionSelect to " + selectedItem);
+		File f = new File(myVersionFileString);
+		try {
+			Files.write(f.toPath(), selectedItem.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -462,21 +473,58 @@ public class SettingsManager implements ICSGClientEvent {
 			numberOfSides.setText("16");
 			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "16");
 		}
-		String bindir = System.getProperty("user.home") + delim()+"bin"+ delim()+"CaDoodle-ApplicationInstall"+ delim();
-		String myVersionFileString = bindir + "currentversion.txt";
+		String bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
+				+ delim();
+		myVersionFileString = bindir + "currentversion.txt";
 		String pinFileName = bindir + "pinVersion";
 		pinFile = new File(pinFileName);
 		boolean toPin = pinFile.exists();
 		versionOptions.setDisable(!toPin);
-		if(!toPin)
+		if (!toPin)
 			checkOnLaunch.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
-//		File bindirFile = new File(bindir);
+		File[] listFiles = new File(bindir).listFiles();
+		if (listFiles != null) {
+			Arrays.sort(listFiles, (f1, f2) -> {
+				java.util.regex.Pattern p = java.util.regex.Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+				Matcher m1 = p.matcher(f1.getName());
+				Matcher m2 = p.matcher(f2.getName());
+
+				if (m1.find() && m2.find()) {
+					int cmp = Integer.compare(Integer.parseInt(m2.group(1)), Integer.parseInt(m1.group(1)));
+					if (cmp != 0)
+						return cmp;
+
+					cmp = Integer.compare(Integer.parseInt(m2.group(2)), Integer.parseInt(m1.group(2)));
+					if (cmp != 0)
+						return cmp;
+
+					return Integer.compare(Integer.parseInt(m2.group(3)), Integer.parseInt(m1.group(3)));
+				}
+				return f2.getName().compareTo(f1.getName());
+			});
+		}
+		for (File f : listFiles) {
+			if (!f.isDirectory())
+				continue;
+			String name = f.getName();
+			String[] fnames = name.split("\\.");
+			if (fnames.length != 3)
+				continue;
+			try {
+				Integer.parseInt(fnames[0]);
+				Integer.parseInt(fnames[1]);
+				Integer.parseInt(fnames[2]);
+			} catch (NumberFormatException ex) {
+				continue;
+			}
+			versionOptions.getItems().add(name);
+		}
 		try {
 			String myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
-			
-		} catch (IOException e) {
+			versionOptions.getSelectionModel().select(myVersionString);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
