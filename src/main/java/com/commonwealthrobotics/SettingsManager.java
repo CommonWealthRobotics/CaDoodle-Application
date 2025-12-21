@@ -119,6 +119,7 @@ public class SettingsManager implements ICSGClientEvent {
 	private ComboBox<String> versionOptions;
 	private File pinFile;
 	private String myVersionFileString;
+	private String bindir;
 
 	@FXML
 	void onPinVersion(ActionEvent event) {
@@ -322,6 +323,7 @@ public class SettingsManager implements ICSGClientEvent {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedMode", "" + selected);
 		mc.setAdvancedMode(selected);
 		ConfigurationDatabase.save();
+		updateVersionOptions();
 	}
 
 	@FXML
@@ -469,7 +471,7 @@ public class SettingsManager implements ICSGClientEvent {
 			numberOfSides.setText("16");
 			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "16");
 		}
-		String bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
+		bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
 				+ delim();
 		myVersionFileString = bindir + "currentversion.txt";
 		String pinFileName = bindir + "pinVersion";
@@ -480,6 +482,11 @@ public class SettingsManager implements ICSGClientEvent {
 			checkOnLaunch.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
+		updateVersionOptions();
+	}
+
+	private void updateVersionOptions() {
+		versionOptions.getItems().clear();
 		File[] listFiles = new File(bindir).listFiles();
 		if (listFiles != null) {
 			Arrays.sort(listFiles, (f1, f2) -> {
@@ -509,9 +516,11 @@ public class SettingsManager implements ICSGClientEvent {
 			if (fnames.length != 3)
 				continue;
 			try {
-				Integer.parseInt(fnames[0]);
-				Integer.parseInt(fnames[1]);
-				Integer.parseInt(fnames[2]);
+				int major=Integer.parseInt(fnames[0]);
+				int minor=Integer.parseInt(fnames[1]);
+				int bugfix=Integer.parseInt(fnames[2]);
+				if((major==0 && minor<26) && !advancedSelector.isSelected())
+					continue;
 			} catch (NumberFormatException ex) {
 				continue;
 			}
