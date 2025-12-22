@@ -103,6 +103,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private int lastFrame = 0;
 	private File currentFile = null;
 	private boolean timelineOpen = true;
+	private long nameTyped = System.currentTimeMillis();
+	private Thread nameTypeDelay = null;
 
 	/**
 	 * CaDoodle Model Classes
@@ -938,9 +940,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				System.exit(1);
 			}
 			fileNameBox.setOnKeyTyped(ev -> {
-				com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
-				ap.get().setProjectName(fileNameBox.getText());
-				session.save();
+				onNameTyped();
 			});
 			setupCSGEngine();
 			SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
@@ -965,6 +965,27 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 			com.neuronrobotics.sdk.common.Log.error(e);
 			System.exit(1);
+		}
+	}
+
+	private void onNameTyped() {
+		nameTyped = System.currentTimeMillis();
+		if(nameTypeDelay==null) {
+			nameTypeDelay=new Thread(()->{
+				while((System.currentTimeMillis()-nameTyped)<3000) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						break;
+					}
+					
+				}
+				com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
+				ap.get().setProjectName(fileNameBox.getText());
+				session.save();
+				nameTypeDelay=null;
+			}) ;
+			nameTypeDelay.start();
 		}
 	}
 
