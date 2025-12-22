@@ -1,0 +1,31 @@
+{
+"Linux-x64":{
+	"url":"https://cdn.azul.com/zulu/bin/",
+	"type":"tar.gz", 
+	"name":"zulu21.46.19-ca-fx-jre21.0.9-linux_x64",
+	"jvmargs":["-Dprism.forceGPU=true", "-XX:MaxRAMPercentage=95"]},
+
+"Linux-aarch64":{
+	"url":"https://cdn.azul.com/zulu/bin/",
+	"type":"tar.gz",
+	"name":"zulu21.46.19-ca-fx-jre21.0.9-linux_aarch64",
+	 "jvmargs":["-Dprism.forceGPU=true", "-XX:MaxRAMPercentage=95"]},
+
+"Windows-x64":{
+	"url":"https://cdn.azul.com/zulu/bin/",
+	"type":"zip ",
+	"name":"zulu21.46.19-ca-fx-jre21.0.9-win_x64",
+	"jvmargs":["-XX:MaxRAMPercentage=95"]},
+
+"Mac-x64":{
+	"url":"https://cdn.azul.com/zulu/bin/",
+	"type":"zip",
+	"name":"zulu21.46.19-ca-fx-jre21.0.9-macosx_x64",
+	"jvmargs":["-Dprism.forceGPU=true", "-XX:MaxRAMPercentage=95"]},
+
+"Mac-aarch64":{
+	"url":"https://cdn.azul.com/zulu/bin/",
+	"type":"zip",
+	"name":"zulu21.46.19-ca-fx-jre21.0.9-macosx_aarch64",
+	"jvmargs":["-Dprism.forceGPU=true", "-XX:MaxRAMPercentage=95"]}
+}
