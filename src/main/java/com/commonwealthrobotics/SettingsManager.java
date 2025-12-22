@@ -4,20 +4,22 @@
 
 package com.commonwealthrobotics;
 
+import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.delim;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -44,6 +46,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -59,6 +62,9 @@ public class SettingsManager implements ICSGClientEvent {
 	private static MainController mc;
 	private static boolean changedDir = false;
 	private HashMap<CSGRequest, Label> active = new HashMap<>();
+
+	private Label clientDisplay = new Label("No client");
+
 	@FXML
 	private CheckBox advancedSelector;
 
@@ -92,7 +98,6 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private Label serverIPDisplay;
-	private Label clientDisplay=new Label("No client");
 	@FXML
 	private VBox serverStatusBox;
 
@@ -101,6 +106,51 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private TextField workingDirPath;
+
+	@FXML
+	private RadioButton checkOnLaunch;
+
+	@FXML
+	private ToggleGroup checkUpdate;
+
+	@FXML
+	private RadioButton pinToVersion;
+	@FXML
+	private ComboBox<String> versionOptions;
+	private File pinFile;
+	private String myVersionFileString;
+	private String bindir;
+
+	@FXML
+	void onPinVersion(ActionEvent event) {
+		Log.debug("onPinVersion");
+		versionOptions.setDisable(false);
+		try {
+			pinFile.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	void onPinVersionSelect(ActionEvent event) {
+		String selectedItem = versionOptions.getSelectionModel().getSelectedItem();
+		Log.debug("onPinVersionSelect to " + selectedItem);
+		File f = new File(myVersionFileString);
+		try {
+			Files.write(f.toPath(), selectedItem.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	void onSetCheck(ActionEvent event) {
+		Log.debug("onSetCheck");
+		versionOptions.setDisable(true);
+		pinFile.delete();
+	}
 
 	@FXML
 	void checkServerConfigs(KeyEvent event) {
@@ -273,6 +323,7 @@ public class SettingsManager implements ICSGClientEvent {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedMode", "" + selected);
 		mc.setAdvancedMode(selected);
 		ConfigurationDatabase.save();
+		updateVersionOptions();
 	}
 
 	@FXML
@@ -312,30 +363,32 @@ public class SettingsManager implements ICSGClientEvent {
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
 	}
+
 	@FXML
 	public void onNumberOfSides(ActionEvent event) {
 		String text = numberOfSides.getText();
 		try {
 			int int1 = Integer.parseInt(text);
-			if(int1>200) {
-				Log.error("Fault can not set that number "+int1);
+			if (int1 > 200) {
+				Log.error("Fault can not set that number " + int1);
 				numberOfSides.setText("200");
-				int1=200;
+				int1 = 200;
 			}
-			if(int1<3) {
-				Log.error("Fault can not set that number "+int1);
+			if (int1 < 3) {
+				Log.error("Fault can not set that number " + int1);
 				numberOfSides.setText("3");
-				int1=3;
+				int1 = 3;
 			}
-			Log.debug("Setting Default Number of sides to "+int1);
-			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides",text);
+			Log.debug("Setting Default Number of sides to " + int1);
+			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", text);
 			ConfigurationDatabase.save();
-			
-		}catch(NumberFormatException ex) {
+
+		} catch (NumberFormatException ex) {
 			Log.error(ex);
 			numberOfSides.setText("16");
 		}
 	}
+
 	@FXML
 	void onBrowse(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("Browse For Working Location");
@@ -405,7 +458,7 @@ public class SettingsManager implements ICSGClientEvent {
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGServerStart", "" + false).toString());
 		startServerCheckbox.setSelected(server);
 		connectServer.setDisable(false);
-		if(server)
+		if (server)
 			serverIPDisplay.setText("Server started " + getLocalIP());
 		serverStatusBox.getChildren().add(clientDisplay);
 		String string = ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", "16").toString();
@@ -413,10 +466,72 @@ public class SettingsManager implements ICSGClientEvent {
 		try {
 			int numberOfSidesInt = Integer.parseInt(string);
 			numberOfSides.setText(string);
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			Log.error(ex);
 			numberOfSides.setText("16");
 			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "16");
+		}
+		bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
+				+ delim();
+		myVersionFileString = bindir + "currentversion.txt";
+		String pinFileName = bindir + "pinVersion";
+		pinFile = new File(pinFileName);
+		boolean toPin = pinFile.exists();
+		versionOptions.setDisable(!toPin);
+		if (!toPin)
+			checkOnLaunch.setSelected(true);
+		else
+			pinToVersion.setSelected(true);
+		updateVersionOptions();
+	}
+
+	private void updateVersionOptions() {
+		versionOptions.getItems().clear();
+		File[] listFiles = new File(bindir).listFiles();
+		if (listFiles != null) {
+			Arrays.sort(listFiles, (f1, f2) -> {
+				java.util.regex.Pattern p = java.util.regex.Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+				Matcher m1 = p.matcher(f1.getName());
+				Matcher m2 = p.matcher(f2.getName());
+
+				if (m1.find() && m2.find()) {
+					int cmp = Integer.compare(Integer.parseInt(m2.group(1)), Integer.parseInt(m1.group(1)));
+					if (cmp != 0)
+						return cmp;
+
+					cmp = Integer.compare(Integer.parseInt(m2.group(2)), Integer.parseInt(m1.group(2)));
+					if (cmp != 0)
+						return cmp;
+
+					return Integer.compare(Integer.parseInt(m2.group(3)), Integer.parseInt(m1.group(3)));
+				}
+				return f2.getName().compareTo(f1.getName());
+			});
+		}
+		for (File f : listFiles) {
+			if (!f.isDirectory())
+				continue;
+			String name = f.getName();
+			String[] fnames = name.split("\\.");
+			if (fnames.length != 3)
+				continue;
+			try {
+				int major=Integer.parseInt(fnames[0]);
+				int minor=Integer.parseInt(fnames[1]);
+				int bugfix=Integer.parseInt(fnames[2]);
+				if((major==0 && minor<26) && !advancedSelector.isSelected())
+					continue;
+			} catch (NumberFormatException ex) {
+				continue;
+			}
+			versionOptions.getItems().add(name);
+		}
+		try {
+			String myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
+			versionOptions.getSelectionModel().select(myVersionString);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -434,8 +549,9 @@ public class SettingsManager implements ICSGClientEvent {
 		}
 		try {
 			// Load the FXML file
-			
-			com.neuronrobotics.sdk.common.Log.debug("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
+
+			com.neuronrobotics.sdk.common.Log
+					.debug("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
 			FXMLLoader loader = new FXMLLoader(
 					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
 			// loader.setController(new SettingsManager());
@@ -472,7 +588,7 @@ public class SettingsManager implements ICSGClientEvent {
 			serverStatusBox.getChildren().add(l);
 		});
 	}
-	
+
 	@Override
 	public void response(CSGResponse response, CSGRequest request) {
 		Label label = active.get(request);

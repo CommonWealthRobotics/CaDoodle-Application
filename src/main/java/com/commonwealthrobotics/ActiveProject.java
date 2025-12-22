@@ -181,7 +181,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	private File getActiveProject() throws Exception {
-		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleacriveFile", null);
+		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
 		if (object == null) // Fix legacy typo, try again with corrected spelling
 			object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
 
@@ -443,7 +443,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public List<CaDoodleFile> getProjects() throws IOException {
 		String directoryPath = getWorkingDir().getAbsolutePath();
-		com.neuronrobotics.sdk.common.Log.error("Loading workspace from "+directoryPath);
+		com.neuronrobotics.sdk.common.Log.debug("Loading workspace from "+directoryPath);
 		File dir = new File(directoryPath);
 		List<CaDoodleFile> list = new ArrayList<>();
 
