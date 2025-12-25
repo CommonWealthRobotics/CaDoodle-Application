@@ -1,5 +1,5 @@
 {
-"Linux-x64":{
+	"Linux-x64":{
 		"url":"https://cdn.azul.com/zulu/bin/",
 		"type":"tar.gz", 
 		"name":"zulu21.46.19-ca-fx-jre21.0.9-linux_x64",
