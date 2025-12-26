@@ -4,7 +4,7 @@ import java.util.zip.ZipFile
  *
  * This generated file contains a sample Java library project to get you started.
  * For more details take a look at the 'Building Java & JVM projects' chapter in the Gradle
- * User Manual available at https://docs.gradle.org/8.1.1/userguide/building_java_projects.html
+ * User Manual available at https://docs.gradle.org/current/userguide/userguide.html
  */
 buildscript {
 	repositories {
@@ -18,8 +18,8 @@ plugins {
 	id 'java'
 	id 'application'
 	id 'eclipse'
-	id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-	id 'org.openjfx.javafxplugin' version '0.0.13'apply false
+	id 'com.gradleup.shadow' version '8.3.9' apply false
+	id 'org.openjfx.javafxplugin' version '0.0.13' apply false
 }
 // Only apply to the root project
 if (project == rootProject) {
@@ -169,7 +169,6 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-
 shadowJar {
 	archiveBaseName.set('CaDoodle-Application')
 	archiveClassifier.set('')
@@ -185,6 +184,7 @@ shadowJar {
 		}
 	}
 }
+
 jar {
 	jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	manifest {
