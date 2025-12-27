@@ -68,6 +68,7 @@ jobs:
         files: |
           CaDoodle-Application.jar
           jvm.json
+          jre.json
           gitcache.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
