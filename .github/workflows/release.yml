@@ -53,7 +53,7 @@ jobs:
       run:
         export DISPLAY=:0
     - name: Compile Script
-      run: xvfb-run -s '-screen 0 1024x768x24' java -Dprism.verbose=true -Dprism.forceGPU=true -d64 -Xmx6500M -jar bowler-kernel.jar -g https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git loadGit.groovy
+      run: xvfb-run -s '-screen 0 1024x768x24' java -Dprism.verbose=true -Dprism.forceGPU=true -Xmx6500M -jar bowler-kernel.jar -g https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git loadGit.groovy
     - name: Zip Results
       run: (export START=$PWD;cd $HOME/Documents/bowler-workspace/gitcache/ ; zip -r $START/gitcache.zip .)
     - name: After JDK download, list directory contnts
