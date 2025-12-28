@@ -4,7 +4,7 @@ export ARCH=x86_64
 JVM=zulu21.46.19-ca-fx-jdk21.0.9-linux_x64
 set -e
 ZIP=$JVM.tar.gz
-export JAVA_HOME=$HOME/bin/java17/
+export JAVA_HOME=$HOME/bin/java21/
 if test -d $JAVA_HOME/$JVM/; then
   echo "$JAVA_HOME exists."
 else

@@ -38,8 +38,6 @@ jobs:
       run: |
         mv build/libs/* .
         ls -al
-    - name: Pull a JavaFX JDK
-      run: wget http://static.azul.com/zulu/bin/zulu21.46.19-ca-fx-jdk21.0.9-linux_x64.tar.gz
     - name: Set Java
       uses: actions/setup-java@v1
       with:
