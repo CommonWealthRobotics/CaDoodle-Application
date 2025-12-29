@@ -18,16 +18,6 @@ jobs:
       uses: actions/checkout@v1
       with:
          submodules: recursive 
-    - name: Build
-      run: bash build.sh
-    - name: Set Java
-      uses: actions/setup-java@v1
-      with:
-        java-version: 21
-        jdkFile: zulu21.46.19-ca-fx-jdk21.0.9-linux_x64.tar.gz
-
-    - name: Download Bowler kernel into CI
-      run: wget https://github.com/CommonWealthRobotics/bowler-script-kernel/releases/latest/download/bowler-kernel.jar
     - name: Install libraries
       run: |
           sudo apt update
@@ -38,6 +28,20 @@ jobs:
     - name: initialize the X11 DISPLAY variable
       run:
         export DISPLAY=:0
+    - name: Build
+      run: bash build.sh
+    - name: Set Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: 21
+        jdkFile: zulu21.46.19-ca-fx-jdk21.0.9-linux_x64.tar.gz
+
+    - name: Run Unit Tests
+      run: xvfb-run -s '-screen 0 1024x768x24' ./gradlew test
+      
+    - name: Download Bowler kernel into CI
+      run: wget https://github.com/CommonWealthRobotics/bowler-script-kernel/releases/latest/download/bowler-kernel.jar
+
     - name: Compile Script
       run: xvfb-run -s '-screen 0 1024x768x24' java -Dprism.verbose=true -Dprism.forceGPU=true -Xmx6500M -jar bowler-kernel.jar -g https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git loadGit.groovy
     - name: Zip Results
