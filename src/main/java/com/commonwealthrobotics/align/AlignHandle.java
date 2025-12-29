@@ -1,4 +1,4 @@
-package com.commonwealthrobotics.allign;
+package com.commonwealthrobotics.align;
 
 import java.util.HashMap;
 import java.util.List;
