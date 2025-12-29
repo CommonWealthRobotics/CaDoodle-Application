@@ -187,9 +187,7 @@ public class Main extends Application {
 		}
 	}
 
-	public static void main(String[] args) {
-		Log.disablePrint();
-		
+	public static void main(String[] args) {		
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
