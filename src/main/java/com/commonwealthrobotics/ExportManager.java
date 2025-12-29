@@ -166,7 +166,7 @@ public class ExportManager {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
-			BowlerKernel.processReturnedObjectsStart(back, exportDir);
+			BowlerKernel.processReturnedObjectsStart(back, exportDir, new File(".").getAbsoluteFile());
 			SplashManager.onLogUpdate("");
 			SplashManager.renderSplashFrame(50, "Zipping Project Source");
 			//ap.get().updateBoM() ;
