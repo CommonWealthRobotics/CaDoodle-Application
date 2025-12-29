@@ -138,8 +138,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button timelineButton;
 	@FXML // fx:id="stackPane"
 	private StackPane stackPane; // Value injected by FXMLLoader
-	@FXML // fx:id="allignButton"
-	private Button allignButton; // Value injected by FXMLLoader
+	@FXML // fx:id="alignButton"
+	private Button alignButton; // Value injected by FXMLLoader
 	@FXML // ResourceBundle that was given to the FXMLLoader
 	private ResourceBundle resources;
 	@FXML // fx:id="lockImage"
@@ -400,9 +400,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
-	void onAllign(ActionEvent event) {
+	void onAlign(ActionEvent event) {
 
-		session.onAllign();
+		session.onAlign();
 		session.setKeyBindingFocus();
 	}
 
@@ -553,9 +553,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setKeyBindingFocus();
 	}
 
-//onXorOpperation
+//onXorOperation
 	@FXML
-	void onXorOpperation(ActionEvent event) {
+	void onXorOperation(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Xor");
 		session.onXor();
 		session.setKeyBindingFocus();
@@ -569,14 +569,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
-	void onHullOpperation(ActionEvent e) {
+	void onHullOperation(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.error("On Hull");
 		session.onGroup(true, false);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
-	void onIntersectOpperation(ActionEvent e) {
+	void onIntersectOperation(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.error("On Intersect");
 		session.onGroup(false, true);
 		session.setKeyBindingFocus();
@@ -933,7 +933,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setUngroup(ungroupButton);
 			session.setShowHideImage(showHideImage);
 
-			session.setAllignButton(allignButton);
+			session.setAlignButton(alignButton);
 			// do this after setting up the session
 			setupEngineControls();
 			try {
@@ -1445,7 +1445,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.objectWorkplane();
 					break;
 				case 108:// l
-					session.onAllign();
+					session.onAlign();
 					break;
 				case 99:// c
 					session.onCruise();
@@ -1549,7 +1549,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onRegenerateDone() {
-		session.clearAllignObjectCache();
+		session.clearAlignObjectCache();
 	}
 
 	@Override

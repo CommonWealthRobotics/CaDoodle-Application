@@ -209,8 +209,8 @@ public class TexturedCSG extends TexturedMesh {
 			pos3 = pos2;
 			pos2 = tmp;
 		}
-		double allignToX = Math.atan2(pos2.y, pos2.x);
-		finalTransform = finalTransform.rotZ(Math.toDegrees(allignToX));
+		double alignToX = Math.atan2(pos2.y, pos2.x);
+		finalTransform = finalTransform.rotZ(Math.toDegrees(alignToX));
 
 		return finalTransform;
 	}

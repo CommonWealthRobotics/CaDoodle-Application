@@ -1,21 +1,19 @@
 .image-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
     -fx-background-insets: 0;
 }
 .normal-button {
     -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-background-insets: 0;
-    -fx-border-width: 2px;
-     -fx-border-color: #263d8c; /* logo-blue */
-    
+    -fx-border-width: 1px;
+    -fx-border-color: #263d8c; /* logo-blue */
 }
 .normal-button:focused {
-	-fx-border-width: 2px;
+	-fx-border-width: 1px;
     -fx-border-color: #bb1f09; /* logo-red */
 }
-
 .normal-button:pressed {
     -fx-background-color: #e7a436; /* logo-orange */
 }
@@ -28,7 +26,6 @@
 .image-button:hover {
     -fx-background-color: #f2c83d; /* logo-yellow */
 }
-
 .image-button-focus {
     -fx-border-color: #bb1f09; /* logo-red */
 }
@@ -43,26 +40,71 @@
     -fx-background-color: #e7a436; /* logo-orange */
 }
 
+.menu-button2 {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-background-insets: 0;
+}
+.menu-button2 > .label {
+    -fx-padding: 0 0 0 0;   /* top right bottom left */
+}
+.menu-button2 > .arrow-button {
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-padding: 0;
+}
+/* ---------- hide the arrow ---------- */
+.menu-button2 > .arrow-button > .arrow {
+    -fx-opacity: 0;
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+}
+.menu-button2:focused {
+    -fx-border-color: #bb1f09; /* logo-red */
+}
+.menu-button2:pressed {
+    -fx-background-color: #e7a436; /* logo-orange */
+}
+.menu-button2:hover {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+}
+.menu-button2-focus {
+    -fx-border-color: #bb1f09;
+}
+.menu-button2-focus:hover {
+    -fx-background-color: #f2c83d;
+}
+.menu-button2-highlight {
+    -fx-background-color: #f2c83d;
+    -fx-background-insets: 0;
+}
+.menu-button2-highlight:hover {
+    -fx-background-color: #e7a436;
+}
+
 .anchor-pane {
     -fx-background-color: #f4ede0; /* logo-beige */
 }
 .text-area {
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 /* TextField styling */
 .text-field {
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* TextArea styling */
 .text-area {
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* TextArea content region */
@@ -153,20 +195,20 @@
     -fx-background-color: #263d8c; /* logo-blue */
 }
 #controlBar{
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
      -fx-border-color: #263d8c; /* logo-blue */
 }
 #drawerArea{
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
      -fx-border-color: #263d8c; /* logo-blue */
 }
 #shapeConfigurationBox{
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
      -fx-border-color: #263d8c; /* logo-blue */
 }
 #fileNameBox{
     -fx-background-color: #f4ede0; /* logo-beige */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
      -fx-border-color: #263d8c; /* logo-blue */
 }
 #view3d {
@@ -228,7 +270,7 @@
 .tab-pane {
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* Tab header area (where tab titles are displayed) */
@@ -252,7 +294,7 @@
     -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-background-radius: 5px 5px 0px 0px;
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px 2px 0px 2px;
+    -fx-border-width: 1px 1px 0px 1px;
     -fx-padding: 8px 16px;
     -fx-text-fill: #263d8c; /* logo-blue */
 }
@@ -267,7 +309,7 @@
 .tab-pane .tab:selected {
     -fx-background-color: #e7a436; /* logo-orange */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px 2px 0px 2px;
+    -fx-border-width: 1px 1px 0px 1px;
     -fx-text-fill: #263d8c; /* logo-blue */
 }
 
@@ -275,7 +317,7 @@
 .tab-pane .tab-content-area {
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
     -fx-padding: 10px;
 }
 
@@ -319,7 +361,7 @@
     -fx-background-radius: 8px 8px 0px 0px;
     -fx-border-color: #263d8c; /* logo-blue */
     -fx-text-fill: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 .tab-pane.primary-theme .tab:hover {
@@ -349,7 +391,7 @@
     -fx-background-color: #2ecc71; /* my-secondary-color */
     -fx-text-fill: #f4ede0; /* logo-beige */
     -fx-border-color: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 .tab-pane.secondary-theme .tab:hover {
@@ -379,7 +421,7 @@
     -fx-background-color: #e7a436; /* logo-orange */
     -fx-text-fill: #263d8c; /* logo-blue */
     -fx-border-color: #bb1f09; /* logo-red */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 .tab-pane.warning-theme .tab:selected {
@@ -409,7 +451,7 @@
     -fx-border-color: #263d8c; /* logo-blue */
     -fx-text-fill: #263d8c; /* logo-blue */
     -fx-cursor: hand;
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 .anchor-pane.button-style:hover {
@@ -425,7 +467,7 @@
 .anchor-pane.light {
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-effect: dropshadow(three-pass-box, rgba(38,61,140,0.2), 5, 0, 0, 2); /* logo-blue with opacity */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* Primary colored anchor pane */
@@ -433,7 +475,7 @@
     -fx-background-color: #3498db; /* my-primary-color */
     -fx-border-color: #263d8c; /* logo-blue */
     -fx-text-fill: #f4ede0; /* logo-beige */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* Secondary colored anchor pane */
@@ -441,7 +483,7 @@
     -fx-background-color: #2ecc71; /* my-secondary-color */
     -fx-border-color: #263d8c; /* logo-blue */
     -fx-text-fill: #f4ede0; /* logo-beige */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* Card style anchor pane */
@@ -449,7 +491,7 @@
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-background-radius: 8px;
     -fx-effect: dropshadow(three-pass-box, rgba(38,61,140,0.15), 10, 0, 0, 3); /* logo-blue with opacity */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
     -fx-border-color: #263d8c; /* logo-blue */
     -fx-padding: 20px;
 }
@@ -459,7 +501,7 @@
     -fx-background-color: #e7a436; /* logo-orange */
     -fx-border-color: #bb1f09; /* logo-red */
     -fx-text-fill: #263d8c; /* logo-blue */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
 }
 
 /* ===== AI MODEL ADDITIONS - Claude Sonnet 4 ===== */
@@ -478,7 +520,7 @@
 .progress-bar {
     -fx-background-color: #f2c83d; /* logo-yellow background */
     -fx-border-color: #263d8c; /* logo-blue border */
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
     -fx-background-radius: 4px;
     -fx-border-radius: 4px;
 }

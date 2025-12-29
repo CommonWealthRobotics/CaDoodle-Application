@@ -108,7 +108,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 			setMyOperation();
 		};
 		// mesh.getTransforms().add(move);
-		// mesh.getTransforms().add(allignLoc);
+		// mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(cameraOrent);

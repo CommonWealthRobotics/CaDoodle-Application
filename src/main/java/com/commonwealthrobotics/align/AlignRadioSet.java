@@ -44,9 +44,9 @@ public class AlignRadioSet {
 		}
 		return result;
 	}
-	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAllign, List<String> selected) {
+	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAlign, List<String> selected) {
 		for(AlignHandle r: asList) {
-			r.initialize(opperation,engine,toAllign,selected);
+			r.initialize(opperation,engine,toAlign,selected);
 		}
 	}
 	public void hide() {
