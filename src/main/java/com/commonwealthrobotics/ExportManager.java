@@ -121,7 +121,8 @@ public class ExportManager {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
 			ArrayList<CSG> back = session.getAllVisable();
-			String name = toSlug(ap.get().getMyProjectName());
+			CaDoodleFile caDoodleFile = ap.get();
+			String name = toSlug(caDoodleFile.getMyProjectName());
 			int index = 1;
 			boolean prev = CSG.isPreventNonManifoldTriangles();
 			boolean manifold = manifoldSTL.isSelected();
@@ -166,14 +167,14 @@ public class ExportManager {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
-			BowlerKernel.processReturnedObjectsStart(back, exportDir);
+			BowlerKernel.processReturnedObjectsStart(back,caDoodleFile.getSelf().getParentFile(), exportDir);
 			SplashManager.onLogUpdate("");
 			SplashManager.renderSplashFrame(50, "Zipping Project Source");
 			//ap.get().updateBoM() ;
-			copyBom(ap.get().getBomFile());
-			copyBom(ap.get().getBomCsv());
+			copyBom(caDoodleFile.getBomFile());
+			copyBom(caDoodleFile.getBomCsv());
 			try {
-				zipDirectory(ap.get().getSelf().getParentFile(),
+				zipDirectory(caDoodleFile.getSelf().getParentFile(),
 						new File(exportDir.getAbsolutePath()+DownloadManager.delim()+name+"-source.zip"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -20,13 +20,11 @@ jobs:
          submodules: recursive 
     - name: Build
       run: bash build.sh
-    - name: Pull a JavaFX JDK
-      run: wget http://static.azul.com/zulu/bin/zulu8.33.0.1-ca-fx-jdk8.0.192-linux_x64.tar.gz
     - name: Set Java
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
-        jdkFile: ./zulu8.33.0.1-ca-fx-jdk8.0.192-linux_x64.tar.gz
+        java-version: 21
+        jdkFile: zulu21.46.19-ca-fx-jdk21.0.9-linux_x64.tar.gz
 
     - name: Download Bowler kernel into CI
       run: wget https://github.com/CommonWealthRobotics/bowler-script-kernel/releases/latest/download/bowler-kernel.jar
@@ -41,7 +39,7 @@ jobs:
       run:
         export DISPLAY=:0
     - name: Compile Script
-      run: xvfb-run -s '-screen 0 1024x768x24' java -Dprism.verbose=true -Dprism.forceGPU=true -d64 -Xmx6500M -jar bowler-kernel.jar -g https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git loadGit.groovy
+      run: xvfb-run -s '-screen 0 1024x768x24' java -Dprism.verbose=true -Dprism.forceGPU=true -Xmx6500M -jar bowler-kernel.jar -g https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git loadGit.groovy
     - name: Zip Results
       run: zip -r gitcache.zip ~/Documents/bowler-workspace/gitcache/
     - name: After JDK download, list directory contnts
