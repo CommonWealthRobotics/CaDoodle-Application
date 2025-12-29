@@ -4,7 +4,7 @@ import java.util.zip.ZipFile
  *
  * This generated file contains a sample Java library project to get you started.
  * For more details take a look at the 'Building Java & JVM projects' chapter in the Gradle
- * User Manual available at https://docs.gradle.org/8.1.1/userguide/building_java_projects.html
+ * User Manual available at https://docs.gradle.org/current/userguide/userguide.html
  */
 buildscript {
 	repositories {
@@ -13,17 +13,17 @@ buildscript {
 	}
 }
 
-
 plugins {
 	id 'java'
 	id 'application'
 	id 'eclipse'
-	id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-	id 'org.openjfx.javafxplugin' version '0.0.13'apply false
+    id 'com.gradleup.shadow' version '8.3.9' apply false
+	id 'org.openjfx.javafxplugin' version '0.1.0' apply false
 }
+
 // Only apply to the root project
 if (project == rootProject) {
-	apply plugin: 'com.github.johnrengelman.shadow'
+	apply plugin: 'com.gradleup.shadow'
 	apply plugin: 'org.openjfx.javafxplugin'
 }
 
@@ -33,11 +33,15 @@ allprojects {
 		gradlePluginPortal()
 	}
 }
+
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
-	sourceCompatibility = 1.8
-	targetCompatibility = 17
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
 
 	eclipse {
 		classpath {
@@ -54,8 +58,8 @@ subprojects {
 			}
 		}
 		jdt {
-			sourceCompatibility = 1.8
-			targetCompatibility = 17
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
 		}
 	}
 
@@ -64,9 +68,10 @@ subprojects {
 		options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
 	}
 }
+
 subprojects { subproject ->
 	subproject.afterEvaluate {		
-		if (subproject.plugins.hasPlugin('com.github.johnrengelman.shadow')) {
+        if (subproject.plugins.hasPlugin('com.gradleup.shadow')) {
 			subproject.tasks.matching { it.name == 'shadowJar' }.all {
 				System.out.println("Disabling Shadowjar for "+it)
 				it.enabled = false
@@ -74,8 +79,6 @@ subprojects { subproject ->
 		}
 	}
 }
-
-
 
 repositories {
 	// Use Maven Central for resolving dependencies.
@@ -102,19 +105,20 @@ dependencies {
 	implementation project(':BowlerStudio:libraries:dockfx')
 	implementation project(':BowlerStudio')
 
-
 	// Use JUnit Jupiter for testing.
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
 
 	// This dependency is used internally, and not exposed to consumers on their own compile classpath.
-	implementation 'com.google.guava:guava:31.1-jre'
-	implementation 'com.google.code.gson:gson:2.8.6'
-	implementation 'org.openjfx:javafx-controls:17'
-	implementation 'org.openjfx:javafx-fxml:17'
-	implementation 'org.openjfx:javafx-graphics:17'
+	implementation 'com.google.guava:guava:33.2.1-jre'
+	implementation 'com.google.code.gson:gson:2.11.0'
+	implementation 'org.openjfx:javafx-controls:21'
+	implementation 'org.openjfx:javafx-fxml:21'
+	implementation 'org.openjfx:javafx-graphics:21'
+
 	//  Jaxb moved out of system path in Java 9
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
-	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
+
 	implementation('org.fxyz3d:fxyz3d:0.6.0') {
 		exclude group: 'eu.mihosoft.vrl.jcsg', module: 'jcsg'
 		//eu.mihosoft.vvecmath:vvecmath
@@ -122,10 +126,11 @@ dependencies {
 		
 	}
 	// Zip and unzip, tar and untar
-	implementation 'org.apache.commons:commons-compress:1.26.2'
+	implementation 'org.apache.commons:commons-compress:1.27.1'
 }
+
 javafx {
-	version = '17' // or whichever version you're using
+	version = '21' // or whichever version you're using
 	modules = [
 		'javafx.controls',
 		'javafx.fxml',
@@ -136,6 +141,7 @@ tasks.withType(Test) {
 	useJUnitPlatform()
 	jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
 }
+
 def javafxOptions = [
     '--add-exports', 'javafx.graphics/com.sun.javafx.css=ALL-UNNAMED',
     '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
@@ -148,9 +154,11 @@ def javafxOptions = [
 	'--add-opens','java.base/java.io=ALL-UNNAMED',
 	'--add-opens','java.base/java.lang=ALL-UNNAMED'
 ]
+
 run {
 	jvmArgs = javafxOptions
 }
+
 application {
 	// Define the main class for the application.
 	mainClass = 'com.commonwealthrobotics.Main'
@@ -164,27 +172,31 @@ tasks.withType(JavaCompile) {
         '--add-opens', 'java.base/java.io=ALL-UNNAMED'
 	]+javafxOptions
 }
+
 tasks.named('test') {
 	// Use JUnit Platform for unit tests.
 	useJUnitPlatform()
 }
 
+if (project == rootProject) {
+    apply plugin: 'com.gradleup.shadow'
+    apply plugin: 'org.openjfx.javafxplugin'
 
-shadowJar {
-	archiveBaseName.set('CaDoodle-Application')
-	archiveClassifier.set('')
-	archiveVersion.set('')
-	zip64 true
-	mergeServiceFiles()
-
-	exclude '**/*.pdb'  
-
-	eachFile { file ->
-		if (file.path.endsWith('.pdb')) {
-			file.exclude()
-		}
-	}
+    shadowJar {
+        archiveBaseName.set('CaDoodle-Application')
+        archiveClassifier.set('')
+        archiveVersion.set('')
+        zip64 true
+        mergeServiceFiles()
+        exclude '**/*.pdb'
+        eachFile { file ->
+            if (file.path.endsWith('.pdb')) {
+                file.exclude()
+            }
+        }
+    }
 }
+
 jar {
 	jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	manifest {
@@ -193,22 +205,23 @@ jar {
 		'Main-Class': 'com.commonwealthrobotics.Main'
 	}
 }
+
 tasks.withType(Copy) {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
 compileJava {
 	options.compilerArgs += javafxOptions
 }
 
 eclipse {
 	classpath {
-
 		downloadSources = true
 		downloadJavadoc = true
 		file {
 			whenMerged { classpath ->
 				classpath.entries.removeAll { it.kind == "con" && it.path.contains("org.eclipse.jdt.launching.JRE_CONTAINER") }
-                classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.Container("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17/"))
+                classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.Container("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"))
 				classpath.entries.findAll { it.kind == 'con' && it.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
 					it.entryAttributes['module'] = 'true'
 					def addExports = []
@@ -225,9 +238,10 @@ eclipse {
 			}
 		}
 	}
+
 	jdt {
-		sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+		sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
 		file {
 			withProperties { properties ->
 				properties.setProperty('org.eclipse.jdt.core.compiler.problem.forbiddenReference', 'ignore')
