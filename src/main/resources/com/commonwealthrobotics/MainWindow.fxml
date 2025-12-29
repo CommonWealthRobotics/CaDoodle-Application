@@ -11,7 +11,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -23,14 +22,14 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -38,8 +37,8 @@
          </columnConstraints>
          <rowConstraints>
             <RowConstraints vgrow="NEVER" />
-            <RowConstraints vgrow="NEVER" minHeight="38" maxHeight="38" prefHeight="38"/>
-            <RowConstraints vgrow="NEVER" valignment="TOP"/>
+            <RowConstraints maxHeight="38" minHeight="38" prefHeight="38" vgrow="NEVER" />
+            <RowConstraints valignment="TOP" vgrow="NEVER" />
          </rowConstraints>
          <children>
             <VBox GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
@@ -48,7 +47,7 @@
                      <children>
                         <AnchorPane fx:id="RobotLabHolder">
                            <children>
-                              <TabPane fx:id="robotLabTabPane" tabClosingPolicy="UNAVAILABLE" style="-fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TabPane fx:id="robotLabTabPane" style="-fx-border-width: 0;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
                                   <Tab fx:id="bodyTab">
                                     <content>
@@ -285,7 +284,7 @@
                         </AnchorPane>
                         <StackPane minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" snapToPixel="false" HBox.hgrow="SOMETIMES">
                            <children>
-                                <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" snapToPixel="false" style="-fx-background-color: transparent"/>
+                                <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" snapToPixel="false" style="-fx-background-color: transparent" />
                               <AnchorPane fx:id="layerHolder" pickOnBounds="false">
                                  <children>
                                     <GridPane fx:id="buttonGrid" pickOnBounds="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -300,6 +299,7 @@
                                         <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="0.0" vgrow="ALWAYS" />
                                           <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                          <RowConstraints />
                                       </rowConstraints>
                                        <children>
                                           <GridPane pickOnBounds="false" GridPane.columnIndex="2" GridPane.rowIndex="2">
@@ -324,29 +324,24 @@
                                           </GridPane>
                                           <VBox alignment="BOTTOM_LEFT" minHeight="0.0" pickOnBounds="false" GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
                                              <children>
-                                                    <HBox pickOnBounds="false" spacing="2" alignment="CENTER_RIGHT" GridPane.columnIndex="0">
+                                                    <HBox alignment="CENTER_RIGHT" pickOnBounds="false" spacing="2" GridPane.columnIndex="0">
 
-                                                            <Label minHeight="0.0" text="Snap Grid"/>
+                                                            <Label minHeight="0.0" text="Snap Grid" />
                                                             <ComboBox fx:id="snapGrid">
                                                                 <stylesheets>
-                                                                    <String fx:value="data:text/css,
-                                                                        .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }
-                                                                        .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }
-                                                                        .combo-box .arrow-button { -fx-padding: 0 0 0 0; }
-                                                                        .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}
-                                                                        "/>
+                                                                    <String fx:value="data:text/css,                                                                         .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }                                                                         .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }                                                                         .combo-box .arrow-button { -fx-padding: 0 0 0 0; }                                                                         .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}                                                                         " />
                                                                 </stylesheets>
                                                             </ComboBox>
 
-                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" styleClass="normal-button" text="Settings" GridPane.columnIndex="1" style="-fx-border-color:#263D8C; -fx-border-width:1;"/>
+                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" style="-fx-border-color:#263D8C; -fx-border-width:1;" styleClass="normal-button" text="Settings" GridPane.columnIndex="1" />
                                                       </HBox>
                                                    </children>
                                           </VBox>
                                           <AnchorPane fx:id="shapeConfigurationHolder" pickOnBounds="false" GridPane.columnIndex="2">
                                              <children>
-                                                <Accordion fx:id="shapeConfigurationBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" style="-fx-border-color:#263D8C; -fx-border-width:1;">
+                                                <Accordion fx:id="shapeConfigurationBox" style="-fx-border-color:#263D8C; -fx-border-width:1;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <panes>
-                                                    <TitledPane fx:id="shapeConfiguration" expanded="false" animated="false" text="Shape">
+                                                    <TitledPane fx:id="shapeConfiguration" animated="false" expanded="false" text="Shape">
                                                       <content>
                                                         <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0" prefWidth="200.0">
                                                                <children>
@@ -372,6 +367,7 @@
                                                                           <rowConstraints>
                                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                              <RowConstraints />
                                                                           </rowConstraints>
                                                                            <children>
                                                                               <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
@@ -472,8 +468,7 @@
                                                       <Tooltip text="Home View" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="fitViewButton"
-                                                   mnemonicParsing="false" onAction="#onFitView" styleClass="image-button" GridPane.rowIndex="2">
+                                                <Button fx:id="fitViewButton" mnemonicParsing="false" onAction="#onFitView" styleClass="image-button" GridPane.rowIndex="2">
                                                    <graphic>
                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -523,7 +518,7 @@
                                                 </Button>
                                              </children>
                                           </GridPane>
-                                          <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                                          <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
                                              <graphic>
                                                 <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -535,7 +530,7 @@
                                                 <Tooltip text="Timeline: Look at previous steps" />
                                              </tooltip>
                                              <GridPane.margin>
-                                                 <Insets bottom="-8.0"/>
+                                                 <Insets bottom="-8.0" />
                                              </GridPane.margin>
                                           </Button>
                                        </children>
@@ -544,7 +539,7 @@
                               </AnchorPane>
                            </children>
                         </StackPane>
-                        <AnchorPane fx:id="drawerArea" HBox.hgrow="NEVER" style="-fx-padding: 0 0 2 3; -fx-border-color: #BBBBBB; -fx-border-width: 0 0 1 1;">
+                        <AnchorPane fx:id="drawerArea" style="-fx-padding: 0 0 2 3; -fx-border-color: #BBBBBB; -fx-border-width: 0 0 1 1;" HBox.hgrow="NEVER">
                            <children>
                               <GridPane fx:id="drawerGrid" style="-fx-padding: 0 0 0 3; -fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0">
                                 <columnConstraints>
@@ -560,7 +555,7 @@
                                 </rowConstraints>
                                  <children>
                                     <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" prefHeight="26.0" prefWidth="197.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                                    <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="3" >
+                                    <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                                        <children>
                                           <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <content>
@@ -643,7 +638,7 @@
                      </children>
                   </HBox>
                   
-            <Region minWidth="1" minHeight="1" maxHeight="1" />
+            <Region maxHeight="1" minHeight="1" minWidth="1" />
 
                   <AnchorPane fx:id="timelineHolder" VBox.vgrow="NEVER">
                      <children>
@@ -669,7 +664,7 @@
                   </AnchorPane>
                </children>
             </VBox>
-            <GridPane fx:id="controlBar" style="-fx-border-color:#BBBBBB; -fx-border-width: 0 0 1 0;" gridLinesVisible="false" GridPane.rowIndex="1">
+            <GridPane fx:id="controlBar" gridLinesVisible="false" style="-fx-border-color:#BBBBBB; -fx-border-width: 0 0 1 0;" GridPane.rowIndex="1">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" prefWidth="80.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="156.0" />
@@ -697,7 +692,7 @@
                             <graphic>
                                 <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@showMenu.png"/>
+                                        <Image url="@showMenu.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -764,7 +759,7 @@
                                 <graphic>
                                     <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true">
                                         <image>
-                                            <Image url="@intersectMenu.png"/>
+                                            <Image url="@intersectMenu.png" />
                                         </image>
                                     </ImageView>
                                 </graphic>
@@ -863,14 +858,14 @@
                               <Tooltip text="Drop To Workplane &lt;D&gt;" />
                            </tooltip>
                         </Button>
-                        <Region prefWidth="5" maxWidth="5" minWidth="5" />
+                        <Region maxWidth="5" minWidth="5" prefWidth="5" />
                         <HBox alignment="CENTER">
                   <padding>
-                    <Insets top="0" right="4" bottom="0" left="4"/>
+                    <Insets bottom="0" left="4" right="4" top="0" />
                   </padding>
-                        <Button fx:id="importButton" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="98.0" maxWidth="98.0" styleClass="normal-button" text="Import" />
-                  <Region prefWidth="4" maxWidth="4" minWidth="4" />
-                        <Button fx:id="export" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="98.0" maxWidth="98.0" styleClass="normal-button" text="Export" />
+                        <Button fx:id="importButton" maxWidth="98.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="98.0" styleClass="normal-button" text="Import" />
+                  <Region maxWidth="4" minWidth="4" prefWidth="4" />
+                        <Button fx:id="export" maxWidth="98.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="98.0" styleClass="normal-button" text="Export" />
                         </HBox>                       
                      </children>
                   </HBox>
@@ -944,7 +939,7 @@
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="304.0" prefWidth="346.0" />
                 <ColumnConstraints fillWidth="false" hgrow="NEVER" minWidth="10.0" prefWidth="308.0" />
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints maxHeight="100.0" prefHeight="40.0" vgrow="NEVER" />
@@ -964,7 +959,7 @@
                               <Tooltip text="Cadoodle Dashboard" />
                            </tooltip>
                         </Button>
-                        <TextField fx:id="fileNameBox" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" HBox.hgrow="SOMETIMES">
+                        <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
@@ -977,26 +972,24 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <HBox GridPane.columnIndex="2" alignment="CENTER" >
+                  <HBox alignment="CENTER" GridPane.columnIndex="2">
                      <padding>
-                         <Insets top="4" right="0" bottom="0" left="0"/>
+                         <Insets bottom="0" left="0" right="0" top="4" />
                       </padding>
                       <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Memory Usage:" wrappingWidth="50" HBox.hgrow="ALWAYS">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Memory Usage:" wrappingWidth="59.0" HBox.hgrow="ALWAYS">
                            <font>
                               <Font size="13.0" />
                            </font>
                         </Text>
 
                       <StackPane>
-                        <ProgressIndicator fx:id="memUsage" progress="0.0" StackPane.alignment="BOTTOM_CENTER"/>
+                        <ProgressIndicator fx:id="memUsage" progress="0.0" StackPane.alignment="BOTTOM_CENTER" />
                      </StackPane>
                      </children>
-              <Region prefWidth="4" maxWidth="4" minWidth="4" />
                   </HBox>
 
-            <Button contentDisplay="GRAPHIC_ONLY" onAction="#openHomePage" GridPane.columnIndex="1"
-                    style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;">
+            <Button contentDisplay="GRAPHIC_ONLY" onAction="#openHomePage" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
                 <graphic>
                   <ImageView fitHeight="90.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
                      <image>
