@@ -365,6 +365,18 @@ public class TimelineManager {
 							// Add the delete item to the context menu
 							contextMenu.getItems().add(deleteItem);
 
+							// Add "Delete all after" to the timeline context menu
+							MenuItem deleteAfterItem = new MenuItem("Delete all after");
+							deleteAfterItem.setOnAction(event -> {
+								contextMenu.hide();
+								if (ap.get().isRegenerating() || !ap.get().isInitialized())
+									return;
+
+								ap.get().deleteTailFromCurrent();
+
+							});
+							contextMenu.getItems().add(deleteAfterItem);
+
 						});
 						// Add event handler for right-click
 					} catch (Exception ex) {
