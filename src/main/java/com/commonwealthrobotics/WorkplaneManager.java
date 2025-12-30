@@ -321,6 +321,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
 				.setColor(Color.YELLOWGREEN);
 		this.setIndicator(indicator, new Affine());
+		ap.get().setWorkplane(new TransformNR());
+		placeWorkplaneVisualization();
 		this.setOnSelectEvent(() -> {
 			if (this.isClicked()) {
 				if (this.isClickOnGround()) {
