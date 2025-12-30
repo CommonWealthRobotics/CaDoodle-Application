@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.sshd.common.session.Session;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.Main;
@@ -33,10 +34,13 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.creature.LimbOption;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
+import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -291,6 +295,39 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setUpParametrics(List<CSG> currentState, CaDoodleOperation source) {
+		if(AddRobotLimb.class.isInstance(source)) {
+			AddRobotLimb op = (AddRobotLimb)source;
+			MobileBaseBuilder builder = op.getMobilBaseBuilder();
+			try {
+				LimbOption limb = op.getLimb();
+				File file = ScriptingEngine.fileFromGit(limb.getUrl(), limb.getSourceFile());
+				IFileChangeListener l = new IFileChangeListener() {
+					@Override
+					public void onFileDelete(File fileThatIsDeleted) {
+					}
+
+					@Override
+					public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
+						Log.debug("File Change updating " + source.getType());
+						builder.clear();
+						myRegenerate(source, this, file);
+					}
+
+				};
+				if (myWatchers.get(source) == null) {
+					try {
+						FileChangeWatcher w = FileChangeWatcher.watch(file);
+						myWatchers.put(source, w);
+						w.addIFileChangeListener(l);
+					} catch (IOException e) {
+						Log.error(e);
+					}
+				}
+			} catch (Exception e) {
+				Log.error(e);
+			}
+			
+		}
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
 			// com.neuronrobotics.sdk.common.Log.error("Adding A op for "+s.getClass());
