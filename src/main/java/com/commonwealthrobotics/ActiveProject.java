@@ -340,6 +340,27 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 						SplashManager.closeSplash();
 
+						// Keyboard shortcut [Escape]=Abort
+						alert.setOnShown(e -> {
+							DialogPane pane = alert.getDialogPane();
+							pane.getScene().setOnKeyPressed(ke -> {
+								if (ke.getCode() == KeyCode.ESCAPE) {
+									this.operationResult = OperationResult.ABORT;
+									alert.hide();
+									ke.consume();
+								}
+							});
+
+							// Keyboard shortcut C=Continue
+							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> { this.operationResult = OperationResult.PRUNE; alert.hide(); });
+
+							// Keyboard shortcut I=Insert
+							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> { this.operationResult = OperationResult.INSERT; alert.hide(); });
+							
+							// Keyboard shortcut A=Abort
+							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.A), () -> { this.operationResult = OperationResult.ABORT; alert.hide(); });
+						});
+
 						// Show alert and wait for result
 						alert.showAndWait();
 
