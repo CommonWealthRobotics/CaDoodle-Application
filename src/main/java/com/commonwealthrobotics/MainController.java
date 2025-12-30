@@ -1008,7 +1008,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				name = intermediateShape.getName();
 			String x = name + " " + type.trim() + " " + String.format(Locale.US,"%.1f", percent) + "% finished : " + i + " of "
 					+ finalIndex;
-			if (SplashManager.isVisableSplash()) {
+			if (SplashManager.isVisibleSplash()) {
 				//com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);
 				int s = x.indexOf(' ');
 				SplashManager.onLogUpdate(x.substring(s, x.length()));
@@ -1027,7 +1027,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
 				SplashManager.renderSplashFrame(3, "Initialize Model");
-				while (!SplashManager.isVisableSplash()) {
+				while (!SplashManager.isVisibleSplash()) {
 					Thread.sleep(100);
 				}
 				ap.get().initialize();
@@ -1036,7 +1036,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				do {
 					Thread.sleep(100);
 					SplashManager.closeSplash();
-				} while (SplashManager.isVisableSplash());
+				} while (SplashManager.isVisibleSplash());
 				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
 				BowlerStudio.runLater(() -> cancel());
 				// JavaFX startup freeze workaround

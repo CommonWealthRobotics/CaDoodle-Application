@@ -120,7 +120,7 @@ public class ExportManager {
 		Thread t=new Thread(() -> {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
-			ArrayList<CSG> back = session.getAllVisable();
+			ArrayList<CSG> back = session.getAllVisible();
 			CaDoodleFile caDoodleFile = ap.get();
 			String name = toSlug(caDoodleFile.getMyProjectName());
 			int index = 1;
@@ -155,7 +155,7 @@ public class ExportManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			while(!SplashManager.isVisableSplash()) {
+//			while(!SplashManager.isVisibleSplash()) {
 //				try {
 //					Thread.sleep(100);
 //				} catch (InterruptedException e) {

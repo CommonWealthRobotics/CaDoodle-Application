@@ -891,7 +891,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setKeyBindingFocus() {
-		if (!SplashManager.isVisableSplash())
+		if (!SplashManager.isVisibleSplash())
 			if (engine != null) {
 				// new Exception("KB Focused here").printStackTrace();
 				// com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
@@ -1867,7 +1867,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getControls().setMode(placing);
 	}
 
-	public ArrayList<CSG> getAllVisable() {
+	public ArrayList<CSG> getAllVisible() {
 		ArrayList<CSG> back = new ArrayList<CSG>();
 		
 		for (CSG c : getCurrentState()) {

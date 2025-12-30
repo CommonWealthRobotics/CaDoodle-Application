@@ -103,7 +103,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			if (t.isAlive()) {
-				while (!SplashManager.isVisableSplash()) {
+				while (!SplashManager.isVisibleSplash()) {
 					SplashManager.renderSplashFrame((int) (get().getPercentInitialized() * 100), " Re-Generating");
 					try {
 						Thread.sleep(100);
@@ -251,7 +251,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					if(insertionStrat!=OperationResult.ASK)
 						return insertionStrat;
 					operationResult = null;
-					boolean isVis = SplashManager.isVisableSplash();
+					boolean isVis = SplashManager.isVisibleSplash();
 					SplashManager.closeSplash();
 					BowlerKernel.runLater(() -> {
 						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

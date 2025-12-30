@@ -215,7 +215,7 @@ public class Main extends Application {
 			});
 			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				Log.debug("CaDoodle Exiting CLean");
+				Log.debug("CaDoodle Exiting Clean");
 				Log.flush();
 			}));
 		} catch (IOException e) {
@@ -390,7 +390,7 @@ public class Main extends Application {
 			@Override
 			public boolean get(String name, String url) {
 				buttonType = null;
-				boolean isVis = SplashManager.isVisableSplash();
+				boolean isVis = SplashManager.isVisibleSplash();
 				SplashManager.closeSplash();
 				BowlerKernel.runLater(() -> {
 					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

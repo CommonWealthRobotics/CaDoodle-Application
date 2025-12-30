@@ -250,11 +250,11 @@ public class SelectionBox {
 
 	public List<String> checkOverlap(CSG selection2) {
 		List<String> overlapping = new ArrayList<>();
-		ArrayList<CSG> visable = session.getSelectable();
+		ArrayList<CSG> visible = session.getSelectable();
 		CSGClient c= CSGClient.getClient();
 		if(c!=null)
 			CSGClient.setClient(null);
-		for (CSG key : visable) {
+		for (CSG key : visible) {
 			// Check if boxes overlap
 			if(key.hasManipulator()) {
 				key=key.transformed(TransformFactory.affineToCSG(key.getManipulator()));
