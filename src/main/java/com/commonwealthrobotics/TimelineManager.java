@@ -371,8 +371,17 @@ public class TimelineManager {
 								contextMenu.hide();
 								if (ap.get().isRegenerating() || !ap.get().isInitialized())
 									return;
-
-								ap.get().deleteTailFromCurrent();
+								int index = ap.get().getCurrentIndex() - 1;
+								Button button = buttons.get(index < 0 ? 0 : index);
+								contextMenu.hide();
+								if (button == toAdd)
+									return;
+								for (CSG c : state)
+									engine.removeObject(c);
+								new Thread(() -> {
+									ap.get().moveToOpIndex(my);
+									ap.get().deleteTailFromCurrent();
+								}).start();
 
 							});
 							contextMenu.getItems().add(deleteAfterItem);
