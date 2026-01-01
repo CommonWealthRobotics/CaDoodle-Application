@@ -142,7 +142,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private VBox parametrics;
 	private ActiveProject ap = null;
-	private HashMap<CaDoodleOperation, FileChangeWatcher> myWatchers = new HashMap<>();
+	private HashMap<FileChangeWatcher, CaDoodleOperation> myWatchers = new HashMap<>();
 	private Button lockButton;
 	private ImageView lockImage;
 	private boolean useButton = false;
@@ -163,6 +163,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Runnable updateRobotLab = null;
 	private LimbControlManager limbs;
 	private ProgressIndicator memUsage;
+	private boolean regenerating;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -256,16 +257,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
-	private void myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
-		FileChangeWatcher fileChangeWatcher = myWatchers.get(source);
+	private Thread myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
+		if(regenerating)
+			return null;
+		regenerating = true;
+		FileChangeWatcher fileChangeWatcher = null;
+		for (FileChangeWatcher w : myWatchers.keySet()) {
+			if (myWatchers.get(w) == source)
+				fileChangeWatcher = w;
+		}
 		if (fileChangeWatcher != null) {
 			fileChangeWatcher.close();
-			myWatchers.remove(source);
+			myWatchers.remove(fileChangeWatcher);
 		}
-		com.neuronrobotics.sdk.common.Log.error("Regenerating from CaDoodle " + source);
+		com.neuronrobotics.sdk.common.Log.debug("Regenerating from CaDoodle " + source);
 
 		// new Exception().printStackTrace();
-		getExecutor().submit(() -> {
+		Thread tr= new Thread(() -> {
 			try {
 				ap.get().getCsgDBinstance().saveDatabase();
 			} catch (Exception e) {
@@ -273,8 +281,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 			Thread t = ap.regenerateFrom(source);
-			if (t == null)
+			if (t == null) {
+				SplashManager.closeSplash();
 				return;
+			}
 			try {
 				t.join();
 			} catch (InterruptedException e) {
@@ -286,14 +296,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				FileChangeWatcher w;
 				try {
 					w = FileChangeWatcher.watch(f);
-					myWatchers.put(source, w);
+					myWatchers.put(w, source);
 					w.addIFileChangeListener(l);
 				} catch (IOException e) {
 					// Auto-generated catch block
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			}
+			regenerating = false;
 		});
+		tr.start();
+		return tr;
 	}
 
 	private void setUpParametrics(List<CSG> currentState, CaDoodleOperation source) {
@@ -302,25 +315,59 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			MobileBaseBuilder builder = op.getMobilBaseBuilder();
 			try {
 				LimbOption limb = op.getLimb();
+				DHParameterKinematics kin = op.getKinematics();
+				File configFile = ScriptingEngine.fileFromGit(limb.getUrl(), limb.getSourceFile());
+				File cadFile = ScriptingEngine.fileFromGit(kin.getGitCadEngine());
+				
+				FileChangeWatcher fileChangeWatcher = null;
+				for (FileChangeWatcher w : myWatchers.keySet()) {
+					if (myWatchers.get(w) == source)
+						fileChangeWatcher = w;
+					if(w.getFileToWatch().toPath().compareTo(configFile.toPath())==0) {
+						fileChangeWatcher=w;
+					}
+					if(w.getFileToWatch().toPath().compareTo(cadFile.toPath())==0) {
+						fileChangeWatcher=w;
+					}
+				}
+				if (fileChangeWatcher == null) {
 
-				if (myWatchers.get(source) == null) {
-					File file = ScriptingEngine.fileFromGit(limb.getUrl(), limb.getSourceFile());
 					IFileChangeListener l = new IFileChangeListener() {
+						boolean active = false;
+
 						@Override
 						public void onFileDelete(File fileThatIsDeleted) {
 						}
 
 						@Override
 						public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
-							Log.debug("File Change updating " + source.getType());
-							builder.clear();
-							myRegenerate(source, this, file);
+							if (ap.get().isRegenerating() || active) {
+								Log.error("Failed regenerate because still running");
+								return;
+							}
+							active = true;
+							try {
+								Log.debug("File Change updating " + source.getType() + " because of "
+										+ fileThatChanged.getAbsolutePath());
+								builder.clear(op);	
+								Thread tr = myRegenerate(source, this, fileThatChanged);
+								if(tr!=null) {
+									tr.join();
+								}
+							} catch (Exception ex) {
+								Log.error(ex);
+							}
+							active = false;
 						}
 
 					};
 					try {
-						FileChangeWatcher w = FileChangeWatcher.watch(file);
-						myWatchers.put(source, w);
+						FileChangeWatcher w1 = FileChangeWatcher.watch(configFile);
+						myWatchers.put(w1, source);
+						w1.addIFileChangeListener(l);
+						FileChangeWatcher w = FileChangeWatcher.watch(cadFile);
+						w.removeIFileChangeListeners();
+						myWatchers.put(w, source);
 						w.addIFileChangeListener(l);
 					} catch (IOException e) {
 						Log.error(e);
@@ -349,14 +396,30 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					@Override
 					public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
 						com.neuronrobotics.sdk.common.Log.error("File Change updating " + source.getType());
-						myRegenerate(source, this, myFile);
+						Thread tr=myRegenerate(source, this, myFile);
+						if(tr!=null) {
+							try {
+								tr.join();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
 
 				};
-				if (myWatchers.get(source) == null) {
+				FileChangeWatcher fileChangeWatcher = null;
+				for (FileChangeWatcher w : myWatchers.keySet()) {
+					if (myWatchers.get(w) == source)
+						fileChangeWatcher = w;
+					if(w.getFileToWatch().toPath().compareTo(f.toPath())==0) {
+						fileChangeWatcher=w;
+					}
+				}
+				if (fileChangeWatcher == null) {
 					try {
 						FileChangeWatcher w = FileChangeWatcher.watch(f);
-						myWatchers.put(source, w);
+						myWatchers.put(w, source);
 						w.addIFileChangeListener(l);
 					} catch (IOException e) {
 						// Auto-generated catch block
@@ -1708,7 +1771,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			try {
 				ap.addOp(mc).join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			TickToc.setEnabled(false);
@@ -1727,7 +1789,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1745,7 +1806,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						try {
 							Thread.sleep(300);
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 						ap.get().setSaveUpdate(saveDisplay);
@@ -1755,7 +1815,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						try {
 							t.join();
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 						SplashManager.closeSplash();
@@ -2001,7 +2060,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onTimelineUpdate(int num) {
-		// TODO Auto-generated method stub
 
 	}
 
