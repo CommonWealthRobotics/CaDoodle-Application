@@ -97,7 +97,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			return null;
 		new Thread(() -> {
 			try {
-				Thread.sleep(200);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);

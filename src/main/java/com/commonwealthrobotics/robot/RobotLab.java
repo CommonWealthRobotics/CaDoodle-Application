@@ -182,7 +182,7 @@ public class RobotLab {
 					controllersVBox.getChildren().add(new Label(num + " " + controller.getType()));
 					num++;
 				}
-				for (AddRobotLimb c : builder.getLimmbs()) {
+				for (AddRobotLimb c : builder.getLimbs()) {
 					LimbOption controller = c.getLimb();
 					combined.add(controller.getProvides());
 					consumed.add(controller.getConsumes());
