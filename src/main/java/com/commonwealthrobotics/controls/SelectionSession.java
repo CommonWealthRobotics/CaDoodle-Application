@@ -159,6 +159,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Runnable updateRobotLab = null;
 	private LimbControlManager limbs;
 	private ProgressIndicator memUsage; 
+	private boolean resizeLiveMode = false; // IRON
+	public boolean isResizeLiveMode() { return resizeLiveMode; } // IRON
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -1174,13 +1176,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						TransformFactory.nrToAffine(copy, gemoAffine);
 					});
 
-					for (CSG c : selectedCSG) {
-						MeshView meshView = getMeshes().get(c);
-						if (meshView != null)
-							BowlerKernel.runLater(() -> {
-								meshView.setVisible(false);
-							});
-					}
+                    for (CSG c : selectedCSG) {
+                        MeshView meshView = getMeshes().get(c);
+                        if (meshView != null)
+                            BowlerKernel.runLater(() -> {
+                                if (!isResizeLiveMode()) {
+                                    meshView.setVisible(false);
+                                }
+                            });
+                    }
 					workplane.setIndicator(indicator, gemoAffine);
 					workplane.setOnSelectEvent(() -> {
 						for (CSG c : selectedCSG) {
