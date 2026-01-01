@@ -446,7 +446,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
 			pm.setSpecularColor(new Color(0.55, 0.55, 0.55, 1));
-			meshView.setCullFace(CullFace.NONE);
+			meshView.setCullFace(CullFace.BACK);
 			meshView.setDrawMode(DrawMode.FILL);
 			meshView.setDepthTest(DepthTest.ENABLE);
 			meshView.setBlendMode(BlendMode.SRC_OVER);
