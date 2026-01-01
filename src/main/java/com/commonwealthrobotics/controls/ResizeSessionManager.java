@@ -492,33 +492,46 @@ public class ResizeSessionManager {
 		Bounds b = getBounds();
 		Vector3d c = b.getCenter();
 		com.neuronrobotics.sdk.common.Log.error("Resizing to " + x + " " + y + " " + z);
+
 		if (topCenter.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("Z resize");
-			topCenter.manipulator.set(0, 0, z - b.getTotalZ());
+
+			topCenter.manipulator.setInReferenceFrame(0, 0, z - b.getTotalZ());
 			if (topCenter.isUniform()) {
 				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
 				uniformScalingZ(tcC);
 			}
 			topCenter.manipulator.fireSave();
 		}
+
 		if (leftFront.isSelected()) {
 			com.neuronrobotics.sdk.common.Log.error("leftFront resize");
-			leftFront.manipulator.set(x - b.getTotalX(), (y - b.getTotalY()), 0);
+			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
 			leftFront.manipulator.fireSave();
 		}
+
 		if (leftRear.isSelected()) {
-			com.neuronrobotics.sdk.common.Log.error("leftRear resize");
-			leftRear.manipulator.set(-(x - b.getTotalX()), (y - b.getTotalY()), 0);
+			double lr_x = -(x - b.getTotalX());
+			double lr_y = (y - b.getTotalY());
+			scalingFlag = false;
+			leftRear.manipulator.setInReferenceFrame(lr_x, lr_y, 0);
+			leftFront.manipulator.setInReferenceFrame(leftFront.manipulator.getCurrentPose().getX(), lr_y, 0);
+			rightRear.manipulator.setInReferenceFrame(lr_x, rightRear.manipulator.getCurrentPose().getY(), 0);
 			leftRear.manipulator.fireSave();
 		}
+
 		if (rightFront.isSelected()) {
-			com.neuronrobotics.sdk.common.Log.error("rightFront resize");
-			rightFront.manipulator.set(x - b.getTotalX(), -(y - b.getTotalY()), 0);
+			double rf_x = x - b.getTotalX();
+			double rf_y = -(y - b.getTotalY());
+			scalingFlag = false;
+			rightFront.manipulator.setInReferenceFrame(rf_x, rf_y, 0);
+			rightRear.manipulator.setInReferenceFrame(rightRear.manipulator.getCurrentPose().getX(), rf_y, 0);
+			leftFront.manipulator.setInReferenceFrame(rf_x, leftFront.manipulator.getCurrentPose().getY(), 0);
 			rightFront.manipulator.fireSave();
 		}
+
 		if (rightRear.isSelected()) {
-			com.neuronrobotics.sdk.common.Log.error("rightRear resize");
-			rightRear.manipulator.set(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
+			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
 			rightRear.manipulator.fireSave();
 		}
 	}
