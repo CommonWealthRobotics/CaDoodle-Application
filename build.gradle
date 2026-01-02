@@ -39,8 +39,8 @@ subprojects {
 	apply plugin: 'eclipse'
     
     java {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
 	eclipse {
@@ -58,8 +58,8 @@ subprojects {
 			}
 		}
 		jdt {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
 		}
 	}
 
@@ -239,8 +239,8 @@ eclipse {
 	}
 
 	jdt {
-		sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+		sourceCompatibility = 1.8
+        targetCompatibility = 1.8
 		file {
 			withProperties { properties ->
 				properties.setProperty('org.eclipse.jdt.core.compiler.problem.forbiddenReference', 'ignore')
