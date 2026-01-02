@@ -102,7 +102,6 @@ dependencies {
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:java-bowler')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:GithubPasswordManager:GithubPasswordManager')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel')
-	implementation project(':BowlerStudio:libraries:dockfx')
 	implementation project(':BowlerStudio')
 
 	// Use JUnit Jupiter for testing.
