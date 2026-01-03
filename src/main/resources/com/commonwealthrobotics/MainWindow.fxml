@@ -329,7 +329,11 @@
                                                             <Label minHeight="0.0" text="Snap Grid" />
                                                             <ComboBox fx:id="snapGrid">
                                                                 <stylesheets>
-                                                                    <String fx:value="data:text/css,                                                                         .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }                                                                         .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }                                                                         .combo-box .arrow-button { -fx-padding: 0 0 0 0; }                                                                         .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}                                                                         " />
+                                                                    <String fx:value="data:text/css, .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }
+                                                                    .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }
+                                                                    .combo-box .arrow-button { -fx-padding: 0 0 0 0; }
+                                                                    .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}
+                                                                    " />
                                                                 </stylesheets>
                                                             </ComboBox>
 
@@ -541,42 +545,44 @@
                         </StackPane>
                         <AnchorPane fx:id="drawerArea" style="-fx-padding: 0 0 2 3; -fx-border-color: #BBBBBB; -fx-border-width: 0 0 1 1;" HBox.hgrow="NEVER">
                            <children>
-                              <GridPane fx:id="drawerGrid" style="-fx-padding: 0 0 0 3; -fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0">
+                              <GridPane fx:id="drawerGrid" style="-fx-padding: 0 5 0 3; -fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="72.0" halignment="CENTER" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="72.0" halignment="CENTER" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="72.0" halignment="CENTER" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="38.0" prefHeight="38.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="50.0" minHeight="34.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="34.0" prefHeight="34.0" vgrow="SOMETIMES" />
                                     <RowConstraints vgrow="ALWAYS" />
                                 </rowConstraints>
+
                                  <children>
-                                    <ComboBox fx:id="shapeCatagory" onAction="#onSetCatagory" prefHeight="26.0" prefWidth="197.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="shapeCategory" onAction="#onSetCategory" prefHeight="26.0" prefWidth="196.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                                     <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                                        <children>
+
                                           <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <content>
                                               <AnchorPane minHeight="0.0" minWidth="0.0">
                                                    <children>
                                                       <GridPane fx:id="objectPallet" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <columnConstraints>
-                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="60.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="62.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="62.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="62.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
-                                                          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                       </GridPane>
                                                    </children>
@@ -585,7 +591,8 @@
                                           </ScrollPane>
                                        </children>
                                     </AnchorPane>
-                                    <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWorkplane" styleClass="image-button">
+
+                                    <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWorkplane" styleClass="image-button" style="-fx-translate-y: 2" GridPane.columnIndex="0">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -597,7 +604,8 @@
                                           <Tooltip text="Workplane Tool &lt;W&gt;" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" styleClass="image-button" GridPane.columnIndex="1">
+
+                                    <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" styleClass="image-button" style="-fx-translate-y: 2"  GridPane.columnIndex="1">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -609,7 +617,8 @@
                                           <Tooltip text="Ruler Tool &lt;R&gt;" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" GridPane.columnIndex="2">
+
+                                    <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" style="-fx-translate-y: 2" GridPane.columnIndex="2">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -621,16 +630,20 @@
                                           <Tooltip text="Notes &lt;N&gt;" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" styleClass="image-button" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                    <HBox alignment="CENTER_LEFT" spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3" maxHeight="26.0" style="-fx-padding: 0 3 0 3;" >
+                                        <TextField fx:id="searchField" disable="true" maxWidth="152" prefHeight="26.0"/>
+
+                                       <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" styleClass="image-button" >
                                        <graphic>
-                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@search.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                    <TextField fx:id="searchField" disable="true" maxWidth="128.0" prefHeight="26.0" prefWidth="128.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+
+                                 </HBox>
                                  </children>
                               </GridPane>
                            </children>
