@@ -64,7 +64,7 @@ public class ShapesPallet {
 	 * Class variables
 	 */
 
-	private ComboBox<String> shapeCatagory;
+	private ComboBox<String> shapeCategory;
 	private GridPane objectPallet;
 	private HashMap<String, HashMap<String, HashMap<String, String>>> nameToFile = new HashMap<>();
 	private Type TT = new TypeToken<HashMap<String, HashMap<String, String>>>() {
@@ -85,18 +85,18 @@ public class ShapesPallet {
 
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
-		this.shapeCatagory = sc;
+		this.shapeCategory = sc;
 		this.objectPallet = objectPallet;
 		this.session = session;
 		ap = active;
 		workplane = workplane2;
-		mine = new ShapePalletMyDoodles(shapeCatagory, objectPallet, session, ap, workplane);
+		mine = new ShapePalletMyDoodles(shapeCategory, objectPallet, session, ap, workplane);
 		// new Thread(() -> {
 		try {
 			ArrayList<String> files = ScriptingEngine.filesInGit(getGitULR());
 			sortedList = new ArrayList<>(files);
 			Collections.sort(sortedList);
-			shapeCatagory.getItems().add(mine.getName());
+			shapeCategory.getItems().add(mine.getName());
 			for (String f : sortedList) {
 				if (f.toLowerCase().endsWith(".json")) {
 					String contents = ScriptingEngine.codeFromGit(getGitULR(), f)[0];
@@ -106,7 +106,7 @@ public class ShapesPallet {
 					String filename = split[0];
 					HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
 					nameToFile.put(filename, tmp);
-					shapeCatagory.getItems().add(filename);
+					shapeCategory.getItems().add(filename);
 				}
 			}
 		} catch (Exception e) {
@@ -114,12 +114,12 @@ public class ShapesPallet {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-		BowlerStudio.runLater(() -> shapeCatagory.getSelectionModel().select(starting));
-		onSetCatagory();
+		BowlerStudio.runLater(() -> shapeCategory.getSelectionModel().select(starting));
+		onSetCategory();
 		// }).start();
 	}
 
-	public void onSetCatagory() {
+	public void onSetCategory() {
 		if (searchMode)
 			return;
 		threadRunning = false;
@@ -138,7 +138,7 @@ public class ShapesPallet {
 			threadRunning = true;
 			ap.setDisableRegenerate(true);
 			try {
-				String current = shapeCatagory.getSelectionModel().getSelectedItem();
+				String current = shapeCategory.getSelectionModel().getSelectedItem();
 				com.neuronrobotics.sdk.common.Log.debug("Selecting shapes from " + current);
 				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
 				if (current.contentEquals(mine.getName())) {
@@ -339,8 +339,8 @@ public class ShapesPallet {
 			});
 		}
 
-		BowlerStudio.runLater(() -> shapeCatagory.setDisable(searchMode));
-		onSetCatagory();
+		BowlerStudio.runLater(() -> shapeCategory.setDisable(searchMode));
+		onSetCategory();
 	}
 
 	private void updateFromSearch(String newValue) {
