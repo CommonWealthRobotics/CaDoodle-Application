@@ -232,7 +232,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								pureRot=TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
 								// an in-plane snapping here by transforming the points
 								// into the plane orentation, then snapping in plane, then transforming the points back. 
-								TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
 								TransformNR t = new TransformNR(x, y, z);
 								TransformNR screenLocationtmp = t;//manipulatorNR.times(t);
 								Polygon np = p.transformed(TransformFactory.affineToCSG(manipulator).inverse());
