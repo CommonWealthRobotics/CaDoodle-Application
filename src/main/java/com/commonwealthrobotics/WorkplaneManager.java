@@ -1,5 +1,6 @@
 package com.commonwealthrobotics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -10,11 +11,15 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.ext.org.poly2tri.PolygonUtil;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.collections.ObservableFloatArray;
 import javafx.event.EventHandler;
@@ -202,26 +207,41 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			z=SelectionSession.roundToNearist(z,increment);
 			
 			TransformNR screenLocation;
-			double[] angles = new double[] { 0, 0, 0 };
+			TransformNR pureRot=new TransformNR();
 			Affine manipulator =new Affine();
+			CSG source=null;
 			if (intersectedNode instanceof MeshView) {
 				MeshView meshView = (MeshView) intersectedNode;
 				if(meshesReverseLookup!=null) {
-					CSG source = meshesReverseLookup.get(meshView);
+					source = meshesReverseLookup.get(meshView);
 					if(source!=null)
 						if(source.getManipulator()!=null)
 							manipulator=source.getManipulator();
 				}
+				
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
 				int faceIndex = pickResult.getIntersectedFace();
-				if (faceIndex >= 0)
-					angles = getFaceNormalAngles(mesh, faceIndex);
-				else
-					com.neuronrobotics.sdk.common.Log.error("Error face index came back: " + faceIndex);
+				if (faceIndex >= 0) {
+					if(source!=null) {
+						ArrayList<Polygon> polygons = source.getPolygons();
+						if(mesh.getFaceElementSize()==polygons.size()) {
+							Polygon p =  polygons.get(faceIndex);
+							try {
+								pureRot=TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
+							} catch (ColinearPointsException e) {
+								Log.error(e);
+							}
+						}else {
+							Log.error("Number of polygons "+polygons.size()+" but got face count "+mesh.getFaceElementSize());
+						}
+					}else {
+						pureRot = getFaceNormalAngles(mesh, faceIndex);
+					}
+				}else
+					Log.error("Error face index came back: " + faceIndex);
 			}
 			TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
-			TransformNR pureRot = new TransformNR(new RotationNR(angles[1], angles[0], angles[2]));
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = manipulatorNR.times(t.times(pureRot));
 			
@@ -240,9 +260,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		}
 	}
 
-	private double[] getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
+	private TransformNR getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
 		ObservableFaceArray faces = mesh.getFaces();
 		ObservableFloatArray points = mesh.getPoints();
+		//mesh.get
 
 		int p1Index = faces.get(faceIndex * 6) * 3;
 		int p2Index = faces.get(faceIndex * 6 + 2) * 3;
@@ -277,7 +298,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		if (azimuth > 180) {
 			azimuth -= 360;
 		}
-		return new double[] { azimuth, tilt, roll };
+		return new TransformNR(new RotationNR( tilt, azimuth, roll));
 	}
 
 	public TransformNR getCurrentAbsolutePose() {
