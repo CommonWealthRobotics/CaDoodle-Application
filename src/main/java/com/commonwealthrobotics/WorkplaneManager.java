@@ -243,10 +243,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								//Log.debug("Polygon "+flattened);
 								//Log.debug("Point "+flattenedTouch.toSimpleString());
 								TransformNR adjusted = new TransformNR(
-										SelectionSession.roundToNearist(flattenedTouch.getX(),increment),
+										SelectionSession.roundToNearist(flattenedTouch.getX(),increment),// snap in plane
 										SelectionSession.roundToNearist(flattenedTouch.getY(),increment),
-										flattened.getPoints().get(0).z);
-								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
+										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
+								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
 								x=adjustedBack.getX();
 								y=adjustedBack.getY();
 								z=adjustedBack.getZ();
