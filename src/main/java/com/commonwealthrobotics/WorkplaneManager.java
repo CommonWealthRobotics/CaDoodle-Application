@@ -252,7 +252,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								z=adjustedBack.getZ();
 								
 								//Log.debug("Polygon snapped "+adjusted);
-								// TODO finish snapping and apply to motion
 							} catch (Exception e) {
 								Log.error(e);
 							}
