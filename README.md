@@ -80,6 +80,9 @@ The build CaDoodle-Application.jar file will be located in ```build/libs```
 
 The Windows CaDoodle application is located in the Windows user directory: ```users\<username>\bin\CaDoodle-ApplicationInstall```
 
+# IntelliJ IDEA instructions
+
+[IDEA setup Instructions Here](IntelliJ%20IDEA.md)
 
 # Eclipse instructions
 
