@@ -317,33 +317,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		Point3D v1 = p2.subtract(p1);
-		Point3D v2 = p3.subtract(p1);
-
-		Point3D normal = v1.crossProduct(v2).normalize();
-
-		// Calculate azimuth and tilt
-		double azimuth = Math.atan2(normal.getY(), normal.getX());
-		double tilt = Math.asin(normal.getZ());
-
-		// Convert to degrees
-		azimuth = Math.toDegrees(azimuth) - 90;
-		tilt = Math.toDegrees(tilt) - 90;
-
-		Point3D globalX = new Point3D(1, 0, 0);
-		Point3D localY = normal.crossProduct(globalX).normalize();
-		Point3D localX = normal.crossProduct(localY).normalize();
-		double roll =0;// Math.atan2(localY.getZ(), localX.getZ());
-
-		// Ensure azimuth is in the range [-180, 180)
-		if (azimuth < -180) {
-			azimuth += 360;
-		}
-		if (azimuth > 180) {
-			azimuth -= 360;
-		}
-		return new TransformNR(new RotationNR( tilt, azimuth, roll));
+		return new TransformNR();
 	}
 
 	public TransformNR getCurrentAbsolutePose() {
