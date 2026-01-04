@@ -19,6 +19,7 @@ import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Polygon;
+import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.ext.org.poly2tri.PolygonUtil;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
@@ -233,7 +234,24 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								// into the plane orentation, then snapping in plane, then transforming the points back. 
 								TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
 								TransformNR t = new TransformNR(x, y, z);
-								TransformNR screenLocationtmp = manipulatorNR.times(t.times(pureRot));
+								TransformNR screenLocationtmp = manipulatorNR.times(t);
+								Polygon np = p.transformed(TransformFactory.affineToCSG(manipulator));
+								Transform npTF =PolygonUtil.calculateNormalTransform(np);
+								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
+								Polygon flattened = np.transformed(npTF);
+								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
+								//Log.debug("Polygon "+flattened);
+								//Log.debug("Point "+flattenedTouch.toSimpleString());
+								TransformNR adjusted = new TransformNR(
+										SelectionSession.roundToNearist(flattenedTouch.getX(),increment),
+										SelectionSession.roundToNearist(flattenedTouch.getY(),increment),
+										flattened.getPoints().get(0).z);
+								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
+								x=adjustedBack.getX();
+								y=adjustedBack.getY();
+								z=adjustedBack.getZ();
+								
+								//Log.debug("Polygon snapped "+adjusted);
 								// TODO finish snapping and apply to motion
 							} catch (Exception e) {
 								Log.error(e);
