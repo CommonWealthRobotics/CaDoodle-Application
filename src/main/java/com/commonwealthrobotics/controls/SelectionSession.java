@@ -63,6 +63,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -200,6 +201,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			public double getCamerDepth() {
 				return engine.getFlyingCamera().getZoomDepth();
+			}
+
+			@Override
+			public PerspectiveCamera getCamera() {
+				return engine.getFlyingCamera().getCamera();
 			}
 		});
 		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
