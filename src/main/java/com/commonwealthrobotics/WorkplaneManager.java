@@ -245,9 +245,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 						x=SelectionSession.roundToNearist(x,increment);
 						y=SelectionSession.roundToNearist(y,increment);
 						z=SelectionSession.roundToNearist(z,increment);
-						if(pureRot==null) {
-							pureRot = getFaceNormalAngles(mesh, faceIndex).inverse();
-						}
+					}
+					if(pureRot==null) {
+						pureRot = getFaceNormalAngles(mesh, faceIndex).inverse();
 					}
 				}else
 					Log.error("Error face index came back: " + faceIndex);
