@@ -234,8 +234,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								// into the plane orentation, then snapping in plane, then transforming the points back. 
 								TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
 								TransformNR t = new TransformNR(x, y, z);
-								TransformNR screenLocationtmp = manipulatorNR.times(t);
-								Polygon np = p.transformed(TransformFactory.affineToCSG(manipulator));
+								TransformNR screenLocationtmp = t;//manipulatorNR.times(t);
+								Polygon np = p.transformed(TransformFactory.affineToCSG(manipulator).inverse());
 								Transform npTF =PolygonUtil.calculateNormalTransform(np);
 								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
 								Polygon flattened = np.transformed(npTF);
