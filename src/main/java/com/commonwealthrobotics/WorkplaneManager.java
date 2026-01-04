@@ -232,6 +232,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							} catch (Exception e) {
 								Log.error(e);
 							}
+							//TODO add an in-plane snapping here by transforming the points
+							// into the plane orentation, then snapping in plane, then transforming the points back. 
 						}else
 							Log.error("Polygon not found " + faceIndex);
 					}else {
