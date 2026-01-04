@@ -187,12 +187,37 @@ if (project == rootProject) {
         archiveVersion.set('')
         zip64 true
         mergeServiceFiles()
-        exclude '**/*.pdb'
-        eachFile { file ->
-            if (file.path.endsWith('.pdb')) {
-                file.exclude()
-            }
-        }
+
+        exclude '**/*.pdb' // Exclude Windows debug files from Jar
+
+        // Development options: Items that can be excluded when not used
+        // exclude '**/opencv/**'       // OpenCV
+        // exclude '**/ibm/**'          // IBM
+        // exclude '**/sun/**'          // Sun
+        // exclude '**/netty/**'        // Netty
+        // exclude 'Windows**/**'       // Windows
+        // exclude 'win**/**'           // Windows
+        // exclude '**/*.dll'           // Windows
+        // exclude '**/*.lib'           // Libs
+        // exclude '**/*.obj'           // Obj
+        // exclude '**/*.exp'           // Exp
+        // exclude '**/*.md'            // Docs
+        // exclude '**/*.dylib'         // MacOS
+        // exclude '**/*.jnilib'        // MacOS
+        // exclude 'Mac-x86_64/**'      // MacOS
+        // exclude '**/*.so'            // Linux/Unix
+        // exclude 'Linux-**/**'        // Linux/Unix
+        // exclude 'linux-**/**'        // Linux/Unix
+        // exclude 'marytts/**'         // Text to speach
+        // exclude 'scala/**'           // Scala
+        // exclude '**/python/**'       // Python
+        // exclude 'ai/**'              // ai
+        // exclude '**/versions/**'     // Versions
+        // exclude '**/glassfish/**'    // Glassfish
+        // exclude '**/bouncycastle/**' // bouncycastle
+
+        // Development option: Uncompressed Jar, might build faster, but Jar is larger
+        // entryCompression=ZipEntryCompression.STORED
     }
 }
 
