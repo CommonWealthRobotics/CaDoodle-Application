@@ -234,6 +234,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							}
 							//TODO add an in-plane snapping here by transforming the points
 							// into the plane orentation, then snapping in plane, then transforming the points back. 
+							TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
+							TransformNR t = new TransformNR(x, y, z);
+							TransformNR screenLocationtmp = manipulatorNR.times(t.times(pureRot)).times(pureRot).inverse();
+							
+							
 						}else
 							Log.error("Polygon not found " + faceIndex);
 					}else {
