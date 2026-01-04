@@ -3,6 +3,7 @@ package com.commonwealthrobotics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -202,12 +203,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				y *=  MainController.groundScale();
 				z *=  MainController.groundScale();
 			}
-			x=SelectionSession.roundToNearist(x,increment);
-			y=SelectionSession.roundToNearist(y,increment);
-			z=SelectionSession.roundToNearist(z,increment);
+
 			
 			TransformNR screenLocation;
-			TransformNR pureRot=new TransformNR();
+			TransformNR pureRot=null;
 			Affine manipulator =new Affine();
 			CSG source=null;
 			if (intersectedNode instanceof MeshView) {
@@ -222,21 +221,26 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
 				int faceIndex = pickResult.getIntersectedFace();
+
 				if (faceIndex >= 0) {
 					if(source!=null) {
 						ArrayList<Polygon> polygons = source.getPolygons();
-						if(mesh.getFaceElementSize()==polygons.size()) {
-							Polygon p =  polygons.get(faceIndex);
+						Polygon p =  getPolygonFromFaceIndex(faceIndex,polygons);
+						if(p!=null) {
 							try {
-								pureRot=TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
-							} catch (ColinearPointsException e) {
+								pureRot=TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
+							} catch (Exception e) {
 								Log.error(e);
 							}
-						}else {
-							Log.error("Number of polygons "+polygons.size()+" but got face count "+mesh.getFaceElementSize());
-						}
+						}else
+							Log.error("Polygon not found " + faceIndex);
 					}else {
-						pureRot = getFaceNormalAngles(mesh, faceIndex);
+						x=SelectionSession.roundToNearist(x,increment);
+						y=SelectionSession.roundToNearist(y,increment);
+						z=SelectionSession.roundToNearist(z,increment);
+						if(pureRot==null) {
+							pureRot = getFaceNormalAngles(mesh, faceIndex).inverse();
+						}
 					}
 				}else
 					Log.error("Error face index came back: " + faceIndex);
@@ -259,7 +263,34 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			
 		}
 	}
-
+	public static Polygon getPolygonFromFaceIndex(int faceIndex, List<Polygon> polygons) {
+		if (faceIndex < 0) {
+			return null;
+		}
+		
+		int currentFaceCount = 0;
+		
+		// We need to iterate because some polygons might have < 3 vertices (0 faces)
+		// If you're CERTAIN all polygons have >= 3 vertices, this could be optimized
+		for (Polygon p : polygons) {
+			int vertexCount = p.getVertices().size();
+			if (vertexCount >= 3) {
+				int facesInThisPolygon = vertexCount - 2;
+				
+				// Check if the face index falls within this polygon's range
+				if (faceIndex < currentFaceCount + facesInThisPolygon) {
+					return p;
+				}
+				
+				currentFaceCount += facesInThisPolygon;
+			}
+		}
+		
+		return null;
+	}
+	private Vector3d toV(javafx.geometry.Point3D p) {
+		return new Vector3d(p.getX(),p.getY(),p.getZ());
+	}
 	private TransformNR getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
 		ObservableFaceArray faces = mesh.getFaces();
 		ObservableFloatArray points = mesh.getPoints();
@@ -272,6 +303,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Point3D p1 = new Point3D(points.get(p1Index), points.get(p1Index + 1), points.get(p1Index + 2));
 		Point3D p2 = new Point3D(points.get(p2Index), points.get(p2Index + 1), points.get(p2Index + 2));
 		Point3D p3 = new Point3D(points.get(p3Index), points.get(p3Index + 1), points.get(p3Index + 2));
+		try {
+			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1),toV(p2),toV(p3)));
+			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
+		} catch (ColinearPointsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		Point3D v1 = p2.subtract(p1);
 		Point3D v2 = p3.subtract(p1);
