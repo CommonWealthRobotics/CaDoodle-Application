@@ -158,6 +158,7 @@ public class ThreedNumber {
 	private void validate() {
 		// Number set from event
 		String t = textField.getText();
+		// com.neuronrobotics.sdk.common.Log.error(" Validating string "+t);
 		if (t.length() == 0) {
 			// empty string, do nothing
 			return;
