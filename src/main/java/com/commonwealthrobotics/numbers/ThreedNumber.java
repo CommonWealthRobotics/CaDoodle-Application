@@ -44,7 +44,6 @@ public class ThreedNumber {
 	private TextField textField = new TextField("20.00");
 	private TransformNR positionPin;
 	private double mostRecentValue = 20;
-	//private final DecimalFormat format = new DecimalFormat("#0.000");
 
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
