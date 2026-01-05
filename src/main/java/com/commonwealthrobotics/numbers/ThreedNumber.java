@@ -26,9 +26,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
+
 import javafx.util.StringConverter;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Locale;
 
 public class ThreedNumber {
 	private double screenW;
@@ -41,7 +44,7 @@ public class ThreedNumber {
 	private TextField textField = new TextField("20.00");
 	private TransformNR positionPin;
 	private double mostRecentValue = 20;
-	private final DecimalFormat format = new DecimalFormat("#0.000");
+	//private final DecimalFormat format = new DecimalFormat("#0.000");
 
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
@@ -104,13 +107,23 @@ public class ThreedNumber {
 		this.ruler = ruler;
 		// Set the preferred width to use computed size
 		textField.setPrefWidth(50);
+		Pattern validPattern = Pattern.compile("[0-9.\\-]*");
 
+		// TextFormatter with filter
+		TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
+			String newText = change.getControlNewText();
+			if (validPattern.matcher(newText).matches()) {
+				return change; // Accept the change
+			}
+			return null; // Reject the change
+		});
+		textField.setTextFormatter(textFormatter);
 		textField.prefWidthProperty().bind(textField.textProperty().length().multiply(8).add(20));
 		textField.setOnKeyPressed(event -> {
 			if (lockout)
 				return;
 			if (event.getCode() == KeyCode.ENTER) {
-				new Thread(()->{
+				new Thread(() -> {
 					runEnter();
 				}).start();
 				event.consume(); // prevent parent from stealing the event
@@ -146,6 +159,7 @@ public class ThreedNumber {
 	private void validate() {
 		// Number set from event
 		String t = textField.getText();
+		t = t.replace(',', '.');
 		// com.neuronrobotics.sdk.common.Log.error(" Validating string "+t);
 		if (t.length() == 0) {
 			// empty string, do nothing
@@ -160,7 +174,8 @@ public class ThreedNumber {
 
 	public void setValue(double v) {
 		lockout = true;
-		textField.setText(format.format(v - ruler.getOffset(dim)));
+		String formatted3 = String.format(Locale.US, "%.3f", v - ruler.getOffset(dim));
+		textField.setText(formatted3);
 		setMostRecentValue(v);
 		lockout = false;
 		// validate();
