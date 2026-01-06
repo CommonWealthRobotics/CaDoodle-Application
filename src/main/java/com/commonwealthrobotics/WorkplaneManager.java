@@ -298,18 +298,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		// If you're CERTAIN all polygons have >= 3 vertices, this could be optimized
 		for (Polygon p : polygons) {
 			int vertexCount = p.getVertices().size();
-			if (vertexCount >= 3) {
-				int facesInThisPolygon = vertexCount - 2;
-				
-				// Check if the face index falls within this polygon's range
-				if (faceIndex < currentFaceCount + facesInThisPolygon) {
-					return p;
-				}
-				
-				currentFaceCount += facesInThisPolygon;
+			int facesInThisPolygon = vertexCount - 2;
+			// Check if the face index falls within this polygon's range
+			if (faceIndex < currentFaceCount + facesInThisPolygon) {
+				return p;
 			}
+			currentFaceCount += facesInThisPolygon;	
 		}
-		
 		return null;
 	}
 	private Vector3d toV(javafx.geometry.Point3D p) {
