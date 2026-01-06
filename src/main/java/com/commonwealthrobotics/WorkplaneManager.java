@@ -330,9 +330,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		try {
 			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1),toV(p2),toV(p3)));
 			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
-		} catch (ColinearPointsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+
 		}
 		return new TransformNR();
 	}
