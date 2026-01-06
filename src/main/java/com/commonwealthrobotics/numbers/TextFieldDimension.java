@@ -1,6 +1,6 @@
 package com.commonwealthrobotics.numbers;
 
-public enum TextFieldDimention {
+public enum TextFieldDimension {
 	X,
 	Y,
 	Z,

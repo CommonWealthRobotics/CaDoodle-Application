@@ -44,20 +44,19 @@ public class RotationSessionManager {
 			result.add(r.handle);
 			result.add(r.controlCircle);
 			result.add(r.arc);
-			result.add(r.text.get());
+			result.add(r.TDnumber.getTextField());
 		}
 		return result;
 	}
 
 	public void initialize(boolean b) {
+
 		for (RotationHandle r : handles) {
 			r.handle.setVisible(!b);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
-			r.text.hide();
-
+			r.TDnumber.hide();
 		}
-
 	}
 
 	public void hide() {
@@ -65,7 +64,7 @@ public class RotationSessionManager {
 			r.handle.setVisible(false);
 			r.controlCircle.setVisible(false);
 			r.arc.setVisible(false);
-			r.text.hide();
+			r.TDnumber.hide();
 		}
 	}
 

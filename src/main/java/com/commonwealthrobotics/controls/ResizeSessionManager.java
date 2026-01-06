@@ -61,13 +61,13 @@ public class ResizeSessionManager {
 			// Scale in workplane coordinates
 			CSG scaledCSG = workplaneCSG.transformed(xyzScale);
 			// Transform back to global coordinates
-			CSG globalCSG = scaledCSG.transformed(workplaneTransform);		  
+			CSG globalCSG = scaledCSG.transformed(workplaneTransform);
 			regenerateMesh(c, globalCSG);
 		}
 	}
 
 	private void regenerateMesh(CSG key, CSG scaledCSG) {
-		MeshView old = meshes.get(key);   // lookup with original key
+		MeshView old = meshes.get(key); // lookup with original key
 		if (old == null)
 			return;
 
@@ -117,7 +117,7 @@ public class ResizeSessionManager {
 				originalBounds = getBounds();
 
 			controlSprites.hideRotationHandles(true);
-			   
+
 			 double sx = 0, sy = 0, sz = 0;
 			// Uniform scaling with shift key
 			if (ev != null && ev.isShiftDown()) {
@@ -570,7 +570,7 @@ topCenter.manipulator.addEventListener(ev -> {
 	}
 */
 
-private void threeDTarget() { // New way for control handles, always closest to 
+private void threeDTarget() { // New way for control handles, always closest to the work plane
 	Vector3d center = bounds.getCenter();
 	Vector3d min	= bounds.getMin(); // relative to work plane
 	Vector3d max	= bounds.getMax(); // relative to work plane
@@ -580,17 +580,17 @@ private void threeDTarget() { // New way for control handles, always closest to
 	double cornerZ = 0; // Object is cut by work plane
 
 	// choose the face that is closest to the work-plane
-	if (min.z > 0)  // object is above the work plane
+	if (min.z > 0) // object is above the work plane
 		cornerZ = min.z;
 	else
 	if (max.z < 0) // object is below the work plane
 		cornerZ = max.z;
 	
 	topCenter.threeDTarget( screenW, screenH, zoom, new TransformNR(center.x, center.y,   max.z), cf, locked);
-	leftFront.threeDTarget( screenW, screenH, zoom, new TransformNR(max.x,	   max.y, cornerZ), cf, locked);
-	leftRear.threeDTarget(  screenW, screenH, zoom, new TransformNR(min.x,	   max.y, cornerZ), cf, locked);
-	rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x,	   min.y, cornerZ), cf, locked);
-	rightRear.threeDTarget( screenW, screenH, zoom, new TransformNR(min.x,	   min.y, cornerZ), cf, locked);
+	leftFront.threeDTarget( screenW, screenH, zoom, new TransformNR(max.x,	     max.y, cornerZ), cf, locked);
+	leftRear.threeDTarget(  screenW, screenH, zoom, new TransformNR(min.x,	     max.y, cornerZ), cf, locked);
+	rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x,	     min.y, cornerZ), cf, locked);
+	rightRear.threeDTarget( screenW, screenH, zoom, new TransformNR(min.x,	     min.y, cornerZ), cf, locked);
 
 	update();
 }

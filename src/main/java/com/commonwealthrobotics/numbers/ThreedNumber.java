@@ -9,29 +9,28 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.util.StringConverter;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.application.Platform;
 
+import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
 
-import javafx.util.StringConverter;
-import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Locale;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public class ThreedNumber {
 	private double screenW;
@@ -41,7 +40,7 @@ public class ThreedNumber {
 	// private SelectionSession session;
 	private Affine move;
 	private Affine workplaneOffset;
-	private TextField textField = new TextField("20.00");
+	private TextField textField = new TextField("20.000");
 	private TransformNR positionPin;
 	private double mostRecentValue = 20;
 
@@ -49,16 +48,23 @@ public class ThreedNumber {
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
 	private double scale;
-	private Affine resizeHandleLocation = new Affine();
-	private Runnable onSelect;
-	private Affine reorent;
-	private TextFieldDimention dim;
+//	private Affine resizeHandleLocation = new Affine();
+	private Runnable onChange;
+	private Affine reOrient;
+	private TextFieldDimension tfDimension;
 	private RulerManager ruler;
 	private boolean lockout = false;
-	private static HashMap<ThreedNumber, Long> lastPressed = new HashMap<>();
+//	private static HashMap<ThreedNumber, Long> lastPressed = new HashMap<>();
+	private double initialValue;
+	private volatile boolean showing = false;
+	private int wholeDigits;   // Allowed whole digits before the dot
+	private char decimalSeparator = '.';
+	public boolean canceled = false; // Edit was canceled, keep old value
+
+// DISABLE TIMEOUT FOR NOW
+/*
 	private static Thread timeout = null;
 	private static final long timeoutTime = 5000;
-
 	private static void startThread() {
 		if (timeout == null) {
 			timeout = new Thread(() -> {
@@ -94,54 +100,142 @@ public class ThreedNumber {
 	public void clearTimeout() {
 		lastPressed.remove(this);
 	}
+*/
 
-	public ThreedNumber(Affine move, Affine workplaneOffset, Runnable onSelect, TextFieldDimention dim,
-			RulerManager ruler) {
-		startThread();
+	public ThreedNumber(Affine move, Affine workplaneOffset, Runnable onChange, TextFieldDimension tfDimension,
+			RulerManager ruler, int wholeDigits) {
+		// startThread(); // TIMEOUT DISABLED
 		// this.session = session;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
-		this.onSelect = onSelect;
-		this.dim = dim;
+		this.onChange = onChange;
+		this.tfDimension = tfDimension;
 		this.ruler = ruler;
-		// Set the preferred width to use computed size
-		textField.setPrefWidth(50);
-		Pattern validPattern = Pattern.compile("[0-9.\\-]*");
+		this.wholeDigits = wholeDigits;
 
-		// TextFormatter with filter
-		TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
-			String newText = change.getControlNewText();
-			if (validPattern.matcher(newText).matches()) {
-				return change; // Accept the change
+		getSystemDecimalSeparator();
+
+		// Select number at edit box select
+		textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal) {
+				Platform.runLater(() -> {
+					textField.selectAll();
+					textField.requestFocus();
+				});
 			}
-			return null; // Reject the change
 		});
+
+		textField.setMinWidth(62);
+		textField.setStyle("-fx-padding: 5 12 5 12; -fx-alignment: center;");
+
+		// Regular expression: -aaaa.bbb, digitsin "aaaa" is defined in wholeDigits
+		Pattern validPattern = decimalSeparator == '.' ?
+			Pattern.compile(String.format("^-?\\d{0,%d}(?:\\.\\d{0,3})?$", wholeDigits)) :
+			Pattern.compile(String.format("^-?\\d{0,%d}(?:\\,\\d{0,3})?$", wholeDigits));
+
+		TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
+			String oldText = change.getControlText();
+			String addText = change.getText();
+			int	pos	 = change.getCaretPosition();
+
+			if ("-".equals(addText)) {
+				if (oldText.startsWith("-")) { // Remove "-" in front
+					change.setText("");
+					change.setRange(0, 1);
+					change.setCaretPosition(Math.max(0, pos - 2));
+					change.setAnchor(Math.max(0, pos - 2));
+				} else {
+					change.setText("-");
+					change.setRange(0, 0);
+				}
+				return validPattern.matcher(change.getControlNewText()).matches() ? change : null;
+			}
+
+			return validPattern.matcher(change.getControlNewText()).matches() ? change : null;
+		});
+
 		textField.setTextFormatter(textFormatter);
-		textField.prefWidthProperty().bind(textField.textProperty().length().multiply(8).add(20));
+		textField.prefWidthProperty().bind(textField.textProperty().length().multiply(7).add(20));
 		textField.setOnKeyPressed(event -> {
+
 			if (lockout)
 				return;
-			if (event.getCode() == KeyCode.ENTER) {
-				new Thread(() -> {
+
+			if (event.getCode() == KeyCode.ESCAPE) {
+				event.consume();
+				canceled = true;
+				new Thread(()-> {
 					runEnter();
 				}).start();
-				event.consume(); // prevent parent from stealing the event
+
 				return;
 			}
-			long timeMillis = System.currentTimeMillis();
-			// com.neuronrobotics.sdk.common.Log.debug(this + " set on " + timeMillis);
 
-			lastPressed.put(this, timeMillis);
+			if (event.getCode() == KeyCode.ENTER) {
+				event.consume();
+				new Thread(()->{
+					runEnter();
+				}).start();
+
+				return;
+			}
+
+			// Up arrow increases value by 1.0
+			if (event.getCode() == KeyCode.UP) {
+				event.consume();
+				double currentValue = getMostRecentValue();
+				if (currentValue + 1.0 < Math.pow(10, wholeDigits))
+					setValue(currentValue + 1.0);
+				return;
+			}
+
+			// Down arrow increases value by 1.0
+			if (event.getCode() == KeyCode.DOWN) {
+				event.consume();
+				double currentValue = getMostRecentValue();
+				if (currentValue - 1.0 > -Math.pow(10, wholeDigits))
+					setValue(currentValue - 1.0);
+				return;
+			}
+
+			// Page up increase the value by 10.0
+			if (event.getCode() == KeyCode.PAGE_UP) {
+				event.consume();
+				double currentValue = getMostRecentValue();
+				if (currentValue + 10.0 < Math.pow(10, wholeDigits))
+					setValue(currentValue + 10.0);
+				return;
+			}
+
+			// Page down decreases the value by 10.0
+			if (event.getCode() == KeyCode.PAGE_DOWN) {
+				event.consume();
+				double currentValue = getMostRecentValue();
+				if (currentValue - 10.0 > -Math.pow(10, wholeDigits))
+					setValue(currentValue - 10.0);
+				return;
+			}
+
+			//long timeMillis = System.currentTimeMillis();
+			//lastPressed.put(this, timeMillis);
+
 		});
-		reorent = new Affine();
+
+		reOrient = new Affine();
 		textField.getTransforms().add(move);
-		textField.getTransforms().add(resizeHandleLocation);
+//		textField.getTransforms().add(resizeHandleLocation);
 		textField.getTransforms().add(workplaneOffset);
 		textField.getTransforms().add(location);
 		textField.getTransforms().add(cameraOrent);
 		textField.getTransforms().add(scaleTF);
-		textField.getTransforms().add(reorent);
+		textField.getTransforms().add(reOrient);
 
+	} // Constructor
+
+	public void getSystemDecimalSeparator() {
+
+		Locale systemLocale = Locale.getDefault();
+		this.decimalSeparator = DecimalFormatSymbols.getInstance(systemLocale).getDecimalSeparator();
 	}
 
 	public boolean isFocused() {
@@ -149,22 +243,26 @@ public class ThreedNumber {
 	}
 
 	private void runEnter() {
+
+		// If value didn't change, report operation canceled, prevents save
+		if (Math.abs(getMostRecentValue() - initialValue) < 1e-6)
+			canceled = true;
+
 		BowlerStudio.runLater(this::hide);
 		validate();
-		onSelect.run();
-		clearTimeout();
+		onChange.run();
 	}
 
 	private void validate() {
-		// Number set from event
-		String t = textField.getText();
-		// com.neuronrobotics.sdk.common.Log.error(" Validating string "+t);
+		// parseDouble needs a dot as decimal separator
+		String t = textField.getText().replace(',', '.');
+		// com.neuronrobotics.sdk.common.Log.error(" Validating string " + t);
 		if (t.length() == 0) {
 			// empty string, do nothing
 			return;
 		}
 		try {
-			setMostRecentValue(Double.parseDouble(t) + ruler.getOffset(dim));
+			setMostRecentValue(Double.parseDouble(t) + ruler.getOffset(tfDimension));
 		} catch (NumberFormatException ex) {
 			setValue(getMostRecentValue());
 		}
@@ -172,22 +270,34 @@ public class ThreedNumber {
 
 	public void setValue(double v) {
 		lockout = true;
-		String formatted3 = String.format(Locale.US, "%.3f", v - ruler.getOffset(dim));
+		canceled = false;
+		double maxValue = Math.pow(10, wholeDigits) - Math.pow(10, -3); // 9999.999
+		v = Math.max(-maxValue, Math.min(maxValue, v));
+		v += 0.0; // Kill -0.000
+		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - ruler.getOffset(tfDimension));
 		textField.setText(formatted3);
 		setMostRecentValue(v);
 		lockout = false;
 		// validate();
 	}
 
-	public Node get() {
+	public Node getTextField() {
 		return textField;
 	}
 
 	public void hide() {
 		textField.setVisible(false);
+		showing = false;
 	}
 
 	public void show() {
+		if (showing)
+			return;
+		showing = true;
+
+		initialValue += 0.0; // Kill -0.000
+		initialValue = getMostRecentValue();
+		textField.setText(String.format(Locale.getDefault(), "%.3f", initialValue));
 		textField.setVisible(true);
 	}
 
@@ -228,7 +338,7 @@ public class ThreedNumber {
 		// scale "+scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(new TransformNR(10, 5, 0, new RotationNR(0, 180, 0)), reorent);
+			TransformFactory.nrToAffine(new TransformNR(10, 5, 0, new RotationNR(0, 180, 0)), reOrient);
 
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
