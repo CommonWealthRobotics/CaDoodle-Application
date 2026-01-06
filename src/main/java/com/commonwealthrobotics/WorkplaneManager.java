@@ -215,7 +215,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if(meshesReverseLookup!=null) {
 					source = meshesReverseLookup.get(meshView);
 					if(source!=null)
-						if(source.getManipulator()!=null)
+						if(source.hasManipulator())
 							manipulator=source.getManipulator();
 				}
 				
