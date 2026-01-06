@@ -254,8 +254,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="settingsButton"
 	private Button settingsButton; // Value injected by FXMLLoader
 
-	@FXML // fx:id="shapeCatagory"
-	private ComboBox<String> shapeCatagory; // Value injected by FXMLLoader
+	@FXML // fx:id="shapeCategory"
+	private ComboBox<String> shapeCategory; // Value injected by FXMLLoader
 
 	@FXML // fx:id="shapeConfiguration"
 	private TitledPane shapeConfiguration; // Value injected by FXMLLoader
@@ -748,9 +748,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@FXML
-	void onSetCatagory(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Set Catagory, re-lod object pallet");
-		pallet.onSetCatagory();
+	void onSetCategory(ActionEvent event) {
+		com.neuronrobotics.sdk.common.Log.error("On Set Category, re-lod object pallet");
+		pallet.onSetCategory();
 		session.setKeyBindingFocus();
 	}
 
@@ -874,8 +874,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert rulerButton != null : "fx:id=\"rulerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert settingsButton != null
 				: "fx:id=\"settingsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert shapeCatagory != null
-				: "fx:id=\"shapeCatagory\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert shapeCategory != null
+				: "fx:id=\"shapeCategory\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert shapeConfiguration != null
 				: "fx:id=\"shapeConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert shapeConfigurationBox != null
@@ -1274,7 +1274,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ruler.setWorkplane(workplane);
 		ruler.setWP(ap.get().getWorkplane());
 		session.setWorkplaneManager(workplane);
-		pallet = new ShapesPallet(shapeCatagory, objectPallet, session, ap, workplane);
+		pallet = new ShapesPallet(shapeCategory, objectPallet, session, ap, workplane);
 		workplane.placeWorkplaneVisualization();
 		selectionBox.setWorkplaneManager(workplane);
 		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab,

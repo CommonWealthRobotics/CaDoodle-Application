@@ -2,7 +2,7 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 1px;
-    -fx-background-insets: 0;
+    -fx-background-insets: 3 5 2 5;
 }
 .normal-button {
     -fx-background-color: #f2c83d; /* logo-yellow */
@@ -257,9 +257,13 @@
        -fx-background-color: #f4ede0; /* logo-beige */
 }
 
-#shapeCatagory{
+#shapeCategory{
        -fx-background-color: #f2c83d; /* logo-yellow */
+       -fx-border-color: #263d8c; /* logo-blue */
+       -fx-border-radius: 4px;
+       -fx-border-width: 1px;
 }
+
 #snapGrid{
        -fx-background-color: #f2c83d; /* logo-yellow */
 }

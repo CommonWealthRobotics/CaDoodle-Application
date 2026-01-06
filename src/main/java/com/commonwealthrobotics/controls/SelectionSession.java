@@ -67,6 +67,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -162,8 +163,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button robotLabDrawer;
 	private Runnable updateRobotLab = null;
 	private LimbControlManager limbs;
-	private ProgressIndicator memUsage;
 	private boolean regenerating;
+	private ProgressIndicator memUsage; 
+	private boolean resizeLiveMode = false; // IRON
+	public boolean isResizeLiveMode() { return resizeLiveMode; } // IRON
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -204,6 +207,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			public double getCamerDepth() {
 				return engine.getFlyingCamera().getZoomDepth();
+			}
+
+			@Override
+			public PerspectiveCamera getCamera() {
+				return engine.getFlyingCamera().getCamera();
 			}
 		});
 		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
@@ -552,7 +560,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
 			pm.setSpecularColor(new Color(0.55, 0.55, 0.55, 1));
-			meshView.setCullFace(CullFace.NONE);
+			meshView.setCullFace(CullFace.BACK);
 			meshView.setDrawMode(DrawMode.FILL);
 			meshView.setDepthTest(DepthTest.ENABLE);
 			meshView.setBlendMode(BlendMode.SRC_OVER);
@@ -1274,13 +1282,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						TransformFactory.nrToAffine(copy, gemoAffine);
 					});
 
-					for (CSG c : selectedCSG) {
-						MeshView meshView = getMeshes().get(c);
-						if (meshView != null)
-							BowlerKernel.runLater(() -> {
-								meshView.setVisible(false);
-							});
-					}
+                    for (CSG c : selectedCSG) {
+                        MeshView meshView = getMeshes().get(c);
+                        if (meshView != null)
+                            BowlerKernel.runLater(() -> {
+                                if (!isResizeLiveMode()) {
+                                    meshView.setVisible(false);
+                                }
+                            });
+                    }
 					workplane.setIndicator(indicator, gemoAffine);
 					workplane.setOnSelectEvent(() -> {
 						for (CSG c : selectedCSG) {

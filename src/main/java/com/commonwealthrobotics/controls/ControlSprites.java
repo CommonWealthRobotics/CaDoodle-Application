@@ -217,7 +217,7 @@ public class ControlSprites {
 			updateLines();
 			// com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
 		};
-		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, up);
+		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, up, this);
 		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
 				scaleSession.rightRear.getMesh(), scaleSession.leftFront.getMesh(), scaleSession.leftRear.getMesh(),
 				footprint, frontLine, backLine, leftLine, rightLine, heightLine, up.getMesh());
@@ -433,33 +433,41 @@ public class ControlSprites {
 			double lineEndOffsetY = 0;// Math.min(5 * lineScale, max.y - min.y);
 			double lineEndOffsetX = 0;// Math.min(5 * lineScale, max.x - min.x);
 			double lineEndOffsetZ = 0;// Math.min(5, max.z - min.z);
+
+			// Draw lines closest to work plane
+			double linesZ = 0;
+            if (min.z > 0) // Object is above the work plane
+                linesZ = min.z;
+            if (max.z < 0) // Object is below the work plane
+                linesZ = max.z;
+
 			frontLine.setStartX(max.x);
 			frontLine.setStartY(min.y + lineEndOffsetY);
 			frontLine.setEndX(max.x);
 			frontLine.setEndY(max.y - lineEndOffsetY);
-			frontLine.setStartZ(min.z);
-			frontLine.setEndZ(min.z);
+			frontLine.setStartZ(linesZ);
+			frontLine.setEndZ(linesZ);
 
 			backLine.setStartX(min.x);
 			backLine.setStartY(min.y + lineEndOffsetY);
 			backLine.setEndX(min.x);
 			backLine.setEndY(max.y - lineEndOffsetY);
-			backLine.setStartZ(min.z);
-			backLine.setEndZ(min.z);
+			backLine.setStartZ(linesZ);
+			backLine.setEndZ(linesZ);
 
 			leftLine.setStartX(min.x + lineEndOffsetX);
 			leftLine.setStartY(max.y);
 			leftLine.setEndX(max.x - lineEndOffsetX);
 			leftLine.setEndY(max.y);
-			leftLine.setStartZ(min.z);
-			leftLine.setEndZ(min.z);
+			leftLine.setStartZ(linesZ);
+			leftLine.setEndZ(linesZ);
 
 			rightLine.setStartX(min.x + lineEndOffsetX);
 			rightLine.setStartY(min.y);
 			rightLine.setEndX(max.x - lineEndOffsetX);
 			rightLine.setEndY(min.y);
-			rightLine.setStartZ(min.z);
-			rightLine.setEndZ(min.z);
+			rightLine.setStartZ(linesZ);
+		    rightLine.setEndZ(linesZ);
 
 			heightLine.setStartX(center.x);
 			heightLine.setStartY(center.y);
@@ -693,5 +701,10 @@ public class ControlSprites {
 	public SelectionSession getSession() {
 		return session;
 	}
+
+	public void hideRotationHandles(boolean hide) {
+		BowlerStudio.runLater(() -> rotationManager.hide());
+	}
+
 
 }

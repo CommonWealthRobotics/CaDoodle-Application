@@ -39,8 +39,8 @@ subprojects {
 	apply plugin: 'eclipse'
     
     java {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
 	eclipse {
@@ -58,8 +58,8 @@ subprojects {
 			}
 		}
 		jdt {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
 		}
 	}
 
@@ -102,7 +102,6 @@ dependencies {
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:java-bowler')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel:GithubPasswordManager:GithubPasswordManager')
 	implementation project(':BowlerStudio:libraries:bowler-script-kernel')
-	implementation project(':BowlerStudio:libraries:dockfx')
 	implementation project(':BowlerStudio')
 
 	// Use JUnit Jupiter for testing.
@@ -188,12 +187,37 @@ if (project == rootProject) {
         archiveVersion.set('')
         zip64 true
         mergeServiceFiles()
-        exclude '**/*.pdb'
-        eachFile { file ->
-            if (file.path.endsWith('.pdb')) {
-                file.exclude()
-            }
-        }
+
+        exclude '**/*.pdb' // Exclude Windows debug files from Jar
+
+        // Development options: Items that can be excluded when not used
+        // exclude '**/opencv/**'       // OpenCV
+        // exclude '**/ibm/**'          // IBM
+        // exclude '**/sun/**'          // Sun
+        // exclude '**/netty/**'        // Netty
+        // exclude 'Windows**/**'       // Windows
+        // exclude 'win**/**'           // Windows
+        // exclude '**/*.dll'           // Windows
+        // exclude '**/*.lib'           // Libs
+        // exclude '**/*.obj'           // Obj
+        // exclude '**/*.exp'           // Exp
+        // exclude '**/*.md'            // Docs
+        // exclude '**/*.dylib'         // MacOS
+        // exclude '**/*.jnilib'        // MacOS
+        // exclude 'Mac-x86_64/**'      // MacOS
+        // exclude '**/*.so'            // Linux/Unix
+        // exclude 'Linux-**/**'        // Linux/Unix
+        // exclude 'linux-**/**'        // Linux/Unix
+        // exclude 'marytts/**'         // Text to speach
+        // exclude 'scala/**'           // Scala
+        // exclude '**/python/**'       // Python
+        // exclude 'ai/**'              // ai
+        // exclude '**/versions/**'     // Versions
+        // exclude '**/glassfish/**'    // Glassfish
+        // exclude '**/bouncycastle/**' // bouncycastle
+
+        // Development option: Uncompressed Jar, might build faster, but Jar is larger
+        // entryCompression=ZipEntryCompression.STORED
     }
 }
 
@@ -240,8 +264,8 @@ eclipse {
 	}
 
 	jdt {
-		sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+		sourceCompatibility = 1.8
+        targetCompatibility = 1.8
 		file {
 			withProperties { properties ->
 				properties.setProperty('org.eclipse.jdt.core.compiler.problem.forbiddenReference', 'ignore')

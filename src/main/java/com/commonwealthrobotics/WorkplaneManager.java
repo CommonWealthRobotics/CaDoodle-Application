@@ -1,7 +1,9 @@
 package com.commonwealthrobotics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -10,11 +12,16 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import eu.mihosoft.vrl.v3d.Polygon;
+import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.ext.org.poly2tri.PolygonUtil;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.collections.ObservableFloatArray;
 import javafx.event.EventHandler;
@@ -197,31 +204,72 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				y *=  MainController.groundScale();
 				z *=  MainController.groundScale();
 			}
-			x=SelectionSession.roundToNearist(x,increment);
-			y=SelectionSession.roundToNearist(y,increment);
-			z=SelectionSession.roundToNearist(z,increment);
+
 			
 			TransformNR screenLocation;
-			double[] angles = new double[] { 0, 0, 0 };
+			TransformNR pureRot=null;
 			Affine manipulator =new Affine();
+			CSG source=null;
 			if (intersectedNode instanceof MeshView) {
 				MeshView meshView = (MeshView) intersectedNode;
 				if(meshesReverseLookup!=null) {
-					CSG source = meshesReverseLookup.get(meshView);
+					source = meshesReverseLookup.get(meshView);
 					if(source!=null)
 						if(source.getManipulator()!=null)
 							manipulator=source.getManipulator();
 				}
+				
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
 				int faceIndex = pickResult.getIntersectedFace();
-				if (faceIndex >= 0)
-					angles = getFaceNormalAngles(mesh, faceIndex);
-				else
-					com.neuronrobotics.sdk.common.Log.error("Error face index came back: " + faceIndex);
+
+				if (faceIndex >= 0) {
+					if(source!=null) {
+						ArrayList<Polygon> polygons = source.getPolygons();
+						Polygon p =  getPolygonFromFaceIndex(faceIndex,polygons);
+						if(p!=null) {
+							try {
+								pureRot=TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
+								// an in-plane snapping here by transforming the points
+								// into the plane orentation, then snapping in plane, then transforming the points back. 
+								TransformNR t = new TransformNR(x, y, z);
+								TransformNR screenLocationtmp = t;//manipulatorNR.times(t);
+								Polygon np = p;//p.transformed(TransformFactory.affineToCSG(manipulator));
+								Transform npTF =PolygonUtil.calculateNormalTransform(np);
+								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
+								Polygon flattened = np.transformed(npTF);
+								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
+								//Log.debug("Polygon "+flattened);
+								//Log.debug("Point "+flattenedTouch.toSimpleString());
+								TransformNR adjusted = new TransformNR(
+										SelectionSession.roundToNearist(flattenedTouch.getX(),increment),// snap in plane
+										SelectionSession.roundToNearist(flattenedTouch.getY(),increment),
+										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
+								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
+								x=adjustedBack.getX();
+								y=adjustedBack.getY();
+								z=adjustedBack.getZ();
+								
+								//Log.debug("Polygon snapped "+adjusted);
+							} catch (Exception e) {
+								Log.error(e);
+							}
+
+							
+						}else
+							Log.error("Polygon not found " + faceIndex);
+					}else {
+						x=SelectionSession.roundToNearist(x,increment);
+						y=SelectionSession.roundToNearist(y,increment);
+						z=SelectionSession.roundToNearist(z,increment);
+					}
+					if(pureRot==null) {
+						pureRot = getFaceNormalAngles(mesh, faceIndex).inverse();
+					}
+				}else
+					Log.error("Error face index came back: " + faceIndex);
 			}
 			TransformNR manipulatorNR=TransformFactory.affineToNr(manipulator);
-			TransformNR pureRot = new TransformNR(new RotationNR(angles[1], angles[0], angles[2]));
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = manipulatorNR.times(t.times(pureRot));
 			
@@ -239,10 +287,38 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			
 		}
 	}
-
-	private double[] getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
+	public static Polygon getPolygonFromFaceIndex(int faceIndex, List<Polygon> polygons) {
+		if (faceIndex < 0) {
+			return null;
+		}
+		
+		int currentFaceCount = 0;
+		
+		// We need to iterate because some polygons might have < 3 vertices (0 faces)
+		// If you're CERTAIN all polygons have >= 3 vertices, this could be optimized
+		for (Polygon p : polygons) {
+			int vertexCount = p.getVertices().size();
+			if (vertexCount >= 3) {
+				int facesInThisPolygon = vertexCount - 2;
+				
+				// Check if the face index falls within this polygon's range
+				if (faceIndex < currentFaceCount + facesInThisPolygon) {
+					return p;
+				}
+				
+				currentFaceCount += facesInThisPolygon;
+			}
+		}
+		
+		return null;
+	}
+	private Vector3d toV(javafx.geometry.Point3D p) {
+		return new Vector3d(p.getX(),p.getY(),p.getZ());
+	}
+	private TransformNR getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
 		ObservableFaceArray faces = mesh.getFaces();
 		ObservableFloatArray points = mesh.getPoints();
+		//mesh.get
 
 		int p1Index = faces.get(faceIndex * 6) * 3;
 		int p2Index = faces.get(faceIndex * 6 + 2) * 3;
@@ -251,33 +327,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Point3D p1 = new Point3D(points.get(p1Index), points.get(p1Index + 1), points.get(p1Index + 2));
 		Point3D p2 = new Point3D(points.get(p2Index), points.get(p2Index + 1), points.get(p2Index + 2));
 		Point3D p3 = new Point3D(points.get(p3Index), points.get(p3Index + 1), points.get(p3Index + 2));
-
-		Point3D v1 = p2.subtract(p1);
-		Point3D v2 = p3.subtract(p1);
-
-		Point3D normal = v1.crossProduct(v2).normalize();
-
-		// Calculate azimuth and tilt
-		double azimuth = Math.atan2(normal.getY(), normal.getX());
-		double tilt = Math.asin(normal.getZ());
-
-		// Convert to degrees
-		azimuth = Math.toDegrees(azimuth) - 90;
-		tilt = Math.toDegrees(tilt) - 90;
-
-		Point3D globalX = new Point3D(1, 0, 0);
-		Point3D localY = normal.crossProduct(globalX).normalize();
-		Point3D localX = normal.crossProduct(localY).normalize();
-		double roll =0;// Math.atan2(localY.getZ(), localX.getZ());
-
-		// Ensure azimuth is in the range [-180, 180)
-		if (azimuth < -180) {
-			azimuth += 360;
+		try {
+			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1),toV(p2),toV(p3)));
+			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
+		} catch (ColinearPointsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		if (azimuth > 180) {
-			azimuth -= 360;
-		}
-		return new double[] { azimuth, tilt, roll };
+		return new TransformNR();
 	}
 
 	public TransformNR getCurrentAbsolutePose() {
