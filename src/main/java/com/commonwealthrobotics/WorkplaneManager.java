@@ -18,6 +18,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -216,7 +217,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					source = meshesReverseLookup.get(meshView);
 					if(source!=null)
 						if(source.hasManipulator())
-							manipulator=source.getManipulator();
+							try {
+								manipulator=source.getManipulator();
+							} catch (MissingManipulatorException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 				}
 				
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
