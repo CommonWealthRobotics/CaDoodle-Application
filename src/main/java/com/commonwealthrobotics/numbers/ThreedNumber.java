@@ -125,7 +125,7 @@ public class ThreedNumber {
 			}
 		});
 
-		textField.setMinWidth(62);
+		textField.setMinWidth(72);
 		textField.setStyle("-fx-padding: 5 12 5 12; -fx-alignment: center;");
 
 		// Regular expression: -aaaa.bbb, digitsin "aaaa" is defined in wholeDigits
