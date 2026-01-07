@@ -160,8 +160,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Runnable updateRobotLab = null;
 	private LimbControlManager limbs;
 	private ProgressIndicator memUsage; 
-	private boolean resizeLiveMode = false; // IRON
-	public boolean isResizeLiveMode() { return resizeLiveMode; } // IRON
+	private boolean resizeLiveMode = false;
+	public boolean isResizeLiveMode() { return resizeLiveMode; }
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {

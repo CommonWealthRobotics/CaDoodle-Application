@@ -418,6 +418,7 @@ public class ControlSprites {
 	}
 
 	public void updateLines() {
+
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
@@ -430,9 +431,9 @@ public class ControlSprites {
 			footprint.setY(Math.min(min.y, max.y));
 
 			double lineScale = 2 * (-zoom / 1000);
-			double lineEndOffsetY = 0;// Math.min(5 * lineScale, max.y - min.y);
-			double lineEndOffsetX = 0;// Math.min(5 * lineScale, max.x - min.x);
-			double lineEndOffsetZ = 0;// Math.min(5, max.z - min.z);
+			double lineEndOffsetY = 0; // Math.min(5 * lineScale, max.y - min.y);
+			double lineEndOffsetX = 0; // Math.min(5 * lineScale, max.x - min.x);
+			double lineEndOffsetZ = 0; // Math.min(5, max.z - min.z);
 
 			// Draw lines closest to work plane
 			double linesZ = 0;
@@ -475,19 +476,29 @@ public class ControlSprites {
 			heightLine.setEndX(center.x);
 			heightLine.setStartZ(min.z);
 			heightLine.setEndZ(max.z - lineEndOffsetZ);
+
 			double numberOffset = 20;
 			double viewScale = scaleSession.getViewScale();
-			TransformNR zHandleLoc = new TransformNR(center.x, center.y,
-					5 + max.z + (ResizingHandle.getSize() * viewScale));
-			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
-					scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
-			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
-					scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, min.z), cf);
-			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, center.z), cf);
-			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x - numberOffset, min.y, min.z), cf);
-			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y - numberOffset, min.z), cf);
+			TransformNR zHandleLoc = new TransformNR(center.x, center.y, 5 + max.z + (ResizingHandle.getSize() * viewScale));
+
+			xdimen.threeDTarget(screenW, screenH, zoom,
+            	new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
+
+			ydimen.threeDTarget(screenW, screenH, zoom,
+            	new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, min.z), cf);
+
+			zdimen.threeDTarget(screenW, screenH, zoom,
+            	new TransformNR(center.x, center.y, center.z), cf);
+
+			xOffset.threeDTarget(screenW, screenH, zoom,
+            	new TransformNR(min.x - numberOffset, min.y, min.z), cf);
+
+			yOffset.threeDTarget(screenW, screenH, zoom,
+            	new TransformNR(min.x, min.y - numberOffset, min.z), cf);
+
 			zOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(max.x + numberOffset / 5, max.y + numberOffset / 5, min.z), cf);
+            	new TransformNR(max.x + numberOffset / 5, max.y + numberOffset / 5, min.z), cf);
+
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
 			zdimen.setValue(bounds.getTotalZ());
@@ -552,7 +563,7 @@ public class ControlSprites {
 			scaleTF.setY(viewScale);
 			scaleTF.setZ(viewScale);
 			double dotscale = viewScale * 7;
-			if (dotscale > 00.75)
+			if (dotscale > 0.75)
 				dotscale = 0.75;
 			if (dotscale < 0.04)
 				dotscale = 0.04;

@@ -121,7 +121,8 @@ public class ResizeSessionManager {
 			 double sx = 0, sy = 0, sz = 0;
 			// Uniform scaling with shift key
 			if (ev != null && ev.isShiftDown()) {
-				double original_tx = originalBounds.getTotalX();
+				rightFront.manipulator.setSnapGridStatus(false); // disalble snap grid for this drag
+                double original_tx = originalBounds.getTotalX();
 				double original_ty = originalBounds.getTotalY();
 				double original_diagonal = Math.hypot(original_tx, original_ty);
 
@@ -142,8 +143,8 @@ public class ResizeSessionManager {
 
 				scalingFlag = true; // block recursive call
 				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
-				rightRear.manipulator.setInReferenceFrame (					 0, -original_ty * gs, 0);
-				leftFront.manipulator.setInReferenceFrame (original_tx * gs, 0					 , 0);
+				rightRear.manipulator.setInReferenceFrame (				  0, -original_ty * gs, 0);
+				leftFront.manipulator.setInReferenceFrame (original_tx * gs, 0				  , 0);
 
 				gs = gs + 1;
 				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * gs);
@@ -192,6 +193,7 @@ public class ResizeSessionManager {
 			controlSprites.hideRotationHandles(true);
 			double sx = 0, sy = 0, sz = 0;
 			if (ev != null && ev.isShiftDown()) {
+				rightRear.manipulator.setSnapGridStatus(false); // disalble snap grid for this drag
 				double original_x = originalBounds.getTotalX();
 				double original_y = originalBounds.getTotalY();
 				double original_diagonal = Math.hypot(original_x, original_y);
@@ -260,6 +262,7 @@ public class ResizeSessionManager {
 			controlSprites.hideRotationHandles(true);
 			double sx = 0, sy = 0, sz = 0;
 			if (ev != null && ev.isShiftDown()) {
+				leftFront.manipulator.setSnapGridStatus(false); // disalble snap grid for this drag
 				double original_x = originalBounds.getTotalX();
 				double original_y = originalBounds.getTotalY();
 				double original_diagonal = Math.hypot(original_x, original_y);
@@ -330,6 +333,7 @@ public class ResizeSessionManager {
 			controlSprites.hideRotationHandles(true);
 			double sx = 0, sy = 0, sz = 0;
 			if (ev != null && ev.isShiftDown()) {
+				leftRear.manipulator.setSnapGridStatus(false); // disalble snap grid for this drag
 				double original_x = originalBounds.getTotalX();
 				double original_y = originalBounds.getTotalY();
 				double original_diagonal = Math.hypot(original_x, original_y);

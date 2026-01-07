@@ -38,6 +38,7 @@ public class ResizingHandle {
 	private Scale scaleTF = new Scale();
 	private double scale;
 	private Affine resizeHandleLocation = new Affine();
+	private Affine baseMove;
 
 	public Manipulation manipulator;
 	private String name;
@@ -59,6 +60,7 @@ public class ResizingHandle {
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
 		this.name = name;
 		this.workplaneOffset = workplaneOffset;
+        this.baseMove = move;
 		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
@@ -87,9 +89,11 @@ public class ResizingHandle {
 			setUniform(event.isShiftDown());
 			onSelect.run();
 			setSelectedColor();
+
+			Point3D startingPos = getAbsolutePosition();
+			manipulator.setStartingWorkplanePosition(startingPos);
 		});
-		
-		
+
 		mesh.getTransforms().add(move);
 		mesh.getTransforms().add(resizeHandleLocation);
 		mesh.getTransforms().add(workplaneOffset);
@@ -100,6 +104,18 @@ public class ResizingHandle {
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
+
+public Point3D getAbsolutePosition() {
+	Affine combined = new Affine();
+	combined.prepend(scaleTF);
+	combined.prepend(cameraOrent);
+	combined.prepend(location);
+	combined.prepend(workplaneOffset);
+	combined.prepend(resizeHandleLocation);
+	combined.prepend(baseMove);
+	
+	return combined.transform(new Point3D(0, 0, 0));
+}
 
 	private void setSelectedColor() {
 		material.setDiffuseColor(highlightColor);
