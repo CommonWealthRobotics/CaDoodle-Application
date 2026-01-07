@@ -10,7 +10,7 @@ import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.align.AlignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
-import com.commonwealthrobotics.numbers.TextFieldDimention;
+import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.commonwealthrobotics.robot.LimbControlManager;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
@@ -66,7 +66,7 @@ public class ControlSprites {
 	private AlignManager align;
 	private MirrorSessionManager mirror;
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
-	// private Rectangle bottomDimentions = new Rectangle(100,100,new
+	// private Rectangle bottomDimensions = new Rectangle(100,100,new
 	// Color(0,0,1,0.25));
 	private Affine workplaneOffset = new Affine();
 	private MoveUpArrow up;
@@ -103,9 +103,9 @@ public class ControlSprites {
 	private ActiveProject ap;
 	private RulerManager ruler;
 
-	public void setSnapGrid(double size) {
-		zMove.setIncrement(size);
-		scaleSession.setSnapGrid(size);
+	public void setSnapGrid(double snapGridValue) {
+		zMove.setIncrement(snapGridValue);
+		scaleSession.setSnapGrid(snapGridValue);
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
@@ -228,11 +228,23 @@ public class ControlSprites {
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
 		Runnable dimChange = () -> {
+			if (xdimen.canceled || ydimen.canceled || zdimen.canceled) {
+				xdimen.hide();
+				ydimen.hide();
+				zdimen.hide();
+				return;
+			}
 			com.neuronrobotics.sdk.common.Log.error("Typed position update");
 			scaleSession.set(xdimen.getMostRecentValue(), ydimen.getMostRecentValue(), zdimen.getMostRecentValue());
 			updateLinesAndCubes();
 		};
+
 		Runnable offsetxyChange = () -> {
+			if ((xOffset.canceled) || (yOffset.canceled)) {
+				xOffset.hide();
+				yOffset.hide();
+				return;
+			}
 
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
@@ -244,7 +256,11 @@ public class ControlSprites {
 			manipulation.fireSave();
 			updateLinesAndCubes();
 		};
+
 		Runnable offsetZChange = () -> {
+			if (zOffset.canceled)
+				return;
+			
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
 			double manipDiff = zOffset.getMostRecentValue() - min.z;
@@ -253,15 +269,15 @@ public class ControlSprites {
 			zMove.fireSave();
 			updateLinesAndCubes();
 		};
-		xdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
-		ydimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
-		zdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimention.None, ruler);
-		xOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimention.X, ruler);
-		yOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimention.Y, ruler);
-		zOffset = new ThreedNumber(selection, workplaneOffset, offsetZChange, TextFieldDimention.Z, ruler);
+		xdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4);
+		ydimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4);
+		zdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4);
+		xOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.X, ruler, 4);
+		yOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.Y, ruler, 4);
+		zOffset = new ThreedNumber(selection, workplaneOffset, offsetZChange, TextFieldDimension.Z, ruler, 4);
 		numbers = Arrays.asList(xdimen, ydimen, zdimen, xOffset, yOffset, zOffset);
 		for (ThreedNumber t : numbers)
-			allElems.add(t.get());
+			allElems.add(t.getTextField());
 
 		clearSelection();
 		setUpUIComponennts();
@@ -436,10 +452,10 @@ public class ControlSprites {
 
 			// Draw lines closest to work plane
 			double linesZ = 0;
-            if (min.z > 0) // Object is above the work plane
-                linesZ = min.z;
-            if (max.z < 0) // Object is below the work plane
-                linesZ = max.z;
+			if (min.z > 0) // Object is above the work plane
+				linesZ = min.z;
+			if (max.z < 0) // Object is below the work plane
+				linesZ = max.z;
 
 			frontLine.setStartX(max.x);
 			frontLine.setStartY(min.y + lineEndOffsetY);
@@ -467,7 +483,7 @@ public class ControlSprites {
 			rightLine.setEndX(max.x - lineEndOffsetX);
 			rightLine.setEndY(min.y);
 			rightLine.setStartZ(linesZ);
-		    rightLine.setEndZ(linesZ);
+			rightLine.setEndZ(linesZ);
 
 			heightLine.setStartX(center.x);
 			heightLine.setStartY(center.y);

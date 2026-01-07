@@ -9,7 +9,7 @@ import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.Quadrant;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
-import com.commonwealthrobotics.numbers.TextFieldDimention;
+import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.commonwealthrobotics.numbers.ThreedNumber;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -57,18 +57,18 @@ public class RotationHandle {
 	private boolean flagSaveChange = false;
 	//private List<String> selectedCSG;
 	private boolean startAngleFound;
-	public ThreedNumber text;
+	public ThreedNumber TDnumber;
 	private boolean selected = false;
 	private Affine viewRotation;
 	private SelectionSession session;
 	private ActiveProject ap;
-	private boolean moveLock=false;
+	private boolean moveLock = false;
 	private IOnRotateDone done;
 	private IOnRotateMoving moving = null;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
 			RotationSessionManager rotationSessionManager, ActiveProject ap, 
-			SelectionSession cs, Affine workplaneOffset,RulerManager ruler,IOnRotateDone done) {
+			SelectionSession cs, Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
 		this.axis = ax;
 		this.viewRotation = vr;
 		this.ap = ap;
@@ -76,22 +76,26 @@ public class RotationHandle {
 		this.session = cs;
 		this.done = done;
 		
-		Runnable onSelect = ()->{
-			double mostRecentValue = text.getMostRecentValue();
+		Runnable onChange = ()-> {
+			if (TDnumber.canceled)
+				return;
 
-			com.neuronrobotics.sdk.common.Log.error("Number entered! = "+mostRecentValue);
+			double mostRecentValue = TDnumber.getMostRecentValue();
+
+			com.neuronrobotics.sdk.common.Log.error("Number entered! = " + mostRecentValue);
 			setSweepAngle(mostRecentValue);
-			flagSaveChange=true;
+			flagSaveChange = true;
 			runSaveAndReset();
 		};
-		text=new ThreedNumber(translate,  workplaneOffset, onSelect, TextFieldDimention.None, ruler);
-		text.get();
-		text.hide();
+
+		TDnumber = new ThreedNumber(translate, workplaneOffset, onChange, TextFieldDimension.None, ruler, 3);
+//		TDnumber.getTextField();
+		TDnumber.hide();
 		handle.setImage(rotateImage);
 		controlCircle.setImage(fullcircleImage);
 		controlCircle.setVisible(false);
 		handle.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
-			if(!moveLock)
+			if (!moveLock)
 				controlCircle.setVisible(true);
 
 			handle.setImage(selectedImage);
@@ -102,19 +106,20 @@ public class RotationHandle {
 			if (!rotationStarted)
 				controlCircle.setVisible(false);
 		});
+
 		EventHandler<? super MouseEvent> eventFilter = ev -> {
-			selected=true;
+			selected = true;
 			rotationStarted = true;
 			startAngleFound = false;
 			com.neuronrobotics.sdk.common.Log.info("Handle clicked");
 			rotationSessionManager.initialize(cs.moveLock());
 			flagSaveChange = false;
 			session.setMode(SpriteDisplayMode.Rotating);
-			if(!moveLock)controlCircle.setVisible(true);
+			if (!moveLock)controlCircle.setVisible(true);
 			arc.setVisible(true);
 			handle.setVisible(true);
-			text.setValue(0);
-			text.show();
+			TDnumber.setValue(0);
+			TDnumber.show();
 			ev.consume();
 		};
 		handle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
@@ -128,7 +133,7 @@ public class RotationHandle {
 
 		EventHandler<? super MouseEvent> dragged = event -> {
 			if (event.getPickResult().getIntersectedNode() != handle) {
-				if (startAngleFound == false) {
+				if (!startAngleFound) {
 					startAngleFound = true;
 					StartAngle = 22.5 * Math.round(getAngle(event) / 22.5);
 				}
@@ -157,7 +162,7 @@ public class RotationHandle {
 				// Update the Arc properties
 				arc.setStartAngle(0);
 				arc.setLength(sweepAngle);
-				text.setValue(sweepAngle);
+				TDnumber.setValue(sweepAngle);
 				
 				setSweepAngle(current);
 			}
@@ -177,12 +182,13 @@ public class RotationHandle {
 		session.setMode(SpriteDisplayMode.Default);
 		controlCircle.setVisible(false);
 		arc.setVisible(false);
-		selected=false;
+		selected = false;
 		TransformNR toUpdate = rotAtCenter.copy();
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
 		});
-		if(!moveLock) {
+
+		if (!moveLock) {
 			done.toUpdate(toUpdate);
 		}
 	}
@@ -195,7 +201,7 @@ public class RotationHandle {
 		// divide the angle in 2 and aply it twice avaoids Euler singularities
 		TransformNR update = new TransformNR(new RotationNR(axis, -c / 2));
 		TransformNR pureRot = update.times(update);
-		if(moving!=null) {
+		if (moving != null) {
 			moving.toUpdate(pureRot);
 		}
 		TransformNR wp = ap.get().getWorkplane();
@@ -280,7 +286,6 @@ public class RotationHandle {
 			break;
 		}
 		
-
 		double circleDiameter = Math.sqrt(Math.pow(rA, 2) + Math.pow(rB, 2));
 		
 		double radius = circleDiameter / 2;
@@ -308,8 +313,8 @@ public class RotationHandle {
 		arc.setRadiusX(radius / 2);
 		arc.setRadiusY(radius / 2);
 		
-		positionPin=input4.times( input.times( new TransformNR(0,0,0)));	
-		text.threeDTarget(screenW, screenH, zoom, positionPin, cf);
+		positionPin = input4.times(input.times(new TransformNR(0,0,0)));	
+		TDnumber.threeDTarget(screenW, screenH, zoom, positionPin, cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);
 			TransformFactory.nrToAffine(input3, handlePlanarOffset);
@@ -327,7 +332,7 @@ public class RotationHandle {
 	}
 
 	public boolean isFocused() {
-		return text.isFocused();
+		return TDnumber.isFocused();
 	}
 
 	public void setLock(boolean moveLock) {
