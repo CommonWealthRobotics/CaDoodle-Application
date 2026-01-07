@@ -50,6 +50,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
@@ -97,7 +98,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			return null;
 		new Thread(() -> {
 			try {
-				Thread.sleep(200);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
@@ -384,6 +385,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					return operationResult;
 				}
 			});
+			fromFile.setImageEngine(new ThumbnailImage());
 			return fromFile;
 		} catch (Exception e) {
 			newProject();

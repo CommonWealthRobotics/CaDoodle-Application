@@ -18,6 +18,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -215,8 +216,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if(meshesReverseLookup!=null) {
 					source = meshesReverseLookup.get(meshView);
 					if(source!=null)
-						if(source.getManipulator()!=null)
-							manipulator=source.getManipulator();
+						if(source.hasManipulator())
+							try {
+								manipulator=source.getManipulator();
+							} catch (MissingManipulatorException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 				}
 				
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
@@ -325,9 +331,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		try {
 			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1),toV(p2),toV(p3)));
 			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
-		} catch (ColinearPointsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+
 		}
 		return new TransformNR();
 	}

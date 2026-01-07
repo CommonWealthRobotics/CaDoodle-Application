@@ -122,7 +122,7 @@ public class ShapePalletButtonResources {
 				for (CSG c : so) {
 					c.setIsHole(false);
 				}
-			image = ThumbnailImage.get(ap.get().getCsgDBinstance(),so);
+			image = ap.get().getImageEngine().get(ap.get().getCsgDBinstance(),so);
 
 		});
 		while (image == null) {
