@@ -676,10 +676,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private Thread importAFile(File last) {
+		Log.debug("Attampt to import "+last.getAbsolutePath());
 		if (last == null)
 			return null;
 		String lowerCase = last.getName().toLowerCase();
 		if (lowerCase.endsWith(".zip")) {
+			Log.debug("Zip archive detected");
 			ap.loadFromZip(last);
 		} else {
 			boolean check = false;

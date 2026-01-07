@@ -63,6 +63,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 import com.neuronrobotics.sdk.common.TickToc;
 import com.neuronrobotics.video.OSUtil;
 
@@ -642,6 +643,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		do {
 			targetDir=new File(getWorkingDir()+delim()+name+"_"+index);
 			index++;
+			Log.debug("CHecking for file: "+targetDir);
 		}while(targetDir.exists());
 		try {
 			unzip(file.getAbsolutePath(),targetDir.getAbsolutePath());
@@ -649,7 +651,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			for(File f:files) {
 				if(f.getName().toLowerCase().endsWith(".doodle")) {
 					setActiveProject(f);
+					System.out.println("Active file set to "+f.getAbsolutePath());
 					new Thread(()->	get().initialize()).start();
+					return;
 				}
 			}
 		} catch (IOException e) {
@@ -659,6 +663,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		
+		Log.debug("Extraction complete, NO DOODLE FOUND IN TL!");
 	}
 }
