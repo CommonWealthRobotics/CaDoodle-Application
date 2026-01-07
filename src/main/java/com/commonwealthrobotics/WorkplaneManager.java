@@ -258,7 +258,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								
 								//Log.debug("Polygon snapped "+adjusted);
 							} catch (Exception e) {
-								Log.error(e);
+								//Log.error(e);
 							}
 
 							
