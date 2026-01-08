@@ -4,13 +4,13 @@
 <svg
    width="256"
    height="256"
-   viewBox="0 0 7.68 7.68"
+   viewBox="0 0 256 256"
    fill="none"
    version="1.1"
    id="svg14"
    sodipodi:docname="magnet-wave-svgrepo-com.svg"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
-   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/magnet.png"
+   inkscape:export-filename="..\src\main\resources\com\commonwealthrobotics\magnet.png"
    inkscape:export-xdpi="24"
    inkscape:export-ydpi="24"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,9 +28,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="2.3405234"
-     inkscape:cx="434.51819"
-     inkscape:cy="134.15802"
+     inkscape:zoom="3.3099999"
+     inkscape:cx="-75.226588"
+     inkscape:cy="85.498491"
      inkscape:window-width="3840"
      inkscape:window-height="1506"
      inkscape:window-x="-11"
@@ -41,7 +41,7 @@
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="g3"
-     transform="translate(0.03447,-0.04374674)">
+     transform="matrix(34.722222,0,0,31.870956,-4.1364575,4.2212784)">
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0.7;stroke-dasharray:none"
        id="rect2"
