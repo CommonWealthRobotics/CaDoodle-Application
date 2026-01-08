@@ -1382,7 +1382,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					for (int i = 0; i < n.size(); i++) {
 						String e = n.get(i);
 						ap.get();
-						CSG g = CaDoodleFile.getByName(ap.get().getCurrentState(), e);
+						CSG g=null;;
+						try {
+							g = CaDoodleFile.getByName(ap.get().getCurrentState(), e);
+						} catch (NameMissingException e1) {
+							continue;
+						}
 						if (g == null)
 							continue;
 						if (g.isInGroup())
