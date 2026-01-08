@@ -434,21 +434,24 @@ public class ControlSprites {
 	}
 
 	public void updateLines() {
+
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
 			Vector3d center = bounds.getCenter();
 			Vector3d min = bounds.getMin();
 			Vector3d max = bounds.getMax();
+			
+			// Set footprint of shape
 			footprint.setHeight(Math.abs(max.y - min.y));
 			footprint.setWidth(Math.abs(max.x - min.x));
 			footprint.setX(Math.min(min.x, max.x));
 			footprint.setY(Math.min(min.y, max.y));
 
-			double lineScale = 2 * (-zoom / 1000);
-			double lineEndOffsetY = 0;// Math.min(5 * lineScale, max.y - min.y);
-			double lineEndOffsetX = 0;// Math.min(5 * lineScale, max.x - min.x);
-			double lineEndOffsetZ = 0;// Math.min(5, max.z - min.z);
+			// double lineScale = 2 * (-zoom / 1000);
+			//double lineEndOffsetY = 0; // Math.min(5 * lineScale, max.y - min.y);
+			//double lineEndOffsetX = 0; // Math.min(5 * lineScale, max.x - min.x);
+			//double lineEndOffsetZ = 0; // Math.min(5, max.z - min.z);
 
 			// Draw lines closest to work plane
 			double linesZ = 0;
@@ -457,53 +460,72 @@ public class ControlSprites {
 			if (max.z < 0) // Object is below the work plane
 				linesZ = max.z;
 
+			// Draw dotted lines between handles
 			frontLine.setStartX(max.x);
-			frontLine.setStartY(min.y + lineEndOffsetY);
+			frontLine.setStartY(min.y);
 			frontLine.setEndX(max.x);
-			frontLine.setEndY(max.y - lineEndOffsetY);
+			frontLine.setEndY(max.y);
 			frontLine.setStartZ(linesZ);
 			frontLine.setEndZ(linesZ);
 
 			backLine.setStartX(min.x);
-			backLine.setStartY(min.y + lineEndOffsetY);
+			backLine.setStartY(min.y);
 			backLine.setEndX(min.x);
-			backLine.setEndY(max.y - lineEndOffsetY);
+			backLine.setEndY(max.y);
 			backLine.setStartZ(linesZ);
 			backLine.setEndZ(linesZ);
 
-			leftLine.setStartX(min.x + lineEndOffsetX);
+			leftLine.setStartX(min.x);
 			leftLine.setStartY(max.y);
-			leftLine.setEndX(max.x - lineEndOffsetX);
+			leftLine.setEndX(max.x);
 			leftLine.setEndY(max.y);
 			leftLine.setStartZ(linesZ);
 			leftLine.setEndZ(linesZ);
 
-			rightLine.setStartX(min.x + lineEndOffsetX);
+			rightLine.setStartX(min.x);
 			rightLine.setStartY(min.y);
-			rightLine.setEndX(max.x - lineEndOffsetX);
+			rightLine.setEndX(max.x);
 			rightLine.setEndY(min.y);
 			rightLine.setStartZ(linesZ);
 			rightLine.setEndZ(linesZ);
 
+			// Draw Z-handle dotted line
 			heightLine.setStartX(center.x);
 			heightLine.setStartY(center.y);
+			heightLine.setStartZ(min.z);
 			heightLine.setEndY(center.y);
 			heightLine.setEndX(center.x);
-			heightLine.setStartZ(min.z);
-			heightLine.setEndZ(max.z - lineEndOffsetZ);
-			double numberOffset = 20;
+			heightLine.setEndZ(max.z);
+		
+			// Distance between handle and label
+			double numberOffset = -zoom / 50;
+
+			// Get view scale of 3D shapes (arrow/cone/dotted line)
 			double viewScale = scaleSession.getViewScale();
-			TransformNR zHandleLoc = new TransformNR(center.x, center.y,
-					5 + max.z + (ResizingHandle.getSize() * viewScale));
-			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
-					scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
-			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
-					scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, min.z), cf);
-			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, center.z), cf);
-			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x - numberOffset, min.y, min.z), cf);
-			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y - numberOffset, min.z), cf);
+
+			// Draw Z-offset handle with arrow/cone
+			double arrowDistance = 5;
+			TransformNR zHandleLoc = new TransformNR(center.x, center.y, arrowDistance + max.z + (ResizingHandle.getSize() * viewScale));
+			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
+			
+			xdimen.threeDTarget(screenW, screenH, zoom,
+				new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
+
+			ydimen.threeDTarget(screenW, screenH, zoom,
+				new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, min.z), cf);
+
+			zdimen.threeDTarget(screenW, screenH, zoom,
+				new TransformNR(center.x, center.y, max.z - (numberOffset / 2)), cf);
+
+			xOffset.threeDTarget(screenW, screenH, zoom,
+				new TransformNR(min.x - numberOffset, min.y, min.z), cf);
+
+			yOffset.threeDTarget(screenW, screenH, zoom,
+				new TransformNR(min.x, min.y - numberOffset, min.z), cf);
+
 			zOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(max.x + numberOffset / 5, max.y + numberOffset / 5, min.z), cf);
+				new TransformNR(max.x, max.y, min.z - (numberOffset / 2)), cf);
+
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
 			zdimen.setValue(bounds.getTotalZ());
@@ -513,13 +535,13 @@ public class ControlSprites {
 
 			zOffset.setValue(min.z + zMove.getCurrentPoseInReferenceFrame().getZ());
 
-			if (scaleSession.zScaleSelected() && mode == SpriteDisplayMode.Default
-					|| mode == SpriteDisplayMode.ResizeZ) {
+			if (scaleSession.zScaleSelected() && (mode == SpriteDisplayMode.Default)
+					|| (mode == SpriteDisplayMode.ResizeZ)) {
 				zdimen.show();
 			} else {
 				zdimen.hide();
 			}
-			if (scaleSession.xySelected() && mode == SpriteDisplayMode.Default) {
+			if (scaleSession.xySelected() && (mode == SpriteDisplayMode.Default)) {
 				xdimen.show();
 				ydimen.show();
 			} else {
@@ -528,17 +550,17 @@ public class ControlSprites {
 			}
 
 			CaDoodleOperation currentOpperation = ap.get().getCurrentOpperation();
-			boolean isThisADisplayMode = mode == SpriteDisplayMode.MoveZ || mode == SpriteDisplayMode.MoveXY
-					|| (mode == SpriteDisplayMode.Default && MoveCenter.class.isInstance(currentOpperation)
-							&& currentOp != currentOpperation);
+			boolean isThisADisplayMode = (mode == SpriteDisplayMode.MoveZ) || (mode == SpriteDisplayMode.MoveXY)
+					|| ((mode == SpriteDisplayMode.Default) && MoveCenter.class.isInstance(currentOpperation)
+							&& (currentOp != currentOpperation));
 			if (!ruler.isActive()) {
-				if (up.isSelected() && mode == SpriteDisplayMode.Default || mode == SpriteDisplayMode.MoveZ) {
+				if (up.isSelected() && (mode == SpriteDisplayMode.Default) || (mode == SpriteDisplayMode.MoveZ)) {
 					zOffset.show();
 				} else {
 					zOffset.hide();
 				}
 
-				if (isThisADisplayMode && (!scaleSession.xySelected() && !scaleSession.zScaleSelected())) {
+				if (isThisADisplayMode && !scaleSession.xySelected() && !scaleSession.zScaleSelected()) {
 
 					if (!xymoving)
 						zOffset.show();
@@ -562,17 +584,16 @@ public class ControlSprites {
 			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
 
-			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
-
 			scaleTF.setX(viewScale);
 			scaleTF.setY(viewScale);
 			scaleTF.setZ(viewScale);
+
 			double dotscale = viewScale * 7;
-			if (dotscale > 00.75)
-				dotscale = 0.75;
-			if (dotscale < 0.04)
-				dotscale = 0.04;
-			// com.neuronrobotics.sdk.common.Log.debug("Z distance = "+dotscale);
+			if (dotscale > 0.5)
+				dotscale = 0.5;
+			if (dotscale < 0.1)
+				dotscale = 0.1;
+			// com.neuronrobotics.sdk.common.Log.debug(" DOTSCALE = " + dotscale);
 			for (DottedLine l : lines) {
 				l.setScale(dotscale);
 			}
