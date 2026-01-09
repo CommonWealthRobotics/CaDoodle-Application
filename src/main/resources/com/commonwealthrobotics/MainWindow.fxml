@@ -653,7 +653,7 @@
                   
             <Region maxHeight="1" minHeight="1" minWidth="1" />
 
-                  <AnchorPane fx:id="timelineHolder" VBox.vgrow="NEVER">
+                  <AnchorPane fx:id="timelineHolder" VBox.vgrow="NEVER" prefWidth="32767">
                      <children>
                      <Region prefHeight="1" style="-fx-background-color: #BBBBBB;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <ScrollPane fx:id="timelineScroll" hbarPolicy="ALWAYS" minHeight="150.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
@@ -876,9 +876,9 @@
                   <padding>
                     <Insets bottom="0" left="4" right="4" top="0" />
                   </padding>
-                        <Button fx:id="importButton" maxWidth="98.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="98.0" styleClass="normal-button" text="Import" />
-                  <Region maxWidth="4" minWidth="4" prefWidth="4" />
-                        <Button fx:id="export" maxWidth="98.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="98.0" styleClass="normal-button" text="Export" />
+                        <Button fx:id="importButton" maxWidth="102.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="Import" />
+                  <Region maxWidth="5" minWidth="5" prefWidth="5" />
+                        <Button fx:id="export" maxWidth="102.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="Export" />
                         </HBox>                       
                      </children>
                   </HBox>
