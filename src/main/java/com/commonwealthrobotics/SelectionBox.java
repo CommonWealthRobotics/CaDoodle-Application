@@ -17,6 +17,7 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.CSGClient;
 import eu.mihosoft.vrl.v3d.Cube;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
@@ -257,7 +258,12 @@ public class SelectionBox {
 		for (CSG key : visible) {
 			// Check if boxes overlap
 			if(key.hasManipulator()) {
-				key=key.transformed(TransformFactory.affineToCSG(key.getManipulator()));
+				try {
+					key=key.transformed(TransformFactory.affineToCSG(key.getManipulator()));
+				} catch (MissingManipulatorException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			if (key.touching(selection2)) {
 				overlapping.add(key.getName());

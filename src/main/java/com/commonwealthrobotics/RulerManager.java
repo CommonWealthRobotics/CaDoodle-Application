@@ -1,6 +1,6 @@
 package com.commonwealthrobotics;
 
-import com.commonwealthrobotics.numbers.TextFieldDimention;
+import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -32,7 +32,7 @@ public class RulerManager {
 //		return rulerGroup;
 //	}
 	
-	public double getOffset(TextFieldDimention dim) {
+	public double getOffset(TextFieldDimension dim) {
 		switch(dim) {
 		default:
 			return 0;
