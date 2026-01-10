@@ -347,8 +347,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private GridPane legsOptionGrid;
 	@FXML
 	private GridPane armsOptionGrid;
-    @FXML
-    private ProgressIndicator memUsage;
+	@FXML
+	private ProgressIndicator memUsage;
 	private Stage newStage;
 
 	public MainController(Stage newStage) {
@@ -409,7 +409,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onRedo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Redo");
-		session.getExecutor().submit(()->{
+		session.getExecutor().submit(() -> {
 			ap.get().forward();	
 		});
 		session.setKeyBindingFocus();
@@ -480,7 +480,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			com.neuronrobotics.sdk.common.Log.error(t);
 		}
 		session.setKeyBindingFocus();
-
 	}
 
 	private void setRobotLabOpenState(boolean tm) {
@@ -507,9 +506,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		if (tm) {
 			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
 			timelineHolder.getChildren().add(timelineScroll);
+			timelineHolder.minHeight(150);
 		} else {
 			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 			timelineHolder.getChildren().remove(timelineScroll);
+			timelineHolder.minHeight(0);
 		}
 		timelineOpen = tm;
 		timelineManager.setOpenState(tm);
@@ -545,7 +546,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		session.getExecutor().submit(()->{
+		session.getExecutor().submit( () -> {
 			TransformNR scale = session.getFocusCenter();
 			engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
 					engine.getFlyingCamera().getZoomDepth());
@@ -676,9 +677,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private Thread importAFile(File last) {
-		Log.debug("Attampt to import "+last.getAbsolutePath());
+		Log.debug("Attampt to import " + last.getAbsolutePath());
 		if (last == null)
 			return null;
+
 		String lowerCase = last.getName().toLowerCase();
 		if (lowerCase.endsWith(".zip")) {
 			Log.debug("Zip archive detected");
@@ -692,6 +694,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				}
 			}
+
 			if (last != null && check) {
 				currentFile = last;
 				com.neuronrobotics.sdk.common.Log.debug("Adding file " + last);
@@ -907,6 +910,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert timelineButton != null : "optionProvide button failed";
 		assert optionProvide != null : "Timeline button failed";
 		assert optionsConsume != null : "optionsConsume button failed";
+
 		try {
 			engine = new BowlerStudio3dEngine("CAD window");
 			engine.rebuild(true);
@@ -921,6 +925,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				Log.flush();
 				System.exit(2);
 			}
+
 			setUpNavigationCube();
 			setUp3dEngine();
 			setUpColorPicker();
@@ -950,6 +955,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				com.neuronrobotics.sdk.common.Log.error(e);
 				System.exit(1);
 			}
+
 			fileNameBox.setOnKeyTyped(ev -> {
 				onNameTyped();
 			});
@@ -977,13 +983,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			com.neuronrobotics.sdk.common.Log.error(e);
 			System.exit(1);
 		}
+		
+		// Prevent the timeline scroll pane to affect other areas
+		timelineHolder.setPrefWidth(32767);
+		// Prevent border color change when selecting the scroll pane
+		// timelineScroll.setFocusTraversable(false);
 	}
 
 	private void onNameTyped() {
 		nameTyped = System.currentTimeMillis();
-		if(nameTypeDelay==null) {
-			nameTypeDelay=new Thread(()->{
-				while((System.currentTimeMillis()-nameTyped)<3000) {
+		if (nameTypeDelay == null) {
+			nameTypeDelay = new Thread(() -> {
+				while((System.currentTimeMillis() - nameTyped) < 3000) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
@@ -994,8 +1005,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
 				ap.get().setProjectName(fileNameBox.getText());
 				session.save();
-				nameTypeDelay=null;
-			}) ;
+				nameTypeDelay = null;
+			});
 			nameTypeDelay.start();
 		}
 	}
@@ -1008,7 +1019,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			String name = "";
 			if (intermediateShape != null)
 				name = intermediateShape.getName();
-			String x = name + " " + type.trim() + " " + String.format(Locale.US,"%.1f", percent) + "% finished : " + i + " of "
+			String x = name + " " + type.trim() + " " + String.format(Locale.US, "%.1f", percent) + "% finished : " + i + " of "
 					+ finalIndex;
 			if (SplashManager.isVisibleSplash()) {
 				//com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);
@@ -1020,7 +1031,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	public void loadActive(MainController mainController) throws Exception {
-
 	}
 
 	private void setupFile() {
@@ -1039,11 +1049,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(100);
 					SplashManager.closeSplash();
 				} while (SplashManager.isVisibleSplash());
+
 				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
 				BowlerStudio.runLater(() -> cancel());
 				// JavaFX startup freeze workaround
 				BowlerStudio.runLater(() -> {
-					Stage s = newStage!=null?newStage:(Stage) engine.getSubScene().getScene().getWindow();
+					Stage s = newStage != null ? newStage : (Stage) engine.getSubScene().getScene().getWindow();
 					double h = s.getHeight();
 					s.setHeight(h - 1);
 					BowlerStudio.runLater(() -> s.setHeight(h));
@@ -1057,7 +1068,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setUpColorPicker() {
 		colorPicker.setOnMousePressed(event -> {
-			com.neuronrobotics.sdk.common.Log.error("Set to Solid ");
+			com.neuronrobotics.sdk.common.Log.error("Set to Solid");
 			session.setToSolid();
 		});
 
@@ -1087,7 +1098,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			@Override
 			public boolean isZoom(ScrollEvent t) {
-				return ScrollEvent.SCROLL == t.getEventType();
+				return (ScrollEvent.SCROLL == t.getEventType());
 			}
 
 			@Override
@@ -1191,7 +1202,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(), () -> {
 			session.updateControls();
 		});
-
 	}
 
 	public static double groundScale() {
@@ -1226,7 +1236,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ViewCube viewcube = new ViewCube();
 		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
 		navigationCube.addUserNode(viewCubeMesh);
-
 	}
 
 	@Override
@@ -1303,7 +1312,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 
 //		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
-//			if(event.isPrimaryButtonDown())
+//			if (event.isPrimaryButtonDown())
 //				sb.activate(event);
 //		});
 
@@ -1316,8 +1325,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 
-			if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.LEFT
-					|| event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.TAB) {
+			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN) || (event.getCode() == KeyCode.LEFT)
+					|| (event.getCode() == KeyCode.RIGHT) || (event.getCode() == KeyCode.TAB)) {
 				double dist = 1;
 				if (event.isShiftDown())
 					dist = 3;
@@ -1345,7 +1354,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				// Consume the event to prevent default focus traversal
 				event.consume();
 			}
-			if (event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE) {
+			if ((event.getCode() == KeyCode.BACK_SPACE) || (event.getCode() == KeyCode.DELETE)) {
 				session.onDelete();
 				// Handle the backspace or delete key press
 				event.consume(); // Prevents the event from being processed further
@@ -1357,7 +1366,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 			String character = event.getCharacter();
-			if(character.isEmpty())
+			if (character.isEmpty())
 				return;
 			// You can still use the key code for non-character keys
 			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
@@ -1373,7 +1382,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					break;
 				case 121:
 				case 25:
-					com.neuronrobotics.sdk.common.Log.error("redo");
+					com.neuronrobotics.sdk.common.Log.error("Redo");
 					ap.get().forward();
 					break;
 				case 103:
@@ -1484,6 +1493,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			workplane.placeWorkplaneVisualization();
 			workplane.clearTemporaryPlane();
 		}
+
 		session.clearSelection();
 		robotLab.onCancel();
 		BowlerStudio.runLater(() -> {

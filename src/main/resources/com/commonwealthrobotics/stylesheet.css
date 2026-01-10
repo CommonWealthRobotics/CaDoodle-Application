@@ -2,8 +2,18 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 1px;
-    -fx-background-insets: 3 5 2 5;
+    -fx-background-insets: 3;
 }
+
+#drawerButton, #timelineButton {
+    -fx-border-width: 0px;      /* No red outline for drawer icons*/
+    -fx-background-insets: 0 6; /* reduce outline of timeline/shapes drawer icon */
+}
+
+#RobotLabDrawer {
+    -fx-border-width: 0px; /* No red outline for robot drawer icon */
+}
+
 .normal-button {
     -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-background-insets: 0;
@@ -194,23 +204,28 @@
 .separator {
     -fx-background-color: #263d8c; /* logo-blue */
 }
+
 #controlBar{
     -fx-border-width: 1px;
-     -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-color: #263d8c; /* logo-blue */
 }
+
 #drawerArea{
     -fx-border-width: 1px;
-     -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-color: #263d8c; /* logo-blue */
 }
+
 #shapeConfigurationBox{
     -fx-border-width: 1px;
-     -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-color: #263d8c; /* logo-blue */
 }
+
 #fileNameBox{
     -fx-background-color: #f4ede0; /* logo-beige */
     -fx-border-width: 1px;
-     -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-color: #263d8c; /* logo-blue */
 }
+
 #view3d {
     -fx-background-color:  radial-gradient(center 50% 50%, radius 30%, #D0D0D0 0%, #f4ede0 90%); /* light-gray to logo-beige */
 }
@@ -218,33 +233,43 @@
 #control3d {
     -fx-background-color: transparent;
 }
+
 #drawerArea {
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 #drawerGrid{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 #projectGrid{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 #totalApplicationBackground{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 #topBar{
     -fx-background-color:  #f4ede0; /* logo-beige */
 }
+
 #controlBar{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 #objectPallet{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 #shapeConfiguration{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
+
 .titled-pane > .title {
     -fx-background-color:  #f2c83d; /* logo-yellow */
 }
+
 #configurationGrid{
     -fx-background-color: #f4ede0; /* logo-beige */
 }
@@ -534,6 +559,3 @@
     -fx-background-radius: 2px;
     -fx-padding: 0.25em;
 }
-
-
-
