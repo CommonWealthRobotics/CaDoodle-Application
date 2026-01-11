@@ -2074,7 +2074,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate(int num) {
+	public void onTimelineUpdate(int num,File image) {
 
 	}
 
