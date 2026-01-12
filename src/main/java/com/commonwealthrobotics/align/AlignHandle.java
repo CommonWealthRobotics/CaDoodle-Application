@@ -97,7 +97,7 @@ public class AlignHandle {
 			};
 			onClickEvent = event -> {
 				onClick.run();
-				com.neuronrobotics.sdk.common.Log.error("Handle clicked ");
+				com.neuronrobotics.sdk.common.Log.debug("Handle clicked "+self);
 				material.setDiffuseColor(Color.GRAY);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
