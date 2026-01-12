@@ -578,6 +578,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		getMeshes().put(c, meshView);
+
+		// Allow move on first click
+		meshView.addEventHandler(MouseEvent.MOUSE_PRESSED, manipulation.getMouseEvents());
 		setUpControls(meshView, c);
 	}
 
