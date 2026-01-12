@@ -29,7 +29,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -304,14 +304,14 @@
                                        <children>
                                           <GridPane pickOnBounds="false" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="5.0" />
                                                 <ColumnConstraints />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" GridPane.columnIndex="1" translateX="5.0">
+                                                <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" translateX="5.0" GridPane.columnIndex="1">
                                                    <graphic>
                                                       <ImageView fx:id="drawrImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -518,7 +518,7 @@
                                                 </Button>
                                              </children>
                                           </GridPane>
-                                          <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" translateY="6.0">
+                                          <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" translateY="6.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
                                              <graphic>
                                                 <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -649,7 +649,7 @@
                   
             <Region maxHeight="1" minHeight="1" minWidth="1" />
 
-                  <AnchorPane fx:id="timelineHolder" VBox.vgrow="NEVER" style="-fx-border-width: 1 0 0 0; -fx-border-color: #BBBBBB;">
+                  <AnchorPane fx:id="timelineHolder" style="-fx-border-width: 1 0 0 0; -fx-border-color: #BBBBBB;" VBox.vgrow="NEVER">
                      <children>
                         <ScrollPane fx:id="timelineScroll" hbarPolicy="ALWAYS" minHeight="150.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
                           <content>
