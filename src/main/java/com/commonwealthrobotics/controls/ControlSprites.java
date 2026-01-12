@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.controls;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -157,7 +158,7 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 			}
 
 			@Override
-			public void onTimelineUpdate(int num) {
+			public void onTimelineUpdate(int num,File image) {
 				// TODO Auto-generated method stub
 			}
 		});

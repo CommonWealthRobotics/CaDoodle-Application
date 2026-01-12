@@ -302,18 +302,18 @@
                                           <RowConstraints />
                                       </rowConstraints>
                                        <children>
-                                          <GridPane pickOnBounds="false" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                          <GridPane pickOnBounds="false" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                                 <ColumnConstraints />
                                             </columnConstraints>
                                             <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" GridPane.columnIndex="1">
+                                                <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" GridPane.columnIndex="1" translateX="5.0">
                                                    <graphic>
-                                                      <ImageView fx:id="drawrImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="drawrImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@drawerClose.png" />
                                                          </image>
@@ -329,11 +329,7 @@
                                                             <Label minHeight="0.0" text="Snap Grid" />
                                                             <ComboBox fx:id="snapGrid">
                                                                 <stylesheets>
-                                                                    <String fx:value="data:text/css, .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }
-                                                                    .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }
-                                                                    .combo-box .arrow-button { -fx-padding: 0 0 0 0; }
-                                                                    .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}
-                                                                    " />
+                                                                    <String fx:value="data:text/css, .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }                                                                     .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }                                                                     .combo-box .arrow-button { -fx-padding: 0 0 0 0; }                                                                     .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}                                                                     " />
                                                                 </stylesheets>
                                                             </ComboBox>
 
@@ -522,7 +518,7 @@
                                                 </Button>
                                              </children>
                                           </GridPane>
-                                          <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
+                                          <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" translateY="6.0">
                                              <graphic>
                                                 <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -547,9 +543,9 @@
                            <children>
                               <GridPane fx:id="drawerGrid" style="-fx-padding: 0 5 0 3; -fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="72.0" halignment="CENTER" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="72.0" halignment="CENTER" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="72.0" halignment="CENTER" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="72.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="72.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="72.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                     <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
@@ -592,7 +588,7 @@
                                        </children>
                                     </AnchorPane>
 
-                                    <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWorkplane" styleClass="image-button" style="-fx-translate-y: 2" GridPane.columnIndex="0">
+                                    <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWorkplane" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="0">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -605,7 +601,7 @@
                                        </tooltip>
                                     </Button>
 
-                                    <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" styleClass="image-button" style="-fx-translate-y: 2"  GridPane.columnIndex="1">
+                                    <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="1">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -618,7 +614,7 @@
                                        </tooltip>
                                     </Button>
 
-                                    <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" styleClass="image-button" style="-fx-translate-y: 2" GridPane.columnIndex="2">
+                                    <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="2">
                                        <graphic>
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -630,10 +626,10 @@
                                           <Tooltip text="Notes &lt;N&gt;" />
                                        </tooltip>
                                     </Button>
-                                    <HBox alignment="CENTER_LEFT" spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3" maxHeight="26.0" style="-fx-padding: 0 3 0 3;" >
-                                        <TextField fx:id="searchField" disable="true" maxWidth="152" prefHeight="26.0"/>
+                                    <HBox alignment="CENTER_LEFT" maxHeight="26.0" spacing="3" style="-fx-padding: 0 3 0 3;" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                                        <TextField fx:id="searchField" disable="true" maxWidth="152" prefHeight="26.0" />
 
-                                       <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" styleClass="image-button" >
+                                       <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" styleClass="image-button">
                                        <graphic>
                                           <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -653,12 +649,11 @@
                   
             <Region maxHeight="1" minHeight="1" minWidth="1" />
 
-                  <AnchorPane fx:id="timelineHolder" VBox.vgrow="NEVER" prefWidth="32767">
+                  <AnchorPane fx:id="timelineHolder" VBox.vgrow="NEVER" style="-fx-border-width: 1 0 0 0; -fx-border-color: #BBBBBB;">
                      <children>
-                     <Region prefHeight="1" style="-fx-background-color: #BBBBBB;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <ScrollPane fx:id="timelineScroll" hbarPolicy="ALWAYS" minHeight="150.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0">
+                            <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-padding: 0 10 0 0;">
                                  <children>
                                     <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>

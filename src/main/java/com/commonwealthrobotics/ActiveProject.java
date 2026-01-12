@@ -386,7 +386,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					return operationResult;
 				}
 			});
-			fromFile.setImageEngine(new ThumbnailImage());
+			//fromFile.setImageEngine(new ThumbnailImage());
 			return fromFile;
 		} catch (Exception e) {
 			newProject();
@@ -588,10 +588,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate(int num) {
+	public void onTimelineUpdate(int num, File image) {
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
-				l.onTimelineUpdate( num);
+				l.onTimelineUpdate( num, image);
 			} catch (Throwable e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}

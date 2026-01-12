@@ -57,6 +57,7 @@ public class TimelineManager {
 	private boolean addrem;
 	private boolean firstTime;
 	private boolean timelineOpen;
+	private int buttonSize = 80;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -81,8 +82,8 @@ public class TimelineManager {
 			@Override
 			public void onRegenerateStart(CaDoodleOperation source) {
 				ArrayList<CaDoodleOperation> ops = ap.get().getOpperations();
-				ArrayList<Button> toRem= new ArrayList<Button>();
-				for(int i=Math.max(0, ap.get().getCurrentIndex());i<buttons.size();i++) {
+				ArrayList<Button> toRem = new ArrayList<Button>();
+				for (int i = Math.max(0, ap.get().getCurrentIndex()); i < buttons.size(); i++) {
 					Button b = buttons.get(i);
 					toRem.add(b);
 					BowlerStudio.runLater(() -> timeline.getChildren().remove(b));
@@ -92,13 +93,13 @@ public class TimelineManager {
 
 			@Override
 			public void onRegenerateDone() {
-				//update(false);
+				// update(false);
 			}
 
 			@Override
 			public void onInitializationStart() {
 				buttons.clear();
-				if(timeline!=null)
+				if (timeline != null)
 					BowlerStudio.runLater(() -> timeline.getChildren().clear());
 			}
 
@@ -110,10 +111,16 @@ public class TimelineManager {
 			}
 
 			@Override
-			public void onTimelineUpdate(int num) {
-//				if (num > 1)
-//					update(true);
-//				else if (num == 1)
+			public void onTimelineUpdate(int num, File imageFile) {
+				if (buttons.size() > num) {
+					Button b = buttons.get(num);
+					ImageView img = (ImageView) b.getGraphic();
+					Image image = new Image(imageFile.toURI().toString());
+					BowlerStudio.runLater(() -> {
+						img.setImage(image);
+					});
+					Log.debug("Updating " + imageFile);
+				}else
 					update(false);
 			}
 		});
@@ -127,7 +134,7 @@ public class TimelineManager {
 	}
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
-		
+
 //		// Read pixels from the original image
 //		PixelReader pixelReader = originalImage.getPixelReader();
 //		int originalWidth = (int) originalImage.getWidth();
@@ -143,21 +150,21 @@ public class TimelineManager {
 //
 //		// Perform nearest-neighbor scaling
 //		for (int y = 0; y < targetHeight; y++) {
-//		    for (int x = 0; x < targetWidth; x++) {
-//		        // Map target coordinates to source coordinates
-//		        int srcX = (int) (x * scaleX);
-//		        int srcY = (int) (y * scaleY);
-//		        
-//		        // Clamp to valid bounds
-//		        srcX = Math.min(srcX, originalWidth - 1);
-//		        srcY = Math.min(srcY, originalHeight - 1);
-//		        
-//		        // Copy the pixel
-//		        int argb = pixelReader.getArgb(srcX, srcY);
-//		        pixelWriter.setArgb(x, y, argb);
-//		    }
+//			for (int x = 0; x < targetWidth; x++) {
+//				// Map target coordinates to source coordinates
+//				int srcX = (int) (x * scaleX);
+//				int srcY = (int) (y * scaleY);
+//				
+//				// Clamp to valid bounds
+//				srcX = Math.min(srcX, originalWidth - 1);
+//				srcY = Math.min(srcY, originalHeight - 1);
+//				
+//				// Copy the pixel
+//				int argb = pixelReader.getArgb(srcX, srcY);
+//				pixelWriter.setArgb(x, y, argb);
+//			}
 //		}
-		
+
 		// Create a canvas with the target dimensions
 		Canvas canvas = new Canvas(targetWidth, targetHeight);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -175,7 +182,7 @@ public class TimelineManager {
 	}
 
 	private boolean boundsSame(CSG one, CSG two) {
-		if (one == null || two == null)
+		if ((one == null) || (two == null))
 			return true;
 		return boundsSame(one.getBounds(), two.getBounds());
 	}
@@ -194,12 +201,13 @@ public class TimelineManager {
 		for (CSG c : list)
 			if (c.getName().contentEquals(get.getName()))
 				return c;
+
 		return null;
 	}
 
 	private void update(boolean clear) {
 		ap.get().setTimelineVisable(timelineOpen);
-		if( baseBox==null)
+		if (baseBox == null)
 			return;
 		// com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
 		this.clear = clear;
@@ -215,22 +223,24 @@ public class TimelineManager {
 			if (timeline != null) {
 				if (clear)
 					clear();
-			}else {
+			} else {
 				timeline = new GridPane();
 				baseBox.getChildren().add(timeline);
 			}
 
-			// Configure columns (all same width)
-			int buttonSize = 80;
 			int space = 20;
 			timeline.setHgap(space / 2); // Horizontal gap between columns
 			timeline.setVgap(space); // Vertical gap between rows
 
 			// Center the entire GridPane content
 			timeline.setAlignment(Pos.CENTER);
-			timeline.setGridLinesVisible(true); // Shows grid lines for debuggin
+//			timeline.setGridLinesVisible(true); // Shows grid lines for debugging
 
-			baseBox.setPrefWidth((opperations.size() + 2) * (buttonSize + space / 2 + 4));
+			// Don't control the prefWidth, use padding on the sides
+			// baseBox.setPrefWidth((opperations.size() + 2) * (buttonSize + space / 2 +
+			// 4));
+
+			// No auto scrolling of the timeline scroll pane
 			// timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)opperations.size()));
 
 			new Thread(() -> {
@@ -258,7 +268,7 @@ public class TimelineManager {
 								: ap.get().getStateAtOperation(opperations.get(myIndex - 1));
 						File f = ap.get().getTimelineImageFile(myIndex - 1);
 						Image image = new Image(f.toURI().toString());
-						
+
 						BowlerStudio.runLater(() -> {
 							ImageView value = new ImageView(resizeImage(image, buttonSize, buttonSize));
 							String text = (myIndex + 1) + "\n" + op.getType();
@@ -286,7 +296,7 @@ public class TimelineManager {
 										}).start();
 
 									}
-									if (event.getButton() == MouseButton.SECONDARY && myIndex>0) {
+									if (event.getButton() == MouseButton.SECONDARY && myIndex > 0) {
 										// Show context menu where the mouse was clicked
 										contextMenu.show(toAdd, event.getScreenX(), event.getScreenY());
 										new Thread(() -> {
@@ -327,7 +337,7 @@ public class TimelineManager {
 									for (CSG c : state)
 										engine.removeObject(c);
 							});
-							
+
 							ImageView toolimage = new ImageView(image);
 							toolimage.setFitHeight(300);
 							toolimage.setFitWidth(300);
@@ -356,6 +366,7 @@ public class TimelineManager {
 								for (CSG c : state)
 									engine.removeObject(c);
 							});
+
 							deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
 								int index = ap.get().getCurrentIndex() - 1;
 								if (index != myButtonIndex)
@@ -382,27 +393,33 @@ public class TimelineManager {
 
 							});
 							contextMenu.getItems().add(deleteAfterItem);
-
 						});
 						// Add event handler for right-click
 					} catch (Exception ex) {
 						com.neuronrobotics.sdk.common.Log.error(ex);
-						;
 					}
 				}
+
 				com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
-				if (addrem || firstTime)
+				if (addrem || firstTime) {
 					BowlerStudio.runLater(java.time.Duration.ofMillis(200), () -> {
-						// if (firstTime) {
-						// timelineScroll.setHvalue(1.0);
-						timelineScroll.setHvalue(((double) ap.get().getCurrentIndex()) / ((double) opperations.size()));
+
+						// Scroll only to end if not inserting opperation
+						if (ap.get().getCurrentIndex() == opperations.size()) {
+							timelineScroll.applyCss();
+							timelineScroll.layout();
+							timelineScroll.setHvalue(1.0);
+						}
+						// Don't auto scroll
+						// timelineScroll.setHvalue(((double) ap.get().getCurrentIndex()) / ((double)
+						// opperations.size()));
 						// }
 						updating = false;
 						if (updateNeeded)
 							update(clear);
 						session.updateControlsDisplayOfSelected();
 					});
-				else {
+				} else {
 					updating = false;
 					if (updateNeeded)
 						update(clear);
@@ -415,15 +432,14 @@ public class TimelineManager {
 
 	public void clear() {
 		// com.neuronrobotics.sdk.common.Log.debug("Old Timeline buttons cleared");
-
 		buttons.clear();
 		timeline.getChildren().clear();
-
 	}
 
 	public void updateSelected(LinkedHashSet<CSG> selected) {
+
 		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
-		for (int i = 0; i < opperations.size() && i < buttons.size(); i++) {
+		for (int i = 0; ((i < opperations.size()) && (i < buttons.size())); i++) {
 			CaDoodleOperation op = opperations.get(i);
 			if (op == null)
 				continue;
@@ -447,7 +463,6 @@ public class TimelineManager {
 				b.getStyleClass().add("image-button-highlight");
 			else
 				b.getStyleClass().add("image-button");
-
 		}
 	}
 
@@ -457,4 +472,4 @@ public class TimelineManager {
 			session.save();
 	}
 
-}
+} // TimelineManager

@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.mirror;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -359,7 +360,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	@Override
-	public void onTimelineUpdate(int num) {
+	public void onTimelineUpdate(int num,File image) {
 		// TODO Auto-generated method stub
 		
 	}
