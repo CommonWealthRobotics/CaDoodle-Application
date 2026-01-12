@@ -108,11 +108,6 @@ public class ControlSprites {
 	public void setSnapGrid(double snapGridValue) {
 		zMove.setIncrement(snapGridValue);
 		scaleSession.setSnapGrid(snapGridValue);
-com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID");
-        if (zmoving) {
-		Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue()); // IRON
-        zMove.setStartingWorkplanePosition(startingPos);
-        }
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
@@ -178,6 +173,7 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 		Affine zMoveOffsetFootprint = new Affine();
 		zMove = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR());
 		zMove.setFrameOfReference(() -> ap.get().getWorkplane());
+
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
 			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
@@ -212,7 +208,8 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 			updateLines();
 		});
 
-		upArrow = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(), () -> {
+		upArrow = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(),
+		() -> {
 			updateLinesAndCubes();
 		}, () -> scaleSession.resetSelected());
 
@@ -303,10 +300,7 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 	}
 
 	private void updateLinesAndCubes() {
-//		Point3D startingPos = new Point3D(0, 0, zdim); // IRON
-//		manipulation.setStartingWorkplanePosition(startingPos);
-
-        session.getExecutor().submit(()-> {
+		session.getExecutor().submit(()-> {
 			List<CSG> selectedCSG = ap.get().getSelect(session.selectedSnapshot());
 			List<CSG> cur=session.getCurrentStateSelected();
 			Platform.runLater(() -> {
@@ -521,6 +515,26 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 			// Get view scale of 3D shapes (arrow/cone/dotted line)
 			double viewScale = scaleSession.getViewScale();
 
+			// Scale factor for Z-handle arrow
+			double arrowScale = viewScale;
+			if (arrowScale > 0.3)
+				arrowScale = arrowScale - (arrowScale - 0.3) / 2;
+
+			scaleTF.setX(arrowScale);
+			scaleTF.setY(arrowScale);
+			scaleTF.setZ(arrowScale);
+
+			// Scale factor for dotted line
+			double dottedLineScale = viewScale * 5;
+
+			if (dottedLineScale > 0.3)
+				dottedLineScale = 0.3 + (dottedLineScale - 0.3) / 5;
+//			if (dottedLineScale < 0.1)
+//				dottedLineScale = 0.1;
+
+			for (DottedLine l : lines)
+				l.setScale(dottedLineScale);
+
 			// Draw Z-offset handle with arrow/cone
 			double arrowDistance = 5;
 			TransformNR zHandleLoc = new TransformNR(center.x, center.y, arrowDistance + max.z + (ResizingHandle.getSize() * viewScale));
@@ -582,6 +596,7 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 
 					if (!xymoving)
 						zOffset.show();
+
 					if (!zmoving && ruler.isActive()) {
 						xOffset.show();
 						yOffset.show();
@@ -591,7 +606,7 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 				} else {
 					xOffset.hide();
 					yOffset.hide();
-					zOffset.hide();
+				//	zOffset.hide(); // Show the height when clicking the top center arrow
 				}
 			} else {
 				if (session.selectedSnapshot().size() > 0) {
@@ -601,19 +616,6 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 				}
 			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
-
-			scaleTF.setX(viewScale);
-			scaleTF.setY(viewScale);
-			scaleTF.setZ(viewScale);
-
-			double dotscale = viewScale * 7;
-			if (dotscale > 0.5)
-				dotscale = 0.5;
-			if (dotscale < 0.1)
-				dotscale = 0.1;
-			// com.neuronrobotics.sdk.common.Log.debug(" DOTSCALE = " + dotscale);
-			for (DottedLine l : lines)
-				l.setScale(dotscale);
 
 		});
 
@@ -662,9 +664,15 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 
 		if (mode == this.mode)
 			return;
+
 		this.mode = mode;
-		System.out.println("Mode Set to " + mode);
-		// new Exception("Mode Set to "+mode).printStackTrace();
+		System.out.println("ControlSprintes setMode: " + mode);
+		if (mode == SpriteDisplayMode.MoveZ)
+		{
+		   Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
+		   zMove.setStartingWorkplanePosition(startingPos);
+		}
+		// new Exception("Mode Set to " + mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default);
@@ -715,30 +723,30 @@ com.neuronrobotics.sdk.common.Log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> SET SNAPGRID
 			case Rotating:
 				break;
 			case Align:
-				for (DottedLine l : lines) {
+				for (DottedLine l : lines)
 					l.setVisible(true);
-				}
+
 				break;
 			case Mirror:
-				for (DottedLine l : lines) {
+				for (DottedLine l : lines)
 					l.setVisible(true);
-				}
+				
 				rotationManager.hide();
 				break;
 			case PLACING:
-				for (DottedLine l : lines) {
+				for (DottedLine l : lines)
 					l.setVisible(true);
-				}
+
 				break;
 			case Clear:
-				for (ThreedNumber t : numbers) {
+				for (ThreedNumber t : numbers)
 					t.hide();
-				}
+
 				align.hide();
 				mirror.hide();
-				for (DottedLine l : lines) {
+				for (DottedLine l : lines)
 					l.setVisible(false);
-				}
+
 				upArrow.hide();
 				footprint.setVisible(false);
 				zOffset.hide();

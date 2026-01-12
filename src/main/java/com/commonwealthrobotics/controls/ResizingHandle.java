@@ -27,7 +27,7 @@ import javafx.scene.transform.Scale;
 
 public class ResizingHandle {
 
-	private double baseSize = 0.75;
+	private double baseSize = 0.75; // Base size for the corner handle cubes
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
 	private static final double size = 10;
@@ -243,13 +243,21 @@ public class ResizingHandle {
 		TransformNR pureRot = new TransformNR(cf.getRotation());
 //		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
 //		TransformNR pr = wp.inverse().times(pureRot);
-		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance " + vect + " scale " + scale);
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distance " + vect + " scale " + scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
-			scaleTF.setX(getScale());
-			scaleTF.setY(getScale());
-			scaleTF.setZ(getScale());
+			
+            double cubeScale = getScale();
+//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> cubeScale: " + cubeScale);
+            if (cubeScale < 0.02)
+                cubeScale = 0.02;
+            if (cubeScale > 0.4)
+                cubeScale = 0.4 + (cubeScale - 0.4) / 1.3;
+            
+            scaleTF.setX(cubeScale);
+			scaleTF.setY(cubeScale);
+			scaleTF.setZ(cubeScale);
 			TransformFactory.nrToAffine(pureRot, cameraOrent);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});

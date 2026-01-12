@@ -23,9 +23,9 @@ public class MoveUpArrow {
 	public MoveUpArrow(Affine selection, Affine workplaneOffset, Affine moveUpLocation, Scale scaleTF,
 			EventHandler<MouseEvent> eventHandler, Runnable onSelect, Runnable onReset) {
 
-		CSG setColor = new Cylinder(ResizingHandle.getSize() / 2, 0, ResizingHandle.getSize()).toCSG()
+        // Arrow on top of z-height handle. Parameters(radius1, radius2, height);
+		CSG setColor = new Cylinder(ResizingHandle.getSize() / 1.5, 0, ResizingHandle.getSize() * 2).toCSG()
 				.setColor(getColor());
-
 		mesh = setColor.getMesh();
 		mesh.getTransforms().add(selection);
 		mesh.getTransforms().add(workplaneOffset);
@@ -46,7 +46,7 @@ public class MoveUpArrow {
 		});
 
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			com.neuronrobotics.sdk.common.Log.error("MoveUp selected");
+			com.neuronrobotics.sdk.common.Log.error("MoveUp selected " + event);
 			onReset.run();
 			selected = true;
 			setSelectedColor();

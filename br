@@ -1,0 +1,3 @@
+set -e
+./gradlew shadowJar --offline
+../java/bin/java.exe -jar build/libs/CaDoodle-Application.jar
