@@ -249,7 +249,7 @@ public class ResizingHandle {
 			setVisible(!locked);
 			
             double cubeScale = getScale();
-//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> cubeScale: " + cubeScale);
+
             if (cubeScale < 0.02)
                 cubeScale = 0.02;
             if (cubeScale > 0.4)
