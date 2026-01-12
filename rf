@@ -1,1 +1,0 @@
-../java/bin/java.exe -Dcom.sun.net.ssl.checkRevocation=false -Djava.security.revocation=false -jar build/libs/CaDoodle-Application.jar
