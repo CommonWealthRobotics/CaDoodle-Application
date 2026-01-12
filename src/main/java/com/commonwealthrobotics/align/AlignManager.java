@@ -51,15 +51,15 @@ public class AlignManager {
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
 		for (AlignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {
-				com.neuronrobotics.sdk.common.Log.error("AlignManager clicked");
+				
 				setAlignemntSelected(true);
 				recompute(() -> {
 					CaDoodleOperation curOp = session.getCurrentOpperation();
 					if (curOp != opperation && opperation!=null)
-						session.addOp(opperation);
+						ap.addOp(opperation);
 					else
-						session.regenerateCurrent();
-
+						ap.get().regenerateCurrent();
+					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked "+opperation);
 					List<String> names = opperation.getNamesAddedInThisOperation();
 					session.selectAll(names);
 				});

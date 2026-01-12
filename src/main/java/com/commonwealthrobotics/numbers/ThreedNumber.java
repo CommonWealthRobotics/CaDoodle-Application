@@ -56,7 +56,6 @@ public class ThreedNumber {
 	private boolean lockout = false;
 //	private static HashMap<ThreedNumber, Long> lastPressed = new HashMap<>();
 	private double initialValue;
-	private volatile boolean showing = false;
 	private int wholeDigits;   // Allowed whole digits before the dot
 	private char decimalSeparator = '.';
 	public boolean canceled = false; // Edit was canceled, keep old value
@@ -125,8 +124,8 @@ public class ThreedNumber {
 			}
 		});
 
-		textField.setMinWidth(72);
-		textField.setStyle("-fx-padding: 5 12 5 12; -fx-alignment: center;");
+		textField.setMinWidth(62);
+		textField.setStyle("-fx-padding: 0; -fx-alignment: center;");
 
 		// Regular expression: -aaaa.bbb, digitsin "aaaa" is defined in wholeDigits
 		Pattern validPattern = decimalSeparator == '.' ?
@@ -287,14 +286,9 @@ public class ThreedNumber {
 
 	public void hide() {
 		textField.setVisible(false);
-		showing = false;
 	}
 
 	public void show() {
-		if (showing)
-			return;
-		showing = true;
-
 		initialValue += 0.0; // Kill -0.000
 		initialValue = getMostRecentValue();
 		textField.setText(String.format(Locale.getDefault(), "%.3f", initialValue));

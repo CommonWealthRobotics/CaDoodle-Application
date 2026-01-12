@@ -9,6 +9,9 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
+import javafx.geometry.Point3D;
+
+import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 
 public class MoveUpArrow {
 	private MeshView mesh;
@@ -19,7 +22,9 @@ public class MoveUpArrow {
 
 	public MoveUpArrow(Affine selection, Affine workplaneOffset, Affine moveUpLocation, Scale scaleTF,
 			EventHandler<MouseEvent> eventHandler, Runnable onSelect, Runnable onReset) {
-		CSG setColor = new Cylinder(ResizingHandle.getSize() / 2, 0, ResizingHandle.getSize()).toCSG()
+
+        // Arrow on top of z-height handle. Parameters(radius1, radius2, height);
+		CSG setColor = new Cylinder(ResizingHandle.getSize() / 1.5, 0, ResizingHandle.getSize() * 2).toCSG()
 				.setColor(getColor());
 		mesh = setColor.getMesh();
 		mesh.getTransforms().add(selection);
@@ -30,21 +35,25 @@ public class MoveUpArrow {
 		material.setDiffuseColor(Color.GRAY);
 		material.setSpecularColor(Color.LIGHTGRAY);
 		mesh.setMaterial(material);
+
 		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
-			if(!selected)
+			if (!selected)
 				resetColor();
 		});
+
 		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
 			setSelectedColor();
 		});
+
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			com.neuronrobotics.sdk.common.Log.error("MoveUp selected");
+			com.neuronrobotics.sdk.common.Log.error("MoveUp selected " + event);
 			onReset.run();
-			selected=true;
+			selected = true;
 			setSelectedColor();
 			onSelect.run();
 		});
 	}
+
 	private void setSelectedColor() {
 		material.setDiffuseColor(selectedColor);
 	}
@@ -52,18 +61,20 @@ public class MoveUpArrow {
 	private void resetColor() {
 		material.setDiffuseColor(getColor());
 	}
-	private Color getColor() {
-		
+
+	private Color getColor() {	
 		return color;
 	}
+
 	public void resetSelected() {
 		resetColor();
-		selected=false;
+		selected = false;
 	}
 
 	public boolean isSelected() {
 		return selected;
 	}
+
 	public MeshView getMesh() {
 		return mesh;
 	}
@@ -75,6 +86,7 @@ public class MoveUpArrow {
 	public void show() {
 		mesh.setVisible(true);
 	}
+
 	/**
 	 * @param color the color to set
 	 */
@@ -82,9 +94,11 @@ public class MoveUpArrow {
 		this.color = color;
 		resetColor() ;
 	}
+
 	public Color getSelectedColor() {
 		return selectedColor;
 	}
+
 	public void setSelectedColor(Color selectedColor) {
 		this.selectedColor = selectedColor;
 	}

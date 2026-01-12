@@ -165,8 +165,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private LimbControlManager limbs;
 	private boolean regenerating;
 	private ProgressIndicator memUsage; 
-	private boolean resizeLiveMode = false; // IRON
-	public boolean isResizeLiveMode() { return resizeLiveMode; } // IRON
+	private boolean resizeLiveMode = false;
+	public boolean isResizeLiveMode() { return resizeLiveMode; }
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -185,7 +185,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			} catch (InterruptedException ex) {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
-				;
 			}
 			getControls().setMode(SpriteDisplayMode.Default);
 
@@ -579,6 +578,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		getMeshes().put(c, meshView);
+
+		// Allow move on first click
+		meshView.addEventHandler(MouseEvent.MOUSE_PRESSED, manipulation.getMouseEvents());
 		setUpControls(meshView, c);
 	}
 

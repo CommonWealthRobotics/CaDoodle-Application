@@ -27,7 +27,7 @@ import javafx.scene.transform.Scale;
 
 public class ResizingHandle {
 
-	private double baseSize = 0.75;
+	private double baseSize = 0.75; // Base size for the corner handle cubes
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
 	private static final double size = 10;
@@ -38,32 +38,35 @@ public class ResizingHandle {
 	private Scale scaleTF = new Scale();
 	private double scale;
 	private Affine resizeHandleLocation = new Affine();
+	private Affine baseMove;
 
 	public Manipulation manipulator;
 	private String name;
 	private PhongMaterial material;
 	private boolean selected = false;
 	private Affine workplaneOffset;
-	private boolean uniform =false;
+	private boolean uniform = false;
 	private boolean resizeAllowed;
 	private boolean moveLock;
-	private Color myColor =null;
-	private Color highlightColor=new Color(1, 0, 0, 1);
+	private Color myColor = null;
+	private Color highlightColor = new Color(1, 0, 0, 1);
 
 	// private Tooltip hover = new Tooltip();
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
-		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset,new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin());
+		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset, new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin());
 	}
+
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
 		this.name = name;
 		this.workplaneOffset = workplaneOffset;
+        this.baseMove = move;
 		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
-		if(engine==null)
+		if (engine == null)
 			throw new NullPointerException();
 		this.engine = engine;
 		camera = engine.getFlyingCamera().getCamera();
@@ -83,13 +86,15 @@ public class ResizingHandle {
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			com.neuronrobotics.sdk.common.Log.error("Corner selected");
 			onReset.run();
-			selected=true;
+			selected = true;
 			setUniform(event.isShiftDown());
 			onSelect.run();
 			setSelectedColor();
+
+			Point3D startingPos = getAbsolutePosition();
+			manipulator.setStartingWorkplanePosition(startingPos);
 		});
-		
-		
+
 		mesh.getTransforms().add(move);
 		mesh.getTransforms().add(resizeHandleLocation);
 		mesh.getTransforms().add(workplaneOffset);
@@ -101,6 +106,18 @@ public class ResizingHandle {
 
 	}
 
+    public Point3D getAbsolutePosition() {
+        Affine combined = new Affine();
+        combined.prepend(scaleTF);
+        combined.prepend(cameraOrent);
+        combined.prepend(location);
+        combined.prepend(workplaneOffset);
+        combined.prepend(resizeHandleLocation);
+        combined.prepend(baseMove);
+        
+        return combined.transform(new Point3D(0, 0, 0));
+    }
+
 	private void setSelectedColor() {
 		material.setDiffuseColor(highlightColor);
 	}
@@ -110,7 +127,7 @@ public class ResizingHandle {
 	}
 
 	private Color currentColor() {
-		return myColor==null?new Color(isResizeAllowed()?1:0, moveLock?0:1, 1, 1):myColor;
+		return (myColor == null) ? new Color(isResizeAllowed() ? 1 : 0, moveLock ? 0 : 1, 1, 1) : myColor;
 	}
 
 	public TransformNR getParametric() {
@@ -225,19 +242,27 @@ public class ResizingHandle {
 		setScale(scaleFactor);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
 //		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
-//		TransformNR pr=wp.inverse().times(pureRot);
-		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+" scale "+scale);
+//		TransformNR pr = wp.inverse().times(pureRot);
+		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distance " + vect + " scale " + scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
-			scaleTF.setX(getScale());
-			scaleTF.setY(getScale());
-			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pureRot ,cameraOrent);
+			
+            double cubeScale = getScale();
+
+            if (cubeScale < 0.02)
+                cubeScale = 0.02;
+            if (cubeScale > 0.4)
+                cubeScale = 0.4 + (cubeScale - 0.4) / 1.3;
+            
+            scaleTF.setX(cubeScale);
+			scaleTF.setY(cubeScale);
+			scaleTF.setZ(cubeScale);
+			TransformFactory.nrToAffine(pureRot, cameraOrent);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});
 
-		// hover.setText(name +" "+getCurrentInReferenceFrame()) ;
+		// hover.setText(name + " " + getCurrentInReferenceFrame()) ;
 	}
 
 	private double getBaseSize() {
