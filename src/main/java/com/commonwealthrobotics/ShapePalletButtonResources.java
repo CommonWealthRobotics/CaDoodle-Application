@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.creature.NoImageException;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
@@ -19,6 +20,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
+import com.neuronrobotics.sdk.common.Log;
 import com.neuronrobotics.video.OSUtil;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
@@ -29,6 +31,7 @@ import eu.mihosoft.vrl.v3d.FileUtil;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import java.io.File;
@@ -42,7 +45,6 @@ public class ShapePalletButtonResources {
 	File imageFile = null;
 	File stlFile = null;
 
-	
 	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name, ActiveProject ap) {
 		String string = key.get("plugin");
 
@@ -50,7 +52,7 @@ public class ShapePalletButtonResources {
 		if (string != null) {
 			isPluginMissing = !DownloadManager.isDownloadedAlready(string);
 		}
-		//String absolutePath = ConfigurationDatabase.getAppDataDirectory().toString();
+		// String absolutePath = ConfigurationDatabase.getAppDataDirectory().toString();
 		String absolutePath = ScriptingEngine.getWorkspace().getAbsolutePath() + delim() + "uicache";
 		File dir = new File(absolutePath);
 		if (!dir.exists())
@@ -61,7 +63,7 @@ public class ShapePalletButtonResources {
 		// if(!OSUtil.isWindows())
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
-				indicator = Vitamins.get(ap.get().getCsgDBinstance(),stlFile);
+				indicator = Vitamins.get(ap.get().getCsgDBinstance(), stlFile);
 				indicator.setColor(Color.WHITE);
 				image = new Image(imageFile.toURI().toString());
 				return;
@@ -95,10 +97,11 @@ public class ShapePalletButtonResources {
 				if (sprial != null) {
 					s.setDefSpiral(Double.parseDouble(sprial));
 				}
-				s.set(f,ap.get()).setPreventBoM(true);
+				s.set(f, ap.get()).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
-				com.neuronrobotics.sdk.common.Log.error(ex);;
+				com.neuronrobotics.sdk.common.Log.error(ex);
+				;
 			}
 		}
 		set.setCaDoodleFile(ap.get());
@@ -116,32 +119,28 @@ public class ShapePalletButtonResources {
 				// TODO Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-		// referenceParts.put(button, so);
-		BowlerStudio.runLater(() -> {
-			if (typeOfShapes.toLowerCase().contains("vitamin"))
-				for (CSG c : so) {
-					c.setIsHole(false);
-				}
-			image = ap.get().getImageEngine().get(ap.get().getCsgDBinstance(),so);
 
-		});
-		while (image == null) {
+		if (typeOfShapes.toLowerCase().contains("vitamin"))
+			for (CSG c : so) {
+				c.setIsHole(false);
+			}
+		try {
+			image = ap.get().getImageEngine().get(ap.get().getCsgDBinstance(), so);
+			BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				ImageIO.write(bufferedImage, "png", imageFile);
+				com.neuronrobotics.sdk.common.Log
+						.error("Thumbnail saved successfully to " + imageFile.getAbsolutePath());
+			} catch (IOException e) {
+				// com.neuronrobotics.sdk.common.Log.error("Error saving image: " +
+				// e.getMessage());
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
+		} catch (NoImageException e) {
+			Log.error(e);
+			image=new WritableImage(100, 100);
 		}
-		BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-		try {
-			ImageIO.write(bufferedImage, "png", imageFile);
-			com.neuronrobotics.sdk.common.Log.error("Thumbnail saved successfully to " + imageFile.getAbsolutePath());
-		} catch (IOException e) {
-			// com.neuronrobotics.sdk.common.Log.error("Error saving image: " +
-			// e.getMessage());
-			com.neuronrobotics.sdk.common.Log.error(e);
-		}
+
 		indicator = so.get(0);
 		if (so.size() > 1) {
 			for (int i = 1; i < so.size(); i++) {

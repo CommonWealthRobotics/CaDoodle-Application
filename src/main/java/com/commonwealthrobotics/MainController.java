@@ -1571,7 +1571,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@Override
-	public void onTimelineUpdate(int num) {
+	public void onTimelineUpdate(int num, File image) {
 		// TODO Auto-generated method stub
 
 	}
