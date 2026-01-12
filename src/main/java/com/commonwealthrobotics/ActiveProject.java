@@ -386,7 +386,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					return operationResult;
 				}
 			});
-			fromFile.setImageEngine(new ThumbnailImage());
+			//fromFile.setImageEngine(new ThumbnailImage());
 			return fromFile;
 		} catch (Exception e) {
 			newProject();
