@@ -309,12 +309,12 @@ public class AlignHandle {
 		visualizationObjects = null;
 		if(opperation==null)
 			return;
-		Alignment x = opperation.x;
-		Alignment y = opperation.y;
-		Alignment z = opperation.z;
+		Align tmp = opperation.copy(); 
+		Align prev = opperation;
+		opperation=tmp;
 		setMyOperation();
-		opperation.setCaDoodleFile(ap.get());
-		visualizationObjects = opperation.process(toAlign);
+		tmp.setCaDoodleFile(ap.get());
+		visualizationObjects = tmp.process(toAlign);
 		for (int i = 0; i < visualizationObjects.size(); i++) {
 			CSG indicator = visualizationObjects.get(i);
 			MeshView indicatorMesh = indicator.newMesh();
@@ -336,10 +336,7 @@ public class AlignHandle {
 			indicatorMesh.setVisible(false);
 			visualizers.put(indicator, indicatorMesh);
 		}
-
-		opperation.x = x;
-		opperation.y = y;
-		opperation.z = z;
+		opperation=prev;
 	}
 
 	public void clear() {
