@@ -32,14 +32,21 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.DepthTest;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.layout.Pane;
+import javafx.geometry.Point2D;
 
 public class SelectionBox {
 
 	private double xStart;
 	private double yStart;
+	private double xStart2;
+	private double yStart2;
 	private double xLeft;
 	private double yTop;
-	private Rectangle rect = new Rectangle();
+	private Rectangle rect1 = new Rectangle();
+	private Rectangle rect2 = new Rectangle();
 	private AnchorPane view3d;
 	private BowlerStudio3dEngine engine;
 	private WorkplaneManager workplane;
@@ -54,13 +61,16 @@ public class SelectionBox {
 	private EventHandler<? super MouseEvent> eventFilter;
 	private CSG selection;
 	private boolean start = false;
+	private Pane overlayPane2D; // 2D overlay pane
 
-	public SelectionBox(SelectionSession session, AnchorPane view3d, BowlerStudio3dEngine engine, ActiveProject ap) {
+	public SelectionBox(SelectionSession session, AnchorPane view3d, BowlerStudio3dEngine engine, ActiveProject ap, Pane paneOverlay2D) {
 		this.session = session;
 		this.view3d = view3d;
 		this.engine = engine;
 		this.ap = ap;
-		rect.setVisible(false);
+		this.overlayPane2D = paneOverlay2D; // keep reference to 2D pane
+		rect1.setVisible(false);
+		rect2.setVisible(false);
 		setSelectionPlane(new Cube(20000, 20000, 0.001).toCSG().newMesh());
 		PhongMaterial material = new PhongMaterial();
 
@@ -72,14 +82,16 @@ public class SelectionBox {
 		getSelectionPlane().getTransforms().addAll(dottedLine);
 
 		getSelectionPlane().setViewOrder(-1);
+
 		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
 			if (event.isPrimaryButtonDown())
 				dragged(event);
 		});
+
 		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
 			released(event);
 		});
-		rect.getTransforms().addAll(dottedLine);
+
 		eventFilter = event -> {
 			// if (event.isPrimaryButtonDown())
 			dragged(event);
@@ -96,120 +108,153 @@ public class SelectionBox {
 	public void activate(MouseEvent event) {
 
 	}
+
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z) {
 		TransformFactory.nrToAffine(getCameraFrame(), wpPickPlacement);
 		TransformFactory.nrToAffine(getBoxFrame(), dottedLine);
-
 	}
+
 	public void dragged(MouseEvent event) {
-		if(!start)
+	if (!start ||
+	   !event.isPrimaryButtonDown() ||
+	   event.isControlDown() || event.isShiftDown() ||
+	   (event.getSource() != getSelectionPlane()))
 			return;
-		if(!event.isPrimaryButtonDown())
-			return;
-		if(event.isControlDown()||event.isShiftDown())
-			return;
-		if(event.getSource()!=getSelectionPlane())
-			return;
-		if (!engine.contains(rect)) {
-			engine.addUserNode(rect);
+
+		if (!overlayPane2D.getChildren().contains(rect1)) {
+			overlayPane2D.getChildren().add(rect1);
+			overlayPane2D.getChildren().add(rect2);
 			active = false;
 		}
+
 		Object source = event.getSource();
 		if (source == engine.getSubScene())
 			return;
+
 		if (!active) {
+			active = true;
 			TransformNR cf = getCameraFrame();
 //			ap.get().setWorkplane(cf);
 //			workplane.placeWorkplaneVisualization();
-			xStart = event.getX();
-			yStart = event.getY();
-			xLeft = xStart;
-			yTop = yStart;
-			com.neuronrobotics.sdk.common.Log.debug("Select Box Started x=" + xStart + " y=" + yStart);
-			rect.setX(xStart);
-			rect.setY(yStart);
-			rect.setVisible(true);
-			rect.setFill(Color.TRANSPARENT);
-			rect.setStroke(Color.RED);
-			rect.setStrokeWidth(2);
-			rect.getStrokeDashArray().setAll(5.0, 5.0);
-			rect.setWidth(0);
-			rect.setHeight(0);
-			rect.setViewOrder(-2);
-			rect.setDepthTest(DepthTest.DISABLE);
+
+			xLeft = event.getX();
+			yTop = event.getY();
+			xStart2 = event.getX();
+			yStart2 = event.getY();
+			
+			com.neuronrobotics.sdk.common.Log.debug("Selection Box Started at x=" + (int)xLeft + " y=" + (int)yTop);
+
+			Point2D scenePt = event.getPickResult().getIntersectedNode().localToScene(event.getX(), event.getY());
+			Point2D p = overlayPane2D.screenToLocal(event.getScreenX(), event.getScreenY());
+			if (p == null)
+				return;
+
+			xStart = p.getX();
+			yStart = p.getY();
+
+			double strokeWidth = 2.0;
+			rect1.setFill(Color.TRANSPARENT); // Only outline
+			rect1.setStroke(Color.BLACK);
+			rect1.setStrokeWidth(strokeWidth);
+			rect1.getStrokeDashArray().setAll(strokeWidth, 6 * strokeWidth);
+			rect1.setStrokeLineCap(StrokeLineCap.BUTT);
+			rect1.setStrokeLineJoin(StrokeLineJoin.MITER);
+			rect1.setSmooth(false);
+
+			rect2.setFill(Color.TRANSPARENT); // Only outline
+			rect2.setStroke(Color.RED);
+			rect2.setStrokeWidth(strokeWidth);
+			rect2.getStrokeDashArray().setAll(strokeWidth, 6 * strokeWidth);
+			rect2.setStrokeDashOffset(3 * strokeWidth); // Misalign dash pattern
+			rect2.setStrokeLineCap(StrokeLineCap.BUTT);
+			rect2.setStrokeLineJoin(StrokeLineJoin.MITER);
+			rect2.setSmooth(false);
 
 			//show.clear();
 			HashMap<CSG, MeshView> meshes = session.getMeshes();
-			for(CSG key:meshes.keySet()) {
+			for (CSG key:meshes.keySet()) {
 				MeshView mv= meshes.get(key);
 				mv.setMouseTransparent(true);
 			}
-			
-			active = true;
 		}
 		
-		// Auto-generated method stub
-		double width = Math.abs(event.getX() - xStart);
-		double height = Math.abs(event.getY() - yStart);
-		// com.neuronrobotics.sdk.common.Log.debug("Select Box Dragging x="+xEnd+" y="+yEnd);
-		if (event.getX() < xStart) {
+		Point2D cur = overlayPane2D.screenToLocal(event.getScreenX(), event.getScreenY());
+		if (cur == null)
+			return;
+
+		double width  = Math.abs(cur.getX() - xStart);
+		double height = Math.abs(cur.getY() - yStart);
+
+		if (event.getX() < xStart)
 			xLeft = event.getX();
-			rect.setX(event.getX());
 
-		}
-		if (event.getY() < yStart) {
+		if (event.getY() < yStart)
 			yTop = event.getY();
-			rect.setY(event.getY());
-		}
 
-		rect.setWidth(width);
-		rect.setHeight(height);
+		rect1.setX(Math.min(xStart, cur.getX()));
+		rect1.setY(Math.min(yStart, cur.getY()));
+		rect1.setWidth(width);
+		rect1.setHeight(height);
+		rect1.setVisible(true);
+
+		rect2.setX(Math.min(xStart, cur.getX()));
+		rect2.setY(Math.min(yStart, cur.getY()));
+		rect2.setWidth(width);
+		rect2.setHeight(height);
+		rect2.setVisible(true);
 	}
 
 	public void released(MouseEvent event) {
 //		rect.setVisible(false);
 //		view3d.getChildren().remove(rect);	
-		engine.removeUserNode(rect);
+//		engine.removeUserNode(rect);
+		overlayPane2D.getChildren().remove(rect1);
+		overlayPane2D.getChildren().remove(rect2);
 //		for (Rectangle r : show) {
 //			engine.removeUserNode(r);
 //		}
 		HashMap<CSG, MeshView> meshes = session.getMeshes();
-		for(CSG key:meshes.keySet()) {
+		for (CSG key:meshes.keySet()) {
 			MeshView mv= meshes.get(key);
 			mv.setMouseTransparent(false);
 		}
+
 		new Thread(() -> {
-			double width = Math.abs(event.getX() - xStart);
-			double height = Math.abs(event.getY() - yStart);
-			if (!active)
-				return;
-			if (width < 2)
-				return;
-			if (height < 2)
+			double width  = Math.abs(event.getX() - xStart2);
+			double height = Math.abs(event.getY() - yStart2);
+
+			if (xLeft > xStart2)
+				xLeft = xStart2;
+
+			if (yTop < yStart2)
+				yTop = yStart2;
+
+			if ((!active) || (width < 2) || (height < 2))
 				return;
 
 			active = false;
-			start=false;
+			start = false;
 //			yTop=yTop-view3d.getHeight()/2;
 //			xLeft=xLeft-(view3d.getWidth()/2);
 //			ap.get().setWorkplane(cf);
 //			workplane.placeWorkplaneVisualization();
 
-			Bounds sel = new Bounds(new Vector3d(xLeft, yTop, 0), new Vector3d(xLeft + width, yTop + height));
+			Bounds sel = new Bounds(new Vector3d(xLeft, yTop, 0), new Vector3d(xLeft + width, yTop - height));
 			Transform boxFrame = TransformFactory.nrToCSG(getBoxFrame());
-//			if(selection!=null)
+//			if (selection != null)
 //				BowlerStudio.runLater(()-> engine.removeObject(selection));
 			selection = HullUtil.hull(Arrays.asList(
 					new Vector3d(sel.getMaxX(),sel.getMaxY(),0).transform(boxFrame),
 					new Vector3d(sel.getMaxX(),sel.getMinY(),0).transform(boxFrame),
 					new Vector3d(sel.getMinX(),sel.getMaxY(),0).transform(boxFrame),
 					new Vector3d(sel.getMinX(),sel.getMinY(),0).transform(boxFrame),
-					new Vector3d(0,0,0).transform(TransformFactory.nrToCSG(getCameraFrame()))
+					new Vector3d(0, 0, 0).transform(TransformFactory.nrToCSG(getCameraFrame()))
 					));
 			
-			if(selection==null)
+			if (selection == null)
 				throw new RuntimeException("Selection can not be null");
+
 			//selection.setManipulator(dottedLine);
 			selection.setColor(new Color(0.25, 0.25, 0, 0.25));
 			//engine.addCsg(selection, null);
@@ -220,13 +265,14 @@ public class SelectionBox {
 
 	private TransformNR getCameraFrame() {
 		VirtualCameraMobileBase camera = engine.getFlyingCamera();
-		double zoom = camera.getZoomDepth() ;
+		double zoom = camera.getZoomDepth();
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		return cf;
 	}
+
 	private TransformNR getBoxFrame() {
 		VirtualCameraMobileBase camera = engine.getFlyingCamera();
-		double zoom = camera.getZoomDepth() /2;
+		double zoom = camera.getZoomDepth() / 2;
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, 500));
 		return cf;
 	}
@@ -253,11 +299,12 @@ public class SelectionBox {
 		List<String> overlapping = new ArrayList<>();
 		ArrayList<CSG> visible = session.getSelectable();
 		CSGClient c= CSGClient.getClient();
-		if(c!=null)
+		if (c != null)
 			CSGClient.setClient(null);
+
 		for (CSG key : visible) {
 			// Check if boxes overlap
-			if(key.hasManipulator()) {
+			if (key.hasManipulator()) {
 				try {
 					key=key.transformed(TransformFactory.affineToCSG(key.getManipulator()));
 				} catch (MissingManipulatorException e) {
@@ -265,9 +312,10 @@ public class SelectionBox {
 					e.printStackTrace();
 				}
 			}
-			if (key.touching(selection2)) {
+			
+			if (key.touching(selection2))
 				overlapping.add(key.getName());
-			}
+
 		}
 		CSGClient.setClient(c);
 		// Return true if any overlaps found
@@ -279,11 +327,11 @@ public class SelectionBox {
 	}
 
 	public void setPressEvent(EventHandler< MouseEvent> value) {
-		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
-			if(event.getSource()!=getSelectionPlane())
+		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_PRESSED, event->{
+			if (event.getSource() != getSelectionPlane())
 				return;
 			com.neuronrobotics.sdk.common.Log.debug("Selection Box Background Click ");
-			start=true;
+			start = true;
 			value.handle(event);
 		});
 	}

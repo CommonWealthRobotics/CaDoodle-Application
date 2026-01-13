@@ -70,6 +70,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -105,6 +106,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private boolean timelineOpen = true;
 	private long nameTyped = System.currentTimeMillis();
 	private Thread nameTypeDelay = null;
+	private Pane paneOverlay2D;
 
 	/**
 	 * CaDoodle Model Classes
@@ -914,10 +916,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 			engine = new BowlerStudio3dEngine("CAD window");
 			engine.rebuild(true);
+			paneOverlay2D = new Pane();
+			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
+			paneOverlay2D.setMouseTransparent(true);
 			ap.addListener(this);
 			session = new SelectionSession(engine, ap, ruler);
 
-			selectionBox = new SelectionBox(session, view3d, engine, ap);
+			selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
 			try {
 				ap.loadActive();
 			} catch (Exception e) {
@@ -1086,6 +1091,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				AnchorPane.setRightAnchor(engine.getSubScene(), 0.0);
 				AnchorPane.setLeftAnchor(engine.getSubScene(), 0.0);
 				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
+
+				// Overlay pane for 2D-lines
+				view3d.getChildren().add(paneOverlay2D);
+				AnchorPane.setTopAnchor(paneOverlay2D, 0.0);
+				AnchorPane.setRightAnchor(paneOverlay2D, 0.0);
+				AnchorPane.setBottomAnchor(paneOverlay2D, 0.0);
+				AnchorPane.setLeftAnchor(paneOverlay2D, 0.0);
 			});
 		});
 
