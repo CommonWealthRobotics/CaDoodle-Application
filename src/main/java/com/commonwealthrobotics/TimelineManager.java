@@ -117,7 +117,7 @@ public class TimelineManager {
 					ImageView img = (ImageView) b.getGraphic();
 					Image image = new Image(imageFile.toURI().toString());
 					BowlerStudio.runLater(() -> {
-						img.setImage(image);
+						img.setImage(resizeImage(image, buttonSize, buttonSize));
 					});
 					Log.debug("Updating " + imageFile);
 				}else

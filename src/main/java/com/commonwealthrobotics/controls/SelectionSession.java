@@ -574,6 +574,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			double blue = diffuseColor.getBlue() + 0.1;
 			phongMaterial.setSpecularColor(Color.color(red > 1 ? 1 : red, green > 1 ? 1 : green, blue > 1 ? 1 : blue,
 					diffuseColor.getOpacity()));
+			meshView.setCullFace(CullFace.BACK);
 		}
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
