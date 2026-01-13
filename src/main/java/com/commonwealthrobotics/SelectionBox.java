@@ -153,7 +153,7 @@ public class SelectionBox {
 			xStart = p.getX();
 			yStart = p.getY();
 
-			double strokeWidth = 2.0;
+			double strokeWidth = 4.0;
 			rect1.setFill(Color.TRANSPARENT); // Only outline
 			rect1.setStroke(Color.BLACK);
 			rect1.setStrokeWidth(strokeWidth);
