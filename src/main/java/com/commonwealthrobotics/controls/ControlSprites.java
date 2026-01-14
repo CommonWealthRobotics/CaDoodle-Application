@@ -115,6 +115,10 @@ public class ControlSprites {
 
 		this.session = session;
 		this.ruler = ruler;
+
+		// Prevent Z-fighting of footprint and work plane
+		footprint.setDepthTest(DepthTest.DISABLE);
+
 		if (e == null)
 			throw new NullPointerException();
 		this.engine = e;
@@ -212,6 +216,9 @@ public class ControlSprites {
 		() -> {
 			updateLinesAndCubes();
 		}, () -> scaleSession.resetSelected());
+
+		// Keep arrow in front of other controls
+		upArrow.getMesh().setViewOrder(-10);
 
 		lines = Arrays.asList(frontLine, backLine, leftLine, rightLine, heightLine);
 		for (DottedLine l : lines) {
@@ -325,9 +332,12 @@ public class ControlSprites {
 
 	private void setUpUIComponents() {
 		Group linesGroupp = new Group();
+		// Draw line in front of other objects
 		linesGroupp.setDepthTest(DepthTest.DISABLE);
 		linesGroupp.setViewOrder(-1); // Lower viewOrder renders on top
 		Group controlsGroup = new Group();
+		
+		// Draw controls in front of other objects
 		controlsGroup.setDepthTest(DepthTest.DISABLE);
 		controlsGroup.setViewOrder(-2); // Lower viewOrder renders on top
 
@@ -345,8 +355,10 @@ public class ControlSprites {
 				else
 					controlsGroup.getChildren().add(r);
 			}
-			engine.addUserNode(linesGroupp);
-			engine.addUserNode(controlsGroup);
+//			engine.addUserNode(linesGroupp); // Commented out, use control node below
+//			engine.addUserNode(controlsGroup); // Commented out, use control node below
+			engine.addControlNode(linesGroupp);
+			engine.addControlNode(controlsGroup);
 		});
 	}
 
@@ -540,20 +552,21 @@ public class ControlSprites {
 			TransformNR zHandleLoc = new TransformNR(center.x, center.y, arrowDistance + max.z + (ResizingHandle.getSize() * viewScale));
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 			
+			// Position value labels
 			xdimen.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, min.z), cf);
+				new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ), cf);
 
 			ydimen.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, min.z), cf);
+				new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, linesZ), cf);
 
 			zdimen.threeDTarget(screenW, screenH, zoom,
 				new TransformNR(center.x, center.y, max.z - (numberOffset / 2)), cf);
 
 			xOffset.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(min.x - numberOffset, min.y, min.z), cf);
+				new TransformNR(min.x - numberOffset, min.y, linesZ), cf);
 
 			yOffset.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(min.x, min.y - numberOffset, min.z), cf);
+				new TransformNR(min.x, min.y - numberOffset, linesZ), cf);
 
 			zOffset.threeDTarget(screenW, screenH, zoom,
 				new TransformNR(max.x, max.y, min.z - (numberOffset / 2)), cf);
