@@ -106,14 +106,20 @@ public class Main extends Application {
 
 		try {
 			// CADoodle-Icon.png
-			Image loadAsset = new Image(Main.class.getResource("CADoodle-Icon.png").toString());
-			stage.getIcons().add(loadAsset);
-			Image image1 = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
-			// or
-			Image image2 = new Image(Main.class.getResource("CADoodle-Icon.png").toExternalForm());
-
-			stage.getIcons().add(image1);
-			stage.getIcons().add(image2);
+			Image fxIcon = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
+		
+			stage.getIcons().add(fxIcon);
+		    // Set system taskbar/dock icon
+		    if (java.awt.Taskbar.isTaskbarSupported()) {
+		        java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
+		        
+		        if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
+		            // Convert JavaFX Image to AWT BufferedImage
+		            java.awt.image.BufferedImage awtIcon = 
+		                javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
+		            taskbar.setIconImage(awtIcon);
+		        }
+		    }
 
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
