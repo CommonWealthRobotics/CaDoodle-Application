@@ -107,19 +107,49 @@ public class Main extends Application {
 		try {
 			// CADoodle-Icon.png
 			Image fxIcon = new Image(Main.class.getResourceAsStream("CADoodle-Icon.png"));
-		
+
 			stage.getIcons().add(fxIcon);
-		    // Set system taskbar/dock icon
-		    if (java.awt.Taskbar.isTaskbarSupported()) {
-		        java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
-		        
-		        if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
-		            // Convert JavaFX Image to AWT BufferedImage
-		            java.awt.image.BufferedImage awtIcon = 
-		                javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
-		            taskbar.setIconImage(awtIcon);
-		        }
-		    }
+
+			// Set system taskbar/dock icon
+			try {
+			    if (java.awt.Taskbar.isTaskbarSupported()) {
+			        java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
+			        
+			        if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
+			            // Convert JavaFX Image to AWT BufferedImage
+			            java.awt.image.BufferedImage awtIcon =
+			                javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
+			            taskbar.setIconImage(awtIcon);
+			        }
+			    }
+			    
+			    // Additional approach for Linux - set via AWT/Swing
+			    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+			        // This approach works better on some Linux desktop environments
+			        java.awt.image.BufferedImage awtIcon =
+			            javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
+			        
+			        // Force icon through AWT
+			        if (java.awt.Toolkit.getDefaultToolkit() != null) {
+			            // Create a hidden AWT frame to set the default icon
+			            final java.awt.Frame hiddenFrame = new java.awt.Frame();
+			            hiddenFrame.setIconImage(awtIcon);
+			            
+			            // Also try setting as default for all frames
+			            try {
+			                Class<?> xToolkit = Class.forName("sun.awt.X11.XToolkit");
+			                if (xToolkit.isInstance(java.awt.Toolkit.getDefaultToolkit())) {
+			                    java.lang.reflect.Method method = xToolkit.getMethod("setIconImage", java.awt.Image.class);
+			                    method.invoke(java.awt.Toolkit.getDefaultToolkit(), awtIcon);
+			                }
+			            } catch (Exception e) {
+			                // Reflection approach failed, not critical
+			            }
+			        }
+			    }
+			} catch (Exception e) {
+			    com.neuronrobotics.sdk.common.Log.error(e);
+			}
 
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
@@ -193,7 +223,12 @@ public class Main extends Application {
 		}
 	}
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {	
+	    // Set WM_CLASS for GNOME to recognize the app
+	    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+	        // This must match StartupWMClass in the desktop file
+	        System.setProperty("glass.gtk.wmclass", "CADoodle");
+	    }
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
