@@ -61,6 +61,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICadoodleSaveStatusUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.SaveOverwriteException;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
@@ -394,7 +395,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		}
 	}
 
-	public void save(CaDoodleFile cf) {
+	public void save(CaDoodleFile cf) throws SaveOverwriteException {
 		try {
 			cf.setSelf(getActiveProject());
 		} catch (Exception e) {
