@@ -1832,7 +1832,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 						ap.get().setSaveUpdate(saveDisplay);
 						if (t.isAlive() && ap.get().isTimelineOpen()) {
-							SplashManager.renderSplashFrame(99, "Saving File");
+							SplashManager.renderSplashFrame(99, "Saving Files");
 						}
 						try {
 							t.join();
