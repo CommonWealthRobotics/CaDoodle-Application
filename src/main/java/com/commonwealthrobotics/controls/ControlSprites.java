@@ -569,7 +569,7 @@ public class ControlSprites {
 				new TransformNR(min.x, min.y - numberOffset, linesZ), cf);
 
 			zOffset.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(max.x, max.y, min.z - (numberOffset / 2)), cf);
+				new TransformNR(center.x, center.y, min.z), cf);
 
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
@@ -679,7 +679,8 @@ public class ControlSprites {
 			return;
 
 		this.mode = mode;
-		System.out.println("ControlSprintes setMode: " + mode);
+		System.out.println("ControlSprites setMode: " + mode);
+
 		if (mode == SpriteDisplayMode.MoveZ)
 		{
 		   Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
@@ -766,6 +767,7 @@ public class ControlSprites {
 				scaleSession.hide();
 				break;
 			}
+
 			if (mode != SpriteDisplayMode.Clear)
 				updateLines();
 		});
