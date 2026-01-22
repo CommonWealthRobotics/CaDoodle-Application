@@ -1817,7 +1817,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						Thread t = new Thread(() -> {
 							com.neuronrobotics.sdk.common.Log
 									.debug("Auto save " + ap.get().getSelf().getAbsolutePath());
-							ap.save(ap.get());
+							try {
+								ap.save(ap.get());
+							} catch (SaveOverwriteException e) {
+								Log.error(e);
+							}
 						});
 						t.start();
 						needsSave = false;
@@ -1828,7 +1832,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 						ap.get().setSaveUpdate(saveDisplay);
 						if (t.isAlive() && ap.get().isTimelineOpen()) {
-							SplashManager.renderSplashFrame(1, "Saving File");
+							SplashManager.renderSplashFrame(99, "Saving Files");
 						}
 						try {
 							t.join();
