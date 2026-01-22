@@ -18,27 +18,33 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 public class ViewCube {
 	private TexturedMesh meshView;
 	private BowlerStudio3dEngine engine;
-	private boolean focusTrig=false;
-	private float width;
+	private boolean focusTrig = false;
+	private float cubeSize = 100f;
+
 	public MeshView createTexturedCube(BowlerStudio3dEngine engine) {
+
 		this.engine = engine;
-		Affine rot = TransformFactory.nrToAffine(new TransformNR(new RotationNR(-90,0,0)));
-		width = 100f;
-		meshView = new CuboidMesh(width, width, width);
+		Affine rot = TransformFactory.nrToAffine(new TransformNR(new RotationNR(-90, 0, 0)));
+		meshView = new CuboidMesh(cubeSize, cubeSize, cubeSize);
 		meshView.setTextureModeImage(MainController.class.getResource("navCube.png").toExternalForm());
 		meshView.getTransforms().add(rot);
+
 		meshView.setOnMousePressed(event -> {
-			focusTrig=true;
+			focusTrig = true;
 		});
+
 		meshView.setOnMouseDragged(event -> {
-			focusTrig=false;
+			engine.focusOrientation(null, null, 0); // Send cancel
+			focusTrig = false;
 		});
+
 		meshView.setOnMouseReleased(event -> {
-			if(focusTrig)
+			if (focusTrig)
 				handleMouseClick(event);
 		});
+
 		engine.setControlsMap(new IControlsMap() {
-			
+
 			@Override
 			public boolean timeToCancel(MouseEvent event) {
 				return false;
@@ -58,7 +64,8 @@ public class ViewCube {
 			public boolean isRotate(MouseEvent me) {
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
 				boolean secondaryButtonDown = me.isSecondaryButtonDown();
-				return (secondaryButtonDown || (primaryButtonDown )) ;
+
+				return (secondaryButtonDown || primaryButtonDown);
 			}
 			
 			@Override
@@ -66,53 +73,61 @@ public class ViewCube {
 				return false;
 			}
 		});
+
 		// meshView.setOnMouseClicked(this::handleMouseClick);
 		// meshView.setOnMouseClicked(event -> handleMouseClick(event, meshView));
 		return meshView;
 	}
 
 	private void handleMouseClick(MouseEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Got event");
 		PickResult pickResult = event.getPickResult();
+
 		if (pickResult.getIntersectedNode() == meshView) {
 			Point3D intersectionPoint = pickResult.getIntersectedPoint();
 			TransformNR faceOrientation = determineFaceOrientation(intersectionPoint);
-			// com.neuronrobotics.sdk.common.Log.error("Clicked face orientation: " + faceOrientation);
-			engine.focusOrentation(faceOrientation);
+			// com.neuronrobotics.sdk.common.Log.debug("Clicked face orientation: " + faceOrientation);
+			engine.focusOrientation(faceOrientation);
 		}
+		else
+			com.neuronrobotics.sdk.common.Log.debug("Got NavigationCube event");
 	}
 
 	private TransformNR determineFaceOrientation(Point3D point) {
 		// Get the bounds of the MeshView
-		double min = -width/2;
-		double max = width/2;
+		double min = -cubeSize / 2;
+		double max =  cubeSize / 2;
 
 		// Small epsilon value for float comparison
 		double epsilon = 0.001;
 		TransformNR frame = engine.getFlyingCamera().getCamerFrame();
 
 		if (Math.abs(point.getX() - min) < epsilon) {
-			com.neuronrobotics.sdk.common.Log.error("Back");
+			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Back");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 180, 0));
 		}
+
 		if (Math.abs(point.getX() - max) < epsilon) {
-			com.neuronrobotics.sdk.common.Log.error("Front");
+			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Front");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 0, 0));
 		}
+
 		if (Math.abs(point.getY() - min) < epsilon) {
-			com.neuronrobotics.sdk.common.Log.error("Top");
-			return new TransformNR(0, 0, 0, new RotationNR(0,0 , -90));
+			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
+			return new TransformNR(0, 0, 0, new RotationNR(0, 0 , -90));
 		}
+
 		if (Math.abs(point.getY() - max) < epsilon) {
-			com.neuronrobotics.sdk.common.Log.error("Bottom");
+			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 90));
 		}
+
 		if (Math.abs(point.getZ() - min) < epsilon) {
-			com.neuronrobotics.sdk.common.Log.error("Right");
+			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Right");
 			return new TransformNR(0, 0, 0, new RotationNR(0, -90, 0));
 		}
+
 		if (Math.abs(point.getZ() - max) < epsilon) {
-			com.neuronrobotics.sdk.common.Log.error("Left");
+			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Left");
 			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 0));
 		}
 

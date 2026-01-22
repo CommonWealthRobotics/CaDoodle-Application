@@ -57,6 +57,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -69,6 +70,8 @@ public class Main extends Application {
 	public static UncaughtExceptionHandler hand;
 	private static final String paramsKey = "CaDoodle-Configs";
 	private static final String objectKey = "currentVersion";
+	public static int screenRefreshRate = 60;
+
 	@Override
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
@@ -94,7 +97,7 @@ public class Main extends Application {
 		// Explicitly disable fullscreen/maximized
 		stage.setFullScreen(false);
 		stage.setMaximized(false);
-		
+
 		String title = StudioBuildInfo.getAppName() + " v " + StudioBuildInfo.getVersion();
 		if (stage != null)
 			stage.setTitle(title);
@@ -121,6 +124,17 @@ public class Main extends Application {
 		FileSelectionFactory.setStage(stage);
 
 		stage.show();
+
+		// Get the screen refresh rate
+		Screen screen = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()).get(0);
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice gd = ge.getScreenDevices()[Screen.getScreens().indexOf(screen)];
+		Main.screenRefreshRate = gd.getDisplayMode().getRefreshRate();
+		com.neuronrobotics.sdk.common.Log.debug("Screen refresh rate = " + Main.screenRefreshRate + " Hz");
+	}
+
+	public static int getScreenRefreshRate() {
+		return screenRefreshRate;
 	}
 
 	private void setupTray(Stage stage) {
@@ -255,7 +269,7 @@ public class Main extends Application {
 					// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
 					try {
 						ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
-								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", 
+								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git",
 								"loadGit.groovy");
 					} catch (Exception e) {
 						Log.error(e);
@@ -277,25 +291,25 @@ public class Main extends Application {
 
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
-			String all="";
-			for(String filename:args) {
-				all+=filename+" ";
-			}
+			String all = "";
+			for (String argument:args)
+				all += argument + " ";
+
 			String replace = all.replace('"', ' ').trim();
-			com.neuronrobotics.sdk.common.Log.debug("Got value: "+replace);
+			com.neuronrobotics.sdk.common.Log.debug("Got command argument: \"" + replace + "\"");
 			File f = new File(replace);
-			com.neuronrobotics.sdk.common.Log.debug("Passed In File at "+f.getAbsolutePath());
-			if(replace.toLowerCase().endsWith(".doodle")) {
-				if(f.exists()) {
+			com.neuronrobotics.sdk.common.Log.debug("Passed In File at " + f.getAbsolutePath());
+			if (replace.toLowerCase().endsWith(".doodle")) {
+				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
 					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
 					HashSet<String> externals =  Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());
 					Main.saveOptionalProjects(externals);
 					
-				}else
+				} else
 					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
-			}else
+			} else
 				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file "+replace.toLowerCase());
 				
 		}

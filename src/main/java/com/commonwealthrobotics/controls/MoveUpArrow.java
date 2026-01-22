@@ -23,10 +23,10 @@ public class MoveUpArrow {
 	public MoveUpArrow(Affine selection, Affine workplaneOffset, Affine moveUpLocation, Scale scaleTF,
 			EventHandler<MouseEvent> eventHandler, Runnable onSelect, Runnable onReset) {
 
-        // Arrow on top of z-height handle. Parameters(radius1, radius2, height);
-		CSG setColor = new Cylinder(ResizingHandle.getSize() / 1.5, 0, ResizingHandle.getSize() * 2).toCSG()
+		// Arrow on top of z-height handle. Parameters(radius1, radius2, height);
+		CSG cylinder = new Cylinder(ResizingHandle.getSize() / 1.5, 0, ResizingHandle.getSize() * 2).toCSG()
 				.setColor(getColor());
-		mesh = setColor.getMesh();
+		mesh = cylinder.getMesh();
 		mesh.getTransforms().add(selection);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(moveUpLocation);

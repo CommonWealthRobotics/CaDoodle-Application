@@ -113,6 +113,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	 */
 	private BowlerStudio3dEngine navigationCube;
 	private BowlerStudio3dEngine engine;
+
 	@FXML
 	private VBox baseRobotBox;
 
@@ -127,7 +128,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	private Tab advancedTab;
-
 	@FXML
 	private Tab bodyTab;
 	@FXML
@@ -550,7 +550,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onFitView(ActionEvent event) {
 		session.getExecutor().submit( () -> {
 			TransformNR scale = session.getFocusCenter();
-			engine.focusOrentation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+
+			engine.focusOrientation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
 					engine.getFlyingCamera().getZoomDepth());
 		});
 		session.setKeyBindingFocus();
@@ -637,7 +638,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrentation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), ZOOM);
+		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), ZOOM);
 		session.setKeyBindingFocus();
 	}
 
@@ -829,7 +830,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void showAll(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On SHow All");
+		com.neuronrobotics.sdk.common.Log.error("On Show All");
 		session.showAll();
 		session.setKeyBindingFocus();
 	}
@@ -938,7 +939,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
 					engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,
-					timelineManager, objectWorkplane, dropToWorkplane,memUsage);
+					timelineManager, objectWorkplane, dropToWorkplane, memUsage);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
@@ -1205,11 +1206,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ground.setCullFace(CullFace.BACK);
 		ground.setMaterial(material);
 		ground.setOpacity(0.25);
-		Group linesGroupp = new Group();
-		linesGroupp.setDepthTest(DepthTest.ENABLE);
-		linesGroupp.setViewOrder(1); // Lower viewOrder renders on top
-		linesGroupp.getChildren().add(ground);
-		engine.addUserNode(linesGroupp);
+		Group linesGroup = new Group();
+		linesGroup.setDepthTest(DepthTest.ENABLE);
+		linesGroup.setViewOrder(1); // Lower viewOrder renders on top
+		linesGroup.getChildren().add(ground);
+		engine.addUserNode(linesGroup);
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
 		ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(), () -> {
 			session.updateControls();
@@ -1227,6 +1228,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		navigationCube.lockZoom();
 		navigationCube.lockMove();
 		navigationCube.setMouseScale(10);
+
 		BowlerStudio.runLater(() -> {
 			navigationCube.getSubScene().setFocusTraversable(false);
 			viewControlCubeHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -1236,6 +1238,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			viewControlCubeHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
 				navigationCube.getSubScene().setHeight(newValue.doubleValue());
 			});
+
 			BowlerStudio.runLater(() -> {
 				viewControlCubeHolder.getChildren().add(navigationCube.getSubScene());
 				AnchorPane.setTopAnchor(navigationCube.getSubScene(), 0.0);
@@ -1245,6 +1248,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			});
 
 		});
+
 		ViewCube viewcube = new ViewCube();
 		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
 		navigationCube.addUserNode(viewCubeMesh);
