@@ -331,8 +331,8 @@ public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 		wpPick.setOpacity(0.25);
 		wpPick.setCullFace(CullFace.BACK);
 //*/
-		wpPick = createWireframeWorkplane(200, 200);
-		//wpPick = createTexturedWorkplane(200, 200);
+		//wpPick = createWireframeWorkplane(200, 200);
+		wpPick = createTexturedWorkplane(200, 200);
 
 		wpPick.getTransforms().addAll(wpPickPlacement);
 		Group linesGroup = new Group();
@@ -693,7 +693,7 @@ public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 		engine.placeGrid(ap.get().getWorkplane());
 
 		BowlerKernel.runLater(() -> {
-			wpPick.setVisible(true);
+			wpPick.setVisible(isWorkplaneNotOrigin());
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
 		});
 	}
