@@ -689,11 +689,11 @@ public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 	}
 
 	public void placeWorkplaneVisualization() {
-
+		Log.debug("Placing workplane visualization");
 		engine.placeGrid(ap.get().getWorkplane());
 
 		BowlerKernel.runLater(() -> {
-			wpPick.setVisible(isWorkplaneNotOrigin());
+			wpPick.setVisible(true);
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
 		});
 	}
