@@ -73,50 +73,49 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private IWorkplaneUpdate updater = null;
 	private Runnable onCancel;
 
-// ---- WIREFRAME WORK PLANE --------------------------------------
-public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
+	public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 
-	TriangleMesh mesh2 = new TriangleMesh();
-	mesh2.getTexCoords().addAll(0, 0);  // required by JavaFX
+		final float LINE_SPACING = 5.0f;
+		final float EXTENT  = (float) xSizeMM / 2.0f;
+		final int   LINE_COUNT   = (int) (2 * EXTENT / LINE_SPACING) + 1;
+		final float THICKNESS   = 0.1f;
 
-	final float SPACING = 5;
-	final float EXTENT  = (float)xSizeMM / 2;
-	final int   STEPS   = (int)(2 * EXTENT/SPACING) + 1;
+		TriangleMesh mesh = new TriangleMesh();
+		mesh.getTexCoords().addAll(0,0);	  // required dummy coords
 
-	for (int i = 0; i < STEPS; i++) {
-		float x = -EXTENT + i * SPACING;
+		for (int i = 0; i < LINE_COUNT; i++) {
+			float x = -EXTENT + i * LINE_SPACING;
+			int base = mesh.getPoints().size() / 3;
+			mesh.getPoints().addAll(
+				x - THICKNESS, -EXTENT, -0.001f,  // 0
+				x + THICKNESS, -EXTENT, -0.001f,  // 1
+				x + THICKNESS,  EXTENT, -0.001f,  // 2
+				x - THICKNESS,  EXTENT, -0.001f); // 3
+			mesh.getFaces().addAll(
+				base,0, base+1,0, base+2,0,
+				base,0, base+2,0, base+3,0);
+		}
 
-		int p0 = mesh2.getPoints().size() / 3;
-		mesh2.getPoints().addAll(x, -EXTENT, -0.001f);
-		int p1 = mesh2.getPoints().size() / 3;
-		mesh2.getPoints().addAll(x,  EXTENT, -0.001f);
+		for (int i = 0; i < LINE_COUNT; i++) {
+			float y = -EXTENT + i * LINE_SPACING;
+			int base = mesh.getPoints().size() / 3;
+			mesh.getPoints().addAll(
+				-EXTENT, y - THICKNESS, -0.001f,  // 0
+				 EXTENT, y - THICKNESS, -0.001f,  // 1
+				 EXTENT, y + THICKNESS, -0.001f,  // 2
+				-EXTENT, y + THICKNESS, -0.001f); // 3
+			mesh.getFaces().addAll(
+				base,0, base+1,0, base+2,0,
+				base,0, base+2,0, base+3,0);
+		}
 
-		mesh2.getFaces().addAll(p0,0, p1,0, p0,0);   // 1st triangle
-		mesh2.getFaces().addAll(p1,0, p0,0, p1,0);   // 2nd triangle
+		MeshView meshView = new MeshView(mesh);
+		meshView.setCullFace(CullFace.NONE);
+		meshView.setDrawMode(DrawMode.FILL);
+		meshView.setMaterial(new PhongMaterial(Color.BLACK));
+
+		return new Group(meshView);
 	}
-
-	for (int i = 0; i < STEPS; i++) {
-		float y = -EXTENT + i * SPACING;
-
-		int p0 = mesh2.getPoints().size() / 3;
-		mesh2.getPoints().addAll(-EXTENT, y, -0.001f);
-		int p1 = mesh2.getPoints().size() / 3;
-		mesh2.getPoints().addAll( EXTENT, y, -0.001f);
-
-		mesh2.getFaces().addAll(p0,0, p1,0, p0,0);
-		mesh2.getFaces().addAll(p1,0, p0,0, p1,0);
-	}
-
-	MeshView grid2 = new MeshView(mesh2);
-	grid2.setDrawMode(DrawMode.LINE); // wire-frame
-	//grid2.setDrawMode(DrawMode.FILL); // wire-frame
-
-	PhongMaterial gridMat = new PhongMaterial();
-	grid2.setMaterial(null); // Wireframe will be black
-	//grid2.setDepthTest(DepthTest.ENABLE);
-
-   return new Group(grid2);
-}
 
 	// Create textured work-plane based on tiles of custom size
 	public Group createTexturedWorkplane(double xSizeMM, double ySizeMM) {
