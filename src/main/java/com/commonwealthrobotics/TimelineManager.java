@@ -206,7 +206,7 @@ public class TimelineManager {
 	}
 
 	private void update(boolean clear) {
-		ap.get().setTimelineVisable(timelineOpen);
+		ap.get().setTimelineVisible(timelineOpen);
 		if (baseBox == null)
 			return;
 		// com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
