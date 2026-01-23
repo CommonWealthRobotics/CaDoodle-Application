@@ -83,22 +83,28 @@ public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 	final float EXTENT  = (float)xSizeMM / 2;
 	final int   STEPS   = (int)(2 * EXTENT/SPACING) + 1;
 
-	// ---- lines parallel to Y
 	for (int i = 0; i < STEPS; i++) {
-		float x = -EXTENT + (i * SPACING);
-		mesh2.getPoints().addAll(x, -EXTENT, -0.001f); // Start point
-		mesh2.getPoints().addAll(x,  EXTENT, -0.001f); // End point
-		int base = mesh2.getPoints().size() / 3 - 2;
-		mesh2.getFaces().addAll(base, 0, base + 1, 0, base + 1,0);
+		float x = -EXTENT + i * SPACING;
+
+		int p0 = mesh2.getPoints().size() / 3;
+		mesh2.getPoints().addAll(x, -EXTENT, -0.001f);
+		int p1 = mesh2.getPoints().size() / 3;
+		mesh2.getPoints().addAll(x,  EXTENT, -0.001f);
+
+		mesh2.getFaces().addAll(p0,0, p1,0, p0,0);   // 1st triangle
+		mesh2.getFaces().addAll(p1,0, p0,0, p1,0);   // 2nd triangle
 	}
 
-	// lines parallel to X
 	for (int i = 0; i < STEPS; i++) {
-		float y = -EXTENT + (i * SPACING);
-		mesh2.getPoints().addAll(-EXTENT, y, -0.001f); // Start point
-		mesh2.getPoints().addAll( EXTENT, y, -0.001f); // End point
-		int base = mesh2.getPoints().size() / 3 - 2;
-		mesh2.getFaces().addAll(base, 0, base + 1, 0, base + 1, 0);
+		float y = -EXTENT + i * SPACING;
+
+		int p0 = mesh2.getPoints().size() / 3;
+		mesh2.getPoints().addAll(-EXTENT, y, -0.001f);
+		int p1 = mesh2.getPoints().size() / 3;
+		mesh2.getPoints().addAll( EXTENT, y, -0.001f);
+
+		mesh2.getFaces().addAll(p0,0, p1,0, p0,0);
+		mesh2.getFaces().addAll(p1,0, p0,0, p1,0);
 	}
 
 	MeshView grid2 = new MeshView(mesh2);
@@ -693,7 +699,7 @@ public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 		engine.placeGrid(ap.get().getWorkplane());
 
 		BowlerKernel.runLater(() -> {
-			wpPick.setVisible(true);
+			wpPick.setVisible(isWorkplaneNotOrigin());
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
 		});
 	}
