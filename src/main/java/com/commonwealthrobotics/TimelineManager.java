@@ -81,7 +81,7 @@ public class TimelineManager {
 
 			@Override
 			public void onRegenerateStart(CaDoodleOperation source) {
-				ArrayList<CaDoodleOperation> ops = ap.get().getOpperations();
+				ArrayList<CaDoodleOperation> ops = ap.get().getOperations();
 				ArrayList<Button> toRem = new ArrayList<Button>();
 				for (int i = Math.max(0, ap.get().getCurrentIndex()); i < buttons.size(); i++) {
 					Button b = buttons.get(i);
@@ -217,7 +217,7 @@ public class TimelineManager {
 		updating = true;
 		updateNeeded = false;
 
-		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
+		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
 
 		BowlerStudio.runLater(() -> {
 			if (timeline != null) {
@@ -237,11 +237,11 @@ public class TimelineManager {
 //			timeline.setGridLinesVisible(true); // Shows grid lines for debugging
 
 			// Don't control the prefWidth, use padding on the sides
-			// baseBox.setPrefWidth((opperations.size() + 2) * (buttonSize + space / 2 +
+			// baseBox.setPrefWidth((operations.size() + 2) * (buttonSize + space / 2 +
 			// 4));
 
 			// No auto scrolling of the timeline scroll pane
-			// timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)opperations.size()));
+			// timelineScroll.setHvalue(((double)ap.get().getCurrentIndex())/((double)operations.size()));
 
 			new Thread(() -> {
 				while (ap.get().isRegenerating() || !ap.get().isInitialized()) {
@@ -255,17 +255,17 @@ public class TimelineManager {
 					}
 				}
 				addrem = false;
-				int s = opperations.size();
+				int s = operations.size();
 				for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 					try {
-						CaDoodleOperation op = opperations.get(i);
+						CaDoodleOperation op = operations.get(i);
 						List<CSG> state = ap.get().getStateAtOperation(op);
 						if (op == null)
 							continue;
 						int myIndex = i;
 						addrem = true;
 						List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
-								: ap.get().getStateAtOperation(opperations.get(myIndex - 1));
+								: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 						File f = ap.get().getTimelineImageFile(myIndex - 1);
 						Image image = new Image(f.toURI().toString());
 
@@ -404,15 +404,15 @@ public class TimelineManager {
 				if (addrem || firstTime) {
 					BowlerStudio.runLater(java.time.Duration.ofMillis(200), () -> {
 
-						// Scroll only to end if not inserting opperation
-						if (ap.get().getCurrentIndex() == opperations.size()) {
+						// Scroll only to end if not inserting operation
+						if (ap.get().getCurrentIndex() == operations.size()) {
 							timelineScroll.applyCss();
 							timelineScroll.layout();
 							timelineScroll.setHvalue(1.0);
 						}
 						// Don't auto scroll
 						// timelineScroll.setHvalue(((double) ap.get().getCurrentIndex()) / ((double)
-						// opperations.size()));
+						// operations.size()));
 						// }
 						updating = false;
 						if (updateNeeded)
@@ -438,9 +438,9 @@ public class TimelineManager {
 
 	public void updateSelected(LinkedHashSet<CSG> selected) {
 
-		ArrayList<CaDoodleOperation> opperations = ap.get().getOpperations();
-		for (int i = 0; ((i < opperations.size()) && (i < buttons.size())); i++) {
-			CaDoodleOperation op = opperations.get(i);
+		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
+		for (int i = 0; ((i < operations.size()) && (i < buttons.size())); i++) {
+			CaDoodleOperation op = operations.get(i);
 			if (op == null)
 				continue;
 			Button b = buttons.get(i);

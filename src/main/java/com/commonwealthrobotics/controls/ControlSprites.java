@@ -137,7 +137,7 @@ public class ControlSprites {
 
 			@Override
 			public void onInitializationDone() {
-				currentOp = ap.get().getCurrentOpperation();
+				currentOp = ap.get().getCurrentOperation();
 			}
 
 			@Override
@@ -243,7 +243,7 @@ public class ControlSprites {
 
 		allElems.addAll(tmp);
 
-		setUpOpperationManagers(session, ap, ruler);
+		setUpOperationManagers(session, ap, ruler);
 		allElems.addAll(align.getElements());
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
@@ -317,7 +317,7 @@ public class ControlSprites {
 		});
 	}
 
-	private void setUpOpperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
+	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
 		});
@@ -594,10 +594,10 @@ public class ControlSprites {
 				ydimen.hide();
 			}
 
-			CaDoodleOperation currentOpperation = ap.get().getCurrentOpperation();
+			CaDoodleOperation currentOperation = ap.get().getCurrentOperation();
 			boolean isThisADisplayMode = (mode == SpriteDisplayMode.MoveZ) || (mode == SpriteDisplayMode.MoveXY)
-					|| ((mode == SpriteDisplayMode.Default) && MoveCenter.class.isInstance(currentOpperation)
-					&& (currentOp != currentOpperation));
+					|| ((mode == SpriteDisplayMode.Default) && MoveCenter.class.isInstance(currentOperation)
+					&& (currentOp != currentOperation));
 
 			if (!ruler.isActive()) {
 				if (upArrow.isSelected() && (mode == SpriteDisplayMode.Default) || (mode == SpriteDisplayMode.MoveZ))
@@ -666,7 +666,7 @@ public class ControlSprites {
 		selectionLive = false;
 		resetSelected();
 		if (ap.get() != null)
-			currentOp = ap.get().getCurrentOpperation();
+			currentOp = ap.get().getCurrentOperation();
 	}
 
 	public SpriteDisplayMode getMode() {

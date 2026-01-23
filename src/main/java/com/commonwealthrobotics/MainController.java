@@ -601,7 +601,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onHideShow(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Hide Show");
-		session.onHideShowOpperation();
+		session.onHideShowOperation();
 
 		session.setKeyBindingFocus();
 	}
@@ -1425,7 +1425,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					session.Duplicate();
 					break;
 				case 8:
-					session.onHideShowOpperation();
+					session.onHideShowOperation();
 					break;
 				case 72:
 					session.showAll();

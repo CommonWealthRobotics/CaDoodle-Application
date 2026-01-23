@@ -29,7 +29,7 @@ public class AlignManager {
 	AlignRadioSet frontBack;
 	AlignRadioSet leftRight;
 	AlignRadioSet upDown;
-	Align opperation = null;
+	Align operation = null;
 	private ArrayList<CSG> toAlign = new ArrayList<CSG>();
 	private SelectionSession session;
 	private boolean alignemntSelected = false;
@@ -54,13 +54,13 @@ public class AlignManager {
 				
 				setAlignemntSelected(true);
 				recompute(() -> {
-					CaDoodleOperation curOp = session.getCurrentOpperation();
-					if (curOp != opperation && opperation!=null)
-						ap.addOp(opperation);
+					CaDoodleOperation curOp = session.getCurrentOperation();
+					if (curOp != operation && operation!=null)
+						ap.addOp(operation);
 					else
 						ap.get().regenerateCurrent();
-					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked "+opperation);
-					List<String> names = opperation.getNamesAddedInThisOperation();
+					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked "+operation);
+					List<String> names = operation.getNamesAddedInThisOperation();
 					session.selectAll(names);
 				});
 
@@ -83,8 +83,8 @@ public class AlignManager {
 	}
 
 	private void updateHandles() {
-		if(opperation!=null)
-			b = opperation.getBounds(ap.get().getCurrentState());
+		if(operation!=null)
+			b = operation.getBounds(ap.get().getCurrentState());
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
@@ -112,21 +112,21 @@ public class AlignManager {
 		this.toAlign.clear();
 		for (CSG c : ta)
 			this.toAlign.add(c);
-		opperation = new Align().setNames(selected).setWorkplane(session.getWorkplane());
-		opperation.setBounds(boundNames);
+		operation = new Align().setNames(selected).setWorkplane(session.getWorkplane());
+		operation.setBounds(boundNames);
 
 		com.neuronrobotics.sdk.common.Log.error("Align manager reinitialized");
 		setAlignemntSelected(false);
 		for (AlignRadioSet r : AS_LIST) {
-			r.initialize(opperation, engine, toAlign, selected);
+			r.initialize(operation, engine, toAlign, selected);
 		}
 		recompute(null);
 		for (CSG c : toAlign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = event -> {
-				if(opperation==null)
+				if(operation==null)
 					return;
-				opperation.setBounds(Arrays.asList(c.getName()));
+				operation.setBounds(Arrays.asList(c.getName()));
 				recompute(null);
 				updateHandles();
 			};
@@ -155,9 +155,9 @@ public class AlignManager {
 		if (isActive()) {
 			this.toAlign.clear();
 			if (isAlignemntSelected()) {
-				com.neuronrobotics.sdk.common.Log.debug("Add op " + opperation);
+				com.neuronrobotics.sdk.common.Log.debug("Add op " + operation);
 			}
-			opperation = null;
+			operation = null;
 		}
 		hide();
 		for (CSG c : toAlign) {
