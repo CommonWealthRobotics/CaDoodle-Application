@@ -41,7 +41,7 @@ public class AlignHandle {
 
 	private Vector3d orentation;
 
-	private Align opperation;
+	private Align operation;
 
 	private List<CSG> toAlign;
 
@@ -121,11 +121,11 @@ public class AlignHandle {
 
 	private void setMyOperation() {
 		if (isXvector())
-			opperation.x = self;
+			operation.x = self;
 		if (isYvector())
-			opperation.y = self;
+			operation.y = self;
 		if (isZvector())
-			opperation.z = self;
+			operation.z = self;
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf) {
@@ -269,8 +269,8 @@ public class AlignHandle {
 		this.scale = scale;
 	}
 
-	public void initialize(Align opperation, BowlerStudio3dEngine engine, List<CSG> toAlign, List<String> selected) {
-		this.opperation = opperation;
+	public void initialize(Align operation, BowlerStudio3dEngine engine, List<CSG> toAlign, List<String> selected) {
+		this.operation = operation;
 		// Auto-generated method stub
 		this.engine = engine;
 		this.toAlign = toAlign;
@@ -307,11 +307,11 @@ public class AlignHandle {
 			visualizationObjects.clear();
 		}
 		visualizationObjects = null;
-		if(opperation==null)
+		if(operation==null)
 			return;
-		Align tmp = opperation.copy(); 
-		Align prev = opperation;
-		opperation=tmp;
+		Align tmp = operation.copy(); 
+		Align prev = operation;
+		operation=tmp;
 		setMyOperation();
 		tmp.setCaDoodleFile(ap.get());
 		visualizationObjects = tmp.process(toAlign);
@@ -336,7 +336,7 @@ public class AlignHandle {
 			indicatorMesh.setVisible(false);
 			visualizers.put(indicator, indicatorMesh);
 		}
-		opperation=prev;
+		operation=prev;
 	}
 
 	public void clear() {

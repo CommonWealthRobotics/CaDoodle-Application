@@ -130,7 +130,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public Thread addOp(CaDoodleOperation h) {
-		Thread t = get().addOpperation(h);
+		Thread t = get().addOperation(h);
 		timeoutThread(h, t);
 		return t;
 	}

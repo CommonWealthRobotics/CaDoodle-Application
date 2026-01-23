@@ -298,7 +298,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOpperation(), ap.get());
+			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOperation(), ap.get());
 			if (f != null && l != null) {
 				FileChangeWatcher w;
 				try {
@@ -1484,7 +1484,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	public void onHideShowOpperation() {
+	public void onHideShowOperation() {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
@@ -1768,7 +1768,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (String s : selectedSnapshot) {
 				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
 			}
-			CaDoodleOperation op = ap.get().getCurrentOpperation();
+			CaDoodleOperation op = ap.get().getCurrentOperation();
 			mc.setLocation(tf);
 			if (op == mc) {
 				if (compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
@@ -1870,7 +1870,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private MoveCenter getActiveMove() {
-		CaDoodleOperation op = ap.get().getCurrentOpperation();
+		CaDoodleOperation op = ap.get().getCurrentOperation();
 		if (MoveCenter.class.isInstance(op)) {
 			MoveCenter active = (MoveCenter) op;
 			if (compareLists(selectedSnapshot(), active.getNamesAddedInThisOperation())) {
@@ -1968,8 +1968,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.ap = ap;
 	}
 
-	public CaDoodleOperation getCurrentOpperation() {
-		return ap.get().getCurrentOpperation();
+	public CaDoodleOperation getCurrentOperation() {
+		return ap.get().getCurrentOperation();
 	}
 
 	public void regenerateCurrent() {
