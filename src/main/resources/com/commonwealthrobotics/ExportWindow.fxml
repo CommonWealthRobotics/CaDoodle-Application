@@ -88,7 +88,7 @@
                   </ImageView>
                </graphic>
                <tooltip>
-                  <Tooltip text="This is for low quality slicing engines such as PrusaSlicer and BambooSlicer. They use a Windows only mesh fixing that is not generally availible. This step ensures your STL will work in those slicers. NOTE this will take a LONG time to complete. " />
+                  <Tooltip text="This is for low quality slicing engines such as PrusaSlicer and BambooSlicer. They use a Windows only mesh fixing that is not generally available. This step ensures your STL will work in those slicers. NOTE this will take a LONG time to complete. " />
                </tooltip>
             </CheckBox>
          </children>
