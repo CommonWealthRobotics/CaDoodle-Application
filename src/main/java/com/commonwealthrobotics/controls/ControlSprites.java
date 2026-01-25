@@ -410,6 +410,9 @@ public class ControlSprites {
 			}
 			// scaleSession.show();
 		}
+
+//		TickToc.toc();
+//		TickToc.setEnabled(false);
 	}
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
