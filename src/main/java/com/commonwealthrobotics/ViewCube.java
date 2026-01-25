@@ -118,7 +118,7 @@ public class ViewCube {
 
 		if (Math.abs(point.getY() - max) < epsilon) {
 			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
-			return new TransformNR(0, 0, 0, new RotationNR(0, 90, 90));
+			return new TransformNR(0, 0, 0, new RotationNR(0, 0, 90));
 		}
 
 		if (Math.abs(point.getZ() - min) < epsilon) {
