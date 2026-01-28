@@ -1266,8 +1266,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// com.neuronrobotics.sdk.common.Log.error("Displaying result of " +
 		// source.getType());
 		BowlerStudio.runLater(() -> {
-			redoButton.setDisable(!ap.get().isForwardAvailible());
-			undoButton.setDisable(!ap.get().isBackAvailible());
+			redoButton.setDisable(!ap.get().isForwardAvailable());
+			undoButton.setDisable(!ap.get().isBackAvailable());
 		});
 		session.onUpdate(currentState, source, fi);
 		if (session.isAnyHidden()) {
