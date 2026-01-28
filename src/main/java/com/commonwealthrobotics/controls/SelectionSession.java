@@ -745,7 +745,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void clearBoundsCache() {
 		Log.debug("Clearing bounds cache ");
-		Log.error(new Exception());
+		//Log.error(new Exception());
 		inWorkplaneBounds.clear();
 	}
 
