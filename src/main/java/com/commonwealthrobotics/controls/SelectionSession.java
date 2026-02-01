@@ -168,14 +168,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean resizeLiveMode = false;
 	public boolean isResizeLiveMode() { return resizeLiveMode; }
 
+	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
+
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
 		engine = e;
 		this.ruler = ruler;
 		setActiveProject(ap);
 		manipulation.addSaveListener(() -> {
+
 			if (intitialization)
 				return;
+
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			// com.neuronrobotics.sdk.common.Log.error("Objects Moved! " +
 			// globalPose.toSimpleString());
@@ -189,13 +193,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			getControls().setMode(SpriteDisplayMode.Default);
 
 		});
+
 		manipulation.addEventListener(ev -> {
 			if (intitialization)
 				return;
 			getControls().setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(() -> updateControls());
 		});
+
 		Manipulation.setUi(new IInteractiveUIElementProvider() {
+
 			public void runLater(Runnable r) {
 				BowlerKernel.runLater(r);
 			}
@@ -212,18 +219,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			public PerspectiveCamera getCamera() {
 				return engine.getFlyingCamera().getCamera();
 			}
+
 		});
+
 		manipulation.setFrameOfReference(() -> ap.get().getWorkplane());
 		ap.addListener(this);
 	}
 
 	public boolean moveLock() {
-		boolean moveLock = false;
+
 		for (CSG sel : getSelected()) {
 			if (sel.isMotionLock() || sel.isInGroup())
-				moveLock = true;
+				return true;
 		}
-		return moveLock;
+
+		return false;
 	}
 
 	public List<String> selectedSnapshot() {
@@ -240,6 +250,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
+
 		if (isAlignActive() && Align.class.isInstance(source))
 			getControls().setMode(SpriteDisplayMode.Align);
 		else if (isMirrorActive() && Mirror.class.isInstance(source)) {
@@ -247,6 +258,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			onMirror();
 		} else
 			getControls().setMode(SpriteDisplayMode.Default);
+
 		intitialization = false;
 		setUpParametrics(currentState, source);
 		displayCurrent();
@@ -260,24 +272,45 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		double value = ((double) CaDoodleFile.getFreeMemory()) / 100.0;
 		Log.info("Mem=" + value);
 		memUsage.setProgress(value);
-		if (value > 0.5 && value < 0.75) {
 
+//		if (value > 0.5 && value < 0.75) { }
+	}
+
+	private static class LockableHandler implements EventHandler<MouseEvent> {
+		private final EventHandler<MouseEvent> delegate;
+		private volatile boolean enabled = true;
+
+		LockableHandler(EventHandler<MouseEvent> delegate) {
+			this.delegate = delegate;
+		}
+
+		void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		@Override
+		public void handle(MouseEvent event) {
+			if (enabled)
+				delegate.handle(event);
 		}
 	}
 
 	private Thread myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
-		if(regenerating)
+		if (regenerating)
 			return null;
+
 		regenerating = true;
 		FileChangeWatcher fileChangeWatcher = null;
 		for (FileChangeWatcher w : myWatchers.keySet()) {
 			if (myWatchers.get(w) == source)
 				fileChangeWatcher = w;
 		}
+
 		if (fileChangeWatcher != null) {
 			fileChangeWatcher.close();
 			myWatchers.remove(fileChangeWatcher);
 		}
+
 		com.neuronrobotics.sdk.common.Log.debug("Regenerating from CaDoodle " + source);
 
 		// new Exception().printStackTrace();
@@ -288,6 +321,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			Thread t = ap.regenerateFrom(source);
 			if (t == null) {
 				SplashManager.closeSplash();
@@ -299,8 +333,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
+
 			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOperation(), ap.get());
-			if (f != null && l != null) {
+			if ((f != null) && (l != null)) {
 				FileChangeWatcher w;
 				try {
 					w = FileChangeWatcher.watch(f);
@@ -313,6 +348,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			regenerating = false;
 		});
+
 		tr.start();
 		return tr;
 	}
@@ -331,13 +367,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				for (FileChangeWatcher w : myWatchers.keySet()) {
 					if (myWatchers.get(w) == source)
 						fileChangeWatcher = w;
-					if(w.getFileToWatch().toPath().compareTo(configFile.toPath())==0) {
+
+					if (w.getFileToWatch().toPath().compareTo(configFile.toPath()) == 0)
 						fileChangeWatcher=w;
-					}
-					if(w.getFileToWatch().toPath().compareTo(cadFile.toPath())==0) {
+
+					if (w.getFileToWatch().toPath().compareTo(cadFile.toPath()) == 0)
 						fileChangeWatcher=w;
-					}
 				}
+
 				if (fileChangeWatcher == null) {
 
 					IFileChangeListener l = new IFileChangeListener() {
@@ -353,15 +390,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								Log.error("Failed regenerate because still running");
 								return;
 							}
+
 							active = true;
 							try {
 								Log.debug("File Change updating " + source.getType() + " because of "
 										+ fileThatChanged.getAbsolutePath());
 								builder.clear(op);	
 								Thread tr = myRegenerate(source, this, fileThatChanged);
-								if(tr!=null) {
+								if (tr != null)
 									tr.join();
-								}
+
 							} catch (Exception ex) {
 								Log.error(ex);
 							}
@@ -369,6 +407,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 
 					};
+
 					try {
 						FileChangeWatcher w1 = FileChangeWatcher.watch(configFile);
 						myWatchers.put(w1, source);
@@ -386,6 +425,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 		}
+
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
 			// com.neuronrobotics.sdk.common.Log.error("Adding A op for "+s.getClass());
@@ -404,8 +444,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					@Override
 					public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
 						com.neuronrobotics.sdk.common.Log.error("File Change updating " + source.getType());
-						Thread tr=myRegenerate(source, this, myFile);
-						if(tr!=null) {
+						Thread tr = myRegenerate(source, this, myFile);
+						if (tr != null) {
 							try {
 								tr.join();
 							} catch (InterruptedException e) {
@@ -416,14 +456,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 
 				};
+
 				FileChangeWatcher fileChangeWatcher = null;
 				for (FileChangeWatcher w : myWatchers.keySet()) {
+
 					if (myWatchers.get(w) == source)
 						fileChangeWatcher = w;
-					if(w.getFileToWatch().toPath().compareTo(f.toPath())==0) {
-						fileChangeWatcher=w;
-					}
+
+					if (w.getFileToWatch().toPath().compareTo(f.toPath()) == 0)
+						fileChangeWatcher = w;
+
 				}
+
 				if (fileChangeWatcher == null) {
 					try {
 						FileChangeWatcher w = FileChangeWatcher.watch(f);
@@ -437,22 +481,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			} catch (NoSuchFileException ex) {
 				// thats ok
 			}
+
 			for (String nameString : namesAdded) {
+
 				CSG n = null;
 				for (CSG c : currentState) {
-					if (c.getName().contentEquals(nameString)) {
+					if (c.getName().contentEquals(nameString))
 						n = c;
-					}
 				}
+
 				if (n == null)
 					continue;
+
 				String name = s.getName();
 				// com.neuronrobotics.sdk.common.Log.error("Adding Listeners for " + name);
 				// new Exception().printStackTrace();
 				Set<String> parameters = n.getParameters(ap.get().getCsgDBinstance());
 				IFileChangeListener myL = l;
 				File myFile = f;
-				if (parameters.size() > 0 && regenEvents.get(n.getName()) == null) {
+
+				if ((parameters.size() > 0) && (regenEvents.get(n.getName()) == null)) {
 					BowlerStudio.runLater(() -> regenerate.setDisable(true));
 					// new RuntimeException("Regester event for " + source.getType() + " " +
 					// nameString).printStackTrace();
@@ -465,9 +513,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					};
 					regenEvents.put(n.getName(), value);
 				}
+
 				for (String k : parameters) {
+
 					if (!k.contains(n.getName()))
 						continue;
+
 					Parameter para = ap.get().getCsgDBinstance().get(k);
 					// com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " +
 					// nameString);
@@ -481,8 +532,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						CaDoodleFile caDoodleFile = ap.get();
 						double percentInitialized = caDoodleFile.getPercentInitialized();
 						boolean regenerating = caDoodleFile.isRegenerating();
-						if (regenerating || percentInitialized < 1)
+						if (regenerating || (percentInitialized < 1))
 							return;
+
 						getExecutor().submit(() -> {
 							if (useButton) {
 								BowlerStudio.runLater(() -> regenerate.setDisable(false));
@@ -490,7 +542,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								myRegenerate(source, myL, myFile);
 							}
 						});
-
 					});
 				}
 			}
@@ -500,62 +551,68 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void displayCurrent() {
 		@SuppressWarnings("unchecked")
 		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get(), true);
-		if (ap.get().isRegenerating()) {
+		if (ap.get().isRegenerating())
 			return;
-		}
+
 		List<CSG> currentState = getCurrentState();
 		BowlerStudio.runLater(() -> {
 			clearScreen();
+
 			if (isShowConstituants()) {
 				for (CSG c : ap.get().getCurrentState()) {
-					if (c.isInGroup() || c.isHide()) {
+					if (c.isInGroup() || c.isHide())
 						c.setIsWireFrame(true);
-					} else {
+					else
 						c.setIsWireFrame(false);
-					}
+
 					displayCSG(c);
-					if ((c.isInGroup() && !c.isAlwaysShow()) || c.isHide()) {
+					if ((c.isInGroup() && !c.isAlwaysShow()) || c.isHide())
 						getMeshes().get(c).setMouseTransparent(true);
-					}
 				}
 			} else
-				for (CSG c : process) {
+				for (CSG c : process)
 					displayCSG(c);
-				}
+
 			ArrayList<CSG> toRemove = new ArrayList<>();
 			for (CSG s : getSelected()) {
 				boolean exists = false;
 				for (CSG c : currentState) {
-					if (c.getName().contentEquals(s.getName()) && !c.isInGroup())
+					if (c.getName().contentEquals(s.getName()) && !c.isInGroup()) {
 						exists = true;
+						break;
+                    }
 				}
-				if (!exists) {
+
+				if (!exists)
 					toRemove.add(s);
-				}
+
 			}
 			getSelected().removeAll(toRemove);
 			if (workplane != null)
 				workplane.updateMeshes(getMeshes());
+
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
 			setKeyBindingFocus();
 			TickToc.toc();
 			TickToc.setEnabled(false);
 		});
-
 	}
 
 	public void clearScreen() {
+
 		if (getMeshes() == null)
 			return;
-		for (CSG c : getMeshes().keySet()) {
+
+		for (CSG c : getMeshes().keySet())
 			engine.removeUserNode(getMeshes().get(c));
-		}
+
 		getMeshes().clear();
 	}
 
 	private void displayCSG(CSG c) {
 		MeshView meshView = c.newMesh();
+
 		if (c.isHole() && !c.isWireFrame()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
@@ -577,35 +634,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					diffuseColor.getOpacity()));
 			meshView.setCullFace(CullFace.BACK);
 		}
+
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		getMeshes().put(c, meshView);
 
 		// Allow move on first click
-		meshView.addEventHandler(MouseEvent.MOUSE_PRESSED, manipulation.getMouseEvents());
+//		meshView.addEventHandler(MouseEvent.MOUSE_PRESSED, manipulation.getMouseEvents());
 		setUpControls(meshView, c);
 	}
 
 	private void setUpControls(MeshView meshView, CSG name) {
+
 		if (name == null)
 			throw new RuntimeException("Name can not be null");
+
 		meshView.setOnMousePressed(event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
-				//TickToc.setEnabled(true);
-				TickToc.tic("Start Click");
+
 				if (event.isShiftDown()) {
-					if (getSelected().contains(name)) {
+					if (getSelected().contains(name))
 						getSelected().remove(name);
-					} else
+					else
 						getSelected().add(name);
-				} else {
-					if (!getSelected().contains(name)) {
+				} else if (!getSelected().contains(name)) {
 						getSelected().clear();
 						getSelected().add(name);
-					}
 				}
+
 				if (getMode() != SpriteDisplayMode.Align)
 					setMode(SpriteDisplayMode.Default);
+
 				updateRobotLab.run();
 				updateControlsDisplayOfSelected();
 				event.consume();
@@ -1618,6 +1677,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					back.add(c);
 			}
 		}
+
 		return back;
 	}
 
