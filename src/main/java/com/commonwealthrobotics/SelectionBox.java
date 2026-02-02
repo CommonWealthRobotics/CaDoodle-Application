@@ -157,7 +157,7 @@ public class SelectionBox {
 			rect1.setFill(Color.TRANSPARENT); // Only outline
 			rect1.setStroke(Color.BLACK);
 			rect1.setStrokeWidth(strokeWidth);
-			rect1.getStrokeDashArray().setAll(strokeWidth, 6 * strokeWidth);
+			rect1.getStrokeDashArray().setAll(strokeWidth, 5 * strokeWidth);
 			rect1.setStrokeLineCap(StrokeLineCap.BUTT);
 			rect1.setStrokeLineJoin(StrokeLineJoin.MITER);
 			rect1.setSmooth(false);
@@ -165,7 +165,7 @@ public class SelectionBox {
 			rect2.setFill(Color.TRANSPARENT); // Only outline
 			rect2.setStroke(Color.RED);
 			rect2.setStrokeWidth(strokeWidth);
-			rect2.getStrokeDashArray().setAll(strokeWidth, 6 * strokeWidth);
+			rect2.getStrokeDashArray().setAll(strokeWidth, 5 * strokeWidth);
 			rect2.setStrokeDashOffset(3 * strokeWidth); // Misalign dash pattern
 			rect2.setStrokeLineCap(StrokeLineCap.BUTT);
 			rect2.setStrokeLineJoin(StrokeLineJoin.MITER);
