@@ -22,10 +22,12 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.InvalidLocationMove;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
@@ -181,14 +183,20 @@ public class ControlSprites {
 		zMove.addSaveListener(() -> {
 			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
 			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
-			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose.copy())
-					.setNames(session.selectedSnapshot(),ap.get()));
+			Thread t;
 			try {
-				t.join();
-			} catch (InterruptedException exx) {
-				// Auto-generated catch block
-				com.neuronrobotics.sdk.common.Log.error(exx);
+				t = ap.addOp(new MoveCenter().setLocation(globalPose.copy())
+						.setNames(session.selectedSnapshot(),ap.get()));
+				try {
+					t.join();
+				} catch (InterruptedException exx) {
+					// Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(exx);
+				}
+			} catch (InvalidLocationMove e1) {
+				Log.error(e1);
 			}
+
 			zMove.set(0, 0, 0);
 			BowlerKernel.runLater(() -> {
 				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
@@ -319,7 +327,11 @@ public class ControlSprites {
 
 	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
-			ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
+			try {
+				ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
+			} catch (InvalidLocationMove e) {
+				return;
+			}
 		});
 
 		align = new AlignManager(session, selection, workplaneOffset, ap);

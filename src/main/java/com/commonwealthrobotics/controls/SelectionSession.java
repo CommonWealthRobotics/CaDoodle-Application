@@ -183,13 +183,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			TransformNR globalPose = manipulation.getGlobalPoseInReferenceFrame();
 			// com.neuronrobotics.sdk.common.Log.error("Objects Moved! " +
 			// globalPose.toSimpleString());
-			Thread t = ap.addOp(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot(), ap.get()));
+			Thread t;
 			try {
-				t.join();
-			} catch (InterruptedException ex) {
-				// Auto-generated catch block
-				com.neuronrobotics.sdk.common.Log.error(e);
+				t = ap.addOp(new MoveCenter().setLocation(globalPose).setNames(selectedSnapshot(), ap.get()));
+				try {
+					t.join();
+				} catch (InterruptedException ex) {
+					// Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			} catch (InvalidLocationMove e1) {
+				Log.error(e1);
 			}
+
 			getControls().setMode(SpriteDisplayMode.Default);
 
 		});
@@ -1370,7 +1376,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 						if (workplane.isClicked()) {
 							TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
-							ap.addOp(new MoveCenter().setNames(seleectedNames, ap.get()).setLocation(finalLocation));
+							try {
+								ap.addOp(new MoveCenter().setNames(seleectedNames, ap.get()).setLocation(finalLocation));
+							} catch (InvalidLocationMove e) {
+								Log.error(e);
+							}
 						}
 					});
 					workplane.setCurrentAbsolutePose(copy.inverse());
@@ -1737,15 +1747,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (CSG c : sel) {
 				double downMove = -c.transformed(t.inverse()).getMinZ();
 				TransformNR location = wp.times(new TransformNR(0, 0, downMove)).times(wp.inverse());
-				Thread op = ap
-						.addOp(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName()), ap.get()));
+				Thread op;
 				try {
-					op.join();// wait for the move of this object to finish
-				} catch (InterruptedException e) {
-					// Auto-generated catch block
-					com.neuronrobotics.sdk.common.Log.error(e);
+					op = ap
+							.addOp(new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName()), ap.get()));
+					try {
+						op.join();// wait for the move of this object to finish
+					} catch (InterruptedException e) {
+						// Auto-generated catch block
+						com.neuronrobotics.sdk.common.Log.error(e);
 
+					}
+				} catch (InvalidLocationMove e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+
 			}
 		});
 
@@ -1764,10 +1781,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
 
 			MoveCenter m = getActiveMove();
+			boolean newMoveHere=false;
 			if (System.currentTimeMillis() - timeSinceLastMove > 2000 || m == null) {
-				m = new MoveCenter().setLocation(new TransformNR()).setNames(selectedSnapshot(), ap.get());// force a
-																											// new move
-																											// event
+				newMoveHere=true;
 			}
 			MoveCenter mc = m;
 			if (ap.get().isOperationRunning()) {
@@ -1828,30 +1844,40 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
 			}
 			CaDoodleOperation op = ap.get().getCurrentOperation();
-			mc.setLocation(tf);
-			if (op == mc) {
-				if (compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
-					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
-					TickToc.tic("Update move here");
-					// com.neuronrobotics.sdk.common.Log.debug("Update Operation "+tf);
-					TickToc.tic("regenerate");
-					regenerateCurrent();
-					TickToc.tic("save");
-					save();
-//					TickToc.toc();
-					//
-//					TickToc.setEnabled(false);
-					return;
-				}
-			}
-			// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
+
 			try {
-				ap.addOp(mc).join();
-			} catch (InterruptedException e) {
-				com.neuronrobotics.sdk.common.Log.error(e);
+				if(newMoveHere) {
+					mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());// force a
+					// new move
+					// event
+				}
+				mc.setLocation(tf);
+				if (op == mc) {
+					if (compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
+						// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
+						TickToc.tic("Update move here");
+						// com.neuronrobotics.sdk.common.Log.debug("Update Operation "+tf);
+						TickToc.tic("regenerate");
+						regenerateCurrent();
+						TickToc.tic("save");
+						save();
+//						TickToc.toc();
+						//
+//						TickToc.setEnabled(false);
+						return;
+					}
+				}
+				// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
+				try {
+					ap.addOp(mc).join();
+				} catch (InterruptedException e) {
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			} catch (InvalidLocationMove e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			TickToc.setEnabled(false);
-
 		});
 
 	}
