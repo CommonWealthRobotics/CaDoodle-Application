@@ -164,7 +164,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Runnable updateRobotLab = null;
 	private LimbControlManager limbs;
 	private boolean regenerating;
-	private ProgressIndicator memUsage; 
+	private ProgressIndicator memUsage;
 	private boolean resizeLiveMode = false;
 	public boolean isResizeLiveMode() { return resizeLiveMode; }
 
@@ -581,7 +581,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (c.getName().contentEquals(s.getName()) && !c.isInGroup()) {
 						exists = true;
 						break;
-                    }
+					}
 				}
 
 				if (!exists)
@@ -642,8 +642,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getMeshes().put(c, meshView);
 
 		// Allow move on first click for unlocked meshes only
-        if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
-            meshView.addEventFilter(MouseEvent.ANY, lockableMouseMover);
+		if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
+			meshView.addEventFilter(MouseEvent.ANY, lockableMouseMover);
 
 		setUpControls(meshView, c);
 	}
@@ -1109,7 +1109,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if ((selectedCSG != null) && (selectedCSG.isHole())) {
 					isSolid = false;
 					break;
-                }
+				}
 			}
 
 			if (isSolid)
