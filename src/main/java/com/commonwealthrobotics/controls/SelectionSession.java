@@ -1833,120 +1833,120 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		getExecutor().submit(() -> {
 			try {
-			if (moveLock())
-				return;
+				if (moveLock())
+					return;
 
-			TransformNR wp = ap.get().getWorkplane();
-			// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
-			TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
+				TransformNR wp = ap.get().getWorkplane();
+				// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
+				TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
 
-			MoveCenter m = getActiveMove();
-			MoveCenter mc=null;
+				MoveCenter m = getActiveMove();
+				MoveCenter mc = null;
 
-			boolean newMoveHere = false;
-			if ((System.currentTimeMillis() - timeSinceLastMove) > 10000 || m == null) {
-				newMoveHere = true;
-			}else
-				mc = m;
-			if (ap.get().isOperationRunning()) {
-				TickToc.tic("Process running, bailing on new update");
-				return;
-			}
+				boolean newMoveHere = false;
+				if ((System.currentTimeMillis() - timeSinceLastMove) > 10000 || m == null) {
+					newMoveHere = true;
+				} else
+					mc = m;
+				if (ap.get().isOperationRunning()) {
+					TickToc.tic("Process running, bailing on new update");
+					return;
+				}
 
-			timeSinceLastMove = System.currentTimeMillis();
-			// TickToc.setEnabled(true);
-			TickToc.tic("Start");
-			RotationNR getCamerFrameGetRotation;
-			double currentRotZ;
-			Quadrant quad;
-			TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-			camerFrame = camerFrame.times(frameOffset);
-			getCamerFrameGetRotation = camerFrame.getRotation();
-			double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuthRadians());
-			quad = Quadrant.getQuad(toDegrees);
-			currentRotZ = Quadrant.QuadrantToAngle(quad);
+				timeSinceLastMove = System.currentTimeMillis();
+				// TickToc.setEnabled(true);
+				TickToc.tic("Start");
+				RotationNR getCamerFrameGetRotation;
+				double currentRotZ;
+				Quadrant quad;
+				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
+				camerFrame = camerFrame.times(frameOffset);
+				getCamerFrameGetRotation = camerFrame.getRotation();
+				double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuthRadians());
+				quad = Quadrant.getQuad(toDegrees);
+				currentRotZ = Quadrant.QuadrantToAngle(quad);
 
-			TransformNR orentationOffset = new TransformNR(0, 0, 0, new RotationNR(0, currentRotZ - 90, 0));
-			TransformNR frame = new TransformNR();// BowlerStudio.getTargetFrame() ;
-			TransformNR stateUnitVector = new TransformNR();
-			double incement = currentGrid;
-			stateUnitVector = orentationOffset.times(stateUnitVectorTmp);
-			stateUnitVector.setRotation(new RotationNR());
-			boolean updateTrig = false;
-			double bound = 0.5;
-			if (stateUnitVector.getX() > bound)
-				updateTrig = true;
+				TransformNR orentationOffset = new TransformNR(0, 0, 0, new RotationNR(0, currentRotZ - 90, 0));
+				TransformNR frame = new TransformNR();// BowlerStudio.getTargetFrame() ;
+				TransformNR stateUnitVector = new TransformNR();
+				double incement = currentGrid;
+				stateUnitVector = orentationOffset.times(stateUnitVectorTmp);
+				stateUnitVector.setRotation(new RotationNR());
+				boolean updateTrig = false;
+				double bound = 0.5;
+				if (stateUnitVector.getX() > bound)
+					updateTrig = true;
 
-			if (stateUnitVector.getX() < -bound)
-				updateTrig = true;
+				if (stateUnitVector.getX() < -bound)
+					updateTrig = true;
 
-			if (stateUnitVector.getY() > bound)
-				updateTrig = true;
+				if (stateUnitVector.getY() > bound)
+					updateTrig = true;
 
-			if (stateUnitVector.getY() < -bound)
-				updateTrig = true;
+				if (stateUnitVector.getY() < -bound)
+					updateTrig = true;
 
-			if (stateUnitVector.getZ() > bound)
-				updateTrig = true;
+				if (stateUnitVector.getZ() > bound)
+					updateTrig = true;
 
-			if (stateUnitVector.getZ() < -bound)
-				updateTrig = true;
+				if (stateUnitVector.getZ() < -bound)
+					updateTrig = true;
 
-			if (!updateTrig) {
-				TickToc.tic("No Update");
-				TickToc.toc();
-				TickToc.setEnabled(false);
-				return;
-			}
+				if (!updateTrig) {
+					TickToc.tic("No Update");
+					TickToc.toc();
+					TickToc.setEnabled(false);
+					return;
+				}
 
-			stateUnitVector = new TransformNR(roundToNearist(stateUnitVector.getX() * incement, incement),
-					roundToNearist(stateUnitVector.getY() * incement, incement),
-					roundToNearist(stateUnitVector.getZ() * incement, incement));
-			stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
+				stateUnitVector = new TransformNR(roundToNearist(stateUnitVector.getX() * incement, incement),
+						roundToNearist(stateUnitVector.getY() * incement, incement),
+						roundToNearist(stateUnitVector.getZ() * incement, incement));
+				stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
 
-			TransformNR current = mc==null?new TransformNR():mc.getLocation();
-			TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
-			TransformNR tf = current.times(currentRotation.inverse()
-					.times(frame.inverse().times(stateUnitVector).times(frame).times(currentRotation)));
+				TransformNR current = mc == null ? new TransformNR() : mc.getLocation();
+				TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
+				TransformNR tf = current.times(currentRotation.inverse()
+						.times(frame.inverse().times(stateUnitVector).times(frame).times(currentRotation)));
 
-			List<String> selectedSnapshot = selectedSnapshot();
+				List<String> selectedSnapshot = selectedSnapshot();
 //			for (String s : selectedSnapshot) {
-			// com.neuronrobotics.sdk.common.Log.error("\t" + s);
+				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
 //			}
 
-			CaDoodleOperation op = ap.get().getCurrentOperation();
-			try {
-				if (newMoveHere) {
-					mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());// force a
-					// new move
-					// event
+				CaDoodleOperation op = ap.get().getCurrentOperation();
+				try {
+					if (newMoveHere) {
+						mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());// force a
+						// new move
+						// event
+					}
+					mc.setLocation(tf);
+				} catch (InvalidLocationMove e) {
+					Log.error(e);
 				}
-				mc.setLocation(tf);
-			} catch (InvalidLocationMove e) {
-				Log.error(e);
-			}
-			if ((op == mc) && compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
-				// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
-				TickToc.tic("Update move here");
-				// com.neuronrobotics.sdk.common.Log.debug("Update Operation "+tf);
-				TickToc.tic("regenerate");
-				regenerateCurrent();
-				TickToc.tic("save");
-				save();
+				if ((op == mc) && compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
+					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
+					TickToc.tic("Update move here");
+					// com.neuronrobotics.sdk.common.Log.debug("Update Operation "+tf);
+					TickToc.tic("regenerate");
+					regenerateCurrent();
+					TickToc.tic("save");
+					save();
 //					TickToc.toc();
-				//
+					//
 //					TickToc.setEnabled(false);
-				return;
-			}
-			// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
-			try {
-				ap.addOp(mc).join();
-			} catch (InterruptedException e) {
-				com.neuronrobotics.sdk.common.Log.error(e);
-			}
-
-			TickToc.setEnabled(false);
-			}catch(Throwable t) {
+					return;
+				} else {
+					// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
+					try {
+						ap.addOp(mc).join();
+					} catch (InterruptedException e) {
+						com.neuronrobotics.sdk.common.Log.error(e);
+					}
+				}
+				TickToc.setEnabled(false);
+			} catch (Throwable t) {
 				Log.error(t);
 			}
 		});
