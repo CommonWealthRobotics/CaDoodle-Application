@@ -72,7 +72,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private double increment = 1.0;
 	private IWorkplaneUpdate updater = null;
 	private Runnable onCancel;
+	private AmbientLight ambientLight = new AmbientLight(Color.color(1.0, 1.0, 1.0, 0));
 
+	// Not used anymore
 	public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 
 		final float LINE_SPACING = 5.0f;
@@ -81,7 +83,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		final float THICKNESS   = 0.1f;
 
 		TriangleMesh mesh = new TriangleMesh();
-		mesh.getTexCoords().addAll(0,0);	  // required dummy coords
+		mesh.getTexCoords().addAll(0,0); // required dummy coords
 
 		for (int i = 0; i < LINE_COUNT; i++) {
 			float x = -EXTENT + i * LINE_SPACING;
@@ -134,7 +136,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		//final float TILE_SIZE_MM	   = 25.4f;
 		//final int TILE_BIG_GRID_PX   = 256;
 		//final int TILE_SMALL_GRID_PX =  16; // 1/16th inch
-		
+
 		// Build square textured tile in half inche
 		//final float TILE_SIZE_MM	   = 12.7f;
 		//final int TILE_BIG_GRID_PX   = 254;
@@ -142,7 +144,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		// Upscale work plane texture
 		final int wpUpscale = 4;
-		
+
 		// Work plane noise in percentage [0-100%]
 		int wpNoise = 25;
 
@@ -170,7 +172,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		int r = (wpColor >> 16) & 0xFF;
 		int g = (wpColor >>  8) & 0xFF;
 		int b =  wpColor		& 0xFF;
-		for (int i = 0; i < src.length; i++) {		
+		for (int i = 0; i < src.length; i++) {
 			int n = 100 + rnd.nextInt(wpNoise + 1) - (wpNoise / 2);
 			src[i] = 0xFF000000 |
 					 (Math.min(255, (r * n) / 100) << 16) |
@@ -223,15 +225,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		// Set work plane texture
 		material.setDiffuseMap(tile);
-		
+
 		// Control work plane transparency
-		Color transWhite = new Color(1, 1, 1, 0.35);
+		Color transWhite = new Color(1, 1, 1, 1);
 		material.setDiffuseColor(transWhite); // Work plane color
 		material.setSpecularColor(Color.BLACK); // No shiny spots
-
-//		WritableImage selfIlluminationImage = new WritableImage(1, 1);
-//		selfIlluminationImage.getPixelWriter().setColor(0, 0, Color.color(0.1, 0.1, 0.1, 1.0)); // RGBA
-//		material.setSelfIlluminationMap(selfIlluminationImage);
 
 		// Create the work plane outline material
 		PhongMaterial material2 = new PhongMaterial();
@@ -240,7 +238,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		material2.setDiffuseMap(outlineImage);
 		material2.setDiffuseColor(transWhite); // Work plane color
 		material2.setSpecularColor(Color.BLACK); // No shiny spots
-//		material2.setSelfIlluminationMap(selfIlluminationImage);
 
 		// Create the work plane mesh, draw at slight offset to align pixel to line centre
 		TriangleMesh topMesh = new TriangleMesh();
@@ -257,7 +254,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			xTextureOffset + workplaneY/TILE_SIZE_MM, yTextureOffset + workplaneX/TILE_SIZE_MM, // top-right
 			xTextureOffset + workplaneY/TILE_SIZE_MM, yTextureOffset);							// bottom-right
 
-		topMesh.getFaces().setAll(0,0, 1,1, 2,2, 0,0, 2,2, 3,3);
+		topMesh.getFaces().setAll(0,0, 1,1, 2,2, 0,0, 2,2, 3,3); // Frontside
+//								  0,0, 2,2, 1,1, 0,0, 3,3, 2,2); // Backside
 
 		MeshView topView = new MeshView(topMesh);
 		topView.setMaterial(material);
@@ -298,9 +296,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		outlineView.setBlendMode(BlendMode.SRC_OVER);
 		outlineView.setCullFace(CullFace.NONE);
 
-		Group wp = new Group(topView, outlineView);
+		Group wp = new Group(topView, outlineView, ambientLight);
 
 		wp.setMouseTransparent(true);
+		wp.setDepthTest(DepthTest.DISABLE);
+		ambientLight.getScope().addAll(wp);
 
 		return wp;
 	}
@@ -323,37 +323,26 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
 
 		this.ap = ap;
-		this.ground = ground;
+		this.ground = ground; // Not used anymore
 		this.engine = engine;
 		this.session = session;
-/*
-		wpPick = new Cube(200, 200, 0.001).toCSG().newMesh();
-		PhongMaterial material = new PhongMaterial();
 
-		material.setDiffuseMap(texture);
-		material.setDiffuseColor(new Color(0.25, 0.25, 0, 0.025));
-		wpPick.setMaterial(material);
-		wpPick.setOpacity(0.25);
-		wpPick.setCullFace(CullFace.BACK);
-//*/
-		wpPick = createWireframeWorkplane(200, 200);
-		//wpPick = createTexturedWorkplane(200, 200);
+		ground.setVisible(false); // Not used anymore
 
+		wpPick = createTexturedWorkplane(200, 200);
 		wpPick.getTransforms().addAll(wpPickPlacement);
-		Group linesGroup = new Group();
-		linesGroup.setDepthTest(DepthTest.ENABLE);
-		linesGroup.setViewOrder(-1); // Lower viewOrder renders on top
-		linesGroup.getChildren().add(wpPick);
+		wpPick.setMouseTransparent(true);
 
-		ground.addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
-			// com.neuronrobotics.sdk.common.Log.error("Ground Click!");
+		wpPick.addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
 			setClickOnGround(true);
 		});
 
-		engine.addUserNode(linesGroup);
-		ground.setMouseTransparent(true);
-		wpPick.setMouseTransparent(true);
-		ground.setVisible(false);
+		engine.getWorkplaneGroup().addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
+			setClickOnGround(true);
+		});
+
+		engine.addUserNode(wpPick);
+		engine.getWorkplaneGroup().setMouseTransparent(true);
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
@@ -368,7 +357,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		PhongMaterial material = new PhongMaterial();
 
 		if (indicator.isHole()) {
-			// material.setDiffuseMap(texture);
 			material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
 			material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		} else {
@@ -390,14 +378,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void cancel() {
+
 		if (!active)
 			return;
 
 		updater = null;
-		ground.removeEventFilter(MouseEvent.ANY, this);
-		wpPick.removeEventFilter(MouseEvent.ANY, this);
+		engine.getWorkplaneGroup().removeEventFilter(MouseEvent.ANY, this);
 		wpPick.setVisible(isWorkplaneNotOrigin());
-		
+
 		if (meshes != null)
 			for (CSG key : meshes.keySet()) {
 				MeshView mv = meshes.get(key);
@@ -415,9 +403,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		onSelectEvent = null;
 		active = false;
 		engine.getWorkplaneGroup().setVisible(true);
+		engine.getWorkplaneGroup().setMouseTransparent(true);
 		session.setMode(SpriteDisplayMode.Clear);
-		ground.setMouseTransparent(true);
-		ground.setVisible(false);
+
+		wpPick.setDepthTest(DepthTest.ENABLE);
 
 		if (onCancel != null) {
 			onCancel.run();
@@ -430,20 +419,21 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void activate(boolean enableGroundPick) {
-
 		active = true;
 		tempory = false;
 		setClickOnGround(false);
 		clicked = false;
-		com.neuronrobotics.sdk.common.Log.error("Starting workplane listeners");
-		ground.addEventFilter(MouseEvent.ANY, this);
-		ground.setMouseTransparent(false);
-		wpPick.setMouseTransparent(false);
-		ground.setVisible(enableGroundPick);
-		engine.getWorkplaneGroup().setVisible(false);
-		wpPick.addEventFilter(MouseEvent.ANY, this);
-		wpPick.setVisible(isWorkplaneNotOrigin());
 
+		// com.neuronrobotics.sdk.common.Log.debug("Starting workplane listeners");
+		wpPick.addEventFilter(MouseEvent.ANY, this);
+		wpPick.setMouseTransparent(false);
+		wpPick.setVisible(isWorkplaneNotOrigin());
+		wpPick.setDepthTest(DepthTest.ENABLE);
+
+		engine.getWorkplaneGroup().addEventFilter(MouseEvent.ANY, this);
+		engine.getWorkplaneGroup().setMouseTransparent(false);
+
+		// Make user meshes pickable
 		if (meshes != null)
 			for (CSG key : meshes.keySet()) {
 				MeshView mv = meshes.get(key);
@@ -461,29 +451,28 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
-			onCancel = null;// non cancles but instead completed
+			onCancel = null;// non cancel but instead completed
 			cancel();
 			ev.consume();
 			session.updateControls();
-			ground.setMouseTransparent(true);
-			wpPick.setMouseTransparent(true);
-			ground.setVisible(false);
-			return;
-		}
+			engine.getWorkplaneGroup().setMouseTransparent(true);
 
-		if ((ev.getEventType() == MouseEvent.MOUSE_MOVED) || (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
+			wpPick.setMouseTransparent(true);
+			wpPick.setDepthTest(DepthTest.DISABLE);
+
+		} else if ((ev.getEventType() == MouseEvent.MOUSE_MOVED) || (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
 			// com.neuronrobotics.sdk.common.Log.error(ev);
 			Point3D intersectedPoint = pickResult.getIntersectedPoint();
 			double x = intersectedPoint.getX();
 			double y = intersectedPoint.getY();
 			double z = intersectedPoint.getZ();
-			if (ev.getSource() == ground) {
+
+			if (ev.getSource() == wpPick) {
 				x *= MainController.groundScale();
 				y *= MainController.groundScale();
 				z *= MainController.groundScale();
 			}
 
-			
 			TransformNR screenLocation;
 			TransformNR pureRot = null;
 			Affine manipulator = new Affine();
@@ -499,11 +488,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 						try {
 							manipulator = source.getManipulator();
 						} catch (MissingManipulatorException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 				}
-				
+
 				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
 				int faceIndex = pickResult.getIntersectedFace();
@@ -521,27 +509,27 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								// into the plane orentation, then snapping in plane, then transforming the points back.
 								TransformNR t = new TransformNR(x, y, z);
 								TransformNR screenLocationtmp = t;//manipulatorNR.times(t);
-								Polygon np = p;//p.transformed(TransformFactory.affineToCSG(manipulator));
+								Polygon np = p; //p.transformed(TransformFactory.affineToCSG(manipulator));
 								Transform npTF = PolygonUtil.calculateNormalTransform(np);
 								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
 								Polygon flattened = np.transformed(npTF);
 								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
-								//Log.debug("Polygon "+flattened);
-								//Log.debug("Point "+flattenedTouch.toSimpleString());
+								//Log.debug("Polygon " + flattened);
+								//Log.debug("Point " + flattenedTouch.toSimpleString());
 								TransformNR adjusted = new TransformNR(
-										SelectionSession.roundToNearist(flattenedTouch.getX(),increment),// snap in plane
-										SelectionSession.roundToNearist(flattenedTouch.getY(),increment),
+										SelectionSession.roundToNearist(flattenedTouch.getX(), increment),// snap in plane
+										SelectionSession.roundToNearist(flattenedTouch.getY(), increment),
 										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
 								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
 								x = adjustedBack.getX();
 								y = adjustedBack.getY();
 								z = adjustedBack.getZ();
-								
-								//Log.debug("Polygon snapped "+adjusted);
+
+								//Log.debug("Polygon snapped " + adjusted);
 							} catch (Exception e) {
-								//Log.error(e);
+								e.printStackTrace();
 							}
-							
+
 						} else
 							Log.error("Polygon not found " + faceIndex);
 
@@ -556,12 +544,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 				} else
 					Log.error("Error face index came back: " + faceIndex);
+
 			}
+
 			TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = manipulatorNR.times(t.times(pureRot));
-			
-			if (intersectedNode == wpPick) {
+
+			if ((intersectedNode == wpPick) || (intersectedNode.getParent() == wpPick)) {
 				if (updater != null)
 					updater.setWorkplaneLocation(screenLocation);
 
@@ -578,9 +568,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		if (faceIndex < 0)
 			return null;
-		
+
 		int currentFaceCount = 0;
-		
+
 		// We need to iterate because some polygons might have < 3 vertices (0 faces)
 		// If you're CERTAIN all polygons have >= 3 vertices, this could be optimized
 		for (Polygon p : polygons) {
@@ -588,24 +578,24 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			int facesInThisPolygon = vertexCount - 2;
 			// Check if the face index falls within this polygon's range
 
-			if (faceIndex < currentFaceCount + facesInThisPolygon)
+			if (faceIndex < (currentFaceCount + facesInThisPolygon))
 				return p;
 
-			currentFaceCount += facesInThisPolygon;	
+			currentFaceCount += facesInThisPolygon;
 		}
+
 		return null;
 	}
 
 	private Vector3d toV(javafx.geometry.Point3D p) {
-		return new Vector3d(p.getX(),p.getY(),p.getZ());
+		return new Vector3d(p.getX(), p.getY(), p.getZ());
 	}
 
 	private TransformNR getFaceNormalAngles(TriangleMesh mesh, int faceIndex) {
 		ObservableFaceArray faces = mesh.getFaces();
 		ObservableFloatArray points = mesh.getPoints();
-		//mesh.get
 
-		int p1Index = faces.get(faceIndex * 6) * 3;
+		int p1Index = faces.get(faceIndex * 6    ) * 3;
 		int p2Index = faces.get(faceIndex * 6 + 2) * 3;
 		int p3Index = faces.get(faceIndex * 6 + 4) * 3;
 
@@ -618,7 +608,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 
 		return new TransformNR();
@@ -630,7 +620,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
 		this.currentAbsolutePose = currentAbsolutePose;
-
 		TransformFactory.nrToAffine(getCurrentAbsolutePose(), getWorkplaneLocation());
 	}
 
@@ -656,16 +645,16 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void pickPlane(Runnable r, Runnable always, RulerManager ruler) {
 
+		// Create work plane placement indicator
 		double pointerLen = 10;
 		double pointerWidth = 2;
 		double pointerHeight = 20;
 
-		CSG indicator = HullUtil
-				.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(pointerLen, 0, 0),
-						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight)))
-				.union(HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(0, pointerLen, 0),
-						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
-				.setColor(Color.YELLOWGREEN);
+		CSG indicator = HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(pointerLen, 0, 0),
+			new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight)))
+			.union(HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(0, pointerLen, 0),
+			new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
+			.setColor(Color.YELLOWGREEN);
 
 		this.setIndicator(indicator, new Affine());
 
@@ -677,7 +666,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			if (this.isClicked()) {
 
 				if (this.isClickOnGround()) {
-					// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
+					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
 					ap.get().setWorkplane(new TransformNR());
 					ruler.cancel();
 				} else
@@ -690,7 +679,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			always.run();
 		});
 
-		this.activate();
+		this.activate(true);
 	}
 
 	public void placeWorkplaneVisualization() {
@@ -717,7 +706,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		double abs = Math.abs(r.getRotationAzimuthDegrees());
 		double abs2 = Math.abs(r.getRotationElevationDegrees());
 		double abs3 = Math.abs(r.getRotationTiltDegrees());
-		
+
 		return ((abs > epsilon) || (abs2 > epsilon) || (abs3 > epsilon));
 	}
 
@@ -742,7 +731,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public Group getPlacementPlane() {
-		// Auto-generated method stub
 		return wpPick;
 	}
 
@@ -752,14 +740,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setWorkplaneLocation(Affine workplaneLocation) {
 		this.workplaneLocation = workplaneLocation;
-
 	}
 
 	public void setUpdater(IWorkplaneUpdate updater) {
 		this.updater = updater;
 	}
 
-	public void onCancle(Runnable onCancel) {
-		this.onCancel = onCancel;	
+	public void onCancel(Runnable onCancel) {
+		this.onCancel = onCancel;
 	}
 }

@@ -288,8 +288,8 @@ public class ShapesPallet {
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
-										// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
-										ap.get().setWorkplane(new TransformNR());
+										// Don't reset work plane to origin
+//										ap.get().setWorkplane(new TransformNR());
 									} else {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
