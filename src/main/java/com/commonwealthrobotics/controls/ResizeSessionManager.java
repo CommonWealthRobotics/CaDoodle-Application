@@ -107,18 +107,21 @@ public class ResizeSessionManager {
 		leftRear   = new ResizingHandle("leftRear",   engine, selection, new Vector3d(1, 1, 0), workplaneOffset, updateLines, onReset);
 		objectBottomZ = 0; // Keep track of the object bottom position
 
+
+		rightFront.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = rightFront;
+		});
+
 		rightFront.manipulator.addEventListener(ev -> {
 
 			if (scalingFlag) {
 				scalingFlag = false;
 				return;
 			}
-			if (beingUpdated == null)
-				beingUpdated = rightFront;
-			if (beingUpdated != rightFront)
+
+			if ((beingUpdated != rightFront) || (originalBounds == null))
 				return;
-			if (originalBounds == null)
-				originalBounds = getBounds();
 
 			controlSprites.hideRotationHandles(true);
 
@@ -139,12 +142,12 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_ty * (1.0 + scale); // Snap Y-dimension to grid
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				
+
 				// Let the XY-size of the scaled object follow the snap grid
 				// It is usually not possible to let the corner land on the snap grid
 				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
 							? (gridNewX / original_tx) - 1.0
-							: (gridNewY / original_ty) - 1.0;				
+							: (gridNewY / original_ty) - 1.0;
 
 				scalingFlag = true; // block recursive call
 				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
@@ -178,9 +181,14 @@ public class ResizeSessionManager {
 					.scale(sx, sy, sz)
 					.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
 
+			BowlerStudio.runLater(() -> updateTopCenter());
 			rescaleMeshes(workplaneOffset, scaleXYZ);
 
-			BowlerStudio.runLater(() -> updateTopCenter());
+		});
+
+		rightRear.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = rightRear;
 		});
 
 		rightRear.manipulator.addEventListener(ev -> {
@@ -189,12 +197,8 @@ public class ResizeSessionManager {
 				scalingFlag = false;
 				return;
 			}
-			if (beingUpdated == null)
-				beingUpdated = rightRear;
-			if (beingUpdated != rightRear)
-				return;
-			if (originalBounds == null)
-				originalBounds = getBounds();
+			if ((beingUpdated != rightRear) || (originalBounds == null))
+				 return;
 
 			controlSprites.hideRotationHandles(true);
 			double sx = 0, sy = 0, sz = 0;
@@ -243,15 +247,21 @@ public class ResizeSessionManager {
 							/ originalBounds.getTotalY();
 				sz = 1.0;
 			}
-			
+
 			Transform scaleXYZ = new Transform()
 				.translate( originalBounds.getMaxX(),  originalBounds.getMaxY(),  originalBounds.getMinZ())
 				.scale(sx, sy, sz)
 				.translate(-originalBounds.getMaxX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
 
-			rescaleMeshes(workplaneOffset, scaleXYZ);			
-
 			BowlerStudio.runLater(() -> updateTopCenter());
+			rescaleMeshes(workplaneOffset, scaleXYZ);
+
+		});
+
+
+		leftFront.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = leftFront;
 		});
 
 		leftFront.manipulator.addEventListener(ev -> {
@@ -260,17 +270,13 @@ public class ResizeSessionManager {
 				scalingFlag = false;
 				return;
 			}
-			if (beingUpdated == null)
-				beingUpdated = leftFront;
-			if (beingUpdated != leftFront)
+			if ((beingUpdated != leftFront) || (originalBounds == null))
 				return;
-			if (originalBounds == null)
-				originalBounds = getBounds();
 
 			controlSprites.hideRotationHandles(true);
 			double sx = 0, sy = 0, sz = 0;
 
-            if ((ev != null) && ev.isShiftDown()) {
+			if ((ev != null) && ev.isShiftDown()) {
 
 				leftFront.manipulator.setSnapGridStatus(false); // disable snap grid for uniform scaling
 				double original_x = originalBounds.getTotalX();
@@ -297,7 +303,7 @@ public class ResizeSessionManager {
 				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * gs);
 
 				sx = gs; sy = gs; sz = gs;
-				
+
 			} else { // Unconstraint resizing path LEFT FRONT
 
 
@@ -317,15 +323,19 @@ public class ResizeSessionManager {
 				sz = 1.0;
 			}
 
-			
 			Transform scaleXYZ = new Transform()
 				.translate( originalBounds.getMinX(),  originalBounds.getMinY(),  originalBounds.getMinZ())
 				.scale(sx, sy, sz)
 				.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
 
+			BowlerStudio.runLater(() -> updateTopCenter());
 			rescaleMeshes(workplaneOffset, scaleXYZ);
 
-			BowlerStudio.runLater(() -> updateTopCenter());
+		});
+
+		leftRear.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = leftRear;
 		});
 
 		leftRear.manipulator.addEventListener(ev -> {
@@ -334,12 +344,8 @@ public class ResizeSessionManager {
 				scalingFlag = false;
 				return;
 			}
-			if (beingUpdated == null)
-				beingUpdated = leftRear;
-			if (beingUpdated != leftRear)
+			if ((beingUpdated != leftRear) || (originalBounds == null))
 				return;
-			if (originalBounds == null)
-				originalBounds = getBounds();
 
 			controlSprites.hideRotationHandles(true);
 			double sx = 0, sy = 0, sz = 0;
@@ -395,9 +401,14 @@ public class ResizeSessionManager {
 				.scale(sx, sy, sz)
 				.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
 
+			BowlerStudio.runLater(() -> updateTopCenter());
 			rescaleMeshes(workplaneOffset, scaleXYZ);
 
-			BowlerStudio.runLater(() -> updateTopCenter());
+		});
+
+		topCenter.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = topCenter;
 		});
 
 		topCenter.manipulator.addEventListener(ev -> {
@@ -406,12 +417,8 @@ public class ResizeSessionManager {
 				scalingFlag = false;
 				return;
 			}
-			if (beingUpdated == null)
-				beingUpdated = topCenter;
-			if (beingUpdated != topCenter)
+			if ((beingUpdated != topCenter) || (originalBounds == null))
 				return;
-			if (originalBounds == null)
-				originalBounds = getBounds();
 
 			controlSprites.hideRotationHandles(true);
 
@@ -435,6 +442,7 @@ public class ResizeSessionManager {
 						.scale(scale, scale, scale)
 						.translate(-originalBounds.getCenterX(), -originalBounds.getCenterY(), -originalBounds.getMinZ());
 
+				BowlerStudio.runLater(() -> updateTopCenter());
 				rescaleMeshes(workplaneOffset, scaleXYZ);
 
 			} else { // Unconstraint resizing path
@@ -445,10 +453,10 @@ public class ResizeSessionManager {
 						.scale(1.0, 1.0, (topCenter.getCurrentInReferenceFrame().getZ()  -originalBounds.getMinZ()) / originalBounds.getTotalZ())
 						.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
 
+				BowlerStudio.runLater(() -> updateTopCenter());
 				rescaleMeshes(workplaneOffset, scaleXYZ);
 			}
 
-			BowlerStudio.runLater(() -> updateTopCenter());
 		});
 
 		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
@@ -528,21 +536,21 @@ public class ResizeSessionManager {
 		double x = (lfC.getX() - rrC.getX()) / 2 + rrC.getX();
 		double y = (lfC.getY() - rrC.getY()) / 2 + rrC.getY();
 
-		double newX = -newXComp;
-		double newY = -newYComp;
-		double newX2 = +newXComp;
-		double newY2 = +newYComp;
+		double newX1 = -newXComp;
+		double newY1 = -newYComp;
+		double newX2 =  newXComp;
+		double newY2 =  newYComp;
 		scalingFlag = true;
-		rightRear.manipulator.setInReferenceFrame(newX, newY, z);
+		rightRear.manipulator.setInReferenceFrame(newX1, newY1, z);
 		leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
-		rightFront.manipulator.setInReferenceFrame(newX2, newY, z);
-		leftRear.manipulator.setInReferenceFrame(newX, newY2, z);
+		rightFront.manipulator.setInReferenceFrame(newX2, newY1, z);
+		leftRear.manipulator.setInReferenceFrame(newX1, newY2, z);
 	}
 
 	private void updateTopCenter() {
 		// if(beingUpdated!=null)
 		ResizingHandle beingUpdated2 = beingUpdated;
-		if (beingUpdated2 != topCenter || beingUpdated2 == null) {
+		if ((beingUpdated2 != topCenter) || (beingUpdated2 == null)) {
 			TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 			TransformNR lfC = leftFront.getCurrentInReferenceFrame();
 			TransformNR tcC = topCenter.getCurrentInReferenceFrame();
@@ -593,7 +601,7 @@ private void threeDTarget() { // New way for control handles, always closest to 
 	Vector3d center = bounds.getCenter();
 	Vector3d min	= bounds.getMin(); // relative to work plane
 	Vector3d max	= bounds.getMax(); // relative to work plane
-	
+
 	objectBottomZ = min.z; // Store correct object Z-min
 
 	double cornerZ = 0; // Object is cut by work plane
@@ -604,7 +612,7 @@ private void threeDTarget() { // New way for control handles, always closest to 
 	else
 	if (max.z < 0) // object is below the work plane
 		cornerZ = max.z;
-	
+
 	topCenter.threeDTarget( screenW, screenH, zoom, new TransformNR(center.x, center.y,   max.z), cf, locked);
 	leftFront.threeDTarget( screenW, screenH, zoom, new TransformNR(max.x,		 max.y, cornerZ), cf, locked);
 	leftRear.threeDTarget(  screenW, screenH, zoom, new TransformNR(min.x,		 max.y, cornerZ), cf, locked);
