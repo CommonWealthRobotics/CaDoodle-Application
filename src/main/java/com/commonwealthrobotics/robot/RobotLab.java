@@ -465,7 +465,8 @@ public class RobotLab {
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
-										ap.get().setWorkplane(new TransformNR());
+										// Don't reset work plane to origin
+//										ap.get().setWorkplane(new TransformNR());
 									} else {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
