@@ -297,7 +297,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		outlineView.setCullFace(CullFace.NONE);
 
 		Group wp = new Group(topView, outlineView, ambientLight);
-
+		topView.setViewOrder(0);
+		outlineView.setViewOrder(0);
 		wp.setMouseTransparent(true);
 		wp.setDepthTest(DepthTest.DISABLE);
 		ambientLight.getScope().addAll(wp);
