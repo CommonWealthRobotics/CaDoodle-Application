@@ -29,7 +29,6 @@ import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.collections.ObservableFloatArray;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
-import javafx.scene.AmbientLight;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -72,7 +71,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private double increment = 1.0;
 	private IWorkplaneUpdate updater = null;
 	private Runnable onCancel;
-	private AmbientLight ambientLight = new AmbientLight(Color.color(1.0, 1.0, 1.0, 0));
 
 	// Not used anymore
 	public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
@@ -227,7 +225,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		material.setDiffuseMap(tile);
 
 		// Control work plane transparency
-		Color transWhite = new Color(1, 1, 1, 1);
+		Color transWhite = new Color(1, 1, 1, 0.45);
 		material.setDiffuseColor(transWhite); // Work plane color
 		material.setSpecularColor(Color.BLACK); // No shiny spots
 
@@ -296,12 +294,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		outlineView.setBlendMode(BlendMode.SRC_OVER);
 		outlineView.setCullFace(CullFace.NONE);
 
-		Group wp = new Group(topView, outlineView, ambientLight);
-		topView.setViewOrder(0);
-		outlineView.setViewOrder(0);
+		Group wp = new Group(topView, outlineView);
+
 		wp.setMouseTransparent(true);
-		wp.setDepthTest(DepthTest.DISABLE);
-		ambientLight.getScope().addAll(wp);
 
 		return wp;
 	}
@@ -342,7 +337,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			setClickOnGround(true);
 		});
 
-		engine.addUserNode(wpPick);
+		engine.addCustomWorkplaneNode(wpPick);
 		engine.getWorkplaneGroup().setMouseTransparent(true);
 	}
 
@@ -407,8 +402,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		engine.getWorkplaneGroup().setMouseTransparent(true);
 		session.setMode(SpriteDisplayMode.Clear);
 
-		wpPick.setDepthTest(DepthTest.ENABLE);
-
 		if (onCancel != null) {
 			onCancel.run();
 			onCancel = null;
@@ -429,7 +422,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		wpPick.addEventFilter(MouseEvent.ANY, this);
 		wpPick.setMouseTransparent(false);
 		wpPick.setVisible(isWorkplaneNotOrigin());
-		wpPick.setDepthTest(DepthTest.ENABLE);
 
 		engine.getWorkplaneGroup().addEventFilter(MouseEvent.ANY, this);
 		engine.getWorkplaneGroup().setMouseTransparent(false);
@@ -459,7 +451,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			engine.getWorkplaneGroup().setMouseTransparent(true);
 
 			wpPick.setMouseTransparent(true);
-			wpPick.setDepthTest(DepthTest.DISABLE);
 
 		} else if ((ev.getEventType() == MouseEvent.MOUSE_MOVED) || (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
 			// com.neuronrobotics.sdk.common.Log.error(ev);
