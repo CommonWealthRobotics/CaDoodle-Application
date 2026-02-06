@@ -1228,6 +1228,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		navigationCube.lockZoom();
 		navigationCube.lockMove();
 		navigationCube.setMouseScale(10);
+		
 
 		BowlerStudio.runLater(() -> {
 			navigationCube.getSubScene().setFocusTraversable(false);
