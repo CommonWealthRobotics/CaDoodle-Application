@@ -692,9 +692,9 @@ public class ControlSprites {
 
 		if (mode == this.mode)
 			return;
+		Log.debug("ControlSprites setMode: " + mode);
 
 		this.mode = mode;
-		System.out.println("ControlSprites setMode: " + mode);
 
 		if (mode == SpriteDisplayMode.MoveZ)
 		{

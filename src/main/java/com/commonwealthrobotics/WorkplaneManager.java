@@ -400,7 +400,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		active = false;
 		engine.getWorkplaneGroup().setVisible(true);
 		engine.getWorkplaneGroup().setMouseTransparent(true);
-		session.setMode(SpriteDisplayMode.Clear);
+		session.setMode(SpriteDisplayMode.Default);
 
 		if (onCancel != null) {
 			onCancel.run();
