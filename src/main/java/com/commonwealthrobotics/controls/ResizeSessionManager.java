@@ -182,13 +182,18 @@ public class ResizeSessionManager {
 				sz = 1.0; // Height is unchanged
 			}
 
-			Transform scaleXYZ = new Transform()
-					.translate(originalBounds.getMinX(), originalBounds.getMaxY(), originalBounds.getMinZ())
-					.scale(sx, sy, sz)
-					.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
-
+			Transform scaleXYZ = null;
+			try {
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMinX(), originalBounds.getMaxY(), originalBounds.getMinZ())
+						.scale(sx, sy, sz)
+						.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
 			BowlerStudio.runLater(() -> updateTopCenter());
-			rescaleMeshes(workplaneOffset, scaleXYZ);
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
 
 		});
 
@@ -255,13 +260,20 @@ public class ResizeSessionManager {
 				sz = 1.0;
 			}
 
-			Transform scaleXYZ = new Transform()
-					.translate(originalBounds.getMaxX(), originalBounds.getMaxY(), originalBounds.getMinZ())
-					.scale(sx, sy, sz)
-					.translate(-originalBounds.getMaxX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+			Transform scaleXYZ = null;
+			try {
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMaxX(), originalBounds.getMaxY(), originalBounds.getMinZ())
+						.scale(sx, sy, sz)
+						.translate(-originalBounds.getMaxX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
 
 			BowlerStudio.runLater(() -> updateTopCenter());
-			rescaleMeshes(workplaneOffset, scaleXYZ);
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
 
 		});
 
@@ -329,13 +341,19 @@ public class ResizeSessionManager {
 				sz = 1.0;
 			}
 
-			Transform scaleXYZ = new Transform()
-					.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
-					.scale(sx, sy, sz)
-					.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+			Transform scaleXYZ = null;
+			try {
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
+						.scale(sx, sy, sz)
+						.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
 
 			BowlerStudio.runLater(() -> updateTopCenter());
-			rescaleMeshes(workplaneOffset, scaleXYZ);
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
 
 		});
 
@@ -403,13 +421,20 @@ public class ResizeSessionManager {
 				sz = 1.0;
 			}
 
-			Transform scaleXYZ = new Transform()
-					.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
-					.scale(sx, sy, sz)
-					.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+			Transform scaleXYZ = null;
+			try {
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
+						.scale(sx, sy, sz)
+						.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
 
 			BowlerStudio.runLater(() -> updateTopCenter());
-			rescaleMeshes(workplaneOffset, scaleXYZ);
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
 
 		});
 
@@ -467,7 +492,7 @@ public class ResizeSessionManager {
 					Log.error(ex);
 				}
 				BowlerStudio.runLater(() -> updateTopCenter());
-				if(scaleXYZ!=null)
+				if (scaleXYZ != null)
 					rescaleMeshes(workplaneOffset, scaleXYZ);
 			}
 
