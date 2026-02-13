@@ -136,7 +136,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR());
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 	private HashMap<CSG, Bounds> inWorkplaneBounds = new HashMap<CSG, Bounds>();
-	private double size;
+	private double snapGridValue;
 
 	private WorkplaneManager workplane;
 	boolean intitialization = false;
@@ -2101,12 +2101,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 //		
 //	}
 
-	public void setSnapGrid(double size) {
-		this.size = size;
-		manipulation.setIncrement(size);
+	public void setSnapGrid(double snapGridValue) {
+		this.snapGridValue = snapGridValue;
+		manipulation.setIncrement(snapGridValue);
 		if (getControls() != null)
-			getControls().setSnapGrid(size);
-		workplane.setIncrement(size);
+			getControls().setSnapGrid(snapGridValue);
+		workplane.setIncrement(snapGridValue);
 	}
 
 	public void setWorkplaneManager(WorkplaneManager workplane) {
@@ -2126,7 +2126,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setActiveProject(ActiveProject ap) {
 		if (this.ap == null) {
 			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler));
-			getControls().setSnapGrid(size);
+			getControls().setSnapGrid(snapGridValue);
 		}
 		this.ap = ap;
 	}
