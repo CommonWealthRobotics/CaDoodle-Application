@@ -1899,9 +1899,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					return;
 				}
 
-				stateUnitVector = new TransformNR(roundToNearist(stateUnitVector.getX() * incement, incement),
-						roundToNearist(stateUnitVector.getY() * incement, incement),
-						roundToNearist(stateUnitVector.getZ() * incement, incement));
+				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
+						roundToNearest(stateUnitVector.getY() * incement, incement),
+						roundToNearest(stateUnitVector.getZ() * incement, incement));
 				stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
 
 				TransformNR current = mc == null ? new TransformNR() : mc.getLocation();
@@ -2041,8 +2041,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return null;
 	}
 
-	public static double roundToNearist(double incoiming, double modulo) {
-		return modulo * (Math.round(incoiming / modulo));
+	public static double roundToNearest(double incoming, double modulo) {
+		return modulo * (Math.round(incoming / modulo));
 	}
 
 	public void updateControls() {

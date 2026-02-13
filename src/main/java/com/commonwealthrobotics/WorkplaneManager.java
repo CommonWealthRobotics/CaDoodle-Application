@@ -509,8 +509,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								//Log.debug("Polygon " + flattened);
 								//Log.debug("Point " + flattenedTouch.toSimpleString());
 								TransformNR adjusted = new TransformNR(
-										SelectionSession.roundToNearist(flattenedTouch.getX(), increment),// snap in plane
-										SelectionSession.roundToNearist(flattenedTouch.getY(), increment),
+										SelectionSession.roundToNearest(flattenedTouch.getX(), snapgridValue),// snap in plane
+										SelectionSession.roundToNearest(flattenedTouch.getY(), snapgridValue),
 										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
 								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
 								x = adjustedBack.getX();
@@ -526,9 +526,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							Log.error("Polygon not found " + faceIndex);
 
 					} else {
-						x = SelectionSession.roundToNearist(x, increment);
-						y = SelectionSession.roundToNearist(y, increment);
-						z = SelectionSession.roundToNearist(z, increment);
+						x = SelectionSession.roundToNearest(x, snapgridValue);
+						y = SelectionSession.roundToNearest(y, snapgridValue);
+						z = SelectionSession.roundToNearest(z, snapgridValue);
 					}
 
 					if (pureRot == null)
