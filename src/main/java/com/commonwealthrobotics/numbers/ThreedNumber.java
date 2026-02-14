@@ -362,4 +362,8 @@ public class ThreedNumber {
 
 		this.mostRecentValue = mostRecentValue;
 	}
+
+	public void mouseTransparent(boolean b) {
+		textField.setMouseTransparent(b);
+	}
 }

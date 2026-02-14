@@ -119,6 +119,7 @@ public class RotationHandle {
 			arc.setVisible(true);
 			handle.setVisible(true);
 			TDnumber.setValue(0);
+			TDnumber.mouseTransparent(false);
 			TDnumber.show();
 			ev.consume();
 		};
@@ -132,10 +133,12 @@ public class RotationHandle {
 		};
 
 		EventHandler<? super MouseEvent> dragged = event -> {
-			if (event.getPickResult().getIntersectedNode() != handle) {
+			
+			if (event.getPickResult().getIntersectedNode() == controlCircle) {
 				if (!startAngleFound) {
 					startAngleFound = true;
 					StartAngle = 22.5 * Math.round(getAngle(event) / 22.5);
+					TDnumber.mouseTransparent(true);
 				}
 
 				current = StartAngle - getAngle(event);
