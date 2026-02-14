@@ -68,7 +68,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private SelectionSession session;
 	private boolean tempory;
 	private ActiveProject ap;
-	private double increment = 1.0;
+	private double snapGridValue = 1.0;
 	private IWorkplaneUpdate updater = null;
 	private Runnable onCancel;
 
@@ -509,8 +509,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								//Log.debug("Polygon " + flattened);
 								//Log.debug("Point " + flattenedTouch.toSimpleString());
 								TransformNR adjusted = new TransformNR(
-										SelectionSession.roundToNearist(flattenedTouch.getX(), increment),// snap in plane
-										SelectionSession.roundToNearist(flattenedTouch.getY(), increment),
+										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),// snap in plane
+										SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
 										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
 								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
 								x = adjustedBack.getX();
@@ -526,9 +526,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							Log.error("Polygon not found " + faceIndex);
 
 					} else {
-						x = SelectionSession.roundToNearist(x, increment);
-						y = SelectionSession.roundToNearist(y, increment);
-						z = SelectionSession.roundToNearist(z, increment);
+						x = SelectionSession.roundToNearest(x, snapGridValue);
+						y = SelectionSession.roundToNearest(y, snapGridValue);
+						z = SelectionSession.roundToNearest(z, snapGridValue);
 					}
 
 					if (pureRot == null)
@@ -715,11 +715,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public double getIncrement() {
-		return increment;
+		return snapGridValue;
 	}
 
-	public void setIncrement(double increment) {
-		this.increment = increment;
+	public void setIncrement(double snapGridValue) {
+		this.snapGridValue = snapGridValue;
 	}
 
 	public Group getPlacementPlane() {
