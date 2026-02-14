@@ -313,8 +313,8 @@ public class RotationHandle {
 		arc.setRadiusX(radius / 2);
 		arc.setRadiusY(radius / 2);
 		
-		positionPin = input4.times(input.times(new TransformNR(0,0,0)));	
-		TDnumber.threeDTarget(screenW, screenH, zoom, positionPin, cf);
+		positionPin = input3.times(input.times(new TransformNR(0,0,0)));	
+		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);
 			TransformFactory.nrToAffine(input3, handlePlanarOffset);
