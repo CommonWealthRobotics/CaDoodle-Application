@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,6 +58,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
+import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
 import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
@@ -919,6 +921,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (file.getName().endsWith("doodle")) {
 				ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", ap.get().getSelf().getAbsolutePath());
 				ConfigurationDatabase.save();
+			}
+			else {
+				// Force an update when the parameters are loaded, 
+				// this should also switch from STL to blender file loading if the blend is generated
+				CopyOnWriteArrayList<IParameterChanged> listeners = para.getInstance().getParamListeners(para.getName());
+				for(IParameterChanged l:listeners){
+					l.parameterChanged(para.getName(), para);
+				}
 			}
 		});
 
@@ -1816,8 +1826,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 					}
 				} catch (InvalidLocationMove e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.error(e);
 				}
 
 			}
