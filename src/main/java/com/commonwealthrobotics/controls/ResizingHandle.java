@@ -176,7 +176,7 @@ public class ResizingHandle {
 	}
 
 	private Color currentColor() {
-		Color tmpColor = (myColor != null) ? myColor : Color.WHITE;
+		Color tmpColor = (myColor != null) ? myColor : new Color(isResizeAllowed()?1:0, moveLock?0:1, 1, 1);
 
 		// Make top handle a bit darker to distinguish it from the corner handles
 		if (zMove)
