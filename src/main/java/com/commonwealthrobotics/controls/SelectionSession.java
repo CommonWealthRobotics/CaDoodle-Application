@@ -1859,8 +1859,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				RotationNR getCamerFrameGetRotation;
 				double currentRotZ;
 				Quadrant quad;
+				// Not needed anymore
+				// TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
+				// camerFrame = camerFrame.times(frameOffset);
 				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				camerFrame = camerFrame.times(frameOffset);
 				getCamerFrameGetRotation = camerFrame.getRotation();
 				double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuthRadians());
 				quad = Quadrant.getQuad(toDegrees);
@@ -1902,7 +1904,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
 						roundToNearest(stateUnitVector.getY() * incement, incement),
 						roundToNearest(stateUnitVector.getZ() * incement, incement));
-				stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
+				// Not needed anymore
+				// stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
 
 				TransformNR current = mc == null ? new TransformNR() : mc.getLocation();
 				TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());

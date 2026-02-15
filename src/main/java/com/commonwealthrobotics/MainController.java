@@ -920,6 +920,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
+
+			engine.setOverlayPane(paneOverlay2D);
+
 			ap.addListener(this);
 			session = new SelectionSession(engine, ap, ruler);
 
@@ -989,7 +992,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			com.neuronrobotics.sdk.common.Log.error(e);
 			System.exit(1);
 		}
-		
+
 		// Prevent the timeline scroll pane to affect other areas
 		timelineHolder.setPrefWidth(32767);
 		// Prevent border color change when selecting the scroll pane
@@ -1006,7 +1009,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					} catch (InterruptedException e) {
 						break;
 					}
-					
+
 				}
 				com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
 				ap.get().setProjectName(fileNameBox.getText());
@@ -1228,7 +1231,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		navigationCube.lockZoom();
 		navigationCube.lockMove();
 		navigationCube.setMouseScale(10);
-		
 
 		BowlerStudio.runLater(() -> {
 			navigationCube.getSubScene().setFocusTraversable(false);

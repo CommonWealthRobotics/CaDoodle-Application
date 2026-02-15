@@ -32,11 +32,12 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Cylinder;
+//import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.application.Platform;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -49,6 +50,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
 public class ControlSprites {
@@ -82,15 +84,15 @@ public class ControlSprites {
 
 	private ArrayList<Node> allElems = new ArrayList<Node>();
 	private boolean selectionLive = false;
+	private Bounds b;
 	private Bounds bounds;
 	private List<DottedLine> lines;
 	private Affine spriteFace = new Affine();
 	private Affine moveUpLocation = new Affine();
 	private Scale scaleTF = new Scale();
 	private Affine selection;
-	private Manipulation zMove;
+	private Manipulation zMoveManipulator;
 	// private CaDoodleFile cadoodle;
-	private Bounds b;
 	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
 	private TransformNR cf;
 	private ThreedNumber xdimen;
@@ -106,10 +108,26 @@ public class ControlSprites {
 	private CaDoodleOperation currentOp;
 	private ActiveProject ap;
 	private RulerManager ruler;
+	private final Pane overlayPane; // Overlay pane for 2D objects
+	private Point3D startingPosition3D;
 
 	public void setSnapGrid(double snapGridValue) {
-		zMove.setIncrement(snapGridValue);
+		zMoveManipulator.setIncrement(snapGridValue);
 		scaleSession.setSnapGrid(snapGridValue);
+	}
+
+	// Use the received mouse position to calculate the world position and send it back
+	public Point3D sendNewWorldPosition(double screenX, double screenY, double snapGridValue) {
+
+		// Convert to subscene coordinates to remove offsets
+		Point2D overlayCoords = overlayPane.sceneToLocal(new Point2D(screenX, screenY));
+
+		this.startingPosition3D = upArrow.getStartingPoint3D();
+
+		Point3D wp3d;
+		double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(), startingPosition3D.getY());
+
+		return new Point3D(startingPosition3D.getX(), startingPosition3D.getY(), manipulation.snapToGrid(foundZ));
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
@@ -118,15 +136,18 @@ public class ControlSprites {
 		this.session = session;
 		this.ruler = ruler;
 
-		// Prevent Z-fighting of footprint and work plane
-		footprint.setDepthTest(DepthTest.DISABLE);
-
 		if (e == null)
 			throw new NullPointerException();
+
 		this.engine = e;
+		this.overlayPane = e.getOverlayPane();
 		this.selection = sel;
 		this.manipulation = m;
 		this.ap = ap;
+
+		// Prevent Z-fighting of footprint and work plane
+		footprint.setDepthTest(DepthTest.DISABLE);
+
 		// this.xyMove = mov;
 		ap.addListener(new ICaDoodleStateUpdate() {
 			@Override
@@ -177,11 +198,11 @@ public class ControlSprites {
 		});
 
 		Affine zMoveOffsetFootprint = new Affine();
-		zMove = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR());
-		zMove.setFrameOfReference(() -> ap.get().getWorkplane());
+		zMoveManipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(), this::sendNewWorldPosition, true);
+		zMoveManipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 
-		zMove.addSaveListener(() -> {
-			TransformNR globalPose = zMove.getGlobalPoseInReferenceFrame();
+		zMoveManipulator.addSaveListener(() -> {
+			TransformNR globalPose = zMoveManipulator.getGlobalPoseInReferenceFrame();
 			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
 			Thread t;
 			try {
@@ -197,7 +218,7 @@ public class ControlSprites {
 				Log.error(e1);
 			}
 
-			zMove.set(0, 0, 0);
+			zMoveManipulator.set(0, 0, 0);
 			BowlerKernel.runLater(() -> {
 				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
 			});
@@ -207,11 +228,11 @@ public class ControlSprites {
 			updateLines();
 		});
 
-		zMove.addEventListener(ev -> {
+		zMoveManipulator.addEventListener(ev -> {
 			zmoving = true;
 			xymoving = false;
 			setMode(SpriteDisplayMode.MoveZ);
-			TransformNR globalPose = zMove.getCurrentPose();
+			TransformNR globalPose = zMoveManipulator.getCurrentPose();
 			TransformNR wp = new TransformNR(ap.get().getWorkplane().getRotation());
 			globalPose = wp.times(globalPose);
 			globalPose.setRotation(new RotationNR());
@@ -220,10 +241,9 @@ public class ControlSprites {
 			updateLines();
 		});
 
-		upArrow = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(),
-		() -> {
-			updateLinesAndCubes();
-		}, () -> scaleSession.resetSelected());
+		upArrow = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMoveManipulator,
+		() -> updateLinesAndCubes(),		 // onSelect
+		() -> scaleSession.resetSelected()); // onReset
 
 		// Keep arrow in front of other controls
 		upArrow.getMesh().setViewOrder(-10);
@@ -289,13 +309,13 @@ public class ControlSprites {
 		Runnable offsetZChange = () -> {
 			if (zOffset.canceled)
 				return;
-			
+
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
 			double manipDiff = zOffset.getMostRecentValue() - min.z;
 			// com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
-			zMove.set(0, 0, manipDiff);
-			zMove.fireSave();
+			zMoveManipulator.set(0, 0, manipDiff);
+			zMoveManipulator.fireSave();
 			updateLinesAndCubes();
 		};
 
@@ -348,7 +368,7 @@ public class ControlSprites {
 		linesGroupp.setDepthTest(DepthTest.DISABLE);
 		linesGroupp.setViewOrder(-1); // Lower viewOrder renders on top
 		Group controlsGroup = new Group();
-		
+
 		// Draw controls in front of other objects
 		controlsGroup.setDepthTest(DepthTest.DISABLE);
 		controlsGroup.setViewOrder(-2); // Lower viewOrder renders on top
@@ -480,7 +500,7 @@ public class ControlSprites {
 			Vector3d center = bounds.getCenter();
 			Vector3d min = bounds.getMin();
 			Vector3d max = bounds.getMax();
-			
+
 			// Set footprint of shape
 			footprint.setHeight(Math.abs(max.y - min.y));
 			footprint.setWidth(Math.abs(max.x - min.x));
@@ -535,7 +555,7 @@ public class ControlSprites {
 			heightLine.setEndY(center.y);
 			heightLine.setEndX(center.x);
 			heightLine.setEndZ(max.z);
-		
+
 			// Distance between handle and label
 			double numberOffset = -zoom / 50;
 
@@ -544,8 +564,8 @@ public class ControlSprites {
 
 			// Scale factor for Z-handle arrow
 			double arrowScale = viewScale;
-			if (arrowScale > 0.3)
-				arrowScale = arrowScale - (arrowScale - 0.3) / 2;
+			//if (arrowScale > 0.3)
+			//	arrowScale = arrowScale - (arrowScale - 0.3) / 2;
 
 			scaleTF.setX(arrowScale);
 			scaleTF.setY(arrowScale);
@@ -566,7 +586,7 @@ public class ControlSprites {
 			double arrowDistance = 5;
 			TransformNR zHandleLoc = new TransformNR(center.x, center.y, arrowDistance + max.z + (ResizingHandle.getSize() * viewScale));
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
-			
+
 			// Position value labels
 			xdimen.threeDTarget(screenW, screenH, zoom,
 				new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ), cf);
@@ -593,7 +613,7 @@ public class ControlSprites {
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
-			zOffset.setValue(min.z + zMove.getCurrentPoseInReferenceFrame().getZ());
+			zOffset.setValue(min.z + zMoveManipulator.getCurrentPoseInReferenceFrame().getZ());
 
 			if (scaleSession.zScaleSelected() && (mode == SpriteDisplayMode.Default)
 					|| (mode == SpriteDisplayMode.ResizeZ))
@@ -660,7 +680,7 @@ public class ControlSprites {
 			if (sel.isNoScale())
 				lockSize = true;
 
-		zMove.setUnlocked(!moveLock);
+		zMoveManipulator.setUnlocked(!moveLock);
 		scaleSession.setResizeAllowed(!lockSize, moveLock);
 		rotationManager.setLock(moveLock);
 		scaleSession.threeDTarget(screenW, screenH, zoom, b, cf, session.isLocked());
@@ -696,11 +716,11 @@ public class ControlSprites {
 
 		this.mode = mode;
 
-		if (mode == SpriteDisplayMode.MoveZ)
-		{
-		   Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
-		   zMove.setStartingWorkplanePosition(startingPos);
-		}
+//		if (mode == SpriteDisplayMode.MoveZ)
+//		{
+//		   Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
+//		   zMove.setStartingWorkplanePosition(startingPos);
+//		}
 		// new Exception("Mode Set to " + mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
@@ -759,7 +779,7 @@ public class ControlSprites {
 			case Mirror:
 				for (DottedLine l : lines)
 					l.setVisible(true);
-				
+
 				rotationManager.hide();
 				break;
 			case PLACING:

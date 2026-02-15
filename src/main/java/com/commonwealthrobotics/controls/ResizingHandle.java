@@ -10,8 +10,9 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ChamferedCube;
 import eu.mihosoft.vrl.v3d.Cube;
-import eu.mihosoft.vrl.v3d.Transform;
+//import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.control.Tooltip;
@@ -24,19 +25,25 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
+import javafx.scene.layout.Pane;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.transform.NonInvertibleTransformException;
 
 public class ResizingHandle {
 
-	private double baseSize = 0.75; // Base size for the corner handle cubes
+	private final Pane overlay; // Overlay pane for 2D objects
+
+	private double baseScale = 0.75; // Base scale factor for the corner handle cubes
+	private static final double size = 10; // Handle size in pixels
+	private double scaleFactor;
+
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-	private static final double size = 10;
 	private MeshView mesh;
-	
+
 	private Affine location = new Affine();
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
-	private double scale;
 	private Affine resizeHandleLocation = new Affine();
 	private Affine baseMove;
 
@@ -50,6 +57,9 @@ public class ResizingHandle {
 	private boolean moveLock;
 	private Color myColor = null;
 	private Color highlightColor = new Color(1, 0, 0, 1);
+	private Point3D startingPosition3D;
+	private boolean zMove = false; // Is the move a XY or a Z-move
+	private double snapGridValue = 0;
 
 	// private Tooltip hover = new Tooltip();
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
@@ -61,15 +71,21 @@ public class ResizingHandle {
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
 		this.name = name;
 		this.workplaneOffset = workplaneOffset;
-        this.baseMove = move;
-		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR());
+		this.baseMove = move;
+		// Different behavior for different moves
+		zMove = this.name.equals("topCenter"); // XY-move or Z-move?
+
+		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR(), this::sendNewWorldPosition, zMove);
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
 		if (engine == null)
 			throw new NullPointerException();
+
 		this.engine = engine;
+		overlay = engine.getOverlayPane();
 		camera = engine.getFlyingCamera().getCamera();
+
 		mesh = shape.getMesh();
 		material = new PhongMaterial();
 		resetColor();
@@ -77,22 +93,26 @@ public class ResizingHandle {
 		// material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 		mesh.setMaterial(material);
 		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
-			if(!selected)
+			if (!selected)
 				resetColor();
 		});
+
 		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
 			setSelectedColor();
 		});
+
 		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			com.neuronrobotics.sdk.common.Log.error("Corner selected");
+			com.neuronrobotics.sdk.common.Log.debug("Corner selected");
 			onReset.run();
 			selected = true;
 			setUniform(event.isShiftDown());
 			onSelect.run();
 			setSelectedColor();
 
-			Point3D startingPos = getAbsolutePosition();
-			manipulator.setStartingWorkplanePosition(startingPos);
+			this.startingPosition3D = getAbsolutePositionInWorkplane();
+			Point2D overlayCoords = overlay.sceneToLocal(new Point2D(event.getSceneX(), event.getSceneY()));
+			manipulator.setStartingWorkplanePosition(startingPosition3D);
+
 		});
 
 		mesh.getTransforms().add(move);
@@ -106,20 +126,49 @@ public class ResizingHandle {
 
 	}
 
-    public Point3D getAbsolutePosition() {
-        Affine combined = new Affine();
-        combined.prepend(scaleTF);
-        combined.prepend(cameraOrent);
-        combined.prepend(location);
-        combined.prepend(workplaneOffset);
-        combined.prepend(resizeHandleLocation);
-        combined.prepend(baseMove);
-        
-        return combined.transform(new Point3D(0, 0, 0));
-    }
+	public Point3D getAbsolutePosition() {
+		Affine combined = new Affine();
+		combined.prepend(scaleTF);
+		combined.prepend(cameraOrent);
+		combined.prepend(location);
+		combined.prepend(workplaneOffset);
+		combined.prepend(resizeHandleLocation);
+		combined.prepend(baseMove);
+
+		return combined.transform(new Point3D(0, 0, 0));
+	}
+
+	public Point3D getAbsolutePositionInWorkplane() {
+		Point3D world = getAbsolutePosition();
+		try {
+			return workplaneOffset.createInverse().transform(world);
+		} catch (NonInvertibleTransformException e) {
+			return world;
+		}
+	}
+
+	public Point3D sendNewWorldPosition(double screenX, double screenY, double snapGridValue) {
+
+		// Convert to subscene coordinates to remove offsets
+		Point2D overlayCoords = overlay.sceneToLocal(new Point2D(screenX, screenY));
+
+		if (zMove) {
+			// Z-move: fixed XY in local space, varying Z
+			double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(), startingPosition3D.getY());
+			return new Point3D( startingPosition3D.getX(),  startingPosition3D.getY(), this.manipulator.snapToGrid(foundZ));
+		} else {
+			// XY-move: fixed Z in local space, varying XY
+			Point3D wp3d = engine.sceneToWorldFixedZ_WP(overlayCoords, startingPosition3D.getZ());
+			return new Point3D(this.manipulator.snapToGrid(wp3d.getX()), this.manipulator.snapToGrid(wp3d.getY()), wp3d.getZ());
+		}
+	}
 
 	private void setSelectedColor() {
 		material.setDiffuseColor(highlightColor);
+	}
+
+	private Color getSelectedColor() {
+		return highlightColor;
 	}
 
 	private void resetColor() {
@@ -127,7 +176,13 @@ public class ResizingHandle {
 	}
 
 	private Color currentColor() {
-		return (myColor == null) ? new Color(isResizeAllowed() ? 1 : 0, moveLock ? 0 : 1, 1, 1) : myColor;
+		Color tmpColor = (myColor != null) ? myColor : Color.WHITE;
+
+		// Make top handle a bit darker to distinguish it from the corner handles
+		if (zMove)
+			tmpColor = Color.color((tmpColor.getRed() * 0.8), (tmpColor.getGreen() * 0.8), (tmpColor.getBlue() * 0.8));
+
+		return tmpColor;
 	}
 
 	public TransformNR getParametric() {
@@ -227,37 +282,45 @@ public class ResizingHandle {
 		double z = target.getZ() - cf.getZ();
 
 		// Calculate the distance between camera and target
-		double distance = Math.sqrt(x * x + y * y + z * z);
+		//double distance = Math.sqrt(x * x + y * y + z * z);
 
 		// Define a base scale and distance
-		double baseScale = getBaseSize();
-		double baseDistance = 1000.0;
+		double baseScale = getBaseScale();
+		//double baseDistance = 1000.0;
 
 		// Calculate the scale factor
-		double scaleFactor = ((distance / baseDistance) * baseScale);
+		//double scaleFactor = ((distance / baseDistance) * baseScale);
 
 		// Clamp the scale factor to a reasonable range
-		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
+		//scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
 
-		setScale(scaleFactor);
+		// Get current world location
+		Point3D world3Dpos = new Point3D(target.getX(), target.getY(), target.getZ());
+		double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
+
+		// Used by top-arrow
+		setScale(calculatedScaleFactor);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
 //		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
 //		TransformNR pr = wp.inverse().times(pureRot);
 		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distance " + vect + " scale " + scale);
 		// com.neuronrobotics.sdk.common.Log.error("");
+
+		double cubeScale = calculatedScaleFactor;
+		scaleTF.setX(cubeScale);
+		scaleTF.setY(cubeScale);
+		scaleTF.setZ(cubeScale);
+
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
-			
-            double cubeScale = getScale();
 
-            if (cubeScale < 0.02)
-                cubeScale = 0.02;
-            if (cubeScale > 0.4)
-                cubeScale = 0.4 + (cubeScale - 0.4) / 1.3;
-            
-            scaleTF.setX(cubeScale);
-			scaleTF.setY(cubeScale);
-			scaleTF.setZ(cubeScale);
+		// double cubeScale = getScale();
+
+		// if (cubeScale < 0.02)
+		//		cubeScale = 0.02;
+		//	if (cubeScale > 0.4)
+		//		cubeScale = 0.4 + (cubeScale - 0.4) / 1.3;
+
 			TransformFactory.nrToAffine(pureRot, cameraOrent);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});
@@ -265,28 +328,27 @@ public class ResizingHandle {
 		// hover.setText(name + " " + getCurrentInReferenceFrame()) ;
 	}
 
-	private double getBaseSize() {
-		return baseSize;
-	}
-	
 	public void hide() {
 		setVisible(false);
 	}
-	
+
 	public void show() {
 		setVisible(true);
 	}
+
 	public void setVisible(boolean b) {
 		mesh.setVisible(b);
 	}
 
+	public static double getSize() {
+		return size;
+	}
+
 	private double getHeight() {
-		// Auto-generated method stub
 		return getSize();
 	}
 
 	private double getWidth() {
-		// Auto-generated method stub
 		return getSize();
 	}
 
@@ -298,16 +360,20 @@ public class ResizingHandle {
 		this.mesh = mesh;
 	}
 
-	public static double getSize() {
-		return size;
+	public void setBaseScale(double baseScale) {
+		this.baseScale = baseScale;
+	}
+
+	private double getBaseScale() {
+		return baseScale;
+	}
+
+	private void setScale(double scaleFactor) {
+		this.scaleFactor = scaleFactor;
 	}
 
 	public double getScale() {
-		return scale;
-	}
-
-	public void setScale(double scale) {
-		this.scale = scale;
+		return baseScale * scaleFactor;
 	}
 
 	@Override
@@ -315,26 +381,22 @@ public class ResizingHandle {
 		return name;
 	}
 
-	public void resetSelected() {
-		resetColor();
-		selected=false;
-		setUniform(false);
-	}
-
 	public boolean isSelected() {
 		return selected;
 	}
 
-	public boolean isUniform() {
-		return uniform;
+	public void resetSelected() {
+		resetColor();
+		selected = false;
+		setUniform(false);
 	}
 
 	public void setUniform(boolean uniform) {
 		this.uniform = uniform;
 	}
 
-	public boolean isResizeAllowed() {
-		return resizeAllowed;
+	public boolean isUniform() {
+		return uniform;
 	}
 
 	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
@@ -344,11 +406,8 @@ public class ResizingHandle {
 		resetColor();
 	}
 
-	/**
-	 * @return the myColor
-	 */
-	public Color getMyColor() {
-		return myColor;
+	public boolean isResizeAllowed() {
+		return resizeAllowed;
 	}
 
 	/**
@@ -361,11 +420,10 @@ public class ResizingHandle {
 	}
 
 	/**
-	 * @param baseSize the baseSize to set
+	 * @return the myColor
 	 */
-	public void setBaseSize(double baseSize) {
-		this.baseSize = baseSize;
-		
+	public Color getMyColor() {
+		return myColor;
 	}
 
 }
