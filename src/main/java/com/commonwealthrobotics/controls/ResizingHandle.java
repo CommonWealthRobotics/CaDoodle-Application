@@ -110,7 +110,6 @@ public class ResizingHandle {
 			setSelectedColor();
 
 			this.startingPosition3D = getAbsolutePositionInWorkplane();
-			Point2D overlayCoords = overlay.sceneToLocal(new Point2D(event.getSceneX(), event.getSceneY()));
 			manipulator.setStartingWorkplanePosition(startingPosition3D);
 
 		});
@@ -155,10 +154,12 @@ public class ResizingHandle {
 		if (zMove) {
 			// Z-move: fixed XY in local space, varying Z
 			double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(), startingPosition3D.getY());
-			return new Point3D( startingPosition3D.getX(),  startingPosition3D.getY(), this.manipulator.snapToGrid(foundZ));
+			updateCubeSize();
+			return new Point3D(startingPosition3D.getX(), startingPosition3D.getY(), this.manipulator.snapToGrid(foundZ));
 		} else {
 			// XY-move: fixed Z in local space, varying XY
 			Point3D wp3d = engine.sceneToWorldFixedZ_WP(overlayCoords, startingPosition3D.getZ());
+			updateCubeSize();
 			return new Point3D(this.manipulator.snapToGrid(wp3d.getX()), this.manipulator.snapToGrid(wp3d.getY()), wp3d.getZ());
 		}
 	}
@@ -272,54 +273,30 @@ public class ResizingHandle {
 		}
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
-		cf = manipulator.getFrameOfReference().inverse().times(cf);
+	public void updateCubeSize() {
 
-		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
-		// Calculate the vector from camera to target
-		double x = target.getX() - cf.getX();
-		double y = target.getY() - cf.getY();
-		double z = target.getZ() - cf.getZ();
+		Point3D world3Dpos = getAbsolutePosition();
 
-		// Calculate the distance between camera and target
-		//double distance = Math.sqrt(x * x + y * y + z * z);
-
-		// Define a base scale and distance
-		double baseScale = getBaseScale();
-		//double baseDistance = 1000.0;
-
-		// Calculate the scale factor
-		//double scaleFactor = ((distance / baseDistance) * baseScale);
-
-		// Clamp the scale factor to a reasonable range
-		//scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
-
-		// Get current world location
-		Point3D world3Dpos = new Point3D(target.getX(), target.getY(), target.getZ());
 		double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
-
-		// Used by top-arrow
+	   
 		setScale(calculatedScaleFactor);
-		TransformNR pureRot = new TransformNR(cf.getRotation());
-//		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
-//		TransformNR pr = wp.inverse().times(pureRot);
-		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distance " + vect + " scale " + scale);
-		// com.neuronrobotics.sdk.common.Log.error("");
+		
+		BowlerStudio.runLater(() -> {
+			scaleTF.setX(calculatedScaleFactor);
+			scaleTF.setY(calculatedScaleFactor);
+			scaleTF.setZ(calculatedScaleFactor);
+		});
+	}
 
-		double cubeScale = calculatedScaleFactor;
-		scaleTF.setX(cubeScale);
-		scaleTF.setY(cubeScale);
-		scaleTF.setZ(cubeScale);
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
+
+		updateCubeSize();
+
+		TransformNR pureRot = new TransformNR(cf.getRotation());
+
 
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
-
-		// double cubeScale = getScale();
-
-		// if (cubeScale < 0.02)
-		//		cubeScale = 0.02;
-		//	if (cubeScale > 0.4)
-		//		cubeScale = 0.4 + (cubeScale - 0.4) / 1.3;
 
 			TransformFactory.nrToAffine(pureRot, cameraOrent);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
