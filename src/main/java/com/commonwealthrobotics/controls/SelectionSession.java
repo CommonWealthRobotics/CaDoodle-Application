@@ -707,7 +707,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TransformNR scenePos = new TransformNR(localPoint.getX(), localPoint.getY(), localPoint.getZ());
 					TransformNR wpLocal = wp.inverse().times(scenePos);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
-					manipulation.setStartingWorkplanePosition(startingPosition3D);
+					manipulation.setStartingWorkplanePosition(new Point3D(manipulation.snapToGrid(startingPosition3D.getX()),
+						manipulation.snapToGrid(startingPosition3D.getY()), manipulation.snapToGrid(startingPosition3D.getZ())));
 				}
 
 				event.consume();
