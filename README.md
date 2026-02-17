@@ -27,10 +27,18 @@ cd CaDoodle-Application
 
 git submodule update --init --recursive
 
-git submodule update  --recursive
+bash build.sh
+```
 
-bash  build.sh
+# Build (macOS)
+```
+git clone https://github.com/CommonWealthRobotics/CaDoodle-Application.git
 
+cd CaDoodle-Application
+
+git submodule update --init --recursive
+
+bash buildMac.sh
 ```
 
 
@@ -71,8 +79,6 @@ cd CaDoodle-Application
 
 git submodule update --init --recursive
 
-git submodule update --recursive
-
 ./gradlew clean shadowJar
 ```
 
@@ -96,4 +102,3 @@ The Windows CaDoodle application is located in the Windows user directory: ```us
 # Icons 
 
 https://www.svgrepo.com/collection/solar-bold-icons/
-
