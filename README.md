@@ -38,7 +38,7 @@ cd CaDoodle-Application
 
 git submodule update --init --recursive
 
-sh buildMac.sh
+bash buildMac.sh
 ```
 
 
