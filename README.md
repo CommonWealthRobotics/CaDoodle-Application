@@ -30,7 +30,7 @@ git submodule update --init --recursive
 bash build.sh
 ```
 
-# Build (Mac OS)
+# Build (macOS)
 ```
 git clone https://github.com/CommonWealthRobotics/CaDoodle-Application.git
 
