@@ -64,7 +64,7 @@ public class ResizingHandle {
 	// private Tooltip hover = new Tooltip();
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
-		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset, new ChamferedCube(getSize(), getSize(), getSize(), getSize() / 5).toCSG().toZMin());
+		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset, new ChamferedCube(getSize(), getSize(), getSize() / 2.4, getSize() / 5).toCSG().toZMin());
 	}
 
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
