@@ -79,8 +79,6 @@ cd CaDoodle-Application
 
 git submodule update --init --recursive
 
-git submodule update --recursive
-
 ./gradlew clean shadowJar
 ```
 
