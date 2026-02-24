@@ -596,7 +596,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Point3D p3 = new Point3D(points.get(p3Index), points.get(p3Index + 1), points.get(p3Index + 2));
 
 		try {
-			Polygon p = Polygon.fromConcavePoints(Arrays.asList(toV(p1),toV(p2),toV(p3))).get(0);
+			Polygon p = Polygon.fromVector3d(Arrays.asList(toV(p1),toV(p2),toV(p3))).get(0);
 			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
 
 		} catch (Exception e) {

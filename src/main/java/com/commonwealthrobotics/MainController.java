@@ -50,6 +50,8 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
+import eu.mihosoft.vrl.v3d.Debug3dProvider;
+import eu.mihosoft.vrl.v3d.IDebug3dProvider;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
@@ -916,6 +918,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		try {
 			engine = new BowlerStudio3dEngine("CAD window");
+			Debug3dProvider.setProvider(new IDebug3dProvider() {
+				
+				@Override
+				public void clearScreen() {
+					engine.clearUserNode();
+				}
+				
+				@Override
+				public void addObject(Object o) {
+					engine.addObject(o, ap.get().getSelf());
+				}
+			});
 			engine.rebuild(true);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
