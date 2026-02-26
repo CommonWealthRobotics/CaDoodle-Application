@@ -717,9 +717,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void updateControlsDisplayOfSelected() {
-		parametrics.getChildren().clear();
-		timeline.updateSelected(getSelected());
-
 		getExecutor().submit(() -> {
 			List<CSG> cs = getCurrentState();
 			BowlerStudio.runLater(() -> UpdateUIControls(cs));
@@ -727,6 +724,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void UpdateUIControls(List<CSG> cs) {
+		parametrics.getChildren().clear();
+		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
 		if (getSelected().size() > 0) {
 			dropToWorkplane.setDisable(false);
