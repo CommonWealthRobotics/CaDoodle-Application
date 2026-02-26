@@ -136,8 +136,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double x;
 	private double y;
 	private double z;
-	private Thread autosaveThread = null;
-	private boolean needsSave = false;
+
 	private Affine selection = new Affine();
 	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false);
 	private Point3D startingPosition3D;
@@ -1993,66 +1992,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void save() {
-		// com.neuronrobotics.sdk.common.Log.error("Save Requested");
-		needsSave = true;
-		// new Exception("Auto-save called here").printStackTrace();
-		if (autosaveThread == null) {
-			autosaveThread = new Thread(() -> {
-				while (!ap.get().isInitialized()) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-
-				while (ap.isOpen()) {
-					if (needsSave && (ap.get().timeSinceLastUpdate() > 1000)) {
-						ICadoodleSaveStatusUpdate saveDisplay = ap.get().getSaveUpdate();
-						ap.get().setSaveUpdate(null);
-
-						Thread t = new Thread(() -> {
-							com.neuronrobotics.sdk.common.Log
-									.debug("Auto save " + ap.get().getSelf().getAbsolutePath());
-							try {
-								ap.save(ap.get());
-							} catch (SaveOverwriteException e) {
-								Log.error(e);
-							}
-						});
-						t.start();
-
-						needsSave = false;
-						try {
-							Thread.sleep(300);
-						} catch (InterruptedException e) {
-							com.neuronrobotics.sdk.common.Log.error(e);
-						}
-
-						ap.get().setSaveUpdate(saveDisplay);
-						if (t.isAlive() && ap.get().isTimelineOpen())
-							SplashManager.renderSplashFrame(99, "Saving Files");
-
-						try {
-							t.join();
-						} catch (InterruptedException e) {
-							com.neuronrobotics.sdk.common.Log.error(e);
-						}
-						SplashManager.closeSplash();
-					}
-
-					try {
-						Thread.sleep(200);
-					} catch (InterruptedException e) {
-						// Auto-generated catch block
-						com.neuronrobotics.sdk.common.Log.error(e);
-					}
-				}
-			});
-
-			autosaveThread.setName("Auto-save thread");
-			autosaveThread.start();
-		}
+		ap.save();
 	}
 
 	public boolean compareLists(List<String> list1, List<String> list2) {

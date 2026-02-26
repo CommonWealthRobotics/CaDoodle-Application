@@ -86,7 +86,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
 //	private boolean isAlwaysAccept=false;
 //	private boolean isAlwaysInsert=false;
-	
+	private Thread autosaveThread = null;
+	private boolean needsSave = false;
 	public ActiveProject() {
 		// this.listener = listener;
 
@@ -179,6 +180,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if (fromFile != null) {
 			fromFile.removeListener(this);
 		}
+		autosaveThread=null;
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
 		return loadActive();
 	}
@@ -395,7 +397,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		}
 	}
 
-	public void save(CaDoodleFile cf) throws SaveOverwriteException {
+	private void save(CaDoodleFile cf) throws SaveOverwriteException {
 		try {
 			cf.setSelf(getActiveProject());
 		} catch (Exception e) {
@@ -665,5 +667,68 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		Log.debug("Extraction complete, NO DOODLE FOUND IN TL!");
+	}
+
+	public void save() {
+		// com.neuronrobotics.sdk.common.Log.error("Save Requested");
+		needsSave = true;
+		// new Exception("Auto-save called here").printStackTrace();
+		if (autosaveThread == null) {
+			autosaveThread = new Thread(() -> {
+				while (!get().isInitialized()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+				while (isOpen()) {
+					if (needsSave && (get().timeSinceLastUpdate() > 1000)) {
+						ICadoodleSaveStatusUpdate saveDisplay = get().getSaveUpdate();
+						get().setSaveUpdate(null);
+
+						Thread t = new Thread(() -> {
+							com.neuronrobotics.sdk.common.Log
+									.debug("Auto save " + get().getSelf().getAbsolutePath());
+							try {
+								save(get());
+							} catch (SaveOverwriteException e) {
+								Log.error(e);
+							}
+						});
+						t.start();
+
+						needsSave = false;
+						try {
+							Thread.sleep(300);
+						} catch (InterruptedException e) {
+							com.neuronrobotics.sdk.common.Log.error(e);
+						}
+
+						get().setSaveUpdate(saveDisplay);
+						if (t.isAlive() && get().isTimelineOpen())
+							SplashManager.renderSplashFrame(99, "Saving Files");
+
+						try {
+							t.join();
+						} catch (InterruptedException e) {
+							com.neuronrobotics.sdk.common.Log.error(e);
+						}
+						SplashManager.closeSplash();
+					}
+
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// Auto-generated catch block
+						com.neuronrobotics.sdk.common.Log.error(e);
+					}
+				}
+			});
+
+			autosaveThread.setName("Auto-save thread");
+			autosaveThread.start();
+		}
 	}
 }
