@@ -26,6 +26,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -231,14 +232,17 @@ public class ProjectManager {
 					File doodle = new File(target.getAbsolutePath() + DownloadManager.delim() + c.getSelf().getName());
 
 					CaDoodleFile nf = CaDoodleFile.fromFile(doodle, null, false);
-					nf.setProjectName(c.getMyProjectName() + "_copy_" + index);
+					nf.setProjectName(RandomStringFactory.getNextRandomName()+"_"+c.getMyProjectName() + "_copy_" + index);
 					nf.setTimeCreated(System.currentTimeMillis());
-					nf.save();
+					nf.save(true);
 					ap.setActiveProject(doodle);
+					
+
 				}
 				ap.get().initialize();
 				SplashManager.closeSplash();
 				onFinish.run();
+				ap.save();
 			} catch (Exception e) {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
