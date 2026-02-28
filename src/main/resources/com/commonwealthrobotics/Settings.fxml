@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<TabPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <tabs>
       <Tab closable="false" text="Basic">
          <content>
@@ -120,11 +120,11 @@
                         </Label>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="Check on launch" />
-                              <RadioButton fx:id="pinToVersion" mnemonicParsing="false" onAction="#onPinVersion" text="Pin to version">
+                              <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="Check on launch">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="checkUpdate" />
                                  </toggleGroup></RadioButton>
+                              <RadioButton fx:id="pinToVersion" mnemonicParsing="false" onAction="#onPinVersion" text="Pin to version" toggleGroup="$checkUpdate" />
                               <ComboBox fx:id="versionOptions" disable="true" onAction="#onPinVersionSelect" prefWidth="150.0" />
                            </children>
                            <padding>
