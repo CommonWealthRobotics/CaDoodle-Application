@@ -6,25 +6,26 @@ labels: enhancement
 assignees: ''
 ---
 
-## Feature Description - A clear and concise description of the feature you'd like to see
-
-## Use Case - Describe a specific scenario where this feature would be useful
+### Feature Description - A clear and concise description of the feature you'd like to see
 
 
-**Current situation:** 
+### Use Case - Describe a specific scenario where this feature would be useful
 
 
-**Desired outcome:** 
+### Current situation
 
 
-**Benefit:** 
+### Desired outcome
 
 
-## Proposed Solution - Describe how you envision this feature working
+### Benefits
 
 
-## Alternatives Considered - Have you considered any alternative solutions or workarounds?
+### Proposed Solution - Describe how you envision this feature working
 
 
-## Additional Context - Add any other context, mockups, or examples here
+### Alternatives Considered - Have you considered any alternative solutions or workarounds?
+
+
+### Additional Context - Add any other context, mockups, or examples here
 
