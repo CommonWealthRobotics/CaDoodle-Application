@@ -663,19 +663,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		ArrayList<String> extentions = new ArrayList<>();
 
 		// extentions.add("*");
-		for (String s : new StlLoader().getFileExtenetion())
+		for (String s : new StlLoader().getFileExtension())
 			extentions.add("*." + s);
-		for (String s : new SvgLoader().getFileExtenetion())
+		for (String s : new SvgLoader().getFileExtension())
 			extentions.add("*." + s);
-		for (String s : new GroovyHelper().getFileExtenetion())
+		for (String s : new GroovyHelper().getFileExtension())
 			extentions.add("*." + s);
-		for (String s : new BlenderLoader().getFileExtenetion())
+		for (String s : new BlenderLoader().getFileExtension())
 			extentions.add("*." + s);
-		for (String s : new FreecadLoader().getFileExtenetion())
+		for (String s : new FreecadLoader().getFileExtension())
 			extentions.add("*." + s);
-		for (String s : new OpenSCADLoader().getFileExtenetion())
+		for (String s : new OpenSCADLoader().getFileExtension())
 			extentions.add("*." + s);
-		for (String s : new CaDoodleLoader().getFileExtenetion())
+		for (String s : new CaDoodleLoader().getFileExtension())
 			extentions.add("*." + s);
 		extentions.add("*.zip");
 		return extentions;
