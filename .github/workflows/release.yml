@@ -58,7 +58,8 @@ jobs:
       run: (export START=$PWD;cd $HOME/Documents/bowler-workspace/gitcache/ ; zip -r $START/gitcache.zip .)
     - name: After JDK download, list directory contnts
       run: pwd; ls -la  
-      
+    - name: Run Unit Tests
+      run: xvfb-run -s '-screen 0 1024x768x24' ./gradlew test
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')

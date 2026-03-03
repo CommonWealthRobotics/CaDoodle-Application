@@ -649,40 +649,47 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		com.neuronrobotics.sdk.common.Log.error("On Import");
 		session.getExecutor().submit(() -> {
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
-			ArrayList<String> extentions = getExtention();
-			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extentions);
+			ArrayList<String> extensions = getExtension();
+			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extensions);
 			if (currentFile == null)
 				currentFile = new File(System.getProperty("user.home") + "/Desktop/");
+
 			File last = FileSelectionFactory.GetFile(currentFile, false, stl);
 			importAFile(last);
 			session.setKeyBindingFocus();
 		});
 	}
 
-	private ArrayList<String> getExtention() {
-		ArrayList<String> extentions = new ArrayList<>();
-
-		// extentions.add("*");
+	private ArrayList<String> getExtension() {
+		ArrayList<String> extensions = new ArrayList<>();
+		// extensions.add("*");
 		for (String s : new StlLoader().getFileExtension())
-			extentions.add("*." + s);
+			extensions.add("*." + s);
+
 		for (String s : new SvgLoader().getFileExtension())
-			extentions.add("*." + s);
+			extensions.add("*." + s);
+
 		for (String s : new GroovyHelper().getFileExtension())
-			extentions.add("*." + s);
+			extensions.add("*." + s);
+
 		for (String s : new BlenderLoader().getFileExtension())
-			extentions.add("*." + s);
+			extensions.add("*." + s);
+
 		for (String s : new FreecadLoader().getFileExtension())
-			extentions.add("*." + s);
+			extensions.add("*." + s);
+
 		for (String s : new OpenSCADLoader().getFileExtension())
-			extentions.add("*." + s);
+			extensions.add("*." + s);
+
 		for (String s : new CaDoodleLoader().getFileExtension())
-			extentions.add("*." + s);
-		extentions.add("*.zip");
-		return extentions;
+			extensions.add("*." + s);
+
+		extensions.add("*.zip");
+		return extensions;
 	}
 
 	private Thread importAFile(File last) {
-		Log.debug("Attampt to import " + last.getAbsolutePath());
+		Log.debug("Attempt to import " + last.getAbsolutePath());
 		if (last == null)
 			return null;
 
@@ -692,15 +699,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			ap.loadFromZip(last);
 		} else {
 			boolean check = false;
-			ArrayList<String> extention = getExtention();
-			for (String s : extention) {
+			ArrayList<String> extension = getExtension();
+			for (String s : extension) {
 				if (lowerCase.endsWith(s.substring(1).toLowerCase())) {
 					check = true;
 					break;
 				}
 			}
 
-			if (last != null && check) {
+			if ((last != null) && check) {
 				currentFile = last;
 				com.neuronrobotics.sdk.common.Log.debug("Adding file " + last);
 				AddFromFile addFromFile = new AddFromFile();
@@ -1017,7 +1024,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		nameTyped = System.currentTimeMillis();
 		if (nameTypeDelay == null) {
 			nameTypeDelay = new Thread(() -> {
-				while((System.currentTimeMillis() - nameTyped) < 3000) {
+				while ((System.currentTimeMillis() - nameTyped) < 3000) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
