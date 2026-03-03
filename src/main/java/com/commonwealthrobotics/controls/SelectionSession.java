@@ -1877,7 +1877,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MoveCenter mc = null;
 
 				boolean newMoveHere = false;
-				if (((System.currentTimeMillis() - timeSinceLastMove) > 10000) || (m == null))
+				if ((System.currentTimeMillis() - timeSinceLastMove) > 10000 || m == null)
 					newMoveHere = true;
 				else
 					mc = m;
@@ -1941,10 +1941,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// Not needed anymore
 				// stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
 
-				TransformNR current = (mc == null ? new TransformNR() : mc.getLocation());
+				TransformNR current = mc == null ? new TransformNR() : mc.getLocation();
 				TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
 				TransformNR tf = current.times(currentRotation.inverse()
 						.times(frame.inverse().times(stateUnitVector).times(frame).times(currentRotation)));
+
 				List<String> selectedSnapshot = selectedSnapshot();
 //			for (String s : selectedSnapshot) {
 				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
@@ -1952,15 +1953,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				CaDoodleOperation op = ap.get().getCurrentOperation();
 				try {
-					if (newMoveHere) // force a new move event
-						mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());
-					else
-						mc.setLocation(tf);
-
+					if (newMoveHere) {
+						mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get()); // force a
+						// new move
+						// event
+					}
+					mc.setLocation(tf);
 				} catch (InvalidLocationMove e) {
 					Log.error(e);
 				}
-
 				if ((op == mc) && compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
 					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
 					TickToc.tic("Update move here");
