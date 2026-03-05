@@ -1869,13 +1869,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (moveLock())
 					return;
 
-				TransformNR wp = ap.get().getWorkplane();
-				// stateUnitVectorTmp = wp.times(stateUnitVectorTmp).times(wp.inverse());
-				TransformNR frameOffset = new TransformNR(0, 0, 0, wp.getRotation());
-
 				MoveCenter m = getActiveMove();
 				MoveCenter mc = null;
-
 				boolean newMoveHere = false;
 				if (((System.currentTimeMillis() - timeSinceLastMove) > 10000) || (m == null))
 					newMoveHere = true;
@@ -1890,42 +1885,32 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				timeSinceLastMove = System.currentTimeMillis();
 				// TickToc.setEnabled(true);
 				TickToc.tic("Start");
-				RotationNR getCamerFrameGetRotation;
-				double currentRotZ;
-				Quadrant quad;
-				// Not needed anymore
-				// TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				// camerFrame = camerFrame.times(frameOffset);
-				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				getCamerFrameGetRotation = camerFrame.getRotation();
-				double toDegrees = Math.toDegrees(getCamerFrameGetRotation.getRotationAzimuthRadians());
-				quad = Quadrant.getQuad(toDegrees);
-				currentRotZ = Quadrant.QuadrantToAngle(quad);
 
-				TransformNR orentationOffset = new TransformNR(0, 0, 0, new RotationNR(0, currentRotZ - 90, 0));
-				TransformNR frame = new TransformNR(); // BowlerStudio.getTargetFrame();
-				TransformNR stateUnitVector = new TransformNR();
+				// Get camera orientation for screen-aligned movement
+				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
+				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians());
+				Quadrant quad = Quadrant.getQuad(camAz);
+				double currentRotZ = Quadrant.QuadrantToAngle(quad);
+
+				// Rotate input vector by camera yaw (screen-space to world-space)
+				double yawRad = Math.toRadians(currentRotZ - 90);
+				double cos = Math.cos(yawRad);
+				double sin = Math.sin(yawRad);
+				
+				double inX = stateUnitVectorTmp.getX();
+				double inY = stateUnitVectorTmp.getY();
+				
+				TransformNR stateUnitVector = new TransformNR(
+					inX * cos - inY * sin,
+					inX * sin + inY * cos,
+					stateUnitVectorTmp.getZ()
+				);
+				
 				double incement = currentGrid;
-				stateUnitVector = orentationOffset.times(stateUnitVectorTmp);
-				stateUnitVector.setRotation(new RotationNR());
+
 				boolean updateTrig = false;
 				double bound = 0.5;
-				if (stateUnitVector.getX() > bound)
-					updateTrig = true;
-
-				if (stateUnitVector.getX() < -bound)
-					updateTrig = true;
-
-				if (stateUnitVector.getY() > bound)
-					updateTrig = true;
-
-				if (stateUnitVector.getY() < -bound)
-					updateTrig = true;
-
-				if (stateUnitVector.getZ() > bound)
-					updateTrig = true;
-
-				if (stateUnitVector.getZ() < -bound)
+				if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound || Math.abs(stateUnitVector.getZ()) > bound)
 					updateTrig = true;
 
 				if (!updateTrig) {
@@ -1935,24 +1920,45 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					return;
 				}
 
-				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
-						roundToNearest(stateUnitVector.getY() * incement, incement),
-						roundToNearest(stateUnitVector.getZ() * incement, incement));
-				// Not needed anymore
-				// stateUnitVector = wp.times(stateUnitVector).times(wp.inverse());
+				stateUnitVector = new TransformNR(
+					roundToNearest(stateUnitVector.getX() * incement, incement),
+					roundToNearest(stateUnitVector.getY() * incement, incement),
+					roundToNearest(stateUnitVector.getZ() * incement, incement));
 
 				TransformNR current = (mc == null ? new TransformNR() : mc.getLocation());
-				TransformNR currentRotation = new TransformNR(0, 0, 0, current.getRotation());
-				TransformNR tf = current.times(currentRotation.inverse()
-						.times(frame.inverse().times(stateUnitVector).times(frame).times(currentRotation)));
+				TransformNR wp = ap.get().getWorkplane();
+				
+				// Convert to workplane-local coordinates
+				TransformNR localCurrent = wp.inverse().times(current);
+
+				// Convert world delta to workplane-local delta
+				double wpAz = Math.toDegrees(wp.getRotation().getRotationAzimuthRadians());
+				double rad = Math.toRadians(-wpAz);
+				cos = Math.cos(rad);
+				sin = Math.sin(rad);
+				
+				double deltaX = stateUnitVector.getX();
+				double deltaY = stateUnitVector.getY();
+				
+				double localDeltaX = deltaX * cos - deltaY * sin;
+				double localDeltaY = deltaX * sin + deltaY * cos;
+
+				// Apply delta in workplane-local space
+				TransformNR localNew = new TransformNR(
+					localCurrent.getX() + localDeltaX,
+					localCurrent.getY() + localDeltaY,
+					localCurrent.getZ() + stateUnitVector.getZ()
+				);
+
+				// Convert back to world coordinates
+				TransformNR tf = wp.times(localNew);
+				tf.setRotation(current.getRotation());
+
 				List<String> selectedSnapshot = selectedSnapshot();
-//			for (String s : selectedSnapshot) {
-				// com.neuronrobotics.sdk.common.Log.error("\t" + s);
-//			}
 
 				CaDoodleOperation op = ap.get().getCurrentOperation();
 				try {
-					if (newMoveHere) // force a new move event
+					if (newMoveHere) // Force a new move event
 						mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());
 					else
 						mc.setLocation(tf);
@@ -1970,7 +1976,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TickToc.tic("save");
 					save();
 //					TickToc.toc();
-					//
 //					TickToc.setEnabled(false);
 					return;
 				} else {
@@ -1986,7 +1991,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Log.error(t);
 			}
 		});
-
 	}
 
 	public void save() {
