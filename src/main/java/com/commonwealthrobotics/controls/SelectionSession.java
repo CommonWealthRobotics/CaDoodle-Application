@@ -243,22 +243,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ap.addListener(this);
 	}
 
-	public double clamp(double in, double min, double max) {
-		return Math.max(min, Math.min(in, max));
-	}
-
 	public Point3D sendNewWorldPosition(double screenX, double screenY, double snapGridValue) {
 
 		// Convert to subscene coordinates to remove offsets
 		Point2D overlayPaneCoordinates = overlayPane.sceneToLocal(new Point2D(screenX, screenY));
-		
-		// Clamp object center for standard and custom work plane
-		double clampValue = workplane.isWorkplaneNotOrigin() ? 300 : 600;
 
 		// XY-move: fixed Z in local space
 		Point3D wp3d = engine.sceneToWorldFixedZ_WP(overlayPaneCoordinates, startingPosition3D.getZ());
-		wp3d = new Point3D(clamp(wp3d.getX(), -clampValue, clampValue), clamp(wp3d.getY(), -clampValue, clampValue), clamp(wp3d.getZ(), -clampValue, clampValue));
-		
 		return new Point3D(this.manipulation.snapToGrid(wp3d.getX()), this.manipulation.snapToGrid(wp3d.getY()), wp3d.getZ());
 	}
 
@@ -1864,6 +1855,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			}
 		});
+
+	}
+
+	public void updateHandleOrientations(TransformNR cameraFrame) {
+		if (controls != null)
+			controls.updateHandleOrientations(cameraFrame);
 
 	}
 

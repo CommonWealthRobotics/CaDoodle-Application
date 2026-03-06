@@ -652,6 +652,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		this.setIndicator(indicator, new Affine());
 
 		ap.get().setWorkplane(new TransformNR());
+		session.updateHandleOrientations(engine.getFlyingCamera().getCamerFrame());
 		placeWorkplaneVisualization();
 
 		this.setOnSelectEvent(() -> {

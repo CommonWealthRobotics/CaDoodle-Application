@@ -116,6 +116,16 @@ public class ControlSprites {
 		scaleSession.setSnapGrid(snapGridValue);
 	}
 
+	public void updateHandleOrientations(TransformNR cameraFrame) {
+		TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
+			
+		scaleSession.topCenter.updateOrientation(cameraFrame);
+		scaleSession.rightFront.updateOrientation(cameraFrame);
+		scaleSession.rightRear.updateOrientation(cameraFrame);
+		scaleSession.leftFront.updateOrientation(cameraFrame);
+		scaleSession.leftRear.updateOrientation(cameraFrame);
+	}
+
 	// Use the received mouse position to calculate the world position and send it back
 	public Point3D sendNewWorldPosition(double screenX, double screenY, double snapGridValue) {
 

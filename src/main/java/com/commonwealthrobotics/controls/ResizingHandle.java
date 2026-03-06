@@ -278,7 +278,7 @@ public class ResizingHandle {
 		Point3D world3Dpos = getAbsolutePosition();
 
 		double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
-	   
+
 		setScale(calculatedScaleFactor);
 		
 		BowlerStudio.runLater(() -> {
@@ -291,18 +291,28 @@ public class ResizingHandle {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
 
 		updateCubeSize();
-
-		TransformNR pureRot = new TransformNR(cf.getRotation());
-
-
+		
+		TransformNR cam = new TransformNR(cf.getRotation());
+		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
+		RotationNR rot = wp.inverse().times(cam).getRotation();
+		
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
-
-			TransformFactory.nrToAffine(pureRot, cameraOrent);
+			TransformNR orient = new TransformNR();
+			orient.setRotation(rot);
+			TransformFactory.nrToAffine(orient, cameraOrent);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});
+	}
 
-		// hover.setText(name + " " + getCurrentInReferenceFrame()) ;
+	public void updateOrientation(TransformNR cf) {
+		TransformNR cam = new TransformNR(cf.getRotation());
+		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
+		RotationNR rot = wp.inverse().times(cam).getRotation();
+		
+		TransformNR orient = new TransformNR();
+		orient.setRotation(rot);
+		TransformFactory.nrToAffine(orient, cameraOrent);
 	}
 
 	public void hide() {
