@@ -23,14 +23,13 @@ public class MoveUpArrow {
 	private Color color = Color.DARKGRAY;
 	private Color selectedColor = new Color(1, 0, 0, 1);
 	private Point3D startingPosition3D;
-
 	private final Affine selectionTransform;
 	private final Affine workplaneOffsetTransform;
 	private final Affine moveUpLocationTransform;
 	private final Scale scaleTransform;
 
 	public MoveUpArrow(Affine selection, Affine workplaneOffset, Affine moveUpLocation, Scale scaleTF,
-			Manipulation zMoveManipulator /*EventHandler<MouseEvent> eventHandler*/, Runnable onSelect, Runnable onReset) {
+			Manipulation zMoveManipulator, Runnable onSelect, Runnable onReset) {
 
 		this.selectionTransform = selection;
 		this.workplaneOffsetTransform = workplaneOffset;
@@ -68,23 +67,21 @@ public class MoveUpArrow {
 			setSelectedColor();
 			onSelect.run();
 
-		// Get the current arrow position (includes zoom-dependent offset)
-		double arrowX = moveUpLocationTransform.getTx();
-		double arrowY = moveUpLocationTransform.getTy();
-		double arrowZ = moveUpLocationTransform.getTz();
+			// Get the current arrow position (includes zoom-dependent offset)
+			double arrowX = moveUpLocationTransform.getTx();
+			double arrowY = moveUpLocationTransform.getTy();
+			double arrowZ = moveUpLocationTransform.getTz();
+			
+			// Calculate the zoom-dependent offset that was added for the arrow
+			double arrowOffset = ResizingHandle.getSize() * scaleTransform.getZ();
+			
+			// Subtract to get back to the base position (top of bounds)
+			double baseX = arrowX;
+			double baseY = arrowY;
+			double baseZ = arrowZ - arrowOffset;
 		
-		// Calculate the zoom-dependent offset that was added
-		double arrowOffset = ResizingHandle.getSize() * scaleTransform.getZ();
-		
-		// Subtract to get back to the base position (top of bounds)
-		double baseX = arrowX;
-		double baseY = arrowY;
-		double baseZ = arrowZ - arrowOffset;
-		
-		this.startingPosition3D = new Point3D(baseX, baseY, baseZ);
-		
-		zMoveManipulator.setStartingWorkplanePosition(startingPosition3D);
-
+			this.startingPosition3D = new Point3D(baseX, baseY, baseZ);
+			zMoveManipulator.setStartingWorkplanePosition(startingPosition3D);
 		});
 	}
 
@@ -95,7 +92,6 @@ public class MoveUpArrow {
 	public Point3D calculateWorldPosition() {
 		// Bounds in parent coordinate space (includes all transforms)
 		javafx.geometry.Bounds parentBounds = mesh.getBoundsInParent();
-		System.out.println("BOUNDS CALC: " + parentBounds);
 		return new Point3D( parentBounds.getCenterX(), parentBounds.getCenterY(), (parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2 );
 	}
 

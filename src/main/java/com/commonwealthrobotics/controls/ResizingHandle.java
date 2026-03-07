@@ -75,7 +75,7 @@ public class ResizingHandle {
 		// Different behavior for different moves
 		zMove = this.name.equals("topCenter"); // XY-move or Z-move?
 
-		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR(), this::sendNewWorldPosition, zMove);
+		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR(), this::sendNewWorldPosition, zMove, true);
 //		super(12.0, 12.0, Color.WHITE);
 //		setStroke(Color.BLACK);
 //		setStrokeWidth(3);
