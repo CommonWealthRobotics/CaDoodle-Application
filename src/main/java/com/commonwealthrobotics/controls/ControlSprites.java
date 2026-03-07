@@ -92,6 +92,7 @@ public class ControlSprites {
 	private Scale scaleTF = new Scale();
 	private Affine selection;
 	private Manipulation zMoveManipulator;
+	private Manipulation manipulation;
 	// private CaDoodleFile cadoodle;
 	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
 	private TransformNR cf;
@@ -102,7 +103,6 @@ public class ControlSprites {
 	private ThreedNumber yOffset;
 	private ThreedNumber zOffset;
 	private List<ThreedNumber> numbers;
-	private Manipulation manipulation;
 	private boolean xymoving = false;
 	private boolean zmoving = false;
 	private CaDoodleOperation currentOp;
@@ -110,7 +110,8 @@ public class ControlSprites {
 	private RulerManager ruler;
 	private final Pane overlayPane; // Overlay pane for 2D objects
 	private Point3D startingPosition3D;
-
+	private double objectHeight = 0;
+	
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
 		scaleSession.setSnapGrid(snapGridValue);
@@ -208,7 +209,7 @@ public class ControlSprites {
 		});
 
 		Affine zMoveOffsetFootprint = new Affine();
-		zMoveManipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(), this::sendNewWorldPosition, true);
+		zMoveManipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(), this::sendNewWorldPosition, true, false);
 		zMoveManipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 
 		zMoveManipulator.addSaveListener(() -> {
@@ -323,6 +324,7 @@ public class ControlSprites {
 			this.bounds = scaleSession.getBounds();
 			Vector3d min = bounds.getMin();
 			double manipDiff = zOffset.getMostRecentValue() - min.z;
+
 			// com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
 			zMoveManipulator.set(0, 0, manipDiff);
 			zMoveManipulator.fireSave();
@@ -402,6 +404,12 @@ public class ControlSprites {
 			engine.addControlNode(linesGroupp);
 			engine.addControlNode(controlsGroup);
 		});
+	}
+
+	// Selection of object informs about the object height
+	public void setObjectHeight(double objectHeight) {
+		this.objectHeight = objectHeight;
+		zMoveManipulator.setObjectHeight(objectHeight);
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
@@ -619,11 +627,12 @@ public class ControlSprites {
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
 			zdimen.setValue(bounds.getTotalZ());
+
 			TransformNR pose = manipulation.getCurrentPoseInReferenceFrame();
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
-			zOffset.setValue(min.z + zMoveManipulator.getCurrentPoseInReferenceFrame().getZ());
+			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
 
 			if (scaleSession.zScaleSelected() && (mode == SpriteDisplayMode.Default)
 					|| (mode == SpriteDisplayMode.ResizeZ))
