@@ -617,13 +617,13 @@ public class ControlSprites {
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
 			zdimen.setValue(bounds.getTotalZ());
+
 			TransformNR pose = manipulation.getCurrentPoseInReferenceFrame();
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
-			double newZoffset = min.z + zMoveManipulator.getCurrentPose().getZ();
+			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
 
-			zOffset.setValue(newZoffset);
 			if (scaleSession.zScaleSelected() && (mode == SpriteDisplayMode.Default)
 					|| (mode == SpriteDisplayMode.ResizeZ))
 				zdimen.show();
