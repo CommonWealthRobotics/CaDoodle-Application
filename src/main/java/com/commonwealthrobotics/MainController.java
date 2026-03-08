@@ -805,9 +805,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		workplane.pickPlane(() -> {
 			ruler.cancel();
 			session.save();
-			session.setMode(SpriteDisplayMode.Default);
-			session.updateControls();
-		}, () -> {
+//			session.setMode(SpriteDisplayMode.Default);
+//			session.updateControls();
+		}, () -> { // Run always
 			session.setMode(SpriteDisplayMode.Default);
 			session.updateControls();
 		}, ruler);
@@ -1344,9 +1344,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		selectionBox.setPressEvent(event -> {
 			resetArmed = true;
 			timeOfClick = System.currentTimeMillis();
-			if (isEventACancel(event)) {
+			if (isEventACancel(event))
 				cancel();
-			}
 
 			// com.neuronrobotics.sdk.common.Log.debug("Releses MainController");
 		});
@@ -1535,6 +1534,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 
 		session.clearSelection();
+
 		robotLab.onCancel();
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());

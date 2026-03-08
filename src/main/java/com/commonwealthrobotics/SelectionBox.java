@@ -93,8 +93,8 @@ public class SelectionBox {
 			// if (event.isPrimaryButtonDown())
 			dragged(event);
 		};
-		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_DRAGGED, eventFilter);
 
+		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_DRAGGED, eventFilter);
 		engine.addUserNode(getSelectionPlane());
 	}
 
@@ -113,8 +113,9 @@ public class SelectionBox {
 	}
 
 	public void dragged(MouseEvent event) {
-		if (!start || !event.isPrimaryButtonDown() || event.isControlDown() || event.isShiftDown()
-				|| (event.getSource() != getSelectionPlane()))
+
+		if (!start || !event.isPrimaryButtonDown() || event.isControlDown() ||
+			event.isShiftDown()	|| (event.getSource() != getSelectionPlane()))
 			return;
 
 		if (!overlayPane2D.getChildren().contains(rect1)) {
@@ -168,10 +169,9 @@ public class SelectionBox {
 
 			// show.clear();
 			HashMap<CSG, MeshView> meshes = session.getMeshes();
-			for (CSG key : meshes.keySet()) {
-				MeshView mv = meshes.get(key);
-				mv.setMouseTransparent(true);
-			}
+			for (CSG key : meshes.keySet())
+				meshes.get(key).setMouseTransparent(true);
+
 		}
 
 		Point2D cur = overlayPane2D.screenToLocal(event.getScreenX(), event.getScreenY());
@@ -210,10 +210,8 @@ public class SelectionBox {
 //			engine.removeUserNode(r);
 //		}
 		HashMap<CSG, MeshView> meshes = session.getMeshes();
-		for (CSG key : meshes.keySet()) {
-			MeshView mv = meshes.get(key);
-			mv.setMouseTransparent(false);
-		}
+		for (CSG key : meshes.keySet())
+			meshes.get(key).setMouseTransparent(false);
 
 		new Thread(() -> {
 			double width = Math.abs(event.getX() - xStart2);
@@ -281,12 +279,9 @@ public class SelectionBox {
 	public boolean touching(CSG selection2, Bounds incoming) {
 		// Fast bounding box overlap check, quick fail if not intersecting
 		// bounding boxes
-		if (selection2.getMaxX() > incoming.getMinX() && selection2.getMinX() < incoming.getMaxX()
-				&& selection2.getMaxY() > incoming.getMinY() && selection2.getMinY() < incoming.getMaxY()
-				&& selection2.getMaxZ() > incoming.getMinZ() && selection2.getMinZ() < incoming.getMaxZ()) {
-			return true;
-		}
-		return false;
+		return ((selection2.getMaxX() > incoming.getMinX()) && (selection2.getMinX() < incoming.getMaxX())
+			&&  (selection2.getMaxY() > incoming.getMinY()) && (selection2.getMinY() < incoming.getMaxY())
+			&&  (selection2.getMaxZ() > incoming.getMinZ()) && (selection2.getMinZ() < incoming.getMaxZ()));
 	}
 
 	public List<String> checkOverlap(CSG selection2) {

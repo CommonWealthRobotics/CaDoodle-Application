@@ -17,7 +17,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 
 public class MoveUpArrow {
-	private MeshView mesh;
+	private MeshView meshview;
 	private boolean selected;
 	private PhongMaterial material = new PhongMaterial();
 	private Color color = Color.DARKGRAY;
@@ -42,26 +42,30 @@ public class MoveUpArrow {
 		CSG cylinder = new Cylinder(ResizingHandle.getSize(), 0, ResizingHandle.getSize() * 2).toCSG()
 			.setColor(getColor());
 
-		mesh = cylinder.getMesh();
-		mesh.getTransforms().add(selection);
-		mesh.getTransforms().add(workplaneOffset);
-		mesh.getTransforms().add(moveUpLocation);
-		mesh.getTransforms().add(scaleTF);
-		mesh.addEventFilter(MouseEvent.ANY, zMoveManipulator.getMouseEvents());
+		// Create upArrow control handle meshview
+		meshview = cylinder.getMesh();
+		meshview.setVisible(false);
+		// Keep up arrow in front of other objects
+		meshview.setViewOrder(-10);
+		meshview.getTransforms().add(selection);
+		meshview.getTransforms().add(workplaneOffset);
+		meshview.getTransforms().add(moveUpLocation);
+		meshview.getTransforms().add(scaleTF);
+		meshview.addEventFilter(MouseEvent.ANY, zMoveManipulator.getMouseEvents());
 		material.setDiffuseColor(Color.GRAY);
 		material.setSpecularColor(Color.LIGHTGRAY);
-		mesh.setMaterial(material);
+		meshview.setMaterial(material);
 
-		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
+		meshview.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
 			if (!selected)
 				resetColor();
 		});
 
-		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
+		meshview.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
 			setSelectedColor();
 		});
 
-		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+		meshview.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			com.neuronrobotics.sdk.common.Log.debug("MoveUp selected " + event);
 			onReset.run();
 			selected = true;
@@ -94,8 +98,7 @@ public class MoveUpArrow {
 
 	public Point3D calculateWorldPosition() {
 		// Bounds in parent coordinate space (includes all transforms)
-		javafx.geometry.Bounds parentBounds = mesh.getBoundsInParent();
-		System.out.println("BOUNDS CALC: " + parentBounds);
+		javafx.geometry.Bounds parentBounds = meshview.getBoundsInParent();
 		return new Point3D( parentBounds.getCenterX(), parentBounds.getCenterY(), (parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2 );
 	}
 
@@ -121,15 +124,15 @@ public class MoveUpArrow {
 	}
 
 	public MeshView getMesh() {
-		return mesh;
+		return meshview;
 	}
 
 	public void hide() {
-		mesh.setVisible(false);
+		meshview.setVisible(false);
 	}
 
 	public void show() {
-		mesh.setVisible(true);
+		meshview.setVisible(true);
 	}
 
 	/**

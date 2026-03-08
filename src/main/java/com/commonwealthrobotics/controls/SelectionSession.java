@@ -138,7 +138,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double z;
 
 	private Affine selection = new Affine();
-	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false);
+	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false, false);
 	private Point3D startingPosition3D;
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 	private HashMap<CSG, Bounds> inWorkplaneBounds = new HashMap<CSG, Bounds>();
@@ -1464,7 +1464,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 
 					workplane.setIndicator(indicator, gemoAffine);
+
 					workplane.setOnSelectEvent(() -> {
+
 						for (CSG c : selectedCSG) {
 							MeshView meshView = getMeshes().get(c);
 
@@ -1472,6 +1474,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								BowlerKernel.runLater(() -> meshView.setVisible(true));
 
 						}
+
 						if (workplane.isClicked()) {
 							TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
 							try {
@@ -1482,6 +1485,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							}
 						}
 					});
+
 					workplane.setCurrentAbsolutePose(copy.inverse());
 					workplane.activate();
 				}

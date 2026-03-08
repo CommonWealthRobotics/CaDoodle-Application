@@ -54,7 +54,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private MeshView ground;
 	private Group wpPick;
 	private HashMap<CSG, MeshView> meshes;
-	private HashMap<MeshView,CSG> meshesReverseLookup;
+	private HashMap<MeshView, CSG> meshesReverseLookup;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
 	private MeshView indicatorMesh;
@@ -330,6 +330,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		wpPick.setMouseTransparent(true);
 
 		wpPick.addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
+
 			setClickOnGround(true);
 		});
 
@@ -345,7 +346,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		if (indicatorMesh != null)
 			engine.removeUserNode(indicatorMesh);
-
 		indicatorMesh = indicator.newMesh();
 		indicatorMesh.getTransforms().addAll(getWorkplaneLocation(), centerOffset);
 		indicatorMesh.setMouseTransparent(true);
@@ -391,13 +391,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		if (indicatorMesh != null)
 			indicatorMesh.setVisible(false);
 
-		indicatorMesh = null;
+//		indicatorMesh = null;
 
 		if (onSelectEvent != null)
 			onSelectEvent.run();
 
 		onSelectEvent = null;
 		active = false;
+
 		engine.getWorkplaneGroup().setVisible(true);
 		engine.getWorkplaneGroup().setMouseTransparent(true);
 		session.setMode(SpriteDisplayMode.Default);
@@ -413,6 +414,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void activate(boolean enableGroundPick) {
+
 		active = true;
 		tempory = false;
 		setClickOnGround(false);
@@ -444,11 +446,15 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
-			onCancel = null;// non cancel but instead completed
+//			onCancel = null;// non cancel but instead completed
+
 			cancel();
+
 			ev.consume();
 			session.updateControls();
 			engine.getWorkplaneGroup().setMouseTransparent(true);
+
+			session.getControls().hideRotationHandles();
 
 			wpPick.setMouseTransparent(true);
 
@@ -667,16 +673,18 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					ap.get().setWorkplane(this.getCurrentAbsolutePose());
 
 				placeWorkplaneVisualization();
-
 				r.run();
 			}
+
 			always.run();
+
 		});
 
 		this.activate(true);
 	}
 
 	public void placeWorkplaneVisualization() {
+
 		Log.debug("Placing workplane visualization");
 		engine.placeGrid(ap.get().getWorkplane());
 
