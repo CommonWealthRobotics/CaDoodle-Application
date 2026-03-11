@@ -138,7 +138,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double z;
 
 	private Affine selection = new Affine();
-	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false);
+	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false, false);
 	private Point3D startingPosition3D;
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 	private HashMap<CSG, Bounds> inWorkplaneBounds = new HashMap<CSG, Bounds>();
@@ -719,6 +719,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						manipulation.snapToGrid(startingPosition3D.getY()), manipulation.snapToGrid(startingPosition3D.getZ())));
 				}
 
+				// Inform the controls about the total selected object(s) height
+				getControls().setObjectHeight(getSellectedBounds().getTotalZ());
 				event.consume();
 			}
 		});
