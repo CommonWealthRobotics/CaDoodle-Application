@@ -105,7 +105,7 @@ public class ShapePalletMyDoodles {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 
-		CSGDatabaseInstance instance =caDoodleFile.getCsgDBinstance();
+		CSGDatabaseInstance instance = caDoodleFile.getCsgDBinstance();
 		if (!caDoodleFile.getSTLThumbnailFile().exists()) {
 //			Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
 //			CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
@@ -154,7 +154,7 @@ public class ShapePalletMyDoodles {
 										return;
 									if (workplane.isClickOnGround()) {
 										// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
-										// Don't reset work plane to origin 
+										// Don't reset work plane to origin
 //										ap.get().setWorkplane(new TransformNR());
 									} else {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());

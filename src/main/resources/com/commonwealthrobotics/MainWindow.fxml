@@ -646,7 +646,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  
+
             <Region maxHeight="1" minHeight="1" minWidth="1" />
 
                   <AnchorPane fx:id="timelineHolder" style="-fx-border-width: 1 0 0 0; -fx-border-color: #BBBBBB;" VBox.vgrow="NEVER">
@@ -874,7 +874,7 @@
                         <Button fx:id="importButton" maxWidth="102.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="Import" />
                   <Region maxWidth="5" minWidth="5" prefWidth="5" />
                         <Button fx:id="export" maxWidth="102.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="Export" />
-                        </HBox>                       
+                        </HBox>
                      </children>
                   </HBox>
                   <HBox fx:id="buttonBar" style="-fx-background-insets: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">

@@ -81,7 +81,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		final float THICKNESS   = 0.1f;
 
 		TriangleMesh mesh = new TriangleMesh();
-		mesh.getTexCoords().addAll(0,0); // required dummy coords
+		mesh.getTexCoords().addAll(0, 0); // required dummy coords
 
 		for (int i = 0; i < LINE_COUNT; i++) {
 			float x = -EXTENT + i * LINE_SPACING;
@@ -498,7 +498,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							try {
 								pureRot = TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
 								// an in-plane snapping here by transforming the points
-								// into the plane orentation, then snapping in plane, then transforming the points back.
+								// into the plane orientation, then snapping in plane, then transforming the points back.
 								TransformNR t = new TransformNR(x, y, z);
 								TransformNR screenLocationtmp = t;//manipulatorNR.times(t);
 								Polygon np = p; //p.transformed(TransformFactory.affineToCSG(manipulator));
@@ -512,7 +512,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),// snap in plane
 										SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
 										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
-								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
+								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orientation in the plane post snap
 								x = adjustedBack.getX();
 								y = adjustedBack.getY();
 								z = adjustedBack.getZ();

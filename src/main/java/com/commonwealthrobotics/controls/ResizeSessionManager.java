@@ -138,9 +138,9 @@ public class ResizeSessionManager {
 				double mouseY = -rightFront.getCurrentInReferenceFrame().getY() + originalBounds.getMinY(); // Right
 				double scale = (mouseX * original_tx + mouseY * original_ty) / (original_diagonal * original_diagonal);
 
-				double rawNewX = original_tx * (1.0 + scale); // Snap X-dimension to grid
+				double rawNewX  = original_tx * (1.0 + scale); // Snap X-dimension to grid
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
-				double rawNewY = original_ty * (1.0 + scale); // Snap Y-dimension to grid
+				double rawNewY  = original_ty * (1.0 + scale); // Snap Y-dimension to grid
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
 
 				// Let the XY-size of the scaled object follow the snap grid
@@ -366,6 +366,7 @@ public class ResizeSessionManager {
 				scalingFlag = false;
 				return;
 			}
+
 			if ((beingUpdated != leftRear) || (originalBounds == null))
 				return;
 
@@ -441,6 +442,7 @@ public class ResizeSessionManager {
 				scalingFlag = false;
 				return;
 			}
+
 			if ((beingUpdated != topCenter) || (originalBounds == null))
 				return;
 
@@ -507,9 +509,9 @@ public class ResizeSessionManager {
 				TransformNR lfC = leftFront.getCurrentInReferenceFrame();
 				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
 
-//				rrC=wp.inverse().times(rrC);
-//				lfC=wp.inverse().times(lfC);
-//				tcC=wp.inverse().times(tcC);
+//				rrC = wp.inverse().times(rrC);
+//				lfC = wp.inverse().times(lfC);
+//				tcC = wp.inverse().times(tcC);
 
 				bounds = getBounds();
 				for (ResizingHandle ctrl : controls)
@@ -578,7 +580,7 @@ public class ResizeSessionManager {
 	}
 
 	private void updateTopCenter() {
-		// if(beingUpdated!=null)
+		// if (beingUpdated != null)
 		ResizingHandle beingUpdated2 = beingUpdated;
 		if ((beingUpdated2 != topCenter) || (beingUpdated2 == null)) {
 			TransformNR rrC = rightRear.getCurrentInReferenceFrame();
@@ -612,11 +614,11 @@ public class ResizeSessionManager {
 	}
 	/*
 	 * private void threeDTarget() {
-	 * 
+	 *
 	 * Vector3d center = bounds.getCenter();
-	 * 
+	 *
 	 * Vector3d min = bounds.getMin(); Vector3d max = bounds.getMax();
-	 * 
+	 *
 	 * topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
 	 * center.y, max.z), cf, locked); leftFront.threeDTarget(screenW, screenH, zoom,
 	 * new TransformNR(max.x, max.y, min.z), cf, locked);

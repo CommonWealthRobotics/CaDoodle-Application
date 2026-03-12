@@ -27,7 +27,7 @@ public class DottedLine extends Group {
 	private Scale scale = new Scale(1, 1, 1);
 	public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset, Color dotColor) {
 		this(dotRadius,  dotSpacing,  workplaneOffset);
-		this.dotColor=dotColor;
+		this.dotColor = dotColor;
 	}
 	public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset) {
 		this.dotRadius = dotRadius;
@@ -40,7 +40,7 @@ public class DottedLine extends Group {
 		endY.addListener((obs, oldVal, newVal) -> updateLine());
 		endZ.addListener((obs, oldVal, newVal) -> updateLine());
 	}
-	
+
 	public void setScale(double d) {
 		scale.setX(d);
 		scale.setY(d);

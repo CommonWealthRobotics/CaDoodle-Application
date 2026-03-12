@@ -152,11 +152,11 @@ public class TimelineManager {
 //				// Map target coordinates to source coordinates
 //				int srcX = (int) (x * scaleX);
 //				int srcY = (int) (y * scaleY);
-//				
+//
 //				// Clamp to valid bounds
 //				srcX = Math.min(srcX, originalWidth - 1);
 //				srcY = Math.min(srcY, originalHeight - 1);
-//				
+//
 //				// Copy the pixel
 //				int argb = pixelReader.getArgb(srcX, srcY);
 //				pixelWriter.setArgb(x, y, argb);

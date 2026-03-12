@@ -30,6 +30,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
@@ -291,15 +292,17 @@ public class ShapesPallet {
 									session.selectAll(namesAdded);
 									if (!workplane.isClicked())
 										return;
+
 									if (workplane.isClickOnGround()) {
 										// Don't reset work plane to origin
 //										ap.get().setWorkplane(new TransformNR());
-									} else {
+									} else
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-									}
+
 									workplane.placeWorkplaneVisualization();
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
+
 								} catch (CadoodleConcurrencyException e) {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
@@ -335,12 +338,10 @@ public class ShapesPallet {
 		this.searchMode = searchMode;
 		if (searchMode) {
 			objectPallet.getChildren().clear();
-			searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-				updateFromSearch(searchField.getText());
-			});
-			searchField.setOnAction(ev -> {
-				updateFromSearch(searchField.getText());
-			});
+			searchField.textProperty().addListener((observable, oldValue, newValue) ->
+				updateFromSearch(searchField.getText()));
+
+			searchField.setOnAction(ev -> updateFromSearch(searchField.getText()));
 		}
 
 		BowlerStudio.runLater(() -> shapeCategory.setDisable(searchMode));
@@ -367,11 +368,12 @@ public class ShapesPallet {
 				for (String name : active.keySet()) {
 					if (i > 15)
 						break;
+
 					HashMap<String, String> hashMap = active.get(name);
 //					String string = hashMap.get("plugin");
-//					if(string!=null) {
-//						boolean b=DownloadManager.isDownloadedAlready(string);
-//						if(!b)
+//					if (string != null) {
+//						boolean b = DownloadManager.isDownloadedAlready(string);
+//						if (!b)
 //							continue;
 //					}
 					if (buttons.contains(name))
@@ -417,5 +419,4 @@ public class ShapesPallet {
 
 		searchThread.start();
 	}
-
 }

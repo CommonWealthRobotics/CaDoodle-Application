@@ -47,17 +47,17 @@ public class ViewCube {
 			public boolean timeToCancel(MouseEvent event) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isZoom(ScrollEvent e) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isSlowMove(MouseEvent event) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isRotate(MouseEvent me) {
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
@@ -65,7 +65,7 @@ public class ViewCube {
 
 				return (secondaryButtonDown || primaryButtonDown);
 			}
-			
+
 			@Override
 			public boolean isMove(MouseEvent ev) {
 				return false;

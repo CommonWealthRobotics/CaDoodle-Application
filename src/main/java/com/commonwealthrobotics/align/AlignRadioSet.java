@@ -24,7 +24,7 @@ public class AlignRadioSet {
 	private Vector3d vector3d;
 	private List<AlignHandle> asList;
 
-	public AlignRadioSet(String name, Affine move, Affine workplaneOffset, Vector3d vector3d, ActiveProject ap){
+	public AlignRadioSet(String name, Affine move, Affine workplaneOffset, Vector3d vector3d, ActiveProject ap) {
 		this.name = name;
 		this.vector3d = vector3d;
 		positive = new AlignHandle(Alignment.positive, move, workplaneOffset, vector3d, ap);
@@ -39,8 +39,8 @@ public class AlignRadioSet {
 		negetive.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
 
-	public List<Node> getElements(){
-		ArrayList<Node> result = new ArrayList<Node>(); 
+	public List<Node> getElements() {
+		ArrayList<Node> result = new ArrayList<Node>();
 		for (AlignHandle r: asList)
 			result.add(r.getHandle());
 

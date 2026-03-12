@@ -81,11 +81,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
-	private CaDoodleFile fromFile=null;
+	private CaDoodleFile fromFile = null;
 	// private ICaDoodleStateUpdate listener;
 	private ArrayList<ICaDoodleStateUpdate> listeners = new ArrayList<ICaDoodleStateUpdate>();
-//	private boolean isAlwaysAccept=false;
-//	private boolean isAlwaysInsert=false;
+//	private boolean isAlwaysAccept = false;
+//	private boolean isAlwaysInsert = false;
 	private Thread autosaveThread = null;
 	private boolean needsSave = false;
 	public ActiveProject() {
@@ -267,7 +267,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				@Override
 				public OperationResult accept() {
 					OperationResult insertionStrat = OperationResult.fromString((String)ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy",OperationResult.ASK.name()));
-					if (insertionStrat!=OperationResult.ASK)
+					if (insertionStrat != OperationResult.ASK)
 						return insertionStrat;
 
 					operationResult = null;
@@ -293,8 +293,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						// Create a VBox to hold descriptions and stack buttons vertically
 						VBox contentBox = new VBox(10);
 						contentBox.setPadding(new Insets(10, 10, 10, 10));
-						CheckBox alwaysPrune =new CheckBox("Always Continue");
-						CheckBox alwaysInsert =new CheckBox("Always Insert");
+						CheckBox alwaysPrune = new CheckBox("Always Continue");
+						CheckBox alwaysInsert = new CheckBox("Always Insert");
 						alwaysInsert.setOnAction(e->alwaysPrune.setSelected(false));
 						alwaysPrune.setOnAction(e->alwaysInsert.setSelected(false));
 
@@ -662,7 +662,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			targetDir = new File(getWorkingDir() + delim() + name + "_" + index);
 			index++;
 			Log.debug("CHecking for file: "+targetDir);
-		} while(targetDir.exists());
+		} while (targetDir.exists());
 		try {
 			unzip(file.getAbsolutePath(),targetDir.getAbsolutePath());
 			File[] files = targetDir.listFiles();

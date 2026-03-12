@@ -40,8 +40,8 @@ public class ArmPointManipulator {
 //			updateLines();
 //		}, () -> scaleSession.resetSelected());
 	}
-	
-	public TransformNR getCurrentPoseInReferenceFrame(){
+
+	public TransformNR getCurrentPoseInReferenceFrame() {
 		return tip.manipulator.getCurrentPoseInReferenceFrame();
 	}
 
@@ -51,7 +51,6 @@ public class ArmPointManipulator {
 	}
 
 	public ArrayList<MeshView> getMesh() {
-		
 		return new ArrayList<MeshView>(Arrays.asList(tip.getMesh()));
 	}
 

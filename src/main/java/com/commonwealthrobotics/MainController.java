@@ -414,7 +414,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onRedo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Redo");
 		session.getExecutor().submit(() -> {
-			ap.get().forward();	
+			ap.get().forward();
 		});
 		session.setKeyBindingFocus();
 	}
@@ -487,7 +487,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setRobotLabOpenState(boolean tm) {
-		// tm=false;
+		// tm = false;
 		if (tm == session.isRobotLabOpen())
 			return;
 		if (tm) {
@@ -926,12 +926,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 			engine = new BowlerStudio3dEngine("CAD window");
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
-				
+
 				@Override
 				public void clearScreen() {
 					engine.clearUserNode();
 				}
-				
+
 				@Override
 				public void addObject(Object o) {
 					engine.addObject(o, ap.get().getSelf());

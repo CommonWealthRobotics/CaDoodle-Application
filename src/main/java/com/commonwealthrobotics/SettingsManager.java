@@ -40,6 +40,7 @@ import eu.mihosoft.vrl.v3d.CSGResponse;
 import eu.mihosoft.vrl.v3d.CSGServer;
 import eu.mihosoft.vrl.v3d.ICSGClientEvent;
 import eu.mihosoft.vrl.v3d.JavaFXInitializer;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,11 +51,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 public class SettingsManager implements ICSGClientEvent {
 	private static CSGServer server = null;
@@ -91,13 +92,16 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private TextField ipaddressField;
+
 	@FXML
 	private TextField numberOfSides;
+
 	@FXML
 	private TextField portField;
 
 	@FXML
 	private Label serverIPDisplay;
+
 	@FXML
 	private VBox serverStatusBox;
 
@@ -115,6 +119,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private RadioButton pinToVersion;
+
 	@FXML
 	private ComboBox<String> versionOptions;
 	private File pinFile;
@@ -163,17 +168,20 @@ public class SettingsManager implements ICSGClientEvent {
 	void checkServerConfigs(KeyEvent event) {
 		try {
 			// Create a trust manager that ignores certificate errors
-			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-				public X509Certificate[] getAcceptedIssuers() {
-					return new X509Certificate[0];
-				}
+			TrustManager[] trustAllCerts = new TrustManager[] {
+				new X509TrustManager() {
 
-				public void checkClientTrusted(X509Certificate[] certs, String authType) {
-				}
+					public X509Certificate[] getAcceptedIssuers() {
+						return new X509Certificate[0];
+					}
 
-				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+					public void checkClientTrusted(X509Certificate[] certs, String authType) {
+					}
+
+					public void checkServerTrusted(X509Certificate[] certs, String authType) {
+					}
 				}
-			} };
+			};
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init(null, trustAllCerts, null);
@@ -240,6 +248,7 @@ public class SettingsManager implements ICSGClientEvent {
 				if (!CSGClient.isRunning())
 					CSGClient.start(host, Integer.parseInt(port), tempFile.toFile());
 				return true;
+
 			} catch (Exception ex) {
 				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
 			}
@@ -402,9 +411,8 @@ public class SettingsManager implements ICSGClientEvent {
 		directoryChooser.setTitle("Select a Directory");
 
 		// Set the initial directory
-		if (start.exists()) {
+		if (start.exists())
 			directoryChooser.setInitialDirectory(start);
-		}
 
 		// Show the dialog and get the selected directory
 		File selectedDirectory = directoryChooser.showDialog(stage);
@@ -413,9 +421,9 @@ public class SettingsManager implements ICSGClientEvent {
 			String absolutePath = selectedDirectory.getAbsolutePath();
 			com.neuronrobotics.sdk.common.Log.debug("Selected directory: " + absolutePath);
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleWorkspace", absolutePath);
-			if (!absolutePath.contentEquals(workingDirPath.getText())) {
+			if (!absolutePath.contentEquals(workingDirPath.getText()))
 				changedDir = true;
-			}
+
 			workingDirPath.setText(absolutePath);
 			ConfigurationDatabase.save();
 		}
@@ -437,18 +445,22 @@ public class SettingsManager implements ICSGClientEvent {
 				(String) ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
 		if (insertionStrat == OperationResult.INSERT)
 			insertOpt.setSelected(true);
+
 		if (insertionStrat == OperationResult.PRUNE)
 			eraseOpt.setSelected(true);
+
 		setExplanationText(insertionStrat);
 		String dir = (String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", ActiveProject.getWorkingDir());
 		workingDirPath.setText(dir);
 		boolean advanced = Boolean
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + true).toString());
+
 		mc.setAdvancedMode(advanced);
 		advancedSelector.setSelected(advanced);
 		changedDir = false;
 		boolean connect = Boolean
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGClientConnect", "" + false).toString());
+
 		String key = ConfigurationDatabase.get("CaDoodle", "CSGClientKey", "").toString();
 		String host = ConfigurationDatabase.get("CaDoodle", "CSGClientHost", "").toString();
 		String port = ConfigurationDatabase.get("CaDoodle", "CSGClientPort", 3742).toString();
@@ -518,17 +530,19 @@ public class SettingsManager implements ICSGClientEvent {
 		for (File f : listFiles) {
 			if (!f.isDirectory())
 				continue;
+
 			String name = f.getName();
 			String[] fnames = name.split("\\.");
 			if (fnames.length != 3)
 				continue;
 
 			try {
-				int major=Integer.parseInt(fnames[0]);
-				int minor=Integer.parseInt(fnames[1]);
-				int bugfix=Integer.parseInt(fnames[2]);
-				if((major==0 && minor<26) && !advancedSelector.isSelected())
+				int major = Integer.parseInt(fnames[0]);
+				int minor = Integer.parseInt(fnames[1]);
+				int bugfix = Integer.parseInt(fnames[2]);
+				if (((major == 0) && (minor < 26)) && !advancedSelector.isSelected())
 					continue;
+
 			} catch (NumberFormatException ex) {
 				continue;
 			}
@@ -551,7 +565,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 	public static void launch(MainController mc) {
 		SettingsManager.mc = mc;
-		if (stage != null && stage.isShowing()) {
+		if ((stage != null) && stage.isShowing()) {
 			stage.toFront();
 			return;
 		}
@@ -593,9 +607,7 @@ public class SettingsManager implements ICSGClientEvent {
 		Label l = new Label("Request " + request.getOperation());
 		active.put(request, l);
 		com.neuronrobotics.sdk.common.Log.debug(l.getText());
-		BowlerStudio.runLater(() -> {
-			serverStatusBox.getChildren().add(l);
-		});
+		BowlerStudio.runLater(() -> serverStatusBox.getChildren().add(l));
 	}
 
 	@Override

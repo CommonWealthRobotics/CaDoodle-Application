@@ -33,13 +33,13 @@ public class AlignHandle {
 	public Alignment self;
 	private MeshView mesh;
 	private Affine location = new Affine();
-	private Affine cameraOrent = new Affine();
+	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
 	private Affine move;
 	private Affine workplaneOffset;
 	private Affine alignLoc = new Affine();
 
-	private Vector3d orentation;
+	private Vector3d orientation;
 
 	private Align operation;
 
@@ -64,7 +64,7 @@ public class AlignHandle {
 		self = set;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
-		this.orentation = vector3d;
+		this.orientation = vector3d;
 		this.ap = ap;
 	}
 
@@ -92,7 +92,7 @@ public class AlignHandle {
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
 				// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
-				// orentation);
+				// orientation);
 				for (CSG key : visualizers.keySet()) {
 					visualizers.get(key).setVisible(true);
 				}
@@ -112,7 +112,7 @@ public class AlignHandle {
 			mesh.getTransforms().add(alignLoc);
 			mesh.getTransforms().add(workplaneOffset);
 			mesh.getTransforms().add(location);
-			mesh.getTransforms().add(cameraOrent);
+			mesh.getTransforms().add(cameraOrient);
 			mesh.getTransforms().add(scaleTF);
 			mesh.setVisible(false);
 			mesh.visibleProperty().addListener((observable, oldValue, newValue) -> {
@@ -246,7 +246,7 @@ public class AlignHandle {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pureRot, cameraOrent);
+			TransformFactory.nrToAffine(pureRot, cameraOrient);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 
@@ -254,15 +254,15 @@ public class AlignHandle {
 	}
 
 	private boolean isZvector() {
-		return orentation.z > 0;
+		return orientation.z > 0;
 	}
 
 	private boolean isYvector() {
-		return orentation.y > 0;
+		return orientation.y > 0;
 	}
 
 	private boolean isXvector() {
-		return orentation.x > 0;
+		return orientation.x > 0;
 	}
 
 	public double getScale() {
@@ -312,7 +312,8 @@ public class AlignHandle {
 		visualizationObjects = null;
 		if (operation == null)
 			return;
-		Align tmp = operation.copy(); 
+
+		Align tmp = operation.copy();
 		Align prev = operation;
 		operation = tmp;
 		setMyOperation();

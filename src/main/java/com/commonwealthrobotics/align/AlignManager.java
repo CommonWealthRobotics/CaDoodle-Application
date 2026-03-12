@@ -71,7 +71,7 @@ public class AlignManager {
 	}
 
 	public void clear() {
-		for (AlignRadioSet r : AS_LIST) 
+		for (AlignRadioSet r : AS_LIST)
 			r.clear();
 	}
 

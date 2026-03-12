@@ -42,7 +42,7 @@ public class ResizingHandle {
 	private MeshView mesh;
 
 	private Affine location = new Affine();
-	private Affine cameraOrent = new Affine();
+	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
 	private Affine resizeHandleLocation = new Affine();
 	private Affine baseMove;
@@ -118,7 +118,7 @@ public class ResizingHandle {
 		mesh.getTransforms().add(resizeHandleLocation);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
-		mesh.getTransforms().add(cameraOrent);
+		mesh.getTransforms().add(cameraOrient);
 		mesh.getTransforms().add(scaleTF);
 		// Tooltip.install(mesh, hover);
 		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
@@ -128,7 +128,7 @@ public class ResizingHandle {
 	public Point3D getAbsolutePosition() {
 		Affine combined = new Affine();
 		combined.prepend(scaleTF);
-		combined.prepend(cameraOrent);
+		combined.prepend(cameraOrient);
 		combined.prepend(location);
 		combined.prepend(workplaneOffset);
 		combined.prepend(resizeHandleLocation);
@@ -280,7 +280,7 @@ public class ResizingHandle {
 		double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
 
 		setScale(calculatedScaleFactor);
-		
+
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(calculatedScaleFactor);
 			scaleTF.setY(calculatedScaleFactor);
@@ -291,16 +291,16 @@ public class ResizingHandle {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
 
 		updateCubeSize();
-		
+
 		TransformNR cam = new TransformNR(cf.getRotation());
 		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
 		RotationNR rot = wp.inverse().times(cam).getRotation();
-		
+
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
 			TransformNR orient = new TransformNR();
 			orient.setRotation(rot);
-			TransformFactory.nrToAffine(orient, cameraOrent);
+			TransformFactory.nrToAffine(orient, cameraOrient);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});
 	}
@@ -309,10 +309,10 @@ public class ResizingHandle {
 		TransformNR cam = new TransformNR(cf.getRotation());
 		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
 		RotationNR rot = wp.inverse().times(cam).getRotation();
-		
+
 		TransformNR orient = new TransformNR();
 		orient.setRotation(rot);
-		TransformFactory.nrToAffine(orient, cameraOrent);
+		TransformFactory.nrToAffine(orient, cameraOrient);
 	}
 
 	public void hide() {

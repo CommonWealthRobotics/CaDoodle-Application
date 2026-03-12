@@ -73,13 +73,13 @@ public class ControlSprites {
 	private MirrorSessionManager mirror;
 	private Rectangle footprint = new Rectangle(100, 100, new Color(0, 0, 1, 0.25));
 	// private Rectangle bottomDimensions = new Rectangle(100,100,new
-	// Color(0,0,1,0.25));
+	// Color(0, 0, 1, 0.25));
 	private Affine workplaneOffset = new Affine();
 	private MoveUpArrow upArrow;
-	private DottedLine frontLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
-	private DottedLine backLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
-	private DottedLine leftLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
-	private DottedLine rightLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
+	private DottedLine frontLine  = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
+	private DottedLine backLine   = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
+	private DottedLine leftLine   = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
+	private DottedLine rightLine  = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
 	private DottedLine heightLine = new DottedLine(SIZE_OF_DOT, NUMBER_OF_MM_PER_DOT, workplaneOffset);
 
 	private ArrayList<Node> allElems = new ArrayList<Node>();
@@ -118,7 +118,7 @@ public class ControlSprites {
 
 	public void updateHandleOrientations(TransformNR cameraFrame) {
 		TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
-			
+
 		scaleSession.topCenter.updateOrientation(cameraFrame);
 		scaleSession.rightFront.updateOrientation(cameraFrame);
 		scaleSession.rightRear.updateOrientation(cameraFrame);
@@ -347,7 +347,7 @@ public class ControlSprites {
 	private void updateLinesAndCubes() {
 		session.getExecutor().submit(()-> {
 			List<CSG> selectedCSG = ap.get().getSelect(session.selectedSnapshot());
-			List<CSG> cur=session.getCurrentStateSelected();
+			List<CSG> cur = session.getCurrentStateSelected();
 			Platform.runLater(() -> {
 				updateCubes(selectedCSG,cur);
 				updateLines();

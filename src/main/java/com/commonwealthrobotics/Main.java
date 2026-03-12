@@ -117,43 +117,43 @@ public class Main extends Application {
 
 			// Set system taskbar/dock icon
 			try {
-			    if (java.awt.Taskbar.isTaskbarSupported()) {
-			        java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
-			        
-			        if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
-			            // Convert JavaFX Image to AWT BufferedImage
-			            java.awt.image.BufferedImage awtIcon =
-			                javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
-			            taskbar.setIconImage(awtIcon);
-			        }
-			    }
-			    
-			    // Additional approach for Linux - set via AWT/Swing
-			    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-			        // This approach works better on some Linux desktop environments
-			        java.awt.image.BufferedImage awtIcon =
-			            javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
-			        
-			        // Force icon through AWT
-			        if (java.awt.Toolkit.getDefaultToolkit() != null) {
-			            // Create a hidden AWT frame to set the default icon
-			            final java.awt.Frame hiddenFrame = new java.awt.Frame();
-			            hiddenFrame.setIconImage(awtIcon);
-			            
-			            // Also try setting as default for all frames
-			            try {
-			                Class<?> xToolkit = Class.forName("sun.awt.X11.XToolkit");
-			                if (xToolkit.isInstance(java.awt.Toolkit.getDefaultToolkit())) {
-			                    java.lang.reflect.Method method = xToolkit.getMethod("setIconImage", java.awt.Image.class);
-			                    method.invoke(java.awt.Toolkit.getDefaultToolkit(), awtIcon);
-			                }
-			            } catch (Exception e) {
-			                // Reflection approach failed, not critical
-			            }
-			        }
-			    }
+				if (java.awt.Taskbar.isTaskbarSupported()) {
+					java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
+
+					if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
+						// Convert JavaFX Image to AWT BufferedImage
+						java.awt.image.BufferedImage awtIcon =
+							javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
+						taskbar.setIconImage(awtIcon);
+					}
+				}
+
+				// Additional approach for Linux - set via AWT/Swing
+				if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+					// This approach works better on some Linux desktop environments
+					java.awt.image.BufferedImage awtIcon =
+						javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
+
+					// Force icon through AWT
+					if (java.awt.Toolkit.getDefaultToolkit() != null) {
+						// Create a hidden AWT frame to set the default icon
+						final java.awt.Frame hiddenFrame = new java.awt.Frame();
+						hiddenFrame.setIconImage(awtIcon);
+
+						// Also try setting as default for all frames
+						try {
+							Class<?> xToolkit = Class.forName("sun.awt.X11.XToolkit");
+							if (xToolkit.isInstance(java.awt.Toolkit.getDefaultToolkit())) {
+								java.lang.reflect.Method method = xToolkit.getMethod("setIconImage", java.awt.Image.class);
+								method.invoke(java.awt.Toolkit.getDefaultToolkit(), awtIcon);
+							}
+						} catch (Exception e) {
+							// Reflection approach failed, not critical
+						}
+					}
+				}
 			} catch (Exception e) {
-			    com.neuronrobotics.sdk.common.Log.error(e);
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 
 		} catch (Exception e) {
@@ -240,18 +240,19 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
-	    // Set WM_CLASS for GNOME to recognize the app
-	    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-	        // This must match StartupWMClass in the desktop file
-	        System.setProperty("glass.gtk.wmclass", "CADoodle");
-	    }
+		// Set WM_CLASS for GNOME to recognize the app
+		if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+			// This must match StartupWMClass in the desktop file
+			System.setProperty("glass.gtk.wmclass", "CADoodle");
+		}
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
 		File logfile = new File(file.getAbsolutePath()+delim()+"cadoodleLog.txt");
-		if(logfile.exists())
+		if (logfile.exists())
 			logfile.delete();
+
 		try {
 			logfile.createNewFile();
 			Log.enableDebugPrint(true);
@@ -290,11 +291,11 @@ public class Main extends Application {
 			String currentVersionDir = bindir+myVersionString+delim();
 			String zipGitCache = currentVersionDir+"gitcache.zip";
 			File file2 = new File(zipGitCache);
-			if(file2.exists()) {
+			if (file2.exists()) {
 				Log.debug("Git Cache zip exists "+zipGitCache);
 				File workingDir = ScriptingEngine.getWorkspace();
 				String workingGitCache = workingDir.getAbsolutePath()+delim()+"gitcache";
-				//if(!new File(workingGitCache).exists()) {
+				//if (!new File(workingGitCache).exists()) {
 				//Log.debug("Local GitCahe is missing: "+workingGitCache);
 				try {
 					unzip(file2, workingGitCache);
@@ -302,7 +303,7 @@ public class Main extends Application {
 					Log.error(e);
 				}
 				//}
-			}else {
+			} else {
 				String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 				String nowVer = ""+StudioBuildInfo.getSDKVersion();
 				boolean b = !lastVer.contentEquals(nowVer);
@@ -382,21 +383,23 @@ public class Main extends Application {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		if(PasswordManager.hasNetwork()) {
+
+		if (PasswordManager.hasNetwork()) {
 			try {
 				ensureGitAssetsArePresent();
-			}catch(Throwable t) {
+			} catch(Throwable t) {
 				com.neuronrobotics.sdk.common.Log.error(t);
 			}
-		}else {
+		} else
 			SplashManager.renderSplashFrame(2, "No Network");
-		}
+
 
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		CSG.setUseGPU(false);
 		launch();
 	}
+
 	public static void saveOptionalProjects(HashSet<String>state) {
 		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
 		l.clear();
@@ -404,6 +407,7 @@ public class Main extends Application {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleExternalOptions", l);
 		ConfigurationDatabase.save();
 	}
+
 	public static HashSet<String> getOptionalProjects() {
 		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
 		HashSet<String> s= new HashSet<>();
@@ -483,6 +487,7 @@ public class Main extends Application {
 					}
 
 				}
+
 				if (isVis)
 					SplashManager.renderSplashFrame(0, "Downloading " + name);
 

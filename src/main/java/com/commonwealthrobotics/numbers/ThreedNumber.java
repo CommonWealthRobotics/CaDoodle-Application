@@ -45,7 +45,7 @@ public class ThreedNumber {
 	private double mostRecentValue = 20;
 
 	private Affine location = new Affine();
-	private Affine cameraOrent = new Affine();
+	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
 	private double scale;
 //	private Affine resizeHandleLocation = new Affine();
@@ -229,7 +229,7 @@ public class ThreedNumber {
 //		textField.getTransforms().add(resizeHandleLocation);
 		textField.getTransforms().add(workplaneOffset);
 		textField.getTransforms().add(location);
-		textField.getTransforms().add(cameraOrent);
+		textField.getTransforms().add(cameraOrient);
 		textField.getTransforms().add(scaleTF);
 		textField.getTransforms().add(reOrient);
 
@@ -339,7 +339,7 @@ public class ThreedNumber {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pr, cameraOrent);
+			TransformFactory.nrToAffine(pr, cameraOrient);
 			TransformFactory.nrToAffine(positionPin.setRotation(new RotationNR()), location);
 		});
 	}

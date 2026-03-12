@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
-
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -19,6 +19,7 @@ import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
+
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -202,7 +203,7 @@ public class SelectionBox {
 
 	public void released(MouseEvent event) {
 //		rect.setVisible(false);
-//		view3d.getChildren().remove(rect);	
+//		view3d.getChildren().remove(rect);
 //		engine.removeUserNode(rect);
 		overlayPane2D.getChildren().remove(rect1);
 		overlayPane2D.getChildren().remove(rect2);
@@ -230,8 +231,8 @@ public class SelectionBox {
 
 			active = false;
 			start = false;
-//			yTop=yTop-view3d.getHeight()/2;
-//			xLeft=xLeft-(view3d.getWidth()/2);
+//			yTop = yTop - view3d.getHeight() / 2;
+//			xLeft = xLeft - (view3d.getWidth() / 2);
 //			ap.get().setWorkplane(cf);
 //			workplane.placeWorkplaneVisualization();
 
@@ -274,7 +275,7 @@ public class SelectionBox {
 	 * A test to see if 2 CSG's are touching. The fast-return is a bounding box
 	 * check If bounding boxes overlap, then an intersection is performed and the
 	 * existance of an interscting object is returned
-	 * 
+	 *
 	 * @param incoming
 	 * @return
 	 */
@@ -332,7 +333,8 @@ public class SelectionBox {
 		getSelectionPlane().addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			if (event.getSource() != getSelectionPlane())
 				return;
-			com.neuronrobotics.sdk.common.Log.debug("Selection Box Background Click ");
+
+			com.neuronrobotics.sdk.common.Log.debug("Selection Box Background Click");
 			start = true;
 			value.handle(event);
 		});

@@ -45,22 +45,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.image.ImageView;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.zip.*;
+import java.util.ResourceBundle;
+import java.net.URL;
 
 public class ExportManager {
+
 	private static ActiveProject ap;
 
 	private static Stage stage;
@@ -86,10 +87,13 @@ public class ExportManager {
 
 	@FXML // fx:id="stl"
 	private CheckBox stl; // Value injected by FXMLLoader
-	@FXML // fx:id="stl"
+
+	@FXML // fx:id="manifoldSTL"
 	private CheckBox manifoldSTL; // Value injected by FXMLLoader
-	@FXML // fx:id="stl"
+
+	@FXML // fx:id="obj"
 	private CheckBox obj; // Value injected by FXMLLoader
+
 	@FXML // fx:id="svg"
 	private CheckBox svg; // Value injected by FXMLLoader
 
@@ -106,21 +110,23 @@ public class ExportManager {
 		return slug.toLowerCase(Locale.ENGLISH);
 	}
 
-    @FXML
-    void fstl(ActionEvent event) {
-    	manifoldSTL.setSelected(false);
-    }
+	@FXML
+	void fstl(ActionEvent event) {
+		manifoldSTL.setSelected(false);
+	}
 
-    @FXML
-    void mstl(ActionEvent event) {
-    	stl.setSelected(false);
-    }
+	@FXML
+	void mstl(ActionEvent event) {
+		stl.setSelected(false);
+	}
+
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
-		Thread t=new Thread(() -> {
+		Thread t = new Thread(() -> {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
+
 			ArrayList<CSG> back = session.getAllVisible();
 			CaDoodleFile caDoodleFile = ap.get();
 			String name = toSlug(caDoodleFile.getMyProjectName());
@@ -128,27 +134,29 @@ public class ExportManager {
 			boolean prev = CSG.isPreventNonManifoldTriangles();
 			boolean manifold = manifoldSTL.isSelected();
 			for (CSG c : back) {
-				if (stl.isSelected() || manifold) {
+				if (stl.isSelected() || manifold)
 					c.addExportFormat("stl");
-				}
-				if (svg.isSelected()) {
+
+				if (svg.isSelected())
 					c.addExportFormat("svg");
-				}
-				if (blender.isSelected()) {
+
+				if (blender.isSelected())
 					c.addExportFormat("blend");
-				}
-				if (freecad.isSelected()) {
+
+				if (freecad.isSelected())
 					c.addExportFormat("freecad");
-				}
-				if(obj.isSelected()) {
+
+				if (obj.isSelected())
 					c.addExportFormat("obj");
-				}
+
 				c.setName(name + "_" + index);
 				index++;
 			}
+
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
 			if (exportDir == null)
 				return;
+
 			SplashManager.renderSplashFrame(1, " Exporting...");
 			try {
 				Thread.sleep(100);
@@ -164,9 +172,9 @@ public class ExportManager {
 //					com.neuronrobotics.sdk.common.Log.error(e);
 //				}
 //			}
-			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
+			if (!exportDir.getAbsolutePath().endsWith(name + "/"))
 				exportDir = new File(exportDir + "/" + name + "/");
-			}
+
 			CSG.setPreventNonManifoldTriangles(manifold);
 
 			BowlerKernel.processReturnedObjectsStart(back,caDoodleFile.getSelf().getParentFile(), exportDir);
@@ -193,13 +201,13 @@ public class ExportManager {
 	}
 
 	private static void zipDirectory(File sourceDir, File zipFile) throws IOException {
-		Path sourceDirPath=sourceDir.toPath();
+		Path sourceDirPath = sourceDir.toPath();
 		Path zipFilePath = zipFile.toPath();
 		try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
 			Files.walk(sourceDirPath)
 			.filter(path -> !Files.isDirectory(path))
-		    .filter(path -> !path.toString().endsWith(".csg"))
-		    .filter(path -> !path.toString().endsWith(".png"))
+			.filter(path -> !path.toString().endsWith(".csg"))
+			.filter(path -> !path.toString().endsWith(".png"))
 			.forEach(path -> {
 
 				ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
@@ -217,10 +225,11 @@ public class ExportManager {
 	}
 
 	private void copyBom(File bomFile) {
+
 		Path source = bomFile.toPath();
-		Path destination=new File(exportDir.getAbsolutePath()+"/"+bomFile.getName()).toPath();
+		Path destination = new File(exportDir.getAbsolutePath() + "/" + bomFile.getName()).toPath();
 		try {
-			Log.debug("Copy from "+source.toString()+" \nto "+destination.toString());
+			Log.debug("Copy from " + source.toString() + " \nto " + destination.toString());
 			Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			// Auto-generated catch block
@@ -232,8 +241,7 @@ public class ExportManager {
 	void initialize() {
 		assert blender != null : "fx:id=\"blender\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert freecad != null : "fx:id=\"freecad\" was not injected: check your FXML file 'ExportWindow.fxml'.";
-		assert projectGrid != null
-				: "fx:id=\"projectGrid\" was not injected: check your FXML file 'ExportWindow.fxml'.";
+		assert projectGrid != null : "fx:id=\"projectGrid\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert stl != null : "fx:id=\"stl\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert svg != null : "fx:id=\"svg\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 	}

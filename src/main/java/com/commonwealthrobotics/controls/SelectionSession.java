@@ -251,14 +251,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// Convert to subscene coordinates to remove offsets
 		Point2D overlayPaneCoordinates = overlayPane.sceneToLocal(new Point2D(screenX, screenY));
-		
+
 		// Clamp object center for standard and custom work plane
 		double clampValue = workplane.isWorkplaneNotOrigin() ? 300 : 600;
 
 		// XY-move: fixed Z in local space
 		Point3D wp3d = engine.sceneToWorldFixedZ_WP(overlayPaneCoordinates, startingPosition3D.getZ());
 		wp3d = new Point3D(clamp(wp3d.getX(), -clampValue, clampValue), clamp(wp3d.getY(), -clampValue, clampValue), clamp(wp3d.getZ(), -clampValue, clampValue));
-		
+
 		return new Point3D(this.manipulation.snapToGrid(wp3d.getX()), this.manipulation.snapToGrid(wp3d.getY()), wp3d.getZ());
 	}
 
@@ -710,7 +710,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (pickedNode == meshView) {
 
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
-					
+
 					TransformNR wp = ap.get().getWorkplane();
 					TransformNR scenePos = new TransformNR(localPoint.getX(), localPoint.getY(), localPoint.getZ());
 					TransformNR wpLocal = wp.inverse().times(scenePos);
@@ -960,7 +960,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				ConfigurationDatabase.save();
 			}
 			else {
-				// Force an update when the parameters are loaded, 
+				// Force an update when the parameters are loaded,
 				// this should also switch from STL to blender file loading if the blend is generated
 				CopyOnWriteArrayList<IParameterChanged> listeners = para.getInstance().getParamListeners(para.getName());
 				for (IParameterChanged l:listeners)
@@ -1911,16 +1911,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double yawRad = Math.toRadians(currentRotZ - 90);
 				double cos = Math.cos(yawRad);
 				double sin = Math.sin(yawRad);
-				
+
 				double inX = stateUnitVectorTmp.getX();
 				double inY = stateUnitVectorTmp.getY();
-				
+
 				TransformNR stateUnitVector = new TransformNR(
 					inX * cos - inY * sin,
 					inX * sin + inY * cos,
 					stateUnitVectorTmp.getZ()
 				);
-				
+
 				double incement = currentGrid;
 
 				boolean updateTrig = false;
@@ -1942,7 +1942,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				TransformNR current = (mc == null ? new TransformNR() : mc.getLocation());
 				TransformNR wp = ap.get().getWorkplane();
-				
+
 				// Convert to workplane-local coordinates
 				TransformNR localCurrent = wp.inverse().times(current);
 
@@ -1951,10 +1951,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double rad = Math.toRadians(-wpAz);
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
-				
+
 				double deltaX = stateUnitVector.getX();
 				double deltaY = stateUnitVector.getY();
-				
+
 				double localDeltaX = deltaX * cos - deltaY * sin;
 				double localDeltaY = deltaX * sin + deltaY * cos;
 
@@ -2094,7 +2094,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 //	public void setCadoodle(ActiveProject ap) {
-//		
+//
 //	}
 
 	public void setSnapGrid(double snapGridValue) {

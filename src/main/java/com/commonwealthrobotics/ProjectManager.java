@@ -255,10 +255,9 @@ public class ProjectManager {
 	 * Copies a source directory to a target directory that doesn't exist yet.
 	 * Creates the target directory and copies all contents including
 	 * subdirectories.
-	 * 
+	 *
 	 * @param sourceDirectoryPath Path to the source directory
-	 * @param targetDirectoryPath Path to the target directory (which will be
-	 *                            created)
+	 * @param targetDirectoryPath Path to the target directory (which will be created)
 	 * @throws IOException If an I/O error occurs during copying
 	 */
 	public static void copyDirectory(String sourceDirectoryPath, String targetDirectoryPath) throws IOException {

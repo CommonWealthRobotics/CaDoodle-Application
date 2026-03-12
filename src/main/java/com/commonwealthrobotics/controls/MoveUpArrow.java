@@ -12,7 +12,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.MatrixType;
 import javafx.geometry.Point3D;
-import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR; 
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 
@@ -72,17 +72,17 @@ public class MoveUpArrow {
 		double arrowX = moveUpLocationTransform.getTx();
 		double arrowY = moveUpLocationTransform.getTy();
 		double arrowZ = moveUpLocationTransform.getTz();
-		
+
 		// Calculate the zoom-dependent offset that was added
 		double arrowOffset = ResizingHandle.getSize() * scaleTransform.getZ();
-		
+
 		// Subtract to get back to the base position (top of bounds)
 		double baseX = arrowX;
 		double baseY = arrowY;
 		double baseZ = arrowZ - arrowOffset;
-		
+
 		this.startingPosition3D = new Point3D(baseX, baseY, baseZ);
-		
+
 		zMoveManipulator.setStartingWorkplanePosition(startingPosition3D);
 
 		});
@@ -107,7 +107,7 @@ public class MoveUpArrow {
 		material.setDiffuseColor(getColor());
 	}
 
-	private Color getColor() {	
+	private Color getColor() {
 		return color;
 	}
 

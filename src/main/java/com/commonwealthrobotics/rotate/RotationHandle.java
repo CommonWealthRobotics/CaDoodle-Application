@@ -67,15 +67,15 @@ public class RotationHandle {
 	private IOnRotateMoving moving = null;
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
-			RotationSessionManager rotationSessionManager, ActiveProject ap, 
+			RotationSessionManager rotationSessionManager, ActiveProject ap,
 			SelectionSession cs, Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
 		this.axis = ax;
 		this.viewRotation = vr;
 		this.ap = ap;
-	
+
 		this.session = cs;
 		this.done = done;
-		
+
 		Runnable onChange = ()-> {
 			if (TDnumber.canceled)
 				return;
@@ -101,6 +101,7 @@ public class RotationHandle {
 			handle.setImage(selectedImage);
 			com.neuronrobotics.sdk.common.Log.info("Entered " + axis);
 		});
+
 		handle.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
 			handle.setImage(rotateImage);
 			if (!rotationStarted)
@@ -133,7 +134,7 @@ public class RotationHandle {
 		};
 
 		EventHandler<? super MouseEvent> dragged = event -> {
-			
+
 			if (event.getPickResult().getIntersectedNode() == controlCircle) {
 				if (!startAngleFound) {
 					startAngleFound = true;
@@ -166,7 +167,7 @@ public class RotationHandle {
 				arc.setStartAngle(0);
 				arc.setLength(sweepAngle);
 				TDnumber.setValue(sweepAngle);
-				
+
 				setSweepAngle(current);
 			}
 		};
@@ -213,7 +214,7 @@ public class RotationHandle {
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(rotAtCenter, viewRotation);
 		});
-		
+
 	}
 
 	private double getAngle(MouseEvent event) {
@@ -258,7 +259,7 @@ public class RotationHandle {
 		Quadrant q = Quadrant.getQuad(-az);
 		rotationStarted = false;
 		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
-		RotationNR axisOrent = new RotationNR();
+		RotationNR axisOrient = new RotationNR();
 		switch (axis) {
 		case azimuth:
 			rA = totx;
@@ -266,8 +267,8 @@ public class RotationHandle {
 			pinLocx = center.x;
 			pinLocy = center.y;
 			pinLocz = min.z;
-			axisOrent = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(q) + 180);
-			
+			axisOrient = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(q) + 180);
+
 			break;
 		case elevation:
 			rA = totx;
@@ -275,7 +276,7 @@ public class RotationHandle {
 			pinLocx = center.x;
 			pinLocy = (az < 90 && az > -90) ? min.y : max.y;
 			pinLocz = center.z;
-			axisOrent = new RotationNR(-90, 0, 0);
+			axisOrient = new RotationNR(-90, 0, 0);
 
 			break;
 		case tilt:
@@ -284,16 +285,16 @@ public class RotationHandle {
 			pinLocx = (az > 0 && az < 180) ? min.x : max.x;
 			pinLocy = center.y;
 			pinLocz = center.z;
-			axisOrent = new RotationNR(-90, 90, 0);
-			
+			axisOrient = new RotationNR(-90, 90, 0);
+
 			break;
 		}
-		
+
 		double circleDiameter = Math.sqrt(Math.pow(rA, 2) + Math.pow(rB, 2));
-		
+
 		double radius = circleDiameter / 2;
 
-		TransformNR pureRot = new TransformNR(axisOrent);
+		TransformNR pureRot = new TransformNR(axisOrient);
 		TransformNR t = new TransformNR(pinLocx, pinLocy, pinLocz);
 		TransformNR input = t;
 
@@ -308,6 +309,7 @@ public class RotationHandle {
 		TransformNR axisAngle = pureRot;
 		if (axis == EulerAxis.azimuth)
 			axisAngle = new TransformNR();
+
 		TransformNR input4 = axisAngle.times(new TransformNR(0, 0, 0));
 
 		TransformNR input2 = pureRot.times(new TransformNR(-circleDiameter / 2, -circleDiameter / 2, 0));
@@ -315,8 +317,8 @@ public class RotationHandle {
 				.times(new TransformNR(-circleDiameter / 8, -circleDiameter / 2 - circleDiameter / 8, 0));
 		arc.setRadiusX(radius / 2);
 		arc.setRadiusY(radius / 2);
-		
-		positionPin = input3.times(input.times(new TransformNR(0,0,0)));	
+
+		positionPin = input3.times(input.times(new TransformNR(0, 0, 0)));
 		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);

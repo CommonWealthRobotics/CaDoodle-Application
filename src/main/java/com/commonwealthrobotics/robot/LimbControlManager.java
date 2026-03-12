@@ -50,7 +50,7 @@ public class LimbControlManager {
 //	private EventHandler<MouseEvent> baseMouseMover = baseManip.getMouseEvents();
 	//ResizingHandle base = null;
 	//ResizingHandle tip = null;
-	
+
 	ArmPointManipulator baseManipulator;
 	ArmPointManipulator tipManipulator;
 	ResizingHandle elbow = null;
@@ -115,7 +115,7 @@ public class LimbControlManager {
 			}
 			updateControls();
 		}, ap, engine, workplaneOffset, onSelect, onReset);
-		
+
 		baseManipulator = new ArmPointManipulator(r,ev -> {
 			BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Clear));
 
@@ -132,8 +132,6 @@ public class LimbControlManager {
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
 			updateControls();
 		}, ap, engine, workplaneOffset, onSelect,onReset);
-		
-
 
 		rotationManager = new RotationSessionManager(new Affine(), ap, session, workplaneOffset, ruler, (tf) -> r.run());
 		rotationManager.setMoving(toUpdate -> {
@@ -159,7 +157,7 @@ public class LimbControlManager {
 
 		handles = new ArrayList<>();
 		handles.addAll(tipManipulator.getMesh());
-		handles.addAll(baseManipulator.getMesh());	
+		handles.addAll(baseManipulator.getMesh());
 		handles.addAll(rotationManager.getElements());
 		hide();
 		for (Node n : handles) {
@@ -212,7 +210,7 @@ public class LimbControlManager {
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
-		if (limb == null) 
+		if (limb == null)
 			return;
 
 		double az = camera.getPanAngle();
@@ -228,7 +226,7 @@ public class LimbControlManager {
 		if (tipManipulator.getState() == DragState.IDLE)
 			tipManipulator.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
 					locked);
-		
+
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(workplane, workplaneOffset));
 
@@ -236,7 +234,7 @@ public class LimbControlManager {
 
 	public void update(MobileBaseBuilder builder) {
 		this.builder = builder;
-		if (builder != null) 
+		if (builder != null)
 			for (CSG c : session.getCurrentStateSelected()) {
 				if (c.getLimbName().isPresent()) {
 					String name = c.getLimbName().get();
