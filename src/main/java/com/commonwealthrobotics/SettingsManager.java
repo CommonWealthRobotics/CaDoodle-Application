@@ -127,6 +127,7 @@ public class SettingsManager implements ICSGClientEvent {
 			com.neuronrobotics.sdk.common.Log.debug("Starting test");
 		}).start();
 	}
+
 	@FXML
 	void onPinVersion(ActionEvent event) {
 		Log.debug("onPinVersion");
@@ -316,11 +317,10 @@ public class SettingsManager implements ICSGClientEvent {
 		String key = apiKey.getText();
 		ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
 		ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
-		if (setServerState()) {
+		if (setServerState())
 			serverIPDisplay.setText("Server started " + getLocalIP());
-		} else {
+		else
 			serverIPDisplay.setText("Server closed");
-		}
 	}
 
 	@FXML
@@ -342,7 +342,6 @@ public class SettingsManager implements ICSGClientEvent {
 	void onAlwaysContinue(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("Continue");
 		setExplanationText(OperationResult.PRUNE);
-
 	}
 
 	@FXML
@@ -457,15 +456,16 @@ public class SettingsManager implements ICSGClientEvent {
 		portField.setText(port);
 		apiKey.setText(key);
 		connectServer.setSelected(connect);
-		if (connect) {
+		if (connect)
 			onConnectServer(null);
-		}
+
 		boolean server = Boolean
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGServerStart", "" + false).toString());
 		startServerCheckbox.setSelected(server);
 		connectServer.setDisable(false);
 		if (server)
 			serverIPDisplay.setText("Server started " + getLocalIP());
+
 		serverStatusBox.getChildren().add(clientDisplay);
 		String string = ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", "16").toString();
 
@@ -514,6 +514,7 @@ public class SettingsManager implements ICSGClientEvent {
 				return f2.getName().compareTo(f1.getName());
 			});
 		}
+
 		for (File f : listFiles) {
 			if (!f.isDirectory())
 				continue;
@@ -521,6 +522,7 @@ public class SettingsManager implements ICSGClientEvent {
 			String[] fnames = name.split("\\.");
 			if (fnames.length != 3)
 				continue;
+
 			try {
 				int major=Integer.parseInt(fnames[0]);
 				int minor=Integer.parseInt(fnames[1]);
@@ -553,6 +555,7 @@ public class SettingsManager implements ICSGClientEvent {
 			stage.toFront();
 			return;
 		}
+
 		try {
 			// Load the FXML file
 
@@ -570,12 +573,12 @@ public class SettingsManager implements ICSGClientEvent {
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 			stage.setOnCloseRequest(event -> {
-				if (changedDir) {
+				if (changedDir)
 					mc.onHome(null);
-				}
-				if (CSGClient.isRunning()) {
+
+				if (CSGClient.isRunning())
 					CSGClient.getClient().removeListener(loader.getController());
-				}
+
 			});
 			// Show the new window
 			stage.show();
@@ -600,9 +603,7 @@ public class SettingsManager implements ICSGClientEvent {
 		Label label = active.get(request);
 		String value = "Request " + request.getOperation() + " result " + response.getOperation();
 		com.neuronrobotics.sdk.common.Log.debug(value);
-		BowlerStudio.runLater(() -> {
-			label.setText(value);
-		});
+		BowlerStudio.runLater(() -> label.setText(value));
 		BowlerStudio.runLater(2000, () -> {
 			BowlerStudio.runLater(() -> {
 				active.remove(request);

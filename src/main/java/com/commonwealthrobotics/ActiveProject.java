@@ -96,9 +96,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public Thread regenerateFrom(CaDoodleOperation source) {
 		if (disableRegenerate)
 			return null;
+
 		Thread t = get().regenerateFrom(source);
 		if (t == null)
 			return null;
+
 		new Thread(() -> {
 			try {
 				Thread.sleep(100);
@@ -106,6 +108,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
+
 			if (t.isAlive()) {
 				while (!SplashManager.isVisibleSplash()) {
 					SplashManager.renderSplashFrame((int) (get().getPercentInitialized() * 100), " Re-Generating");
@@ -116,15 +119,16 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
-			} else {
+			} else
 				return;
-			}
+
 			try {
 				t.join();
 			} catch (InterruptedException e) {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
+
 			SplashManager.closeSplash();
 		}).start();
 		return t;
@@ -144,11 +148,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-			if (t.isAlive()) {
+
+			if (t.isAlive())
 				SplashManager.renderSplashFrame(50, h.getType() + " running");
-			} else {
+			else
 				return;
-			}
+
 			try {
 				t.join();
 			} catch (InterruptedException e) {
@@ -167,41 +172,49 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public ActiveProject removeListener(ICaDoodleStateUpdate l) {
 		if (listeners.contains(l))
 			listeners.remove(l);
+
 		return this;
 	}
 
 	public ActiveProject addListener(ICaDoodleStateUpdate l) {
 		if (!listeners.contains(l))
 			listeners.add(l);
+
 		return this;
 	}
 
 	public CaDoodleFile setActiveProject(File f) throws Exception {
-		if (fromFile != null) {
+
+		if (fromFile != null)
 			fromFile.removeListener(this);
-		}
-		autosaveThread=null;
+
+		autosaveThread = null;
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
+
 		return loadActive();
 	}
 
 	private File getActiveProject() throws Exception {
+
 		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
 		if (object == null) // Fix legacy typo, try again with corrected spelling
 			object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
 
 		if (object == null)
 			return newProject();
+
 		String string = object.toString();
 		com.neuronrobotics.sdk.common.Log.debug("Loading file "+string);
 		File file = new File(string);
-		if(file.exists())
+		if (file.exists())
 			return file;
+
 		return newProject();
 	}
 
 	// Helper method to create styled option buttons with descriptions
 	private HBox createOptionButton(CheckBox always,String buttonText, String description, String tooltipText, EventHandler<ActionEvent> value) {
+
 		HBox buttonContainer = new HBox(5);
 		buttonContainer.setAlignment(Pos.CENTER_LEFT);
 
@@ -215,7 +228,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		descriptionLabel.setWrapText(true);
 
 		buttonContainer.getChildren().addAll(button, descriptionLabel);
-		if(always!=null)
+		if (always != null)
 			buttonContainer.getChildren().add(always);
 		// Set tooltip
 		Tooltip tooltip = new Tooltip(tooltipText);
@@ -232,29 +245,31 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public CaDoodleFile loadActive() throws Exception {
-		if(fromFile!=null) {
+		if (fromFile != null) {
 			fromFile.close();
-			fromFile=null;
+			fromFile = null;
 		}
-		
+
 		FileChangeWatcher.clearAll();
 		try {
 			fromFile = CaDoodleFile.fromFile(getActiveProject(), this, false);
 			fromFile.setSaveUpdate(new ICadoodleSaveStatusUpdate() {
-				
+
 				@Override
 				public void renderSplashFrame(int percent, String message) {
 					SplashManager.renderSplashFrame(percent, message);
 				}
 			});
+
 			fromFile.setAccept(new IAcceptPruneForward() {
 				private OperationResult operationResult = null;
 
 				@Override
 				public OperationResult accept() {
 					OperationResult insertionStrat = OperationResult.fromString((String)ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy",OperationResult.ASK.name()));
-					if(insertionStrat!=OperationResult.ASK)
+					if (insertionStrat!=OperationResult.ASK)
 						return insertionStrat;
+
 					operationResult = null;
 					boolean isVis = SplashManager.isVisibleSplash();
 					SplashManager.closeSplash();
@@ -361,7 +376,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 							// Keyboard shortcut I=Insert
 							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> { this.operationResult = OperationResult.INSERT; alert.hide(); });
-							
+
 							// Keyboard shortcut A=Abort
 							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.A), () -> { this.operationResult = OperationResult.ABORT; alert.hide(); });
 						});
@@ -369,8 +384,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						// Show alert and wait for result
 						alert.showAndWait();
 
-						if(this.operationResult==null)
+						if (this.operationResult == null)
 							this.operationResult= OperationResult.ABORT;
+
 						alert.close();
 					});
 
@@ -389,6 +405,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					return operationResult;
 				}
 			});
+
 			//fromFile.setImageEngine(new ThumbnailImage());
 			return fromFile;
 		} catch (Exception e) {
@@ -460,9 +477,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
-		if(OSUtil.isWindows()) {
+		if (OSUtil.isWindows())
 			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
-		}
+
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();
 		return new File((String) ConfigurationDatabase.get("CaDoodle", "CaDoodleWorkspace", defaultFile.getAbsolutePath()));
@@ -493,10 +510,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 		HashSet<String> externals =  Main.getOptionalProjects();
-		
-		for(String s:externals) {
+
+		for (String s:externals) {
 			File f = new File(s);
-			if(f.exists()&&f.getName().toLowerCase().endsWith(".doodle")) {
+			if (f.exists()&&f.getName().toLowerCase().endsWith(".doodle")) {
 				try {
 					list.add(CaDoodleFile.fromFile(f, null, false));
 				} catch (Exception e) {
@@ -603,23 +620,21 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static void unzip(String zipFilePath, String destDir) throws IOException {
 		Path destPath = Paths.get(destDir);
-		if (Files.exists(destPath)) {
+		if (Files.exists(destPath))
 			throw new IOException("Destination directory already exists: " + destDir);
-		}
+
 		Files.createDirectories(destPath);
 
 		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
 			ZipEntry zipEntry = zis.getNextEntry();
 			while (zipEntry != null) {
 				Path newPath = zipSlipProtect(zipEntry, destPath);
-				if (zipEntry.isDirectory()) {
+				if (zipEntry.isDirectory())
 					Files.createDirectories(newPath);
-				} else {
-					if (newPath.getParent() != null) {
-						if (Files.notExists(newPath.getParent())) {
-							Files.createDirectories(newPath.getParent());
-						}
-					}
+				else {
+					if ((newPath.getParent() != null) && (Files.notExists(newPath.getParent())))
+						Files.createDirectories(newPath.getParent());
+
 					Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
 				}
 				zipEntry = zis.getNextEntry();
@@ -630,35 +645,35 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	// Protects against Zip Slip vulnerability
 	private static Path zipSlipProtect(ZipEntry zipEntry, Path targetDir) throws IOException {
+
 		Path targetDirResolved = targetDir.resolve(zipEntry.getName());
 		Path normalizedPath = targetDirResolved.normalize();
-		if (!normalizedPath.startsWith(targetDir)) {
+		if (!normalizedPath.startsWith(targetDir))
 			throw new IOException("Bad zip entry: " + zipEntry.getName());
-		}
+
 		return normalizedPath;
 	}
 
-
 	public void loadFromZip(File file) {
 		String name = file.getName().substring(0, file.getName().length()-4);
-		int index=0;
+		int index = 0;
 		File targetDir = null;
 		do {
-			targetDir=new File(getWorkingDir()+delim()+name+"_"+index);
+			targetDir = new File(getWorkingDir() + delim() + name + "_" + index);
 			index++;
 			Log.debug("CHecking for file: "+targetDir);
-		}while(targetDir.exists());
+		} while(targetDir.exists());
 		try {
 			unzip(file.getAbsolutePath(),targetDir.getAbsolutePath());
-			File[] files= targetDir.listFiles();
-			for(File f:files) {
-				if(f.getName().toLowerCase().endsWith(".doodle")) {
+			File[] files = targetDir.listFiles();
+			for (File f:files)
+				if (f.getName().toLowerCase().endsWith(".doodle")) {
 					setActiveProject(f);
 					System.out.println("Active file set to "+f.getAbsolutePath());
 					new Thread(()->	get().initialize()).start();
 					return;
 				}
-			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
@@ -709,7 +724,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						get().setSaveUpdate(saveDisplay);
 						if (t.isAlive() && get().isTimelineOpen())
 							SplashManager.renderSplashFrame(99, "Saving Files");
-
 						try {
 							t.join();
 						} catch (InterruptedException e) {

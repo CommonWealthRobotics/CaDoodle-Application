@@ -38,8 +38,7 @@ public class MirrorSessionManager {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
 		x = new MirrorHandle(MirrorOrentation.x, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
-		y = new MirrorHandle(MirrorOrentation.y, workplaneOffset, selection, null, ap, controlSprites,
-				workplaneOffset);
+		y = new MirrorHandle(MirrorOrentation.y, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
 		z = new MirrorHandle(MirrorOrentation.z, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
 		handles = Arrays.asList(x, y, z);
 		hide();
@@ -47,16 +46,15 @@ public class MirrorSessionManager {
 
 	public List<Node> getElements() {
 		ArrayList<Node> result = new ArrayList<Node>();
-		for (MirrorHandle r : handles) {
+		for (MirrorHandle r : handles)
 			result.addAll(r.getElements());
-		}
+
 		return result;
 	}
 
 	public void hide() {
-		for (MirrorHandle r : handles) {
+		for (MirrorHandle r : handles)
 			r.hide();
-		}
 		
 	}
 
@@ -74,9 +72,9 @@ public class MirrorSessionManager {
 		this.ta = ta;
 		this.selected = selected;
 		this.meshes = meshes;
-		for (MirrorHandle r : handles) {
+		for (MirrorHandle r : handles)
 			r.initialize(b, engine, ta, selected, meshes);
-		}
+
 		setActive(true);
 	}
 
@@ -91,9 +89,8 @@ public class MirrorSessionManager {
 
 	public void setActive(boolean active) {
 		this.active = active;
-		for (MirrorHandle r : handles) {
+		for (MirrorHandle r : handles)
 			r.setActive(active);
-		}
 	}
 
 }

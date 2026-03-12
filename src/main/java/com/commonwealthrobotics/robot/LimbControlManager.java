@@ -70,6 +70,7 @@ public class LimbControlManager {
 		this.session = session;
 		this.ap = ap;
 		sprites = session.getControls();
+
 		Runnable r = () -> {
 			BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Default));
 			// add the operation and reset\
@@ -89,10 +90,12 @@ public class LimbControlManager {
 		Runnable onReset = () -> {
 			onReset();
 		};
+
 		Runnable onSelect = () -> {
 			updateControls();
 		};
-		tipManipulator = new ArmPointManipulator(r,ev -> {
+
+		tipManipulator = new ArmPointManipulator(r, ev -> {
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
@@ -111,12 +114,11 @@ public class LimbControlManager {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			updateControls();
-		},ap,engine,workplaneOffset,onSelect, onReset);
+		}, ap, engine, workplaneOffset, onSelect, onReset);
 		
 		baseManipulator = new ArmPointManipulator(r,ev -> {
-			BowlerStudio.runLater(() -> {
-				session.setMode(SpriteDisplayMode.Clear);
-			});
+			BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Clear));
+
 			TransformNR baseAtStaartTF = mod.getBase().copy();
 			// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 			RotationNR nr = baseAtStaartTF.getRotation();
@@ -129,19 +131,16 @@ public class LimbControlManager {
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
 			updateControls();
-		},ap,engine,workplaneOffset,onSelect,onReset);
+		}, ap, engine, workplaneOffset, onSelect,onReset);
 		
 
 
-		rotationManager = new RotationSessionManager(new Affine(), ap, session, workplaneOffset, ruler, (tf) -> {
-			r.run();
-		});
+		rotationManager = new RotationSessionManager(new Affine(), ap, session, workplaneOffset, ruler, (tf) -> r.run());
 		rotationManager.setMoving(toUpdate -> {
 			try {
 
-				BowlerStudio.runLater(() -> {
-					session.setMode(SpriteDisplayMode.Clear);
-				});
+				BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Clear));
+
 				TransformNR baseAtStartTF = mod.getBase().copy();
 				// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 				RotationNR nr = baseAtStartTF.getRotation();
@@ -169,7 +168,6 @@ public class LimbControlManager {
 			engine.addUserNode(n);
 			n.setVisible(false);
 		}
-
 	}
 
 	private void onReset() {
@@ -182,8 +180,9 @@ public class LimbControlManager {
 	public void show(DHParameterKinematics limb) {
 		this.limb = limb;
 		b = session.getBounds(limb);
-		if(b==null)
+		if (b == null)
 			throw new RuntimeException("Limb has no parts");
+
 		selectedCSG = session.selectedSnapshot();
 		mod = new ModifyLimb().setLimb(limb).setNames(session.selectedSnapshot());
 		baseManipulator.show();
@@ -215,6 +214,7 @@ public class LimbControlManager {
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
 		if (limb == null) 
 			return;
+
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
 		double x = camera.getGlobalX();
@@ -230,9 +230,7 @@ public class LimbControlManager {
 					locked);
 		
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
-		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(workplane, workplaneOffset);
-		});
+		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(workplane, workplaneOffset));
 
 	}
 

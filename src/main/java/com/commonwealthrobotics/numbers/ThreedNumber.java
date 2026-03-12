@@ -135,7 +135,7 @@ public class ThreedNumber {
 		TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
 			String oldText = change.getControlText();
 			String addText = change.getText();
-			int	pos	 = change.getCaretPosition();
+			int	pos = change.getCaretPosition();
 
 			if ("-".equals(addText)) {
 				if (oldText.startsWith("-")) { // Remove "-" in front
@@ -185,6 +185,7 @@ public class ThreedNumber {
 				double currentValue = getMostRecentValue();
 				if (currentValue + 1.0 < Math.pow(10, wholeDigits))
 					setValue(currentValue + 1.0);
+
 				return;
 			}
 
@@ -194,6 +195,7 @@ public class ThreedNumber {
 				double currentValue = getMostRecentValue();
 				if (currentValue - 1.0 > -Math.pow(10, wholeDigits))
 					setValue(currentValue - 1.0);
+
 				return;
 			}
 
@@ -203,6 +205,7 @@ public class ThreedNumber {
 				double currentValue = getMostRecentValue();
 				if (currentValue + 10.0 < Math.pow(10, wholeDigits))
 					setValue(currentValue + 10.0);
+
 				return;
 			}
 
@@ -212,6 +215,7 @@ public class ThreedNumber {
 				double currentValue = getMostRecentValue();
 				if (currentValue - 10.0 > -Math.pow(10, wholeDigits))
 					setValue(currentValue - 10.0);
+
 				return;
 			}
 
@@ -232,7 +236,6 @@ public class ThreedNumber {
 	} // Constructor
 
 	public void getSystemDecimalSeparator() {
-
 		Locale systemLocale = Locale.getDefault();
 		this.decimalSeparator = DecimalFormatSymbols.getInstance(systemLocale).getDecimalSeparator();
 	}
@@ -256,10 +259,9 @@ public class ThreedNumber {
 		// parseDouble needs a dot as decimal separator
 		String t = textField.getText().replace(',', '.');
 		// com.neuronrobotics.sdk.common.Log.error(" Validating string " + t);
-		if (t.length() == 0) {
-			// empty string, do nothing
+		if (t.length() == 0) // empty string, do nothing
 			return;
-		}
+
 		try {
 			setMostRecentValue(Double.parseDouble(t) + ruler.getOffset(tfDimension));
 		} catch (NumberFormatException ex) {

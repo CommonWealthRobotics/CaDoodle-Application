@@ -81,12 +81,14 @@ public class AlignHandle {
 
 			mesh.setCullFace(CullFace.NONE);
 			mesh.setMaterial(material);
+
 			exited = event -> {
 				material.setDiffuseColor(Color.BLACK);
-				for (CSG key : visualizers.keySet()) {
+				for (CSG key : visualizers.keySet())
 					visualizers.get(key).setVisible(false);
-				}
+
 			};
+
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
 				// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
@@ -95,6 +97,7 @@ public class AlignHandle {
 					visualizers.get(key).setVisible(true);
 				}
 			};
+
 			onClickEvent = event -> {
 				onClick.run();
 				com.neuronrobotics.sdk.common.Log.debug("Handle clicked "+self);
@@ -104,6 +107,7 @@ public class AlignHandle {
 				getHandle().removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
 				setMyOperation();
 			};
+
 			mesh.getTransforms().add(move);
 			mesh.getTransforms().add(alignLoc);
 			mesh.getTransforms().add(workplaneOffset);
@@ -289,7 +293,6 @@ public class AlignHandle {
 
 	public void setOnClickCallback(Runnable onClick) {
 		this.onClick = onClick;
-
 	}
 
 	public void reset() {
@@ -307,11 +310,11 @@ public class AlignHandle {
 			visualizationObjects.clear();
 		}
 		visualizationObjects = null;
-		if(operation==null)
+		if (operation == null)
 			return;
 		Align tmp = operation.copy(); 
 		Align prev = operation;
-		operation=tmp;
+		operation = tmp;
 		setMyOperation();
 		tmp.setCaDoodleFile(ap.get());
 		visualizationObjects = tmp.process(toAlign);
@@ -336,7 +339,7 @@ public class AlignHandle {
 			indicatorMesh.setVisible(false);
 			visualizers.put(indicator, indicatorMesh);
 		}
-		operation=prev;
+		operation = prev;
 	}
 
 	public void clear() {

@@ -74,6 +74,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	private Affine cameraOrent = new Affine();
 	private double scale;
 	private Mirror op;
+
 	public MirrorHandle(MirrorOrentation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
 			ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
 		this.ax = ax;
@@ -91,23 +92,25 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		mesh.setMaterial(material);
 		exited = event -> {
 			material.setDiffuseColor(Color.BLACK);
-			for (CSG key : visualizers.keySet()) {
+			for (CSG key : visualizers.keySet())
 				visualizers.get(key).setVisible(false);
-			}
 		};
+
 		entered = event -> {
 			material.setDiffuseColor(new Color(1, 0, 0, 1));
 			// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
 			// orentation);
-			for (CSG key : visualizers.keySet()) {
+			for (CSG key : visualizers.keySet())
 				visualizers.get(key).setVisible(true);
-			}
+
 		};
+
 		onClickEvent = event -> {
 			material.setDiffuseColor(Color.BLACK);
 			com.neuronrobotics.sdk.common.Log.error("Handle clicked ");
 			setMyOperation();
 		};
+
 		// mesh.getTransforms().add(move);
 		// mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(workplaneOffset);
@@ -172,17 +175,17 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		double rx = 0;
 		double ry = 0;
 		double rz = 0;
-		if (ax==MirrorOrentation.x) {
+		if (ax == MirrorOrentation.x) {
 			rx = 0;
 			ry = -90;
 			rz = 90;
 		}
-		if (ax==MirrorOrentation.y) {
+		if (ax == MirrorOrentation.y) {
 			rx = 0;
 			ry = 90;
 			rz = 0;
 		}
-		if (ax==MirrorOrentation.z) {
+		if (ax == MirrorOrentation.z) {
 			rx = -90;
 			ry = 0;
 			rz = 0;
@@ -217,7 +220,8 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 			TransformFactory.nrToAffine(pureRot, cameraOrent);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
-		if(op!=null)
+
+		if (op != null)
 			op.setWorkplane(ap.get().getWorkplane());
 	}
 
@@ -246,11 +250,11 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	public void updateState() {
-		//com.neuronrobotics.sdk.common.Log.debug("Initialize Mirror "+ax);
-		op= new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
+		//com.neuronrobotics.sdk.common.Log.debug("Initialize Mirror " + ax);
+		op = new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
 		clearVisualizers();
 		op.setCaDoodleFile(ap.get());
-		for(CSG indicator: op.process(ta)) {
+		for (CSG indicator: op.process(ta)) {
 			MeshView indicatorMesh = indicator.newMesh();
 			indicatorMesh.setMouseTransparent(true);
 			//indicatorMesh.getTransforms().addAll(workplaneOffset);
@@ -286,9 +290,9 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		mesh.removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
 		mesh.removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
 		mesh.removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
-		for(CSG key:visualizers.keySet()) {
+		for (CSG key:visualizers.keySet())
 			visualizers.get(key).setVisible(false);
-		}
+
 		clearVisualizers();
 		ap.removeListener(this);
 	}
@@ -321,37 +325,31 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 		// Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onSaveSuggestion() {
 		// Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onInitializationDone() {
 		// Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onInitializationStart() {
 		// Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onRegenerateDone() {
 		// Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onRegenerateStart(CaDoodleOperation source) {
 		// Auto-generated method stub
-		
 	}
 
 	@Override
@@ -362,6 +360,5 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	@Override
 	public void onTimelineUpdate(int num,File image) {
 		// TODO Auto-generated method stub
-		
 	}
 }

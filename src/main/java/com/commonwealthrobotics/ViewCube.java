@@ -29,9 +29,7 @@ public class ViewCube {
 		meshView.setTextureModeImage(MainController.class.getResource("navCube.png").toExternalForm());
 		meshView.getTransforms().add(rot);
 
-		meshView.setOnMousePressed(event -> {
-			focusTrig = true;
-		});
+		meshView.setOnMousePressed(event -> focusTrig = true);
 
 		meshView.setOnMouseDragged(event -> {
 			engine.focusOrientation(null, null, 0); // Send cancel

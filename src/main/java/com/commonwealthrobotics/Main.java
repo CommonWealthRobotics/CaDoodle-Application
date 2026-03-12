@@ -43,6 +43,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -58,14 +59,15 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javafx.application.Platform;
-import javafx.stage.Stage;
 
 public class Main extends Application {
+
 	private static Thread loadDeps;
 	public static UncaughtExceptionHandler hand;
 	private static final String paramsKey = "CaDoodle-Configs";
@@ -77,7 +79,7 @@ public class Main extends Application {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
 		loader.setController(new MainController(stage));
 		Parent root = loader.load();
-		
+
 		// Get JavaFX screen bounds (this already accounts for taskbars, etc.)
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
 
@@ -237,7 +239,7 @@ public class Main extends Application {
 		}
 	}
 
-	public static void main(String[] args) {	
+	public static void main(String[] args) {
 	    // Set WM_CLASS for GNOME to recognize the app
 	    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
 	        // This must match StartupWMClass in the desktop file
@@ -256,7 +258,7 @@ public class Main extends Application {
 			//Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
-			
+
 			hand = new UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
@@ -277,6 +279,7 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
+
 		//String currentVersionString = StudioBuildInfo.getVersion();
 		String bindir = System.getProperty("user.home") + delim()+"bin"+ delim()+"CaDoodle-ApplicationInstall"+ delim();
 		String myVersionFileString = bindir + "currentversion.txt";
@@ -305,8 +308,8 @@ public class Main extends Application {
 				boolean b = !lastVer.contentEquals(nowVer);
 				boolean contentEquals = nowVer.contentEquals("0");
 				boolean c = b || contentEquals;
-				
-				if (c) {			
+
+				if (c) {
 					// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
 					try {
 						ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
@@ -320,7 +323,7 @@ public class Main extends Application {
 		} catch (IOException e) {
 			Log.error(e);
 		}
-		
+
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
@@ -347,12 +350,12 @@ public class Main extends Application {
 					HashSet<String> externals =  Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());
 					Main.saveOptionalProjects(externals);
-					
+
 				} else
-					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
+					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists!");
 			} else
-				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file "+replace.toLowerCase());
-				
+				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file " + replace.toLowerCase());
+
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
@@ -409,13 +412,12 @@ public class Main extends Application {
 	}
 
 	private static void ensureGitAssetsArePresent() {
-		
+
 		SplashManager.renderSplashFrame(2, "Downloading...");
 
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 		String nowVer = ""+StudioBuildInfo.getSDKVersion();
-	
-		
+
 		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
 		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
 		try {
@@ -439,6 +441,7 @@ public class Main extends Application {
 				SplashManager.closeSplash();
 			}
 		});
+
 		DownloadManager.setApproval(new IApprovalForDownload() {
 			private ButtonType buttonType = null;
 
@@ -458,6 +461,7 @@ public class Main extends Application {
 						int tmp = fontNum - 10;
 						if (tmp < 12)
 							tmp = 12;
+
 						root.setStyle("-fx-font-size: " + tmp + "pt");
 						alert.getDialogPane().applyCss();
 						alert.getDialogPane().layout();
@@ -481,6 +485,7 @@ public class Main extends Application {
 				}
 				if (isVis)
 					SplashManager.renderSplashFrame(0, "Downloading " + name);
+
 				return buttonType.equals(ButtonType.OK);
 			}
 
@@ -511,6 +516,7 @@ public class Main extends Application {
 						alert.getDialogPane().layout();
 						stage.sizeToScene();
 					});
+
 					Optional<ButtonType> result = alert.showAndWait();
 					buttonType = result.get();
 					alert.close();

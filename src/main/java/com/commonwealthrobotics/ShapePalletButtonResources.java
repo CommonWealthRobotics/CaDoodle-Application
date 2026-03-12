@@ -49,14 +49,15 @@ public class ShapePalletButtonResources {
 		String string = key.get("plugin");
 
 		boolean isPluginMissing = false;
-		if (string != null) {
+		if (string != null)
 			isPluginMissing = !DownloadManager.isDownloadedAlready(string);
-		}
+
 		// String absolutePath = ConfigurationDatabase.getAppDataDirectory().toString();
 		String absolutePath = ScriptingEngine.getWorkspace().getAbsolutePath() + delim() + "uicache";
 		File dir = new File(absolutePath);
 		if (!dir.exists())
 			dir.mkdirs();
+
 		imageFile = new File(absolutePath + delim() + typeOfShapes + name + ".png");
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
 		// https://github.com/CommonWealthRobotics/CaDoodle-Application/issues/69
@@ -89,28 +90,27 @@ public class ShapePalletButtonResources {
 				String ZPer = key.get("ZPer");
 				String Degrees = key.get("Degrees");
 				String sprial = key.get("Spiral");
-				if (ZPer != null) {
+				if (ZPer != null)
 					s.setDefz(Double.parseDouble(ZPer));
-				}
+
 				if (Degrees != null)
 					s.setDefangle(Double.parseDouble(Degrees));
-				if (sprial != null) {
+
+				if (sprial != null)
 					s.setDefSpiral(Double.parseDouble(sprial));
-				}
+
 				s.set(f, ap.get()).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
 				com.neuronrobotics.sdk.common.Log.error(ex);
-				;
 			}
 		}
 		set.setCaDoodleFile(ap.get());
 		List<CSG> so = set.process(new ArrayList<>());
-		for (CSG c : so) {
-			for (String s : c.getParameters(ap.get().getCsgDBinstance())) {
+		for (CSG c : so)
+			for (String s : c.getParameters(ap.get().getCsgDBinstance()))
 				ap.get().getCsgDBinstance().delete(s);
-			}
-		}
+
 		if (isSweep)
 			try {
 				File file = set.getFile();
@@ -121,9 +121,9 @@ public class ShapePalletButtonResources {
 			}
 
 		if (typeOfShapes.toLowerCase().contains("vitamin"))
-			for (CSG c : so) {
+			for (CSG c : so)
 				c.setIsHole(false);
-			}
+
 		try {
 			image = ap.get().getImageEngine().get(ap.get().getCsgDBinstance(), so);
 			BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
@@ -138,15 +138,15 @@ public class ShapePalletButtonResources {
 			}
 		} catch (NoImageException e) {
 			Log.error(e);
-			image=new WritableImage(100, 100);
+			image = new WritableImage(100, 100);
 		}
 
 		indicator = so.get(0);
 		if (so.size() > 1) {
-			for (int i = 1; i < so.size(); i++) {
+			for (int i = 1; i < so.size(); i++)
 				indicator = indicator.dumbUnion(so.get(i));
-			}
 		}
+
 		indicator.setColor(Color.WHITE);
 		try {
 			FileUtil.write(Paths.get(stlFile.getAbsolutePath()), indicator.toStlString());

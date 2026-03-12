@@ -43,35 +43,38 @@ public class AlignManager {
 	private ActiveProject ap;
 
 	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
+
 		this.session = session;
 		this.ap = ap;
-		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);
-		leftRight = new AlignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0),ap);
-		upDown = new AlignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1),ap);
+		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0), ap);
+		leftRight = new AlignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0), ap);
+		upDown = new AlignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1), ap);
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
 		for (AlignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {
-				
+
 				setAlignemntSelected(true);
 				recompute(() -> {
 					CaDoodleOperation curOp = session.getCurrentOperation();
-					if (curOp != operation && operation!=null)
+					if ((curOp != operation) && (operation != null))
 						ap.addOp(operation);
 					else
 						ap.get().regenerateCurrent();
-					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked "+operation);
+
+					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked " + operation);
 					List<String> names = operation.getNamesAddedInThisOperation();
 					session.selectAll(names);
 				});
-
 			});
 		}
 		hide();
 	}
+
 	public void clear() {
 		for (AlignRadioSet r : AS_LIST) 
 			r.clear();
 	}
+
 	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c) {
 		this.screenW = w;
 		this.screenH = h;
@@ -79,12 +82,12 @@ public class AlignManager {
 		this.b = bo;
 		this.cf = c;
 		updateHandles();
-
 	}
 
 	private void updateHandles() {
-		if(operation!=null)
+		if (operation != null)
 			b = operation.getBounds(ap.get().getCurrentState());
+
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
@@ -92,9 +95,9 @@ public class AlignManager {
 
 	public List<Node> getElements() {
 		ArrayList<Node> result = new ArrayList<Node>();
-		for (AlignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST)
 			result.addAll(r.getElements());
-		}
+
 		return result;
 	}
 
@@ -103,33 +106,35 @@ public class AlignManager {
 	}
 
 	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
+
 			HashMap<CSG, MeshView> meshes) {
 		this.meshes = meshes;
-		for (Node n : getElements()) {
+		for (Node n : getElements())
 			BowlerStudio.runLater(()->n.setVisible(true));
-			;
-		}
+
 		this.toAlign.clear();
 		for (CSG c : ta)
 			this.toAlign.add(c);
+
 		operation = new Align().setNames(selected).setWorkplane(session.getWorkplane());
 		operation.setBounds(boundNames);
 
 		com.neuronrobotics.sdk.common.Log.error("Align manager reinitialized");
 		setAlignemntSelected(false);
-		for (AlignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST)
 			r.initialize(operation, engine, toAlign, selected);
-		}
+
 		recompute(null);
 		for (CSG c : toAlign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = event -> {
-				if(operation==null)
+				if (operation == null)
 					return;
 				operation.setBounds(Arrays.asList(c.getName()));
 				recompute(null);
 				updateHandles();
 			};
+
 			mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
 			events.put(c, eventFilter);
 		}
@@ -154,9 +159,9 @@ public class AlignManager {
 		com.neuronrobotics.sdk.common.Log.debug("Align canceled here");
 		if (isActive()) {
 			this.toAlign.clear();
-			if (isAlignemntSelected()) {
+			if (isAlignemntSelected())
 				com.neuronrobotics.sdk.common.Log.debug("Add op " + operation);
-			}
+
 			operation = null;
 		}
 		hide();
@@ -168,12 +173,11 @@ public class AlignManager {
 	}
 
 	public void hide() {
-		for (AlignRadioSet r : AS_LIST) {
+		for (AlignRadioSet r : AS_LIST)
 			r.hide();
-		}
-		for (Node n : getElements()) {
+
+		for (Node n : getElements())
 			BowlerStudio.runLater(()->n.setVisible(false));
-		}
 	}
 
 	public boolean isAlignemntSelected() {

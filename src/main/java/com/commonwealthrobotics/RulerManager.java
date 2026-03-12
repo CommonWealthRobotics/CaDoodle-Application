@@ -108,6 +108,7 @@ public class RulerManager {
 			tmp.setRotation(new RotationNR());
 			TransformFactory.nrToAffine(tmp, rulerOffset);
 		});
+
 		workplane.onCancel(()->{
 			com.neuronrobotics.sdk.common.Log.debug("Canceling active ruler pick session");
 			cancel();

@@ -122,6 +122,7 @@ public class ShapesPallet {
 	public void onSetCategory() {
 		if (searchMode)
 			return;
+
 		threadRunning = false;
 		Thread t = new Thread(() -> {
 			SplashManager.renderSplashFrame(50, "Loading Shapes");
@@ -137,16 +138,18 @@ public class ShapesPallet {
 			threadComplete = false;
 			threadRunning = true;
 			ap.setDisableRegenerate(true);
+
 			try {
 				String current = shapeCategory.getSelectionModel().getSelectedItem();
 				com.neuronrobotics.sdk.common.Log.debug("Selecting shapes from " + current);
 				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
-				if (current.contentEquals(mine.getName())) {
+				if (current.contentEquals(mine.getName()))
 					mine.activate();
-				} else {
+				else {
 					active = nameToFile.get(current);
 					if (active == null)
 						return;
+
 					ArrayList<HashMap<String, String>> orderedList = new ArrayList<HashMap<String, String>>();
 					// store the name os the keys for labeling the hoverover later
 					HashMap<Map, String> names = new HashMap<>();
@@ -159,9 +162,9 @@ public class ShapesPallet {
 							while (orderedList.size() <= index)
 								orderedList.add(null);
 							orderedList.set(index, hashMap);
-						} else {
+						} else
 							orderedList.add(hashMap);
-						}
+
 						names.put(hashMap, key);
 					}
 					BowlerStudio.runLater(() -> objectPallet.getChildren().clear());
@@ -173,6 +176,7 @@ public class ShapesPallet {
 						HashMap<String, String> key = orderedList.get(i);
 						if (key == null)
 							continue;
+
 //						com.neuronrobotics.sdk.common.Log
 //								.error("Placing " + names.get(key) + " at " + row + " , " + col);
 						try {
@@ -346,9 +350,11 @@ public class ShapesPallet {
 	private void updateFromSearch(String newValue) {
 		if (searchThread != null)
 			return;
+
 		objectPallet.getChildren().clear();
 		if (newValue.length() < 2)
 			return;
+
 		searchThread = new Thread(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Text changed to: " + newValue);
 			int i = 0;
@@ -357,6 +363,7 @@ public class ShapesPallet {
 				active = nameToFile.get(current);
 				if (active == null)
 					continue;
+
 				for (String name : active.keySet()) {
 					if (i > 15)
 						break;
@@ -369,6 +376,7 @@ public class ShapesPallet {
 //					}
 					if (buttons.contains(name))
 						continue;
+
 					buttons.add(name);
 					if (name.toLowerCase().contains(newValue.toLowerCase())) {
 						com.neuronrobotics.sdk.common.Log.debug("Matching " + current + " value " + name);
@@ -387,6 +395,7 @@ public class ShapesPallet {
 				for (CaDoodleFile caDoodleFile : proj) {
 					if (caDoodleFile.getMyProjectName().contentEquals(ap.get().getMyProjectName()))
 						continue;
+
 					if (caDoodleFile.getMyProjectName().toLowerCase().contains(newValue.toLowerCase())) {
 						int col = i % 3;
 						int row = i / 3;
@@ -405,6 +414,7 @@ public class ShapesPallet {
 
 			searchThread = null;
 		});
+
 		searchThread.start();
 	}
 

@@ -66,7 +66,7 @@ public class ProjectManager {
 	@FXML // URL location of the FXML file that was given to the FXMLLoader
 	private URL location;
 
-	@FXML // fx:id="projectGrid"
+	@FXML // fx:id = "projectGrid"
 	private GridPane projectGrid; // Value injected by FXMLLoader
 
 	private static ActiveProject ap;
@@ -124,10 +124,10 @@ public class ProjectManager {
 			List<CaDoodleFile> proj1 = ap.getProjects();
 			com.neuronrobotics.sdk.common.Log.error("Found " + proj1.size() + " projects");
 			ArrayList<CaDoodleFile> proj = new ArrayList<CaDoodleFile>();
-			for(CaDoodleFile cf:proj1) {
-				if(cf.isIgnore()) {
+			for (CaDoodleFile cf:proj1) {
+				if (cf.isIgnore())
 					continue;
-				}
+
 				proj.add(cf);
 			}
 
@@ -151,22 +151,25 @@ public class ProjectManager {
 					// Create a delete menu item
 					MenuItem deleteItem = new MenuItem("Delete");
 					deleteItem.getStyleClass().add("image-button-focus");
+
 					deleteItem.setOnAction(event -> {
 						box.getChildren().remove(b);
 						box.getChildren().remove(e);
 						c.setIgnore();
 					});
+
 					deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
 						BowlerStudio.runLater(() -> contextMenu.hide());
 					});
+
 					// Add the delete item to the context menu
 					contextMenu.getItems().add(deleteItem);
 
 					b.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 						contextMenu.hide();
-						if (event.getButton() == MouseButton.PRIMARY) {
+						if (event.getButton() == MouseButton.PRIMARY)
 							openProject(c);
-						}
+
 						if (event.getButton() == MouseButton.SECONDARY) {
 							contextMenu.show(b, event.getScreenX(), event.getScreenY());
 							new Thread(() -> {
@@ -199,7 +202,6 @@ public class ProjectManager {
 						b.requestFocus();
 						currentFileButton = b;
 					}
-
 				});
 
 			}
@@ -217,9 +219,9 @@ public class ProjectManager {
 					clearScreen.run();
 				});
 				SplashManager.renderSplashFrame(50, "Initialize");
-				if (!copy) {
+				if (!copy)
 					ap.setActiveProject(c.getSelf());
-				} else {
+				else {
 					File sourceDir = c.getSelf().getParentFile();
 					File target = null;
 					int index = 1;
@@ -236,9 +238,8 @@ public class ProjectManager {
 					nf.setTimeCreated(System.currentTimeMillis());
 					nf.save(true);
 					ap.setActiveProject(doodle);
-					
-
 				}
+
 				ap.get().initialize();
 				SplashManager.closeSplash();
 				onFinish.run();
@@ -266,13 +267,12 @@ public class ProjectManager {
 		Path targetDir = Paths.get(targetDirectoryPath);
 
 		// Verify source directory exists and is a directory
-		if (!Files.exists(sourceDir)) {
+		if (!Files.exists(sourceDir))
 			throw new IOException("Source directory doesn't exist: " + sourceDirectoryPath);
-		}
 
-		if (!Files.isDirectory(sourceDir)) {
+		if (!Files.isDirectory(sourceDir))
 			throw new IOException("Source is not a directory: " + sourceDirectoryPath);
-		}
+
 
 		// Create the target directory if it doesn't exist
 		Files.createDirectories(targetDir);
@@ -289,9 +289,8 @@ public class ProjectManager {
 				// Copy the file/directory
 				if (Files.isDirectory(sourcePath)) {
 					// Create directory if it doesn't exist
-					if (!Files.exists(targetPath)) {
+					if (!Files.exists(targetPath))
 						Files.createDirectory(targetPath);
-					}
 				} else {
 					// Copy the file, replacing if it exists
 					Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);

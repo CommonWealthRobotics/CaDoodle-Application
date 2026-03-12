@@ -81,6 +81,7 @@ public class ShapePalletMyDoodles {
 			int row = i / 3;
 			if (proj.get(j).getMyProjectName().contentEquals(ap.get().getMyProjectName()) || proj.get(j).isIgnore())
 				continue;
+
 			try {
 				buttons.add(setupButton(proj.get(j), col, row));
 				i++;
@@ -89,9 +90,8 @@ public class ShapePalletMyDoodles {
 			}
 		}
 		BowlerStudio.runLater(() -> {
-			for (Button b : buttons) {
+			for (Button b : buttons)
 				b.setDisable(false);
-			}
 		});
 	}
 

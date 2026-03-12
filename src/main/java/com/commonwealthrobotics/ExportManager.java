@@ -105,6 +105,7 @@ public class ExportManager {
 		String slug = NONLATIN.matcher(normalized).replaceAll("");
 		return slug.toLowerCase(Locale.ENGLISH);
 	}
+
     @FXML
     void fstl(ActionEvent event) {
     	manifoldSTL.setSelected(false);
@@ -146,7 +147,7 @@ public class ExportManager {
 				index++;
 			}
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
-			if(exportDir==null)
+			if (exportDir == null)
 				return;
 			SplashManager.renderSplashFrame(1, " Exporting...");
 			try {
@@ -200,7 +201,7 @@ public class ExportManager {
 		    .filter(path -> !path.toString().endsWith(".csg"))
 		    .filter(path -> !path.toString().endsWith(".png"))
 			.forEach(path -> {
-				
+
 				ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
 				try {
 					zs.putNextEntry(zipEntry);
@@ -214,6 +215,7 @@ public class ExportManager {
 			});
 		}
 	}
+
 	private void copyBom(File bomFile) {
 		Path source = bomFile.toPath();
 		Path destination=new File(exportDir.getAbsolutePath()+"/"+bomFile.getName()).toPath();
@@ -234,7 +236,6 @@ public class ExportManager {
 				: "fx:id=\"projectGrid\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert stl != null : "fx:id=\"stl\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert svg != null : "fx:id=\"svg\" was not injected: check your FXML file 'ExportWindow.fxml'.";
-		
 	}
 
 	public static void launch(SelectionSession session, ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
@@ -252,9 +253,8 @@ public class ExportManager {
 			stage.setTitle("Project Manager");
 			// Set the window to always be on top
 			stage.setAlwaysOnTop(true);
-			stage.setOnCloseRequest(event -> {
-				onFinish.run();
-			});
+			stage.setOnCloseRequest(event -> onFinish.run());
+
 			// Set the scene
 			Scene scene = new Scene(root);
 			stage.setScene(scene);

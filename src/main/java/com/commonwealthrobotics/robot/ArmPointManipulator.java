@@ -44,10 +44,12 @@ public class ArmPointManipulator {
 	public TransformNR getCurrentPoseInReferenceFrame(){
 		return tip.manipulator.getCurrentPoseInReferenceFrame();
 	}
+
 	public void onReset() {
 		tip.resetSelected();
 		tip.manipulator.reset();
 	}
+
 	public ArrayList<MeshView> getMesh() {
 		
 		return new ArrayList<MeshView>(Arrays.asList(tip.getMesh()));
@@ -64,6 +66,7 @@ public class ArmPointManipulator {
 	public  DragState getState() {
 		return tip.manipulator.getState();
 	}
+
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
 		tip.threeDTarget(screenW, screenH, zoom, target, cf, locked);
 	}

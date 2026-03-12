@@ -89,6 +89,7 @@ public class RobotLab {
 			VBox controllerConsumedBox, VBox capabilitiesVBox, VBox optionProvide, VBox optionsConsume,
 			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid, BowlerStudio3dEngine engine,
 			RulerManager ruler) {
+
 		this.session = session;
 		this.ap = ap;
 		this.baseRobotBox = baseRobotBox;
@@ -113,14 +114,15 @@ public class RobotLab {
 			builder = null;
 			updateDisplay();
 		});
+
 		updateDisplay();
 		setManager(new LimbControlManager(engine, session, ap, ruler));
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
-		if (isOpen) {
+		if (isOpen)
 			updateDisplay();
-		} else {
+		else {
 			builder = null;
 			getManager().hide();
 		}
@@ -133,15 +135,16 @@ public class RobotLab {
 	public void updateDisplay() {
 		if (updating)
 			return;
+
 		updating = true;
 		session.submit(() -> {
 			try {
-				while (ap.get() == null) {
+				while (ap.get() == null)
 					Thread.sleep(100);
-				}
-				while (!ap.get().isInitialized()) {
+
+				while (!ap.get().isInitialized())
 					Thread.sleep(100);
-				}
+
 				searchForBuilder();
 				setupMainPanel();
 				setupControllersPanel();
@@ -157,6 +160,7 @@ public class RobotLab {
 	}
 
 	private void setupMainPanel() {
+
 		BowlerStudio.runLater(() -> {
 			controllersVBox.getChildren().clear();
 			capabilitiesVBox.getChildren().clear();
@@ -196,9 +200,11 @@ public class RobotLab {
 	}
 
 	private void setFunctionalityToList(ControllerFeatures provided, ControllerFeatures consumed, VBox provide,
+
 			VBox consume) {
 		if (provided == null)
 			provided = new ControllerFeatures();
+
 		if (consumed == null)
 			consumed = new ControllerFeatures();
 
@@ -234,9 +240,9 @@ public class RobotLab {
 		makeVoltage("+Peak W ", provided.getBatteryPeakWatts(), "W", provide);
 		// batteryWattHour+=f.batteryWattHour;
 		makeVoltage("+Capacity ", provided.getBatteryWattHours(), "W-H", provide);
-		for (Double d : consumed.getBatteryVoltage()) {
+		for (Double d : consumed.getBatteryVoltage())
 			makeVoltage("-Rail ", d, "volts", consume);
-		}
+
 		// batteryPeakWatt+=f.batteryPeakWatt;
 		makeVoltage("-Peak W ", consumed.getBatteryPeakWatts(), "W", consume);
 		// batteryWattHour+=f.batteryWattHour;
@@ -246,6 +252,7 @@ public class RobotLab {
 	private void makeVoltage(String l, double has, String type, VBox provide) {
 		if (has == 0)
 			return;
+
 		HBox line = new HBox(10);
 		Label label = new Label(l);
 		label.setPrefWidth(80);
@@ -262,6 +269,7 @@ public class RobotLab {
 	private void makeLine(String l, int has, int usednum, VBox provide, VBox consume) {
 		if (has == 0 && usednum == 0)
 			return;
+
 		HBox line = new HBox(10);
 		Label label = new Label("+" + l);
 		label.setPrefWidth(80);
@@ -282,6 +290,7 @@ public class RobotLab {
 	}
 
 	private void searchForBuilder() {
+
 		CaDoodleFile caDoodleFile = ap.get();
 		if (caDoodleFile != null) {
 			HashMap<String, MobileBaseBuilder> robots = caDoodleFile.getRobots();
@@ -289,6 +298,7 @@ public class RobotLab {
 				for (String s : robots.keySet()) {
 					if (builder != null)
 						break;
+
 					for (CSG c : session.getSelectedCSG(session.selectedSnapshot())) {
 						Optional<String> mobileBaseName = c.getMobileBaseName();
 						if (mobileBaseName.isPresent()) {
@@ -304,13 +314,13 @@ public class RobotLab {
 	}
 
 	private void setupTabs() {
+
 		BowlerStudio.runLater(() -> {
 			boolean value = session.numberSelected() == 0;
 			robotLabTabPane.setDisable(value);
 			if (builder == null) {
-				if (!baseRobotBox.getChildren().contains(makeRobotButton)) {
+				if (!baseRobotBox.getChildren().contains(makeRobotButton))
 					baseRobotBox.getChildren().add(makeRobotButton);
-				}
 
 				if (baseRobotBox.getChildren().contains(robotBasePanel))
 					baseRobotBox.getChildren().remove(robotBasePanel);
@@ -319,12 +329,12 @@ public class RobotLab {
 				if (!value)
 					robotLabTabPane.getSelectionModel().select(bodyTab);
 			} else {
-				if (baseRobotBox.getChildren().contains(makeRobotButton)) {
+				if (baseRobotBox.getChildren().contains(makeRobotButton))
 					baseRobotBox.getChildren().remove(makeRobotButton);
-				}
 
 				if (!baseRobotBox.getChildren().contains(robotBasePanel))
 					baseRobotBox.getChildren().add(robotBasePanel);
+
 				headTab.setDisable(false);
 				advancedTab.setDisable(false);
 			}
@@ -332,12 +342,15 @@ public class RobotLab {
 	}
 
 	private void setupLimbsPanel() {
+
 		if (limmbsLoaded)
 			return;
+
 		limmbsLoaded = true;
 		try {
 			if (limbOptions == null)
 				limbOptions = LimbOption.getOptions();
+
 			ArrayList<LimbOption> arms = new ArrayList<LimbOption>();
 			ArrayList<LimbOption> legs = new ArrayList<LimbOption>();
 			ArrayList<LimbOption> wheels = new ArrayList<LimbOption>();
@@ -370,9 +383,7 @@ public class RobotLab {
 
 	private void setupLimbOption(ArrayList<LimbOption> arms, GridPane armsOptionGrid2) {
 
-		BowlerStudio.runLater(() -> {
-			armsOptionGrid2.getChildren().clear();
-		});
+		BowlerStudio.runLater(() -> armsOptionGrid2.getChildren().clear());
 
 		for (int i = 0; i < arms.size(); i++) {
 			LimbOption o = arms.get(i);
@@ -380,7 +391,6 @@ public class RobotLab {
 			int row = i / 3;
 			setupAddLimbButton(o, row, col, armsOptionGrid2);
 		}
-
 	}
 
 	private void setupControllersPanel() {
@@ -426,6 +436,7 @@ public class RobotLab {
 			optionProvide.getChildren().clear();
 			optionsConsume.getChildren().clear();
 		});
+
 		BowlerStudio.runLater(() -> {
 			armsOptionGrid2.add(button, col, row);
 			Image thumb = o.getImage();
@@ -467,12 +478,13 @@ public class RobotLab {
 									if (workplane.isClickOnGround()) {
 										// Don't reset work plane to origin
 //										ap.get().setWorkplane(new TransformNR());
-									} else {
+									} else
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-									}
+
 									workplane.placeWorkplaneVisualization();
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
+
 								} catch (CadoodleConcurrencyException e) {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
@@ -490,6 +502,7 @@ public class RobotLab {
 	}
 
 	private void setupAddControllerButton(ControllerOption o, int col, int row) {
+
 		o.build(ap.get());
 		Tooltip hover = new Tooltip(o.getType());
 		Button button = new Button();
@@ -519,16 +532,21 @@ public class RobotLab {
 //			tIv.setFitHeight(50);
 //			tIv.setFitWidth(50);
 			button.setGraphic(tIv);
+
 			button.setOnMousePressed(ev -> {
+
 				session.submit(() -> {
 					CSG indicator = o.getIndicator();
 					session.setMode(SpriteDisplayMode.PLACING);
 					workplane.setIndicator(indicator, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
+
 					workplane.setOnSelectEvent(() -> {
+
 						session.submit(() -> {
 							session.setMode(SpriteDisplayMode.Default);
+
 							if (workplane.isClicked())
 								try {
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
@@ -543,20 +561,21 @@ public class RobotLab {
 									session.selectAll(namesAdded);
 									if (!workplane.isClicked())
 										return;
-									if (workplane.isClickOnGround()) {
+
+									if (workplane.isClickOnGround())
 										ap.get().setWorkplane(new TransformNR());
-									} else {
+									else
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-									}
+
 									workplane.placeWorkplaneVisualization();
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
+
 								} catch (CadoodleConcurrencyException e) {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								}
-
 						});
 					});
 					workplane.activate();
@@ -579,8 +598,10 @@ public class RobotLab {
 				e.printStackTrace();
 			}
 			builder = ap.get().getRobots().get(mr.getName());
+
 			if (builder == null)
 				throw new RuntimeException("Failed to create robot!");
+
 			updateDisplay();
 		});
 	}

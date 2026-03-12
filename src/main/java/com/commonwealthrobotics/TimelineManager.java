@@ -116,11 +116,9 @@ public class TimelineManager {
 					Button b = buttons.get(num);
 					ImageView img = (ImageView) b.getGraphic();
 					Image image = new Image(imageFile.toURI().toString());
-					BowlerStudio.runLater(() -> {
-						img.setImage(resizeImage(image, buttonSize, buttonSize));
-					});
+					BowlerStudio.runLater(() -> img.setImage(resizeImage(image, buttonSize, buttonSize));
 					Log.debug("Updating " + imageFile);
-				}else
+				} else
 					update(false);
 			}
 		});
@@ -188,12 +186,12 @@ public class TimelineManager {
 	}
 
 	private boolean boundsSame(Bounds one, Bounds two) {
-		if (one.getMax().test(two.getMax(), 0.0001)) {
+		if (one.getMax().test(two.getMax(), 0.0001))
 			return true;
-		}
-		if (one.getMin().test(two.getMin(), 0.0001)) {
+
+		if (one.getMin().test(two.getMin(), 0.0001))
 			return true;
-		}
+
 		return false;
 	}
 
@@ -209,11 +207,13 @@ public class TimelineManager {
 		ap.get().setTimelineVisible(timelineOpen);
 		if (baseBox == null)
 			return;
+
 		// com.neuronrobotics.sdk.common.Log.debug("Timeline Update called");
 		this.clear = clear;
 		updateNeeded = true;
 		if (updating)
 			return;
+
 		updating = true;
 		updateNeeded = false;
 
@@ -254,6 +254,7 @@ public class TimelineManager {
 						return;
 					}
 				}
+
 				addrem = false;
 				int s = operations.size();
 				for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
@@ -282,6 +283,7 @@ public class TimelineManager {
 								session.setKeyBindingFocus();
 								if (ap.get().isRegenerating() || !ap.get().isInitialized())
 									return;
+
 								BowlerStudio.runLater(() -> {
 									if (event.getButton() == MouseButton.PRIMARY) {
 										int index = ap.get().getCurrentIndex() - 1;
@@ -289,6 +291,7 @@ public class TimelineManager {
 										contextMenu.hide();
 										if (button == toAdd)
 											return;
+
 										for (CSG c : state)
 											engine.removeObject(c);
 										new Thread(() -> {
@@ -310,6 +313,7 @@ public class TimelineManager {
 									}
 								});
 							});
+
 							int myButtonIndex = myIndex;
 							toAdd.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
 								int index = ap.get().getCurrentIndex() - 1;
@@ -317,20 +321,25 @@ public class TimelineManager {
 									for (CSG c : state) {
 										if (c.isInGroup())
 											continue;
+
 										if (c.isHide())
 											continue;
+
 										CSG prev = getSameName(c, previous);
 										boolean b = !boundsSame(prev, c);
 										if (prev != null) {
 											if (prev.isHide() && !c.isHide())
 												b = true;
+
 											if (prev.isHole() != c.isHole())
 												b = true;
 										}
+
 										if (b || prev == null)
 											engine.addObject(c, null, 0.4, ap.get().getCsgDBinstance());
 									}
 							});
+
 							toAdd.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
 								int index = ap.get().getCurrentIndex() - 1;
 								if (index != myButtonIndex)
@@ -359,6 +368,7 @@ public class TimelineManager {
 							deleteItem.setOnAction(event -> {
 								if (ap.get().isRegenerating() || !ap.get().isInitialized())
 									return;
+
 								toAdd.setDisable(true);
 								buttons.remove(toAdd);
 								timeline.getChildren().remove(toAdd);
@@ -373,6 +383,7 @@ public class TimelineManager {
 									for (CSG c : state)
 										engine.removeObject(c);
 							});
+
 							// Add the delete item to the context menu
 							contextMenu.getItems().add(deleteItem);
 
@@ -382,6 +393,7 @@ public class TimelineManager {
 								contextMenu.hide();
 								if (ap.get().isRegenerating() || !ap.get().isInitialized())
 									return;
+
 								contextMenu.hide();
 								for (CSG c : state)
 									engine.removeObject(c);
@@ -417,12 +429,14 @@ public class TimelineManager {
 						updating = false;
 						if (updateNeeded)
 							update(clear);
+
 						session.updateControlsDisplayOfSelected();
 					});
 				} else {
 					updating = false;
 					if (updateNeeded)
 						update(clear);
+
 					BowlerStudio.runLater(() -> session.updateControlsDisplayOfSelected());
 				}
 
@@ -443,22 +457,24 @@ public class TimelineManager {
 			CaDoodleOperation op = operations.get(i);
 			if (op == null)
 				continue;
+
 			Button b = buttons.get(i);
 			boolean applyToMe = false;
 			int index = ap.get().getCurrentIndex() - 1;
 			if (index >= buttons.size())
 				continue;
+
 			Button sel = buttons.get(index < 0 ? 0 : index);
 			for (String s : op.getNamesAddedInThisOperation()) {
-				for (CSG p : selected) {
+				for (CSG p : selected)
 					if (s.contentEquals(p.getName()))
 						applyToMe = true;
-				}
+
 			}
 			b.getStyleClass().clear();
-			if (sel == b) {
+			if (sel == b)
 				b.getStyleClass().add("image-button-focus");
-			}
+
 			if (applyToMe)
 				b.getStyleClass().add("image-button-highlight");
 			else
