@@ -232,6 +232,7 @@ if (project == rootProject) {
 }
 
 jar {
+	dependsOn 'spotlessCheck'
 	jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	manifest {
 		attributes 'Implementation-Title': 'CaDoodle-Application',
