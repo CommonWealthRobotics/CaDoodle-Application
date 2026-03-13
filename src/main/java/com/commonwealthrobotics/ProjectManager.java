@@ -2,9 +2,6 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 /**
  * Sample Skeleton for 'ProjectManager.fxml' Controller Class
@@ -27,10 +24,7 @@ import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
-import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
-import com.neuronrobotics.sdk.common.Log;
 
-import eu.mihosoft.vrl.v3d.CSG;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,7 +42,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -98,7 +91,7 @@ public class ProjectManager {
 		clearScreen.run();
 		try {
 			ap.newProject();
-			new Thread(()->{
+			new Thread(() -> {
 				ap.get().initialize();
 			}).start();
 		} catch (IOException e) {
@@ -124,8 +117,8 @@ public class ProjectManager {
 			List<CaDoodleFile> proj1 = ap.getProjects();
 			com.neuronrobotics.sdk.common.Log.error("Found " + proj1.size() + " projects");
 			ArrayList<CaDoodleFile> proj = new ArrayList<CaDoodleFile>();
-			for(CaDoodleFile cf:proj1) {
-				if(cf.isIgnore()) {
+			for (CaDoodleFile cf : proj1) {
+				if (cf.isIgnore()) {
 					continue;
 				}
 				proj.add(cf);
@@ -232,11 +225,11 @@ public class ProjectManager {
 					File doodle = new File(target.getAbsolutePath() + DownloadManager.delim() + c.getSelf().getName());
 
 					CaDoodleFile nf = CaDoodleFile.fromFile(doodle, null, false);
-					nf.setProjectName(RandomStringFactory.getNextRandomName()+"_"+c.getMyProjectName() + "_copy_" + index);
+					nf.setProjectName(
+							RandomStringFactory.getNextRandomName() + "_" + c.getMyProjectName() + "_copy_" + index);
 					nf.setTimeCreated(System.currentTimeMillis());
 					nf.save(true);
 					ap.setActiveProject(doodle);
-					
 
 				}
 				ap.get().initialize();
@@ -254,11 +247,13 @@ public class ProjectManager {
 	 * Copies a source directory to a target directory that doesn't exist yet.
 	 * Creates the target directory and copies all contents including
 	 * subdirectories.
-	 * 
-	 * @param sourceDirectoryPath Path to the source directory
-	 * @param targetDirectoryPath Path to the target directory (which will be
-	 *                            created)
-	 * @throws IOException If an I/O error occurs during copying
+	 *
+	 * @param sourceDirectoryPath
+	 *            Path to the source directory
+	 * @param targetDirectoryPath
+	 *            Path to the target directory (which will be created)
+	 * @throws IOException
+	 *             If an I/O error occurs during copying
 	 */
 	public static void copyDirectory(String sourceDirectoryPath, String targetDirectoryPath) throws IOException {
 		// Convert string paths to Path objects
@@ -305,7 +300,7 @@ public class ProjectManager {
 				.debug("Directory copied successfully from " + sourceDirectoryPath + " to " + targetDirectoryPath);
 	}
 
-	public static void launch( ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
+	public static void launch(ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
 		ProjectManager.ap = ap;
 		ProjectManager.onFinish = onFinish;
 		ProjectManager.clearScreen = clearScreen;

@@ -49,17 +49,17 @@ public class ViewCube {
 			public boolean timeToCancel(MouseEvent event) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isZoom(ScrollEvent e) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isSlowMove(MouseEvent event) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean isRotate(MouseEvent me) {
 				boolean primaryButtonDown = me.isPrimaryButtonDown();
@@ -67,7 +67,7 @@ public class ViewCube {
 
 				return (secondaryButtonDown || primaryButtonDown);
 			}
-			
+
 			@Override
 			public boolean isMove(MouseEvent ev) {
 				return false;
@@ -85,17 +85,17 @@ public class ViewCube {
 		if (pickResult.getIntersectedNode() == meshView) {
 			Point3D intersectionPoint = pickResult.getIntersectedPoint();
 			TransformNR faceOrientation = determineFaceOrientation(intersectionPoint);
-			// com.neuronrobotics.sdk.common.Log.debug("Clicked face orientation: " + faceOrientation);
+			// com.neuronrobotics.sdk.common.Log.debug("Clicked face orientation: " +
+			// faceOrientation);
 			engine.focusOrientation(faceOrientation);
-		}
-		else
+		} else
 			com.neuronrobotics.sdk.common.Log.debug("Got NavigationCube event");
 	}
 
 	private TransformNR determineFaceOrientation(Point3D point) {
 		// Get the bounds of the MeshView
 		double min = -cubeSize / 2;
-		double max =  cubeSize / 2;
+		double max = cubeSize / 2;
 
 		// Small epsilon value for float comparison
 		double epsilon = 0.001;
@@ -113,7 +113,7 @@ public class ViewCube {
 
 		if (Math.abs(point.getY() - min) < epsilon) {
 			com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
-			return new TransformNR(0, 0, 0, new RotationNR(0, 0 , -90));
+			return new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
 		}
 
 		if (Math.abs(point.getY() - max) < epsilon) {

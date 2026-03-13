@@ -2,13 +2,11 @@ package com.commonwealthrobotics.align;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.SelectionSession;
-import com.commonwealthrobotics.rotate.RotationHandle;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
@@ -42,24 +40,24 @@ public class AlignManager {
 	private Bounds b;
 	private ActiveProject ap;
 
-	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset,ActiveProject ap) {
+	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset, ActiveProject ap) {
 		this.session = session;
 		this.ap = ap;
-		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0),ap);
-		leftRight = new AlignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0),ap);
-		upDown = new AlignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1),ap);
+		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0), ap);
+		leftRight = new AlignRadioSet("leftRight", move, workplaneOffset, new Vector3d(0, 1, 0), ap);
+		upDown = new AlignRadioSet("upDown", move, workplaneOffset, new Vector3d(0, 0, 1), ap);
 		AS_LIST = Arrays.asList(frontBack, leftRight, upDown);
 		for (AlignRadioSet r : AS_LIST) {
 			r.setOnClickCallback(() -> {
-				
+
 				setAlignemntSelected(true);
 				recompute(() -> {
 					CaDoodleOperation curOp = session.getCurrentOperation();
-					if (curOp != operation && operation!=null)
+					if (curOp != operation && operation != null)
 						ap.addOp(operation);
 					else
 						ap.get().regenerateCurrent();
-					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked "+operation);
+					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked " + operation);
 					List<String> names = operation.getNamesAddedInThisOperation();
 					session.selectAll(names);
 				});
@@ -69,7 +67,7 @@ public class AlignManager {
 		hide();
 	}
 	public void clear() {
-		for (AlignRadioSet r : AS_LIST) 
+		for (AlignRadioSet r : AS_LIST)
 			r.clear();
 	}
 	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c) {
@@ -83,7 +81,7 @@ public class AlignManager {
 	}
 
 	private void updateHandles() {
-		if(operation!=null)
+		if (operation != null)
 			b = operation.getBounds(ap.get().getCurrentState());
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
@@ -106,8 +104,7 @@ public class AlignManager {
 			HashMap<CSG, MeshView> meshes) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
-			BowlerStudio.runLater(()->n.setVisible(true));
-			;
+			BowlerStudio.runLater(() -> n.setVisible(true));;
 		}
 		this.toAlign.clear();
 		for (CSG c : ta)
@@ -124,7 +121,7 @@ public class AlignManager {
 		for (CSG c : toAlign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = event -> {
-				if(operation==null)
+				if (operation == null)
 					return;
 				operation.setBounds(Arrays.asList(c.getName()));
 				recompute(null);
@@ -172,7 +169,7 @@ public class AlignManager {
 			r.hide();
 		}
 		for (Node n : getElements()) {
-			BowlerStudio.runLater(()->n.setVisible(false));
+			BowlerStudio.runLater(() -> n.setVisible(false));
 		}
 	}
 

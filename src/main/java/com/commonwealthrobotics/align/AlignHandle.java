@@ -13,9 +13,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.*;
-import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -60,7 +58,7 @@ public class AlignHandle {
 
 	private ActiveProject ap;
 
-	public AlignHandle(Alignment set, Affine move, Affine workplaneOffset, Vector3d vector3d,ActiveProject ap) {
+	public AlignHandle(Alignment set, Affine move, Affine workplaneOffset, Vector3d vector3d, ActiveProject ap) {
 		self = set;
 		this.move = move;
 		this.workplaneOffset = workplaneOffset;
@@ -97,7 +95,7 @@ public class AlignHandle {
 			};
 			onClickEvent = event -> {
 				onClick.run();
-				com.neuronrobotics.sdk.common.Log.debug("Handle clicked "+self);
+				com.neuronrobotics.sdk.common.Log.debug("Handle clicked " + self);
 				material.setDiffuseColor(Color.GRAY);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
 				getHandle().removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
@@ -137,59 +135,59 @@ public class AlignHandle {
 		boolean isY = isYvector();
 		boolean isZ = isZvector();
 		switch (self) {
-		case middle:
-			if (isX) {
-				X = b.getCenter().x;
-				Y = b.getMin().y;
-				Z = b.getMin().z;
-			}
-			if (isY) {
-				X = b.getMax().x;
-				Y = b.getCenter().y;
-				Z = b.getMin().z;
-			}
-			if (isZ) {
-				X = b.getMax().x;
-				Y = b.getMax().y;
-				Z = b.getCenter().z;
-			}
-			break;
-		case negative:
-			if (isX) {
-				X = b.getMin().x;
-				Y = b.getMin().y;
-				Z = b.getMin().z;
-			}
-			if (isY) {
-				X = b.getMax().x;
-				Y = b.getMin().y;
-				Z = b.getMin().z;
-			}
-			if (isZ) {
-				X = b.getMax().x;
-				Y = b.getMax().y;
-				Z = b.getMin().z;
-			}
-			break;
-		case positive:
-			if (isX) {
-				X = b.getMax().x;
-				Y = b.getMin().y;
-				Z = b.getMin().z;
-			}
-			if (isY) {
-				X = b.getMax().x;
-				Y = b.getMax().y;
-				Z = b.getMin().z;
-			}
-			if (isZ) {
-				X = b.getMax().x;
-				Y = b.getMax().y;
-				Z = b.getMax().z;
-			}
-			break;
-		default:
-			break;
+			case middle :
+				if (isX) {
+					X = b.getCenter().x;
+					Y = b.getMin().y;
+					Z = b.getMin().z;
+				}
+				if (isY) {
+					X = b.getMax().x;
+					Y = b.getCenter().y;
+					Z = b.getMin().z;
+				}
+				if (isZ) {
+					X = b.getMax().x;
+					Y = b.getMax().y;
+					Z = b.getCenter().z;
+				}
+				break;
+			case negative :
+				if (isX) {
+					X = b.getMin().x;
+					Y = b.getMin().y;
+					Z = b.getMin().z;
+				}
+				if (isY) {
+					X = b.getMax().x;
+					Y = b.getMin().y;
+					Z = b.getMin().z;
+				}
+				if (isZ) {
+					X = b.getMax().x;
+					Y = b.getMax().y;
+					Z = b.getMin().z;
+				}
+				break;
+			case positive :
+				if (isX) {
+					X = b.getMax().x;
+					Y = b.getMin().y;
+					Z = b.getMin().z;
+				}
+				if (isY) {
+					X = b.getMax().x;
+					Y = b.getMax().y;
+					Z = b.getMin().z;
+				}
+				if (isZ) {
+					X = b.getMax().x;
+					Y = b.getMax().y;
+					Z = b.getMax().z;
+				}
+				break;
+			default :
+				break;
 
 		}
 
@@ -307,11 +305,11 @@ public class AlignHandle {
 			visualizationObjects.clear();
 		}
 		visualizationObjects = null;
-		if(operation==null)
+		if (operation == null)
 			return;
-		Align tmp = operation.copy(); 
+		Align tmp = operation.copy();
 		Align prev = operation;
-		operation=tmp;
+		operation = tmp;
 		setMyOperation();
 		tmp.setCaDoodleFile(ap.get());
 		visualizationObjects = tmp.process(toAlign);
@@ -336,7 +334,7 @@ public class AlignHandle {
 			indicatorMesh.setVisible(false);
 			visualizers.put(indicator, indicatorMesh);
 		}
-		operation=prev;
+		operation = prev;
 	}
 
 	public void clear() {

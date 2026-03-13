@@ -18,14 +18,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.sshd.common.session.Session;
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import com.commonwealthrobotics.ActiveProject;
-import com.commonwealthrobotics.Main;
 import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.TexturedCSG;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.robot.LimbControlManager;
@@ -57,27 +52,22 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
-import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
 import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
@@ -85,8 +75,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -137,7 +125,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double z;
 
 	private Affine selection = new Affine();
-	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false, false);
+	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(),
+			this::sendNewWorldPosition, false, false);
 	private Point3D startingPosition3D;
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 	private HashMap<CSG, Bounds> inWorkplaneBounds = new HashMap<CSG, Bounds>();
@@ -250,15 +239,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// Convert to subscene coordinates to remove offsets
 		Point2D overlayPaneCoordinates = overlayPane.sceneToLocal(new Point2D(screenX, screenY));
-		
+
 		// Clamp object center for standard and custom work plane
 		double clampValue = workplane.isWorkplaneNotOrigin() ? 300 : 600;
 
 		// XY-move: fixed Z in local space
 		Point3D wp3d = engine.sceneToWorldFixedZ_WP(overlayPaneCoordinates, startingPosition3D.getZ());
-		wp3d = new Point3D(clamp(wp3d.getX(), -clampValue, clampValue), clamp(wp3d.getY(), -clampValue, clampValue), clamp(wp3d.getZ(), -clampValue, clampValue));
-		
-		return new Point3D(this.manipulation.snapToGrid(wp3d.getX()), this.manipulation.snapToGrid(wp3d.getY()), wp3d.getZ());
+		wp3d = new Point3D(clamp(wp3d.getX(), -clampValue, clampValue), clamp(wp3d.getY(), -clampValue, clampValue),
+				clamp(wp3d.getZ(), -clampValue, clampValue));
+
+		return new Point3D(this.manipulation.snapToGrid(wp3d.getX()), this.manipulation.snapToGrid(wp3d.getY()),
+				wp3d.getZ());
 	}
 
 	public boolean moveLock() {
@@ -308,7 +299,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Log.info("Mem=" + value);
 		memUsage.setProgress(value);
 
-//		if (value > 0.5 && value < 0.75) { }
+		// if (value > 0.5 && value < 0.75) { }
 	}
 
 	private static class LockableHandler implements EventHandler<MouseEvent> {
@@ -686,7 +677,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (name == null)
 			throw new RuntimeException("Name can not be null");
 
-		meshView.addEventFilter(MouseEvent.MOUSE_PRESSED,event -> {
+		meshView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
 
 				if (event.isShiftDown()) {
@@ -709,15 +700,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (pickedNode == meshView) {
 					Log.debug("Setup Move Starting point");
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
-					
+
 					TransformNR wp = ap.get().getWorkplane();
 					TransformNR scenePos = new TransformNR(localPoint.getX(), localPoint.getY(), localPoint.getZ());
 					TransformNR wpLocal = wp.inverse().times(scenePos);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
-					manipulation.setStartingWorkplanePosition(new Point3D(manipulation.snapToGrid(startingPosition3D.getX()),
-					manipulation.snapToGrid(startingPosition3D.getY()), manipulation.snapToGrid(startingPosition3D.getZ())));
-				}else {
-					Log.debug("NOT Setup Move Starting point because "+pickedNode+" is not "+meshView);
+					manipulation.setStartingWorkplanePosition(
+							new Point3D(manipulation.snapToGrid(startingPosition3D.getX()),
+									manipulation.snapToGrid(startingPosition3D.getY()),
+									manipulation.snapToGrid(startingPosition3D.getZ())));
+				} else {
+					Log.debug("NOT Setup Move Starting point because " + pickedNode + " is not " + meshView);
 
 				}
 
@@ -962,12 +955,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (file.getName().endsWith("doodle")) {
 				ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", ap.get().getSelf().getAbsolutePath());
 				ConfigurationDatabase.save();
-			}
-			else {
-				// Force an update when the parameters are loaded, 
-				// this should also switch from STL to blender file loading if the blend is generated
-				CopyOnWriteArrayList<IParameterChanged> listeners = para.getInstance().getParamListeners(para.getName());
-				for (IParameterChanged l:listeners)
+			} else {
+				// Force an update when the parameters are loaded,
+				// this should also switch from STL to blender file loading if the blend is
+				// generated
+				CopyOnWriteArrayList<IParameterChanged> listeners = para.getInstance()
+						.getParamListeners(para.getName());
+				for (IParameterChanged l : listeners)
 					l.parameterChanged(para.getName(), para);
 
 			}
@@ -1735,9 +1729,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		getExecutor().submit(() -> {
 			getControls().setMode(SpriteDisplayMode.Align);
-//			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
-//			Bounds b = getSellectedBounds(selectedCSG);
-//			getControls().initializeAlign(selectedCSG, b, getMeshes());
+			// List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
+			// Bounds b = getSellectedBounds(selectedCSG);
+			// getControls().initializeAlign(selectedCSG, b, getMeshes());
 			List<String> selectedSnapshot = selectedSnapshot();
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
 			getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes());
@@ -1915,21 +1909,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double yawRad = Math.toRadians(currentRotZ - 90);
 				double cos = Math.cos(yawRad);
 				double sin = Math.sin(yawRad);
-				
+
 				double inX = stateUnitVectorTmp.getX();
 				double inY = stateUnitVectorTmp.getY();
-				
-				TransformNR stateUnitVector = new TransformNR(
-					inX * cos - inY * sin,
-					inX * sin + inY * cos,
-					stateUnitVectorTmp.getZ()
-				);
-				
+
+				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
+						stateUnitVectorTmp.getZ());
+
 				double incement = currentGrid;
 
 				boolean updateTrig = false;
 				double bound = 0.5;
-				if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound || Math.abs(stateUnitVector.getZ()) > bound)
+				if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound
+						|| Math.abs(stateUnitVector.getZ()) > bound)
 					updateTrig = true;
 
 				if (!updateTrig) {
@@ -1939,14 +1931,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					return;
 				}
 
-				stateUnitVector = new TransformNR(
-					roundToNearest(stateUnitVector.getX() * incement, incement),
-					roundToNearest(stateUnitVector.getY() * incement, incement),
-					roundToNearest(stateUnitVector.getZ() * incement, incement));
+				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
+						roundToNearest(stateUnitVector.getY() * incement, incement),
+						roundToNearest(stateUnitVector.getZ() * incement, incement));
 
 				TransformNR current = (mc == null ? new TransformNR() : mc.getLocation());
 				TransformNR wp = ap.get().getWorkplane();
-				
+
 				// Convert to workplane-local coordinates
 				TransformNR localCurrent = wp.inverse().times(current);
 
@@ -1955,19 +1946,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double rad = Math.toRadians(-wpAz);
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
-				
+
 				double deltaX = stateUnitVector.getX();
 				double deltaY = stateUnitVector.getY();
-				
+
 				double localDeltaX = deltaX * cos - deltaY * sin;
 				double localDeltaY = deltaX * sin + deltaY * cos;
 
 				// Apply delta in workplane-local space
-				TransformNR localNew = new TransformNR(
-					localCurrent.getX() + localDeltaX,
-					localCurrent.getY() + localDeltaY,
-					localCurrent.getZ() + stateUnitVector.getZ()
-				);
+				TransformNR localNew = new TransformNR(localCurrent.getX() + localDeltaX,
+						localCurrent.getY() + localDeltaY, localCurrent.getZ() + stateUnitVector.getZ());
 
 				// Convert back to world coordinates
 				TransformNR tf = wp.times(localNew);
@@ -1994,8 +1982,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					regenerateCurrent();
 					TickToc.tic("save");
 					save();
-//					TickToc.toc();
-//					TickToc.setEnabled(false);
+					// TickToc.toc();
+					// TickToc.setEnabled(false);
 					return;
 				} else {
 					// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
@@ -2085,21 +2073,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 
 			BowlerStudio.runLater(() -> {
-//				TickToc.setEnabled(true);
-//				TickToc.tic("Start bounds");
+				// TickToc.setEnabled(true);
+				// TickToc.tic("Start bounds");
 				Bounds sellectedBounds = getSellectedBounds(selectedCSG);
-//				TickToc.tic("bounds made");
+				// TickToc.tic("bounds made");
 				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
 						sellectedBounds);
-//				TickToc.toc();
-//				TickToc.setEnabled(false);
+				// TickToc.toc();
+				// TickToc.setEnabled(false);
 			});
 		});
 	}
 
-//	public void setCadoodle(ActiveProject ap) {
-//		
-//	}
+	// public void setCadoodle(ActiveProject ap) {
+	//
+	// }
 
 	public void setSnapGrid(double snapGridValue) {
 		this.snapGridValue = snapGridValue;
@@ -2272,7 +2260,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param updateRobotLab the updateRobotLab to set
+	 * @param updateRobotLab
+	 *            the updateRobotLab to set
 	 */
 	public void setUpdateRobotLab(Runnable updateRobotLab) {
 		this.updateRobotLab = updateRobotLab;
@@ -2286,7 +2275,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param controls the controls to set
+	 * @param controls
+	 *            the controls to set
 	 */
 	public void setControls(ControlSprites controls) {
 		this.controls = controls;
@@ -2300,7 +2290,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param limbs the limbs to set
+	 * @param limbs
+	 *            the limbs to set
 	 */
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;

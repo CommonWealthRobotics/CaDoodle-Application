@@ -3,7 +3,6 @@ package com.commonwealthrobotics.controls;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import com.commonwealthrobotics.align.AlignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.commonwealthrobotics.numbers.ThreedNumber;
-import com.commonwealthrobotics.robot.LimbControlManager;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -28,7 +26,6 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
-import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -39,15 +36,10 @@ import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.geometry.Point2D;
@@ -111,7 +103,7 @@ public class ControlSprites {
 	private final Pane overlayPane; // Overlay pane for 2D objects
 	private Point3D startingPosition3D;
 	private double objectHeight = 0;
-	
+
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
 		scaleSession.setSnapGrid(snapGridValue);
@@ -119,7 +111,7 @@ public class ControlSprites {
 
 	public void updateHandleOrientations(TransformNR cameraFrame) {
 		TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
-			
+
 		scaleSession.topCenter.updateOrientation(cameraFrame);
 		scaleSession.rightFront.updateOrientation(cameraFrame);
 		scaleSession.rightRear.updateOrientation(cameraFrame);
@@ -127,7 +119,8 @@ public class ControlSprites {
 		scaleSession.leftRear.updateOrientation(cameraFrame);
 	}
 
-	// Use the received mouse position to calculate the world position and send it back
+	// Use the received mouse position to calculate the world position and send it
+	// back
 	public Point3D sendNewWorldPosition(double screenX, double screenY, double snapGridValue) {
 
 		// Convert to subscene coordinates to remove offsets
@@ -136,7 +129,8 @@ public class ControlSprites {
 		this.startingPosition3D = upArrow.getStartingPoint3D();
 
 		Point3D wp3d;
-		double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(), startingPosition3D.getY());
+		double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(),
+				startingPosition3D.getY());
 
 		return new Point3D(startingPosition3D.getX(), startingPosition3D.getY(), manipulation.snapToGrid(foundZ));
 	}
@@ -191,7 +185,7 @@ public class ControlSprites {
 			}
 
 			@Override
-			public void onTimelineUpdate(int num,File image) {
+			public void onTimelineUpdate(int num, File image) {
 				// TODO Auto-generated method stub
 			}
 		});
@@ -209,7 +203,8 @@ public class ControlSprites {
 		});
 
 		Affine zMoveOffsetFootprint = new Affine();
-		zMoveManipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(), this::sendNewWorldPosition, true, false);
+		zMoveManipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(),
+				this::sendNewWorldPosition, true, false);
 		zMoveManipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 
 		zMoveManipulator.addSaveListener(() -> {
@@ -217,8 +212,8 @@ public class ControlSprites {
 			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
 			Thread t;
 			try {
-				t = ap.addOp(new MoveCenter().setLocation(globalPose.copy())
-						.setNames(session.selectedSnapshot(),ap.get()));
+				t = ap.addOp(
+						new MoveCenter().setLocation(globalPose.copy()).setNames(session.selectedSnapshot(), ap.get()));
 				try {
 					t.join();
 				} catch (InterruptedException exx) {
@@ -253,8 +248,8 @@ public class ControlSprites {
 		});
 
 		upArrow = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMoveManipulator,
-		() -> updateLinesAndCubes(),		 // onSelect
-		() -> scaleSession.resetSelected()); // onReset
+				() -> updateLinesAndCubes(), // onSelect
+				() -> scaleSession.resetSelected()); // onReset
 
 		// Keep arrow in front of other controls
 		upArrow.getMesh().setViewOrder(-10);
@@ -311,7 +306,8 @@ public class ControlSprites {
 			Vector3d min = bounds.getMin();
 			double xOff = xOffset.getMostRecentValue() - min.x;
 			double yOff = yOffset.getMostRecentValue() - min.y;
-			// com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x=" + xOff + y=" + yOff);
+			// com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x=" + xOff +
+			// y=" + yOff);
 			manipulation.set(xOff, yOff, 0);
 			manipulation.fireSave();
 			updateLinesAndCubes();
@@ -347,11 +343,11 @@ public class ControlSprites {
 	}
 
 	private void updateLinesAndCubes() {
-		session.getExecutor().submit(()-> {
+		session.getExecutor().submit(() -> {
 			List<CSG> selectedCSG = ap.get().getSelect(session.selectedSnapshot());
-			List<CSG> cur=session.getCurrentStateSelected();
+			List<CSG> cur = session.getCurrentStateSelected();
 			Platform.runLater(() -> {
-				updateCubes(selectedCSG,cur);
+				updateCubes(selectedCSG, cur);
 				updateLines();
 			});
 		});
@@ -360,7 +356,7 @@ public class ControlSprites {
 	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			try {
-				ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(),ap.get()));
+				ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(), ap.get()));
 			} catch (InvalidLocationMove e) {
 				return;
 			}
@@ -399,8 +395,8 @@ public class ControlSprites {
 				else
 					controlsGroup.getChildren().add(r);
 			}
-//			engine.addUserNode(linesGroupp); // Commented out, use control node below
-//			engine.addUserNode(controlsGroup); // Commented out, use control node below
+			// engine.addUserNode(linesGroupp); // Commented out, use control node below
+			// engine.addUserNode(controlsGroup); // Commented out, use control node below
 			engine.addControlNode(linesGroupp);
 			engine.addControlNode(controlsGroup);
 		});
@@ -461,8 +457,8 @@ public class ControlSprites {
 			// scaleSession.show();
 		}
 
-//		TickToc.toc();
-//		TickToc.setEnabled(false);
+		// TickToc.toc();
+		// TickToc.setEnabled(false);
 	}
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
@@ -526,9 +522,9 @@ public class ControlSprites {
 			footprint.setY(Math.min(min.y, max.y));
 
 			// double lineScale = 2 * (-zoom / 1000);
-			//double lineEndOffsetY = 0; // Math.min(5 * lineScale, max.y - min.y);
-			//double lineEndOffsetX = 0; // Math.min(5 * lineScale, max.x - min.x);
-			//double lineEndOffsetZ = 0; // Math.min(5, max.z - min.z);
+			// double lineEndOffsetY = 0; // Math.min(5 * lineScale, max.y - min.y);
+			// double lineEndOffsetX = 0; // Math.min(5 * lineScale, max.x - min.x);
+			// double lineEndOffsetZ = 0; // Math.min(5, max.z - min.z);
 
 			// Draw lines closest to work plane
 			double linesZ = 0;
@@ -582,8 +578,8 @@ public class ControlSprites {
 
 			// Scale factor for Z-handle arrow
 			double arrowScale = viewScale;
-			//if (arrowScale > 0.3)
-			//	arrowScale = arrowScale - (arrowScale - 0.3) / 2;
+			// if (arrowScale > 0.3)
+			// arrowScale = arrowScale - (arrowScale - 0.3) / 2;
 
 			scaleTF.setX(arrowScale);
 			scaleTF.setY(arrowScale);
@@ -594,35 +590,33 @@ public class ControlSprites {
 
 			if (dottedLineScale > 0.3)
 				dottedLineScale = 0.3 + (dottedLineScale - 0.3) / 5;
-//			if (dottedLineScale < 0.1)
-//				dottedLineScale = 0.1;
+			// if (dottedLineScale < 0.1)
+			// dottedLineScale = 0.1;
 
 			for (DottedLine l : lines)
 				l.setScale(dottedLineScale);
 
 			// Draw Z-offset handle with arrow/cone
 			double arrowDistance = 5;
-			TransformNR zHandleLoc = new TransformNR(center.x, center.y, arrowDistance + max.z + (ResizingHandle.getSize() * viewScale));
+			TransformNR zHandleLoc = new TransformNR(center.x, center.y,
+					arrowDistance + max.z + (ResizingHandle.getSize() * viewScale));
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 
 			// Position value labels
-			xdimen.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ), cf);
+			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
+					scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ), cf);
 
-			ydimen.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, linesZ), cf);
+			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
+					scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, linesZ), cf);
 
-			zdimen.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(center.x, center.y, max.z - (numberOffset / 2)), cf);
+			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z - (numberOffset / 2)),
+					cf);
 
-			xOffset.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(min.x - numberOffset, min.y, linesZ), cf);
+			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x - numberOffset, min.y, linesZ), cf);
 
-			yOffset.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(min.x, min.y - numberOffset, linesZ), cf);
+			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y - numberOffset, linesZ), cf);
 
-			zOffset.threeDTarget(screenW, screenH, zoom,
-				new TransformNR(center.x, center.y, min.z), cf);
+			zOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, min.z), cf);
 
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
@@ -651,7 +645,7 @@ public class ControlSprites {
 			CaDoodleOperation currentOperation = ap.get().getCurrentOperation();
 			boolean isThisADisplayMode = (mode == SpriteDisplayMode.MoveZ) || (mode == SpriteDisplayMode.MoveXY)
 					|| ((mode == SpriteDisplayMode.Default) && MoveCenter.class.isInstance(currentOperation)
-					&& (currentOp != currentOperation));
+							&& (currentOp != currentOperation));
 
 			if (!ruler.isActive()) {
 				if (upArrow.isSelected() && (mode == SpriteDisplayMode.Default) || (mode == SpriteDisplayMode.MoveZ))
@@ -673,7 +667,7 @@ public class ControlSprites {
 				} else {
 					xOffset.hide();
 					yOffset.hide();
-				//	zOffset.hide(); // Show the height when clicking the top center arrow
+					// zOffset.hide(); // Show the height when clicking the top center arrow
 				}
 			} else {
 				if (session.selectedSnapshot().size() > 0) {
@@ -692,7 +686,7 @@ public class ControlSprites {
 		return rotationManager.getViewRotation();
 	}
 
-	private void updateCubes(List<CSG> selectedCSG,List<CSG> currentState) {
+	private void updateCubes(List<CSG> selectedCSG, List<CSG> currentState) {
 		boolean lockSize = false;
 		boolean moveLock = session.moveLock();
 		for (CSG sel : currentState)
@@ -735,11 +729,11 @@ public class ControlSprites {
 
 		this.mode = mode;
 
-//		if (mode == SpriteDisplayMode.MoveZ)
-//		{
-//		   Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
-//		   zMove.setStartingWorkplanePosition(startingPos);
-//		}
+		// if (mode == SpriteDisplayMode.MoveZ)
+		// {
+		// Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
+		// zMove.setStartingWorkplanePosition(startingPos);
+		// }
 		// new Exception("Mode Set to " + mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
@@ -747,79 +741,79 @@ public class ControlSprites {
 
 			switch (this.mode) {
 
-			case Default:
-				initialize();
-				for (ThreedNumber t : numbers)
-					t.hide();
+				case Default :
+					initialize();
+					for (ThreedNumber t : numbers)
+						t.hide();
 
-				align.hide();
-				mirror.hide();
-				if (ruler.isActive()) {
-					xOffset.show();
-					yOffset.show();
+					align.hide();
+					mirror.hide();
+					if (ruler.isActive()) {
+						xOffset.show();
+						yOffset.show();
+						zOffset.show();
+					}
+					return;
+
+				case MoveXY :
+					for (DottedLine l : lines) {
+						l.setVisible(true);
+					}
+					if (ruler.isActive()) {
+						xOffset.show();
+						yOffset.show();
+					}
+					break;
+
+				case MoveZ :
+					for (DottedLine l : lines) {
+						l.setVisible(true);
+					}
+					upArrow.show();
+					footprint.setVisible(true);
 					zOffset.show();
-				}
-				return;
+					break;
 
-			case MoveXY:
-				for (DottedLine l : lines) {
-					l.setVisible(true);
-				}
-				if (ruler.isActive()) {
-					xOffset.show();
-					yOffset.show();
-				}
-				break;
+				case ResizeX :
+					break;
+				case ResizeXY :
+					break;
+				case ResizeY :
+					break;
+				case ResizeZ :
+					break;
+				case Rotating :
+					break;
+				case Align :
+					for (DottedLine l : lines)
+						l.setVisible(true);
 
-			case MoveZ:
-				for (DottedLine l : lines) {
-					l.setVisible(true);
-				}
-				upArrow.show();
-				footprint.setVisible(true);
-				zOffset.show();
-				break;
+					break;
+				case Mirror :
+					for (DottedLine l : lines)
+						l.setVisible(true);
 
-			case ResizeX:
-				break;
-			case ResizeXY:
-				break;
-			case ResizeY:
-				break;
-			case ResizeZ:
-				break;
-			case Rotating:
-				break;
-			case Align:
-				for (DottedLine l : lines)
-					l.setVisible(true);
+					rotationManager.hide();
+					break;
+				case PLACING :
+					for (DottedLine l : lines)
+						l.setVisible(true);
 
-				break;
-			case Mirror:
-				for (DottedLine l : lines)
-					l.setVisible(true);
+					break;
+				case Clear :
+					for (ThreedNumber t : numbers)
+						t.hide();
 
-				rotationManager.hide();
-				break;
-			case PLACING:
-				for (DottedLine l : lines)
-					l.setVisible(true);
+					align.hide();
+					mirror.hide();
+					for (DottedLine l : lines)
+						l.setVisible(false);
 
-				break;
-			case Clear:
-				for (ThreedNumber t : numbers)
-					t.hide();
-
-				align.hide();
-				mirror.hide();
-				for (DottedLine l : lines)
-					l.setVisible(false);
-
-				upArrow.hide();
-				footprint.setVisible(false);
-				zOffset.hide();
-				scaleSession.hide();
-				break;
+					upArrow.hide();
+					footprint.setVisible(false);
+					zOffset.hide();
+					scaleSession.hide();
+					break;
 			}
 
 			if (mode != SpriteDisplayMode.Clear)

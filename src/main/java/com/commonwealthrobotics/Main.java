@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
-import javax.swing.filechooser.FileSystemView;
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -35,13 +34,10 @@ import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.external.GroovyEclipseExternalEditor;
-import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Plane;
-import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -50,10 +46,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -77,7 +71,7 @@ public class Main extends Application {
 		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
 		loader.setController(new MainController(stage));
 		Parent root = loader.load();
-		
+
 		// Get JavaFX screen bounds (this already accounts for taskbars, etc.)
 		Rectangle2D primaryScreenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
 
@@ -85,8 +79,8 @@ public class Main extends Application {
 		double sh = primaryScreenBounds.getHeight();
 
 		// Create a smaller buffer to account for window decorations
-		double w = sw ;  // Increased margin
-		double h = sh ;
+		double w = sw; // Increased margin
+		double h = sh;
 
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
@@ -115,43 +109,43 @@ public class Main extends Application {
 
 			// Set system taskbar/dock icon
 			try {
-			    if (java.awt.Taskbar.isTaskbarSupported()) {
-			        java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
-			        
-			        if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
-			            // Convert JavaFX Image to AWT BufferedImage
-			            java.awt.image.BufferedImage awtIcon =
-			                javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
-			            taskbar.setIconImage(awtIcon);
-			        }
-			    }
-			    
-			    // Additional approach for Linux - set via AWT/Swing
-			    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-			        // This approach works better on some Linux desktop environments
-			        java.awt.image.BufferedImage awtIcon =
-			            javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
-			        
-			        // Force icon through AWT
-			        if (java.awt.Toolkit.getDefaultToolkit() != null) {
-			            // Create a hidden AWT frame to set the default icon
-			            final java.awt.Frame hiddenFrame = new java.awt.Frame();
-			            hiddenFrame.setIconImage(awtIcon);
-			            
-			            // Also try setting as default for all frames
-			            try {
-			                Class<?> xToolkit = Class.forName("sun.awt.X11.XToolkit");
-			                if (xToolkit.isInstance(java.awt.Toolkit.getDefaultToolkit())) {
-			                    java.lang.reflect.Method method = xToolkit.getMethod("setIconImage", java.awt.Image.class);
-			                    method.invoke(java.awt.Toolkit.getDefaultToolkit(), awtIcon);
-			                }
-			            } catch (Exception e) {
-			                // Reflection approach failed, not critical
-			            }
-			        }
-			    }
+				if (java.awt.Taskbar.isTaskbarSupported()) {
+					java.awt.Taskbar taskbar = java.awt.Taskbar.getTaskbar();
+
+					if (taskbar.isSupported(java.awt.Taskbar.Feature.ICON_IMAGE)) {
+						// Convert JavaFX Image to AWT BufferedImage
+						java.awt.image.BufferedImage awtIcon = javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon,
+								null);
+						taskbar.setIconImage(awtIcon);
+					}
+				}
+
+				// Additional approach for Linux - set via AWT/Swing
+				if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+					// This approach works better on some Linux desktop environments
+					java.awt.image.BufferedImage awtIcon = javafx.embed.swing.SwingFXUtils.fromFXImage(fxIcon, null);
+
+					// Force icon through AWT
+					if (java.awt.Toolkit.getDefaultToolkit() != null) {
+						// Create a hidden AWT frame to set the default icon
+						final java.awt.Frame hiddenFrame = new java.awt.Frame();
+						hiddenFrame.setIconImage(awtIcon);
+
+						// Also try setting as default for all frames
+						try {
+							Class<?> xToolkit = Class.forName("sun.awt.X11.XToolkit");
+							if (xToolkit.isInstance(java.awt.Toolkit.getDefaultToolkit())) {
+								java.lang.reflect.Method method = xToolkit.getMethod("setIconImage",
+										java.awt.Image.class);
+								method.invoke(java.awt.Toolkit.getDefaultToolkit(), awtIcon);
+							}
+						} catch (Exception e) {
+							// Reflection approach failed, not critical
+						}
+					}
+				}
 			} catch (Exception e) {
-			    com.neuronrobotics.sdk.common.Log.error(e);
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 
 		} catch (Exception e) {
@@ -162,7 +156,8 @@ public class Main extends Application {
 		stage.show();
 
 		// Get the screen refresh rate
-		Screen screen = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()).get(0);
+		Screen screen = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight())
+				.get(0);
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getScreenDevices()[Screen.getScreens().indexOf(screen)];
 		Main.screenRefreshRate = gd.getDisplayMode().getRefreshRate();
@@ -199,7 +194,7 @@ public class Main extends Application {
 			Graphics g = bufferedImage.getGraphics();
 
 			// Draw the original image to the new one, preserving transparency
-			g.drawImage(originalImage, 0, 0, trayIconSize.width , trayIconSize.height , null);
+			g.drawImage(originalImage, 0, 0, trayIconSize.width, trayIconSize.height, null);
 			g.dispose();
 
 			// Create a popup menu
@@ -237,38 +232,38 @@ public class Main extends Application {
 		}
 	}
 
-	public static void main(String[] args) {	
-	    // Set WM_CLASS for GNOME to recognize the app
-	    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-	        // This must match StartupWMClass in the desktop file
-	        System.setProperty("glass.gtk.wmclass", "CADoodle");
-	    }
+	public static void main(String[] args) {
+		// Set WM_CLASS for GNOME to recognize the app
+		if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+			// This must match StartupWMClass in the desktop file
+			System.setProperty("glass.gtk.wmclass", "CADoodle");
+		}
 		String relative = ScriptingEngine.getWorkingDirectory().getAbsolutePath();
 		File file = new File(relative + delim() + "CaDoodle-workspace" + delim());
 		file.mkdirs();
 		ScriptingEngine.setWorkspace(file);
-		File logfile = new File(file.getAbsolutePath()+delim()+"cadoodleLog.txt");
-		if(logfile.exists())
+		File logfile = new File(file.getAbsolutePath() + delim() + "cadoodleLog.txt");
+		if (logfile.exists())
 			logfile.delete();
 		try {
 			logfile.createNewFile();
 			Log.enableDebugPrint(true);
-			//Log.enableErrorPrint();
+			// Log.enableErrorPrint();
 			Log.setFile(logfile);
-			com.neuronrobotics.sdk.common.Log.debug("Log file set to "+logfile.getAbsolutePath());
-			
+			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
+
 			hand = new UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
-					com.neuronrobotics.sdk.common.Log.error("Uncaught exception in "+t);
+					com.neuronrobotics.sdk.common.Log.error("Uncaught exception in " + t);
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 			};
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
-			Platform.runLater(()->{
+			Platform.runLater(() -> {
 				Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			});
-			Log.warning("CaDoodle Version "+StudioBuildInfo.getVersion());
+			Log.warning("CaDoodle Version " + StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.debug("CaDoodle Exiting Clean");
 				Log.flush();
@@ -277,41 +272,41 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		//String currentVersionString = StudioBuildInfo.getVersion();
-		String bindir = System.getProperty("user.home") + delim()+"bin"+ delim()+"CaDoodle-ApplicationInstall"+ delim();
+		// String currentVersionString = StudioBuildInfo.getVersion();
+		String bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
+				+ delim();
 		String myVersionFileString = bindir + "currentversion.txt";
-//		File myVersionFile = new File(myVersionFileString);
-//		File bindirFile = new File(bindir);
+		// File myVersionFile = new File(myVersionFileString);
+		// File bindirFile = new File(bindir);
 		try {
 			String myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
-			String currentVersionDir = bindir+myVersionString+delim();
-			String zipGitCache = currentVersionDir+"gitcache.zip";
+			String currentVersionDir = bindir + myVersionString + delim();
+			String zipGitCache = currentVersionDir + "gitcache.zip";
 			File file2 = new File(zipGitCache);
-			if(file2.exists()) {
-				Log.debug("Git Cache zip exists "+zipGitCache);
+			if (file2.exists()) {
+				Log.debug("Git Cache zip exists " + zipGitCache);
 				File workingDir = ScriptingEngine.getWorkspace();
-				String workingGitCache = workingDir.getAbsolutePath()+delim()+"gitcache";
-				//if(!new File(workingGitCache).exists()) {
-				//Log.debug("Local GitCahe is missing: "+workingGitCache);
+				String workingGitCache = workingDir.getAbsolutePath() + delim() + "gitcache";
+				// if(!new File(workingGitCache).exists()) {
+				// Log.debug("Local GitCahe is missing: "+workingGitCache);
 				try {
 					unzip(file2, workingGitCache);
 				} catch (Exception e) {
 					Log.error(e);
 				}
-				//}
-			}else {
+				// }
+			} else {
 				String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
-				String nowVer = ""+StudioBuildInfo.getSDKVersion();
+				String nowVer = "" + StudioBuildInfo.getSDKVersion();
 				boolean b = !lastVer.contentEquals(nowVer);
 				boolean contentEquals = nowVer.contentEquals("0");
 				boolean c = b || contentEquals;
-				
-				if (c) {			
+
+				if (c) {
 					// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
 					try {
 						ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
-								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git",
-								"loadGit.groovy");
+								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", "loadGit.groovy");
 					} catch (Exception e) {
 						Log.error(e);
 					}
@@ -320,11 +315,12 @@ public class Main extends Application {
 		} catch (IOException e) {
 			Log.error(e);
 		}
-		
+
 		DownloadManager.setSTUDIO_INSTALL("CaDoodle-ApplicationInstall");
 		try {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
-			com.neuronrobotics.sdk.common.Log.debug("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
+			com.neuronrobotics.sdk.common.Log
+					.debug("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
@@ -333,7 +329,7 @@ public class Main extends Application {
 		BowlerKernel.setKernelMode(false);
 		if (args != null) {
 			String all = "";
-			for (String argument:args)
+			for (String argument : args)
 				all += argument + " ";
 
 			String replace = all.replace('"', ' ').trim();
@@ -344,15 +340,15 @@ public class Main extends Application {
 				if (f.exists()) {
 					ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
 					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
-					HashSet<String> externals =  Main.getOptionalProjects();
+					HashSet<String> externals = Main.getOptionalProjects();
 					externals.add(f.getAbsolutePath());
 					Main.saveOptionalProjects(externals);
-					
+
 				} else
 					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
 			} else
-				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file "+replace.toLowerCase());
-				
+				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file " + replace.toLowerCase());
+
 		}
 		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
 		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
@@ -379,13 +375,13 @@ public class Main extends Application {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		if(PasswordManager.hasNetwork()) {
+		if (PasswordManager.hasNetwork()) {
 			try {
 				ensureGitAssetsArePresent();
-			}catch(Throwable t) {
+			} catch (Throwable t) {
 				com.neuronrobotics.sdk.common.Log.error(t);
 			}
-		}else {
+		} else {
 			SplashManager.renderSplashFrame(2, "No Network");
 		}
 
@@ -394,29 +390,31 @@ public class Main extends Application {
 		CSG.setUseGPU(false);
 		launch();
 	}
-	public static void saveOptionalProjects(HashSet<String>state) {
-		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
+	public static void saveOptionalProjects(HashSet<String> state) {
+		ArrayList<String> l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions",
+				new ArrayList<String>());
 		l.clear();
 		l.addAll(state);
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleExternalOptions", l);
 		ConfigurationDatabase.save();
 	}
 	public static HashSet<String> getOptionalProjects() {
-		ArrayList<String>l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions", new ArrayList<String>());
-		HashSet<String> s= new HashSet<>();
+		ArrayList<String> l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions",
+				new ArrayList<String>());
+		HashSet<String> s = new HashSet<>();
 		s.addAll(l);
 		return s;
 	}
 
 	private static void ensureGitAssetsArePresent() {
-		
+
 		SplashManager.renderSplashFrame(2, "Downloading...");
 
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
-		String nowVer = ""+StudioBuildInfo.getSDKVersion();
-	
-		
-		com.neuronrobotics.sdk.common.Log.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
+		String nowVer = "" + StudioBuildInfo.getSDKVersion();
+
+		com.neuronrobotics.sdk.common.Log
+				.debug("Pervious version was " + lastVer + " and current version is " + nowVer);
 		ConfigurationDatabase.put(paramsKey, objectKey, nowVer);
 		try {
 			AssetFactory.loadAllAssets();
@@ -519,12 +517,12 @@ public class Main extends Application {
 		});
 	}
 
-//	public static Thread getLoadDeps() {
-//		return loadDeps;
-//	}
-//
-//	public static void setLoadDeps(Thread loadDeps) {
-//		Main.loadDeps = loadDeps;
-//	}
+	// public static Thread getLoadDeps() {
+	// return loadDeps;
+	// }
+	//
+	// public static void setLoadDeps(Thread loadDeps) {
+	// Main.loadDeps = loadDeps;
+	// }
 
 }

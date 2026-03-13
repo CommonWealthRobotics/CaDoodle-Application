@@ -2,15 +2,11 @@ package com.commonwealthrobotics.mirror;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
-import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -19,7 +15,6 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Mirror;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrentation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
-import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -36,7 +31,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
-public class MirrorHandle implements ICaDoodleStateUpdate{
+public class MirrorHandle implements ICaDoodleStateUpdate {
 	private MirrorOrentation ax;
 	private Affine translate;
 	private Affine vr;
@@ -118,8 +113,8 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	private void setMyOperation() {
-		//com.neuronrobotics.sdk.common.Log.debug("\n\nRun Mirror on " + ax);
-		new Thread(()->{
+		// com.neuronrobotics.sdk.common.Log.debug("\n\nRun Mirror on " + ax);
+		new Thread(() -> {
 			try {
 				ap.addOp(op).join();
 			} catch (InterruptedException e) {
@@ -132,7 +127,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double xI, double yI,
 			double zI, List<String> selectedCSG, Bounds b, TransformNR cf) {
-		//com.neuronrobotics.sdk.common.Log.debug("Mirror Handle "+ax+" Updated");
+		// com.neuronrobotics.sdk.common.Log.debug("Mirror Handle "+ax+" Updated");
 		this.screenW = screenW;
 		this.screenH = screenH;
 		this.zoom = zoom;
@@ -148,23 +143,23 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		double Y = 0;
 		double Z = 0;
 		switch (ax) {
-		case x:
-			X = b.getCenter().x;
-			Y = b.getMin().y;
-			Z = b.getMin().z;
-			break;
-		case y:
-			X = b.getMax().x;
-			Y = b.getCenter().y;
-			Z = b.getMin().z;
-			break;
-		case z:
-			X = b.getMax().x;
-			Y = b.getMax().y;
-			Z = b.getCenter().z;
-			break;
-		default:
-			break;
+			case x :
+				X = b.getCenter().x;
+				Y = b.getMin().y;
+				Z = b.getMin().z;
+				break;
+			case y :
+				X = b.getMax().x;
+				Y = b.getCenter().y;
+				Z = b.getMin().z;
+				break;
+			case z :
+				X = b.getMax().x;
+				Y = b.getMax().y;
+				Z = b.getCenter().z;
+				break;
+			default :
+				break;
 
 		}
 
@@ -172,17 +167,17 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		double rx = 0;
 		double ry = 0;
 		double rz = 0;
-		if (ax==MirrorOrentation.x) {
+		if (ax == MirrorOrentation.x) {
 			rx = 0;
 			ry = -90;
 			rz = 90;
 		}
-		if (ax==MirrorOrentation.y) {
+		if (ax == MirrorOrentation.y) {
 			rx = 0;
 			ry = 90;
 			rz = 0;
 		}
-		if (ax==MirrorOrentation.z) {
+		if (ax == MirrorOrentation.z) {
 			rx = -90;
 			ry = 0;
 			rz = 0;
@@ -217,7 +212,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 			TransformFactory.nrToAffine(pureRot, cameraOrent);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
-		if(op!=null)
+		if (op != null)
 			op.setWorkplane(ap.get().getWorkplane());
 	}
 
@@ -246,14 +241,14 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	public void updateState() {
-		//com.neuronrobotics.sdk.common.Log.debug("Initialize Mirror "+ax);
-		op= new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
+		// com.neuronrobotics.sdk.common.Log.debug("Initialize Mirror "+ax);
+		op = new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
 		clearVisualizers();
 		op.setCaDoodleFile(ap.get());
-		for(CSG indicator: op.process(ta)) {
+		for (CSG indicator : op.process(ta)) {
 			MeshView indicatorMesh = indicator.newMesh();
 			indicatorMesh.setMouseTransparent(true);
-			//indicatorMesh.getTransforms().addAll(workplaneOffset);
+			// indicatorMesh.getTransforms().addAll(workplaneOffset);
 			PhongMaterial material = new PhongMaterial();
 
 			if (indicator.isHole()) {
@@ -275,7 +270,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	private void clearVisualizers() {
 		ArrayList<CSG> toRem = new ArrayList<>();
 		toRem.addAll(visualizers.keySet());
-		for (CSG obj:toRem) {
+		for (CSG obj : toRem) {
 			MeshView mv = visualizers.remove(obj);
 			engine.removeUserNode(mv);
 		}
@@ -286,7 +281,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 		mesh.removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
 		mesh.removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
 		mesh.removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
-		for(CSG key:visualizers.keySet()) {
+		for (CSG key : visualizers.keySet()) {
 			visualizers.get(key).setVisible(false);
 		}
 		clearVisualizers();
@@ -321,37 +316,37 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSaveSuggestion() {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onInitializationDone() {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onInitializationStart() {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRegenerateDone() {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRegenerateStart(CaDoodleOperation source) {
 		// Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -360,8 +355,8 @@ public class MirrorHandle implements ICaDoodleStateUpdate{
 	}
 
 	@Override
-	public void onTimelineUpdate(int num,File image) {
+	public void onTimelineUpdate(int num, File image) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

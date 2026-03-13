@@ -17,7 +17,6 @@ import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -29,10 +28,8 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
@@ -120,7 +117,7 @@ public class TimelineManager {
 						img.setImage(resizeImage(image, buttonSize, buttonSize));
 					});
 					Log.debug("Updating " + imageFile);
-				}else
+				} else
 					update(false);
 			}
 		});
@@ -135,35 +132,35 @@ public class TimelineManager {
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
 
-//		// Read pixels from the original image
-//		PixelReader pixelReader = originalImage.getPixelReader();
-//		int originalWidth = (int) originalImage.getWidth();
-//		int originalHeight = (int) originalImage.getHeight();
-//
-//		// Create a new WritableImage with target dimensions
-//		WritableImage resizedImage = new WritableImage(targetWidth, targetHeight);
-//		PixelWriter pixelWriter = resizedImage.getPixelWriter();
-//
-//		// Calculate scale factors
-//		double scaleX = (double) originalWidth / targetWidth;
-//		double scaleY = (double) originalHeight / targetHeight;
-//
-//		// Perform nearest-neighbor scaling
-//		for (int y = 0; y < targetHeight; y++) {
-//			for (int x = 0; x < targetWidth; x++) {
-//				// Map target coordinates to source coordinates
-//				int srcX = (int) (x * scaleX);
-//				int srcY = (int) (y * scaleY);
-//				
-//				// Clamp to valid bounds
-//				srcX = Math.min(srcX, originalWidth - 1);
-//				srcY = Math.min(srcY, originalHeight - 1);
-//				
-//				// Copy the pixel
-//				int argb = pixelReader.getArgb(srcX, srcY);
-//				pixelWriter.setArgb(x, y, argb);
-//			}
-//		}
+		// // Read pixels from the original image
+		// PixelReader pixelReader = originalImage.getPixelReader();
+		// int originalWidth = (int) originalImage.getWidth();
+		// int originalHeight = (int) originalImage.getHeight();
+		//
+		// // Create a new WritableImage with target dimensions
+		// WritableImage resizedImage = new WritableImage(targetWidth, targetHeight);
+		// PixelWriter pixelWriter = resizedImage.getPixelWriter();
+		//
+		// // Calculate scale factors
+		// double scaleX = (double) originalWidth / targetWidth;
+		// double scaleY = (double) originalHeight / targetHeight;
+		//
+		// // Perform nearest-neighbor scaling
+		// for (int y = 0; y < targetHeight; y++) {
+		// for (int x = 0; x < targetWidth; x++) {
+		// // Map target coordinates to source coordinates
+		// int srcX = (int) (x * scaleX);
+		// int srcY = (int) (y * scaleY);
+		//
+		// // Clamp to valid bounds
+		// srcX = Math.min(srcX, originalWidth - 1);
+		// srcY = Math.min(srcY, originalHeight - 1);
+		//
+		// // Copy the pixel
+		// int argb = pixelReader.getArgb(srcX, srcY);
+		// pixelWriter.setArgb(x, y, argb);
+		// }
+		// }
 
 		// Create a canvas with the target dimensions
 		Canvas canvas = new Canvas(targetWidth, targetHeight);
@@ -234,7 +231,7 @@ public class TimelineManager {
 
 			// Center the entire GridPane content
 			timeline.setAlignment(Pos.CENTER);
-//			timeline.setGridLinesVisible(true); // Shows grid lines for debugging
+			// timeline.setGridLinesVisible(true); // Shows grid lines for debugging
 
 			// Don't control the prefWidth, use padding on the sides
 			// baseBox.setPrefWidth((operations.size() + 2) * (buttonSize + space / 2 +
@@ -264,7 +261,8 @@ public class TimelineManager {
 							continue;
 						int myIndex = i;
 						addrem = true;
-						List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
+						List<CSG> previous = (myIndex == 0)
+								? new ArrayList<CSG>()
 								: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 						File f = ap.get().getTimelineImageFile(myIndex - 1);
 						Image image = new Image(f.toURI().toString());

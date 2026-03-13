@@ -19,8 +19,18 @@ plugins {
 	id 'eclipse'
     id 'com.gradleup.shadow' version '8.3.9' apply false
 	id 'org.openjfx.javafxplugin' version '0.1.0' apply false
+	id 'com.diffplug.spotless' version '6.25.0'
 }
-
+spotless {
+	java {
+		// Eclipse formatter with your config file
+        eclipse()  // Uses Eclipse's built-in default profile — no XML needed!		
+		// Optional but recommended additions:
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
 // Only apply to the root project
 if (project == rootProject) {
 	apply plugin: 'com.gradleup.shadow'

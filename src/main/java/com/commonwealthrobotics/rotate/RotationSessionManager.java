@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -23,18 +22,18 @@ public class RotationSessionManager {
 	private boolean moveLock;
 
 	public RotationSessionManager(Affine selection, ActiveProject ap, SelectionSession controlSprites,
-			Affine workplaneOffset,RulerManager ruler,IOnRotateDone done) {
+			Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
 		RotationHandle az;
 		RotationHandle el;
 		RotationHandle tlt;
 		az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset,ruler,done);
+				workplaneOffset, ruler, done);
 		el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset,ruler,done);
+				workplaneOffset, ruler, done);
 		tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap, controlSprites,
-				workplaneOffset,ruler,done);
+				workplaneOffset, ruler, done);
 		handles = Arrays.asList(az, el, tlt);
 	}
 

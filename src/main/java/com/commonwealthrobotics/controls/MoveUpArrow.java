@@ -2,17 +2,13 @@ package com.commonwealthrobotics.controls;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
-import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.MatrixType;
 import javafx.geometry.Point3D;
-import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR; 
 
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 
@@ -39,7 +35,7 @@ public class MoveUpArrow {
 		// Arrow on top of z-height handle. Parameters(radius1, radius2, height);
 		double cSize = ResizingHandle.getSize();
 		CSG cylinder = new Cylinder(ResizingHandle.getSize(), 0, ResizingHandle.getSize() * 2).toCSG()
-			.setColor(getColor());
+				.setColor(getColor());
 
 		mesh = cylinder.getMesh();
 		mesh.getTransforms().add(selection);
@@ -71,15 +67,15 @@ public class MoveUpArrow {
 			double arrowX = moveUpLocationTransform.getTx();
 			double arrowY = moveUpLocationTransform.getTy();
 			double arrowZ = moveUpLocationTransform.getTz();
-			
+
 			// Calculate the zoom-dependent offset that was added for the arrow
 			double arrowOffset = ResizingHandle.getSize() * scaleTransform.getZ();
-			
+
 			// Subtract to get back to the base position (top of bounds)
 			double baseX = arrowX;
 			double baseY = arrowY;
 			double baseZ = arrowZ - arrowOffset;
-		
+
 			this.startingPosition3D = new Point3D(baseX, baseY, baseZ);
 			zMoveManipulator.setStartingWorkplanePosition(startingPosition3D);
 		});
@@ -92,7 +88,8 @@ public class MoveUpArrow {
 	public Point3D calculateWorldPosition() {
 		// Bounds in parent coordinate space (includes all transforms)
 		javafx.geometry.Bounds parentBounds = mesh.getBoundsInParent();
-		return new Point3D( parentBounds.getCenterX(), parentBounds.getCenterY(), (parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2 );
+		return new Point3D(parentBounds.getCenterX(), parentBounds.getCenterY(),
+				(parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2);
 	}
 
 	private void setSelectedColor() {
@@ -103,7 +100,7 @@ public class MoveUpArrow {
 		material.setDiffuseColor(getColor());
 	}
 
-	private Color getColor() {	
+	private Color getColor() {
 		return color;
 	}
 
@@ -129,11 +126,12 @@ public class MoveUpArrow {
 	}
 
 	/**
-	 * @param color the color to set
+	 * @param color
+	 *            the color to set
 	 */
 	public void setColor(Color color) {
 		this.color = color;
-		resetColor() ;
+		resetColor();
 	}
 
 	public Color getSelectedColor() {
