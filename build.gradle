@@ -192,6 +192,7 @@ if (project == rootProject) {
     apply plugin: 'org.openjfx.javafxplugin'
 
     shadowJar {
+		dependsOn 'spotlessCheck'
         archiveBaseName.set('CaDoodle-Application')
         archiveClassifier.set('')
         archiveVersion.set('')
