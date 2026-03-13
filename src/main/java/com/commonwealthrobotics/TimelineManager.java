@@ -116,7 +116,7 @@ public class TimelineManager {
 					Button b = buttons.get(num);
 					ImageView img = (ImageView) b.getGraphic();
 					Image image = new Image(imageFile.toURI().toString());
-					BowlerStudio.runLater(() -> img.setImage(resizeImage(image, buttonSize, buttonSize));
+					BowlerStudio.runLater(() -> img.setImage(resizeImage(image, buttonSize, buttonSize)));
 					Log.debug("Updating " + imageFile);
 				} else
 					update(false);
