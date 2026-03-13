@@ -481,7 +481,7 @@ public class ControlSprites {
 
 	private void initialize() {
 
-		// Initialize at hidden to prevent visual glitches
+		// Initialize as hidden to prevent visual glitches
 		for (Node r : allElems)
 			r.setVisible(false);
 
