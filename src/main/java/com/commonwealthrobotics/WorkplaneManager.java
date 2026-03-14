@@ -368,7 +368,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		if (indicatorMesh != null)
 			indicatorMesh.setVisible(false);
 
-//		indicatorMesh = null;
+		// indicatorMesh = null;
 
 		if (onSelectEvent != null)
 			onSelectEvent.run();
@@ -423,7 +423,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 			clicked = true;
-//			onCancel = null;// non cancel but instead completed
+			// onCancel = null;// non cancel but instead completed
 
 			cancel();
 

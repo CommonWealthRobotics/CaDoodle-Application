@@ -571,7 +571,7 @@ public class ControlSprites {
 			rightLine.setStartZ(linesZ);
 			rightLine.setEndZ(linesZ);
 			rightLine.setVisible(true);
-			
+
 			// Draw Z-handle dotted line
 			heightLine.setStartX(center.x);
 			heightLine.setStartY(center.y);
