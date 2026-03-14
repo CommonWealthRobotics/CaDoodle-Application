@@ -29,13 +29,13 @@ public class RotationSessionManager {
 		this.controlSprites = controlSprites;
 
 		RotationHandle az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap,
-			controlSprites, workplaneOffset, ruler, done);
+				controlSprites, workplaneOffset, ruler, done);
 
 		RotationHandle el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap,
-			controlSprites, workplaneOffset, ruler, done);
+				controlSprites, workplaneOffset, ruler, done);
 
 		RotationHandle tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap, controlSprites,
-			workplaneOffset, ruler, done);
+				workplaneOffset, ruler, done);
 
 		handles = Arrays.asList(az, el, tlt);
 	}
