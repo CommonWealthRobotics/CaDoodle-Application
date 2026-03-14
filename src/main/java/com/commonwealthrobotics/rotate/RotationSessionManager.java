@@ -29,13 +29,13 @@ public class RotationSessionManager {
 		this.controlSprites = controlSprites;
 
 		RotationHandle az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap,
-			controlSprites,	workplaneOffset, ruler, done);
+			controlSprites, workplaneOffset, ruler, done);
 
 		RotationHandle el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap,
-			controlSprites,	workplaneOffset, ruler, done);
+			controlSprites, workplaneOffset, ruler, done);
 
-		RotationHandle tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap,
-			controlSprites,	workplaneOffset, ruler, done);
+		RotationHandle tlt = new RotationHandle(EulerAxis.tilt, selection, getViewRotation(), this, ap, controlSprites,
+			workplaneOffset, ruler, done);
 
 		handles = Arrays.asList(az, el, tlt);
 	}
@@ -78,7 +78,7 @@ public class RotationSessionManager {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-		double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
 
 		for (RotationHandle r : handles)
 			r.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
