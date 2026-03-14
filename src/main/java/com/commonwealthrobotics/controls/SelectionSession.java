@@ -109,7 +109,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
-	// private CaDoodleOperation source;
 	private final double MAX_NUMBER_FILED = 9999;
 	private TitledPane shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -138,7 +137,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double z;
 
 	private Affine selection = new Affine();
-	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false);
+	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(), this::sendNewWorldPosition, false, false);
 	private Point3D startingPosition3D;
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 	private HashMap<CSG, Bounds> inWorkplaneBounds = new HashMap<CSG, Bounds>();
@@ -687,7 +686,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (name == null)
 			throw new RuntimeException("Name can not be null");
 
-		meshView.setOnMousePressed(event -> {
+		meshView.addEventFilter(MouseEvent.MOUSE_PRESSED,event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
 
 				if (event.isShiftDown()) {
@@ -708,7 +707,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				javafx.scene.Node pickedNode = event.getPickResult().getIntersectedNode();
 				if (pickedNode == meshView) {
-
+					Log.debug("Setup Move Starting point");
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
@@ -716,9 +715,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TransformNR wpLocal = wp.inverse().times(scenePos);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(new Point3D(manipulation.snapToGrid(startingPosition3D.getX()),
-						manipulation.snapToGrid(startingPosition3D.getY()), manipulation.snapToGrid(startingPosition3D.getZ())));
+					manipulation.snapToGrid(startingPosition3D.getY()), manipulation.snapToGrid(startingPosition3D.getZ())));
+				}else {
+					Log.debug("NOT Setup Move Starting point because "+pickedNode+" is not "+meshView);
+
 				}
 
+				// Inform the controls about the total selected object(s) height
+				getControls().setObjectHeight(getSellectedBounds().getTotalZ());
 				event.consume();
 			}
 		});

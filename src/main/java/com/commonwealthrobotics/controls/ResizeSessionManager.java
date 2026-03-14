@@ -82,6 +82,14 @@ public class ResizeSessionManager {
 		meshes.put(key, fresh);
 	}
 
+	// Prevent 0-value for scaling
+	public double notZero(double in) {
+		if (Math.abs(in) < 0.001)
+			return 0.001;
+
+		return in;
+	}
+
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
 			SelectionSession session, Affine workplaneOffset, MoveUpArrow upArrow, ControlSprites controlSprites) {
 
@@ -182,8 +190,9 @@ public class ResizeSessionManager {
 			try {
 				scaleXYZ = new Transform()
 						.translate(originalBounds.getMinX(), originalBounds.getMaxY(), originalBounds.getMinZ())
-						.scale(sx, sy, sz)
+						.scale(notZero(sx), notZero(sy), notZero(sz))
 						.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+
 			} catch (Exception ex) {
 				Log.error(ex);
 			}
@@ -261,7 +270,7 @@ public class ResizeSessionManager {
 			try {
 				scaleXYZ = new Transform()
 						.translate(originalBounds.getMaxX(), originalBounds.getMaxY(), originalBounds.getMinZ())
-						.scale(sx, sy, sz)
+						.scale(notZero(sx), notZero(sy), notZero(sz))
 						.translate(-originalBounds.getMaxX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
 
 			} catch (Exception ex) {
@@ -343,8 +352,9 @@ public class ResizeSessionManager {
 			try {
 				scaleXYZ = new Transform()
 						.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
-						.scale(sx, sy, sz)
+						.scale(notZero(sx), notZero(sy), notZero(sz))
 						.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+
 			} catch (Exception ex) {
 				Log.error(ex);
 			}
@@ -422,7 +432,7 @@ public class ResizeSessionManager {
 
 			Transform scaleXYZ = new Transform()
 				.translate( originalBounds.getMaxX(),  originalBounds.getMinY(),  originalBounds.getMinZ())
-				.scale(sx, sy, sz)
+				.scale(notZero(sx), notZero(sy), notZero(sz))
 				.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
 
 			BowlerStudio.runLater(() -> updateTopCenter());
@@ -460,7 +470,7 @@ public class ResizeSessionManager {
 				double startY = originalBounds.getTotalY();
 				double nowZ = tcC.getZ() - originalBounds.getMinZ();
 
-				double scale = nowZ / startZ;
+				double scale = notZero(nowZ / startZ);
 
 				// Create scaling in workplane coordinates
 				Transform scaleXYZ = new Transform()
@@ -478,7 +488,7 @@ public class ResizeSessionManager {
 				try {
 					scaleXYZ = new Transform()
 						.translate( originalBounds.getMinX(),  originalBounds.getMinY(),  originalBounds.getMinZ())
-						.scale(1.0, 1.0, (topCenter.getCurrentInReferenceFrame().getZ()  -originalBounds.getMinZ()) / originalBounds.getTotalZ())
+						.scale(1.0, 1.0, notZero((topCenter.getCurrentInReferenceFrame().getZ()  -originalBounds.getMinZ()) / originalBounds.getTotalZ()))
 						.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
 
 				} catch (Exception ex) {
