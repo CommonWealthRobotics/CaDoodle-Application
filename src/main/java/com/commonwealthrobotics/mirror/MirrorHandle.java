@@ -13,7 +13,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Mirror;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrentation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrientation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -32,7 +32,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
 public class MirrorHandle implements ICaDoodleStateUpdate {
-	private MirrorOrentation ax;
+	private MirrorOrientation ax;
 	private Affine translate;
 	private Affine vr;
 	private MirrorSessionManager rotationSessionManager;
@@ -69,7 +69,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	private Affine cameraOrent = new Affine();
 	private double scale;
 	private Mirror op;
-	public MirrorHandle(MirrorOrentation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
+	public MirrorHandle(MirrorOrientation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
 			ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
 		this.ax = ax;
 		this.translate = translate;
@@ -167,17 +167,17 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		double rx = 0;
 		double ry = 0;
 		double rz = 0;
-		if (ax == MirrorOrentation.x) {
+		if (ax == MirrorOrientation.x) {
 			rx = 0;
 			ry = -90;
 			rz = 90;
 		}
-		if (ax == MirrorOrentation.y) {
+		if (ax == MirrorOrientation.y) {
 			rx = 0;
 			ry = 90;
 			rz = 0;
 		}
-		if (ax == MirrorOrentation.z) {
+		if (ax == MirrorOrientation.z) {
 			rx = -90;
 			ry = 0;
 			rz = 0;
