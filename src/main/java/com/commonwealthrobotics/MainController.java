@@ -801,8 +801,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		workplane.pickPlane(() -> {
 			ruler.cancel();
 			session.save();
-//			session.setMode(SpriteDisplayMode.Default);
-//			session.updateControls();
+			// session.setMode(SpriteDisplayMode.Default);
+			// session.updateControls();
 		}, () -> { // Run always
 			session.setMode(SpriteDisplayMode.Default);
 			session.updateControls();
