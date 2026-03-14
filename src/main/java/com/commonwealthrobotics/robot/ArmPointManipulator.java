@@ -26,22 +26,24 @@ public class ArmPointManipulator {
 	private Affine moveUpLocation = new Affine();
 
 	private MoveUpArrow up;
-	public ArmPointManipulator(Runnable saveListener,EventHandler<MouseEvent> moveListener, ActiveProject ap,BowlerStudio3dEngine engine,
-			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
+	public ArmPointManipulator(Runnable saveListener, EventHandler<MouseEvent> moveListener, ActiveProject ap,
+			BowlerStudio3dEngine engine, Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
 		this.saveListener = saveListener;
-		tip = new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset,onSelect, onReset, new Cylinder(5, 1).toCSG());
+		tip = new ResizingHandle("Limb Base", engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset, onSelect,
+				onReset, new Cylinder(5, 1).toCSG());
 		tip.setMyColor(Color.PINK, Color.TEAL);
 		tip.setBaseScale(1.25);
 		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 		tip.manipulator.addEventListener(moveListener);
 		tip.manipulator.addSaveListener(saveListener);
-//		up = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF, zMove.getMouseEvents(), () -> {
-//			updateCubes();
-//			updateLines();
-//		}, () -> scaleSession.resetSelected());
+		// up = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF,
+		// zMove.getMouseEvents(), () -> {
+		// updateCubes();
+		// updateLines();
+		// }, () -> scaleSession.resetSelected());
 	}
-	
-	public TransformNR getCurrentPoseInReferenceFrame(){
+
+	public TransformNR getCurrentPoseInReferenceFrame() {
 		return tip.manipulator.getCurrentPoseInReferenceFrame();
 	}
 	public void onReset() {
@@ -49,7 +51,7 @@ public class ArmPointManipulator {
 		tip.manipulator.reset();
 	}
 	public ArrayList<MeshView> getMesh() {
-		
+
 		return new ArrayList<MeshView>(Arrays.asList(tip.getMesh()));
 	}
 
@@ -61,10 +63,11 @@ public class ArmPointManipulator {
 		tip.hide();
 	}
 
-	public  DragState getState() {
+	public DragState getState() {
 		return tip.manipulator.getState();
 	}
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf,
+			boolean locked) {
 		tip.threeDTarget(screenW, screenH, zoom, target, cf, locked);
 	}
 }

@@ -2,10 +2,6 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 /**
  * Sample Skeleton for 'ProjectManager.fxml' Controller Class
  */
@@ -16,17 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
-import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -37,18 +28,9 @@ import eu.mihosoft.vrl.v3d.CSG;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -105,19 +87,19 @@ public class ExportManager {
 		String slug = NONLATIN.matcher(normalized).replaceAll("");
 		return slug.toLowerCase(Locale.ENGLISH);
 	}
-    @FXML
-    void fstl(ActionEvent event) {
-    	manifoldSTL.setSelected(false);
-    }
+	@FXML
+	void fstl(ActionEvent event) {
+		manifoldSTL.setSelected(false);
+	}
 
-    @FXML
-    void mstl(ActionEvent event) {
-    	stl.setSelected(false);
-    }
+	@FXML
+	void mstl(ActionEvent event) {
+		stl.setSelected(false);
+	}
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
-		Thread t=new Thread(() -> {
+		Thread t = new Thread(() -> {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
 			ArrayList<CSG> back = session.getAllVisible();
@@ -139,14 +121,14 @@ public class ExportManager {
 				if (freecad.isSelected()) {
 					c.addExportFormat("freecad");
 				}
-				if(obj.isSelected()) {
+				if (obj.isSelected()) {
 					c.addExportFormat("obj");
 				}
 				c.setName(name + "_" + index);
 				index++;
 			}
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
-			if(exportDir==null)
+			if (exportDir == null)
 				return;
 			SplashManager.renderSplashFrame(1, " Exporting...");
 			try {
@@ -155,29 +137,29 @@ public class ExportManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			while(!SplashManager.isVisibleSplash()) {
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					// Auto-generated catch block
-//					com.neuronrobotics.sdk.common.Log.error(e);
-//				}
-//			}
+			// while(!SplashManager.isVisibleSplash()) {
+			// try {
+			// Thread.sleep(100);
+			// } catch (InterruptedException e) {
+			// // Auto-generated catch block
+			// com.neuronrobotics.sdk.common.Log.error(e);
+			// }
+			// }
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
 				exportDir = new File(exportDir + "/" + name + "/");
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
 
-			BowlerKernel.processReturnedObjectsStart(back,caDoodleFile.getSelf().getParentFile(), exportDir);
+			BowlerKernel.processReturnedObjectsStart(back, caDoodleFile.getSelf().getParentFile(), exportDir);
 
 			SplashManager.onLogUpdate("");
 			SplashManager.renderSplashFrame(50, "Zipping Project Source");
-			//ap.get().updateBoM() ;
+			// ap.get().updateBoM() ;
 			copyBom(caDoodleFile.getBomFile());
 			copyBom(caDoodleFile.getBomCsv());
 			try {
 				zipDirectory(caDoodleFile.getSelf().getParentFile(),
-						new File(exportDir.getAbsolutePath()+DownloadManager.delim()+name+"-source.zip"));
+						new File(exportDir.getAbsolutePath() + DownloadManager.delim() + name + "-source.zip"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
@@ -192,33 +174,31 @@ public class ExportManager {
 	}
 
 	private static void zipDirectory(File sourceDir, File zipFile) throws IOException {
-		Path sourceDirPath=sourceDir.toPath();
+		Path sourceDirPath = sourceDir.toPath();
 		Path zipFilePath = zipFile.toPath();
 		try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
-			Files.walk(sourceDirPath)
-			.filter(path -> !Files.isDirectory(path))
-		    .filter(path -> !path.toString().endsWith(".csg"))
-		    .filter(path -> !path.toString().endsWith(".png"))
-			.forEach(path -> {
-				
-				ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
-				try {
-					zs.putNextEntry(zipEntry);
-					Files.copy(path, zs);
-					SplashManager.onLogUpdate("zip "+path.getFileName());
-					zs.closeEntry();
-				} catch (IOException e) {
-					com.neuronrobotics.sdk.common.Log.error("Failed to zip file: " + path);
-					com.neuronrobotics.sdk.common.Log.error(e);
-				}
-			});
+			Files.walk(sourceDirPath).filter(path -> !Files.isDirectory(path))
+					.filter(path -> !path.toString().endsWith(".csg")).filter(path -> !path.toString().endsWith(".png"))
+					.forEach(path -> {
+
+						ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
+						try {
+							zs.putNextEntry(zipEntry);
+							Files.copy(path, zs);
+							SplashManager.onLogUpdate("zip " + path.getFileName());
+							zs.closeEntry();
+						} catch (IOException e) {
+							com.neuronrobotics.sdk.common.Log.error("Failed to zip file: " + path);
+							com.neuronrobotics.sdk.common.Log.error(e);
+						}
+					});
 		}
 	}
 	private void copyBom(File bomFile) {
 		Path source = bomFile.toPath();
-		Path destination=new File(exportDir.getAbsolutePath()+"/"+bomFile.getName()).toPath();
+		Path destination = new File(exportDir.getAbsolutePath() + "/" + bomFile.getName()).toPath();
 		try {
-			Log.debug("Copy from "+source.toString()+" \nto "+destination.toString());
+			Log.debug("Copy from " + source.toString() + " \nto " + destination.toString());
 			Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			// Auto-generated catch block
@@ -234,7 +214,7 @@ public class ExportManager {
 				: "fx:id=\"projectGrid\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert stl != null : "fx:id=\"stl\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert svg != null : "fx:id=\"svg\" was not injected: check your FXML file 'ExportWindow.fxml'.";
-		
+
 	}
 
 	public static void launch(SelectionSession session, ActiveProject ap, Runnable onFinish, Runnable clearScreen) {

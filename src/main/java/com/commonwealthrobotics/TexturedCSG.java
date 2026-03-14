@@ -32,8 +32,6 @@ package com.commonwealthrobotics;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Matrix4d;
-
 import javafx.geometry.Point2D;
 import javafx.scene.DepthTest;
 import javafx.scene.effect.BlendMode;
@@ -52,9 +50,7 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
-import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Matrix3d;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -84,7 +80,7 @@ public class TexturedCSG extends TexturedMesh {
 		material.setSpecularColor(javafx.scene.paint.Color.WHITE);
 
 		setMaterial(material);
-		//setOpacity(0.25);
+		// setOpacity(0.25);
 	}
 
 	@Override
@@ -142,9 +138,9 @@ public class TexturedCSG extends TexturedMesh {
 
 					Vector3d pos = v.pos;
 					Vector3d transformed = pos.transformed(inverseTransform);
-//                    if(Math.abs(transformed.z)>0.000001) {
-//                    	throw new RuntimeException("Failed to transform the point to the xy plane");
-//                    }
+					// if(Math.abs(transformed.z)>0.000001) {
+					// throw new RuntimeException("Failed to transform the point to the xy plane");
+					// }
 
 					// Normalize coordinates to fit within the image bounds
 					float u = (float) ((transformed.x - minX) / (maxX - minX));
@@ -214,37 +210,38 @@ public class TexturedCSG extends TexturedMesh {
 
 		return finalTransform;
 	}
-//
-//	private Polygon applyTransformToPolygon(Polygon polygon, Transform transform) {
-//		return polygon.transformed(transform);
-//	}
+	//
+	// private Polygon applyTransformToPolygon(Polygon polygon, Transform transform)
+	// {
+	// return polygon.transformed(transform);
+	// }
 
-//    private Transform createTransform(Vector3d normal, Vector3d point) {
-//        // Normalize the normal vector
-//        Vector3d n = normal.normalized();
-//        
-//        // Calculate rotation angles
-//        double rotX, rotY, rotZ;
-//        
-//        // Rotation around Y-axis
-//        rotY = Math.atan2(n.x, n.z);
-//        
-//        // Rotation around X-axis
-//        double lenXZ = Math.sqrt(n.x * n.x + n.z * n.z);
-//        rotX = Math.atan2(-n.y, lenXZ);
-//        
-//        // We don't need rotation around Z-axis for aligning the normal
-//        rotZ = 0;
-//        
-//        // Create the transform
-//        Transform transform = new Transform()
-//            .rotX(Math.toDegrees(-rotX))
-//            .rotY(Math.toDegrees(-rotY))
-//            .rotZ(Math.toDegrees(-rotZ))
-//            .translate(point.x, point.y, point.z);
-//        
-//        return transform;
-//    }
+	// private Transform createTransform(Vector3d normal, Vector3d point) {
+	// // Normalize the normal vector
+	// Vector3d n = normal.normalized();
+	//
+	// // Calculate rotation angles
+	// double rotX, rotY, rotZ;
+	//
+	// // Rotation around Y-axis
+	// rotY = Math.atan2(n.x, n.z);
+	//
+	// // Rotation around X-axis
+	// double lenXZ = Math.sqrt(n.x * n.x + n.z * n.z);
+	// rotX = Math.atan2(-n.y, lenXZ);
+	//
+	// // We don't need rotation around Z-axis for aligning the normal
+	// rotZ = 0;
+	//
+	// // Create the transform
+	// Transform transform = new Transform()
+	// .rotX(Math.toDegrees(-rotX))
+	// .rotY(Math.toDegrees(-rotY))
+	// .rotZ(Math.toDegrees(-rotZ))
+	// .translate(point.x, point.y, point.z);
+	//
+	// return transform;
+	// }
 	private Transform createTransform(Vector3d normal, Vector3d point) {
 		double rotz = Math.toDegrees(-Math.atan2(normal.y, normal.x));
 

@@ -1,35 +1,22 @@
 package com.commonwealthrobotics.numbers;
 
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
-import eu.mihosoft.vrl.v3d.Bounds;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Region;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.util.StringConverter;
-import javafx.beans.binding.Bindings;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.application.Platform;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.function.UnaryOperator;
 
-import java.text.ParseException;
-import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 public class ThreedNumber {
@@ -48,58 +35,37 @@ public class ThreedNumber {
 	private Affine cameraOrent = new Affine();
 	private Scale scaleTF = new Scale();
 	private double scale;
-//	private Affine resizeHandleLocation = new Affine();
+	// private Affine resizeHandleLocation = new Affine();
 	private Runnable onChange;
 	private Affine reOrient;
 	private TextFieldDimension tfDimension;
 	private RulerManager ruler;
 	private boolean lockout = false;
-//	private static HashMap<ThreedNumber, Long> lastPressed = new HashMap<>();
+	// private static HashMap<ThreedNumber, Long> lastPressed = new HashMap<>();
 	private double initialValue;
-	private int wholeDigits;   // Allowed whole digits before the dot
+	private int wholeDigits; // Allowed whole digits before the dot
 	private char decimalSeparator = '.';
 	public boolean canceled = false; // Edit was canceled, keep old value
 
-// DISABLE TIMEOUT FOR NOW
-/*
-	private static Thread timeout = null;
-	private static final long timeoutTime = 5000;
-	private static void startThread() {
-		if (timeout == null) {
-			timeout = new Thread(() -> {
-				while (true) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						return;
-					}
-					if (lastPressed.size() > 0) {
-
-						ArrayList<ThreedNumber> torem = new ArrayList<>();
-						ArrayList<ThreedNumber> tocheck = new ArrayList<>(lastPressed.keySet());
-						for (ThreedNumber key : tocheck) {
-							long val = lastPressed.get(key);
-							if ((System.currentTimeMillis() - val) > timeoutTime) {
-								key.runEnter();
-								torem.add(key);
-								// com.neuronrobotics.sdk.common.Log.debug(key + " cleared on " + val);
-							}
-
-						}
-						for (ThreedNumber key : torem)
-							lastPressed.remove(key);
-					}
-				}
-
-			});
-			timeout.start();
-		}
-	}
-
-	public void clearTimeout() {
-		lastPressed.remove(this);
-	}
-*/
+	// DISABLE TIMEOUT FOR NOW
+	/*
+	 * private static Thread timeout = null; private static final long timeoutTime =
+	 * 5000; private static void startThread() { if (timeout == null) { timeout =
+	 * new Thread(() -> { while (true) { try { Thread.sleep(100); } catch
+	 * (InterruptedException e) { return; } if (lastPressed.size() > 0) {
+	 *
+	 * ArrayList<ThreedNumber> torem = new ArrayList<>(); ArrayList<ThreedNumber>
+	 * tocheck = new ArrayList<>(lastPressed.keySet()); for (ThreedNumber key :
+	 * tocheck) { long val = lastPressed.get(key); if ((System.currentTimeMillis() -
+	 * val) > timeoutTime) { key.runEnter(); torem.add(key); //
+	 * com.neuronrobotics.sdk.common.Log.debug(key + " cleared on " + val); }
+	 *
+	 * } for (ThreedNumber key : torem) lastPressed.remove(key); } }
+	 *
+	 * }); timeout.start(); } }
+	 *
+	 * public void clearTimeout() { lastPressed.remove(this); }
+	 */
 
 	public ThreedNumber(Affine move, Affine workplaneOffset, Runnable onChange, TextFieldDimension tfDimension,
 			RulerManager ruler, int wholeDigits) {
@@ -128,14 +94,14 @@ public class ThreedNumber {
 		textField.setStyle("-fx-padding: 0; -fx-alignment: center;");
 
 		// Regular expression: -aaaa.bbb, digitsin "aaaa" is defined in wholeDigits
-		Pattern validPattern = decimalSeparator == '.' ?
-			Pattern.compile(String.format("^-?\\d{0,%d}(?:\\.\\d{0,3})?$", wholeDigits)) :
-			Pattern.compile(String.format("^-?\\d{0,%d}(?:\\,\\d{0,3})?$", wholeDigits));
+		Pattern validPattern = decimalSeparator == '.'
+				? Pattern.compile(String.format("^-?\\d{0,%d}(?:\\.\\d{0,3})?$", wholeDigits))
+				: Pattern.compile(String.format("^-?\\d{0,%d}(?:\\,\\d{0,3})?$", wholeDigits));
 
 		TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
 			String oldText = change.getControlText();
 			String addText = change.getText();
-			int	pos	 = change.getCaretPosition();
+			int pos = change.getCaretPosition();
 
 			if ("-".equals(addText)) {
 				if (oldText.startsWith("-")) { // Remove "-" in front
@@ -163,7 +129,7 @@ public class ThreedNumber {
 			if (event.getCode() == KeyCode.ESCAPE) {
 				event.consume();
 				canceled = true;
-				new Thread(()-> {
+				new Thread(() -> {
 					runEnter();
 				}).start();
 
@@ -172,7 +138,7 @@ public class ThreedNumber {
 
 			if (event.getCode() == KeyCode.ENTER) {
 				event.consume();
-				new Thread(()->{
+				new Thread(() -> {
 					runEnter();
 				}).start();
 
@@ -215,14 +181,14 @@ public class ThreedNumber {
 				return;
 			}
 
-			//long timeMillis = System.currentTimeMillis();
-			//lastPressed.put(this, timeMillis);
+			// long timeMillis = System.currentTimeMillis();
+			// lastPressed.put(this, timeMillis);
 
 		});
 
 		reOrient = new Affine();
 		textField.getTransforms().add(move);
-//		textField.getTransforms().add(resizeHandleLocation);
+		// textField.getTransforms().add(resizeHandleLocation);
 		textField.getTransforms().add(workplaneOffset);
 		textField.getTransforms().add(location);
 		textField.getTransforms().add(cameraOrent);

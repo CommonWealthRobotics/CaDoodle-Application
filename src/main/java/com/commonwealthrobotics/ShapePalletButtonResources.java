@@ -10,10 +10,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.neuronrobotics.bowlerstudio.BowlerStudio;
-import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.NoImageException;
-import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
@@ -21,22 +18,18 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.sdk.common.Log;
-import com.neuronrobotics.video.OSUtil;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.FileUtil;
-import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ShapePalletButtonResources {
@@ -100,8 +93,7 @@ public class ShapePalletButtonResources {
 				s.set(f, ap.get()).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
-				com.neuronrobotics.sdk.common.Log.error(ex);
-				;
+				com.neuronrobotics.sdk.common.Log.error(ex);;
 			}
 		}
 		set.setCaDoodleFile(ap.get());
@@ -138,7 +130,7 @@ public class ShapePalletButtonResources {
 			}
 		} catch (NoImageException e) {
 			Log.error(e);
-			image=new WritableImage(100, 100);
+			image = new WritableImage(100, 100);
 		}
 
 		indicator = so.get(0);

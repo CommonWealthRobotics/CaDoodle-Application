@@ -1,7 +1,6 @@
 package com.commonwealthrobotics.robot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
@@ -11,29 +10,21 @@ import com.commonwealthrobotics.controls.ResizingHandle;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
-import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation.DragState;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.DHParameterKinematics;
-import com.neuronrobotics.sdk.addons.kinematics.math.ITransformNRChangeListener;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Cylinder;
-import eu.mihosoft.vrl.v3d.Vector3d;
-import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 public class LimbControlManager {
@@ -44,13 +35,15 @@ public class LimbControlManager {
 	private ControlSprites sprites;
 	private MobileBaseBuilder builder;
 	private ModifyLimb mod;
-//	private Manipulation tipManip = new Manipulation(baseSelection, new Vector3d(1, 1, 0), new TransformNR());
-//	private EventHandler<MouseEvent> tipMouseMover = tipManip.getMouseEvents();
-//	private Manipulation baseManip = new Manipulation(baseSelection, new Vector3d(1, 1, 0), new TransformNR());
-//	private EventHandler<MouseEvent> baseMouseMover = baseManip.getMouseEvents();
-	//ResizingHandle base = null;
-	//ResizingHandle tip = null;
-	
+	// private Manipulation tipManip = new Manipulation(baseSelection, new
+	// Vector3d(1, 1, 0), new TransformNR());
+	// private EventHandler<MouseEvent> tipMouseMover = tipManip.getMouseEvents();
+	// private Manipulation baseManip = new Manipulation(baseSelection, new
+	// Vector3d(1, 1, 0), new TransformNR());
+	// private EventHandler<MouseEvent> baseMouseMover = baseManip.getMouseEvents();
+	// ResizingHandle base = null;
+	// ResizingHandle tip = null;
+
 	ArmPointManipulator baseManipulator;
 	ArmPointManipulator tipManipulator;
 	ResizingHandle elbow = null;
@@ -92,7 +85,7 @@ public class LimbControlManager {
 		Runnable onSelect = () -> {
 			updateControls();
 		};
-		tipManipulator = new ArmPointManipulator(r,ev -> {
+		tipManipulator = new ArmPointManipulator(r, ev -> {
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
@@ -111,9 +104,9 @@ public class LimbControlManager {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			updateControls();
-		},ap,engine,workplaneOffset,onSelect, onReset);
-		
-		baseManipulator = new ArmPointManipulator(r,ev -> {
+		}, ap, engine, workplaneOffset, onSelect, onReset);
+
+		baseManipulator = new ArmPointManipulator(r, ev -> {
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
@@ -129,9 +122,7 @@ public class LimbControlManager {
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
 			updateControls();
-		},ap,engine,workplaneOffset,onSelect,onReset);
-		
-
+		}, ap, engine, workplaneOffset, onSelect, onReset);
 
 		rotationManager = new RotationSessionManager(new Affine(), ap, session, workplaneOffset, ruler, (tf) -> {
 			r.run();
@@ -160,7 +151,7 @@ public class LimbControlManager {
 
 		handles = new ArrayList<>();
 		handles.addAll(tipManipulator.getMesh());
-		handles.addAll(baseManipulator.getMesh());	
+		handles.addAll(baseManipulator.getMesh());
 		handles.addAll(rotationManager.getElements());
 		hide();
 		for (Node n : handles) {
@@ -182,7 +173,7 @@ public class LimbControlManager {
 	public void show(DHParameterKinematics limb) {
 		this.limb = limb;
 		b = session.getBounds(limb);
-		if(b==null)
+		if (b == null)
 			throw new RuntimeException("Limb has no parts");
 		selectedCSG = session.selectedSnapshot();
 		mod = new ModifyLimb().setLimb(limb).setNames(session.selectedSnapshot());
@@ -192,7 +183,7 @@ public class LimbControlManager {
 		mod.setUndo(true);
 		onReset();
 		rotationManager.show(false);
-		com.neuronrobotics.sdk.common.Log.debug("\n\nShowing Limb "+limb.getScriptingName());
+		com.neuronrobotics.sdk.common.Log.debug("\n\nShowing Limb " + limb.getScriptingName());
 	}
 
 	public void hide() {
@@ -213,7 +204,7 @@ public class LimbControlManager {
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
-		if (limb == null) 
+		if (limb == null)
 			return;
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
@@ -222,13 +213,13 @@ public class LimbControlManager {
 		double z = camera.getGlobalZ();
 		TransformNR workplane = ap.get().getWorkplane();
 		if (baseManipulator.getState() == DragState.IDLE)
-			baseManipulator.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getRobotToFiducialTransform()), cf,
-					locked);
+			baseManipulator.threeDTarget(screenW, screenH, zoom,
+					workplane.inverse().times(limb.getRobotToFiducialTransform()), cf, locked);
 
 		if (tipManipulator.getState() == DragState.IDLE)
-			tipManipulator.threeDTarget(screenW, screenH, zoom, workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf,
-					locked);
-		
+			tipManipulator.threeDTarget(screenW, screenH, zoom,
+					workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf, locked);
+
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(workplane, workplaneOffset);
@@ -238,7 +229,7 @@ public class LimbControlManager {
 
 	public void update(MobileBaseBuilder builder) {
 		this.builder = builder;
-		if (builder != null) 
+		if (builder != null)
 			for (CSG c : session.getCurrentStateSelected()) {
 				if (c.getLimbName().isPresent()) {
 					String name = c.getLimbName().get();

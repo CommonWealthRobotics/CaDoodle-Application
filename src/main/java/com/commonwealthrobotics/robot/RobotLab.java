@@ -1,6 +1,5 @@
 package com.commonwealthrobotics.robot;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,14 +8,11 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
-import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -24,18 +20,12 @@ import com.neuronrobotics.bowlerstudio.creature.ControllerFeatures;
 import com.neuronrobotics.bowlerstudio.creature.ControllerOption;
 import com.neuronrobotics.bowlerstudio.creature.LimbOption;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
-import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotController;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.MakeRobot;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
-import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -343,19 +333,19 @@ public class RobotLab {
 			ArrayList<LimbOption> wheels = new ArrayList<LimbOption>();
 			for (LimbOption o : limbOptions) {
 				switch (o.getType()) {
-				case arm:
-				case flap:
-				case hand:
-				case head:
-					arms.add(o);
-					break;
-				case leg:
-					legs.add(o);
-					break;
-				case steerable:
-				case wheel:
-					wheels.add(o);
-					break;
+					case arm :
+					case flap :
+					case hand :
+					case head :
+						arms.add(o);
+						break;
+					case leg :
+						legs.add(o);
+						break;
+					case steerable :
+					case wheel :
+						wheels.add(o);
+						break;
 				}
 				// break;
 			}
@@ -436,8 +426,8 @@ public class RobotLab {
 			toolimage.setFitWidth(300);
 			hover.setGraphic(toolimage);
 			hover.setContentDisplay(ContentDisplay.TOP);
-//			tIv.setFitHeight(50);
-//			tIv.setFitWidth(50);
+			// tIv.setFitHeight(50);
+			// tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
 				session.submit(() -> {
@@ -460,13 +450,13 @@ public class RobotLab {
 									HashSet<String> namesAdded = add.getNamesAdded();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
-//
+									//
 									session.selectAll(namesAdded);
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
 										// Don't reset work plane to origin
-//										ap.get().setWorkplane(new TransformNR());
+										// ap.get().setWorkplane(new TransformNR());
 									} else {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
@@ -516,8 +506,8 @@ public class RobotLab {
 			toolimage.setFitWidth(300);
 			hover.setGraphic(toolimage);
 			hover.setContentDisplay(ContentDisplay.TOP);
-//			tIv.setFitHeight(50);
-//			tIv.setFitWidth(50);
+			// tIv.setFitHeight(50);
+			// tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
 				session.submit(() -> {
@@ -539,7 +529,7 @@ public class RobotLab {
 									HashSet<String> namesAdded = add.getNamesAdded();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
-//
+									//
 									session.selectAll(namesAdded);
 									if (!workplane.isClicked())
 										return;
@@ -593,7 +583,8 @@ public class RobotLab {
 	}
 
 	/**
-	 * @param manager the manager to set
+	 * @param manager
+	 *            the manager to set
 	 */
 	public void setManager(LimbControlManager manager) {
 		this.manager = manager;
