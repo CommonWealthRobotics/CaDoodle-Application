@@ -113,8 +113,8 @@ public class SelectionBox {
 
 	public void dragged(MouseEvent event) {
 
-		if (!start || !event.isPrimaryButtonDown() || event.isControlDown() ||
-			event.isShiftDown() || (event.getSource() != getSelectionPlane()))
+		if (!start || !event.isPrimaryButtonDown() || event.isControlDown() || event.isShiftDown()
+				|| (event.getSource() != getSelectionPlane()))
 			return;
 
 		if (!overlayPane2D.getChildren().contains(rect1)) {
@@ -279,8 +279,8 @@ public class SelectionBox {
 		// Fast bounding box overlap check, quick fail if not intersecting
 		// bounding boxes
 		return ((selection2.getMaxX() > incoming.getMinX()) && (selection2.getMinX() < incoming.getMaxX())
-		&& (selection2.getMaxY() > incoming.getMinY()) && (selection2.getMinY() < incoming.getMaxY())
-		&& (selection2.getMaxZ() > incoming.getMinZ()) && (selection2.getMinZ() < incoming.getMaxZ()));
+				&& (selection2.getMaxY() > incoming.getMinY()) && (selection2.getMinY() < incoming.getMaxY())
+				&& (selection2.getMaxZ() > incoming.getMinZ()) && (selection2.getMinZ() < incoming.getMaxZ()));
 	}
 
 	public List<String> checkOverlap(CSG selection2) {

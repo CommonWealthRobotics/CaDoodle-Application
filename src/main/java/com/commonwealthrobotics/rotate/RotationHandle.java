@@ -21,7 +21,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.Vector3d;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -159,11 +158,11 @@ public class RotationHandle {
 					currentAngle -= 360;
 
 				// com.neuronrobotics.sdk.common.Log.error("Angle Is " + currentAngle);
-//				if (Math.abs(currentAngle) > 0.001) {
-//					arc.setVisible(true);
-//					flagSaveChange = true;
-//				} else
-//					flagSaveChange = false;
+				// if (Math.abs(currentAngle) > 0.001) {
+				//	arc.setVisible(true);
+				//	flagSaveChange = true;
+				//} else
+				//	flagSaveChange = false;
 				flagSaveChange = (Math.abs(currentAngle) > 0.001);
 
 				// Calculate the sweep angle
@@ -264,7 +263,7 @@ public class RotationHandle {
 		Vector3d center = bounds.getCenter();
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
-//		double numberOffset = 20;
+		// double numberOffset = 20;
 
 		this.az = az;
 		// this.selectedCSG = selectedCSG;
@@ -274,7 +273,7 @@ public class RotationHandle {
 		double rA = 1, rB = 1;
 		double pinLocx = 0, pinLocy = 0, pinLocz = 0;
 		TransformNR positionPin = new TransformNR();
-//		Quadrant q = Quadrant.getQuad(-az);
+		// Quadrant q = Quadrant.getQuad(-az);
 		rotationStarted = false;
 		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
 		RotationNR axisOrent = new RotationNR();
