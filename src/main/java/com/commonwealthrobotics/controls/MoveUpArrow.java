@@ -92,8 +92,8 @@ public class MoveUpArrow {
 	public Point3D calculateWorldPosition() {
 		// Bounds in parent coordinate space (includes all transforms)
 		javafx.geometry.Bounds parentBounds = meshview.getBoundsInParent();
-		return new Point3D( parentBounds.getCenterX(), parentBounds.getCenterY(),
-				(parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2 );
+		return new Point3D(parentBounds.getCenterX(), parentBounds.getCenterY(),
+				(parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2);
 	}
 
 	private void setSelectedColor() {

@@ -159,10 +159,10 @@ public class RotationHandle {
 
 				// com.neuronrobotics.sdk.common.Log.error("Angle Is " + currentAngle);
 				// if (Math.abs(currentAngle) > 0.001) {
-				//	arc.setVisible(true);
-				//	flagSaveChange = true;
+				// arc.setVisible(true);
+				// flagSaveChange = true;
 				//} else
-				//	flagSaveChange = false;
+				// flagSaveChange = false;
 				flagSaveChange = (Math.abs(currentAngle) > 0.001);
 
 				// Calculate the sweep angle
@@ -279,35 +279,35 @@ public class RotationHandle {
 		RotationNR axisOrent = new RotationNR();
 		switch (axis) {
 
-		case azimuth:
-			rA = totx;
-			rB = toty;
-			pinLocx = center.x;
-			pinLocy = center.y;
-			pinLocz = min.z;
-			axisOrent = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(Quadrant.getQuad(-az)) + 180);
+			case azimuth:
+				rA = totx;
+				rB = toty;
+				pinLocx = center.x;
+				pinLocy = center.y;
+				pinLocz = min.z;
+				axisOrent = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(Quadrant.getQuad(-az)) + 180);
 
-			break;
+				break;
 
-		case elevation:
-			rA = totx;
-			rB = totz;
-			pinLocx = center.x;
-			pinLocy = (az < 90 && az > -90) ? min.y : max.y;
-			pinLocz = center.z;
-			axisOrent = new RotationNR(-90, 0, 0);
+			case elevation:
+				rA = totx;
+				rB = totz;
+				pinLocx = center.x;
+				pinLocy = (az < 90 && az > -90) ? min.y : max.y;
+				pinLocz = center.z;
+				axisOrent = new RotationNR(-90, 0, 0);
 
-			break;
+				break;
 
-		case tilt:
-			rA = totz;
-			rB = toty;
-			pinLocx = (az > 0 && az < 180) ? min.x : max.x;
-			pinLocy = center.y;
-			pinLocz = center.z;
-			axisOrent = new RotationNR(-90, 90, 0);
+			case tilt:
+				rA = totz;
+				rB = toty;
+				pinLocx = (az > 0 && az < 180) ? min.x : max.x;
+				pinLocy = center.y;
+				pinLocz = center.z;
+				axisOrent = new RotationNR(-90, 90, 0);
 
-			break;
+				break;
 		}
 
 		double circleDiameter = Math.sqrt(Math.pow(rA, 2) + Math.pow(rB, 2));
