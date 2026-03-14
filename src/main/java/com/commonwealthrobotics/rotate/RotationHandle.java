@@ -5,7 +5,6 @@ import java.util.List;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.Quadrant;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
@@ -14,19 +13,16 @@ import com.commonwealthrobotics.numbers.ThreedNumber;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 //import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
-import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Vector3d;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -62,7 +58,7 @@ public class RotationHandle {
 	private double az;
 	private TransformNR rotAtCenter;
 	private boolean flagSaveChange = false;
-	//private List<String> selectedCSG;
+	// private List<String> selectedCSG;
 	private boolean startAngleFound;
 	public ThreedNumber TDnumber;
 	private boolean selected = false;
@@ -73,10 +69,8 @@ public class RotationHandle {
 	private IOnRotateDone done;
 	private IOnRotateMoving moving = null;
 
-	public RotationHandle(EulerAxis ax, Affine translate, Affine vr,
-			RotationSessionManager rotationSessionManager, ActiveProject ap, 
-			SelectionSession cs, Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
-
+	public RotationHandle(EulerAxis ax, Affine translate, Affine vr, RotationSessionManager rotationSessionManager,
+			ActiveProject ap, SelectionSession cs, Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
 		this.axis = ax;
 		this.viewRotation = vr;
 		this.ap = ap;
@@ -84,7 +78,7 @@ public class RotationHandle {
 		this.session = cs;
 		this.done = done;
 
-		Runnable onChange = ()-> {
+		Runnable onChange = () -> {
 			if (TDnumber.canceled)
 				return;
 
@@ -97,7 +91,7 @@ public class RotationHandle {
 		};
 
 		TDnumber = new ThreedNumber(translate, workplaneOffset, onChange, TextFieldDimension.None, ruler, 3);
-//		TDnumber.getTextField();
+		// TDnumber.getTextField();
 		TDnumber.hide();
 		handle.setImage(rotateImage);
 		handle.setVisible(false);
@@ -129,7 +123,6 @@ public class RotationHandle {
 			session.setMode(SpriteDisplayMode.Rotating);
 			if (!moveLock)
 				controlCircle.setVisible(true);
-
 			arc.setVisible(true);
 			handle.setVisible(true);
 			TDnumber.setValue(0);
@@ -198,9 +191,9 @@ public class RotationHandle {
 		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
 		arc.setFill(new Color(0.0, 0, 1, 0.5));
 
-		arc.getTransforms().addAll(translate,workplaneOffset, controlPin, arcPlanerOffset);
-		handle.getTransforms().addAll(translate, workplaneOffset,controlPin, handlePlanarOffset);
-		controlCircle.getTransforms().addAll(translate, workplaneOffset,controlPin, circelPlanerOffset);
+		arc.getTransforms().addAll(translate, workplaneOffset, controlPin, arcPlanerOffset);
+		handle.getTransforms().addAll(translate, workplaneOffset, controlPin, handlePlanarOffset);
+		controlCircle.getTransforms().addAll(translate, workplaneOffset, controlPin, circelPlanerOffset);
 		controlCircle.setOpacity(0.5);
 	}
 
@@ -230,7 +223,8 @@ public class RotationHandle {
 			moving.toUpdate(pureRot);
 
 		TransformNR wp = ap.get().getWorkplane();
-		TransformNR center = wp.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
+		TransformNR center = wp
+				.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
 		rotAtCenter = center.times(pureRot.times(center.inverse()));
 		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(rotAtCenter, viewRotation));;
 
@@ -273,7 +267,7 @@ public class RotationHandle {
 //		double numberOffset = 20;
 
 		this.az = az;
-		//this.selectedCSG = selectedCSG;
+		// this.selectedCSG = selectedCSG;
 		double totx = b.getMax().x - b.getMin().x;
 		double toty = b.getMax().y - b.getMin().y;
 		double totz = b.getMax().z - b.getMin().z;

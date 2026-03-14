@@ -10,7 +10,6 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
-
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.CSGClient;
@@ -131,8 +130,8 @@ public class SelectionBox {
 		if (!active) {
 			active = true;
 			TransformNR cf = getCameraFrame();
-//			ap.get().setWorkplane(cf);
-//			workplane.placeWorkplaneVisualization();
+			// ap.get().setWorkplane(cf);
+			// workplane.placeWorkplaneVisualization();
 
 			xLeft = event.getX();
 			yTop = event.getY();
@@ -201,14 +200,14 @@ public class SelectionBox {
 	}
 
 	public void released(MouseEvent event) {
-//		rect.setVisible(false);
-//		view3d.getChildren().remove(rect);	
-//		engine.removeUserNode(rect);
+		// rect.setVisible(false);
+		// view3d.getChildren().remove(rect);
+		// engine.removeUserNode(rect);
 		overlayPane2D.getChildren().remove(rect1);
 		overlayPane2D.getChildren().remove(rect2);
-//		for (Rectangle r : show) {
-//			engine.removeUserNode(r);
-//		}
+		// for (Rectangle r : show) {
+		// engine.removeUserNode(r);
+		// }
 		HashMap<CSG, MeshView> meshes = session.getMeshes();
 		for (CSG key : meshes.keySet())
 			meshes.get(key).setMouseTransparent(false);
@@ -228,15 +227,15 @@ public class SelectionBox {
 
 			active = false;
 			start = false;
-//			yTop=yTop-view3d.getHeight()/2;
-//			xLeft=xLeft-(view3d.getWidth()/2);
-//			ap.get().setWorkplane(cf);
-//			workplane.placeWorkplaneVisualization();
+			// yTop=yTop-view3d.getHeight()/2;
+			// xLeft=xLeft-(view3d.getWidth()/2);
+			// ap.get().setWorkplane(cf);
+			// workplane.placeWorkplaneVisualization();
 
 			Bounds sel = new Bounds(new Vector3d(xLeft, yTop, 0), new Vector3d(xLeft + width, yTop - height));
 			Transform boxFrame = TransformFactory.nrToCSG(getBoxFrame());
-//			if (selection != null)
-//				BowlerStudio.runLater(()-> engine.removeObject(selection));
+			// if (selection != null)
+			// BowlerStudio.runLater(()-> engine.removeObject(selection));
 			selection = HullUtil.hull(Arrays.asList(new Vector3d(sel.getMaxX(), sel.getMaxY(), 0).transform(boxFrame),
 					new Vector3d(sel.getMaxX(), sel.getMinY(), 0).transform(boxFrame),
 					new Vector3d(sel.getMinX(), sel.getMaxY(), 0).transform(boxFrame),
@@ -272,7 +271,7 @@ public class SelectionBox {
 	 * A test to see if 2 CSG's are touching. The fast-return is a bounding box
 	 * check If bounding boxes overlap, then an intersection is performed and the
 	 * existance of an interscting object is returned
-	 * 
+	 *
 	 * @param incoming
 	 * @return
 	 */

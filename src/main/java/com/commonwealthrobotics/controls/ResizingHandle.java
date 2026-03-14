@@ -9,24 +9,19 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ChamferedCube;
-import eu.mihosoft.vrl.v3d.Cube;
 //import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.scene.layout.Pane;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class ResizingHandle {
@@ -64,7 +59,8 @@ public class ResizingHandle {
 	// private Tooltip hover = new Tooltip();
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
 			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
-		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset, new ChamferedCube(getSize(), getSize(), getSize() / 2.4, getSize() / 5).toCSG().toZMin());
+		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset,
+				new ChamferedCube(getSize(), getSize(), getSize() / 2.4, getSize() / 5).toCSG().toZMin());
 	}
 
 	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
@@ -75,10 +71,11 @@ public class ResizingHandle {
 		// Different behavior for different moves
 		zMove = this.name.equals("topCenter"); // XY-move or Z-move?
 
-		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR(), this::sendNewWorldPosition, zMove, true);
-//		super(12.0, 12.0, Color.WHITE);
-//		setStroke(Color.BLACK);
-//		setStrokeWidth(3);
+		manipulator = new Manipulation(resizeHandleLocation, vector3d, new TransformNR(), this::sendNewWorldPosition,
+				zMove, true);
+		// super(12.0, 12.0, Color.WHITE);
+		// setStroke(Color.BLACK);
+		// setStrokeWidth(3);
 		if (engine == null)
 			throw new NullPointerException();
 
@@ -153,14 +150,17 @@ public class ResizingHandle {
 
 		if (zMove) {
 			// Z-move: fixed XY in local space, varying Z
-			double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(), startingPosition3D.getY());
+			double foundZ = engine.sceneToWorldFixedXY_WP(overlayCoords, startingPosition3D.getX(),
+					startingPosition3D.getY());
 			updateCubeSize();
-			return new Point3D(startingPosition3D.getX(), startingPosition3D.getY(), this.manipulator.snapToGrid(foundZ));
+			return new Point3D(startingPosition3D.getX(), startingPosition3D.getY(),
+					this.manipulator.snapToGrid(foundZ));
 		} else {
 			// XY-move: fixed Z in local space, varying XY
 			Point3D wp3d = engine.sceneToWorldFixedZ_WP(overlayCoords, startingPosition3D.getZ());
 			updateCubeSize();
-			return new Point3D(this.manipulator.snapToGrid(wp3d.getX()), this.manipulator.snapToGrid(wp3d.getY()), wp3d.getZ());
+			return new Point3D(this.manipulator.snapToGrid(wp3d.getX()), this.manipulator.snapToGrid(wp3d.getY()),
+					wp3d.getZ());
 		}
 	}
 
@@ -177,7 +177,7 @@ public class ResizingHandle {
 	}
 
 	private Color currentColor() {
-		Color tmpColor = (myColor != null) ? myColor : new Color(isResizeAllowed()?1:0, moveLock?0:1, 1, 1);
+		Color tmpColor = (myColor != null) ? myColor : new Color(isResizeAllowed() ? 1 : 0, moveLock ? 0 : 1, 1, 1);
 
 		// Make top handle a bit darker to distinguish it from the corner handles
 		if (zMove)
@@ -280,7 +280,7 @@ public class ResizingHandle {
 		double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
 
 		setScale(calculatedScaleFactor);
-		
+
 		BowlerStudio.runLater(() -> {
 			scaleTF.setX(calculatedScaleFactor);
 			scaleTF.setY(calculatedScaleFactor);
@@ -288,14 +288,15 @@ public class ResizingHandle {
 		});
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf, boolean locked) {
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf,
+			boolean locked) {
 
 		updateCubeSize();
-		
+
 		TransformNR cam = new TransformNR(cf.getRotation());
 		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
 		RotationNR rot = wp.inverse().times(cam).getRotation();
-		
+
 		BowlerStudio.runLater(() -> {
 			setVisible(!locked);
 			TransformNR orient = new TransformNR();
@@ -309,7 +310,7 @@ public class ResizingHandle {
 		TransformNR cam = new TransformNR(cf.getRotation());
 		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
 		RotationNR rot = wp.inverse().times(cam).getRotation();
-		
+
 		TransformNR orient = new TransformNR();
 		orient.setRotation(rot);
 		TransformFactory.nrToAffine(orient, cameraOrent);
@@ -389,7 +390,7 @@ public class ResizingHandle {
 	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
 		this.resizeAllowed = resizeAllowed;
 		this.moveLock = moveLock;
-		manipulator.setUnlocked( resizeAllowed) ;
+		manipulator.setUnlocked(resizeAllowed);
 		resetColor();
 	}
 
@@ -398,7 +399,8 @@ public class ResizingHandle {
 	}
 
 	/**
-	 * @param myColor the myColor to set
+	 * @param myColor
+	 *            the myColor to set
 	 */
 	public void setMyColor(Color myColor, Color highlightColor) {
 		this.myColor = myColor;

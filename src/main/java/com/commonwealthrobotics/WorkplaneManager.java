@@ -10,16 +10,12 @@ import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.ColinearPointsException;
-import eu.mihosoft.vrl.v3d.Cube;
-import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
@@ -29,12 +25,9 @@ import eu.mihosoft.vrl.v3d.ext.quickhull3d.HullUtil;
 import javafx.collections.ObservableFloatArray;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
-import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
@@ -46,7 +39,6 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.ObservableFaceArray;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.Translate;
 import javafx.scene.image.WritableImage;
 
 public class WorkplaneManager implements EventHandler<MouseEvent> {
@@ -76,37 +68,31 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
 
 		final float LINE_SPACING = 5.0f;
-		final float EXTENT  = (float) xSizeMM / 2.0f;
-		final int   LINE_COUNT   = (int) (2 * EXTENT / LINE_SPACING) + 1;
-		final float THICKNESS   = 0.1f;
+		final float EXTENT = (float) xSizeMM / 2.0f;
+		final int LINE_COUNT = (int) (2 * EXTENT / LINE_SPACING) + 1;
+		final float THICKNESS = 0.1f;
 
 		TriangleMesh mesh = new TriangleMesh();
-		mesh.getTexCoords().addAll(0,0); // required dummy coords
+		mesh.getTexCoords().addAll(0, 0); // required dummy coords
 
 		for (int i = 0; i < LINE_COUNT; i++) {
 			float x = -EXTENT + i * LINE_SPACING;
 			int base = mesh.getPoints().size() / 3;
-			mesh.getPoints().addAll(
-				x - THICKNESS, -EXTENT, -0.001f,  // 0
-				x + THICKNESS, -EXTENT, -0.001f,  // 1
-				x + THICKNESS,  EXTENT, -0.001f,  // 2
-				x - THICKNESS,  EXTENT, -0.001f); // 3
-			mesh.getFaces().addAll(
-				base,0, base+1,0, base+2,0,
-				base,0, base+2,0, base+3,0);
+			mesh.getPoints().addAll(x - THICKNESS, -EXTENT, -0.001f, // 0
+					x + THICKNESS, -EXTENT, -0.001f, // 1
+					x + THICKNESS, EXTENT, -0.001f, // 2
+					x - THICKNESS, EXTENT, -0.001f); // 3
+			mesh.getFaces().addAll(base, 0, base + 1, 0, base + 2, 0, base, 0, base + 2, 0, base + 3, 0);
 		}
 
 		for (int i = 0; i < LINE_COUNT; i++) {
 			float y = -EXTENT + i * LINE_SPACING;
 			int base = mesh.getPoints().size() / 3;
-			mesh.getPoints().addAll(
-				-EXTENT, y - THICKNESS, -0.001f,  // 0
-				 EXTENT, y - THICKNESS, -0.001f,  // 1
-				 EXTENT, y + THICKNESS, -0.001f,  // 2
-				-EXTENT, y + THICKNESS, -0.001f); // 3
-			mesh.getFaces().addAll(
-				base,0, base+1,0, base+2,0,
-				base,0, base+2,0, base+3,0);
+			mesh.getPoints().addAll(-EXTENT, y - THICKNESS, -0.001f, // 0
+					EXTENT, y - THICKNESS, -0.001f, // 1
+					EXTENT, y + THICKNESS, -0.001f, // 2
+					-EXTENT, y + THICKNESS, -0.001f); // 3
+			mesh.getFaces().addAll(base, 0, base + 1, 0, base + 2, 0, base, 0, base + 2, 0, base + 3, 0);
 		}
 
 		MeshView meshView = new MeshView(mesh);
@@ -121,24 +107,24 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public Group createTexturedWorkplane(double xSizeMM, double ySizeMM) {
 
 		// Build square textured tile in MM
-		final float TILE_SIZE_MM	 = 10.0f;
-		final int TILE_BIG_GRID_PX   = 200;
-		final int TILE_SMALL_GRID_PX =  20;
+		final float TILE_SIZE_MM = 10.0f;
+		final int TILE_BIG_GRID_PX = 200;
+		final int TILE_SMALL_GRID_PX = 20;
 
 		// Build square textured tile in inches
-		//final float TILE_SIZE_MM	   = 25.4f;
-		//final int TILE_BIG_GRID_PX   = 200;
-		//final int TILE_SMALL_GRID_PX =  20; // 1/10th inch
+		// final float TILE_SIZE_MM = 25.4f;
+		// final int TILE_BIG_GRID_PX = 200;
+		// final int TILE_SMALL_GRID_PX = 20; // 1/10th inch
 
 		// Build square textured tile in inches
-		//final float TILE_SIZE_MM	   = 25.4f;
-		//final int TILE_BIG_GRID_PX   = 256;
-		//final int TILE_SMALL_GRID_PX =  16; // 1/16th inch
+		// final float TILE_SIZE_MM = 25.4f;
+		// final int TILE_BIG_GRID_PX = 256;
+		// final int TILE_SMALL_GRID_PX = 16; // 1/16th inch
 
 		// Build square textured tile in half inche
-		//final float TILE_SIZE_MM	   = 12.7f;
-		//final int TILE_BIG_GRID_PX   = 254;
-		//final int TILE_SMALL_GRID_PX = 127;
+		// final float TILE_SIZE_MM = 12.7f;
+		// final int TILE_BIG_GRID_PX = 254;
+		// final int TILE_SMALL_GRID_PX = 127;
 
 		// Upscale work plane texture
 		final int wpUpscale = 4;
@@ -147,52 +133,50 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		int wpNoise = 25;
 
 		// Work plane texture colors
-		int wpColor	 = webColorToArgb(Color.web("#3838A8")); // Higher is lighter color
-		int grid1Color  = webColorToArgb(Color.web("#202060"));
+		int wpColor = webColorToArgb(Color.web("#3838A8")); // Higher is lighter color
+		int grid1Color = webColorToArgb(Color.web("#202060"));
 		int grid10Color = webColorToArgb(Color.web("#0000FF"));
 
-		float workplaneX = (float)xSizeMM;
-		float workplaneY = (float)ySizeMM;
+		float workplaneX = (float) xSizeMM;
+		float workplaneY = (float) ySizeMM;
 
 		final float TILE_HALF_PIXEL_SIZE = TILE_SIZE_MM / (TILE_BIG_GRID_PX * 2);
 
 		// Calculate texture offsets. Note X and Y are swapped in the 3D view
-		float xTextureOffset = (float)((int)(ySizeMM / (TILE_SIZE_MM * 2)) - ySizeMM / (TILE_SIZE_MM * 2));
-		float yTextureOffset = (float)((int)(xSizeMM / (TILE_SIZE_MM * 2)) - xSizeMM / (TILE_SIZE_MM * 2));
+		float xTextureOffset = (float) ((int) (ySizeMM / (TILE_SIZE_MM * 2)) - ySizeMM / (TILE_SIZE_MM * 2));
+		float yTextureOffset = (float) ((int) (xSizeMM / (TILE_SIZE_MM * 2)) - xSizeMM / (TILE_SIZE_MM * 2));
 
 		int[] src = new int[TILE_BIG_GRID_PX * TILE_BIG_GRID_PX];
 
 		// Set work plane background (done when adding noise)
-		//Arrays.fill(src, wpColor);
+		// Arrays.fill(src, wpColor);
 
 		// Add some noise to make the work plane look real
 		Random rnd = new Random();
 		int r = (wpColor >> 16) & 0xFF;
-		int g = (wpColor >>  8) & 0xFF;
-		int b =  wpColor		& 0xFF;
+		int g = (wpColor >> 8) & 0xFF;
+		int b = wpColor & 0xFF;
 		for (int i = 0; i < src.length; i++) {
 			int n = 100 + rnd.nextInt(wpNoise + 1) - (wpNoise / 2);
-			src[i] = 0xFF000000 |
-					 (Math.min(255, (r * n) / 100) << 16) |
-					 (Math.min(255, (g * n) / 100) <<  8) |
-					 (Math.min(255, (b * n) / 100));
+			src[i] = 0xFF000000 | (Math.min(255, (r * n) / 100) << 16) | (Math.min(255, (g * n) / 100) << 8)
+					| (Math.min(255, (b * n) / 100));
 		}
 
 		// Draw small grid, 1 line
 		for (int x1 = 0; x1 < TILE_BIG_GRID_PX; x1 += TILE_SMALL_GRID_PX) {
 			for (int y = 0; y < TILE_BIG_GRID_PX; y++) {
-			src[y * TILE_BIG_GRID_PX + x1] = grid1Color;
-			src[x1 * TILE_BIG_GRID_PX + y] = grid1Color;
+				src[y * TILE_BIG_GRID_PX + x1] = grid1Color;
+				src[x1 * TILE_BIG_GRID_PX + y] = grid1Color;
 			}
 		}
 
 		// Draw big grid, 3 lines
 		int last = TILE_BIG_GRID_PX - 1;
 		for (int i = 0; i < TILE_BIG_GRID_PX; i++) {
-			src[i + TILE_BIG_GRID_PX	] = grid10Color;
+			src[i + TILE_BIG_GRID_PX] = grid10Color;
 			src[i * TILE_BIG_GRID_PX + 1] = grid10Color;
 
-			src[i					] = grid10Color;
+			src[i] = grid10Color;
 			src[i * TILE_BIG_GRID_PX] = grid10Color;
 
 			src[i * TILE_BIG_GRID_PX + last] = grid10Color;
@@ -215,11 +199,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		// Create the work plane material
 		PhongMaterial material = new PhongMaterial();
-// Sharp edges, edges with aliasing
-//		material.setDiffuseMap(tile);
-//		material.setDiffuseColor(new Color(1, 1, 0, 0.33));
-//		material.setSpecularColor(Color.BLACK);
-//		material.setSelfIlluminationMap(tile);
+		// Sharp edges, edges with aliasing
+		// material.setDiffuseMap(tile);
+		// material.setDiffuseColor(new Color(1, 1, 0, 0.33));
+		// material.setSpecularColor(Color.BLACK);
+		// material.setSelfIlluminationMap(tile);
 
 		// Set work plane texture
 		material.setDiffuseMap(tile);
@@ -237,57 +221,54 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		material2.setDiffuseColor(transWhite); // Work plane color
 		material2.setSpecularColor(Color.BLACK); // No shiny spots
 
-		// Create the work plane mesh, draw at slight offset to align pixel to line centre
+		// Create the work plane mesh, draw at slight offset to align pixel to line
+		// centre
 		TriangleMesh topMesh = new TriangleMesh();
-		topMesh.getPoints().setAll(
-		  	-workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-  			 workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-  			 workplaneX / 2 - TILE_HALF_PIXEL_SIZE,  workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-		  	-workplaneX / 2 - TILE_HALF_PIXEL_SIZE,  workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f);
+		topMesh.getPoints().setAll(-workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				workplaneX / 2 - TILE_HALF_PIXEL_SIZE, workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				-workplaneX / 2 - TILE_HALF_PIXEL_SIZE, workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f);
 
 		// Map texture to mesh
-		topMesh.getTexCoords().setAll(
-			xTextureOffset							, yTextureOffset,							// bottom-left
-			xTextureOffset							, yTextureOffset + workplaneX/TILE_SIZE_MM, // top-left
-			xTextureOffset + workplaneY/TILE_SIZE_MM, yTextureOffset + workplaneX/TILE_SIZE_MM, // top-right
-			xTextureOffset + workplaneY/TILE_SIZE_MM, yTextureOffset);							// bottom-right
+		topMesh.getTexCoords().setAll(xTextureOffset, yTextureOffset, // bottom-left
+				xTextureOffset, yTextureOffset + workplaneX / TILE_SIZE_MM, // top-left
+				xTextureOffset + workplaneY / TILE_SIZE_MM, yTextureOffset + workplaneX / TILE_SIZE_MM, // top-right
+				xTextureOffset + workplaneY / TILE_SIZE_MM, yTextureOffset); // bottom-right
 
-		topMesh.getFaces().setAll(0,0, 1,1, 2,2, 0,0, 2,2, 3,3); // Frontside
-//								  0,0, 2,2, 1,1, 0,0, 3,3, 2,2); // Backside
+		topMesh.getFaces().setAll(0, 0, 1, 1, 2, 2, 0, 0, 2, 2, 3, 3); // Frontside
+		// 0,0, 2,2, 1,1, 0,0, 3,3, 2,2); // Backside
 
 		MeshView topView = new MeshView(topMesh);
 		topView.setMaterial(material);
 		topView.setBlendMode(BlendMode.SRC_OVER);
 		topView.setCullFace(CullFace.NONE);
-		//topView.setCache(false); // keeps JavaFX from scaling the image
+		// topView.setCache(false); // keeps JavaFX from scaling the image
 
 		// Create the work plane outline mesh
 		final float OUT = 2.0f; // outwards mm
-		final float IN  = 0.0f; // inwards mm
+		final float IN = 0.0f; // inwards mm
 
 		TriangleMesh outlineMesh = new TriangleMesh();
 		outlineMesh.getPoints().setAll(
-		// inside
-			 IN - workplaneX / 2 - TILE_HALF_PIXEL_SIZE,   IN - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-			-IN + workplaneX / 2 - TILE_HALF_PIXEL_SIZE,   IN - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-			-IN + workplaneX / 2 - TILE_HALF_PIXEL_SIZE,  -IN + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-			 IN - workplaneX / 2 - TILE_HALF_PIXEL_SIZE,  -IN + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-		// outside
-		   -OUT - workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -OUT - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-			OUT + workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -OUT - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-			OUT + workplaneX / 2 - TILE_HALF_PIXEL_SIZE,  OUT + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
-		   -OUT - workplaneX / 2 - TILE_HALF_PIXEL_SIZE,  OUT + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f);
+				// inside
+				IN - workplaneX / 2 - TILE_HALF_PIXEL_SIZE, IN - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				-IN + workplaneX / 2 - TILE_HALF_PIXEL_SIZE, IN - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				-IN + workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -IN + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				IN - workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -IN + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				// outside
+				-OUT - workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -OUT - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				OUT + workplaneX / 2 - TILE_HALF_PIXEL_SIZE, -OUT - workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				OUT + workplaneX / 2 - TILE_HALF_PIXEL_SIZE, OUT + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f,
+				-OUT - workplaneX / 2 - TILE_HALF_PIXEL_SIZE, OUT + workplaneY / 2 - TILE_HALF_PIXEL_SIZE, 0f);
 
-		outlineMesh.getTexCoords().setAll(
-			0,0,  1,0,  1,1,  0,1,   // inside
-			0,0,  1,0,  1,1,  0,1);  // outide
+		outlineMesh.getTexCoords().setAll(0, 0, 1, 0, 1, 1, 0, 1, // inside
+				0, 0, 1, 0, 1, 1, 0, 1); // outide
 
 		// 8 triangles (4 quads)
-		outlineMesh.getFaces().setAll(
-			0,0, 4,4, 5,5,	0,0, 5,5, 1,1,   // bottom
-			1,1, 5,5, 6,6,	1,1, 6,6, 2,2,   // right
-			2,2, 6,6, 7,7,	2,2, 7,7, 3,3,   // top
-			3,3, 7,7, 4,4,	3,3, 4,4, 0,0 ); // left
+		outlineMesh.getFaces().setAll(0, 0, 4, 4, 5, 5, 0, 0, 5, 5, 1, 1, // bottom
+				1, 1, 5, 5, 6, 6, 1, 1, 6, 6, 2, 2, // right
+				2, 2, 6, 6, 7, 7, 2, 2, 7, 7, 3, 3, // top
+				3, 3, 7, 7, 4, 4, 3, 3, 4, 4, 0, 0); // left
 
 		MeshView outlineView = new MeshView(outlineMesh);
 		outlineView.setMaterial(material2);
@@ -302,18 +283,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	private static int webColorToArgb(Color color) {
-		return (int) (color.getOpacity() * 255) << 24 |
-			   (int) (color.getRed()	 * 255) << 16 |
-			   (int) (color.getGreen()	 * 255) <<  8 |
-			   (int) (color.getBlue()	 * 255);
+		return (int) (color.getOpacity() * 255) << 24 | (int) (color.getRed() * 255) << 16
+				| (int) (color.getGreen() * 255) << 8 | (int) (color.getBlue() * 255);
 	}
 
 	private static Color argbToColor(int argb) {
 
-	return Color.color(((argb >> 16) & 0xFF) / 255.0,
-					   ((argb >>  8) & 0xFF) / 255.0,
-					   ( argb		 & 0xFF) / 255.0,
-					   ((argb >> 24) & 0xFF) / 255.0);
+		return Color.color(((argb >> 16) & 0xFF) / 255.0, ((argb >> 8) & 0xFF) / 255.0, (argb & 0xFF) / 255.0,
+				((argb >> 24) & 0xFF) / 255.0);
 	}
 
 	public WorkplaneManager(ActiveProject ap, MeshView ground, BowlerStudio3dEngine engine, SelectionSession session) {
@@ -369,7 +346,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		this.meshes = meshes;
 		meshesReverseLookup = new HashMap<MeshView, CSG>();
 
-		for (CSG c:meshes.keySet())
+		for (CSG c : meshes.keySet())
 			meshesReverseLookup.put(meshes.get(c), c);
 	}
 
@@ -498,32 +475,37 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 					if (source != null) {
 						ArrayList<Polygon> polygons = source.getPolygons();
-						Polygon p =  getPolygonFromFaceIndex(faceIndex,polygons);
+						Polygon p = getPolygonFromFaceIndex(faceIndex, polygons);
 
 						if (p != null) {
 							try {
 								pureRot = TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
 								// an in-plane snapping here by transforming the points
-								// into the plane orentation, then snapping in plane, then transforming the points back.
+								// into the plane orentation, then snapping in plane, then transforming the
+								// points back.
 								TransformNR t = new TransformNR(x, y, z);
-								TransformNR screenLocationtmp = t;//manipulatorNR.times(t);
-								Polygon np = p; //p.transformed(TransformFactory.affineToCSG(manipulator));
+								TransformNR screenLocationtmp = t;// manipulatorNR.times(t);
+								Polygon np = p; // p.transformed(TransformFactory.affineToCSG(manipulator));
 								Transform npTF = PolygonUtil.calculateNormalTransform(np);
 								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
 								Polygon flattened = np.transformed(npTF);
 								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
-								//Log.debug("Polygon " + flattened);
-								//Log.debug("Point " + flattenedTouch.toSimpleString());
+								// Log.debug("Polygon " + flattened);
+								// Log.debug("Point " + flattenedTouch.toSimpleString());
 								TransformNR adjusted = new TransformNR(
-										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),// snap in plane
+										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue), // snap
+																												// in
+																												// plane
 										SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
 										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
-								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to its original orentaation in the plane post snap
+								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to
+																							// its original orentaation
+																							// in the plane post snap
 								x = adjustedBack.getX();
 								y = adjustedBack.getY();
 								z = adjustedBack.getZ();
 
-								//Log.debug("Polygon snapped " + adjusted);
+								// Log.debug("Polygon snapped " + adjusted);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -554,9 +536,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					updater.setWorkplaneLocation(screenLocation);
 
 				screenLocation = ap.get().getWorkplane().times(screenLocation);
-			} else
-				if (updater != null)
-					updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
+			} else if (updater != null)
+				updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
 
 			setCurrentAbsolutePose(screenLocation);
 		}
@@ -593,7 +574,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		ObservableFaceArray faces = mesh.getFaces();
 		ObservableFloatArray points = mesh.getPoints();
 
-		int p1Index = faces.get(faceIndex * 6    ) * 3;
+		int p1Index = faces.get(faceIndex * 6) * 3;
 		int p2Index = faces.get(faceIndex * 6 + 2) * 3;
 		int p3Index = faces.get(faceIndex * 6 + 4) * 3;
 
@@ -602,8 +583,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Point3D p3 = new Point3D(points.get(p3Index), points.get(p3Index + 1), points.get(p3Index + 2));
 
 		try {
-			//Polygon p = Polygon.fromVector3d(Arrays.asList(toV(p1),toV(p2),toV(p3))).get(0);
-			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1),toV(p2),toV(p3)));
+			// Polygon p =
+			// Polygon.fromVector3d(Arrays.asList(toV(p1),toV(p2),toV(p3))).get(0);
+			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1), toV(p2), toV(p3)));
 			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
 
 		} catch (Exception e) {
@@ -649,11 +631,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		double pointerWidth = 2;
 		double pointerHeight = 20;
 
-		CSG indicator = HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(pointerLen, 0, 0),
-			new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight)))
-			.union(HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(0, pointerLen, 0),
-			new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
-			.setColor(Color.YELLOWGREEN);
+		CSG indicator = HullUtil
+				.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(pointerLen, 0, 0),
+						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight)))
+				.union(HullUtil.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(0, pointerLen, 0),
+						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
+				.setColor(Color.YELLOWGREEN);
 
 		this.setIndicator(indicator, new Affine());
 

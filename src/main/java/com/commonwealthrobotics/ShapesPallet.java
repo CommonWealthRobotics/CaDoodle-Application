@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -15,21 +14,16 @@ import org.eclipse.jgit.api.errors.TransportException;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
-import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
-import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
-import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
@@ -49,7 +43,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.file.NoSuchFileException;
 
 public class ShapesPallet {
 	private static final String SEARCH_MODE = "Search Mode";
@@ -155,7 +148,7 @@ public class ShapesPallet {
 						String s = hashMap.get("order");
 						if (s != null) {
 							int index = Integer.parseInt(s);
-							//com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
+							// com.neuronrobotics.sdk.common.Log.error("Adding " + key + " at " + index);
 							while (orderedList.size() <= index)
 								orderedList.add(null);
 							orderedList.set(index, hashMap);
@@ -173,8 +166,8 @@ public class ShapesPallet {
 						HashMap<String, String> key = orderedList.get(i);
 						if (key == null)
 							continue;
-//						com.neuronrobotics.sdk.common.Log
-//								.error("Placing " + names.get(key) + " at " + row + " , " + col);
+						// com.neuronrobotics.sdk.common.Log
+						// .error("Placing " + names.get(key) + " at " + row + " , " + col);
 						try {
 							setupButton(names.get(key), key, col, row, current);
 						} catch (Throwable tx) {
@@ -213,8 +206,8 @@ public class ShapesPallet {
 			toolimage.setFitWidth(300);
 			hover.setGraphic(toolimage);
 			hover.setContentDisplay(ContentDisplay.TOP);
-//			tIv.setFitHeight(50);
-//			tIv.setFitWidth(50);
+			// tIv.setFitHeight(50);
+			// tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {
@@ -247,7 +240,7 @@ public class ShapesPallet {
 											if (sprial != null) {
 												s.setDefSpiral(Double.parseDouble(sprial));
 											}
-											s.set(f,ap.get()).setPreventBoM(true).setLocation(currentAbsolutePose);
+											s.set(f, ap.get()).setPreventBoM(true).setLocation(currentAbsolutePose);
 											setAddFromScript = s;
 										} catch (Exception e) {
 											com.neuronrobotics.sdk.common.Log.error(e);
@@ -261,7 +254,7 @@ public class ShapesPallet {
 											try {
 												File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
 												AddFromFile addFromFile = new AddFromFile();
-												setAddFromScript = addFromFile.set(f,ap.get())
+												setAddFromScript = addFromFile.set(f, ap.get())
 														.setLocation(currentAbsolutePose);
 											} catch (InvalidRemoteException e) {
 												//
@@ -280,16 +273,16 @@ public class ShapesPallet {
 									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
-//
-//									MoveCenter mc = new MoveCenter().setNames(namesBack)
-//											.setLocation(currentAbsolutePose);
-//									ap.addOp(mc).join();
+									//
+									// MoveCenter mc = new MoveCenter().setNames(namesBack)
+									// .setLocation(currentAbsolutePose);
+									// ap.addOp(mc).join();
 									session.selectAll(namesAdded);
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
 										// Don't reset work plane to origin
-//										ap.get().setWorkplane(new TransformNR());
+										// ap.get().setWorkplane(new TransformNR());
 									} else {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
@@ -310,11 +303,11 @@ public class ShapesPallet {
 				session.setKeyBindingFocus();
 			});
 		});
-//		try {
-//			Thread.sleep(30);
-//		} catch (InterruptedException e) {
-//			com.neuronrobotics.sdk.common.Log.error(e);
-//		}
+		// try {
+		// Thread.sleep(30);
+		// } catch (InterruptedException e) {
+		// com.neuronrobotics.sdk.common.Log.error(e);
+		// }
 
 		return button;
 	}
@@ -361,12 +354,12 @@ public class ShapesPallet {
 					if (i > 15)
 						break;
 					HashMap<String, String> hashMap = active.get(name);
-//					String string = hashMap.get("plugin");
-//					if(string!=null) {
-//						boolean b=DownloadManager.isDownloadedAlready(string);
-//						if(!b)
-//							continue;
-//					}
+					// String string = hashMap.get("plugin");
+					// if(string!=null) {
+					// boolean b=DownloadManager.isDownloadedAlready(string);
+					// if(!b)
+					// continue;
+					// }
 					if (buttons.contains(name))
 						continue;
 					buttons.add(name);

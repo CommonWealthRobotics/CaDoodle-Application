@@ -7,10 +7,8 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
-//import com.commonwealthrobotics.rotate.RotationHandle;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrentation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
-import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
@@ -38,8 +36,7 @@ public class MirrorSessionManager {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
 		x = new MirrorHandle(MirrorOrentation.x, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
-		y = new MirrorHandle(MirrorOrentation.y, workplaneOffset, selection, null, ap, controlSprites,
-				workplaneOffset);
+		y = new MirrorHandle(MirrorOrentation.y, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
 		z = new MirrorHandle(MirrorOrentation.z, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
 		handles = Arrays.asList(x, y, z);
 		hide();
@@ -57,7 +54,7 @@ public class MirrorSessionManager {
 		for (MirrorHandle r : handles) {
 			r.hide();
 		}
-		
+
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,

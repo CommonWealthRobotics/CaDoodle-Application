@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
-import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.sdk.addons.kinematics.math.EulerAxis;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;

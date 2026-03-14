@@ -27,45 +27,43 @@ public class RulerManager {
 		this.ap = ap;
 	}
 
-//	public Group getRulerGroup() {
-//		return rulerGroup;
-//	}
+	// public Group getRulerGroup() {
+	// return rulerGroup;
+	// }
 
 	public double getOffset(TextFieldDimension dim) {
-		switch(dim) {
-		default:
-			return 0;
-		case X:
-			return ap.get().getRulerLocation().getX();
-		case Y:
-			return ap.get().getRulerLocation().getY();
-		case Z:
-			return ap.get().getRulerLocation().getZ();
+		switch (dim) {
+			default :
+				return 0;
+			case X :
+				return ap.get().getRulerLocation().getX();
+			case Y :
+				return ap.get().getRulerLocation().getY();
+			case Z :
+				return ap.get().getRulerLocation().getZ();
 		}
 	}
 
-	public void initialize(Group rulerGroup,Affine wpUpstream,Affine ro, Runnable OnCancel) {
+	public void initialize(Group rulerGroup, Affine wpUpstream, Affine ro, Runnable OnCancel) {
 		rulerOffset = ro;
 		wp = wpUpstream;
 		rulerGroup.getChildren().add(cancel);
-		cancel.getTransforms().addAll(wp,ro);
-		BowlerStudio.runLater(()->cancel.setVisible(false));
-		cancel.setOnAction(ev->{
+		cancel.getTransforms().addAll(wp, ro);
+		BowlerStudio.runLater(() -> cancel.setVisible(false));
+		cancel.setOnAction(ev -> {
 			setActive(false);
 			OnCancel.run();
 		});
 		cancel.getTransforms().addAll(buttonLoc);
-		BowlerStudio.runLater(()->TransformFactory.nrToAffine(
-				new TransformNR(-10, -30, 1,RotationNR.getRotationY(180)),
-				buttonLoc));
+		BowlerStudio.runLater(() -> TransformFactory
+				.nrToAffine(new TransformNR(-10, -30, 1, RotationNR.getRotationY(180)), buttonLoc));
 
 		TransformNR rulerLocation = ap.get().getRulerLocation();
-		BowlerStudio.runLater(()->{
-			TransformFactory.nrToAffine(rulerLocation,rulerOffset);
+		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(rulerLocation, rulerOffset);
 		});
-		if ((Math.abs(rulerLocation.getX()) > 0.01) ||
-			(Math.abs(rulerLocation.getY()) > 0.01) ||
-			(Math.abs(rulerLocation.getZ()) > 0.01)) {
+		if ((Math.abs(rulerLocation.getX()) > 0.01) || (Math.abs(rulerLocation.getY()) > 0.01)
+				|| (Math.abs(rulerLocation.getZ()) > 0.01)) {
 			setActive(true);
 		}
 	}
@@ -75,11 +73,11 @@ public class RulerManager {
 			return;
 
 		this.newWP = n.copy();
-//		newWP.setX(0);
-//		newWP.setY(0);
-//		newWP.setZ(0);
+		// newWP.setX(0);
+		// newWP.setY(0);
+		// newWP.setZ(0);
 		if (isActive())
-			BowlerStudio.runLater(()->TransformFactory.nrToAffine(newWP, wp));
+			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(newWP, wp));
 	}
 
 	public boolean isActive() {
@@ -89,13 +87,13 @@ public class RulerManager {
 	public void setActive(boolean active) {
 		this.active = active;
 		if (!active) {
-			BowlerStudio.runLater(()->TransformFactory.nrToAffine(new TransformNR(), wp));
-			BowlerStudio.runLater(()->TransformFactory.nrToAffine(new TransformNR(), rulerOffset));
+			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), wp));
+			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), rulerOffset));
 			ap.get().setRulerLocation(new TransformNR());
 		} else
 			setWP(newWP);
 
-		BowlerStudio.runLater(()->cancel.setVisible(active));
+		BowlerStudio.runLater(() -> cancel.setVisible(active));
 	}
 
 	public void startPick(Runnable onFinish) {
@@ -103,18 +101,18 @@ public class RulerManager {
 		CSG csg = new Cylinder(0, 5, 10, 20).toCSG();
 		CSG csg2 = new Cylinder(2, 2, 10, 20).toCSG().movez(10);
 		workplane.setIndicator(csg.union(csg2), new Affine());
-		workplane.setUpdater(tf->{
+		workplane.setUpdater(tf -> {
 			TransformNR tmp = tf.copy();
 			tmp.setRotation(new RotationNR());
 			TransformFactory.nrToAffine(tmp, rulerOffset);
 		});
-		workplane.onCancel(()->{
+		workplane.onCancel(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Canceling active ruler pick session");
 			cancel();
 			onFinish.run();
 		});
 
-		workplane.setOnSelectEvent(()->{
+		workplane.setOnSelectEvent(() -> {
 			if (workplane.isClicked()) {
 				com.neuronrobotics.sdk.common.Log.debug("Placing ruler");
 				ap.get().setRulerLocation(TransformFactory.affineToNr(rulerOffset));

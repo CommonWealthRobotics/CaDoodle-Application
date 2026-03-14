@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 
 public class DottedLine extends Group {
@@ -26,8 +25,8 @@ public class DottedLine extends Group {
 	private Affine workplaneOffset;
 	private Scale scale = new Scale(1, 1, 1);
 	public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset, Color dotColor) {
-		this(dotRadius,  dotSpacing,  workplaneOffset);
-		this.dotColor=dotColor;
+		this(dotRadius, dotSpacing, workplaneOffset);
+		this.dotColor = dotColor;
 	}
 	public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset) {
 		this.dotRadius = dotRadius;
@@ -40,7 +39,7 @@ public class DottedLine extends Group {
 		endY.addListener((obs, oldVal, newVal) -> updateLine());
 		endZ.addListener((obs, oldVal, newVal) -> updateLine());
 	}
-	
+
 	public void setScale(double d) {
 		scale.setX(d);
 		scale.setY(d);

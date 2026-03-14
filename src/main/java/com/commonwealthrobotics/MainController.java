@@ -7,7 +7,6 @@ package com.commonwealthrobotics;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -31,7 +30,6 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.FreecadLoader;
 import com.neuronrobotics.bowlerstudio.scripting.GroovyHelper;
 import com.neuronrobotics.bowlerstudio.scripting.OpenSCADLoader;
-import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.StlLoader;
 import com.neuronrobotics.bowlerstudio.scripting.SvgLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
@@ -47,7 +45,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
-import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Debug3dProvider;
@@ -233,7 +230,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="mirronButton"
 	private Button mirronButton; // Value injected by FXMLLoader
 
-
 	@FXML // fx:id="notesButton"
 	private Button notesButton; // Value injected by FXMLLoader
 
@@ -246,8 +242,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private VBox parametrics;
 
-//	@FXML // fx:id="physicsButton"
-//	private Button physicsButton; // Value injected by FXMLLoader
+	// @FXML // fx:id="physicsButton"
+	// private Button physicsButton; // Value injected by FXMLLoader
 
 	@FXML // fx:id="redoButton"
 	private Button redoButton; // Value injected by FXMLLoader
@@ -414,7 +410,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onRedo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Redo");
 		session.getExecutor().submit(() -> {
-			ap.get().forward();	
+			ap.get().forward();
 		});
 		session.setKeyBindingFocus();
 	}
@@ -550,7 +546,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		session.getExecutor().submit( () -> {
+		session.getExecutor().submit(() -> {
 			TransformNR scale = session.getFocusCenter();
 
 			engine.focusOrientation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
@@ -559,7 +555,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setKeyBindingFocus();
 	}
 
-//onXorOperation
+	// onXorOperation
 	@FXML
 	void onXorOperation(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Xor");
@@ -731,23 +727,23 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setKeyBindingFocus();
 	}
 
-//	@FXML
-//	void onModeling(ActionEvent event) {
-//		com.neuronrobotics.sdk.common.Log.error("Select Modeling View");
-//		session.setKeyBindingFocus();
-//	}
+	// @FXML
+	// void onModeling(ActionEvent event) {
+	// com.neuronrobotics.sdk.common.Log.error("Select Modeling View");
+	// session.setKeyBindingFocus();
+	// }
 
 	@FXML
 	void onNotesClick(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.error("On Notes");
 		session.setKeyBindingFocus();
 	}
-//
-//	@FXML
-//	void onPhysics(ActionEvent event) {
-//		com.neuronrobotics.sdk.common.Log.error("On Physics Mode Selected");
-//		session.setKeyBindingFocus();
-//	}
+	//
+	// @FXML
+	// void onPhysics(ActionEvent event) {
+	// com.neuronrobotics.sdk.common.Log.error("On Physics Mode Selected");
+	// session.setKeyBindingFocus();
+	// }
 
 	@FXML
 	void onRuler(ActionEvent event) {
@@ -854,7 +850,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				: "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert copyButton != null : "fx:id=\"copyButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert cruiseButton != null : "fx:id=\"cruiseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert cruiseButton != null
+				: "fx:id=\"cruiseButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert deleteButton != null
 				: "fx:id=\"deleteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert drawerArea != null : "fx:id=\"drawerArea\" was not injected: check your FXML file 'MainWindow.fxml'.";
@@ -885,8 +882,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert objectPallet != null
 				: "fx:id=\"objectPallet\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert pasteButton != null : "fx:id=\"pasteButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
-//		assert physicsButton != null
-//				: "fx:id=\"physicsButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		// assert physicsButton != null
+		// : "fx:id=\"physicsButton\" was not injected: check your FXML file
+		// 'MainWindow.fxml'.";
 		assert redoButton != null : "fx:id=\"redoButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert rulerButton != null : "fx:id=\"rulerButton\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert settingsButton != null
@@ -926,12 +924,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 			engine = new BowlerStudio3dEngine("CAD window");
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
-				
+
 				@Override
 				public void clearScreen() {
 					engine.clearUserNode();
 				}
-				
+
 				@Override
 				public void addObject(Object o) {
 					engine.addObject(o, ap.get().getSelf());
@@ -1049,10 +1047,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			String name = "";
 			if (intermediateShape != null)
 				name = intermediateShape.getName();
-			String x = name + " " + type.trim() + " " + String.format(Locale.US, "%.1f", percent) + "% finished : " + i + " of "
-					+ finalIndex;
+			String x = name + " " + type.trim() + " " + String.format(Locale.US, "%.1f", percent) + "% finished : " + i
+					+ " of " + finalIndex;
 			if (SplashManager.isVisibleSplash()) {
-				//com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: " + x);
+				// com.neuronrobotics.sdk.common.Log.debug("MainController.setupCSGEngine():: "
+				// + x);
 				int s = x.indexOf(' ');
 				SplashManager.onLogUpdate(x.substring(s, x.length()));
 			}
@@ -1305,9 +1304,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				showAllButton.setDisable(true);
 			});
 		}
-//		if (this.source != source) {
-//			session.save();
-//		}
+		// if (this.source != source) {
+		// session.save();
+		// }
 		this.source = source;
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
@@ -1350,10 +1349,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			// com.neuronrobotics.sdk.common.Log.debug("Releses MainController");
 		});
 
-//		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
-//			if (event.isPrimaryButtonDown())
-//				sb.activate(event);
-//		});
+		// engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
+		// if (event.isPrimaryButtonDown())
+		// sb.activate(event);
+		// });
 
 		session.setKeyBindingFocus();
 		SubScene subScene = engine.getSubScene();
@@ -1364,30 +1363,31 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 
-			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN) || (event.getCode() == KeyCode.LEFT)
-					|| (event.getCode() == KeyCode.RIGHT) || (event.getCode() == KeyCode.TAB)) {
+			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN)
+					|| (event.getCode() == KeyCode.LEFT) || (event.getCode() == KeyCode.RIGHT)
+					|| (event.getCode() == KeyCode.TAB)) {
 				double dist = 1;
 				if (event.isShiftDown())
 					dist = 3;
 				switch (event.getCode()) {
-				case UP:
-					if (event.isControlDown()) {
-						session.moveInCameraFrame(new TransformNR(0, 0, dist));
-					} else
-						session.moveInCameraFrame(new TransformNR(dist, 0, 0));
-					break;
-				case DOWN:
-					if (event.isControlDown()) {
-						session.moveInCameraFrame(new TransformNR(0, 0, -dist));
-					} else
-						session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
-					break;
-				case LEFT:
-					session.moveInCameraFrame(new TransformNR(0, dist, 0));
-					break;
-				case RIGHT:
-					session.moveInCameraFrame(new TransformNR(0, -dist, 0));
-					break;
+					case UP :
+						if (event.isControlDown()) {
+							session.moveInCameraFrame(new TransformNR(0, 0, dist));
+						} else
+							session.moveInCameraFrame(new TransformNR(dist, 0, 0));
+						break;
+					case DOWN :
+						if (event.isControlDown()) {
+							session.moveInCameraFrame(new TransformNR(0, 0, -dist));
+						} else
+							session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
+						break;
+					case LEFT :
+						session.moveInCameraFrame(new TransformNR(0, dist, 0));
+						break;
+					case RIGHT :
+						session.moveInCameraFrame(new TransformNR(0, -dist, 0));
+						break;
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());
 				// Consume the event to prevent default focus traversal
@@ -1412,113 +1412,114 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (event.isControlDown() || (OsUtils.isOSX() ? event.isMetaDown() : event.isControlDown())) {
 				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
 				switch ((int) character.charAt(0)) {
-				case 90:
-				case 122:
-				case 26:
-					com.neuronrobotics.sdk.common.Log.error("Undo");
-					workplane.cancel();
-					ap.get().back();
-					break;
-				case 121:
-				case 25:
-					com.neuronrobotics.sdk.common.Log.error("Redo");
-					ap.get().forward();
-					break;
-				case 103:
-				case 7:
-					onGroup(null);
-					break;
-				case 71:
-					if (event.isShiftDown()) {
-						com.neuronrobotics.sdk.common.Log.error("Un-Group");
-						session.onUngroup();
-					}
-					break;
-				case 1:
-					com.neuronrobotics.sdk.common.Log.error("Select All");
-					session.selectAll();
-					break;
-				case 3:
-					session.setCopyListToCurrentSelected();
-					break;
-				case 22:
-					session.onPaste();
-					break;
-				case 4:
-					session.Duplicate();
-					break;
-				case 8:
-					session.onHideShowOperation();
-					break;
-				case 72:
-					session.showAll();
-					break;
-				case 12:
-					session.lockToggle();
-					break;
-				default:
-					if (!character.isEmpty()) {
-						char rawChar = character.charAt(0);
-						com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
-					} else {
-						com.neuronrobotics.sdk.common.Log
-								.error("No character data available (probably a non-character key)");
-					}
-					break;
+					case 90 :
+					case 122 :
+					case 26 :
+						com.neuronrobotics.sdk.common.Log.error("Undo");
+						workplane.cancel();
+						ap.get().back();
+						break;
+					case 121 :
+					case 25 :
+						com.neuronrobotics.sdk.common.Log.error("Redo");
+						ap.get().forward();
+						break;
+					case 103 :
+					case 7 :
+						onGroup(null);
+						break;
+					case 71 :
+						if (event.isShiftDown()) {
+							com.neuronrobotics.sdk.common.Log.error("Un-Group");
+							session.onUngroup();
+						}
+						break;
+					case 1 :
+						com.neuronrobotics.sdk.common.Log.error("Select All");
+						session.selectAll();
+						break;
+					case 3 :
+						session.setCopyListToCurrentSelected();
+						break;
+					case 22 :
+						session.onPaste();
+						break;
+					case 4 :
+						session.Duplicate();
+						break;
+					case 8 :
+						session.onHideShowOperation();
+						break;
+					case 72 :
+						session.showAll();
+						break;
+					case 12 :
+						session.lockToggle();
+						break;
+					default :
+						if (!character.isEmpty()) {
+							char rawChar = character.charAt(0);
+							com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
+						} else {
+							com.neuronrobotics.sdk.common.Log
+									.error("No character data available (probably a non-character key)");
+						}
+						break;
 				}
 			} else {
 				switch ((int) character.charAt(0)) {
-				case 119:// w
-					onWorkplane(null);
-					break;
-				case 45:// -
-					onZoomOut(null);
-					break;
-				case 43:// +
-					onZoomIn(null);
-					break;
-				case 102:// f
-					onFitView(null);
-					break;
-				case 104:// h
-					session.setToHole();
-					break;
-				case 115:
-					session.setToSolid();
-					break;
-				case 100:// d
-					session.onDrop();
-					break;
-				case 101:// e
-				case 69:// E
-					com.neuronrobotics.sdk.common.Log.error("Call Object WP toggle");
-					session.objectWorkplane();
-					break;
-				case 108:// l
-					session.onAlign();
-					break;
-				case 99:// c
-					session.onCruise();
-					break;
-				case 27:// escape
-					workplane.cancel();
-					break;
-				case 116:// t
-				case 84:
-					session.toggleTransparent();
-					break;
-				case 109:// m
-					session.onMirror();
-					break;
-				default:
-					if (!character.isEmpty()) {
-						char rawChar = character.charAt(0);
-						com.neuronrobotics.sdk.common.Log.error("Raw char value: " + (int) rawChar + " : " + character);
-					} else {
-						com.neuronrobotics.sdk.common.Log
-								.error("No character data available (probably a non-character key)");
-					}
-					break;
+					case 119 :// w
+						onWorkplane(null);
+						break;
+					case 45 :// -
+						onZoomOut(null);
+						break;
+					case 43 :// +
+						onZoomIn(null);
+						break;
+					case 102 :// f
+						onFitView(null);
+						break;
+					case 104 :// h
+						session.setToHole();
+						break;
+					case 115 :
+						session.setToSolid();
+						break;
+					case 100 :// d
+						session.onDrop();
+						break;
+					case 101 :// e
+					case 69 :// E
+						com.neuronrobotics.sdk.common.Log.error("Call Object WP toggle");
+						session.objectWorkplane();
+						break;
+					case 108 :// l
+						session.onAlign();
+						break;
+					case 99 :// c
+						session.onCruise();
+						break;
+					case 27 :// escape
+						workplane.cancel();
+						break;
+					case 116 :// t
+					case 84 :
+						session.toggleTransparent();
+						break;
+					case 109 :// m
+						session.onMirror();
+						break;
+					default :
+						if (!character.isEmpty()) {
+							char rawChar = character.charAt(0);
+							com.neuronrobotics.sdk.common.Log
+									.error("Raw char value: " + (int) rawChar + " : " + character);
+						} else {
+							com.neuronrobotics.sdk.common.Log
+									.error("No character data available (probably a non-character key)");
+						}
+						break;
 				}
 			}
 		});
@@ -1561,11 +1562,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double az = camera.getPanAngle();
 		double el = camera.getTiltAngle();
 		// com.neuronrobotics.sdk.common.Log.error("Elevation "+el);
-//		if (el < -90 || el > 90) {
-//			ground.setVisible(false);
-//		} else {
-//			ground.setVisible(true);
-//		}
+		// if (el < -90 || el > 90) {
+		// ground.setVisible(false);
+		// } else {
+		// ground.setVisible(true);
+		// }
 		double x = camera.getGlobalX();
 		double y = camera.getGlobalY();
 		double z = camera.getGlobalZ();

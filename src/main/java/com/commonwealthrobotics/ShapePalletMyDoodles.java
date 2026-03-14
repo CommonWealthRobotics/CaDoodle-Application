@@ -1,33 +1,21 @@
 package com.commonwealthrobotics;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
-import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -105,17 +93,17 @@ public class ShapePalletMyDoodles {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 
-		CSGDatabaseInstance instance =caDoodleFile.getCsgDBinstance();
+		CSGDatabaseInstance instance = caDoodleFile.getCsgDBinstance();
 		if (!caDoodleFile.getSTLThumbnailFile().exists()) {
-//			Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
-//			CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
-//			caDoodleFile.initialize();
-//			caDoodleFile.save();
-//			CSGDatabase.setInstance(instance);
-//			if (!caDoodleFile.getSTLThumbnailFile().exists())
-				throw new Exception("Failed to initialize model " + caDoodleFile.getMyProjectName());
+			// Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
+			// CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
+			// caDoodleFile.initialize();
+			// caDoodleFile.save();
+			// CSGDatabase.setInstance(instance);
+			// if (!caDoodleFile.getSTLThumbnailFile().exists())
+			throw new Exception("Failed to initialize model " + caDoodleFile.getMyProjectName());
 		}
-		CSG indicator = Vitamins.get(instance,caDoodleFile.getSTLThumbnailFile());
+		CSG indicator = Vitamins.get(instance, caDoodleFile.getSTLThumbnailFile());
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = caDoodleFile.loadImageFromFile();
@@ -126,8 +114,8 @@ public class ShapePalletMyDoodles {
 			toolimage.setFitWidth(300);
 			hover.setGraphic(toolimage);
 			hover.setContentDisplay(ContentDisplay.TOP);
-//			tIv.setFitHeight(50);
-//			tIv.setFitWidth(50);
+			// tIv.setFitHeight(50);
+			// tIv.setFitWidth(50);
 			button.setGraphic(tIv);
 			button.setDisable(true);
 			button.setOnMousePressed(ev -> {
@@ -154,8 +142,8 @@ public class ShapePalletMyDoodles {
 										return;
 									if (workplane.isClickOnGround()) {
 										// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
-										// Don't reset work plane to origin 
-//										ap.get().setWorkplane(new TransformNR());
+										// Don't reset work plane to origin
+										// ap.get().setWorkplane(new TransformNR());
 									} else {
 										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
 									}
