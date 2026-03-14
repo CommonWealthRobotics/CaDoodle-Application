@@ -161,7 +161,7 @@ public class RotationHandle {
 				// if (Math.abs(currentAngle) > 0.001) {
 				// arc.setVisible(true);
 				// flagSaveChange = true;
-				//} else
+				// } else
 				// flagSaveChange = false;
 				flagSaveChange = (Math.abs(currentAngle) > 0.001);
 
@@ -279,7 +279,7 @@ public class RotationHandle {
 		RotationNR axisOrent = new RotationNR();
 		switch (axis) {
 
-			case azimuth:
+			case azimuth :
 				rA = totx;
 				rB = toty;
 				pinLocx = center.x;
@@ -289,7 +289,7 @@ public class RotationHandle {
 
 				break;
 
-			case elevation:
+			case elevation :
 				rA = totx;
 				rB = totz;
 				pinLocx = center.x;
@@ -299,7 +299,7 @@ public class RotationHandle {
 
 				break;
 
-			case tilt:
+			case tilt :
 				rA = totz;
 				rB = toty;
 				pinLocx = (az > 0 && az < 180) ? min.x : max.x;

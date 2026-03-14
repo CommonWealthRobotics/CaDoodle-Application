@@ -23,13 +23,13 @@ public class RotationSessionManager {
 	private boolean moveLock = true;
 
 	public RotationSessionManager(Affine selection, ActiveProject ap, SelectionSession controlSprites,
-			Affine workplaneOffset, RulerManager ruler,IOnRotateDone done) {
+			Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
 
 		this.selection = selection;
 		this.controlSprites = controlSprites;
 
 		RotationHandle az = new RotationHandle(EulerAxis.azimuth, selection, getViewRotation(), this, ap,
-			controlSprites,	workplaneOffset,ruler, done);
+			controlSprites,	workplaneOffset, ruler, done);
 
 		RotationHandle el = new RotationHandle(EulerAxis.elevation, selection, getViewRotation(), this, ap,
 			controlSprites,	workplaneOffset, ruler, done);
