@@ -276,7 +276,7 @@ public class RotationHandle {
 		// Quadrant q = Quadrant.getQuad(-az);
 		rotationStarted = false;
 		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
-		RotationNR axisOrent = new RotationNR();
+		RotationNR axisOrient = new RotationNR();
 		switch (axis) {
 
 			case azimuth :
@@ -295,7 +295,7 @@ public class RotationHandle {
 				pinLocx = center.x;
 				pinLocy = (az < 90 && az > -90) ? min.y : max.y;
 				pinLocz = center.z;
-				axisOrent = new RotationNR(-90, 0, 0);
+				axisOrient = new RotationNR(-90, 0, 0);
 
 				break;
 
@@ -305,7 +305,7 @@ public class RotationHandle {
 				pinLocx = (az > 0 && az < 180) ? min.x : max.x;
 				pinLocy = center.y;
 				pinLocz = center.z;
-				axisOrent = new RotationNR(-90, 90, 0);
+				axisOrient = new RotationNR(-90, 90, 0);
 
 				break;
 		}
@@ -314,7 +314,7 @@ public class RotationHandle {
 
 		double radius = circleDiameter / 2;
 
-		TransformNR pureRot = new TransformNR(axisOrent);
+		TransformNR pureRot = new TransformNR(axisOrient);
 		TransformNR t = new TransformNR(pinLocx, pinLocy, pinLocz);
 		TransformNR input = t;
 

@@ -480,11 +480,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 						if (p != null) {
 							try {
 								pureRot = TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
-								// an in-plane snapping here by transforming the points
-								// into the plane orentation, then snapping in plane, then transforming the
-								// points back.
+								// an in-plane snapping here by transforming the points into the plane
+								// orientation, then snapping in plane, then transforming the points back.
 								TransformNR t = new TransformNR(x, y, z);
-								TransformNR screenLocationtmp = t;// manipulatorNR.times(t);
+								TransformNR screenLocationtmp = t; // manipulatorNR.times(t);
 								Polygon np = p; // p.transformed(TransformFactory.affineToCSG(manipulator));
 								Transform npTF = PolygonUtil.calculateNormalTransform(np);
 								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
@@ -492,15 +491,12 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
 								// Log.debug("Polygon " + flattened);
 								// Log.debug("Point " + flattenedTouch.toSimpleString());
-								TransformNR adjusted = new TransformNR(
-										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue), // snap
-																												// in
-																												// plane
+								TransformNR adjusted = new TransformNR( // Snap in plane
+										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),
 										SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
-										flattened.getPoints().get(0).z);// adhere to the plane of the polygon
-								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);// flip the point back to
-																							// its original orentaation
-																							// in the plane post snap
+										flattened.getPoints().get(0).z); // adhere to the plane of the polygon
+								// flip the point back to its original orientation in the plane post snap
+								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
 								x = adjustedBack.getX();
 								y = adjustedBack.getY();
 								z = adjustedBack.getZ();

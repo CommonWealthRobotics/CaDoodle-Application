@@ -13,7 +13,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Mirror;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrentation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrientation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -32,7 +32,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
 public class MirrorHandle implements ICaDoodleStateUpdate {
-	private MirrorOrentation ax;
+	private MirrorOrientation ax;
 	private Affine translate;
 	private Affine vr;
 	private MirrorSessionManager rotationSessionManager;
@@ -66,10 +66,10 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	private HashMap<CSG, MeshView> visualizers = new HashMap<>();
 	private Scale scaleTF = new Scale();
 	private Affine location = new Affine();
-	private Affine cameraOrent = new Affine();
+	private Affine cameraOrient = new Affine();
 	private double scale;
 	private Mirror op;
-	public MirrorHandle(MirrorOrentation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
+	public MirrorHandle(MirrorOrientation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
 			ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
 		this.ax = ax;
 		this.translate = translate;
@@ -93,7 +93,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		entered = event -> {
 			material.setDiffuseColor(new Color(1, 0, 0, 1));
 			// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
-			// orentation);
+			// orientation);
 			for (CSG key : visualizers.keySet()) {
 				visualizers.get(key).setVisible(true);
 			}
@@ -107,7 +107,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		// mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
-		mesh.getTransforms().add(cameraOrent);
+		mesh.getTransforms().add(cameraOrient);
 		mesh.getTransforms().add(scaleTF);
 		mesh.setVisible(false);
 	}
@@ -167,17 +167,17 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		double rx = 0;
 		double ry = 0;
 		double rz = 0;
-		if (ax == MirrorOrentation.x) {
+		if (ax == MirrorOrientation.x) {
 			rx = 0;
 			ry = -90;
 			rz = 90;
 		}
-		if (ax == MirrorOrentation.y) {
+		if (ax == MirrorOrientation.y) {
 			rx = 0;
 			ry = 90;
 			rz = 0;
 		}
-		if (ax == MirrorOrentation.z) {
+		if (ax == MirrorOrientation.z) {
 			rx = -90;
 			ry = 0;
 			rz = 0;
@@ -209,7 +209,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pureRot, cameraOrent);
+			TransformFactory.nrToAffine(pureRot, cameraOrient);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 		if (op != null)

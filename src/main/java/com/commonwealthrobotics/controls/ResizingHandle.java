@@ -37,7 +37,7 @@ public class ResizingHandle {
 	private MeshView meshview;
 
 	private Affine location = new Affine();
-	private Affine cameraOrent = new Affine();
+	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
 	private Affine resizeHandleLocation = new Affine();
 	private Affine baseMove;
@@ -111,12 +111,12 @@ public class ResizingHandle {
 
 		});
 
-		meshview.getTransforms().add(move);
-		meshview.getTransforms().add(resizeHandleLocation);
-		meshview.getTransforms().add(workplaneOffset);
-		meshview.getTransforms().add(location);
-		meshview.getTransforms().add(cameraOrent);
-		meshview.getTransforms().add(scaleTF);
+		mesh.getTransforms().add(move);
+		mesh.getTransforms().add(resizeHandleLocation);
+		mesh.getTransforms().add(workplaneOffset);
+		mesh.getTransforms().add(location);
+		mesh.getTransforms().add(cameraOrient);
+		mesh.getTransforms().add(scaleTF);
 		// Tooltip.install(mesh, hover);
 		meshview.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
@@ -125,7 +125,7 @@ public class ResizingHandle {
 	public Point3D getAbsolutePosition() {
 		Affine combined = new Affine();
 		combined.prepend(scaleTF);
-		combined.prepend(cameraOrent);
+		combined.prepend(cameraOrient);
 		combined.prepend(location);
 		combined.prepend(workplaneOffset);
 		combined.prepend(resizeHandleLocation);
@@ -301,7 +301,7 @@ public class ResizingHandle {
 			setVisible(!locked);
 			TransformNR orient = new TransformNR();
 			orient.setRotation(rot);
-			TransformFactory.nrToAffine(orient, cameraOrent);
+			TransformFactory.nrToAffine(orient, cameraOrient);
 			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
 		});
 	}
@@ -313,7 +313,7 @@ public class ResizingHandle {
 
 		TransformNR orient = new TransformNR();
 		orient.setRotation(rot);
-		TransformFactory.nrToAffine(orient, cameraOrent);
+		TransformFactory.nrToAffine(orient, cameraOrient);
 	}
 
 	public void hide() {
