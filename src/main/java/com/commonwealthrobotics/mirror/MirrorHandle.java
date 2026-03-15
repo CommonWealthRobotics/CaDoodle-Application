@@ -66,7 +66,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	private HashMap<CSG, MeshView> visualizers = new HashMap<>();
 	private Scale scaleTF = new Scale();
 	private Affine location = new Affine();
-	private Affine cameraOrent = new Affine();
+	private Affine cameraOrient = new Affine();
 	private double scale;
 	private Mirror op;
 	public MirrorHandle(MirrorOrientation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
@@ -93,7 +93,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		entered = event -> {
 			material.setDiffuseColor(new Color(1, 0, 0, 1));
 			// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
-			// orentation);
+			// orientation);
 			for (CSG key : visualizers.keySet()) {
 				visualizers.get(key).setVisible(true);
 			}
@@ -107,7 +107,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		// mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
-		mesh.getTransforms().add(cameraOrent);
+		mesh.getTransforms().add(cameraOrient);
 		mesh.getTransforms().add(scaleTF);
 		mesh.setVisible(false);
 	}
@@ -209,7 +209,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 			scaleTF.setX(getScale());
 			scaleTF.setY(getScale());
 			scaleTF.setZ(getScale());
-			TransformFactory.nrToAffine(pureRot, cameraOrent);
+			TransformFactory.nrToAffine(pureRot, cameraOrient);
 			TransformFactory.nrToAffine(target.setRotation(new RotationNR()), location);
 		});
 		if (op != null)

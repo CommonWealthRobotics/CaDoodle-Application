@@ -35,9 +35,12 @@ public class MirrorSessionManager {
 			Affine workplaneOffset) {
 		this.selection = selection;
 		this.controlSprites = controlSprites;
-		x = new MirrorHandle(MirrorOrientation.x, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
-		y = new MirrorHandle(MirrorOrientation.y, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
-		z = new MirrorHandle(MirrorOrientation.z, workplaneOffset, selection, null, ap, controlSprites, workplaneOffset);
+		x = new MirrorHandle(MirrorOrientation.x, workplaneOffset, selection, null, ap, controlSprites,
+				workplaneOffset);
+		y = new MirrorHandle(MirrorOrientation.y, workplaneOffset, selection, null, ap, controlSprites,
+				workplaneOffset);
+		z = new MirrorHandle(MirrorOrientation.z, workplaneOffset, selection, null, ap, controlSprites,
+				workplaneOffset);
 		handles = Arrays.asList(x, y, z);
 		hide();
 	}
