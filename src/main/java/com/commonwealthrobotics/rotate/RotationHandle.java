@@ -10,6 +10,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.commonwealthrobotics.numbers.ThreedNumber;
+
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 //import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
@@ -19,6 +20,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.Vector3d;
+
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,10 +32,15 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
 
 public class RotationHandle {
+
+	// Black arrow arc
+	private static final Image rotateImage = new Image(MainController.class.getResourceAsStream("rotate.png"));
+	// Orange arrow arc
 	private static final Image selectedImage = new Image(
 			MainController.class.getResourceAsStream("rotateSelected.png"));
+	// Orange arc circle image
 	private static final Image fullcircleImage = new Image(MainController.class.getResourceAsStream("fullCircle.png"));
-	private static final Image rotateImage = new Image(MainController.class.getResourceAsStream("rotate.png"));
+
 	private EulerAxis axis;
 	ImageView handle = new ImageView();
 	ImageView controlCircle = new ImageView();
@@ -44,7 +51,7 @@ public class RotationHandle {
 
 	private boolean rotationStarted = false;
 	private double StartAngle = 0;
-	private double current = 0;
+	private double currentAngle = 0;
 	private Bounds bounds;
 	Arc arc = new Arc();
 	private double az;
@@ -86,8 +93,11 @@ public class RotationHandle {
 		// TDnumber.getTextField();
 		TDnumber.hide();
 		handle.setImage(rotateImage);
+		handle.setVisible(false);
+
 		controlCircle.setImage(fullcircleImage);
 		controlCircle.setVisible(false);
+
 		handle.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
 			if (!moveLock)
 				controlCircle.setVisible(true);
@@ -95,6 +105,7 @@ public class RotationHandle {
 			handle.setImage(selectedImage);
 			com.neuronrobotics.sdk.common.Log.info("Entered " + axis);
 		});
+
 		handle.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
 			handle.setImage(rotateImage);
 			if (!rotationStarted)
@@ -118,12 +129,15 @@ public class RotationHandle {
 			TDnumber.show();
 			ev.consume();
 		};
+
 		handle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
 		controlCircle.setPickOnBounds(true);
+
 		EventHandler<? super MouseEvent> released = event -> {
 			if (!flagSaveChange)
 				return;
+
 			runSaveAndReset();
 		};
 
@@ -136,35 +150,41 @@ public class RotationHandle {
 					TDnumber.mouseTransparent(true);
 				}
 
-				current = StartAngle - getAngle(event);
-				while (current > 180)
-					current -= 360;
-				while (current < -180)
-					current += 360;
-				// com.neuronrobotics.sdk.common.Log.error("Angle Is "+current);
-				if (Math.abs(current) > 0.001) {
-					arc.setVisible(true);
-					flagSaveChange = true;
-				} else
-					flagSaveChange = false;
+				currentAngle = StartAngle - getAngle(event);
+				while (currentAngle < -180)
+					currentAngle += 360;
+
+				while (currentAngle > 180)
+					currentAngle -= 360;
+
+				// com.neuronrobotics.sdk.common.Log.error("Angle Is " + currentAngle);
+				// if (Math.abs(currentAngle) > 0.001) {
+				// arc.setVisible(true);
+				// flagSaveChange = true;
+				// } else
+				// flagSaveChange = false;
+				flagSaveChange = (Math.abs(currentAngle) > 0.001);
+
 				// Calculate the sweep angle
 				double sweepAngle = -getAngle(event) + StartAngle;
-				if (sweepAngle < -180) {
+				if (sweepAngle < -180)
 					sweepAngle += 360;
-				}
-				if (sweepAngle > 180) {
+
+				if (sweepAngle > 180)
 					sweepAngle -= 360;
-				}
+
 				if (axis == EulerAxis.tilt)
 					sweepAngle = -sweepAngle;
+
 				// Update the Arc properties
 				arc.setStartAngle(0);
 				arc.setLength(sweepAngle);
 				TDnumber.setValue(sweepAngle);
 
-				setSweepAngle(current);
+				setSweepAngle(currentAngle);
 			}
 		};
+
 		handle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
 		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
@@ -182,13 +202,12 @@ public class RotationHandle {
 		arc.setVisible(false);
 		selected = false;
 		TransformNR toUpdate = rotAtCenter.copy();
-		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(new TransformNR(), viewRotation);
-		});
 
-		if (!moveLock) {
+		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), viewRotation));
+
+		if (!moveLock)
 			done.toUpdate(toUpdate);
-		}
+
 	}
 
 	private void setSweepAngle(double c) {
@@ -199,49 +218,52 @@ public class RotationHandle {
 		// divide the angle in 2 and aply it twice avaoids Euler singularities
 		TransformNR update = new TransformNR(new RotationNR(axis, -c / 2));
 		TransformNR pureRot = update.times(update);
-		if (moving != null) {
+		if (moving != null)
 			moving.toUpdate(pureRot);
-		}
+
 		TransformNR wp = ap.get().getWorkplane();
 		TransformNR center = wp
 				.times(new TransformNR(bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z));
 		rotAtCenter = center.times(pureRot.times(center.inverse()));
-		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(rotAtCenter, viewRotation);
-		});
+		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(rotAtCenter, viewRotation));;
 
 	}
 
 	private double getAngle(MouseEvent event) {
+
 		PickResult result = event.getPickResult();
-		// com.neuronrobotics.sdk.common.Log.error("Draggin on circle");
-		// com.neuronrobotics.sdk.common.Log.error(result);
+
 		double h = controlCircle.getFitHeight();
 		double w = controlCircle.getFitWidth();
+
 		double x = result.getIntersectedPoint().getX();
 		double y = result.getIntersectedPoint().getY();
+
 		double unitX = (x / h - 0.5) * 2;
 		double unitY = (y / w - 0.5) * 2;
-		double unitVect = Math.sqrt(Math.pow(unitX, 2) + Math.pow(unitY, 2));
 
+		double unitVect = Math.sqrt(Math.pow(unitX, 2) + Math.pow(unitY, 2));
 		double angle = Math.toDegrees(Math.atan2(unitY, unitX));
-		if (unitVect < 0.85) {
-			angle = 22.5 * Math.round(angle / 22.5);
-		}
-		// com.neuronrobotics.sdk.common.Log.error("Unit Location "+angle);
+
+		if (unitVect < 0.85)
+			angle = 22.5 * Math.round(angle / 22.5); // Snap to 22.5
+
+		// com.neuronrobotics.sdk.common.Log.error("Unit Location " + angle);
 		if (axis == EulerAxis.tilt)
 			angle = -angle;
+
 		return angle;
 
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
+
 		this.bounds = b;
 		Vector3d center = bounds.getCenter();
 		Vector3d min = bounds.getMin();
 		Vector3d max = bounds.getMax();
-		double numberOffset = 20;
+		// double numberOffset = 20;
 
 		this.az = az;
 		// this.selectedCSG = selectedCSG;
@@ -251,20 +273,22 @@ public class RotationHandle {
 		double rA = 1, rB = 1;
 		double pinLocx = 0, pinLocy = 0, pinLocz = 0;
 		TransformNR positionPin = new TransformNR();
-		Quadrant q = Quadrant.getQuad(-az);
+		// Quadrant q = Quadrant.getQuad(-az);
 		rotationStarted = false;
 		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
 		RotationNR axisOrient = new RotationNR();
 		switch (axis) {
+
 			case azimuth :
 				rA = totx;
 				rB = toty;
 				pinLocx = center.x;
 				pinLocy = center.y;
 				pinLocz = min.z;
-				axisOrient = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(q) + 180);
+				axisOrent = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(Quadrant.getQuad(-az)) + 180);
 
 				break;
+
 			case elevation :
 				rA = totx;
 				rB = totz;
@@ -274,6 +298,7 @@ public class RotationHandle {
 				axisOrient = new RotationNR(-90, 0, 0);
 
 				break;
+
 			case tilt :
 				rA = totz;
 				rB = toty;
@@ -304,6 +329,7 @@ public class RotationHandle {
 		TransformNR axisAngle = pureRot;
 		if (axis == EulerAxis.azimuth)
 			axisAngle = new TransformNR();
+
 		TransformNR input4 = axisAngle.times(new TransformNR(0, 0, 0));
 
 		TransformNR input2 = pureRot.times(new TransformNR(-circleDiameter / 2, -circleDiameter / 2, 0));
@@ -314,6 +340,7 @@ public class RotationHandle {
 
 		positionPin = input3.times(input.times(new TransformNR(0, 0, 0)));
 		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf);
+
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);
 			TransformFactory.nrToAffine(input3, handlePlanarOffset);
