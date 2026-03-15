@@ -111,13 +111,13 @@ public class ResizingHandle {
 
 		});
 
-		mesh.getTransforms().add(move);
-		mesh.getTransforms().add(resizeHandleLocation);
-		mesh.getTransforms().add(workplaneOffset);
-		mesh.getTransforms().add(location);
-		mesh.getTransforms().add(cameraOrient);
-		mesh.getTransforms().add(scaleTF);
-		// Tooltip.install(mesh, hover);
+		meshview.getTransforms().add(move);
+		meshview.getTransforms().add(resizeHandleLocation);
+		meshview.getTransforms().add(workplaneOffset);
+		meshview.getTransforms().add(location);
+		meshview.getTransforms().add(cameraOrient);
+		meshview.getTransforms().add(scaleTF);
+		// Tooltip.install(meshview, hover);
 		meshview.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}

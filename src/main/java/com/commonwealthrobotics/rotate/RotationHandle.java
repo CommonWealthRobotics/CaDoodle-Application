@@ -285,7 +285,7 @@ public class RotationHandle {
 				pinLocx = center.x;
 				pinLocy = center.y;
 				pinLocz = min.z;
-				axisOrent = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(Quadrant.getQuad(-az)) + 180);
+				axisOrient = RotationNR.getRotationZ(Quadrant.QuadrantToAngle(Quadrant.getQuad(-az)) + 180);
 
 				break;
 
