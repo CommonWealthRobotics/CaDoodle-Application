@@ -23,8 +23,8 @@ plugins {
 }
 spotless {
 	java {
-		// Eclipse formatter with your config file
-        eclipse()  // Uses Eclipse's built-in default profile — no XML needed!		
+		lineEndings = com.diffplug.spotless.LineEnding.UNIX
+        eclipse('4.26')	
 		// Optional but recommended additions:
 		removeUnusedImports()
 		trimTrailingWhitespace()
