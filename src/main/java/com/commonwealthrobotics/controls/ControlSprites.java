@@ -251,9 +251,6 @@ public class ControlSprites {
 				() -> updateLinesAndCubes(), // onSelect
 				() -> scaleSession.resetSelected()); // onReset
 
-		// Keep arrow in front of other controls
-		upArrow.getMesh().setViewOrder(-10);
-
 		lines = Arrays.asList(frontLine, backLine, leftLine, rightLine, heightLine);
 		for (DottedLine l : lines) {
 			l.getTransforms().add(selection);
@@ -442,6 +439,7 @@ public class ControlSprites {
 		// TickToc.tic("rot update");
 		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
 		updateLinesAndCubes();
+
 		if (session.isLocked() || session.isInOperationMode()) {
 			upArrow.hide();
 			rotationManager.hide();
@@ -484,8 +482,10 @@ public class ControlSprites {
 	}
 
 	private void initialize() {
+
+		// Initialize as hidden to prevent visual glitches
 		for (Node r : allElems)
-			r.setVisible(true);
+			r.setVisible(false);
 
 		rotationManager.initialize(session.moveLock());
 		mirror.hide();
@@ -499,6 +499,7 @@ public class ControlSprites {
 	}
 
 	public boolean isFocused() {
+
 		for (ThreedNumber t : numbers)
 			if (t.isFocused())
 				return true;
@@ -515,6 +516,10 @@ public class ControlSprites {
 			Vector3d min = bounds.getMin();
 			Vector3d max = bounds.getMax();
 
+			// Don't draw anything for zero size objects
+			if ((max.x - min.x) < 0.0001)
+				return;
+
 			// Set footprint of shape
 			footprint.setHeight(Math.abs(max.y - min.y));
 			footprint.setWidth(Math.abs(max.x - min.x));
@@ -530,6 +535,7 @@ public class ControlSprites {
 			double linesZ = 0;
 			if (min.z > 0) // Object is above the work plane
 				linesZ = min.z;
+
 			if (max.z < 0) // Object is below the work plane
 				linesZ = max.z;
 
@@ -540,6 +546,7 @@ public class ControlSprites {
 			frontLine.setEndY(max.y);
 			frontLine.setStartZ(linesZ);
 			frontLine.setEndZ(linesZ);
+			frontLine.setVisible(true);
 
 			backLine.setStartX(min.x);
 			backLine.setStartY(min.y);
@@ -547,6 +554,7 @@ public class ControlSprites {
 			backLine.setEndY(max.y);
 			backLine.setStartZ(linesZ);
 			backLine.setEndZ(linesZ);
+			backLine.setVisible(true);
 
 			leftLine.setStartX(min.x);
 			leftLine.setStartY(max.y);
@@ -554,6 +562,7 @@ public class ControlSprites {
 			leftLine.setEndY(max.y);
 			leftLine.setStartZ(linesZ);
 			leftLine.setEndZ(linesZ);
+			leftLine.setVisible(true);
 
 			rightLine.setStartX(min.x);
 			rightLine.setStartY(min.y);
@@ -561,6 +570,7 @@ public class ControlSprites {
 			rightLine.setEndY(min.y);
 			rightLine.setStartZ(linesZ);
 			rightLine.setEndZ(linesZ);
+			rightLine.setVisible(true);
 
 			// Draw Z-handle dotted line
 			heightLine.setStartX(center.x);
@@ -569,6 +579,7 @@ public class ControlSprites {
 			heightLine.setEndY(center.y);
 			heightLine.setEndX(center.x);
 			heightLine.setEndZ(max.z);
+			heightLine.setVisible(true);
 
 			// Distance between handle and label
 			double numberOffset = -zoom / 50;
@@ -706,6 +717,7 @@ public class ControlSprites {
 	}
 
 	public void clearSelection() {
+
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(false);
@@ -736,6 +748,7 @@ public class ControlSprites {
 		// }
 		// new Exception("Mode Set to " + mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
+
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default);
 
@@ -816,7 +829,7 @@ public class ControlSprites {
 					break;
 			}
 
-			if (mode != SpriteDisplayMode.Clear)
+			if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
 				updateLines();
 		});
 	}
@@ -833,7 +846,7 @@ public class ControlSprites {
 		return session;
 	}
 
-	public void hideRotationHandles(boolean hide) {
+	public void hideRotationHandles() {
 		BowlerStudio.runLater(() -> rotationManager.hide());
 	}
 

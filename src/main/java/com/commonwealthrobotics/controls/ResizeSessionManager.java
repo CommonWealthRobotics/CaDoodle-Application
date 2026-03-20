@@ -134,9 +134,9 @@ public class ResizeSessionManager {
 			if ((beingUpdated != rightFront) || (originalBounds == null))
 				return;
 
-			controlSprites.hideRotationHandles(true);
-
+			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
+
 			// Uniform scaling with shift key
 			if ((ev != null) && ev.isShiftDown()) {
 
@@ -219,7 +219,7 @@ public class ResizeSessionManager {
 			if ((beingUpdated != rightRear) || (originalBounds == null))
 				return;
 
-			controlSprites.hideRotationHandles(true);
+			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
 
 			if ((ev != null) && ev.isShiftDown()) {
@@ -300,7 +300,7 @@ public class ResizeSessionManager {
 			if ((beingUpdated != leftFront) || (originalBounds == null))
 				return;
 
-			controlSprites.hideRotationHandles(true);
+			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
 
 			if ((ev != null) && ev.isShiftDown()) {
@@ -382,7 +382,7 @@ public class ResizeSessionManager {
 			if ((beingUpdated != leftRear) || (originalBounds == null))
 				return;
 
-			controlSprites.hideRotationHandles(true);
+			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
 
 			if ((ev != null) && ev.isShiftDown()) {
@@ -458,7 +458,7 @@ public class ResizeSessionManager {
 			if ((beingUpdated != topCenter) || (originalBounds == null))
 				return;
 
-			controlSprites.hideRotationHandles(true);
+			controlSprites.hideRotationHandles();
 
 			if ((ev != null) && (ev.isShiftDown())) {
 
@@ -711,11 +711,13 @@ public class ResizeSessionManager {
 	}
 
 	public Bounds getBounds() {
+
 		TransformNR lr = rightRear.getCurrentInReferenceFrame();
 		TransformNR rf = leftFront.getCurrentInReferenceFrame();
 		TransformNR tc = topCenter.getCurrentInReferenceFrame();
 		Vector3d min = new Vector3d(lr.getX(), lr.getY(), objectBottomZ);
 		Vector3d max = new Vector3d(rf.getX(), rf.getY(), tc.getZ());
+
 		return new Bounds(min, max);
 	}
 

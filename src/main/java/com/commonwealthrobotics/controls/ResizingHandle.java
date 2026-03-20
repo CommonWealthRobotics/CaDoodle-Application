@@ -34,7 +34,7 @@ public class ResizingHandle {
 
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
-	private MeshView mesh;
+	private MeshView meshview;
 
 	private Affine location = new Affine();
 	private Affine cameraOrient = new Affine();
@@ -83,22 +83,22 @@ public class ResizingHandle {
 		overlay = engine.getOverlayPane();
 		camera = engine.getFlyingCamera().getCamera();
 
-		mesh = shape.getMesh();
+		meshview = shape.getMesh();
 		material = new PhongMaterial();
 		resetColor();
-		mesh.setCullFace(CullFace.BACK);
+		meshview.setCullFace(CullFace.BACK);
 		// material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-		mesh.setMaterial(material);
-		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
+		meshview.setMaterial(material);
+		meshview.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
 			if (!selected)
 				resetColor();
 		});
 
-		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
+		meshview.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
 			setSelectedColor();
 		});
 
-		mesh.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+		meshview.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			com.neuronrobotics.sdk.common.Log.debug("Corner selected");
 			onReset.run();
 			selected = true;
@@ -111,14 +111,14 @@ public class ResizingHandle {
 
 		});
 
-		mesh.getTransforms().add(move);
-		mesh.getTransforms().add(resizeHandleLocation);
-		mesh.getTransforms().add(workplaneOffset);
-		mesh.getTransforms().add(location);
-		mesh.getTransforms().add(cameraOrient);
-		mesh.getTransforms().add(scaleTF);
-		// Tooltip.install(mesh, hover);
-		mesh.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
+		meshview.getTransforms().add(move);
+		meshview.getTransforms().add(resizeHandleLocation);
+		meshview.getTransforms().add(workplaneOffset);
+		meshview.getTransforms().add(location);
+		meshview.getTransforms().add(cameraOrient);
+		meshview.getTransforms().add(scaleTF);
+		// Tooltip.install(meshview, hover);
+		meshview.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
 
@@ -325,7 +325,7 @@ public class ResizingHandle {
 	}
 
 	public void setVisible(boolean b) {
-		mesh.setVisible(b);
+		meshview.setVisible(b);
 	}
 
 	public static double getSize() {
@@ -341,11 +341,11 @@ public class ResizingHandle {
 	}
 
 	public MeshView getMesh() {
-		return mesh;
+		return meshview;
 	}
 
 	public void setMesh(MeshView mesh) {
-		this.mesh = mesh;
+		this.meshview = meshview;
 	}
 
 	public void setBaseScale(double baseScale) {

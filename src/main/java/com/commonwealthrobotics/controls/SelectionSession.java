@@ -1462,7 +1462,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 
 					workplane.setIndicator(indicator, gemoAffine);
+
 					workplane.setOnSelectEvent(() -> {
+
 						for (CSG c : selectedCSG) {
 							MeshView meshView = getMeshes().get(c);
 
@@ -1470,6 +1472,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								BowlerKernel.runLater(() -> meshView.setVisible(true));
 
 						}
+
 						if (workplane.isClicked()) {
 							TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
 							try {
@@ -1480,6 +1483,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							}
 						}
 					});
+
 					workplane.setCurrentAbsolutePose(copy.inverse());
 					workplane.activate();
 				}
