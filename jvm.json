@@ -22,6 +22,8 @@
 		"type":"tar.gz",
 		"name":"zulu21.48.17-ca-fx-jre21.0.10-linux_aarch64",
 		"jvmargs":[
+			"-Dprism.order=es2",
+			"-Dprism.verbose=true", 
 			"-Dprism.forceGPU=true",
 			"-XX:MaxRAMPercentage=95",
 			"--add-exports javafx.graphics/com.sun.javafx.css=ALL-UNNAMED",
