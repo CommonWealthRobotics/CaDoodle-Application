@@ -1614,7 +1614,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				groups.setIntersect(intersect);
 				try {
 					ap.addOp(groups).join();
-					List<CSG> got = ap.get().getCurrentState();
+					List<CSG> got = getSelectedCSG(groups.getNamesAddedInThisOperation());
 					getSelected().clear();
 					getSelected().addAll(got);
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
