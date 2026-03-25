@@ -1616,9 +1616,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					ap.addOp(groups).join();
 					List<String> namesAddedInThisOperation = groups.getNamesAddedInThisOperation();
 					List<CSG> got = new ArrayList<CSG>();
-					for(CSG c: ap.get().getCurrentState()) {
-						for(String s:namesAddedInThisOperation) {
-							if(c.getName().contentEquals(s))
+					for (CSG c : ap.get().getCurrentState()) {
+						for (String s : namesAddedInThisOperation) {
+							if (c.getName().contentEquals(s))
 								got.add(c);
 						}
 					}
@@ -2273,7 +2273,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param updateRobotLab the updateRobotLab to set
+	 * @param updateRobotLab
+	 *            the updateRobotLab to set
 	 */
 	public void setUpdateRobotLab(Runnable updateRobotLab) {
 		this.updateRobotLab = updateRobotLab;
@@ -2287,7 +2288,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param controls the controls to set
+	 * @param controls
+	 *            the controls to set
 	 */
 	public void setControls(ControlSprites controls) {
 		this.controls = controls;
@@ -2301,7 +2303,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param limbs the limbs to set
+	 * @param limbs
+	 *            the limbs to set
 	 */
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;
