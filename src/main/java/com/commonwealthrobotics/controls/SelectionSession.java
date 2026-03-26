@@ -1747,7 +1747,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// getControls().initializeAlign(selectedCSG, b, getMeshes());
 			List<String> selectedSnapshot = selectedSnapshot();
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
-			getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes());
+			getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(),inWorkplaneBounds);
 		});
 
 	}
@@ -2091,7 +2091,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 				// TickToc.tic("bounds made");
 				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
-						sellectedBounds);
+						sellectedBounds,inWorkplaneBounds);
 				// TickToc.toc();
 				// TickToc.setEnabled(false);
 			});

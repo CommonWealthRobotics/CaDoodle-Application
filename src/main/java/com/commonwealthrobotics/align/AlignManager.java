@@ -70,19 +70,19 @@ public class AlignManager {
 		for (AlignRadioSet r : AS_LIST)
 			r.clear();
 	}
-	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c) {
+	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c, HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = z;
 		this.b = bo;
 		this.cf = c;
-		updateHandles();
+		updateHandles(inWorkplaneBounds);
 
 	}
 
-	private void updateHandles() {
+	private void updateHandles(HashMap<CSG, Bounds> inWorkplaneBounds) {
 		if (operation != null)
-			b = operation.getBounds(ap.get().getCurrentState());
+			b = operation.getBounds(ap.get().getCurrentState(),inWorkplaneBounds);
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
@@ -101,7 +101,7 @@ public class AlignManager {
 	}
 
 	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
-			HashMap<CSG, MeshView> meshes) {
+			HashMap<CSG, MeshView> meshes,HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
 			BowlerStudio.runLater(() -> n.setVisible(true));;
@@ -125,7 +125,7 @@ public class AlignManager {
 					return;
 				operation.setBounds(Arrays.asList(c.getName()));
 				recompute(null);
-				updateHandles();
+				updateHandles(inWorkplaneBounds);
 			};
 			mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
 			events.put(c, eventFilter);

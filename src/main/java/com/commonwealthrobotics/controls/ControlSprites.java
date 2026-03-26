@@ -406,7 +406,7 @@ public class ControlSprites {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b) {
+			double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds) {
 
 		this.b = b;
 		if (!selectionLive) {
@@ -437,7 +437,7 @@ public class ControlSprites {
 		// TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		// TickToc.tic("rot update");
-		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b);
+		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,inWorkplaneBounds);
 		updateLinesAndCubes();
 
 		if (session.isLocked() || session.isInOperationMode()) {
@@ -460,15 +460,15 @@ public class ControlSprites {
 	}
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
-			double y, double z, List<String> selectedCSG, Bounds b) {
+			double y, double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds) {
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		// TickToc.tic("aligned update");
-		align.threeDTarget(screenW, screenH, zoom, b, cf);
+		align.threeDTarget(screenW, screenH, zoom, b, cf,inWorkplaneBounds);
 	}
 
-	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshView> meshes) {
-		align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes);
+	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshView> meshes,HashMap<CSG, Bounds> inWorkplaneBounds) {
+		align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes,inWorkplaneBounds);
 
 	}
 
