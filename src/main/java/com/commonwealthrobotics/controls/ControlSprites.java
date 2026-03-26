@@ -136,7 +136,7 @@ public class ControlSprites {
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
-			ActiveProject ap, RulerManager ruler,HashMap<CSG, Bounds> cache) {
+			ActiveProject ap, RulerManager ruler, HashMap<CSG, Bounds> cache) {
 
 		this.session = session;
 		this.ruler = ruler;
@@ -274,7 +274,7 @@ public class ControlSprites {
 
 		allElems.addAll(tmp);
 
-		setUpOperationManagers(session, ap, ruler,cache);
+		setUpOperationManagers(session, ap, ruler, cache);
 		allElems.addAll(align.getElements());
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
@@ -350,7 +350,8 @@ public class ControlSprites {
 		});
 	}
 
-	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler,HashMap<CSG, Bounds> cache) {
+	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler,
+			HashMap<CSG, Bounds> cache) {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			try {
 				ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(), ap.get()));
@@ -359,7 +360,7 @@ public class ControlSprites {
 			}
 		});
 
-		align = new AlignManager(session, selection, workplaneOffset, ap,cache);
+		align = new AlignManager(session, selection, workplaneOffset, ap, cache);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
@@ -437,7 +438,7 @@ public class ControlSprites {
 		// TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		// TickToc.tic("rot update");
-		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b,inWorkplaneBounds);
+		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, inWorkplaneBounds);
 		updateLinesAndCubes();
 
 		if (session.isLocked() || session.isInOperationMode()) {
@@ -464,11 +465,12 @@ public class ControlSprites {
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		// TickToc.tic("aligned update");
-		align.threeDTarget(screenW, screenH, zoom, b, cf,inWorkplaneBounds);
+		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds);
 	}
 
-	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshView> meshes,HashMap<CSG, Bounds> inWorkplaneBounds) {
-		align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes,inWorkplaneBounds);
+	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshView> meshes,
+			HashMap<CSG, Bounds> inWorkplaneBounds) {
+		align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes, inWorkplaneBounds);
 
 	}
 

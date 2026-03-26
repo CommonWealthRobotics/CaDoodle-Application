@@ -108,8 +108,7 @@ public class AlignManager {
 			HashMap<CSG, MeshView> meshes, HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
-			BowlerStudio.runLater(() -> n.setVisible(true));
-			;
+			BowlerStudio.runLater(() -> n.setVisible(true));;
 		}
 		this.toAlign.clear();
 		for (CSG c : ta)
