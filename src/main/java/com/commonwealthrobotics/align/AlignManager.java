@@ -52,6 +52,7 @@ public class AlignManager {
 			r.setOnClickCallback(() -> {
 
 				setAlignemntSelected(true);
+				session.clearBoundsCache();
 				recompute(() -> {
 					CaDoodleOperation curOp = session.getCurrentOperation();
 					if (curOp != operation && operation != null)
