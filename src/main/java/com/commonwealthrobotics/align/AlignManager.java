@@ -40,7 +40,8 @@ public class AlignManager {
 	private Bounds b;
 	private ActiveProject ap;
 
-	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset, ActiveProject ap) {
+	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset, ActiveProject ap,
+			HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.session = session;
 		this.ap = ap;
 		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0), ap);
@@ -60,17 +61,20 @@ public class AlignManager {
 					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked " + operation);
 					List<String> names = operation.getNamesAddedInThisOperation();
 					session.selectAll(names);
-				});
+				}, inWorkplaneBounds);
 
 			});
 		}
 		hide();
 	}
-	public void clear() {
+
+	public void clear(HashMap<CSG, Bounds> cache) {
 		for (AlignRadioSet r : AS_LIST)
-			r.clear();
+			r.clear(cache);
 	}
-	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c, HashMap<CSG, Bounds> inWorkplaneBounds) {
+
+	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c,
+			HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = z;
@@ -82,7 +86,7 @@ public class AlignManager {
 
 	private void updateHandles(HashMap<CSG, Bounds> inWorkplaneBounds) {
 		if (operation != null)
-			b = operation.getBounds(ap.get().getCurrentState(),inWorkplaneBounds);
+			b = operation.getBounds(ap.get().getCurrentState(), inWorkplaneBounds);
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
@@ -101,15 +105,16 @@ public class AlignManager {
 	}
 
 	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
-			HashMap<CSG, MeshView> meshes,HashMap<CSG, Bounds> inWorkplaneBounds) {
+			HashMap<CSG, MeshView> meshes, HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
-			BowlerStudio.runLater(() -> n.setVisible(true));;
+			BowlerStudio.runLater(() -> n.setVisible(true));
+			;
 		}
 		this.toAlign.clear();
 		for (CSG c : ta)
 			this.toAlign.add(c);
-		operation = new Align().setNames(selected).setWorkplane(session.getWorkplane());
+		operation = new Align().setNames(selected).setWorkplane(session.getWorkplane()).setCache(inWorkplaneBounds);
 		operation.setBounds(boundNames);
 
 		com.neuronrobotics.sdk.common.Log.error("Align manager reinitialized");
@@ -117,14 +122,14 @@ public class AlignManager {
 		for (AlignRadioSet r : AS_LIST) {
 			r.initialize(operation, engine, toAlign, selected);
 		}
-		recompute(null);
+		recompute(null, inWorkplaneBounds);
 		for (CSG c : toAlign) {
 			MeshView mv = meshes.get(c);
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if (operation == null)
 					return;
 				operation.setBounds(Arrays.asList(c.getName()));
-				recompute(null);
+				recompute(null, inWorkplaneBounds);
 				updateHandles(inWorkplaneBounds);
 			};
 			mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
@@ -132,10 +137,10 @@ public class AlignManager {
 		}
 	}
 
-	private void recompute(Runnable r) {
+	private void recompute(Runnable r, HashMap<CSG, Bounds> cache) {
 		new Thread(() -> {
 			for (AlignRadioSet rs : AS_LIST) {
-				rs.recomputeOps();
+				rs.recomputeOps(cache);
 			}
 			if (r != null)
 				r.run();

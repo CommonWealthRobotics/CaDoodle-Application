@@ -2,6 +2,7 @@ package com.commonwealthrobotics.align;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
@@ -65,14 +66,14 @@ public class AlignRadioSet {
 			});
 		}
 	}
-	public void recomputeOps() {
+	public void recomputeOps(HashMap<CSG, Bounds> cache) {
 		for (AlignHandle ah : asList) {
-			ah.recomputeOps();
+			ah.recomputeOps(cache);
 		}
 	}
-	public void clear() {
+	public void clear(HashMap<CSG, Bounds> cache) {
 		for (AlignHandle ah : asList) {
-			ah.clear();
+			ah.clear(cache);
 		}
 	}
 }

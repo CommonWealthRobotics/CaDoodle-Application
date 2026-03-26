@@ -1046,7 +1046,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearAlignObjectCache() {
-		getControls().clearAlign();
+		getControls().clearAlign(inWorkplaneBounds);
 	}
 
 	private void setupSnapGrid() {
@@ -2128,7 +2128,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setActiveProject(ActiveProject ap) {
 		if (this.ap == null) {
-			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler));
+			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler,inWorkplaneBounds));
 			getControls().setSnapGrid(snapGridValue);
 		}
 		this.ap = ap;

@@ -298,7 +298,7 @@ public class AlignHandle {
 		material.setDiffuseColor(Color.BLACK);
 	}
 
-	public void recomputeOps() {
+	public void recomputeOps(HashMap<CSG, Bounds> cache) {
 		if (visualizationObjects != null) {
 			for (CSG c : visualizationObjects)
 				engine.removeUserNode(visualizers.get(c));
@@ -312,6 +312,7 @@ public class AlignHandle {
 		operation = tmp;
 		setMyOperation();
 		tmp.setCaDoodleFile(ap.get());
+		tmp.setCache(cache);
 		visualizationObjects = tmp.process(toAlign);
 		for (int i = 0; i < visualizationObjects.size(); i++) {
 			CSG indicator = visualizationObjects.get(i);
@@ -337,7 +338,7 @@ public class AlignHandle {
 		operation = prev;
 	}
 
-	public void clear() {
-		recomputeOps();
+	public void clear(HashMap<CSG, Bounds> cache) {
+		recomputeOps(cache);
 	}
 }
