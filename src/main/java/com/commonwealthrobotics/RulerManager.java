@@ -22,6 +22,9 @@ public class RulerManager {
 	private ActiveProject ap;
 	private Affine rulerOffset;
 	private WorkplaneManager workplane;
+	private CSG csg = new Cylinder(0, 5, 10, 20).toCSG();
+	private CSG csg2 = new Cylinder(2, 2, 10, 20).toCSG().movez(10);
+	private CSG union = csg.union(csg2);
 
 	public RulerManager(ActiveProject ap) {
 		this.ap = ap;
@@ -51,7 +54,7 @@ public class RulerManager {
 		cancel.getTransforms().addAll(wp, ro);
 		BowlerStudio.runLater(() -> cancel.setVisible(false));
 		cancel.setOnAction(ev -> {
-			setActive(false);
+			disableRulerMode();
 			OnCancel.run();
 		});
 		cancel.getTransforms().addAll(buttonLoc);
@@ -85,8 +88,10 @@ public class RulerManager {
 	}
 
 	public void setActive(boolean active) {
+		com.neuronrobotics.sdk.common.Log.debug("Setting ruler active to: " + active);
 		this.active = active;
 		if (!active) {
+			// com.neuronrobotics.sdk.common.Log.error(new Exception("Clear ruler"));
 			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), wp));
 			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), rulerOffset));
 			ap.get().setRulerLocation(new TransformNR());
@@ -98,9 +103,8 @@ public class RulerManager {
 
 	public void startPick(Runnable onFinish) {
 		com.neuronrobotics.sdk.common.Log.debug("Start Pick for Ruler");
-		CSG csg = new Cylinder(0, 5, 10, 20).toCSG();
-		CSG csg2 = new Cylinder(2, 2, 10, 20).toCSG().movez(10);
-		workplane.setIndicator(csg.union(csg2), new Affine());
+
+		workplane.setIndicator(union, new Affine());
 		workplane.setUpdater(tf -> {
 			TransformNR tmp = tf.copy();
 			tmp.setRotation(new RotationNR());
@@ -108,16 +112,16 @@ public class RulerManager {
 		});
 		workplane.onCancel(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Canceling active ruler pick session");
-			cancel();
 			onFinish.run();
 		});
 
 		workplane.setOnSelectEvent(() -> {
 			if (workplane.isClicked()) {
-				com.neuronrobotics.sdk.common.Log.debug("Placing ruler");
-				ap.get().setRulerLocation(TransformFactory.affineToNr(rulerOffset));
+				TransformNR affineToNr = TransformFactory.affineToNr(rulerOffset);
+				com.neuronrobotics.sdk.common.Log.debug("Placing ruler " + affineToNr);
+				ap.get().setRulerLocation(affineToNr);
 			} else
-				cancel();
+				disableRulerMode();
 
 			onFinish.run();
 		});
@@ -130,8 +134,11 @@ public class RulerManager {
 		this.workplane = workplane;
 	}
 
-	public void cancel() {
+	public void disableRulerMode() {
 		setActive(false);
+	}
+	public void cancelRulerPick() {
+		workplane.cancel();
 	}
 
 }
