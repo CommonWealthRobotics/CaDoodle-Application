@@ -127,6 +127,7 @@ public class SettingsManager implements ICSGClientEvent {
 			com.neuronrobotics.sdk.common.Log.debug("Starting test");
 		}).start();
 	}
+
 	@FXML
 	void onPinVersion(ActionEvent event) {
 		Log.debug("onPinVersion");

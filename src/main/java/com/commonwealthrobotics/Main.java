@@ -390,6 +390,7 @@ public class Main extends Application {
 		CSG.setUseGPU(false);
 		launch();
 	}
+
 	public static void saveOptionalProjects(HashSet<String> state) {
 		ArrayList<String> l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions",
 				new ArrayList<String>());
@@ -398,6 +399,7 @@ public class Main extends Application {
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleExternalOptions", l);
 		ConfigurationDatabase.save();
 	}
+
 	public static HashSet<String> getOptionalProjects() {
 		ArrayList<String> l = (ArrayList<String>) ConfigurationDatabase.get("CaDoodle", "CaDoodleExternalOptions",
 				new ArrayList<String>());

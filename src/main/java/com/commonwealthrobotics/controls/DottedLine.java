@@ -28,6 +28,7 @@ public class DottedLine extends Group {
 		this(dotRadius, dotSpacing, workplaneOffset);
 		this.dotColor = dotColor;
 	}
+
 	public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset) {
 		this.dotRadius = dotRadius;
 		this.dotSpacing = dotSpacing;

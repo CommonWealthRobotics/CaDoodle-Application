@@ -24,7 +24,7 @@ plugins {
 spotless {
 	java {
 		lineEndings = com.diffplug.spotless.LineEnding.UNIX
-        eclipse('4.26')	
+		eclipse('4.26').configFile('BowlerStudio/libraries/bowler-script-kernel/config/eclipse-formatter.xml')		// Optional but recommended additions:
 		// Optional but recommended additions:
 		removeUnusedImports()
 		trimTrailingWhitespace()
@@ -235,7 +235,7 @@ if (project == rootProject) {
 }
 
 jar {
-	dependsOn 'spotlessCheck'
+	dependsOn 'spotlessApply'
 	jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	manifest {
 		attributes 'Implementation-Title': 'CaDoodle-Application',

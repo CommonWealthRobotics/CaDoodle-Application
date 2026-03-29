@@ -87,6 +87,7 @@ public class ExportManager {
 		String slug = NONLATIN.matcher(normalized).replaceAll("");
 		return slug.toLowerCase(Locale.ENGLISH);
 	}
+
 	@FXML
 	void fstl(ActionEvent event) {
 		manifoldSTL.setSelected(false);
@@ -96,6 +97,7 @@ public class ExportManager {
 	void mstl(ActionEvent event) {
 		stl.setSelected(false);
 	}
+
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
@@ -194,6 +196,7 @@ public class ExportManager {
 					});
 		}
 	}
+
 	private void copyBom(File bomFile) {
 		Path source = bomFile.toPath();
 		Path destination = new File(exportDir.getAbsolutePath() + "/" + bomFile.getName()).toPath();

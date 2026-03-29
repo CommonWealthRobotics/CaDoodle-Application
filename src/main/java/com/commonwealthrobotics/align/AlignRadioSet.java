@@ -33,11 +33,13 @@ public class AlignRadioSet {
 		asList = Arrays.asList(positive, middle, negetive);
 
 	}
+
 	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf) {
 		positive.threeDTarget(screenW, screenH, zoom, b, cf);
 		middle.threeDTarget(screenW, screenH, zoom, b, cf);
 		negetive.threeDTarget(screenW, screenH, zoom, b, cf);
 	}
+
 	public List<Node> getElements() {
 		ArrayList<Node> result = new ArrayList<Node>();
 		for (AlignHandle r : asList) {
@@ -45,16 +47,19 @@ public class AlignRadioSet {
 		}
 		return result;
 	}
+
 	public void initialize(Align operation, BowlerStudio3dEngine engine, List<CSG> toAlign, List<String> selected) {
 		for (AlignHandle r : asList) {
 			r.initialize(operation, engine, toAlign, selected);
 		}
 	}
+
 	public void hide() {
 		for (AlignHandle r : asList) {
 			r.hide();
 		}
 	}
+
 	public void setOnClickCallback(Runnable onClick) {
 		for (AlignHandle r : asList) {
 			r.setOnClickCallback(() -> {
@@ -66,11 +71,13 @@ public class AlignRadioSet {
 			});
 		}
 	}
+
 	public void recomputeOps(HashMap<CSG, Bounds> cache) {
 		for (AlignHandle ah : asList) {
 			ah.recomputeOps(cache);
 		}
 	}
+
 	public void clear(HashMap<CSG, Bounds> cache) {
 		for (AlignHandle ah : asList) {
 			ah.clear(cache);

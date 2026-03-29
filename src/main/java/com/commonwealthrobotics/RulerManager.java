@@ -137,6 +137,7 @@ public class RulerManager {
 	public void disableRulerMode() {
 		setActive(false);
 	}
+
 	public void cancelRulerPick() {
 		workplane.cancel();
 	}
