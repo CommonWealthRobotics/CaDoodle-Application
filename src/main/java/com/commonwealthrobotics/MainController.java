@@ -21,6 +21,7 @@ import org.apache.sshd.common.util.OsUtils;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.robot.RobotLab;
+import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
@@ -1371,13 +1372,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					dist = 3;
 				switch (event.getCode()) {
 					case UP :
-						if (event.isControlDown()) {
+						if ( Manipulation.isControlOrCommandPressed(event)) {
 							session.moveInCameraFrame(new TransformNR(0, 0, dist));
 						} else
 							session.moveInCameraFrame(new TransformNR(dist, 0, 0));
 						break;
 					case DOWN :
-						if (event.isControlDown()) {
+						if ( Manipulation.isControlOrCommandPressed(event)) {
 							session.moveInCameraFrame(new TransformNR(0, 0, -dist));
 						} else
 							session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
@@ -1409,7 +1410,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			// You can still use the key code for non-character keys
 			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
-			if (event.isControlDown() || (OsUtils.isOSX() ? event.isMetaDown() : event.isControlDown())) {
+			if ( Manipulation.isControlOrCommandPressed(event)) {
 				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
 				switch ((int) character.charAt(0)) {
 					case 90 :
@@ -1524,6 +1525,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 		});
 	}
+
+
 
 	private void cancel() {
 		com.neuronrobotics.sdk.common.Log.debug("MainController:Cancel event");
