@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.sshd.common.util.OsUtils;
-
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.robot.RobotLab;
@@ -369,6 +367,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onMakeRobot(ActionEvent e) {
 		com.neuronrobotics.sdk.common.Log.debug("Make robot");
 		robotLab.makeRobot();
+		session.setKeyBindingFocus();
 	}
 
 	@FXML
@@ -1363,7 +1362,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
 				return;
 			}
-
+			if (event.getCode() == KeyCode.ESCAPE) {
+				workplane.cancel();
+				return;
+			}
 			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN)
 					|| (event.getCode() == KeyCode.LEFT) || (event.getCode() == KeyCode.RIGHT)
 					|| (event.getCode() == KeyCode.TAB)) {
@@ -1372,13 +1374,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					dist = 3;
 				switch (event.getCode()) {
 					case UP :
-						if ( Manipulation.isControlOrCommandPressed(event)) {
+						if (Manipulation.isControlOrCommandPressed(event)) {
 							session.moveInCameraFrame(new TransformNR(0, 0, dist));
 						} else
 							session.moveInCameraFrame(new TransformNR(dist, 0, 0));
 						break;
 					case DOWN :
-						if ( Manipulation.isControlOrCommandPressed(event)) {
+						if (Manipulation.isControlOrCommandPressed(event)) {
 							session.moveInCameraFrame(new TransformNR(0, 0, -dist));
 						} else
 							session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
@@ -1400,133 +1402,123 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				event.consume(); // Prevents the event from being processed further
 			}
 		});
-		subScene.setOnKeyTyped(event -> {
+		subScene.addEventFilter(KeyEvent.KEY_TYPED,event -> {
 			if (session.isFocused()) {
-				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
 				return;
 			}
 			String character = event.getCharacter();
 			if (character.isEmpty())
 				return;
-			// You can still use the key code for non-character keys
-			// com.neuronrobotics.sdk.common.Log.error("Key code: " + event.getCode());
-			if ( Manipulation.isControlOrCommandPressed(event)) {
-				// com.neuronrobotics.sdk.common.Log.error("CTRL + ");
-				switch ((int) character.charAt(0)) {
-					case 90 :
-					case 122 :
-					case 26 :
-						com.neuronrobotics.sdk.common.Log.error("Undo");
+
+			boolean ctrl = Manipulation.isControlOrCommandPressed(event);
+			boolean shift = event.isShiftDown();
+
+			int raw = character.charAt(0);
+			char key = (ctrl && raw < 32) ? (char) (raw + 64) : Character.toUpperCase((char) raw);
+			com.neuronrobotics.sdk.common.Log.debug("Got "+key+" "+(ctrl?"ctrl":"")+" "+(shift?"shift":""));
+			if (ctrl) {
+				switch (key) {
+					case 'Z' : // Ctrl+Z / Ctrl+Shift+Z - Undo
+						com.neuronrobotics.sdk.common.Log.debug("Undo");
 						workplane.cancel();
 						ap.get().back();
 						break;
-					case 121 :
-					case 25 :
-						com.neuronrobotics.sdk.common.Log.error("Redo");
+					case 'Y' : // Ctrl+Y - Redo
+						com.neuronrobotics.sdk.common.Log.debug("Redo");
 						ap.get().forward();
 						break;
-					case 103 :
-					case 7 :
-						onGroup(null);
-						break;
-					case 71 :
-						if (event.isShiftDown()) {
-							com.neuronrobotics.sdk.common.Log.error("Un-Group");
+					case 'G' :
+						if (shift) { // Ctrl+Shift+G - Ungroup
+							com.neuronrobotics.sdk.common.Log.debug("Un-Group");
 							session.onUngroup();
+						} else { // Ctrl+G - Group
+							onGroup(null);
 						}
 						break;
-					case 1 :
-						com.neuronrobotics.sdk.common.Log.error("Select All");
+					case 'A' : // Ctrl+A - Select All
+						com.neuronrobotics.sdk.common.Log.debug("Select All");
 						session.selectAll();
 						break;
-					case 3 :
+					case 'C' : // Ctrl+C - Copy
 						session.setCopyListToCurrentSelected();
 						break;
-					case 22 :
+					case 'V' : // Ctrl+V - Paste
 						session.onPaste();
 						break;
-					case 4 :
+					case 'D' : // Ctrl+D - Duplicate
 						session.Duplicate();
 						break;
-					case 8 :
-						session.onHideShowOperation();
+					case 'H' :
+						if (shift) { // Ctrl+Shift+H - Show All
+							session.showAll();
+						} else { // Ctrl+H - Hide/Show Toggle
+							session.onHideShowOperation();
+						}
 						break;
-					case 72 :
-						session.showAll();
-						break;
-					case 12 :
+					case 'L' : // Ctrl+L - Lock Toggle
 						session.lockToggle();
 						break;
 					default :
-						if (!character.isEmpty()) {
-							char rawChar = character.charAt(0);
-							com.neuronrobotics.sdk.common.Log.error("CTRL+ Raw char value: " + (int) rawChar);
-						} else {
-							com.neuronrobotics.sdk.common.Log
-									.error("No character data available (probably a non-character key)");
-						}
+						com.neuronrobotics.sdk.common.Log.error("CTRL+" + key + " unhandled (raw: " + raw + ")");
 						break;
 				}
 			} else {
-				switch ((int) character.charAt(0)) {
-					case 119 :// w
+				switch (key) {
+					case 'W' : // W - Workplane
+						com.neuronrobotics.sdk.common.Log.debug("Workplane");
 						onWorkplane(null);
 						break;
-					case 45 :// -
+					case '-' : // - - Zoom Out
+						com.neuronrobotics.sdk.common.Log.debug("Zoom out");
 						onZoomOut(null);
 						break;
-					case 43 :// +
+					case '+' : // + - Zoom In
+						com.neuronrobotics.sdk.common.Log.debug("Zoom in");
 						onZoomIn(null);
 						break;
-					case 102 :// f
+					case 'F' : // F - Fit View
+						com.neuronrobotics.sdk.common.Log.debug("Fit view");
 						onFitView(null);
 						break;
-					case 104 :// h
+					case 'H' : // H - Set Hole
+						com.neuronrobotics.sdk.common.Log.debug("Set to Hole");
 						session.setToHole();
 						break;
-					case 115 :
+					case 'S' : // S - Set Solid
+						com.neuronrobotics.sdk.common.Log.debug("Set to solid");
 						session.setToSolid();
 						break;
-					case 100 :// d
+					case 'D' : // D - Drop
+						com.neuronrobotics.sdk.common.Log.debug("Drop");
 						session.onDrop();
 						break;
-					case 101 :// e
-					case 69 :// E
-						com.neuronrobotics.sdk.common.Log.error("Call Object WP toggle");
+					case 'E' : // E - Object Workplane Toggle
+						com.neuronrobotics.sdk.common.Log.debug("Call Object WP toggle");
 						session.objectWorkplane();
 						break;
-					case 108 :// l
+					case 'L' : // L - Align
+						com.neuronrobotics.sdk.common.Log.debug("Allign");
 						session.onAlign();
 						break;
-					case 99 :// c
+					case 'C' : // C - Cruise
+						com.neuronrobotics.sdk.common.Log.debug("Cruse");
 						session.onCruise();
 						break;
-					case 27 :// escape
-						workplane.cancel();
-						break;
-					case 116 :// t
-					case 84 :
+					case 'T' : // T - Toggle Transparent
+						com.neuronrobotics.sdk.common.Log.debug("Transparent toggle");
 						session.toggleTransparent();
 						break;
-					case 109 :// m
+					case 'M' : // M - Mirror
+						com.neuronrobotics.sdk.common.Log.debug("Mirror");
 						session.onMirror();
 						break;
 					default :
-						if (!character.isEmpty()) {
-							char rawChar = character.charAt(0);
-							com.neuronrobotics.sdk.common.Log
-									.error("Raw char value: " + (int) rawChar + " : " + character);
-						} else {
-							com.neuronrobotics.sdk.common.Log
-									.error("No character data available (probably a non-character key)");
-						}
+						com.neuronrobotics.sdk.common.Log.error("Unhandled key: " + key + " (raw: " + raw + ")");
 						break;
 				}
 			}
 		});
 	}
-
-
 
 	private void cancel() {
 		com.neuronrobotics.sdk.common.Log.debug("MainController:Cancel event");
@@ -1542,6 +1534,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		robotLab.onCancel();
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
+			session.setKeyBindingFocus();
 		});
 	}
 

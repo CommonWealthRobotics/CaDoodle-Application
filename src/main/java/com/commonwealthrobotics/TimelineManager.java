@@ -423,6 +423,7 @@ public class TimelineManager {
 						update(clear);
 					BowlerStudio.runLater(() -> session.updateControlsDisplayOfSelected());
 				}
+				session.setKeyBindingFocus();
 
 			}).start();
 		});

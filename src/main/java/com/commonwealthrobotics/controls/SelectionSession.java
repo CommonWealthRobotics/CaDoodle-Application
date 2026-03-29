@@ -731,6 +731,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void UpdateUIControls(List<CSG> cs) {
+		
+		resetSelectedCSGsFromCurrentState(cs);
+		
 		parametrics.getChildren().clear();
 		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
@@ -856,6 +859,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			getControls().clearSelection();
 		}
 		updateControls();
+	}
+
+	private void resetSelectedCSGsFromCurrentState(List<CSG> cs) {
+		List<String> namesAddedInThisOperation = new ArrayList<String>();
+		for(CSG c:getSelected()) {
+			namesAddedInThisOperation.add(c.getName());
+		}
+		List<CSG> got = new ArrayList<CSG>();
+		for (CSG c : cs) {
+			for (String s : namesAddedInThisOperation) {
+				if (c.getName().contentEquals(s))
+					got.add(c);
+			}
+		}
+		getSelected().clear();
+		getSelected().addAll(got);
 	}
 
 	public void clearBoundsCache() {
@@ -1148,9 +1167,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setKeyBindingFocus() {
 		if (!SplashManager.isVisibleSplash() && (engine != null)) {
 			// new Exception("KB Focused here").printStackTrace();
-			// com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
+			com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
 			BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
+		} else {
+			com.neuronrobotics.sdk.common.Log.error("Rejecting focus KeyBindingFocus");
 		}
+	}
+
+	public void setToHole() {
+		getExecutor().submit(() -> {
+			LinkedHashSet<CSG> selected2 = getSelected();
+			if (selected2.size() == 0)
+				return;
+
+			boolean isSolid = false;
+			for (CSG s : selected2) {
+				if (!s.isHole()) {
+					isSolid = true;
+					break;
+				}
+			}
+
+			if (isSolid) { // some solid
+				ToHole h = new ToHole().setNames(selectedSnapshot());
+				try {
+					addOp(h).join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void setToSolid() {
@@ -1174,7 +1221,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return; // all solid
 
 			ToSolid h = new ToSolid().setNames(selectedSnapshot());
-			addOp(h);
+			try {
+				addOp(h).join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		});
 
 	}
@@ -1235,24 +1287,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setColor(Color value) {
 		ToSolid solid = new ToSolid().setNames(selectedSnapshot()).setColor(value);
 		addOp(solid);
-	}
-
-	public void setToHole() {
-		if (getSelected().size() == 0)
-			return;
-
-		boolean isSolid = false;
-		for (CSG s : getSelected()) {
-			if (!s.isHole()) {
-				isSolid = true;
-				break;
-			}
-		}
-
-		if (isSolid) { // some solid
-			ToHole h = new ToHole().setNames(selectedSnapshot());
-			addOp(h);
-		}
 	}
 
 	public TransformNR getFocusCenter() {
@@ -2275,8 +2309,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param updateRobotLab
-	 *            the updateRobotLab to set
+	 * @param updateRobotLab the updateRobotLab to set
 	 */
 	public void setUpdateRobotLab(Runnable updateRobotLab) {
 		this.updateRobotLab = updateRobotLab;
@@ -2290,8 +2323,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param controls
-	 *            the controls to set
+	 * @param controls the controls to set
 	 */
 	public void setControls(ControlSprites controls) {
 		this.controls = controls;
@@ -2305,8 +2337,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param limbs
-	 *            the limbs to set
+	 * @param limbs the limbs to set
 	 */
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;
