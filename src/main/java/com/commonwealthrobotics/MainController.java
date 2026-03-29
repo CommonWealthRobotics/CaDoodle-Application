@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.commons.collections.bag.SynchronizedSortedBag;
-
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.robot.RobotLab;
@@ -1404,7 +1402,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				event.consume(); // Prevents the event from being processed further
 			}
 		});
-		subScene.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+		subScene.addEventFilter(KeyEvent.KEY_TYPED, event -> {
 			if (session.isFocused()) {
 				return;
 			}
@@ -1417,7 +1415,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			int raw = character.charAt(0);
 			char key = (ctrl && raw < 32) ? (char) (raw + 64) : Character.toUpperCase((char) raw);
-			com.neuronrobotics.sdk.common.Log.debug("Got "+key+" "+(ctrl?"ctrl":"")+" "+(shift?"shift":""));
+			com.neuronrobotics.sdk.common.Log
+					.debug("Got " + key + " " + (ctrl ? "ctrl" : "") + " " + (shift ? "shift" : ""));
 			if (ctrl) {
 				switch (key) {
 					case 'Z' : // Ctrl+Z / Ctrl+Shift+Z - Undo
@@ -1514,7 +1513,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						com.neuronrobotics.sdk.common.Log.debug("Mirror");
 						session.onMirror();
 						break;
-					case 'R':
+					case 'R' :
 						com.neuronrobotics.sdk.common.Log.debug("Ruler");
 						onRuler(null);
 						break;

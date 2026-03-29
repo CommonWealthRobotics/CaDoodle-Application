@@ -731,9 +731,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void UpdateUIControls(List<CSG> cs) {
-		
+
 		resetSelectedCSGsFromCurrentState(cs);
-		
+
 		parametrics.getChildren().clear();
 		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
@@ -863,7 +863,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void resetSelectedCSGsFromCurrentState(List<CSG> cs) {
 		List<String> namesAddedInThisOperation = new ArrayList<String>();
-		for(CSG c:getSelected()) {
+		for (CSG c : getSelected()) {
 			namesAddedInThisOperation.add(c.getName());
 		}
 		List<CSG> got = new ArrayList<CSG>();
@@ -2309,7 +2309,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param updateRobotLab the updateRobotLab to set
+	 * @param updateRobotLab
+	 *            the updateRobotLab to set
 	 */
 	public void setUpdateRobotLab(Runnable updateRobotLab) {
 		this.updateRobotLab = updateRobotLab;
@@ -2323,7 +2324,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param controls the controls to set
+	 * @param controls
+	 *            the controls to set
 	 */
 	public void setControls(ControlSprites controls) {
 		this.controls = controls;
@@ -2337,7 +2339,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param limbs the limbs to set
+	 * @param limbs
+	 *            the limbs to set
 	 */
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;
