@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<TabPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <tabs>
       <Tab closable="false" text="Basic">
          <content>
@@ -49,11 +49,11 @@
                                     <Insets right="10.0" />
                                  </padding>
                               </Label>
-                              <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always ask" />
-                              <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always insert">
+                              <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always ask">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="insertStrat" />
                                  </toggleGroup></RadioButton>
+                              <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always insert" toggleGroup="$insertStrat" />
                               <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always continue and erase" toggleGroup="$insertStrat" />
                            </children>
                         </VBox>
