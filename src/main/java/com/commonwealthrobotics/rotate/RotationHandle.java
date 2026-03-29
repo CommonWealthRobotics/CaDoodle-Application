@@ -310,7 +310,7 @@ public class RotationHandle {
 				break;
 		}
 
-		double circleDiameter = Math.sqrt(Math.pow(rA, 2) + Math.pow(rB, 2));
+		double circleDiameter =Math.max( Math.sqrt(Math.pow(rA, 2) + Math.pow(rB, 2)), 50);
 
 		double radius = circleDiameter / 2;
 
