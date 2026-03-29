@@ -16,6 +16,6 @@ else
 fi
 echo "Java home set to $JAVA_HOME"
 
-./gradlew clean shadowJar
+./gradlew clean spotlessCheck shadowJar
 #$JAVA_HOME/bin/java -jar build/libs/CaDoodle-Application.jar
 #./gradlew run
