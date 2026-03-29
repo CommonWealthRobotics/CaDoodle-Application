@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
+
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.robot.RobotLab;
@@ -1511,6 +1513,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					case 'M' : // M - Mirror
 						com.neuronrobotics.sdk.common.Log.debug("Mirror");
 						session.onMirror();
+						break;
+					case 'R':
+						com.neuronrobotics.sdk.common.Log.debug("Ruler");
+						onRuler(null);
 						break;
 					default :
 						com.neuronrobotics.sdk.common.Log.error("Unhandled key: " + key + " (raw: " + raw + ")");
