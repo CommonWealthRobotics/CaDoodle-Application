@@ -241,7 +241,7 @@ public class ThreedNumber {
 		v = Math.max(-maxValue, Math.min(maxValue, v));
 		v += 0.0; // Kill -0.000
 		double offset = ruler.getOffset(tfDimension);
-		com.neuronrobotics.sdk.common.Log.debug(tfDimension + " to " + v + " offset by " + offset);
+		com.neuronrobotics.sdk.common.Log.info(tfDimension + " to " + v + " offset by " + offset);
 		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - offset);
 		textField.setText(formatted3);
 		setMostRecentValue(v);
