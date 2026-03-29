@@ -1464,7 +1464,54 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						break;
 				}
 			} else {
+				TransformNR scale = session.getFocusCenter();
 				switch (key) {
+					case 'P' :
+
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Ortho");
+						new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
+						break;
+
+					case '1' :
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 0)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Front");
+						break;
+					case '2' :
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 90, 0)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Left");
+						break;
+					case '3' :
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 180, 0)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Back");
+						break;
+					case '4' :
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, -90, 0)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Right");
+						break;
+					case '5' :
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 90)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
+						break;
+					case '6' :
+						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, -90)),
+								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+								engine.getFlyingCamera().getZoomDepth());
+						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
+						break;
+
 					case 'W' : // W - Workplane
 						com.neuronrobotics.sdk.common.Log.debug("Workplane");
 						onWorkplane(null);
