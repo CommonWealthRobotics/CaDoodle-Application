@@ -139,7 +139,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				// Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-			
+
 			SplashManager.closeSplash();
 		}).start();
 	}
