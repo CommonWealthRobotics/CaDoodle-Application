@@ -229,6 +229,7 @@ public class ThreedNumber {
 		try {
 			setMostRecentValue(Double.parseDouble(t) + ruler.getOffset(tfDimension));
 		} catch (NumberFormatException ex) {
+			com.neuronrobotics.sdk.common.Log.error(ex);
 			setValue(getMostRecentValue());
 		}
 	}
@@ -239,7 +240,9 @@ public class ThreedNumber {
 		double maxValue = Math.pow(10, wholeDigits) - Math.pow(10, -3); // 9999.999
 		v = Math.max(-maxValue, Math.min(maxValue, v));
 		v += 0.0; // Kill -0.000
-		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - ruler.getOffset(tfDimension));
+		double offset = ruler.getOffset(tfDimension);
+		com.neuronrobotics.sdk.common.Log.debug(tfDimension + " to " + v + " offset by " + offset);
+		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - offset);
 		textField.setText(formatted3);
 		setMostRecentValue(v);
 		lockout = false;
@@ -257,7 +260,7 @@ public class ThreedNumber {
 	public void show() {
 		initialValue += 0.0; // Kill -0.000
 		initialValue = getMostRecentValue();
-		textField.setText(String.format(Locale.getDefault(), "%.3f", initialValue));
+		setValue(initialValue);
 		textField.setVisible(true);
 	}
 
