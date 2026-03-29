@@ -647,7 +647,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if (this.isClickOnGround()) {
 					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
 					ap.get().setWorkplane(new TransformNR());
-					ruler.cancel();
+					ruler.disableRulerMode();
 				} else
 					ap.get().setWorkplane(this.getCurrentAbsolutePose());
 
