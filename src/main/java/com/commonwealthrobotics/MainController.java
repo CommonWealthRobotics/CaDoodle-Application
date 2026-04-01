@@ -1673,9 +1673,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.setAdvancedMode(advanced);
 		BowlerStudio.runLater(() -> {
-			timelineButton.setDisable(!advanced);
-			advancedGroupMenu.setDisable(!advanced);
-			RobotLabDrawer.setDisable(!advanced);
+			timelineButton.setVisible(advanced);
+			advancedGroupMenu.setVisible(advanced);
+			RobotLabDrawer.setVisible(advanced);
 		});
 
 	}
