@@ -240,9 +240,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				public OperationResult accept() {
 					OperationResult insertionStrat = OperationResult.fromString((String) ConfigurationDatabase
 							.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
-					boolean advanced = Boolean
-							.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
-					if(!advanced) {
+					boolean advanced = Boolean.parseBoolean(
+							ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
+					if (!advanced) {
 						insertionStrat = OperationResult.PRUNE;
 					}
 					if (insertionStrat != OperationResult.ASK)
