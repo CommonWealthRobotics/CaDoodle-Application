@@ -528,7 +528,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		try {
 			CaDoodleFile cf = setActiveProject(nf);
 			cf.setProjectName(nextRandomName);
-			cf.save();
+			cf.save(true);
 		} catch (Exception e) {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
