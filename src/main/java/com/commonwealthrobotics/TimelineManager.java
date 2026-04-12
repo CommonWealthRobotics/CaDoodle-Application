@@ -438,7 +438,7 @@ public class TimelineManager {
 	public void updateSelected(LinkedHashSet<CSG> selected) {
 
 		CaDoodleFile caDoodleFile = ap.get();
-		if(caDoodleFile==null)
+		if (caDoodleFile == null)
 			return;
 		ArrayList<CaDoodleOperation> operations = caDoodleFile.getOperations();
 		for (int i = 0; ((i < operations.size()) && (i < buttons.size())); i++) {
