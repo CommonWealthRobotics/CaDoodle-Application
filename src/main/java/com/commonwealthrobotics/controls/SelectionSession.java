@@ -1654,13 +1654,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					List<CSG> got = new ArrayList<CSG>();
 					for (CSG c : ap.get().getCurrentState()) {
 						for (String s : namesAddedInThisOperation) {
-							if (c.getName().contentEquals(s))
+							if (c.getName().contentEquals(s) && !c.isInGroup())
 								got.add(c);
 						}
 					}
 					getSelected().clear();
 					getSelected().addAll(got);
-					BowlerStudio.runLater(() -> {
+					BowlerStudio.runLater(java.time.Duration.ofMinutes(100), () -> {
 						updateControlsDisplayOfSelected();
 					});
 					updateRobotLab.run();
@@ -1783,7 +1783,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// getControls().initializeAlign(selectedCSG, b, getMeshes());
 			List<String> selectedSnapshot = selectedSnapshot();
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
-			getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), inWorkplaneBounds);
+			BowlerStudio.runLater(() -> {
+				updateControlsDisplayOfSelected();
+				getExecutor().submit(() -> {
+					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), inWorkplaneBounds);
+				});
+			});
 		});
 
 	}
