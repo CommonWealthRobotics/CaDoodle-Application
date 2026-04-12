@@ -16,6 +16,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
@@ -475,19 +476,26 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 					if (source != null) {
 						ArrayList<Polygon> polygons = source.getPolygons();
-						Polygon p = getPolygonFromFaceIndex(faceIndex, polygons);
+						Polygon p = getPolygonFromFaceIndex(faceIndex,polygons);
+//						Polygon p =null;
+//						
+//						try {
+//							p=source.getPolygonByIndex(faceIndex);
+//						} catch (ColinearPointsException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
 
 						if (p != null) {
 							try {
-								pureRot = TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p)).inverse();
+								Transform npTF = PolygonUtil.calculateNormalTransform(p);
+								pureRot = TransformFactory.csgToNR(npTF).inverse();
 								// an in-plane snapping here by transforming the points into the plane
 								// orientation, then snapping in plane, then transforming the points back.
 								TransformNR t = new TransformNR(x, y, z);
 								TransformNR screenLocationtmp = t; // manipulatorNR.times(t);
-								Polygon np = p; // p.transformed(TransformFactory.affineToCSG(manipulator));
-								Transform npTF = PolygonUtil.calculateNormalTransform(np);
 								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
-								Polygon flattened = np.transformed(npTF);
+								Polygon flattened = p.transformed(npTF);
 								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
 								// Log.debug("Polygon " + flattened);
 								// Log.debug("Point " + flattenedTouch.toSimpleString());

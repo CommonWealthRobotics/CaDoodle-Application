@@ -51,6 +51,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -99,67 +100,72 @@ public class TexturedCSG extends TexturedMesh {
 		listFaces.clear();
 
 		// Process each polygon
-		primitive.getPolygons().forEach(p -> {
-			List<Integer> polyIndices = new ArrayList<>();
+		try {
+			primitive.generatePolygonsFromMesh().forEach(p -> {
+				List<Integer> polyIndices = new ArrayList<>();
 
-			// Compute polygon normal
-			// Vector3d normal = computePolygonNormal(p);
+				// Compute polygon normal
+				// Vector3d normal = computePolygonNormal(p);
 
-			// Create transformation matrix
-			// Transform transform = createTransform(normal, p.getBounds().getMin());
-			Transform transform = createPolygonTransform(p);
-			// Invert transformation matrix
-			Transform inverseTransform = transform.inverse();
+				// Create transformation matrix
+				// Transform transform = createTransform(normal, p.getBounds().getMin());
+				Transform transform = createPolygonTransform(p);
+				// Invert transformation matrix
+				Transform inverseTransform = transform.inverse();
 
-			double minXt = Double.MAX_VALUE, minYt = Double.MAX_VALUE;
-			double maxXt = -Double.MAX_VALUE, maxYt = -Double.MAX_VALUE;
+				double minXt = Double.MAX_VALUE, minYt = Double.MAX_VALUE;
+				double maxXt = -Double.MAX_VALUE, maxYt = -Double.MAX_VALUE;
 
-			// Transform vertices to 2D plane and calculate bounding box for texture mapping
-			for (Vertex v : p.getVertices()) {
-				Vector3d pos = v.pos;
-				Vector3d transformed = pos.transformed(inverseTransform);
-
-				minXt = Math.min(minXt, transformed.x);
-				minYt = Math.min(minYt, transformed.y);
-				maxXt = Math.max(maxXt, transformed.x);
-				maxYt = Math.max(maxYt, transformed.y);
-			}
-
-			final double minX = minXt;
-			final double minY = minYt;
-			final double maxX = (minXt == maxXt) ? (maxXt + 1.0) : maxXt; // Avoid division by zero
-			final double maxY = (minYt == maxYt) ? (maxYt + 1.0) : maxYt; // Avoid division by zero
-
-			// Calculate texture coordinates for this polygon
-			for (Vertex v : p.getVertices()) {
-				if (!vertices.contains(v)) {
-					vertices.add(v);
-					listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
-
+				// Transform vertices to 2D plane and calculate bounding box for texture mapping
+				for (Vertex v : p.getVertices()) {
 					Vector3d pos = v.pos;
 					Vector3d transformed = pos.transformed(inverseTransform);
-					// if(Math.abs(transformed.z)>0.000001) {
-					// throw new RuntimeException("Failed to transform the point to the xy plane");
-					// }
 
-					// Normalize coordinates to fit within the image bounds
-					float u = (float) ((transformed.x - minX) / (maxX - minX));
-					float vf = (float) ((transformed.y - minY) / (maxY - minY));
-
-					// Clamp coordinates to [0, 1] range
-					u = Math.max(0, Math.min(1, u));
-					vf = Math.max(0, Math.min(1, vf));
-
-					texCoords.add(new Point2D(u, vf));
-					polyIndices.add(vertices.size());
-				} else {
-					int index = vertices.indexOf(v);
-					polyIndices.add(index + 1);
+					minXt = Math.min(minXt, transformed.x);
+					minYt = Math.min(minYt, transformed.y);
+					maxXt = Math.max(maxXt, transformed.x);
+					maxYt = Math.max(maxYt, transformed.y);
 				}
-			}
 
-			indices.add(polyIndices);
-		});
+				final double minX = minXt;
+				final double minY = minYt;
+				final double maxX = (minXt == maxXt) ? (maxXt + 1.0) : maxXt; // Avoid division by zero
+				final double maxY = (minYt == maxYt) ? (maxYt + 1.0) : maxYt; // Avoid division by zero
+
+				// Calculate texture coordinates for this polygon
+				for (Vertex v : p.getVertices()) {
+					if (!vertices.contains(v)) {
+						vertices.add(v);
+						listVertices.add(new Point3D((float) v.pos.x, (float) v.pos.y, (float) v.pos.z));
+
+						Vector3d pos = v.pos;
+						Vector3d transformed = pos.transformed(inverseTransform);
+						// if(Math.abs(transformed.z)>0.000001) {
+						// throw new RuntimeException("Failed to transform the point to the xy plane");
+						// }
+
+						// Normalize coordinates to fit within the image bounds
+						float u = (float) ((transformed.x - minX) / (maxX - minX));
+						float vf = (float) ((transformed.y - minY) / (maxY - minY));
+
+						// Clamp coordinates to [0, 1] range
+						u = Math.max(0, Math.min(1, u));
+						vf = Math.max(0, Math.min(1, vf));
+
+						texCoords.add(new Point2D(u, vf));
+						polyIndices.add(vertices.size());
+					} else {
+						int index = vertices.indexOf(v);
+						polyIndices.add(index + 1);
+					}
+				}
+
+				indices.add(polyIndices);
+			});
+		} catch (ColinearPointsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Convert texture coordinates list to float array
 		textureCoords = new float[texCoords.size() * 2];

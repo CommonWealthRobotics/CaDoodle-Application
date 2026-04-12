@@ -285,7 +285,7 @@ public class SelectionBox {
 
 	public List<String> checkOverlap(CSG selection2) {
 		List<String> overlapping = new ArrayList<>();
-		if (selection2.getPolygons().size() < 5)
+		if (selection2.getNumberOfTriangles()< 5)
 			return overlapping;
 		ArrayList<CSG> visible = session.getSelectable();
 		CSGClient c = CSGClient.getClient();
@@ -302,7 +302,7 @@ public class SelectionBox {
 					e.printStackTrace();
 				}
 			}
-			if (key.getPolygons().size() > 4) {
+			if (key.getNumberOfTriangles()> 4) {
 				try {
 					boolean touching = key.touching(selection2);
 					if (touching)
