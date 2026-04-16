@@ -76,9 +76,20 @@ subprojects {
 	tasks.withType(JavaCompile) {
 		options.encoding = 'UTF-8'
 		options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
+		options.compilerArgs += ['--enable-preview']
 	}
 }
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs += ['--enable-preview']
+}
 
+tasks.withType(Test).configureEach {
+	jvmArgs '--enable-preview'
+}
+
+tasks.withType(JavaExec).configureEach {
+	jvmArgs '--enable-preview'
+}
 subprojects { subproject ->
 	subproject.afterEvaluate {		
         if (subproject.plugins.hasPlugin('com.gradleup.shadow')) {
@@ -163,7 +174,8 @@ def javafxOptions = [
     '--add-exports', 'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
 	'--add-opens','javafx.graphics/javafx.scene=ALL-UNNAMED',
 	'--add-opens','java.base/java.io=ALL-UNNAMED',
-	'--add-opens','java.base/java.lang=ALL-UNNAMED'
+	'--add-opens','java.base/java.lang=ALL-UNNAMED',
+	'--enable-preview'
 ]
 
 run {
