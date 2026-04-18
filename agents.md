@@ -1,0 +1,1 @@
+formatting and linting should be done with `./gradlew spotlessApply` 

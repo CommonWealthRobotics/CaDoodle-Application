@@ -103,7 +103,7 @@ public class ShapePalletMyDoodles {
 			// if (!caDoodleFile.getSTLThumbnailFile().exists())
 			throw new Exception("Failed to initialize model " + caDoodleFile.getMyProjectName());
 		}
-		CSG indicator = Vitamins.get(instance, false,caDoodleFile.getSTLThumbnailFile());
+		CSG indicator = Vitamins.get(instance, false, caDoodleFile.getSTLThumbnailFile());
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = caDoodleFile.loadImageFromFile();

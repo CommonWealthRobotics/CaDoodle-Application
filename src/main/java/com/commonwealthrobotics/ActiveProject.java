@@ -433,14 +433,14 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Log.error("Update too fast! ");
 			if (lastUpdate == null) {
 				lastUpdate = new Thread(() -> {
-					while(System.currentTimeMillis() - timeOfLastUpdate < 100) {
+					while (System.currentTimeMillis() - timeOfLastUpdate < 100) {
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {
 							return;
 						}
 					}
-					onUpdate( currentState,  source,  file);
+					onUpdate(currentState, source, file);
 				});
 				lastUpdate.start();
 			}
@@ -483,8 +483,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
-			;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();

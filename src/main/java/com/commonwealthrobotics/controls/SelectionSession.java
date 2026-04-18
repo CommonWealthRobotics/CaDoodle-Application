@@ -271,7 +271,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
-		
+
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
 		clearBoundsCache();
