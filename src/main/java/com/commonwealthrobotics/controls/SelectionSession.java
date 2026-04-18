@@ -271,6 +271,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
+		
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
 		clearBoundsCache();
@@ -582,6 +583,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<CSG> currentState = getCurrentState();
+		//Exception exp = new Exception(" Time of Exception "+System.currentTimeMillis());
 		BowlerStudio.runLater(() -> {
 			clearScreen();
 
@@ -620,7 +622,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
-			setKeyBindingFocus();
+			if (!setKeyBindingFocus()) {
+				//exp.printStackTrace();
+			}
 			TickToc.toc();
 			TickToc.setEnabled(false);
 		});
@@ -1164,14 +1168,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-	public void setKeyBindingFocus() {
+	public boolean setKeyBindingFocus() {
 		if (!SplashManager.isVisibleSplash() && (engine != null)) {
 			// new Exception("KB Focused here").printStackTrace();
 			com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
 			BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
+			return true;
 		} else {
-			com.neuronrobotics.sdk.common.Log.error("Rejecting focus KeyBindingFocus");
+			com.neuronrobotics.sdk.common.Log.error("Rejecting focus KeyBindingFocus"
+					+ (SplashManager.isVisibleSplash() ? " Splash open" : "") + (engine == null ? " Engine null" : ""));
 		}
+		return false;
 	}
 
 	public void setToHole() {
@@ -2314,8 +2321,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param updateRobotLab
-	 *            the updateRobotLab to set
+	 * @param updateRobotLab the updateRobotLab to set
 	 */
 	public void setUpdateRobotLab(Runnable updateRobotLab) {
 		this.updateRobotLab = updateRobotLab;
@@ -2329,8 +2335,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param controls
-	 *            the controls to set
+	 * @param controls the controls to set
 	 */
 	public void setControls(ControlSprites controls) {
 		this.controls = controls;
@@ -2344,8 +2349,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * @param limbs
-	 *            the limbs to set
+	 * @param limbs the limbs to set
 	 */
 	public void setLimbs(LimbControlManager limbs) {
 		this.limbs = limbs;

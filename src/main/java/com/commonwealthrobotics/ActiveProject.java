@@ -72,6 +72,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	// private boolean isAlwaysInsert=false;
 	private Thread autosaveThread = null;
 	private boolean needsSave = false;
+	private long timeOfLastUpdate = 0;
+	private Thread lastUpdate = null;
+
 	public ActiveProject() {
 		// this.listener = listener;
 
@@ -426,6 +429,26 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
+		if (System.currentTimeMillis() - timeOfLastUpdate < 100) {
+			Log.error("Update too fast! ");
+			if (lastUpdate == null) {
+				lastUpdate = new Thread(() -> {
+					while(System.currentTimeMillis() - timeOfLastUpdate < 100) {
+						try {
+							Thread.sleep(16);
+						} catch (InterruptedException e) {
+							return;
+						}
+					}
+					onUpdate( currentState,  source,  file);
+				});
+				lastUpdate.start();
+			}
+			return;
+		}
+		if (lastUpdate != null)
+			lastUpdate.interrupt();
+		timeOfLastUpdate = System.currentTimeMillis();
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
 				l.onUpdate(currentState, source, file);
@@ -460,7 +483,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
+			;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();

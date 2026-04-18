@@ -56,12 +56,13 @@ public class ShapePalletButtonResources {
 		// if(!OSUtil.isWindows())
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
-				indicator = Vitamins.get(ap.get().getCsgDBinstance(), stlFile);
+				indicator = Vitamins.get(ap.get().getCsgDBinstance(), false,stlFile);
 				indicator.setColor(Color.WHITE);
 				image = new Image(imageFile.toURI().toString());
 				return;
 			} catch (Throwable t) {
 				com.neuronrobotics.sdk.common.Log.error(t);
+				stlFile.delete();
 			}
 		}
 		if (isPluginMissing) {
