@@ -53,7 +53,6 @@ import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.SubScene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -1083,7 +1082,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				BowlerStudio.runLater(() -> cancel());
 				// JavaFX startup freeze workaround
 				BowlerStudio.runLater(() -> {
-					Stage s = newStage != null ? newStage : (Stage) engine.getSubScene().getScene().getWindow();
+					Stage s = newStage != null ? newStage : engine.getWindow();
 					double h = s.getHeight();
 					s.setHeight(h - 1);
 					BowlerStudio.runLater(() -> s.setHeight(h));
@@ -1106,15 +1105,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void setUp3dEngine() {
 		engine.hideHand();
 		BowlerStudio.runLater(() -> {
-			engine.getSubScene().setFocusTraversable(false);
+			engine.setFocusTraversable(false);
 			BowlerStudio.runLater(() -> {
 				// Add the 3d environment
-				view3d.getChildren().add(engine.getSubScene());
-				// anchor it
-				AnchorPane.setTopAnchor(engine.getSubScene(), 0.0);
-				AnchorPane.setRightAnchor(engine.getSubScene(), 0.0);
-				AnchorPane.setLeftAnchor(engine.getSubScene(), 0.0);
-				AnchorPane.setBottomAnchor(engine.getSubScene(), 0.0);
+				engine.addTo(view3d);
+
 
 				// Overlay pane for 2D-lines
 				view3d.getChildren().add(paneOverlay2D);
@@ -1178,25 +1173,25 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		engine.addListener(this);
 
 		layerHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
-			engine.getSubScene().setWidth(newValue.doubleValue());
+			engine.setWidth(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
 
 		layerHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
-			engine.getSubScene().setHeight(newValue.doubleValue());
+			engine.setHeight(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
 		createGroundPlane();
 		// Handle drag over event
-		engine.getSubScene().setOnDragOver(event -> {
-			if (event.getGestureSource() != engine.getSubScene() && event.getDragboard().hasFiles()) {
+		engine.setOnDragOver(event -> {
+			if (!engine.isSubScene(event.getGestureSource()) && event.getDragboard().hasFiles()) {
 				event.acceptTransferModes(TransferMode.COPY);
 			}
 			event.consume();
 		});
 
 		// Handle drag dropped event
-		engine.getSubScene().setOnDragDropped(event -> {
+		engine.setOnDragDropped(event -> {
 			Dragboard db = event.getDragboard();
 			if (db.hasFiles()) {
 				List<File> files = db.getFiles();
@@ -1253,21 +1248,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		navigationCube.setMouseScale(10);
 
 		BowlerStudio.runLater(() -> {
-			navigationCube.getSubScene().setFocusTraversable(false);
+			navigationCube.setFocusTraversable(false);
 			viewControlCubeHolder.widthProperty().addListener((observable, oldValue, newValue) -> {
-				navigationCube.getSubScene().setWidth(newValue.doubleValue());
+				navigationCube.setWidth(newValue.doubleValue());
 			});
 
 			viewControlCubeHolder.heightProperty().addListener((observable, oldValue, newValue) -> {
-				navigationCube.getSubScene().setHeight(newValue.doubleValue());
+				navigationCube.setHeight(newValue.doubleValue());
 			});
 
 			BowlerStudio.runLater(() -> {
-				viewControlCubeHolder.getChildren().add(navigationCube.getSubScene());
-				AnchorPane.setTopAnchor(navigationCube.getSubScene(), 0.0);
-				AnchorPane.setRightAnchor(navigationCube.getSubScene(), 0.0);
-				AnchorPane.setLeftAnchor(navigationCube.getSubScene(), 0.0);
-				AnchorPane.setBottomAnchor(navigationCube.getSubScene(), 0.0);
+				navigationCube.addTo(viewControlCubeHolder);
 			});
 
 		});
@@ -1355,9 +1346,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// });
 
 		session.setKeyBindingFocus();
-		SubScene subScene = engine.getSubScene();
+		//SubScene subScene = engine.getSubScene();
 
-		subScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+		engine.addKeyFilter(KeyEvent.KEY_PRESSED, event -> {
 			if (session.isFocused()) {
 				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
 				return;
@@ -1402,7 +1393,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				event.consume(); // Prevents the event from being processed further
 			}
 		});
-		subScene.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+		engine.addKeyFilter(KeyEvent.KEY_TYPED, event -> {
 			if (session.isFocused()) {
 				return;
 			}
@@ -1592,7 +1583,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && in != engine.getSubScene() && in != workplane.getPlacementPlane()
+		if (in != ground && !engine.isSubScene(in) && in != workplane.getPlacementPlane()
 				&& in != selectionBox.getSelectionPlane())
 			return false;
 		if (event.isControlDown())
@@ -1618,8 +1609,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double x = camera.getGlobalX();
 		double y = camera.getGlobalY();
 		double z = camera.getGlobalZ();
-		double screenW = engine.getSubScene().getWidth();
-		double screenH = engine.getSubScene().getHeight();
+		double screenW = engine.getWidth();
+		double screenH = engine.getHeight();
 		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 		selectionBox.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 

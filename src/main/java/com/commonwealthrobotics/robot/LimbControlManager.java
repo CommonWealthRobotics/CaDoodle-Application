@@ -196,8 +196,8 @@ public class LimbControlManager {
 
 	private void updateControls() {
 		double zoom = camera.getZoomDepth();
-		double screenW = engine.getSubScene().getWidth();
-		double screenH = engine.getSubScene().getHeight();
+		double screenW = engine.getWidth();
+		double screenH = engine.getHeight();
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		threeDTarget(screenW, screenH, zoom, cf, false);
 		builder.getCadManager().render();

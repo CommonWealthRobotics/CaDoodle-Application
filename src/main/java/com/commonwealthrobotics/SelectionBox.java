@@ -93,7 +93,7 @@ public class SelectionBox {
 			dragged(event);
 		};
 
-		engine.getSubScene().addEventFilter(MouseEvent.MOUSE_DRAGGED, eventFilter);
+		engine.addMouseFilter(MouseEvent.MOUSE_DRAGGED, eventFilter);
 		engine.addUserNode(getSelectionPlane());
 	}
 
@@ -124,7 +124,7 @@ public class SelectionBox {
 		}
 
 		Object source = event.getSource();
-		if (source == engine.getSubScene())
+		if (engine.isSubScene(source))
 			return;
 
 		if (!active) {

@@ -1172,7 +1172,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SplashManager.isVisibleSplash() && (engine != null)) {
 			// new Exception("KB Focused here").printStackTrace();
 			com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
-			BowlerStudio.runLater(() -> engine.getSubScene().requestFocus());
+			BowlerStudio.runLater(() -> engine.requestFocus());
 			return true;
 		} else {
 			com.neuronrobotics.sdk.common.Log.error("Rejecting focus KeyBindingFocus"
@@ -2105,8 +2105,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		double x = camera.getGlobalX();
 		double y = camera.getGlobalY();
 		double z = camera.getGlobalZ();
-		double screenW = engine.getSubScene().getWidth();
-		double screenH = engine.getSubScene().getHeight();
+		double screenW = engine.getWidth();
+		double screenH = engine.getHeight();
 		onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 	}
 
