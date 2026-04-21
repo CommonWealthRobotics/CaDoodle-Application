@@ -389,7 +389,6 @@ public class Main extends Application {
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		CSG.setUseGPU(false);
-		CSG.setDefaultOptType(OptType.Manifold3d);
 		launch();
 	}
 

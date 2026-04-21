@@ -48,6 +48,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Debug3dProvider;
 import eu.mihosoft.vrl.v3d.IDebug3dProvider;
+import eu.mihosoft.vrl.v3d.CSG.OptType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.DepthTest;
@@ -970,6 +971,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setAlignButton(alignButton);
 			// do this after setting up the session
 			setupEngineControls();
+			boolean manifold = Boolean
+					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
+			CSG.setDefaultOptType(manifold?OptType.Manifold3d:OptType.CSG_BOUND);
 			try {
 				SettingsManager.setServerState();
 				if (SettingsManager.clientStateSet()) {
@@ -1005,6 +1009,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			boolean advanced = Boolean
 					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
 			setAdvancedMode(advanced);
+
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 			com.neuronrobotics.sdk.common.Log.error(e);
