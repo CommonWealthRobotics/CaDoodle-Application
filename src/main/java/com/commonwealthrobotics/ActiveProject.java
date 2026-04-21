@@ -429,23 +429,25 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
-		if (System.currentTimeMillis() - timeOfLastUpdate < 100) {
-			Log.error("Update too fast! ");
-			if (lastUpdate == null) {
-				lastUpdate = new Thread(() -> {
-					while (System.currentTimeMillis() - timeOfLastUpdate < 100) {
-						try {
-							Thread.sleep(16);
-						} catch (InterruptedException e) {
-							return;
-						}
-					}
-					onUpdate(currentState, source, file);
-				});
-				lastUpdate.start();
-			}
-			return;
-		}
+//		if (System.currentTimeMillis() - timeOfLastUpdate < 100) {
+//			Log.error("Update too fast! ");
+//			if (lastUpdate == null) {
+//				lastUpdate = new Thread(() -> {
+//					while (System.currentTimeMillis() - timeOfLastUpdate < 100) {
+//						try {
+//							Thread.sleep(16);
+//						} catch (InterruptedException e) {
+//							return;
+//						}
+//					}
+//					onUpdate(file.getCurrentState(), source, file);
+//					lastUpdate=null;
+//				});
+//				lastUpdate.start();
+//			}
+//			timeOfLastUpdate = System.currentTimeMillis();
+//			return;
+//		}
 		if (lastUpdate != null)
 			lastUpdate.interrupt();
 		timeOfLastUpdate = System.currentTimeMillis();
@@ -455,6 +457,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			} catch (Throwable e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
+		}
+		try {
+			Thread.sleep(16);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
