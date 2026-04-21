@@ -61,6 +61,7 @@ public class ShapePalletButtonResources {
 				image = new Image(imageFile.toURI().toString());
 				return;
 			} catch (Throwable t) {
+				Log.error("Faulty STL, reloading "+stlFile);
 				com.neuronrobotics.sdk.common.Log.error(t);
 				stlFile.delete();
 			}
