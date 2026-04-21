@@ -205,15 +205,15 @@ public class ResizingHandle {
 		TransformNR wp = manipulator.getFrameOfReference().copy();
 		TransformNR rsz = TransformFactory.affineToNr(resizeHandleLocation);
 		TransformNR loc = TransformFactory.affineToNr(location);
-		TransformNR times=null;
+		TransformNR times = null;
 		try {
 			times = wp.times(loc);
-		}catch(NotARotationMatrixException l) {
-			Log.error("Tried to multiply "+wp);
-			Log.error("times "+loc);
-			
+		} catch (NotARotationMatrixException l) {
+			Log.error("Tried to multiply " + wp);
+			Log.error("times " + loc);
+
 			Log.error(l);
-			times=loc.copy();
+			times = loc.copy();
 		}
 		return rsz.times(times);
 	}
