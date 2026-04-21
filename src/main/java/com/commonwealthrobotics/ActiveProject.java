@@ -3,6 +3,8 @@ package com.commonwealthrobotics;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +14,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,9 +38,13 @@ import javafx.stage.Stage;
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
+import com.neuronrobotics.bowlerstudio.scripting.IApprovalForDownload;
+import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -77,7 +85,116 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public ActiveProject() {
 		// this.listener = listener;
+		DownloadManager.setDownloadEvents(new IDownloadManagerEvents() {
 
+			@Override
+			public void startDownload() {
+				SplashManager.renderSplashFrame(0, "Downloading...");
+			}
+
+			@Override
+			public void finishDownload() {
+				SplashManager.closeSplash();
+			}
+		});
+		ActiveProject ap = this;
+		DownloadManager.setApproval(new IApprovalForDownload() {
+			private ButtonType buttonType = null;
+
+			@Override
+			public boolean get(String name, String url) {
+
+				buttonType = null;
+				boolean isVis = SplashManager.isVisibleSplash();
+				BooleanSupplier p = SplashManager.getClosePreventer();
+				SplashManager.setClosePreventer(() -> {
+					return false;
+				});
+
+				while (SplashManager.isVisibleSplash()) {
+					Log.debug("Closing splash");
+					SplashManager.closeSplash();
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				SplashManager.setClosePreventer(p);
+				BowlerKernel.runLater(() -> {
+					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+					alert.setTitle("Message");
+					alert.setHeaderText("Would you like to add the: " + name + " Plugin?");
+					Node root = alert.getDialogPane();
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.setOnCloseRequest(ev -> alert.hide());
+					FontSizeManager.addListener(fontNum -> {
+						int tmp = fontNum - 10;
+						if (tmp < 12)
+							tmp = 12;
+						root.setStyle("-fx-font-size: " + tmp + "pt");
+						alert.getDialogPane().applyCss();
+						alert.getDialogPane().layout();
+						stage.sizeToScene();
+					});
+					Optional<ButtonType> result = alert.showAndWait();
+					buttonType = result.get();
+					alert.close();
+				});
+
+				while (buttonType == null) {
+					try {
+						Thread.sleep(20);
+
+						SplashManager.closeSplash();
+					} catch (InterruptedException e) {
+						// Auto-generated catch block
+						com.neuronrobotics.sdk.common.Log.error(e);
+					}
+
+				}
+				if (isVis)
+					SplashManager.renderSplashFrame(0, "Downloading " + name);
+				return buttonType.equals(ButtonType.OK);
+			}
+
+			@Override
+			public void onInstallFail(String url) {
+				if (!ap.get().isInitialized()) {
+					return;
+				}
+				try {
+					BowlerStudio.openExternalWebpage(new URL(url));
+				} catch (MalformedURLException e) {
+					// Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			}
+
+			public void notifyOfFailure(String name) {
+				BowlerKernel.runLater(() -> {
+					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+					alert.setTitle("Message");
+					alert.setHeaderText("FAILED to install " + name + " plugin");
+					Node root = alert.getDialogPane();
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.setOnCloseRequest(ev -> alert.hide());
+					FontSizeManager.addListener(fontNum -> {
+						int tmp = fontNum - 10;
+						if (tmp < 12)
+							tmp = 12;
+						root.setStyle("-fx-font-size: " + tmp + "pt");
+						alert.getDialogPane().applyCss();
+						alert.getDialogPane().layout();
+						stage.sizeToScene();
+					});
+					Optional<ButtonType> result = alert.showAndWait();
+					buttonType = result.get();
+					alert.close();
+				});
+			}
+		});
 	}
 
 	public Thread regenerateFrom(CaDoodleOperation source) {

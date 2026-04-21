@@ -8,18 +8,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Optional;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
-import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.NameGetter;
 import com.neuronrobotics.bowlerstudio.PsudoSplash;
 import com.neuronrobotics.bowlerstudio.SplashManager;
@@ -29,8 +25,6 @@ import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
-import com.neuronrobotics.bowlerstudio.scripting.IApprovalForDownload;
-import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.external.GroovyEclipseExternalEditor;
@@ -43,11 +37,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -364,7 +355,7 @@ public class Main extends Application {
 		PsudoSplash.setMessageY(250);
 
 		SplashManager.renderSplashFrame(1, "Main Window Show");
-		setUpApprovalWindow();
+
 		ScriptingEngine.setAppName("CaDoodle");
 
 		NameGetter mykey = new NameGetter();
@@ -426,98 +417,6 @@ public class Main extends Application {
 		}
 	}
 
-	private static void setUpApprovalWindow() {
-		DownloadManager.setDownloadEvents(new IDownloadManagerEvents() {
-
-			@Override
-			public void startDownload() {
-				SplashManager.renderSplashFrame(0, "Downloading...");
-			}
-
-			@Override
-			public void finishDownload() {
-				SplashManager.closeSplash();
-			}
-		});
-		DownloadManager.setApproval(new IApprovalForDownload() {
-			private ButtonType buttonType = null;
-
-			@Override
-			public boolean get(String name, String url) {
-				buttonType = null;
-				boolean isVis = SplashManager.isVisibleSplash();
-				SplashManager.closeSplash();
-				BowlerKernel.runLater(() -> {
-					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-					alert.setTitle("Message");
-					alert.setHeaderText("Would you like to add the: " + name + " Plugin?");
-					Node root = alert.getDialogPane();
-					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-					stage.setOnCloseRequest(ev -> alert.hide());
-					FontSizeManager.addListener(fontNum -> {
-						int tmp = fontNum - 10;
-						if (tmp < 12)
-							tmp = 12;
-						root.setStyle("-fx-font-size: " + tmp + "pt");
-						alert.getDialogPane().applyCss();
-						alert.getDialogPane().layout();
-						stage.sizeToScene();
-					});
-					Optional<ButtonType> result = alert.showAndWait();
-					buttonType = result.get();
-					alert.close();
-				});
-
-				while (buttonType == null) {
-					try {
-						Thread.sleep(20);
-
-						SplashManager.closeSplash();
-					} catch (InterruptedException e) {
-						// Auto-generated catch block
-						com.neuronrobotics.sdk.common.Log.error(e);
-					}
-
-				}
-				if (isVis)
-					SplashManager.renderSplashFrame(0, "Downloading " + name);
-				return buttonType.equals(ButtonType.OK);
-			}
-
-			@Override
-			public void onInstallFail(String url) {
-				try {
-					BowlerStudio.openExternalWebpage(new URL(url));
-				} catch (MalformedURLException e) {
-					// Auto-generated catch block
-					com.neuronrobotics.sdk.common.Log.error(e);
-				}
-			}
-
-			public void notifyOfFailure(String name) {
-				BowlerKernel.runLater(() -> {
-					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-					alert.setTitle("Message");
-					alert.setHeaderText("FAILED to install " + name + " plugin");
-					Node root = alert.getDialogPane();
-					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-					stage.setOnCloseRequest(ev -> alert.hide());
-					FontSizeManager.addListener(fontNum -> {
-						int tmp = fontNum - 10;
-						if (tmp < 12)
-							tmp = 12;
-						root.setStyle("-fx-font-size: " + tmp + "pt");
-						alert.getDialogPane().applyCss();
-						alert.getDialogPane().layout();
-						stage.sizeToScene();
-					});
-					Optional<ButtonType> result = alert.showAndWait();
-					buttonType = result.get();
-					alert.close();
-				});
-			}
-		});
-	}
 
 	// public static Thread getLoadDeps() {
 	// return loadDeps;
