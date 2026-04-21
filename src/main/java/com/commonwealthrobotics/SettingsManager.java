@@ -338,13 +338,15 @@ public class SettingsManager implements ICSGClientEvent {
 		ConfigurationDatabase.save();
 		updateVersionOptions();
 	}
+
 	@FXML
 	void onManifoldCheck(ActionEvent event) {
 		boolean selected = manifoldCheck.isSelected();
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + selected);
-		CSG.setDefaultOptType(selected?OptType.Manifold3d:OptType.CSG_BOUND);
+		CSG.setDefaultOptType(selected ? OptType.Manifold3d : OptType.CSG_BOUND);
 		ConfigurationDatabase.save();
 	}
+
 	@FXML
 	void onAlwaysAsk(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("Ask");
