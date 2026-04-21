@@ -31,3 +31,6 @@ bowler
 **~
 /CSGdatabase.json
 **-autosave.kra
+
+# Isolated GRADLE_USER_HOME for `nix develop` reproducible environment
+.gradle-nix
