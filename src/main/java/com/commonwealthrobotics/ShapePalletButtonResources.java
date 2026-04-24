@@ -138,7 +138,7 @@ public class ShapePalletButtonResources {
 		indicator = so.get(0);
 		if (so.size() > 1) {
 			for (int i = 1; i < so.size(); i++) {
-				indicator = indicator.dumbUnion(so.get(i));
+				indicator = indicator.union(so.get(i));
 			}
 		}
 		indicator.setColor(Color.WHITE);
