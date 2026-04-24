@@ -103,7 +103,15 @@ public class ShapePalletMyDoodles {
 			// if (!caDoodleFile.getSTLThumbnailFile().exists())
 			throw new Exception("Failed to initialize model " + caDoodleFile.getMyProjectName());
 		}
-		CSG indicator = Vitamins.get(instance, false, caDoodleFile.getSTLThumbnailFile());
+		CSG indicator = null;
+		try {
+			indicator = Vitamins.get(instance, false, caDoodleFile.getSTLThumbnailFile());
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			caDoodleFile.getSTLThumbnailFile().delete();
+		}
+		CSG in = indicator;
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = caDoodleFile.loadImageFromFile();
@@ -121,7 +129,7 @@ public class ShapePalletMyDoodles {
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {
 					session.setMode(SpriteDisplayMode.PLACING);
-					workplane.setIndicator(indicator, new Affine());
+					workplane.setIndicator(in, new Affine());
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
