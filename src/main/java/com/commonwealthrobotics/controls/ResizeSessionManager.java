@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.controls;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +19,32 @@ import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.Transform;
 
 import javafx.scene.transform.Affine;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
 
 public class ResizeSessionManager {
-	ResizingHandle topCenter = null;
-	ResizingHandle rightFront = null;
-	ResizingHandle rightRear = null;
-	ResizingHandle leftFront = null;
-	ResizingHandle leftRear = null;
+	private ResizingHandle topCenter = null;
+	private ResizingHandle rightFront = null;
+	private ResizingHandle rightRear = null;
+	private ResizingHandle leftFront = null;
+	private ResizingHandle leftRear = null;
+
+	// Edge-midpoint handles — each rescales only one axis (X or Y)
+	//
+	//   leftRear --[leftMid]-- leftFront
+	//      |                       |
+	//   [rearMid]             [frontMid]
+	//      |                       |
+	//   rightRear --[rightMid]-- rightFront
+	//
+	// frontMid / rearMid  →  X-only rescale  (axis vector 1,0,0)
+	// leftMid  / rightMid →  Y-only rescale  (axis vector 0,1,0)
+	private ResizingHandle frontMid = null;
+	private ResizingHandle rearMid = null;
+	private ResizingHandle leftMid = null;
+	private ResizingHandle rightMid = null;
+	private ArrayList<MeshView> meshControls = new ArrayList<MeshView>();
+
 	private List<ResizingHandle> controls;
 	private ResizingHandle beingUpdated = null;
 	private Runnable updateLines;
@@ -35,17 +54,13 @@ public class ResizeSessionManager {
 	private double zoom;
 	private double snapGrid = 1;
 	private BowlerStudio3dEngine engine;
-	// private Affine workplaneOffset;
 	private TransformNR cf;
-	private ActiveProject ap;
 	private boolean scalingFlag = false;
 	private boolean locked;
 	private boolean resizeAllowed;
-	private boolean moveLock;
 	private volatile Bounds originalBounds = null;
 	private final Map<CSG, MeshView> meshes;
 	private final SelectionSession session;
-	private final ControlSprites controlSprites;
 	private volatile double objectBottomZ = 0;
 
 	public void rescaleMeshes(Affine workplaneOffset, Transform xyzScale) {
@@ -94,13 +109,12 @@ public class ResizeSessionManager {
 		this.session = session;
 		this.engine = engine;
 		this.meshes = session.getMeshes();
-		this.controlSprites = controlSprites;
 
 		if (engine == null)
 			throw new NullPointerException();
 
 		this.updateLines = updateLines;
-		this.ap = ap;
+
 
 		Runnable onReset = () -> {
 			resetSelected();
@@ -117,7 +131,22 @@ public class ResizeSessionManager {
 				updateLines, onReset);
 		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
 				updateLines, onReset);
+
+		// Edge-midpoint handles: single-axis constraint vectors
+		frontMid = new ResizingHandle("frontMid", engine, selection, new Vector3d(1, 0, 0), workplaneOffset,
+				updateLines, onReset);
+		rearMid = new ResizingHandle("rearMid", engine, selection, new Vector3d(1, 0, 0), workplaneOffset, updateLines,
+				onReset);
+		leftMid = new ResizingHandle("leftMid", engine, selection, new Vector3d(0, 1, 0), workplaneOffset, updateLines,
+				onReset);
+		rightMid = new ResizingHandle("rightMid", engine, selection, new Vector3d(0, 1, 0), workplaneOffset,
+				updateLines, onReset);
+
 		objectBottomZ = 0; // Keep track of the object bottom position
+
+		// -----------------------------------------------------------------------
+		// CORNER HANDLES — unchanged from original
+		// -----------------------------------------------------------------------
 
 		rightFront.getMesh().setOnMousePressed(ev -> {
 			originalBounds = getBounds();
@@ -468,8 +497,6 @@ public class ResizeSessionManager {
 
 				// Live preview for uniform scaling
 				double startZ = originalBounds.getTotalZ();
-				double startX = originalBounds.getTotalX();
-				double startY = originalBounds.getTotalY();
 				double nowZ = tcC.getZ() - originalBounds.getMinZ();
 
 				double scale = notZero(nowZ / startZ);
@@ -505,8 +532,212 @@ public class ResizeSessionManager {
 
 		});
 
-		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear);
+		// -----------------------------------------------------------------------
+		// EDGE-MIDPOINT HANDLES — single-axis rescale, no shift-uniform mode
+		// -----------------------------------------------------------------------
+
+		// --- frontMid: sits at (maxX, midY, cornerZ) — rescales X only ---
+		// Dragging frontMid outward/inward grows/shrinks the X dimension while
+		// keeping the rear edge (minX) fixed. rightFront and leftFront corners
+		// are kept in sync so their X coordinate mirrors the handle.
+
+		frontMid.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = frontMid;
+		});
+
+		frontMid.manipulator.addEventListener(ev -> {
+
+			if (scalingFlag) {
+				scalingFlag = false;
+				return;
+			}
+			if ((beingUpdated != frontMid) || (originalBounds == null))
+				return;
+
+			controlSprites.hideRotationHandles();
+
+			// frontMid moves in X only; derive sx from its current X position
+			// relative to the fixed rear edge (originalBounds.getMinX()).
+			double newMaxX = frontMid.getCurrentInReferenceFrame().getX();
+			double sx = (newMaxX - originalBounds.getMinX()) / originalBounds.getTotalX();
+
+			// Keep the two front corners aligned to the handle's X position
+			double z = rightFront.manipulator.getCurrentPose().getZ();
+			rightFront.manipulator.setInReferenceFrame(frontMid.manipulator.getCurrentPose().getX(),
+					rightFront.manipulator.getCurrentPose().getY(), z);
+			leftFront.manipulator.setInReferenceFrame(frontMid.manipulator.getCurrentPose().getX(),
+					leftFront.manipulator.getCurrentPose().getY(), z);
+
+			Transform scaleXYZ = null;
+			try {
+				// Anchor: the rear edge stays fixed at originalBounds.getMinX()
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
+						.scale(notZero(sx), 1.0, 1.0)
+						.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
+
+			BowlerStudio.runLater(() -> updateTopCenter());
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
+		});
+
+		// --- rearMid: sits at (minX, midY, cornerZ) — rescales X only ---
+		// Dragging rearMid grows/shrinks the X dimension while keeping the
+		// front edge (maxX) fixed. rightRear and leftRear corners follow.
+
+		rearMid.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = rearMid;
+		});
+
+		rearMid.manipulator.addEventListener(ev -> {
+
+			if (scalingFlag) {
+				scalingFlag = false;
+				return;
+			}
+			if ((beingUpdated != rearMid) || (originalBounds == null))
+				return;
+
+			controlSprites.hideRotationHandles();
+
+			// rearMid moves in X only; derive sx relative to the fixed front edge.
+			double newMinX = rearMid.getCurrentInReferenceFrame().getX();
+			double sx = (originalBounds.getMaxX() - newMinX) / originalBounds.getTotalX();
+
+			// Keep the two rear corners aligned to the handle's X position
+			double z = rightRear.manipulator.getCurrentPose().getZ();
+			rightRear.manipulator.setInReferenceFrame(rearMid.manipulator.getCurrentPose().getX(),
+					rightRear.manipulator.getCurrentPose().getY(), z);
+			leftRear.manipulator.setInReferenceFrame(rearMid.manipulator.getCurrentPose().getX(),
+					leftRear.manipulator.getCurrentPose().getY(), z);
+
+			Transform scaleXYZ = null;
+			try {
+				// Anchor: the front edge stays fixed at originalBounds.getMaxX()
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
+						.scale(notZero(sx), 1.0, 1.0)
+						.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
+
+			BowlerStudio.runLater(() -> updateTopCenter());
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
+		});
+
+		// --- leftMid: sits at (midX, maxY, cornerZ) — rescales Y only ---
+		// Dragging leftMid grows/shrinks the Y dimension while keeping the
+		// right edge (minY) fixed. leftFront and leftRear corners follow.
+
+		leftMid.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = leftMid;
+		});
+
+		leftMid.manipulator.addEventListener(ev -> {
+
+			if (scalingFlag) {
+				scalingFlag = false;
+				return;
+			}
+			if ((beingUpdated != leftMid) || (originalBounds == null))
+				return;
+
+			controlSprites.hideRotationHandles();
+
+			// leftMid moves in Y only; derive sy relative to the fixed right edge.
+			double newMaxY = leftMid.getCurrentInReferenceFrame().getY();
+			double sy = (newMaxY - originalBounds.getMinY()) / originalBounds.getTotalY();
+
+			// Keep the two left corners aligned to the handle's Y position
+			double z = leftFront.manipulator.getCurrentPose().getZ();
+			leftFront.manipulator.setInReferenceFrame(leftFront.manipulator.getCurrentPose().getX(),
+					leftMid.manipulator.getCurrentPose().getY(), z);
+			leftRear.manipulator.setInReferenceFrame(leftRear.manipulator.getCurrentPose().getX(),
+					leftMid.manipulator.getCurrentPose().getY(), z);
+
+			Transform scaleXYZ = null;
+			try {
+				// Anchor: the right edge stays fixed at originalBounds.getMinY()
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
+						.scale(1.0, notZero(sy), 1.0)
+						.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
+
+			BowlerStudio.runLater(() -> updateTopCenter());
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
+		});
+
+		// --- rightMid: sits at (midX, minY, cornerZ) — rescales Y only ---
+		// Dragging rightMid grows/shrinks the Y dimension while keeping the
+		// left edge (maxY) fixed. rightFront and rightRear corners follow.
+
+		rightMid.getMesh().setOnMousePressed(ev -> {
+			originalBounds = getBounds();
+			beingUpdated = rightMid;
+		});
+
+		rightMid.manipulator.addEventListener(ev -> {
+
+			if (scalingFlag) {
+				scalingFlag = false;
+				return;
+			}
+			if ((beingUpdated != rightMid) || (originalBounds == null))
+				return;
+
+			controlSprites.hideRotationHandles();
+
+			// rightMid moves in Y only; derive sy relative to the fixed left edge.
+			double newMinY = rightMid.getCurrentInReferenceFrame().getY();
+			double sy = (originalBounds.getMaxY() - newMinY) / originalBounds.getTotalY();
+
+			// Keep the two right corners aligned to the handle's Y position
+			double z = rightFront.manipulator.getCurrentPose().getZ();
+			rightFront.manipulator.setInReferenceFrame(rightFront.manipulator.getCurrentPose().getX(),
+					rightMid.manipulator.getCurrentPose().getY(), z);
+			rightRear.manipulator.setInReferenceFrame(rightRear.manipulator.getCurrentPose().getX(),
+					rightMid.manipulator.getCurrentPose().getY(), z);
+
+			Transform scaleXYZ = null;
+			try {
+				// Anchor: the left edge stays fixed at originalBounds.getMaxY()
+				scaleXYZ = new Transform()
+						.translate(originalBounds.getMinX(), originalBounds.getMaxY(), originalBounds.getMinZ())
+						.scale(1.0, notZero(sy), 1.0)
+						.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+			} catch (Exception ex) {
+				Log.error(ex);
+			}
+
+			BowlerStudio.runLater(() -> updateTopCenter());
+			if (scaleXYZ != null)
+				rescaleMeshes(workplaneOffset, scaleXYZ);
+		});
+
+		// -----------------------------------------------------------------------
+		// Save listeners for all controls (corners + edges + top)
+		// -----------------------------------------------------------------------
+
+		controls = Arrays.asList(topCenter, rightFront, rightRear, leftFront, leftRear, frontMid, rearMid, leftMid,
+				rightMid);
+		for (ResizingHandle c : Arrays.asList(frontMid, rearMid, leftMid, rightMid)) {
+			c.setMyColor(Color.BLACK, Color.RED);
+		}
+
 		for (ResizingHandle c : controls) {
+			meshControls.add(c.getMesh());
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 			c.manipulator.addSaveListener(() -> {
 				if (beingUpdated != c)
@@ -514,39 +745,25 @@ public class ResizeSessionManager {
 				try {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
-					// Auto-generated catch block
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
-				// com.neuronrobotics.sdk.common.Log.error("Saving from "+c);
 				TransformNR wp = ap.get().getWorkplane().copy();
 				TransformNR rrC = rightRear.getCurrentInReferenceFrame();
 				TransformNR lfC = leftFront.getCurrentInReferenceFrame();
 				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
 
-				// rrC=wp.inverse().times(rrC);
-				// lfC=wp.inverse().times(lfC);
-				// tcC=wp.inverse().times(tcC);
-
 				bounds = getBounds();
 				for (ResizingHandle ctrl : controls)
 					ctrl.manipulator.set(0, 0, 0);
 
-				// if (Math.abs(lfC.getZ() - rrC.getZ()) > 0.00001) {
-				// throw new RuntimeException("The control points of the corners must be at the
-				// same Z value \n"
-				// + lfC.toSimpleString() + "\n" + rrC.toSimpleString());
-				// }
-
-				Resize setResize = new Resize().setNames(session.selectedSnapshot())
-						// .setDebugger(engine)
-						.setWorkplane(wp).setResize(tcC, lfC, rrC);
+				Resize setResize = new Resize().setNames(session.selectedSnapshot()).setWorkplane(wp).setResize(tcC,
+						lfC, rrC);
 
 				if (resizeAllowed) {
 					Thread t = ap.addOp(setResize);
 					try {
 						t.join();
 					} catch (InterruptedException e) {
-						// Auto-generated catch block
 						com.neuronrobotics.sdk.common.Log.error(e);
 					}
 				}
@@ -559,7 +776,6 @@ public class ResizeSessionManager {
 
 	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
 		this.resizeAllowed = resizeAllowed;
-		this.moveLock = moveLock;
 		for (ResizingHandle c : controls)
 			c.setResizeAllowed(resizeAllowed, moveLock);
 	}
@@ -574,15 +790,7 @@ public class ResizeSessionManager {
 		double newXComp = (startX * scale - startX) / 2;
 		double newYComp = (startY * scale - startY) / 2;
 
-		double centerX = bounds.getCenterX();
-		double centerY = bounds.getCenterY();
-		// com.neuronrobotics.sdk.common.Log.debug("Center x:"+centerX+"
-		// centerY:"+centerY);
 		double z = leftRear.manipulator.getCurrentPose().getZ();
-		TransformNR rrC = rightRear.getCurrentInReferenceFrame();
-		TransformNR lfC = leftFront.getCurrentInReferenceFrame();
-		double x = (lfC.getX() - rrC.getX()) / 2 + rrC.getX();
-		double y = (lfC.getY() - rrC.getY()) / 2 + rrC.getY();
 
 		double newX1 = -newXComp;
 		double newY1 = -newYComp;
@@ -596,7 +804,6 @@ public class ResizeSessionManager {
 	}
 
 	private void updateTopCenter() {
-		// if (beingUpdated!=null)
 		ResizingHandle beingUpdated2 = beingUpdated;
 		if ((beingUpdated2 != topCenter) || (beingUpdated2 == null)) {
 			TransformNR rrC = rightRear.getCurrentInReferenceFrame();
@@ -607,9 +814,6 @@ public class ResizeSessionManager {
 			double z = tcC.getZ();
 			topCenter.setInReferenceFrame(x, y, z);
 			beingUpdated = beingUpdated2;
-		} else {
-			// com.neuronrobotics.sdk.common.Log.error("Not updating center cube
-			// "+beingUpdated2);
 		}
 		updateLines.run();
 	}
@@ -628,39 +832,6 @@ public class ResizeSessionManager {
 		this.locked = locked;
 		threeDTarget();
 	}
-	/*
-	 * private void threeDTarget() {
-	 *
-	 * Vector3d center = bounds.getCenter();
-	 *
-	 * Vector3d min = bounds.getMin(); Vector3d max = bounds.getMax();
-	 *
-	 * topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
-	 * center.y, max.z), cf, locked); leftFront.threeDTarget(screenW, screenH, zoom,
-	 * new TransformNR(max.x, max.y, min.z), cf, locked);
-	 * leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y,
-	 * min.z), cf, locked); rightFront.threeDTarget(screenW, screenH, zoom, new
-	 * TransformNR(max.x, min.y, min.z), cf, locked);
-	 * rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y,
-	 * min.z), cf, locked); updateTopCenter(); }
-	 */
-	/*
-	 * private void threeDTarget() {
-	 *
-	 * Vector3d center = bounds.getCenter();
-	 *
-	 * Vector3d min = bounds.getMin(); // relative to work plane Vector3d max =
-	 * bounds.getMax(); // relative to work plane
-	 *
-	 * topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
-	 * center.y, max.z), cf, locked); leftFront.threeDTarget(screenW, screenH, zoom,
-	 * new TransformNR(max.x, max.y, min.z), cf, locked);
-	 * leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y,
-	 * min.z), cf, locked); rightFront.threeDTarget(screenW, screenH, zoom, new
-	 * TransformNR(max.x, min.y, min.z), cf, locked);
-	 * rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y,
-	 * min.z), cf, locked); updateTopCenter(); }
-	 */
 
 	private void threeDTarget() { // New way for control handles, always closest to the work plane
 		Vector3d center = bounds.getCenter();
@@ -677,11 +848,22 @@ public class ResizeSessionManager {
 		else if (max.z < 0) // object is below the work plane
 			cornerZ = max.z;
 
+		// Corner handles
 		topCenter.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z), cf, locked);
 		leftFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, max.y, cornerZ), cf, locked);
 		leftRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, max.y, cornerZ), cf, locked);
 		rightFront.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, min.y, cornerZ), cf, locked);
 		rightRear.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y, cornerZ), cf, locked);
+
+		// Edge-midpoint handles — positioned at the midpoint of each edge
+		frontMid.threeDTarget(screenW, screenH, zoom, new TransformNR(max.x, (min.y + max.y) / 2.0, cornerZ), cf,
+				locked);
+		rearMid.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, (min.y + max.y) / 2.0, cornerZ), cf,
+				locked);
+		leftMid.threeDTarget(screenW, screenH, zoom, new TransformNR((min.x + max.x) / 2.0, max.y, cornerZ), cf,
+				locked);
+		rightMid.threeDTarget(screenW, screenH, zoom, new TransformNR((min.x + max.x) / 2.0, min.y, cornerZ), cf,
+				locked);
 
 		updateTopCenter();
 	}
@@ -737,7 +919,6 @@ public class ResizeSessionManager {
 
 	public void set(double x, double y, double z) {
 		Bounds b = getBounds();
-		Vector3d c = b.getCenter();
 		com.neuronrobotics.sdk.common.Log.error("Resizing to " + x + " " + y + " " + z);
 
 		if (topCenter.isSelected()) {
@@ -781,6 +962,31 @@ public class ResizeSessionManager {
 			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
 			rightRear.manipulator.fireSave();
 		}
+
+		// Edge-midpoint programmatic resize
+		if (frontMid.isSelected()) {
+			com.neuronrobotics.sdk.common.Log.error("frontMid resize (X only)");
+			frontMid.manipulator.setInReferenceFrame(x - b.getTotalX(), 0, 0);
+			frontMid.manipulator.fireSave();
+		}
+
+		if (rearMid.isSelected()) {
+			com.neuronrobotics.sdk.common.Log.error("rearMid resize (X only)");
+			rearMid.manipulator.setInReferenceFrame(-(x - b.getTotalX()), 0, 0);
+			rearMid.manipulator.fireSave();
+		}
+
+		if (leftMid.isSelected()) {
+			com.neuronrobotics.sdk.common.Log.error("leftMid resize (Y only)");
+			leftMid.manipulator.setInReferenceFrame(0, y - b.getTotalY(), 0);
+			leftMid.manipulator.fireSave();
+		}
+
+		if (rightMid.isSelected()) {
+			com.neuronrobotics.sdk.common.Log.error("rightMid resize (Y only)");
+			rightMid.manipulator.setInReferenceFrame(0, -(y - b.getTotalY()), 0);
+			rightMid.manipulator.fireSave();
+		}
 	}
 
 	public void hide() {
@@ -789,6 +995,19 @@ public class ResizeSessionManager {
 		leftRear.hide();
 		rightFront.hide();
 		rightRear.hide();
+		frontMid.hide();
+		rearMid.hide();
+		leftMid.hide();
+		rightMid.hide();
+	}
+
+	public void updateOrientation(TransformNR cameraFrame) {
+		for (ResizingHandle c : controls)
+			c.updateOrientation(cameraFrame);
+	}
+
+	public ArrayList<MeshView> getMeshes() {
+		return meshControls;
 	}
 
 }

@@ -32,7 +32,7 @@ public class ResizingHandle {
 	private final Pane overlay; // Overlay pane for 2D objects
 
 	private double baseScale = 0.75; // Base scale factor for the corner handle cubes
-	private static final double size = 10; // Handle size in pixels
+	private static final double size = 15; // Handle size in pixels
 	private double scaleFactor;
 
 	private BowlerStudio3dEngine engine;
