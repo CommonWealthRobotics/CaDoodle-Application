@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.commonwealthrobotics.ActiveProject;
-import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -185,7 +184,8 @@ public class ResizeSessionManager {
 
 				// Let the XY-size of the scaled object follow the snap grid
 				// It is usually not possible to let the corner land on the snap grid
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_tx) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
+						? (gridNewX / original_tx) - 1.0
 						: (gridNewY / original_ty) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -216,15 +216,7 @@ public class ResizeSessionManager {
 						/ originalBounds.getTotalY();
 				sz = 1.0; // Height is unchanged
 			}
-
-			rightMid.manipulator.setInReferenceFrame(
-					(rightFront.manipulator.getSetGlobalPose().getX() - rightRear.manipulator.getSetGlobalPose().getX())
-							/ 2,
-					rightFront.manipulator.getSetGlobalPose().getY(), rightFront.manipulator.getCurrentPose().getZ());
-			leftMid.manipulator.setInReferenceFrame(
-					(leftFront.manipulator.getSetGlobalPose().getX() - leftRear.manipulator.getSetGlobalPose().getX())
-							/ 2,
-					leftFront.manipulator.getSetGlobalPose().getY(), leftFront.manipulator.getCurrentPose().getZ());
+			updateHandleCenters();
 
 			Transform scaleXYZ = null;
 			try {
@@ -274,7 +266,8 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_y * (1.0 + scale);
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_x) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
+						? (gridNewX / original_x) - 1.0
 						: (gridNewY / original_y) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -314,7 +307,7 @@ public class ResizeSessionManager {
 					cornerZ);
 			rearMid.manipulator.setInReferenceFrame((rr.getX() + lr.getX()) / 2.0, (rr.getY() + lr.getY()) / 2.0,
 					cornerZ);
-
+			updateHandleCenters();
 			Transform scaleXYZ = null;
 			try {
 				scaleXYZ = new Transform()
@@ -364,7 +357,8 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_y * (1.0 + scale);
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_x) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
+						? (gridNewX / original_x) - 1.0
 						: (gridNewY / original_y) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -405,7 +399,7 @@ public class ResizeSessionManager {
 					cornerZ);
 			leftMid.manipulator.setInReferenceFrame((lf.getX() + lr.getX()) / 2.0, (lf.getY() + lr.getY()) / 2.0,
 					cornerZ);
-
+			updateHandleCenters();
 			Transform scaleXYZ = null;
 			try {
 				scaleXYZ = new Transform()
@@ -455,7 +449,8 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_y * (1.0 + scale);
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_x) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
+						? (gridNewX / original_x) - 1.0
 						: (gridNewY / original_y) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -496,7 +491,7 @@ public class ResizeSessionManager {
 					cornerZ);
 			leftMid.manipulator.setInReferenceFrame((lr.getX() + lf.getX()) / 2.0, (lr.getY() + lf.getY()) / 2.0,
 					cornerZ);
-
+			updateHandleCenters();
 			Transform scaleXYZ = new Transform()
 					.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
 					.scale(notZero(sx), notZero(sy), notZero(sz))
@@ -614,7 +609,7 @@ public class ResizeSessionManager {
 			} catch (Exception ex) {
 				Log.error(ex);
 			}
-
+			updateHandleCenters(frontMid);
 			BowlerStudio.runLater(() -> updateTopCenter());
 			if (scaleXYZ != null)
 				rescaleMeshes(workplaneOffset, scaleXYZ);
@@ -661,6 +656,7 @@ public class ResizeSessionManager {
 			} catch (Exception ex) {
 				Log.error(ex);
 			}
+			updateHandleCenters(rearMid);
 
 			BowlerStudio.runLater(() -> updateTopCenter());
 			if (scaleXYZ != null)
@@ -708,7 +704,7 @@ public class ResizeSessionManager {
 			} catch (Exception ex) {
 				Log.error(ex);
 			}
-
+			updateHandleCenters(leftMid);
 			BowlerStudio.runLater(() -> updateTopCenter());
 			if (scaleXYZ != null)
 				rescaleMeshes(workplaneOffset, scaleXYZ);
@@ -755,7 +751,7 @@ public class ResizeSessionManager {
 			} catch (Exception ex) {
 				Log.error(ex);
 			}
-
+			updateHandleCenters(rightMid);
 			BowlerStudio.runLater(() -> updateTopCenter());
 			if (scaleXYZ != null)
 				rescaleMeshes(workplaneOffset, scaleXYZ);
@@ -807,6 +803,30 @@ public class ResizeSessionManager {
 				BowlerStudio.runLater(() -> threeDTarget());
 			});
 		}
+	}
+
+	private void updateHandleCenters() {
+		updateHandleCenters(null);
+	}
+
+	private void updateHandleCenters(ResizingHandle avoid) {
+		double nY = (rightFront.manipulator.getCurrentPose().getY() - leftFront.manipulator.getCurrentPose().getY())
+				/ 2;
+		if (avoid != frontMid)
+			frontMid.manipulator.setInReferenceFrame((rightFront.manipulator.getCurrentPose().getX()), nY,
+					rightFront.manipulator.getCurrentPose().getZ());
+		if (avoid != rearMid)
+			rearMid.manipulator.setInReferenceFrame((leftRear.manipulator.getCurrentPose().getX()), nY,
+					leftFront.manipulator.getCurrentPose().getZ());
+
+		double nX = (rightFront.manipulator.getCurrentPose().getX() - rightRear.manipulator.getCurrentPose().getX())
+				/ 2;
+		if (avoid != rightMid)
+			rightMid.manipulator.setInReferenceFrame(nX, rightFront.manipulator.getCurrentPose().getY(),
+					rightFront.manipulator.getCurrentPose().getZ());
+		if (avoid != leftMid)
+			leftMid.manipulator.setInReferenceFrame(nX, leftFront.manipulator.getCurrentPose().getY(),
+					leftFront.manipulator.getCurrentPose().getZ());
 	}
 
 	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
