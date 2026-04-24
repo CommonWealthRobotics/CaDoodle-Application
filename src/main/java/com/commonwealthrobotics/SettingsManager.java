@@ -343,7 +343,14 @@ public class SettingsManager implements ICSGClientEvent {
 	void onManifoldCheck(ActionEvent event) {
 		boolean selected = manifoldCheck.isSelected();
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + selected);
-		CSG.setDefaultOptType(selected ? OptType.Manifold3d : OptType.CSG_BOUND);
+		try {
+			CSG.setDefaultOptType(selected ? OptType.Manifold3d : OptType.CSG_BOUND);
+		} catch (Throwable t) {
+			Log.error(t);
+			CSG.setDefaultOptType(OptType.CSG_BOUND);
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + false).toString();
+			manifoldCheck.setSelected(false);
+		}
 		ConfigurationDatabase.save();
 	}
 
