@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -31,14 +32,14 @@ public class ResizeSessionManager {
 
 	// Edge-midpoint handles — each rescales only one axis (X or Y)
 	//
-	//   leftRear --[leftMid]-- leftFront
-	//      |                       |
-	//   [rearMid]             [frontMid]
-	//      |                       |
-	//   rightRear --[rightMid]-- rightFront
+	// leftRear --[leftMid]-- leftFront
+	// | |
+	// [rearMid] [frontMid]
+	// | |
+	// rightRear --[rightMid]-- rightFront
 	//
-	// frontMid / rearMid  →  X-only rescale  (axis vector 1,0,0)
-	// leftMid  / rightMid →  Y-only rescale  (axis vector 0,1,0)
+	// frontMid / rearMid → X-only rescale (axis vector 1,0,0)
+	// leftMid / rightMid → Y-only rescale (axis vector 0,1,0)
 	private ResizingHandle frontMid = null;
 	private ResizingHandle rearMid = null;
 	private ResizingHandle leftMid = null;
@@ -115,7 +116,6 @@ public class ResizeSessionManager {
 
 		this.updateLines = updateLines;
 
-
 		Runnable onReset = () -> {
 			resetSelected();
 			upArrow.resetSelected();
@@ -185,8 +185,7 @@ public class ResizeSessionManager {
 
 				// Let the XY-size of the scaled object follow the snap grid
 				// It is usually not possible to let the corner land on the snap grid
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
-						? (gridNewX / original_tx) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_tx) - 1.0
 						: (gridNewY / original_ty) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -217,6 +216,15 @@ public class ResizeSessionManager {
 						/ originalBounds.getTotalY();
 				sz = 1.0; // Height is unchanged
 			}
+
+			rightMid.manipulator.setInReferenceFrame(
+					(rightFront.manipulator.getSetGlobalPose().getX() - rightRear.manipulator.getSetGlobalPose().getX())
+							/ 2,
+					rightFront.manipulator.getSetGlobalPose().getY(), rightFront.manipulator.getCurrentPose().getZ());
+			leftMid.manipulator.setInReferenceFrame(
+					(leftFront.manipulator.getSetGlobalPose().getX() - leftRear.manipulator.getSetGlobalPose().getX())
+							/ 2,
+					leftFront.manipulator.getSetGlobalPose().getY(), leftFront.manipulator.getCurrentPose().getZ());
 
 			Transform scaleXYZ = null;
 			try {
@@ -266,8 +274,7 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_y * (1.0 + scale);
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
-						? (gridNewX / original_x) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_x) - 1.0
 						: (gridNewY / original_y) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -297,6 +304,16 @@ public class ResizeSessionManager {
 						/ originalBounds.getTotalY();
 				sz = 1.0;
 			}
+
+			// Update mid handles to their new midpoint positions
+			TransformNR rr = rightRear.getCurrentInReferenceFrame();
+			TransformNR rf = rightFront.getCurrentInReferenceFrame();
+			TransformNR lr = leftRear.getCurrentInReferenceFrame();
+			double cornerZ = rr.getZ();
+			rightMid.manipulator.setInReferenceFrame((rr.getX() + rf.getX()) / 2.0, (rr.getY() + rf.getY()) / 2.0,
+					cornerZ);
+			rearMid.manipulator.setInReferenceFrame((rr.getX() + lr.getX()) / 2.0, (rr.getY() + lr.getY()) / 2.0,
+					cornerZ);
 
 			Transform scaleXYZ = null;
 			try {
@@ -347,8 +364,7 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_y * (1.0 + scale);
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
-						? (gridNewX / original_x) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_x) - 1.0
 						: (gridNewY / original_y) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -379,6 +395,16 @@ public class ResizeSessionManager {
 						/ originalBounds.getTotalY();
 				sz = 1.0;
 			}
+
+			// Update mid handles to their new midpoint positions
+			TransformNR lf = leftFront.getCurrentInReferenceFrame();
+			TransformNR rf = rightFront.getCurrentInReferenceFrame();
+			TransformNR lr = leftRear.getCurrentInReferenceFrame();
+			double cornerZ = lf.getZ();
+			frontMid.manipulator.setInReferenceFrame((lf.getX() + rf.getX()) / 2.0, (lf.getY() + rf.getY()) / 2.0,
+					cornerZ);
+			leftMid.manipulator.setInReferenceFrame((lf.getX() + lr.getX()) / 2.0, (lf.getY() + lr.getY()) / 2.0,
+					cornerZ);
 
 			Transform scaleXYZ = null;
 			try {
@@ -429,8 +455,7 @@ public class ResizeSessionManager {
 				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
 				double rawNewY = original_y * (1.0 + scale);
 				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
-				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
-						? (gridNewX / original_x) - 1.0
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY) ? (gridNewX / original_x) - 1.0
 						: (gridNewY / original_y) - 1.0;
 
 				scalingFlag = true; // block recursive call
@@ -461,6 +486,16 @@ public class ResizeSessionManager {
 
 				sz = 1.0;
 			}
+
+			// Update mid handles to their new midpoint positions
+			TransformNR lr = leftRear.getCurrentInReferenceFrame();
+			TransformNR rr = rightRear.getCurrentInReferenceFrame();
+			TransformNR lf = leftFront.getCurrentInReferenceFrame();
+			double cornerZ = lr.getZ();
+			rearMid.manipulator.setInReferenceFrame((lr.getX() + rr.getX()) / 2.0, (lr.getY() + rr.getY()) / 2.0,
+					cornerZ);
+			leftMid.manipulator.setInReferenceFrame((lr.getX() + lf.getX()) / 2.0, (lr.getY() + lf.getY()) / 2.0,
+					cornerZ);
 
 			Transform scaleXYZ = new Transform()
 					.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
