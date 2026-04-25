@@ -833,21 +833,17 @@ public class ResizeSessionManager {
 			nX = (-leftFront.manipulator.getCurrentPose().getX() + leftRear.manipulator.getCurrentPose().getX()) / 2;
 			ly = leftRear.manipulator.getCurrentPose().getY();
 		}
-		if(source == frontMid) {
-			nX = (frontMid.manipulator.getCurrentPose().getX() - rearMid.manipulator.getCurrentPose().getX())
-					/ 2;
+		if (source == frontMid) {
+			nX = (frontMid.manipulator.getCurrentPose().getX() - rearMid.manipulator.getCurrentPose().getX()) / 2;
 		}
-		if(source == rearMid) {
-			nX = (-frontMid.manipulator.getCurrentPose().getX() + rearMid.manipulator.getCurrentPose().getX())
-					/ 2;
+		if (source == rearMid) {
+			nX = (-frontMid.manipulator.getCurrentPose().getX() + rearMid.manipulator.getCurrentPose().getX()) / 2;
 		}
-		if(source == rightMid) {
-			nY = (rightMid.manipulator.getCurrentPose().getY() - leftMid.manipulator.getCurrentPose().getY())
-					/ 2;
+		if (source == rightMid) {
+			nY = (rightMid.manipulator.getCurrentPose().getY() - leftMid.manipulator.getCurrentPose().getY()) / 2;
 		}
-		if(source == leftMid) {
-			nY = (-rightMid.manipulator.getCurrentPose().getY() + leftMid.manipulator.getCurrentPose().getY())
-					/ 2;
+		if (source == leftMid) {
+			nY = (-rightMid.manipulator.getCurrentPose().getY() + leftMid.manipulator.getCurrentPose().getY()) / 2;
 		}
 		if (source != frontMid)
 			frontMid.manipulator.setInReferenceFrame(fx, nY, z);
@@ -954,7 +950,7 @@ public class ResizeSessionManager {
 	}
 
 	boolean leftSelected() {
-		return leftFront.isSelected() || leftRear.isSelected()||frontMid.isSelected()||rearMid.isSelected();
+		return leftFront.isSelected() || leftRear.isSelected() || frontMid.isSelected() || rearMid.isSelected();
 	}
 
 	boolean rightSelected() {
@@ -962,7 +958,7 @@ public class ResizeSessionManager {
 	}
 
 	boolean frontSelected() {
-		return rightFront.isSelected() || leftFront.isSelected()||leftMid.isSelected()||rightMid.isSelected();
+		return rightFront.isSelected() || leftFront.isSelected() || leftMid.isSelected() || rightMid.isSelected();
 	}
 
 	boolean rearSelected() {
