@@ -216,7 +216,7 @@ public class ResizeSessionManager {
 						/ originalBounds.getTotalY();
 				sz = 1.0; // Height is unchanged
 			}
-			updateHandleCenters();
+			updateHandleCenters(rightFront);
 
 			Transform scaleXYZ = null;
 			try {
@@ -307,7 +307,7 @@ public class ResizeSessionManager {
 					cornerZ);
 			rearMid.manipulator.setInReferenceFrame((rr.getX() + lr.getX()) / 2.0, (rr.getY() + lr.getY()) / 2.0,
 					cornerZ);
-			updateHandleCenters();
+			updateHandleCenters(rightRear);
 			Transform scaleXYZ = null;
 			try {
 				scaleXYZ = new Transform()
@@ -399,7 +399,7 @@ public class ResizeSessionManager {
 					cornerZ);
 			leftMid.manipulator.setInReferenceFrame((lf.getX() + lr.getX()) / 2.0, (lf.getY() + lr.getY()) / 2.0,
 					cornerZ);
-			updateHandleCenters();
+			updateHandleCenters(leftFront);
 			Transform scaleXYZ = null;
 			try {
 				scaleXYZ = new Transform()
@@ -491,7 +491,7 @@ public class ResizeSessionManager {
 					cornerZ);
 			leftMid.manipulator.setInReferenceFrame((lr.getX() + lf.getX()) / 2.0, (lr.getY() + lf.getY()) / 2.0,
 					cornerZ);
-			updateHandleCenters();
+			updateHandleCenters(leftRear);
 			Transform scaleXYZ = new Transform()
 					.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
 					.scale(notZero(sx), notZero(sy), notZero(sz))
@@ -805,28 +805,54 @@ public class ResizeSessionManager {
 		}
 	}
 
-	private void updateHandleCenters() {
-		updateHandleCenters(null);
-	}
 
-	private void updateHandleCenters(ResizingHandle avoid) {
+
+	private void updateHandleCenters(ResizingHandle source) {
+		
 		double nY = (rightFront.manipulator.getCurrentPose().getY() - leftFront.manipulator.getCurrentPose().getY())
 				/ 2;
-		if (avoid != frontMid)
-			frontMid.manipulator.setInReferenceFrame((rightFront.manipulator.getCurrentPose().getX()), nY,
-					rightFront.manipulator.getCurrentPose().getZ());
-		if (avoid != rearMid)
-			rearMid.manipulator.setInReferenceFrame((leftRear.manipulator.getCurrentPose().getX()), nY,
-					leftFront.manipulator.getCurrentPose().getZ());
-
 		double nX = (rightFront.manipulator.getCurrentPose().getX() - rightRear.manipulator.getCurrentPose().getX())
 				/ 2;
-		if (avoid != rightMid)
-			rightMid.manipulator.setInReferenceFrame(nX, rightFront.manipulator.getCurrentPose().getY(),
-					rightFront.manipulator.getCurrentPose().getZ());
-		if (avoid != leftMid)
-			leftMid.manipulator.setInReferenceFrame(nX, leftFront.manipulator.getCurrentPose().getY(),
-					leftFront.manipulator.getCurrentPose().getZ());
+		double rmx =leftRear.manipulator.getCurrentPose().getX();
+		double ry = rightFront.manipulator.getCurrentPose().getY();
+		double ly = leftFront.manipulator.getCurrentPose().getY();
+		double z = leftFront.manipulator.getCurrentPose().getZ();
+		double fx = (rightFront.manipulator.getCurrentPose().getX());
+		if(source==rightRear) {
+			nX = (-rightFront.manipulator.getCurrentPose().getX() + rightRear.manipulator.getCurrentPose().getX())
+					/ 2;
+			rmx =rightRear.manipulator.getCurrentPose().getX();
+			ry = rightRear.manipulator.getCurrentPose().getY();
+			nY = (rightRear.manipulator.getCurrentPose().getY() - leftRear.manipulator.getCurrentPose().getY())
+					/ 2;
+		}
+		if(source==leftFront) {
+			nY = (-rightFront.manipulator.getCurrentPose().getY() + leftFront.manipulator.getCurrentPose().getY())
+					/ 2;
+			fx = (leftFront.manipulator.getCurrentPose().getX());
+			nX = (leftFront.manipulator.getCurrentPose().getX() - leftRear.manipulator.getCurrentPose().getX())
+					/ 2;
+		}
+		if(source==leftRear) {
+			nY = (-rightRear.manipulator.getCurrentPose().getY() + leftRear.manipulator.getCurrentPose().getY())
+					/ 2;
+			nX = (-leftFront.manipulator.getCurrentPose().getX() + leftRear.manipulator.getCurrentPose().getX())
+					/ 2;
+			ly = leftRear.manipulator.getCurrentPose().getY();
+		}
+		if (source != frontMid)
+			frontMid.manipulator.setInReferenceFrame(fx, nY,
+					z);
+		if (source != rearMid)
+			rearMid.manipulator.setInReferenceFrame(rmx, nY,
+					z);
+
+		if (source != rightMid)
+			rightMid.manipulator.setInReferenceFrame(nX, ry,
+					z);
+		if (source != leftMid)
+			leftMid.manipulator.setInReferenceFrame(nX,ly,
+					z);
 	}
 
 	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
