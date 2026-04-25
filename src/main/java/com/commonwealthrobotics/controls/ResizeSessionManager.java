@@ -837,7 +837,6 @@ public class ResizeSessionManager {
 			frontMid.manipulator.setInReferenceFrame(fx, nY, z);
 		if (source != rearMid)
 			rearMid.manipulator.setInReferenceFrame(rmx, nY, z);
-
 		if (source != rightMid)
 			rightMid.manipulator.setInReferenceFrame(nX, ry, z);
 		if (source != leftMid)
