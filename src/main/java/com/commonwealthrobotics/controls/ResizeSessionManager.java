@@ -806,53 +806,42 @@ public class ResizeSessionManager {
 	}
 
 
-
 	private void updateHandleCenters(ResizingHandle source) {
-		
+
 		double nY = (rightFront.manipulator.getCurrentPose().getY() - leftFront.manipulator.getCurrentPose().getY())
 				/ 2;
 		double nX = (rightFront.manipulator.getCurrentPose().getX() - rightRear.manipulator.getCurrentPose().getX())
 				/ 2;
-		double rmx =leftRear.manipulator.getCurrentPose().getX();
+		double rmx = leftRear.manipulator.getCurrentPose().getX();
 		double ry = rightFront.manipulator.getCurrentPose().getY();
 		double ly = leftFront.manipulator.getCurrentPose().getY();
 		double z = leftFront.manipulator.getCurrentPose().getZ();
 		double fx = (rightFront.manipulator.getCurrentPose().getX());
-		if(source==rightRear) {
-			nX = (-rightFront.manipulator.getCurrentPose().getX() + rightRear.manipulator.getCurrentPose().getX())
-					/ 2;
-			rmx =rightRear.manipulator.getCurrentPose().getX();
+		if (source == rightRear) {
+			nX = (-rightFront.manipulator.getCurrentPose().getX() + rightRear.manipulator.getCurrentPose().getX()) / 2;
+			rmx = rightRear.manipulator.getCurrentPose().getX();
 			ry = rightRear.manipulator.getCurrentPose().getY();
-			nY = (rightRear.manipulator.getCurrentPose().getY() - leftRear.manipulator.getCurrentPose().getY())
-					/ 2;
+			nY = (rightRear.manipulator.getCurrentPose().getY() - leftRear.manipulator.getCurrentPose().getY()) / 2;
 		}
-		if(source==leftFront) {
-			nY = (-rightFront.manipulator.getCurrentPose().getY() + leftFront.manipulator.getCurrentPose().getY())
-					/ 2;
+		if (source == leftFront) {
+			nY = (-rightFront.manipulator.getCurrentPose().getY() + leftFront.manipulator.getCurrentPose().getY()) / 2;
 			fx = (leftFront.manipulator.getCurrentPose().getX());
-			nX = (leftFront.manipulator.getCurrentPose().getX() - leftRear.manipulator.getCurrentPose().getX())
-					/ 2;
+			nX = (leftFront.manipulator.getCurrentPose().getX() - leftRear.manipulator.getCurrentPose().getX()) / 2;
 		}
-		if(source==leftRear) {
-			nY = (-rightRear.manipulator.getCurrentPose().getY() + leftRear.manipulator.getCurrentPose().getY())
-					/ 2;
-			nX = (-leftFront.manipulator.getCurrentPose().getX() + leftRear.manipulator.getCurrentPose().getX())
-					/ 2;
+		if (source == leftRear) {
+			nY = (-rightRear.manipulator.getCurrentPose().getY() + leftRear.manipulator.getCurrentPose().getY()) / 2;
+			nX = (-leftFront.manipulator.getCurrentPose().getX() + leftRear.manipulator.getCurrentPose().getX()) / 2;
 			ly = leftRear.manipulator.getCurrentPose().getY();
 		}
 		if (source != frontMid)
-			frontMid.manipulator.setInReferenceFrame(fx, nY,
-					z);
+			frontMid.manipulator.setInReferenceFrame(fx, nY, z);
 		if (source != rearMid)
-			rearMid.manipulator.setInReferenceFrame(rmx, nY,
-					z);
+			rearMid.manipulator.setInReferenceFrame(rmx, nY, z);
 
 		if (source != rightMid)
-			rightMid.manipulator.setInReferenceFrame(nX, ry,
-					z);
+			rightMid.manipulator.setInReferenceFrame(nX, ry, z);
 		if (source != leftMid)
-			leftMid.manipulator.setInReferenceFrame(nX,ly,
-					z);
+			leftMid.manipulator.setInReferenceFrame(nX, ly, z);
 	}
 
 	public void setResizeAllowed(boolean resizeAllowed, boolean moveLock) {
