@@ -643,9 +643,15 @@ public class ControlSprites {
 			else
 				zdimen.hide();
 
-			if (scaleSession.xySelected() && (mode == SpriteDisplayMode.Default)) {
-				xdimen.show();
-				ydimen.show();
+			if ((mode == SpriteDisplayMode.Default)) {
+				if (scaleSession.rightSelected() || scaleSession.leftSelected())
+					xdimen.show();
+				else
+					xdimen.hide();
+				if(scaleSession.frontSelected()||scaleSession.rearSelected())
+					ydimen.show();
+				else
+					ydimen.hide();
 			} else {
 				xdimen.hide();
 				ydimen.hide();
@@ -752,79 +758,79 @@ public class ControlSprites {
 
 			switch (this.mode) {
 
-				case Default :
-					initialize();
-					for (ThreedNumber t : numbers)
-						t.hide();
+			case Default:
+				initialize();
+				for (ThreedNumber t : numbers)
+					t.hide();
 
-					align.hide();
-					mirror.hide();
-					if (ruler.isActive()) {
-						xOffset.show();
-						yOffset.show();
-						zOffset.show();
-					}
-					return;
-
-				case MoveXY :
-					for (DottedLine l : lines) {
-						l.setVisible(true);
-					}
-					if (ruler.isActive()) {
-						xOffset.show();
-						yOffset.show();
-					}
-					break;
-
-				case MoveZ :
-					for (DottedLine l : lines) {
-						l.setVisible(true);
-					}
-					upArrow.show();
-					footprint.setVisible(true);
+				align.hide();
+				mirror.hide();
+				if (ruler.isActive()) {
+					xOffset.show();
+					yOffset.show();
 					zOffset.show();
-					break;
+				}
+				return;
 
-				case ResizeX :
-					break;
-				case ResizeXY :
-					break;
-				case ResizeY :
-					break;
-				case ResizeZ :
-					break;
-				case Rotating :
-					break;
-				case Align :
-					for (DottedLine l : lines)
-						l.setVisible(true);
+			case MoveXY:
+				for (DottedLine l : lines) {
+					l.setVisible(true);
+				}
+				if (ruler.isActive()) {
+					xOffset.show();
+					yOffset.show();
+				}
+				break;
 
-					break;
-				case Mirror :
-					for (DottedLine l : lines)
-						l.setVisible(true);
+			case MoveZ:
+				for (DottedLine l : lines) {
+					l.setVisible(true);
+				}
+				upArrow.show();
+				footprint.setVisible(true);
+				zOffset.show();
+				break;
 
-					rotationManager.hide();
-					break;
-				case PLACING :
-					for (DottedLine l : lines)
-						l.setVisible(true);
+			case ResizeX:
+				break;
+			case ResizeXY:
+				break;
+			case ResizeY:
+				break;
+			case ResizeZ:
+				break;
+			case Rotating:
+				break;
+			case Align:
+				for (DottedLine l : lines)
+					l.setVisible(true);
 
-					break;
-				case Clear :
-					for (ThreedNumber t : numbers)
-						t.hide();
+				break;
+			case Mirror:
+				for (DottedLine l : lines)
+					l.setVisible(true);
 
-					align.hide();
-					mirror.hide();
-					for (DottedLine l : lines)
-						l.setVisible(false);
+				rotationManager.hide();
+				break;
+			case PLACING:
+				for (DottedLine l : lines)
+					l.setVisible(true);
 
-					upArrow.hide();
-					footprint.setVisible(false);
-					zOffset.hide();
-					scaleSession.hide();
-					break;
+				break;
+			case Clear:
+				for (ThreedNumber t : numbers)
+					t.hide();
+
+				align.hide();
+				mirror.hide();
+				for (DottedLine l : lines)
+					l.setVisible(false);
+
+				upArrow.hide();
+				footprint.setVisible(false);
+				zOffset.hide();
+				scaleSession.hide();
+				break;
 			}
 
 			if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
