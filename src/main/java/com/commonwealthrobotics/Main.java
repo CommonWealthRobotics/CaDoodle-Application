@@ -74,6 +74,7 @@ public class Main extends Application {
 		double h = sh;
 
 		Scene scene = new Scene(root);
+		PsudoSplash.setParentWindow(stage);
 		stage.setScene(scene);
 
 		stage.setWidth(w);
