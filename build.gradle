@@ -17,7 +17,7 @@ plugins {
 	id 'java'
 	id 'application'
 	id 'eclipse'
-    id 'com.gradleup.shadow' version '8.3.9' apply false
+	id 'com.gradleup.shadow' version '8.3.9' apply false
 	id 'org.openjfx.javafxplugin' version '0.1.0' apply false
 	id 'com.diffplug.spotless' version '6.25.0'
 }
@@ -47,11 +47,11 @@ allprojects {
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
-    
-    java {
-        sourceCompatibility = 21
-        targetCompatibility = 21
-    }
+
+	java {
+		sourceCompatibility = 21
+		targetCompatibility = 21
+	}
 
 	eclipse {
 		classpath {
@@ -68,8 +68,14 @@ subprojects {
 			}
 		}
 		jdt {
-            sourceCompatibility = 1.8
-            targetCompatibility = 1.8
+			sourceCompatibility = 1.8
+			targetCompatibility = 1.8
+			file {
+				withProperties { props ->
+					props['org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures'] = 'enabled'
+					props['org.eclipse.jdt.core.compiler.problem.reportPreviewFeatures'] = 'ignore'
+				}
+			}
 		}
 	}
 
@@ -77,6 +83,40 @@ subprojects {
 		options.encoding = 'UTF-8'
 		options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
 		options.compilerArgs += ['--enable-preview']
+	}
+	tasks.named('eclipseJdt') {
+		doLast {
+			def prefs = file('.settings/org.eclipse.jdt.core.prefs')
+			def lines = prefs.exists() ? prefs.readLines() : []
+			def toAdd = [
+				'org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures=enabled',
+				'org.eclipse.jdt.core.compiler.problem.reportPreviewFeatures=ignore'
+			]
+			toAdd.each { line ->
+				def key = line.split('=')[0]
+				if (!lines.any { it.startsWith(key) }) {
+					lines << line
+				}
+			}
+			prefs.text = lines.join('\n') + '\n'
+		}
+	}
+}
+tasks.named('eclipseJdt') {
+	doLast {
+		def prefs = file('.settings/org.eclipse.jdt.core.prefs')
+		def lines = prefs.exists() ? prefs.readLines() : []
+		def toAdd = [
+			'org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures=enabled',
+			'org.eclipse.jdt.core.compiler.problem.reportPreviewFeatures=ignore'
+		]
+		toAdd.each { line ->
+			def key = line.split('=')[0]
+			if (!lines.any { it.startsWith(key) }) {
+				lines << line
+			}
+		}
+		prefs.text = lines.join('\n') + '\n'
 	}
 }
 tasks.withType(JavaCompile).configureEach {
@@ -91,8 +131,8 @@ tasks.withType(JavaExec).configureEach {
 	jvmArgs '--enable-preview'
 }
 subprojects { subproject ->
-	subproject.afterEvaluate {		
-        if (subproject.plugins.hasPlugin('com.gradleup.shadow')) {
+	subproject.afterEvaluate {
+		if (subproject.plugins.hasPlugin('com.gradleup.shadow')) {
 			subproject.tasks.matching { it.name == 'shadowJar' }.all {
 				System.out.println("Disabling Shadowjar for "+it)
 				it.enabled = false
@@ -113,7 +153,6 @@ repositories {
 		allowInsecureProtocol = true
 	}
 	maven { url "https://clojars.org/repo" }
-	
 }
 
 java {
@@ -145,7 +184,6 @@ dependencies {
 		exclude group: 'eu.mihosoft.vrl.jcsg', module: 'jcsg'
 		//eu.mihosoft.vvecmath:vvecmath
 		exclude group: 'eu.mihosoft.vvecmath', module: 'vvecmath'
-		
 	}
 	// Zip and unzip, tar and untar
 	implementation 'org.apache.commons:commons-compress:1.27.1'
@@ -156,7 +194,8 @@ javafx {
 	modules = [
 		'javafx.controls',
 		'javafx.fxml',
-		'javafx.graphics'] // add other modules as needed
+		'javafx.graphics'
+	] // add other modules as needed
 }
 
 tasks.withType(Test) {
@@ -165,16 +204,26 @@ tasks.withType(Test) {
 }
 
 def javafxOptions = [
-    '--add-exports', 'javafx.graphics/com.sun.javafx.css=ALL-UNNAMED',
-    '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
-    '--add-exports', 'javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED',
-    '--add-exports', 'javafx.base/com.sun.javafx.event=ALL-UNNAMED',
-    '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED',
-    '--add-exports', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
-    '--add-exports', 'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
-	'--add-opens','javafx.graphics/javafx.scene=ALL-UNNAMED',
-	'--add-opens','java.base/java.io=ALL-UNNAMED',
-	'--add-opens','java.base/java.lang=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.graphics/com.sun.javafx.css=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.base/com.sun.javafx.event=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+	'--add-opens',
+	'javafx.graphics/javafx.scene=ALL-UNNAMED',
+	'--add-opens',
+	'java.base/java.io=ALL-UNNAMED',
+	'--add-opens',
+	'java.base/java.lang=ALL-UNNAMED',
 	'--enable-preview'
 ]
 
@@ -190,9 +239,12 @@ application {
 
 tasks.withType(JavaCompile) {
 	options.compilerArgs += [
-		'--add-modules', 'ALL-MODULE-PATH',
-        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-        '--add-opens', 'java.base/java.io=ALL-UNNAMED'
+		'--add-modules',
+		'ALL-MODULE-PATH',
+		'--add-opens',
+		'java.base/java.lang=ALL-UNNAMED',
+		'--add-opens',
+		'java.base/java.io=ALL-UNNAMED'
 	]+javafxOptions
 }
 
@@ -202,48 +254,48 @@ tasks.named('test') {
 }
 
 if (project == rootProject) {
-    apply plugin: 'com.gradleup.shadow'
-    apply plugin: 'org.openjfx.javafxplugin'
+	apply plugin: 'com.gradleup.shadow'
+	apply plugin: 'org.openjfx.javafxplugin'
 
-    shadowJar {
+	shadowJar {
 		dependsOn 'spotlessCheck'
-        archiveBaseName.set('CaDoodle-Application')
-        archiveClassifier.set('')
-        archiveVersion.set('')
-        zip64 true
-        mergeServiceFiles()
+		archiveBaseName.set('CaDoodle-Application')
+		archiveClassifier.set('')
+		archiveVersion.set('')
+		zip64 true
+		mergeServiceFiles()
 
-        exclude '**/*.pdb' // Exclude Windows debug files from Jar
+		exclude '**/*.pdb' // Exclude Windows debug files from Jar
 
-        // Development options: Items that can be excluded when not used
-        // exclude '**/opencv/**'       // OpenCV
-        // exclude '**/ibm/**'          // IBM
-        // exclude '**/sun/**'          // Sun
-        // exclude '**/netty/**'        // Netty
-        // exclude 'Windows**/**'       // Windows
-        // exclude 'win**/**'           // Windows
-        // exclude '**/*.dll'           // Windows
-        // exclude '**/*.lib'           // Libs
-        // exclude '**/*.obj'           // Obj
-        // exclude '**/*.exp'           // Exp
-        // exclude '**/*.md'            // Docs
-        // exclude '**/*.dylib'         // MacOS
-        // exclude '**/*.jnilib'        // MacOS
-        // exclude 'Mac-x86_64/**'      // MacOS
-        // exclude '**/*.so'            // Linux/Unix
-        // exclude 'Linux-**/**'        // Linux/Unix
-        // exclude 'linux-**/**'        // Linux/Unix
-        // exclude 'marytts/**'         // Text to speach
-        // exclude 'scala/**'           // Scala
-        // exclude '**/python/**'       // Python
-        // exclude 'ai/**'              // ai
-        // exclude '**/versions/**'     // Versions
-        // exclude '**/glassfish/**'    // Glassfish
-        // exclude '**/bouncycastle/**' // bouncycastle
+		// Development options: Items that can be excluded when not used
+		// exclude '**/opencv/**'       // OpenCV
+		// exclude '**/ibm/**'          // IBM
+		// exclude '**/sun/**'          // Sun
+		// exclude '**/netty/**'        // Netty
+		// exclude 'Windows**/**'       // Windows
+		// exclude 'win**/**'           // Windows
+		// exclude '**/*.dll'           // Windows
+		// exclude '**/*.lib'           // Libs
+		// exclude '**/*.obj'           // Obj
+		// exclude '**/*.exp'           // Exp
+		// exclude '**/*.md'            // Docs
+		// exclude '**/*.dylib'         // MacOS
+		// exclude '**/*.jnilib'        // MacOS
+		// exclude 'Mac-x86_64/**'      // MacOS
+		// exclude '**/*.so'            // Linux/Unix
+		// exclude 'Linux-**/**'        // Linux/Unix
+		// exclude 'linux-**/**'        // Linux/Unix
+		// exclude 'marytts/**'         // Text to speach
+		// exclude 'scala/**'           // Scala
+		// exclude '**/python/**'       // Python
+		// exclude 'ai/**'              // ai
+		// exclude '**/versions/**'     // Versions
+		// exclude '**/glassfish/**'    // Glassfish
+		// exclude '**/bouncycastle/**' // bouncycastle
 
-        // Development option: Uncompressed Jar, might build faster, but Jar is larger
-        // entryCompression=ZipEntryCompression.STORED
-    }
+		// Development option: Uncompressed Jar, might build faster, but Jar is larger
+		// entryCompression=ZipEntryCompression.STORED
+	}
 }
 
 jar {
@@ -271,7 +323,7 @@ eclipse {
 		file {
 			whenMerged { classpath ->
 				classpath.entries.removeAll { it.kind == "con" && it.path.contains("org.eclipse.jdt.launching.JRE_CONTAINER") }
-                classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.Container("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"))
+				classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.Container("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"))
 				classpath.entries.findAll { it.kind == 'con' && it.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
 					it.entryAttributes['module'] = 'true'
 					def addExports = []
@@ -291,7 +343,7 @@ eclipse {
 
 	jdt {
 		sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+		targetCompatibility = 1.8
 		file {
 			withProperties { properties ->
 				properties.setProperty('org.eclipse.jdt.core.compiler.problem.forbiddenReference', 'ignore')
