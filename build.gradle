@@ -49,8 +49,8 @@ subprojects {
 	apply plugin: 'eclipse'
 
 	java {
-		sourceCompatibility = 21
-		targetCompatibility = 21
+		sourceCompatibility = 25
+		targetCompatibility = 25
 	}
 
 	eclipse {
@@ -190,7 +190,7 @@ dependencies {
 }
 
 javafx {
-	version = '21' // or whichever version you're using
+	version = '25' // or whichever version you're using
 	modules = [
 		'javafx.controls',
 		'javafx.fxml',
@@ -198,10 +198,10 @@ javafx {
 	] // add other modules as needed
 }
 
-tasks.withType(Test) {
-	useJUnitPlatform()
-	jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
-}
+//tasks.withType(Test) {
+//	useJUnitPlatform()
+//	jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+//}
 
 def javafxOptions = [
 	'--add-exports',

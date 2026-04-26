@@ -10,7 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        jdk = pkgs.zulu21;
+        jdk = pkgs.zulu25;
         openjfx = pkgs.openjfx;
         gradleJavafxInit = pkgs.writeText "cadoodle-javafx-init.gradle" ''
           allprojects {
