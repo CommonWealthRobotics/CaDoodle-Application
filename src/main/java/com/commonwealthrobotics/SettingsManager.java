@@ -34,6 +34,8 @@ import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.sdk.common.Log;
 
+import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.CSG.OptType;
 import eu.mihosoft.vrl.v3d.CSGClient;
 import eu.mihosoft.vrl.v3d.CSGRequest;
 import eu.mihosoft.vrl.v3d.CSGResponse;
@@ -67,6 +69,8 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private CheckBox advancedSelector;
+	@FXML
+	private CheckBox manifoldCheck;
 
 	@FXML
 	private TextField apiKey;
@@ -336,6 +340,21 @@ public class SettingsManager implements ICSGClientEvent {
 	}
 
 	@FXML
+	void onManifoldCheck(ActionEvent event) {
+		boolean selected = manifoldCheck.isSelected();
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + selected);
+		try {
+			CSG.setDefaultOptType(selected ? OptType.Manifold3d : OptType.CSG_BOUND);
+		} catch (Throwable t) {
+			Log.error(t);
+			CSG.setDefaultOptType(OptType.CSG_BOUND);
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + false).toString();
+			manifoldCheck.setSelected(false);
+		}
+		ConfigurationDatabase.save();
+	}
+
+	@FXML
 	void onAlwaysAsk(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("Ask");
 		setExplanationText(OperationResult.ASK);
@@ -448,6 +467,9 @@ public class SettingsManager implements ICSGClientEvent {
 		workingDirPath.setText(dir);
 		boolean advanced = Boolean
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + true).toString());
+		boolean manifold = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
+		manifoldCheck.setSelected(manifold);
 		mc.setAdvancedMode(advanced);
 		advancedSelector.setSelected(advanced);
 		changedDir = false;

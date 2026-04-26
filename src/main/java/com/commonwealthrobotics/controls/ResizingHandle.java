@@ -1,11 +1,14 @@
 package com.commonwealthrobotics.controls;
 
+import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixException;
+
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ChamferedCube;
@@ -29,7 +32,7 @@ public class ResizingHandle {
 	private final Pane overlay; // Overlay pane for 2D objects
 
 	private double baseScale = 0.75; // Base scale factor for the corner handle cubes
-	private static final double size = 10; // Handle size in pixels
+	private static final double size = 15; // Handle size in pixels
 	private double scaleFactor;
 
 	private BowlerStudio3dEngine engine;
@@ -202,7 +205,17 @@ public class ResizingHandle {
 		TransformNR wp = manipulator.getFrameOfReference().copy();
 		TransformNR rsz = TransformFactory.affineToNr(resizeHandleLocation);
 		TransformNR loc = TransformFactory.affineToNr(location);
-		return rsz.times(wp.times(loc));
+		TransformNR times = null;
+		try {
+			times = wp.times(loc);
+		} catch (NotARotationMatrixException l) {
+			Log.error("Tried to multiply " + wp);
+			Log.error("times " + loc);
+
+			Log.error(l);
+			times = loc.copy();
+		}
+		return rsz.times(times);
 	}
 
 	public TransformNR getCurrentInReferenceFrame() {

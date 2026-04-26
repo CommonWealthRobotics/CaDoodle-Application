@@ -112,11 +112,7 @@ public class ControlSprites {
 	public void updateHandleOrientations(TransformNR cameraFrame) {
 		TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 
-		scaleSession.topCenter.updateOrientation(cameraFrame);
-		scaleSession.rightFront.updateOrientation(cameraFrame);
-		scaleSession.rightRear.updateOrientation(cameraFrame);
-		scaleSession.leftFront.updateOrientation(cameraFrame);
-		scaleSession.leftRear.updateOrientation(cameraFrame);
+		scaleSession.updateOrientation(cameraFrame);
 	}
 
 	// Use the received mouse position to calculate the world position and send it
@@ -268,11 +264,11 @@ public class ControlSprites {
 		};
 
 		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, upArrow, this);
-		List<Node> tmp = Arrays.asList(scaleSession.topCenter.getMesh(), scaleSession.rightFront.getMesh(),
-				scaleSession.rightRear.getMesh(), scaleSession.leftFront.getMesh(), scaleSession.leftRear.getMesh(),
-				footprint, frontLine, backLine, leftLine, rightLine, heightLine, upArrow.getMesh());
+		List<Node> tmp = Arrays.asList(footprint, frontLine, backLine, leftLine, rightLine, heightLine,
+				upArrow.getMesh());
 
 		allElems.addAll(tmp);
+		allElems.addAll(scaleSession.getMeshes());
 
 		setUpOperationManagers(session, ap, ruler, cache);
 		allElems.addAll(align.getElements());
@@ -647,9 +643,15 @@ public class ControlSprites {
 			else
 				zdimen.hide();
 
-			if (scaleSession.xySelected() && (mode == SpriteDisplayMode.Default)) {
-				xdimen.show();
-				ydimen.show();
+			if ((mode == SpriteDisplayMode.Default)) {
+				if (scaleSession.rightSelected() || scaleSession.leftSelected())
+					xdimen.show();
+				else
+					xdimen.hide();
+				if (scaleSession.frontSelected() || scaleSession.rearSelected())
+					ydimen.show();
+				else
+					ydimen.hide();
 			} else {
 				xdimen.hide();
 				ydimen.hide();

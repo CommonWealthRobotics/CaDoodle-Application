@@ -56,12 +56,14 @@ public class ShapePalletButtonResources {
 		// if(!OSUtil.isWindows())
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
-				indicator = Vitamins.get(ap.get().getCsgDBinstance(), stlFile);
+				indicator = Vitamins.get(ap.get().getCsgDBinstance(), false, stlFile);
 				indicator.setColor(Color.WHITE);
 				image = new Image(imageFile.toURI().toString());
 				return;
 			} catch (Throwable t) {
+				Log.error("Faulty STL, reloading " + stlFile);
 				com.neuronrobotics.sdk.common.Log.error(t);
+				stlFile.delete();
 			}
 		}
 		if (isPluginMissing) {
@@ -136,7 +138,7 @@ public class ShapePalletButtonResources {
 		indicator = so.get(0);
 		if (so.size() > 1) {
 			for (int i = 1; i < so.size(); i++) {
-				indicator = indicator.dumbUnion(so.get(i));
+				indicator = indicator.union(so.get(i));
 			}
 		}
 		indicator.setColor(Color.WHITE);

@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<TabPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <tabs>
       <Tab closable="false" text="Basic">
          <content>
@@ -36,6 +36,7 @@
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
                     </rowConstraints>
                      <children>
@@ -88,7 +89,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </HBox>
-                        <Label text="Advanced mode" GridPane.rowIndex="4">
+                        <Label text="Use Elalish Manifold" GridPane.rowIndex="4">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -96,7 +97,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable advanced features" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable advanced features" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
@@ -131,6 +132,19 @@
                               <Insets bottom="10.0" left="10.0" top="10.0" />
                            </padding>
                         </HBox>
+                        <Label text="Advanced mode" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                        <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="Enable Manifold Library" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </CheckBox>
                      </children>
                   </GridPane>
                </children>
