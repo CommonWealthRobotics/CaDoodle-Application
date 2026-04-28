@@ -23,7 +23,6 @@ import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
-import eu.mihosoft.vrl.v3d.FileUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -143,9 +142,9 @@ public class ShapePalletButtonResources {
 		}
 		indicator.setColor(Color.WHITE);
 		try {
-			FileUtil.write(Paths.get(stlFile.getAbsolutePath()), indicator.toStlString());
+			indicator.toStl(Paths.get(stlFile.getAbsolutePath()));
 			com.neuronrobotics.sdk.common.Log.error("Indicator STL saved successfully to " + stlFile.getAbsolutePath());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
