@@ -74,6 +74,8 @@ public class ExportManager {
 	private CheckBox obj; // Value injected by FXMLLoader
 	@FXML // fx:id="svg"
 	private CheckBox svg; // Value injected by FXMLLoader
+	@FXML // fx:id="svg"
+	private CheckBox type3mf; // Value injected by FXMLLoader
 
 	private static SelectionSession session;
 
@@ -125,6 +127,9 @@ public class ExportManager {
 				}
 				if (obj.isSelected()) {
 					c.addExportFormat("obj");
+				}
+				if (type3mf.isSelected()) {
+					c.addExportFormat("3mf");
 				}
 				c.setName(name + "_" + index);
 				index++;

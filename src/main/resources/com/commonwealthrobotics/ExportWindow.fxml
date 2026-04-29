@@ -91,6 +91,15 @@
                   <Tooltip text="This is for low quality slicing engines such as PrusaSlicer and BambooSlicer. They use a Windows only mesh fixing that is not generally available. This step ensures your STL will work in those slicers. NOTE this will take a LONG time to complete. " />
                </tooltip>
             </CheckBox>
+            <CheckBox fx:id="type3mf" mnemonicParsing="false" text="3mf" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@3mf.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
          </children>
       </GridPane>
    </children>
