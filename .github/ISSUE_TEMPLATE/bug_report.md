@@ -9,8 +9,8 @@ assignees: ''
 ### Bug Description - <You put clear and concise description of what the bug is here>
 
 ### Environment
-CadDoodle Version: e.g., 0.30.17
-Operating System:  e.g., Windows 11 23H2, Ubuntu 22.04, macOS 14.2
+CadDoodle Version: <You put the version here >
+Operating System: <you fill in your operating system information here>
 
 ### Steps to Reproduce - Provide a step-by-step description of how to reproduce the bug
 1. 
