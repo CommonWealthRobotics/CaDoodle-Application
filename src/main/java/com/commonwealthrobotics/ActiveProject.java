@@ -557,7 +557,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			}
 		}
 		try {
-			Thread.sleep(16*3);
+			Thread.sleep(16 * 3);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
