@@ -1,12 +1,12 @@
 ---
 name: Bug Report
 about: Report something that isn't working correctly
-title: "[BUG] (bug summary)"
+title: "[BUG] <you put your summary here>"
 labels: bug
 assignees: ''
 ---
 
-### Bug Description - A clear and concise description of what the bug is
+### Bug Description - <You put clear and concise description of what the bug is here>
 
 ### Environment
 CadDoodle Version: e.g., 0.30.17
@@ -27,4 +27,9 @@ Operating System:  e.g., Windows 11 23H2, Ubuntu 22.04, macOS 14.2
 
 
 ### Screenshots / Logs / Additional information or comments
+
+* Required *
+
+Attach the cadoodleLog.txt file found in ~/Documments/Cadoodle-workspace/ 
+  
 
