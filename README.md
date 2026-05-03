@@ -48,15 +48,15 @@ bash buildMac.sh
 
 2. Inside the project directory create a directory for the Java JDK, e.a. ```D:\CaDoodle\java```
 
-3. Download the Windows Java JDK https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jdk21.0.9-win_x64.zip
+3. Download the Windows Java JDK https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jdk25.0.2-macosx_x64.zip
 
-4. Extract the Zip-archive to the Java JDK directory, e.a. ```D:\CaDoodle\java\zulu25.32.21-ca-fx-jdk25.0.2-win_x64\``` 
+4. Extract the Zip-archive to the Java JDK directory, e.a. ```D:\CaDoodle\java\zulu25.32.21-ca-fx-jdk25.0.2-macosx_x64\``` 
 
 5. Install MSYS2 from https://www.msys2.org to get a Linux bash shell.
 
 6. Start the MSYS2 UCRT64 shell, all remaining commands will be executed in this shell.
 
-7. Set the Java environment to point to the Java JDK, e.a. ```export JAVA_HOME=/d/CadDoodle/java/zulu25.32.21-ca-fx-jdk25.0.2-win_x64```
+7. Set the Java environment to point to the Java JDK, e.a. ```export JAVA_HOME=/d/CadDoodle/java/zulu25.32.21-ca-fx-jdk25.0.2-macosx_x64```
 
 Verify the path with ```ls $JAVA_HOME```
 
