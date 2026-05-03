@@ -34,3 +34,4 @@ bowler
 
 # Isolated GRADLE_USER_HOME for `nix develop` reproducible environment
 .gradle-nix
+/gridfinity-bin.stl
