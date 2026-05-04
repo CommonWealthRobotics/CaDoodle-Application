@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="133.85136mm"
+   height="130.00456mm"
+   viewBox="0 0 133.85136 130.00456"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="fillet.svg"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/fillet.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.62003367"
+     inkscape:cx="49.190877"
+     inkscape:cy="268.5338"
+     inkscape:window-width="1737"
+     inkscape:window-height="1133"
+     inkscape:window-x="66"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1"
+     showgrid="false" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-37.389284,-79.25293)">
+    <g
+       id="g1"
+       inkscape:export-filename="g1.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       style="stroke:#263d8c;stroke-width:10;stroke-dasharray:none;stroke-opacity:1"
+       transform="translate(-5.9741379,0.85344828)">
+      <path
+         id="rect1"
+         style="fill:#ffffff;fill-opacity:1;stroke:#263d8c;stroke-width:10;stroke-dasharray:none;stroke-opacity:1"
+         d="M 48.363422,83.399482 V 203.40404 H 85.584406 A 68.823441,66.165581 0 0 1 84.493,191.90242 a 68.823441,66.165581 0 0 1 68.82371,-66.16547 68.823441,66.165581 0 0 1 18.89807,2.54351 V 83.399482 Z" />
+    </g>
+  </g>
+</svg>
