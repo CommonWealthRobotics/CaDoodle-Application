@@ -23,6 +23,7 @@ import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.fillet.FilletUIManager;
 import com.commonwealthrobotics.robot.LimbControlManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
@@ -160,6 +161,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ProgressIndicator memUsage;
 	private boolean resizeLiveMode = false;
 	private final Pane overlayPane; // Overlay pane for 2D objects
+	private FilletUIManager filletTool = new FilletUIManager();
 
 	public boolean isResizeLiveMode() {
 		return resizeLiveMode;
@@ -1171,7 +1173,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public boolean setKeyBindingFocus() {
 		if (!SplashManager.isVisibleSplash() && (engine != null)) {
 			// new Exception("KB Focused here").printStackTrace();
-			com.neuronrobotics.sdk.common.Log.error("Setting KeyBindingFocus");
+			com.neuronrobotics.sdk.common.Log.debug("Setting KeyBindingFocus");
 			BowlerStudio.runLater(() -> engine.requestFocus());
 			return true;
 		} else {
@@ -2377,7 +2379,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void runFillet() {
 		com.neuronrobotics.sdk.common.Log.debug("onFillet");
-
+		filletTool.run(selected, ap);
 	}
 
 }
