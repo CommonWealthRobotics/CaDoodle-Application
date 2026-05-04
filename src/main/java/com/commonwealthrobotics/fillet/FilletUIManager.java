@@ -46,8 +46,18 @@ public class FilletUIManager {
 						selectedSet.add(c.getName());
 					FilletChamfer op = new FilletChamfer().setWorkplane(ap.get().getWorkplane()).setFaces(16)
 							.setUp(false).setRadius(2).setOuter(false).setToFillet(selectedSet);
-					ap.addOp(op);
-
+					Thread thread = ap.addOp(op);
+					session.clearSelection();
+					session.getExecutor().execute(() -> {
+						try {
+							thread.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						HashSet<String> added = op.getNamesAdded();
+						session.selectAll(added);
+					});
 				}
 
 				workplane.placeWorkplaneVisualization();
