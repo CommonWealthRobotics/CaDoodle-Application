@@ -349,10 +349,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private GridPane armsOptionGrid;
 	@FXML
 	private ProgressIndicator memUsage;
+	@FXML
+	private Button filletButton;
+
 	private Stage newStage;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
+	}
+
+	@FXML
+	void onFillet(ActionEvent ae) {
+		session.runFillet();
+		session.setKeyBindingFocus();
 	}
 
 	@FXML

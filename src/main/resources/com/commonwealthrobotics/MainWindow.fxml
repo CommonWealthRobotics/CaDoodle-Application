@@ -684,6 +684,18 @@
                <children>
                   <HBox GridPane.columnIndex="2">
                      <children>
+                        <Button fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@fillet.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Fillet or Chamfer" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fx:id="showAllImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
