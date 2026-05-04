@@ -104,7 +104,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private AnchorPane shapeConfigurationHolder;
 	private GridPane configurationGrid;
 	private AnchorPane control3d;
-	private BowlerStudio3dEngine engine;
+	public BowlerStudio3dEngine engine;
 	private LinkedHashSet<CSG> selected = new LinkedHashSet<>();
 	private ColorPicker colorPicker;
 	private ComboBox<String> snapGrid;
@@ -465,47 +465,49 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			IFileChangeListener l = null;
 			try {
 				f = s.getFile();
-				File myFile = f;
-				l = new IFileChangeListener() {
-					@Override
-					public void onFileDelete(File fileThatIsDeleted) {
-					}
+				if (f != null) {
+					File myFile = f;
+					l = new IFileChangeListener() {
+						@Override
+						public void onFileDelete(File fileThatIsDeleted) {
+						}
 
-					@Override
-					public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
-						com.neuronrobotics.sdk.common.Log.error("File Change updating " + source.getType());
-						Thread tr = myRegenerate(source, this, myFile);
-						if (tr != null) {
-							try {
-								tr.join();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+						@Override
+						public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
+							com.neuronrobotics.sdk.common.Log.error("File Change updating " + source.getType());
+							Thread tr = myRegenerate(source, this, myFile);
+							if (tr != null) {
+								try {
+									tr.join();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
 						}
+
+					};
+
+					FileChangeWatcher fileChangeWatcher = null;
+					for (FileChangeWatcher w : myWatchers.keySet()) {
+
+						if (myWatchers.get(w) == source)
+							fileChangeWatcher = w;
+
+						if (w.getFileToWatch().toPath().compareTo(f.toPath()) == 0)
+							fileChangeWatcher = w;
+
 					}
 
-				};
-
-				FileChangeWatcher fileChangeWatcher = null;
-				for (FileChangeWatcher w : myWatchers.keySet()) {
-
-					if (myWatchers.get(w) == source)
-						fileChangeWatcher = w;
-
-					if (w.getFileToWatch().toPath().compareTo(f.toPath()) == 0)
-						fileChangeWatcher = w;
-
-				}
-
-				if (fileChangeWatcher == null) {
-					try {
-						FileChangeWatcher w = FileChangeWatcher.watch(f);
-						myWatchers.put(w, source);
-						w.addIFileChangeListener(l);
-					} catch (IOException e) {
-						// Auto-generated catch block
-						com.neuronrobotics.sdk.common.Log.error(e);
+					if (fileChangeWatcher == null) {
+						try {
+							FileChangeWatcher w = FileChangeWatcher.watch(f);
+							myWatchers.put(w, source);
+							w.addIFileChangeListener(l);
+						} catch (IOException e) {
+							// Auto-generated catch block
+							com.neuronrobotics.sdk.common.Log.error(e);
+						}
 					}
 				}
 			} catch (NoSuchFileException ex) {

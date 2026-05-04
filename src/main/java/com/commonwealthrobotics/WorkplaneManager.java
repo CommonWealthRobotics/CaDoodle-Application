@@ -485,7 +485,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 						if (p != null) {
 							try {
-								Transform npTF = PolygonUtil.calculateNormalTransform(p);
+								Transform npTF = PolygonUtil
+										.calculateNormalTransform(source.getPlaneByIndex(faceIndex).getNormal());
 								pureRot = TransformFactory.csgToNR(npTF).inverse();
 								// an in-plane snapping here by transforming the points into the plane
 								// orientation, then snapping in plane, then transforming the points back.
@@ -575,7 +576,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			// Polygon p =
 			// Polygon.fromVector3d(Arrays.asList(toV(p1),toV(p2),toV(p3))).get(0);
 			Polygon p = Polygon.fromPoints(Arrays.asList(toV(p1), toV(p2), toV(p3)));
-			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p));
+			return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(p.getPlane().getNormal()));
 
 		} catch (Exception e) {
 			e.printStackTrace();
