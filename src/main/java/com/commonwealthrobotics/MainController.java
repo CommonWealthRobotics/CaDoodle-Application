@@ -1689,6 +1689,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
 			RobotLabDrawer.setVisible(advanced);
+			filletButton.setVisible(advanced);
 		});
 
 	}
