@@ -2379,7 +2379,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void runFillet() {
 		com.neuronrobotics.sdk.common.Log.debug("onFillet");
-		filletTool.run(selected, ap);
+		filletTool.run(selected, ap, this, workplane, ruler);
 	}
 
 }

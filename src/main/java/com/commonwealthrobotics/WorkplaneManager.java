@@ -1,9 +1,7 @@
 package com.commonwealthrobotics;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
@@ -16,6 +14,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
@@ -474,8 +473,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if (faceIndex >= 0) {
 
 					if (source != null) {
-						ArrayList<Polygon> polygons = source.getPolygons();
-						Polygon p = getPolygonFromFaceIndex(faceIndex, polygons);
+						Polygon p = getPolygonFromFaceIndex(faceIndex, source);
 						//						Polygon p =null;
 						//
 						//						try {
@@ -546,26 +544,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		}
 	}
 
-	public static Polygon getPolygonFromFaceIndex(int faceIndex, List<Polygon> polygons) {
+	public static Polygon getPolygonFromFaceIndex(int faceIndex, CSG polygons) {
 
-		if (faceIndex < 0)
-			return null;
-
-		int currentFaceCount = 0;
-
-		// We need to iterate because some polygons might have < 3 vertices (0 faces)
-		// If you're CERTAIN all polygons have >= 3 vertices, this could be optimized
-		for (Polygon p : polygons) {
-			int vertexCount = p.getVertices().size();
-			int facesInThisPolygon = vertexCount - 2;
-			// Check if the face index falls within this polygon's range
-
-			if (faceIndex < (currentFaceCount + facesInThisPolygon))
-				return p;
-
-			currentFaceCount += facesInThisPolygon;
+		try {
+			return polygons.getPolygonByIndex(faceIndex);
+		} catch (ColinearPointsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		return null;
 	}
 
