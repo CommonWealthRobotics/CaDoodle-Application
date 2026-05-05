@@ -34,32 +34,29 @@ public class FilletUIManager {
 		workplane.setOnSelectEvent(() -> {
 
 			if (workplane.isClicked()) {
-
+				ruler.disableRulerMode();
 				if (workplane.isClickOnGround()) {
 					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
 					ap.get().setWorkplane(new TransformNR());
-					ruler.disableRulerMode();
 				} else {
 					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-					Set<String> selectedSet = new HashSet<String>();
-					for (CSG c : selected)
-						selectedSet.add(c.getName());
-					FilletChamfer op = new FilletChamfer().setWorkplane(ap.get().getWorkplane()).setFaces(16)
-							.setUp(false).setRadius(2).setOuter(false).setToFillet(selectedSet);
-					Thread thread = ap.addOp(op);
-					session.clearSelection();
-					session.getExecutor().execute(() -> {
-						try {
-							thread.join();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						HashSet<String> added = op.getNamesAdded();
-						session.selectAll(added);
-					});
 				}
-
+				Set<String> selectedSet = new HashSet<String>();
+				for (CSG c : selected)
+					selectedSet.add(c.getName());
+				FilletChamfer op = new FilletChamfer().setWorkplane(ap.get().getWorkplane()).setToFillet(selectedSet);
+				Thread thread = ap.addOp(op);
+				session.clearSelection();
+				session.getExecutor().execute(() -> {
+					try {
+						thread.join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					HashSet<String> added = op.getNamesAdded();
+					session.selectAll(added);
+				});
 				workplane.placeWorkplaneVisualization();
 				ruler.disableRulerMode();
 				session.save();
