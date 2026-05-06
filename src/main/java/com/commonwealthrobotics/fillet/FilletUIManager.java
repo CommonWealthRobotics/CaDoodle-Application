@@ -10,7 +10,6 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FilletChamfer;
-import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Fillet;
@@ -27,24 +26,23 @@ public class FilletUIManager {
 
 		workplane.setIndicator(indicator, new Affine());
 
-		ap.get().setWorkplane(new TransformNR());
 		session.updateHandleOrientations(session.engine.getFlyingCamera().getCamerFrame());
 		workplane.placeWorkplaneVisualization();
 
 		workplane.setOnSelectEvent(() -> {
 
 			if (workplane.isClicked()) {
-				ruler.disableRulerMode();
-				if (workplane.isClickOnGround()) {
-					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
-					ap.get().setWorkplane(new TransformNR());
-				} else {
-					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-				}
+				//				if (workplane.isClickOnGround()) {
+				//					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
+				//					ap.get().setWorkplane(new TransformNR());
+				//				} else {
+				//					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+				//				}
 				Set<String> selectedSet = new HashSet<String>();
 				for (CSG c : selected)
 					selectedSet.add(c.getName());
-				FilletChamfer op = new FilletChamfer().setWorkplane(ap.get().getWorkplane()).setToFillet(selectedSet);
+				FilletChamfer op = new FilletChamfer().setWorkplane(workplane.getCurrentAbsolutePose())
+						.setToFillet(selectedSet);
 				Thread thread = ap.addOp(op);
 				session.clearSelection();
 				session.getExecutor().execute(() -> {
