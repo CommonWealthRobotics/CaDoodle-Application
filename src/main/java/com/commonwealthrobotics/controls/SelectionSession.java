@@ -725,7 +725,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 
 				// Inform the controls about the total selected object(s) height
-				getControls().setObjectHeight(getSellectedBounds().getTotalZ());
+				try {
+					getControls().setObjectHeight(getSellectedBounds().getTotalZ());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
 				event.consume();
 			}
 		});
