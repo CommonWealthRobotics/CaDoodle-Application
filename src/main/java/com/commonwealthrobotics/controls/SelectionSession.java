@@ -1526,6 +1526,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 
 						if (workplane.isClicked()) {
+							// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
 							TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 							TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
 

@@ -16,6 +16,7 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.MissingManipulatorException;
+import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -474,14 +475,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 					if (source != null) {
 						Polygon p = getPolygonFromFaceIndex(faceIndex, source);
-						//						Polygon p =null;
+						// Polygon p =null;
 						//
-						//						try {
-						//							p=source.getPolygonByIndex(faceIndex);
-						//						} catch (ColinearPointsException e) {
-						//							// TODO Auto-generated catch block
-						//							e.printStackTrace();
-						//						}
+						// try {
+						// p=source.getPolygonByIndex(faceIndex);
+						// } catch (ColinearPointsException e) {
+						// // TODO Auto-generated catch block
+						// e.printStackTrace();
+						// }
 
 						if (p != null) {
 							try {
@@ -642,9 +643,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
 					ap.get().setWorkplane(new TransformNR());
 					ruler.disableRulerMode();
-				} else
-					ap.get().setWorkplane(this.getCurrentAbsolutePose());
+				} else {
+					// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
+					TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
+					TransformNR currentAbsolutePose = this.getCurrentAbsolutePose().times(downset);
 
+					ap.get().setWorkplane(currentAbsolutePose);
+				}
 				placeWorkplaneVisualization();
 				r.run();
 			}

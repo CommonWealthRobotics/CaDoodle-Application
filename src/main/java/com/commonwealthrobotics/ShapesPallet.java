@@ -222,6 +222,7 @@ public class ShapesPallet {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
+									// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
 									TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
 									AbstractAddFrom setAddFromScript = new AddFromScript()
