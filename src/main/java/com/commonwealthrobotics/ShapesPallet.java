@@ -24,6 +24,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Plane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
@@ -221,7 +222,8 @@ public class ShapesPallet {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
-									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
+									TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
+									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
 									AbstractAddFrom setAddFromScript = new AddFromScript()
 											.set(key.get("git"), key.get("file")).setLocation(currentAbsolutePose);
 

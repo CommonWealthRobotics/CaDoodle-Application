@@ -51,6 +51,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
 import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
@@ -1525,7 +1526,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 
 						if (workplane.isClicked()) {
-							TransformNR finalLocation = workplane.getCurrentAbsolutePose().times(copy);
+							TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
+							TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
+
+							TransformNR finalLocation = currentAbsolutePose.times(copy);
 							try {
 								ap.addOp(
 										new MoveCenter().setNames(seleectedNames, ap.get()).setLocation(finalLocation));
