@@ -1110,6 +1110,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					s.setHeight(h - 1);
 					BowlerStudio.runLater(() -> s.setHeight(h));
 				});
+				BowlerStudio.go();
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
