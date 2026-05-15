@@ -289,6 +289,51 @@
        -fx-border-width: 1px;
 }
 
+.component-tree-panel {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 1px;
+}
+
+.component-tree-header {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-border-color: #263d8c; /* logo-blue */
+    -fx-border-width: 0 0 1px 0;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 8px;
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+.component-tree-view {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-width: 0;
+}
+
+.component-tree-view .tree-cell {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+.component-tree-view .tree-cell:hover {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+}
+
+.component-tree-view .tree-cell:selected,
+.component-tree-view .tree-cell.component-tree-cell-selected {
+    -fx-background-color: #e7a436; /* logo-orange */
+    -fx-text-fill: #263d8c; /* logo-blue */
+}
+
+.component-tree-view .tree-cell.component-tree-cell-root,
+.component-tree-view .tree-cell.component-tree-cell-group {
+    -fx-font-weight: bold;
+}
+
+.component-tree-view .tree-cell.component-tree-cell-hidden {
+    -fx-text-fill: #606060; /* gray */
+    -fx-font-style: italic;
+}
+
 #snapGrid{
        -fx-background-color: #f2c83d; /* logo-yellow */
 }

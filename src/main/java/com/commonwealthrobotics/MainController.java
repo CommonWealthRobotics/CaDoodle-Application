@@ -97,6 +97,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private TimelineManager timelineManager = new TimelineManager(ap);
 	private CaDoodleOperation source;
 	private RobotLab robotLab;
+	private ComponentTreePanel componentTreePanel;
+	private boolean componentTreeOpen = true;
+	private final Image imgTreeArrowOpen = new Image(MainController.class.getResourceAsStream("drawerOpen.png"));
+	private final Image imgTreeArrowClose = new Image(MainController.class.getResourceAsStream("drawerClose.png"));
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
@@ -124,6 +128,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	private AnchorPane RobotLabHolder;
+
+	@FXML
+	private Button componentTreeDrawer;
+
+	@FXML
+	private ImageView componentTreeDrawerImage;
+
+	@FXML
+	private ImageView componentTreeDrawerArrow;
+
+	@FXML
+	private AnchorPane componentTreeHolder;
 
 	@FXML
 	private Tab advancedTab;
@@ -508,6 +524,27 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.setRobotLabOpen(tm);
 		robotLab.setRobotLabOpenState(tm);
+	}
+
+	@FXML
+	void componentTreeDrawerEvent(ActionEvent e) {
+		setComponentTreeOpenState(!componentTreeOpen);
+		session.setKeyBindingFocus();
+	}
+
+	private void setComponentTreeOpenState(boolean tm) {
+		if (tm == componentTreeOpen)
+			return;
+		componentTreeOpen = tm;
+		if (tm) {
+			componentTreeDrawerArrow.setImage(imgTreeArrowClose);
+			componentTreeHolder.setVisible(true);
+			componentTreeHolder.setManaged(true);
+		} else {
+			componentTreeDrawerArrow.setImage(imgTreeArrowOpen);
+			componentTreeHolder.setVisible(false);
+			componentTreeHolder.setManaged(false);
+		}
 	}
 
 	private void setTimelineOpenState(boolean tm) {
@@ -982,6 +1019,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setAlignButton(alignButton);
 			// do this after setting up the session
 			setupEngineControls();
+			componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
+			ap.addListener(componentTreePanel);
 			boolean manifold = Boolean.parseBoolean(
 					ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
 			try {
