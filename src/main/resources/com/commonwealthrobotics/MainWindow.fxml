@@ -508,9 +508,9 @@
                                                 </Button>
                                                 <Button fx:id="componentTreeDrawer" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#componentTreeDrawerEvent" styleClass="image-button" GridPane.rowIndex="5">
                                                    <graphic>
-                                                      <ImageView fx:id="componentTreeDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="componentTreeDrawerImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
-                                                            <Image url="@group.png" />
+                                                            <Image url="@tree.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>
