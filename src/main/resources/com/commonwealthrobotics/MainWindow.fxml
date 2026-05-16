@@ -404,7 +404,7 @@
                                                                         </GridPane>
                                                                         <VBox fx:id="parametrics" pickOnBounds="false" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
 
-                                                                        <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button" GridPane.columnIndex="0">
+                                                                              <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button" GridPane.columnIndex="0">
                                                                            <graphic>
                                                                               <ImageView fx:id="showHideImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
                                                                                  <image>
@@ -417,7 +417,7 @@
                                                                            </tooltip>
                                                                         </Button>
 
-                                                                        <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="1">
+                                                                              <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="1">
                                                                            <graphic>
                                                                               <ImageView fx:id="lockImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
                                                                                  <image>
@@ -435,6 +435,11 @@
                                                             </AnchorPane>
                                                       </content>
                                                     </TitledPane>
+                                                      <TitledPane fx:id="shapePosition" animated="false" expanded="false" text="Position">
+                                                        <content>
+                                                          <AnchorPane fx:id="shapePositionAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                                        </content>
+                                                      </TitledPane>
                                                   </panes>
                                                 </Accordion>
                                              </children>
