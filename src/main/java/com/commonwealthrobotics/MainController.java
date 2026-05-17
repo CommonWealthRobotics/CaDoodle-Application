@@ -357,6 +357,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private Stage newStage;
 	private static Label label;
+	private Button renameBtn;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
@@ -974,9 +975,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setUpColorPicker();
 			timelineManager.set(timelineScroll, timeline, session, engine);
 			label = new Label(shapeConfiguration.getText());
+			renameBtn = new Button("Rename");
+
 			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
 					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
-					objectWorkplane, dropToWorkplane, memUsage);
+					objectWorkplane, dropToWorkplane, memUsage, renameBtn);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
@@ -1050,7 +1053,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	 * the pane to an Accordion (or any scene).
 	 */
 	public void makeEditableTitle(TitledPane pane) {
-		Button renameBtn = new Button("Rename");
 		renameBtn.getStyleClass().add("normal-button");
 		TextField textField = new TextField();
 		textField.setVisible(false);
