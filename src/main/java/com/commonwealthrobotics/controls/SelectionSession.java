@@ -2399,4 +2399,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		filletTool.run(selected, ap, this, workplane, ruler);
 	}
 
+	public void setUserDefinedName(String newText) {
+		if(ap.get().isOperationRunning())
+			return;
+		CSG csg = getCurrentStateSelected().get(0);
+		if(csg.getUserDefinedName().contentEquals(newText))
+			return;
+		SetUserDefinedName ns = new SetUserDefinedName()
+				.setTarget(csg.getName())
+				.setNewUserDefinedName(newText);
+		ap.addOp(ns);
+	}
+
 }

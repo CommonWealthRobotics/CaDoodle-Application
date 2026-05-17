@@ -52,6 +52,7 @@ import eu.mihosoft.vrl.v3d.IDebug3dProvider;
 import eu.mihosoft.vrl.v3d.CSG.OptType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -972,9 +973,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setUpColorPicker();
 			timelineManager.set(timelineScroll, timeline, session, engine);
 			label = new Label(shapeConfiguration.getText());
-			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-					engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,
-					timelineManager, objectWorkplane, dropToWorkplane, memUsage);
+			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
+					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
+					objectWorkplane, dropToWorkplane, memUsage);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
@@ -1047,62 +1048,60 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	 * Makes a TitledPane's title editable on double-click. Call this after adding
 	 * the pane to an Accordion (or any scene).
 	 */
-	public static void makeEditableTitle(TitledPane pane) {
-		
-		pane.setText("");
-
+	public void makeEditableTitle(TitledPane pane) {
+		Button renameBtn = new Button("Rename");
+		renameBtn.getStyleClass().add("normal-button");
 		TextField textField = new TextField();
 		textField.setVisible(false);
-		textField.setMaxWidth(Double.MAX_VALUE);
 
-		// A StackPane keeps both nodes in the same space; only one is visible at a time
-		StackPane graphic = new StackPane(label, textField);
-		graphic.setOnMouseClicked(e -> {
-			// Prevent the click from toggling the Accordion pane
-			if (e.getClickCount() == 2)
-				e.consume();
-		});
+		// Label is a class variable — just place it directly in the layout
+		HBox graphic = new HBox(5, label, textField, renameBtn);
+		graphic.setAlignment(Pos.CENTER_LEFT);
+		pane.setText("");
 		pane.setGraphic(graphic);
 
-		// 2. Double-click the label → switch to TextField
-		label.setOnMouseClicked(event -> {
-			
-			if (event.getClickCount() == 2) {
-				event.consume(); // don't let accordion collapse/expand
-				textField.setText(label.getText());
-				label.setVisible(false);
-				textField.setVisible(true);
-				textField.selectAll();
-				textField.requestFocus();
-			}
+		// Rename button starts edit mode
+		renameBtn.setOnAction(e -> {
+			if(session.getCurrentStateSelected().size()!=1)
+				return;
+			textField.setText(label.getText());
+			label.setVisible(false);
+			textField.setVisible(true);
+			renameBtn.setDisable(true);
+			textField.selectAll();
+			textField.requestFocus();
 		});
 
-		// 3. Commit on Enter
-		textField.setOnAction(e -> commitTitle(label, textField));
+		// Commit on Enter
+		textField.setOnAction(e -> commitTitle(textField, renameBtn));
 
-		// 4. Commit (or cancel) on focus lost
+		// Commit on focus lost
 		textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
 			if (!isNowFocused)
-				commitTitle(label, textField);
+				commitTitle(textField, renameBtn);
 		});
 
-		// 5. Cancel on Escape — restore original text
+		// Cancel on Escape
 		textField.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.ESCAPE) {
-				textField.setText(label.getText()); // discard changes
-				commitTitle(label, textField);
+				textField.setText(label.getText()); // discard
+				commitTitle(textField, renameBtn);
 			}
 		});
 	}
 
-	private static void commitTitle(Label label, TextField textField) {
+	private void commitTitle(TextField textField, Button renameBtn) {
+		
 		String newText = textField.getText().trim();
+		if(newText.contentEquals(label.getText()) && !textField.isVisible())
+			return;
 		if (!newText.isEmpty()) {
 			label.setText(newText);
 		}
 		textField.setVisible(false);
 		label.setVisible(true);
-		Log.debug("Setting new username "+label);
+		renameBtn.setDisable(false); // re-enable when done
+		session.setUserDefinedName(newText);
 	}
 
 	private void onNameTyped() {
