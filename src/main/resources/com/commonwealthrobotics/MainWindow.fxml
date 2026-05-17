@@ -506,30 +506,43 @@
                                                       <Tooltip text="Zoom Out &lt;-&gt;" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="componentTreeDrawer" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#componentTreeDrawerEvent" styleClass="image-button" GridPane.rowIndex="5">
-                                                   <graphic>
-                                                      <ImageView fx:id="componentTreeDrawerImage" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@tree.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Component Tree" />
-                                                   </tooltip>
-                                                </Button>
-                                                <Button fx:id="RobotLabDrawer" alignment="BOTTOM_LEFT" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#robotLabDrawerEvent" styleClass="image-button" GridPane.rowIndex="6">
-                                                   <graphic>
-                                                      <ImageView fx:id="RobotLabDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@robot-close.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Robot: Make a robot" />
-                                                   </tooltip>
-                                                </Button>
+                                                <VBox alignment="BOTTOM_LEFT" spacing="2.0" GridPane.rowIndex="6">
+                                                   <children>
+                                                      <Button fx:id="componentTreeDrawer" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#componentTreeDrawerEvent" styleClass="image-button">
+                                                         <graphic>
+                                                            <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                               <children>
+                                                                  <ImageView fx:id="componentTreeDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@tree.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                                  <ImageView fx:id="componentTreeDrawerArrow" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" rotate="180.0">
+                                                                     <image>
+                                                                        <Image url="@drawerClose.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </HBox>
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Component Tree" />
+                                                         </tooltip>
+                                                      </Button>
+                                                      <Button fx:id="RobotLabDrawer" alignment="BOTTOM_LEFT" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#robotLabDrawerEvent" styleClass="image-button">
+                                                         <graphic>
+                                                            <ImageView fx:id="RobotLabDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@robot-close.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Robot: Make a robot" />
+                                                         </tooltip>
+                                                      </Button>
+                                                   </children>
+                                                </VBox>
                                              </children>
                                           </GridPane>
                                           <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" translateY="6.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">

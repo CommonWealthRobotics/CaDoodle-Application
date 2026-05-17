@@ -1,10 +1,13 @@
 package com.commonwealthrobotics;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import javafx.collections.ListChangeListener;
@@ -20,6 +23,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeCell;
@@ -32,6 +36,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class ComponentTreePanel implements ICaDoodleStateUpdate {
+	private static final String ROOT_NODE_ID = "__root__";
 
 	private final SelectionSession session;
 	private final TreeView<CSG> treeView;
@@ -41,8 +46,13 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private final Menu menuItemMoreGroup;
 	private final MenuItem menuItemUngroup;
 	private final MenuItem menuItemHideShow;
-	private Set<String> selectedNames = new HashSet<>();
+	private String rootLabel = "Project";
 	private boolean rebuilding = false;
+	private boolean syncingTreeSelection = false;
+	private static final String TREE_CELL_GROUP = "component-tree-cell-group";
+	private static final String TREE_CELL_HIDDEN = "component-tree-cell-hidden";
+	private static final String TREE_CELL_SELECTED = "component-tree-cell-selected";
+	private static final String TREE_CELL_ROOT = "component-tree-cell-root";
 
 	public ComponentTreePanel(AnchorPane holder, SelectionSession session) {
 		this.session = session;
@@ -54,6 +64,11 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.setShowRoot(true);
 		treeView.setCellFactory(tv -> new ComponentTreeCell());
 		treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		treeView.getStyleClass().add("component-tree-view");
+		session.addSelectionListener(() -> BowlerStudio.runLater(() -> {
+			syncTreeSelectionToSession();
+			treeView.refresh();
+		}));
 
 		treeView.focusedProperty().addListener((obs, old, focused) -> treeView.refresh());
 
@@ -76,25 +91,9 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		});
 
 		treeView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreeItem<CSG>>) change -> {
-			if (rebuilding)
+			if (rebuilding || syncingTreeSelection)
 				return;
-			LinkedHashSet<String> names = new LinkedHashSet<>();
-			for (TreeItem<CSG> item : treeView.getSelectionModel().getSelectedItems()) {
-				if (item == null)
-					continue;
-				CSG csg = item.getValue();
-				if (csg == null)
-					continue; // root
-				if (csg.isInGroup()) {
-					// Group children are hidden in the viewport; redirect to parent group
-					TreeItem<CSG> parent = item.getParent();
-					if (parent == null || parent.getValue() == null)
-						continue;
-					names.add(parent.getValue().getName());
-				} else {
-					names.add(csg.getName());
-				}
-			}
+			LinkedHashSet<String> names = selectedTreeNames();
 			if (names.isEmpty())
 				session.clearSelection();
 			else
@@ -102,12 +101,12 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		});
 
 		Label header = new Label("Component Tree");
-		header.setStyle(
-				"-fx-font-weight: bold; -fx-padding: 4 6 4 6; -fx-border-color: #BBBBBB; -fx-border-width: 0 0 1 0;");
+		header.getStyleClass().add("component-tree-header");
 		header.setMaxWidth(Double.MAX_VALUE);
 
 		VBox.setVgrow(treeView, Priority.ALWAYS);
 		VBox content = new VBox(header, treeView);
+		content.getStyleClass().add("component-tree-panel");
 		content.setFillWidth(true);
 
 		AnchorPane.setTopAnchor(content, 0.0);
@@ -203,49 +202,161 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		return menu;
 	}
 
+	private LinkedHashSet<String> selectedTreeNames() {
+		LinkedHashSet<String> names = new LinkedHashSet<>();
+		for (TreeItem<CSG> item : treeView.getSelectionModel().getSelectedItems()) {
+			if (item == null)
+				continue;
+			CSG csg = item.getValue();
+			if (csg == null)
+				continue; // root
+			if (csg.isInGroup()) {
+				// Group children are hidden in the viewport; redirect to parent group
+				TreeItem<CSG> parent = item.getParent();
+				if (parent == null || parent.getValue() == null)
+					continue;
+				names.add(parent.getValue().getName());
+			} else {
+				names.add(csg.getName());
+			}
+		}
+		return names;
+	}
+
+	private void syncTreeSelectionToSession() {
+		if (rebuilding)
+			return;
+		syncingTreeSelection = true;
+		try {
+			Set<String> selectedNames = session.getSelected().stream().map(CSG::getName).collect(Collectors.toSet());
+			MultipleSelectionModel<TreeItem<CSG>> selectionModel = treeView.getSelectionModel();
+			selectionModel.clearSelection();
+			selectMatchingItems(root, selectedNames, selectionModel);
+		} finally {
+			syncingTreeSelection = false;
+		}
+	}
+
+	private void selectMatchingItems(TreeItem<CSG> item, Set<String> selectedNames,
+			MultipleSelectionModel<TreeItem<CSG>> selectionModel) {
+		if (item == null)
+			return;
+		CSG csg = item.getValue();
+		if (csg != null && selectedNames.contains(csg.getName()))
+			selectionModel.select(item);
+		for (TreeItem<CSG> child : item.getChildren())
+			selectMatchingItems(child, selectedNames, selectionModel);
+	}
+
 	private void rebuildTree(List<CSG> state) {
+		Map<String, List<String>> previousChildOrder = snapshotChildOrder();
 		rebuilding = true;
 		try {
 			root.getChildren().clear();
-			selectedNames = new HashSet<>();
-			for (CSG s : session.getSelected())
-				selectedNames.add(s.getName());
-			for (CSG csg : state) {
-				if (csg.isInGroup())
-					continue;
-				root.getChildren().add(makeItem(csg, state));
+			for (CSG csg : stableOrder(topLevelItems(state), previousChildOrder.get(ROOT_NODE_ID))) {
+				root.getChildren().add(makeItem(csg, state, previousChildOrder));
 			}
 		} finally {
 			rebuilding = false;
 		}
+		syncTreeSelectionToSession();
 		treeView.refresh();
 	}
 
-	private TreeItem<CSG> makeItem(CSG csg, List<CSG> all) {
+	private TreeItem<CSG> makeItem(CSG csg, List<CSG> all, Map<String, List<String>> previousChildOrder) {
 		TreeItem<CSG> item = new TreeItem<>(csg);
 		item.setExpanded(true);
 		if (csg.isGroupResult()) {
-			addGroupChildren(item, csg.getName(), all);
+			addGroupChildren(item, csg.getName(), all, previousChildOrder);
 		}
 		return item;
 	}
 
-	private void addGroupChildren(TreeItem<CSG> parent, String groupID, List<CSG> all) {
-		for (CSG child : all) {
+	private void addGroupChildren(TreeItem<CSG> parent, String groupID, List<CSG> all,
+			Map<String, List<String>> previousChildOrder) {
+		for (CSG child : stableOrder(groupChildren(groupID, all), previousChildOrder.get(groupID))) {
 			if (!child.checkGroupMembership(groupID))
 				continue;
 			TreeItem<CSG> item = new TreeItem<>(child);
 			item.setExpanded(true);
 			parent.getChildren().add(item);
 			if (child.isGroupResult()) {
-				addGroupChildren(item, child.getName(), all);
+				addGroupChildren(item, child.getName(), all, previousChildOrder);
 			}
 		}
 	}
 
+	private List<CSG> topLevelItems(List<CSG> state) {
+		List<CSG> topLevel = new ArrayList<>();
+		for (CSG csg : state) {
+			if (!csg.isInGroup())
+				topLevel.add(csg);
+		}
+		return topLevel;
+	}
+
+	private List<CSG> groupChildren(String groupID, List<CSG> state) {
+		List<CSG> children = new ArrayList<>();
+		for (CSG csg : state) {
+			if (csg.checkGroupMembership(groupID))
+				children.add(csg);
+		}
+		return children;
+	}
+
+	private List<CSG> stableOrder(List<CSG> items, List<String> previousOrder) {
+		if (items.isEmpty() || previousOrder == null || previousOrder.isEmpty())
+			return items;
+
+		Map<String, CSG> byName = new HashMap<>();
+		for (CSG item : items) {
+			byName.put(item.getName(), item);
+		}
+
+		List<CSG> ordered = new ArrayList<>(items.size());
+		Set<String> addedNames = new LinkedHashSet<>();
+		for (String name : previousOrder) {
+			CSG existing = byName.get(name);
+			if (existing != null) {
+				ordered.add(existing);
+				addedNames.add(name);
+			}
+		}
+		for (CSG item : items) {
+			if (addedNames.add(item.getName()))
+				ordered.add(item);
+		}
+		return ordered;
+	}
+
+	private Map<String, List<String>> snapshotChildOrder() {
+		Map<String, List<String>> childOrder = new HashMap<>();
+		snapshotChildOrder(root, ROOT_NODE_ID, childOrder);
+		return childOrder;
+	}
+
+	private void snapshotChildOrder(TreeItem<CSG> parent, String parentId, Map<String, List<String>> childOrder) {
+		List<String> names = new ArrayList<>();
+		for (TreeItem<CSG> child : parent.getChildren()) {
+			CSG childValue = child.getValue();
+			if (childValue == null)
+				continue;
+			names.add(childValue.getName());
+			if (childValue.isGroupResult()) {
+				snapshotChildOrder(child, childValue.getName(), childOrder);
+			}
+		}
+		childOrder.put(parentId, names);
+	}
+
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
-		BowlerStudio.runLater(() -> rebuildTree(currentState));
+		BowlerStudio.runLater(() -> {
+			rootLabel = file != null && file.getMyProjectName() != null && !file.getMyProjectName().isBlank()
+					? file.getMyProjectName()
+					: "Project";
+			rebuildTree(currentState);
+		});
 	}
 
 	@Override
@@ -282,31 +393,37 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		@Override
 		protected void updateItem(CSG csg, boolean empty) {
 			super.updateItem(csg, empty);
+			getStyleClass().removeAll(TREE_CELL_GROUP, TREE_CELL_HIDDEN, TREE_CELL_SELECTED, TREE_CELL_ROOT);
 			if (empty) {
 				setText(null);
 				setGraphic(null);
-				setStyle("");
 				return;
 			}
 			if (csg == null) {
-				setText("World Origin");
-				setStyle("-fx-text-fill: #263d8c; -fx-font-weight: bold;");
+				setText(rootLabel);
+				getStyleClass().add(TREE_CELL_ROOT);
 				return;
 			}
-			StringBuilder style = new StringBuilder("-fx-text-fill: #263d8c;");
 			if (csg.isGroupResult()) {
 				setText("Group: " + csg.getName());
-				style.append(" -fx-font-weight: bold;");
+				getStyleClass().add(TREE_CELL_GROUP);
 			} else {
 				setText(csg.getName());
 			}
 			if (csg.isHide() || isAncestorHidden(getTreeItem())) {
-				style.append(" -fx-text-fill: #aaaaaa; -fx-font-style: italic;");
+				getStyleClass().add(TREE_CELL_HIDDEN);
 			}
-			if (selectedNames.contains(csg.getName())) {
-				style.append(" -fx-background-color: #3399ff44;");
+			if (isSessionSelected(csg)) {
+				getStyleClass().add(TREE_CELL_SELECTED);
 			}
-			setStyle(style.toString());
+		}
+
+		private boolean isSessionSelected(CSG csg) {
+			for (CSG selected : session.getSelected()) {
+				if (selected.getName().contentEquals(csg.getName()))
+					return true;
+			}
+			return false;
 		}
 
 		private boolean isAncestorHidden(TreeItem<CSG> item) {

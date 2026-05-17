@@ -99,8 +99,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private RobotLab robotLab;
 	private ComponentTreePanel componentTreePanel;
 	private boolean componentTreeOpen = true;
-	private final Image imgTreeOpen = new Image(MainController.class.getResourceAsStream("tree.png"));
-	private final Image imgTreeClose = new Image(MainController.class.getResourceAsStream("drawerClose.png"));
+	private final Image imgTreeArrowOpen = new Image(MainController.class.getResourceAsStream("drawerOpen.png"));
+	private final Image imgTreeArrowClose = new Image(MainController.class.getResourceAsStream("drawerClose.png"));
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
@@ -134,6 +134,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	private ImageView componentTreeDrawerImage;
+
+	@FXML
+	private ImageView componentTreeDrawerArrow;
 
 	@FXML
 	private AnchorPane componentTreeHolder;
@@ -534,11 +537,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			return;
 		componentTreeOpen = tm;
 		if (tm) {
-			componentTreeDrawerImage.setImage(imgTreeClose);
+			componentTreeDrawerArrow.setImage(imgTreeArrowClose);
 			componentTreeHolder.setVisible(true);
 			componentTreeHolder.setManaged(true);
 		} else {
-			componentTreeDrawerImage.setImage(imgTreeOpen);
+			componentTreeDrawerArrow.setImage(imgTreeArrowOpen);
 			componentTreeHolder.setVisible(false);
 			componentTreeHolder.setManaged(false);
 		}
