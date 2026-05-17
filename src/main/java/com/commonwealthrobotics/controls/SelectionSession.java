@@ -73,7 +73,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -795,12 +794,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			manipulation.setUnlocked(!lockMove);
-			String name = "Shapes"+ " (" + getSelected().size() + ")";
+			String name = "Shapes" + " (" + getSelected().size() + ")";
 			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
 
 			if (csgs.size() == 1)
 				name = csgs.get(0).getUserDefinedName();
-			shapeConfiguration.setText(name );
+			shapeConfiguration.setText(name);
 			if ((selectedSnapshot.size() == 1) && (csgs.size() > 0)) {
 				CSG sel = csgs.get(0);
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
@@ -2400,14 +2399,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setUserDefinedName(String newText) {
-		if(ap.get().isOperationRunning())
+		if (ap.get().isOperationRunning())
 			return;
 		CSG csg = getCurrentStateSelected().get(0);
-		if(csg.getUserDefinedName().contentEquals(newText))
+		if (csg.getUserDefinedName().contentEquals(newText))
 			return;
-		SetUserDefinedName ns = new SetUserDefinedName()
-				.setTarget(csg.getName())
-				.setNewUserDefinedName(newText);
+		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
 		ap.addOp(ns);
 	}
 
