@@ -169,6 +169,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
+	private Thread timeoutMoveThread = null;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -588,7 +589,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<CSG> currentState = getCurrentState();
-		//Exception exp = new Exception(" Time of Exception "+System.currentTimeMillis());
 		BowlerStudio.runLater(() -> {
 			clearScreen();
 
@@ -627,9 +627,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
-			if (!setKeyBindingFocus()) {
-				//exp.printStackTrace();
-			}
 			TickToc.toc();
 			TickToc.setEnabled(false);
 		});
@@ -1526,7 +1523,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 
 						if (workplane.isClicked()) {
-							// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
+							// Move the workplane down from the surface to ensure a solid overlap between
+							// the object and the surface
 							TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 							TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
 
@@ -1956,14 +1954,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (moveLock())
 					return;
 
-				MoveCenter m = getActiveMove();
-				MoveCenter mc = null;
-				boolean newMoveHere = false;
-				if (((System.currentTimeMillis() - timeSinceLastMove) > 10000) || (m == null))
-					newMoveHere = true;
-				else
-					mc = m;
-
 				if (ap.get().isOperationRunning()) {
 					TickToc.tic("Process running, bailing on new update");
 					return;
@@ -2009,7 +1999,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						roundToNearest(stateUnitVector.getY() * incement, incement),
 						roundToNearest(stateUnitVector.getZ() * incement, incement));
 
-				TransformNR current = (mc == null ? new TransformNR() : mc.getLocation());
+				TransformNR current = manipulation.getGlobalPose();
 				TransformNR wp = ap.get().getWorkplane();
 
 				// Convert to workplane-local coordinates
@@ -2038,35 +2028,40 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				List<String> selectedSnapshot = selectedSnapshot();
 
 				CaDoodleOperation op = ap.get().getCurrentOperation();
-				try {
-					if (newMoveHere) // Force a new move event
-						mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());
-					else
-						mc.setLocation(tf);
 
-				} catch (InvalidLocationMove e) {
-					Log.error(e);
-				}
+				if (timeoutMoveThread == null) {
+					timeoutMoveThread = new Thread(() -> {
+						while ((System.currentTimeMillis() - timeSinceLastMove) < 500) {
+							try {
+								Thread.sleep(100);
+								// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 
-				if ((op == mc) && compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
-					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
-					TickToc.tic("Update move here");
-					// com.neuronrobotics.sdk.common.Log.debug("Update Operation "+tf);
-					TickToc.tic("regenerate");
-					regenerateCurrent();
-					TickToc.tic("save");
-					save();
-					// TickToc.toc();
-					// TickToc.setEnabled(false);
-					return;
-				} else {
-					// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
-					try {
-						ap.addOp(mc).join();
-					} catch (InterruptedException e) {
-						com.neuronrobotics.sdk.common.Log.error(e);
-					}
+						try {
+							ap.addOp(new MoveCenter().setLocation(manipulation.getGlobalPose())
+									.setNames(selectedSnapshot(), ap.get())).join();
+						} catch (InterruptedException e) {
+							com.neuronrobotics.sdk.common.Log.error(e);
+						} catch (InvalidLocationMove e) {
+							com.neuronrobotics.sdk.common.Log.error(e);
+						}
+
+						manipulation.reset();
+						TickToc.tic("save");
+						save();
+						timeoutMoveThread = null;
+					});
+					timeoutMoveThread.start();
 				}
+				Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" + current.toSimpleString());
+				// manipulation.setInReferenceFrame(tf);
+				manipulation.set(tf);
+				Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
+
 				TickToc.setEnabled(false);
 			} catch (Throwable t) {
 				Log.error(t);
