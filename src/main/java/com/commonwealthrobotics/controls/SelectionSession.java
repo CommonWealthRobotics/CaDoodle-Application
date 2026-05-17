@@ -170,6 +170,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
 	private Thread timeoutMoveThread = null;
+	private boolean applyingMoveOperation;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -1948,7 +1949,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TickToc.tic("Start Move Request");
 		if (getSelected().size() == 0)
 			return;
-
+		if (applyingMoveOperation)
+			return;
 		getExecutor().submit(() -> {
 			try {
 				if (moveLock())
@@ -2031,7 +2033,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				if (timeoutMoveThread == null) {
 					timeoutMoveThread = new Thread(() -> {
-						while ((System.currentTimeMillis() - timeSinceLastMove) < 500) {
+						while ((System.currentTimeMillis() - timeSinceLastMove) < 800) {
 							try {
 								Thread.sleep(100);
 								// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
@@ -2040,7 +2042,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								e.printStackTrace();
 							}
 						}
-
+						applyingMoveOperation = true;
 						try {
 							ap.addOp(new MoveCenter().setLocation(manipulation.getGlobalPose())
 									.setNames(selectedSnapshot(), ap.get())).join();
@@ -2053,11 +2055,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						manipulation.reset();
 						TickToc.tic("save");
 						save();
+						applyingMoveOperation = false;
 						timeoutMoveThread = null;
 					});
 					timeoutMoveThread.start();
 				}
-				// Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" + current.toSimpleString());
+				// Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" +
+				// current.toSimpleString());
 				// manipulation.setInReferenceFrame(tf);
 				manipulation.set(tf);
 				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
