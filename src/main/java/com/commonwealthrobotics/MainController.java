@@ -1380,6 +1380,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				workplane.cancel();
 				return;
 			}
+			if (ap.get().isOperationRunning())
+				return;
 			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN)
 					|| (event.getCode() == KeyCode.LEFT) || (event.getCode() == KeyCode.RIGHT)
 					|| (event.getCode() == KeyCode.TAB)) {
