@@ -170,6 +170,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
 	private Thread timeoutMoveThread = null;
 	private boolean applyingMoveOperation;
+	private Button renameBtn;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -797,8 +798,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			String name = "Shapes" + " (" + getSelected().size() + ")";
 			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
 
-			if (csgs.size() == 1)
+			if (csgs.size() == 1) {
 				name = csgs.get(0).getUserDefinedName();
+				renameBtn.setVisible(true);
+			} else
+				renameBtn.setVisible(false);
 			shapeConfiguration.setText(name);
 			if ((selectedSnapshot.size() == 1) && (csgs.size() > 0)) {
 				CSG sel = csgs.get(0);
@@ -1058,7 +1062,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
 			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
-			ProgressIndicator memUsage) {
+			ProgressIndicator memUsage, Button renameBtn) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -1075,6 +1079,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
 		this.memUsage = memUsage;
+		this.renameBtn = renameBtn;
 		setupSnapGrid();
 
 	}
@@ -2401,7 +2406,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setUserDefinedName(String newText) {
 		if (ap.get().isOperationRunning())
 			return;
-		CSG csg = getCurrentStateSelected().get(0);
+		List<CSG> currentStateSelected = getCurrentStateSelected();
+		if (currentStateSelected == null)
+			return;
+		if (currentStateSelected.size() == 0)
+			return;
+		CSG csg = currentStateSelected.get(0);
 		if (csg.getUserDefinedName().contentEquals(newText))
 			return;
 		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
