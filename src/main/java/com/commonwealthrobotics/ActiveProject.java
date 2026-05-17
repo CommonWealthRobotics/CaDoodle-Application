@@ -82,6 +82,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private boolean needsSave = false;
 	private long timeOfLastUpdate = 0;
 	private Thread lastUpdate = null;
+	private boolean saving;
 
 	public ActiveProject() {
 		// this.listener = listener;
@@ -517,6 +518,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	private void save(CaDoodleFile cf) throws SaveOverwriteException {
+		saving = true;
 		try {
 			cf.setSelf(getActiveProject());
 		} catch (Exception e) {
@@ -529,6 +531,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
+		saving = false;
 	}
 
 	public boolean isOpen() {
@@ -820,33 +823,35 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 							com.neuronrobotics.sdk.common.Log.debug("Auto save " + get().getSelf().getAbsolutePath());
 							try {
 								save(get());
-							} catch (SaveOverwriteException e) {
+							} catch (Throwable e) {
 								Log.error(e);
+								saving = false;
 							}
 						});
 						t.start();
 
 						needsSave = false;
 						try {
-							Thread.sleep(300);
+							Thread.sleep(50);
 						} catch (InterruptedException e) {
 							com.neuronrobotics.sdk.common.Log.error(e);
 						}
 
 						get().setSaveUpdate(saveDisplay);
-						if (t.isAlive() && get().isTimelineOpen())
-							SplashManager.renderSplashFrame(99, "Saving Files");
-
-						try {
-							t.join();
-						} catch (InterruptedException e) {
-							com.neuronrobotics.sdk.common.Log.error(e);
+						if (saving) {
+							try {
+								t.join();
+							} catch (InterruptedException e) {
+								com.neuronrobotics.sdk.common.Log.error(e);
+							}
 						}
+
 						SplashManager.closeSplash();
+
 					}
 
 					try {
-						Thread.sleep(200);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
 						com.neuronrobotics.sdk.common.Log.error(e);
