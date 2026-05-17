@@ -75,7 +75,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		treeView.getStyleClass().add("component-tree-view");
 		session.addSelectionListener(() -> BowlerStudio.runLater(() -> {
-			syncTreeSelectionToSession();
+			syncTreeSelectionFromSession();
 			treeView.refresh();
 		}));
 
@@ -98,7 +98,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreeItem<CSG>>) change -> {
 			if (rebuilding || syncingTreeSelection)
 				return;
-			syncSessionFromTreeSelection();
+			syncSessionFromTreeSelectionModel();
 		});
 
 		treeView.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
@@ -106,7 +106,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 				return;
 			if (findNonEmptyTreeCell(event.getPickResult().getIntersectedNode()) == null)
 				return;
-			syncSessionFromTreeSelection();
+			syncSessionFromTreeSelectionModel();
 		});
 
 		Label header = new Label("Component Tree");
@@ -292,9 +292,8 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 				|| operation instanceof Mirror;
 	}
 
-	private List<CSG> selectedTreeCsgs() {
-		List<CSG> csgs = new ArrayList<>();
-		Set<String> names = new LinkedHashSet<>();
+	private LinkedHashSet<String> selectedTreeNames() {
+		LinkedHashSet<String> names = new LinkedHashSet<>();
 		for (TreeItem<CSG> item : treeView.getSelectionModel().getSelectedItems()) {
 			if (item == null)
 				continue;
@@ -308,21 +307,20 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 					continue;
 				csg = parent.getValue();
 			}
-			if (names.add(csg.getName()))
-				csgs.add(csg);
+			names.add(csg.getName());
 		}
-		return csgs;
+		return names;
 	}
 
-	private void syncSessionFromTreeSelection() {
-		List<CSG> selectedCsgs = selectedTreeCsgs();
-		if (selectedCsgs.isEmpty())
+	private void syncSessionFromTreeSelectionModel() {
+		LinkedHashSet<String> names = selectedTreeNames();
+		if (names.isEmpty())
 			session.clearSelection();
 		else
-			session.selectAllCsgs(selectedCsgs);
+			session.selectAll(names);
 	}
 
-	private void syncTreeSelectionToSession() {
+	private void syncTreeSelectionFromSession() {
 		if (rebuilding)
 			return;
 		syncingTreeSelection = true;
@@ -330,13 +328,13 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 			Set<String> selectedNames = session.getSelected().stream().map(CSG::getName).collect(Collectors.toSet());
 			MultipleSelectionModel<TreeItem<CSG>> selectionModel = treeView.getSelectionModel();
 			selectionModel.clearSelection();
-			selectMatchingItems(root, selectedNames, selectionModel);
+			selectTreeItemsByName(root, selectedNames, selectionModel);
 		} finally {
 			syncingTreeSelection = false;
 		}
 	}
 
-	private void selectMatchingItems(TreeItem<CSG> item, Set<String> selectedNames,
+	private void selectTreeItemsByName(TreeItem<CSG> item, Set<String> selectedNames,
 			MultipleSelectionModel<TreeItem<CSG>> selectionModel) {
 		if (item == null)
 			return;
@@ -344,7 +342,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		if (csg != null && selectedNames.contains(csg.getName()))
 			selectionModel.select(item);
 		for (TreeItem<CSG> child : item.getChildren())
-			selectMatchingItems(child, selectedNames, selectionModel);
+			selectTreeItemsByName(child, selectedNames, selectionModel);
 	}
 
 	private void rebuildTree(List<CSG> state) {
@@ -358,7 +356,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		} finally {
 			rebuilding = false;
 		}
-		syncTreeSelectionToSession();
+		syncTreeSelectionFromSession();
 		treeView.refresh();
 	}
 
