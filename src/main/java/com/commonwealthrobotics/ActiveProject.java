@@ -862,4 +862,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			autosaveThread.start();
 		}
 	}
+
+	public boolean isAdvancedMode() {
+		return Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
+
+	}
 }
