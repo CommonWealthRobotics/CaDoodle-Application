@@ -808,7 +808,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			autosaveThread = new Thread(() -> {
 				while (!get().isInitialized()) {
 					try {
-						Thread.sleep(100);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -825,7 +825,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								save(get());
 							} catch (Throwable e) {
 								Log.error(e);
-								saving = false;
 							}
 						});
 						t.start();
@@ -851,7 +850,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					}
 
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
 						com.neuronrobotics.sdk.common.Log.error(e);
