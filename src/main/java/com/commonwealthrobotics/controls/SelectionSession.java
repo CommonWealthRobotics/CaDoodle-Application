@@ -801,7 +801,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			if (csgs.size() == 1) {
 				name = csgs.get(0).getUserDefinedName();
-				renameBtn.setVisible(true);
+				renameBtn.setVisible(ap.isAdvancedMode());
 			} else
 				renameBtn.setVisible(false);
 			shapeConfiguration.setText(name);
