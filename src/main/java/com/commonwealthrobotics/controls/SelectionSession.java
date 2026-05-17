@@ -2057,10 +2057,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					});
 					timeoutMoveThread.start();
 				}
-				Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" + current.toSimpleString());
+				// Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" + current.toSimpleString());
 				// manipulation.setInReferenceFrame(tf);
 				manipulation.set(tf);
-				Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
+				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
 
 				TickToc.setEnabled(false);
 			} catch (Throwable t) {
