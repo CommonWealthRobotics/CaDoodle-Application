@@ -100,7 +100,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	private final double MAX_NUMBER_FILED = 9999;
-	private TitledPane shapeConfiguration;
+	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
 	private AnchorPane shapeConfigurationHolder;
 	private GridPane configurationGrid;
@@ -795,12 +795,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			manipulation.setUnlocked(!lockMove);
-			String name = "Shapes";
+			String name = "Shapes"+ " (" + getSelected().size() + ")";
 			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
 
 			if (csgs.size() == 1)
 				name = csgs.get(0).getUserDefinedName();
-			shapeConfiguration.setText(name + " (" + getSelected().size() + ")");
+			shapeConfiguration.setText(name );
 			if ((selectedSnapshot.size() == 1) && (csgs.size() > 0)) {
 				CSG sel = csgs.get(0);
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
@@ -1055,7 +1055,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return null;
 	}
 
-	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
+	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
 			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
