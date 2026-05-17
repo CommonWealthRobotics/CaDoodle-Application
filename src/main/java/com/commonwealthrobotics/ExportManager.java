@@ -44,7 +44,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.zip.*;
 
-import org.python.antlr.ast.unaryopType;
 
 public class ExportManager {
 	private static ActiveProject ap;
@@ -113,23 +112,20 @@ public class ExportManager {
 			return "_";
 
 		String result = s
-				// Remove null bytes
-				.replace("\0", "")
-				// Remove characters disallowed on Windows or Unix: \ / : * ? " < > |
-				.replaceAll("[\\\\/:*?\"<>|]", "")
-				// Remove control characters
+				// Replace spaces with underscores
+				.replaceAll(" ", "_")
+				// Remove null bytes and control characters
 				.replaceAll("[\\x00-\\x1F\\x7F]", "")
-				// Strip leading/trailing dots and spaces (Windows disallows these)
-				.replaceAll("^[. ]+|[. ]+$", "").trim();
+				// Keep only letters, numbers, and underscores
+				.replaceAll("[^a-zA-Z0-9_]", "").trim();
 
-		// Check against Windows reserved names (e.g. "NUL", "COM1.txt")
+		// Check against Windows reserved names
 		String nameWithoutExtension = result.contains(".") ? result.substring(0, result.lastIndexOf('.')) : result;
 
 		if (RESERVED_NAMES.contains(nameWithoutExtension.toUpperCase())) {
 			result = "_" + result;
 		}
 
-		// Fallback if everything was stripped
 		return result.isEmpty() ? "_" : result;
 	}
 
@@ -177,12 +173,12 @@ public class ExportManager {
 			if (exportDir == null)
 				return;
 			SplashManager.renderSplashFrame(1, " Exporting...");
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			//			try {
+			//				Thread.sleep(100);
+			//			} catch (InterruptedException e) {
+			//				// TODO Auto-generated catch block
+			//				e.printStackTrace();
+			//			}
 			// while(!SplashManager.isVisibleSplash()) {
 			// try {
 			// Thread.sleep(100);
