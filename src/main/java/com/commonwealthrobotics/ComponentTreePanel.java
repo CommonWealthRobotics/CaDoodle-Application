@@ -167,7 +167,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private void updateContextMenuState() {
 		boolean anySelected = !session.getSelected().isEmpty();
 		boolean anyTreeSelected = !treeView.getSelectionModel().getSelectedItems().isEmpty();
-		CSG editTarget = contextMenuTargetCsg();
+		CSG editTarget = contextMenuEditTargetCsg();
 		long unlockedCount = session.getSelected().stream().filter(c -> !c.isLock()).count();
 		boolean anyGroup = session.getSelected().stream().anyMatch(CSG::isGroupResult);
 
@@ -236,7 +236,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	}
 
 	private void editContextMenuTarget() {
-		CSG target = contextMenuTargetCsg();
+		CSG target = contextMenuEditTargetCsg();
 		if (target == null)
 			return;
 		String targetName = target.getName();
@@ -267,6 +267,12 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 			return parent.getValue();
 		}
 		return csg;
+	}
+
+	private CSG contextMenuEditTargetCsg() {
+		if (contextMenuTarget == null)
+			return null;
+		return contextMenuTarget.getValue();
 	}
 
 	private int findLastTransformIndex(String targetName) {
