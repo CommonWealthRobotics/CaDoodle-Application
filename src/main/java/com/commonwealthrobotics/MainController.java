@@ -1031,9 +1031,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			timelineManager.setOpenState(timelineOpen);
 
-			boolean advanced = Boolean
-					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
-			setAdvancedMode(advanced);
+			setAdvancedMode(ap.isAdvancedMode());
 
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
@@ -1769,6 +1767,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			advancedGroupMenu.setVisible(advanced);
 			RobotLabDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
+			renameBtn.setVisible(advanced);
 		});
 
 	}
