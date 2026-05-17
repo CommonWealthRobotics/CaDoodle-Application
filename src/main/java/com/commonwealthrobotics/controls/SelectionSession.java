@@ -54,6 +54,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
 import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
@@ -2234,9 +2235,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (c.isHide() || c.isHole() || (c.isInGroup() && !c.isAlwaysShow()))
 				continue;
 
-			back.add(c.clone());
+			back.add(c.clone().syncProperties(getDb(), c));
 		}
 		return back;
+	}
+
+	private CSGDatabaseInstance getDb() {
+		return ap.get().getCsgDBinstance();
 	}
 
 	public ArrayList<CSG> getSelectable() {

@@ -13,7 +13,9 @@ import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -41,6 +43,8 @@ import javafx.scene.layout.GridPane;
 import java.io.*;
 import java.nio.file.*;
 import java.util.zip.*;
+
+import org.python.antlr.ast.unaryopType;
 
 public class ExportManager {
 	private static ActiveProject ap;
@@ -100,6 +104,35 @@ public class ExportManager {
 		stl.setSelected(false);
 	}
 
+	private static final Set<String> RESERVED_NAMES = Set.of("CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4",
+			"COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8",
+			"LPT9");
+
+	public static String toValidFilename(String s) {
+		if (s == null || s.isBlank())
+			return "_";
+
+		String result = s
+				// Remove null bytes
+				.replace("\0", "")
+				// Remove characters disallowed on Windows or Unix: \ / : * ? " < > |
+				.replaceAll("[\\\\/:*?\"<>|]", "")
+				// Remove control characters
+				.replaceAll("[\\x00-\\x1F\\x7F]", "")
+				// Strip leading/trailing dots and spaces (Windows disallows these)
+				.replaceAll("^[. ]+|[. ]+$", "").trim();
+
+		// Check against Windows reserved names (e.g. "NUL", "COM1.txt")
+		String nameWithoutExtension = result.contains(".") ? result.substring(0, result.lastIndexOf('.')) : result;
+
+		if (RESERVED_NAMES.contains(nameWithoutExtension.toUpperCase())) {
+			result = "_" + result;
+		}
+
+		// Fallback if everything was stripped
+		return result.isEmpty() ? "_" : result;
+	}
+
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
@@ -112,6 +145,7 @@ public class ExportManager {
 			int index = 1;
 			boolean prev = CSG.isPreventNonManifoldTriangles();
 			boolean manifold = manifoldSTL.isSelected();
+			HashSet<String> namesUnique = new HashSet<>();
 			for (CSG c : back) {
 				if (stl.isSelected() || manifold) {
 					c.addExportFormat("stl");
@@ -131,19 +165,24 @@ public class ExportManager {
 				if (type3mf.isSelected()) {
 					c.addExportFormat("3mf");
 				}
-				c.setName(name + "_" + index);
-				index++;
+				String nameToSet = toValidFilename(c.getUserDefinedName());
+				if (namesUnique.contains(nameToSet)) {
+					nameToSet += "_" + index;
+					index++;
+				}
+				namesUnique.add(nameToSet);
+				c.setName(nameToSet);
 			}
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
 			if (exportDir == null)
 				return;
 			SplashManager.renderSplashFrame(1, " Exporting...");
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			// while(!SplashManager.isVisibleSplash()) {
 			// try {
 			// Thread.sleep(100);
