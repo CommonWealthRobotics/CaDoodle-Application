@@ -1019,7 +1019,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setAlignButton(alignButton);
 			// do this after setting up the session
 			setupEngineControls();
-			componentTreePanel = new ComponentTreePanel(componentTreeHolder, session);
+			componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
 			ap.addListener(componentTreePanel);
 			boolean manifold = Boolean.parseBoolean(
 					ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());

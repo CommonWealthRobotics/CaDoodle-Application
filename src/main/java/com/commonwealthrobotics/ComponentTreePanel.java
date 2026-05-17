@@ -12,9 +12,13 @@ import java.util.stream.Collectors;
 import com.commonwealthrobotics.controls.SelectionSession;
 import javafx.collections.ListChangeListener;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Mirror;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
@@ -30,6 +34,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
@@ -39,13 +44,16 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private static final String ROOT_NODE_ID = "__root__";
 
 	private final SelectionSession session;
+	private final ActiveProject ap;
 	private final TreeView<CSG> treeView;
 	private final TreeItem<CSG> root;
 	private final ContextMenu contextMenu;
-	private final MenuItem menuItemGroup;
-	private final Menu menuItemMoreGroup;
-	private final MenuItem menuItemUngroup;
-	private final MenuItem menuItemHideShow;
+	private MenuItem menuItemEdit;
+	private MenuItem menuItemGroup;
+	private Menu menuItemMoreGroup;
+	private MenuItem menuItemUngroup;
+	private MenuItem menuItemHideShow;
+	private TreeItem<CSG> contextMenuTarget;
 	private String rootLabel = "Project";
 	private boolean rebuilding = false;
 	private boolean syncingTreeSelection = false;
@@ -54,8 +62,9 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private static final String TREE_CELL_SELECTED = "component-tree-cell-selected";
 	private static final String TREE_CELL_ROOT = "component-tree-cell-root";
 
-	public ComponentTreePanel(AnchorPane holder, SelectionSession session) {
+	public ComponentTreePanel(AnchorPane holder, SelectionSession session, ActiveProject ap) {
 		this.session = session;
+		this.ap = ap;
 
 		root = new TreeItem<>(null);
 		root.setExpanded(true);
@@ -73,10 +82,6 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.focusedProperty().addListener((obs, old, focused) -> treeView.refresh());
 
 		contextMenu = buildContextMenu();
-		menuItemGroup = (MenuItem) contextMenu.getItems().get(0);
-		menuItemMoreGroup = (Menu) contextMenu.getItems().get(1);
-		menuItemUngroup = contextMenu.getItems().get(2);
-		menuItemHideShow = contextMenu.getItems().get(4);
 
 		treeView.setOnContextMenuRequested(this::onContextMenuRequested);
 
@@ -93,11 +98,15 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreeItem<CSG>>) change -> {
 			if (rebuilding || syncingTreeSelection)
 				return;
-			LinkedHashSet<String> names = selectedTreeNames();
-			if (names.isEmpty())
-				session.clearSelection();
-			else
-				session.selectAll(names);
+			syncSessionFromTreeSelection();
+		});
+
+		treeView.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+			if (rebuilding || syncingTreeSelection || event.getButton() != MouseButton.PRIMARY)
+				return;
+			if (findNonEmptyTreeCell(event.getPickResult().getIntersectedNode()) == null)
+				return;
+			syncSessionFromTreeSelection();
 		});
 
 		Label header = new Label("Component Tree");
@@ -128,36 +137,59 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	}
 
 	private void onContextMenuRequested(ContextMenuEvent event) {
-		if (findNonEmptyTreeCell(event.getPickResult().getIntersectedNode()) != null) {
+		TreeCell<?> cell = findNonEmptyTreeCell(event.getPickResult().getIntersectedNode());
+		if (cell != null) {
+			contextMenuTarget = treeItemFromCell(cell);
+			if (contextMenuTarget != null && contextMenuTarget.getValue() != null) {
+				treeView.getSelectionModel().clearSelection();
+				treeView.getSelectionModel().select(contextMenuTarget);
+			}
 			updateContextMenuState();
 			contextMenu.show(treeView, event.getScreenX(), event.getScreenY());
 			event.consume();
 		} else {
+			contextMenuTarget = null;
 			contextMenu.hide();
 		}
+	}
+
+	private TreeItem<CSG> treeItemFromCell(TreeCell<?> cell) {
+		TreeItem<?> item = cell.getTreeItem();
+		if (item == null)
+			return null;
+		if (item.getValue() != null && !(item.getValue() instanceof CSG))
+			return null;
+		@SuppressWarnings("unchecked")
+		TreeItem<CSG> csgItem = (TreeItem<CSG>) item;
+		return csgItem;
 	}
 
 	private void updateContextMenuState() {
 		boolean anySelected = !session.getSelected().isEmpty();
 		boolean anyTreeSelected = !treeView.getSelectionModel().getSelectedItems().isEmpty();
+		CSG editTarget = contextMenuTargetCsg();
 		long unlockedCount = session.getSelected().stream().filter(c -> !c.isLock()).count();
 		boolean anyGroup = session.getSelected().stream().anyMatch(CSG::isGroupResult);
 
+		menuItemEdit.setDisable(editTarget == null || findLastTransformIndex(editTarget.getName()) < 0);
 		menuItemGroup.setDisable(unlockedCount < 2);
 		menuItemMoreGroup.setDisable(unlockedCount < 2);
 		menuItemUngroup.setDisable(!anyGroup);
 		menuItemHideShow.setDisable(!anyTreeSelected);
 		contextMenu.getItems().forEach(item -> {
-			if (item instanceof SeparatorMenuItem || item == menuItemGroup || item == menuItemMoreGroup
-					|| item == menuItemUngroup || item == menuItemHideShow)
+			if (item instanceof SeparatorMenuItem || item == menuItemEdit || item == menuItemGroup
+					|| item == menuItemMoreGroup || item == menuItemUngroup || item == menuItemHideShow)
 				return;
 			item.setDisable(!anySelected);
 		});
 	}
 
 	private ContextMenu buildContextMenu() {
-		MenuItem groupItem = new MenuItem("Group");
-		groupItem.setOnAction(e -> session.onGroup(false, false));
+		menuItemEdit = new MenuItem("Edit");
+		menuItemEdit.setOnAction(e -> editContextMenuTarget());
+
+		menuItemGroup = new MenuItem("Group");
+		menuItemGroup.setOnAction(e -> session.onGroup(false, false));
 
 		MenuItem hullItem = new MenuItem("Hull");
 		hullItem.setOnAction(e -> session.onGroup(true, false));
@@ -168,11 +200,11 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		MenuItem xorItem = new MenuItem("Xor");
 		xorItem.setOnAction(e -> session.onXor());
 
-		Menu moreGroupMenu = new Menu("More Group");
-		moreGroupMenu.getItems().addAll(hullItem, intersectItem, xorItem);
+		menuItemMoreGroup = new Menu("More Group");
+		menuItemMoreGroup.getItems().addAll(hullItem, intersectItem, xorItem);
 
-		MenuItem ungroupItem = new MenuItem("Ungroup");
-		ungroupItem.setOnAction(e -> session.onUngroup());
+		menuItemUngroup = new MenuItem("Ungroup");
+		menuItemUngroup.setOnAction(e -> session.onUngroup());
 
 		MenuItem makeHoleItem = new MenuItem("Make Hole");
 		makeHoleItem.setOnAction(e -> session.setToHole());
@@ -183,8 +215,8 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		MenuItem deleteItem = new MenuItem("Delete");
 		deleteItem.setOnAction(e -> session.onDelete());
 
-		MenuItem hideShowItem = new MenuItem("Hide / Show");
-		hideShowItem.setOnAction(e -> {
+		menuItemHideShow = new MenuItem("Hide / Show");
+		menuItemHideShow.setOnAction(e -> {
 			// Hidden items are filtered by selectAll(); re-inject them so the operation sees them
 			for (TreeItem<CSG> item : treeView.getSelectionModel().getSelectedItems()) {
 				if (item != null && item.getValue() != null && item.getValue().isHide())
@@ -196,14 +228,73 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		MenuItem lockToggleItem = new MenuItem("Lock / Unlock");
 		lockToggleItem.setOnAction(e -> session.lockToggle());
 
-		ContextMenu menu = new ContextMenu(groupItem, moreGroupMenu, ungroupItem, new SeparatorMenuItem(), makeHoleItem,
-				makeSolidItem, new SeparatorMenuItem(), deleteItem, hideShowItem, lockToggleItem);
+		ContextMenu menu = new ContextMenu(menuItemEdit, new SeparatorMenuItem(), menuItemGroup, menuItemMoreGroup,
+				menuItemUngroup, new SeparatorMenuItem(), makeHoleItem, makeSolidItem, new SeparatorMenuItem(),
+				deleteItem, menuItemHideShow, lockToggleItem);
 		menu.setAutoHide(true);
 		return menu;
 	}
 
-	private LinkedHashSet<String> selectedTreeNames() {
-		LinkedHashSet<String> names = new LinkedHashSet<>();
+	private void editContextMenuTarget() {
+		CSG target = contextMenuTargetCsg();
+		if (target == null)
+			return;
+		String targetName = target.getName();
+		CaDoodleFile file = ap.get();
+		if (file == null || file.isRegenerating() || !file.isInitialized())
+			return;
+		int transformIndex = findLastTransformIndex(targetName);
+		if (transformIndex < 0)
+			return;
+
+		session.selectAll(List.of(targetName));
+		new Thread(() -> {
+			file.moveToOpIndex(transformIndex);
+			BowlerStudio.runLater(() -> session.selectAll(List.of(targetName)));
+		}).start();
+	}
+
+	private CSG contextMenuTargetCsg() {
+		if (contextMenuTarget == null)
+			return null;
+		CSG csg = contextMenuTarget.getValue();
+		if (csg == null)
+			return null;
+		if (csg.isInGroup()) {
+			TreeItem<CSG> parent = contextMenuTarget.getParent();
+			if (parent == null || parent.getValue() == null)
+				return null;
+			return parent.getValue();
+		}
+		return csg;
+	}
+
+	private int findLastTransformIndex(String targetName) {
+		CaDoodleFile file = ap.get();
+		if (file == null)
+			return -1;
+		List<CaDoodleOperation> operations = file.getOperations();
+		int start = Math.min(file.getCurrentIndex() - 1, operations.size() - 1);
+		for (int i = start; i >= 0; i--) {
+			CaDoodleOperation operation = operations.get(i);
+			if (!isTransformOperation(operation))
+				continue;
+			for (String name : operation.getNamesAddedInThisOperation()) {
+				if (targetName.contentEquals(name))
+					return i;
+			}
+		}
+		return -1;
+	}
+
+	private boolean isTransformOperation(CaDoodleOperation operation) {
+		return operation instanceof MoveCenter || operation instanceof Resize || operation instanceof Align
+				|| operation instanceof Mirror;
+	}
+
+	private List<CSG> selectedTreeCsgs() {
+		List<CSG> csgs = new ArrayList<>();
+		Set<String> names = new LinkedHashSet<>();
 		for (TreeItem<CSG> item : treeView.getSelectionModel().getSelectedItems()) {
 			if (item == null)
 				continue;
@@ -215,12 +306,20 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 				TreeItem<CSG> parent = item.getParent();
 				if (parent == null || parent.getValue() == null)
 					continue;
-				names.add(parent.getValue().getName());
-			} else {
-				names.add(csg.getName());
+				csg = parent.getValue();
 			}
+			if (names.add(csg.getName()))
+				csgs.add(csg);
 		}
-		return names;
+		return csgs;
+	}
+
+	private void syncSessionFromTreeSelection() {
+		List<CSG> selectedCsgs = selectedTreeCsgs();
+		if (selectedCsgs.isEmpty())
+			session.clearSelection();
+		else
+			session.selectAllCsgs(selectedCsgs);
 	}
 
 	private void syncTreeSelectionToSession() {
@@ -272,10 +371,10 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		return item;
 	}
 
-	private void addGroupChildren(TreeItem<CSG> parent, String groupID, List<CSG> all,
+	private void addGroupChildren(TreeItem<CSG> parent, String groupName, List<CSG> all,
 			Map<String, List<String>> previousChildOrder) {
-		for (CSG child : stableOrder(groupChildren(groupID, all), previousChildOrder.get(groupID))) {
-			if (!child.checkGroupMembership(groupID))
+		for (CSG child : stableOrder(groupChildren(groupName, all), previousChildOrder.get(groupName))) {
+			if (!child.checkGroupMembership(groupName))
 				continue;
 			TreeItem<CSG> item = new TreeItem<>(child);
 			item.setExpanded(true);

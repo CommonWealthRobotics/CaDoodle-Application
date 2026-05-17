@@ -1195,6 +1195,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
+	public void selectAllCsgs(Iterable<CSG> csgs) {
+		getExecutor().submit(() -> {
+			getSelected().clear();
+			Set<String> selectedNames = new HashSet<>();
+			for (CSG c : csgs) {
+
+				if ((c.isInGroup() && !c.isAlwaysShow()))
+					continue;
+
+				if (c.isHide())
+					continue;
+
+				if (selectedNames.add(c.getName()))
+					getSelected().add(c);
+			}
+
+			fireSelectionChanged();
+			BowlerStudio.runLater(() -> {
+				updateControlsDisplayOfSelected();
+			});
+
+			updateRobotLab.run();
+		});
+	}
+
 	public void selectAll() {
 		getExecutor().submit(() -> {
 			getSelected().clear();
