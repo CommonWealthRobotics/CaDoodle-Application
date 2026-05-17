@@ -1021,6 +1021,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setupEngineControls();
 			componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
 			ap.addListener(componentTreePanel);
+			setComponentTreeOpenState(false);
 			boolean manifold = Boolean.parseBoolean(
 					ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
 			try {
@@ -1723,12 +1724,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		if (!advanced) {
 			setTimelineOpenState(false);
 			setRobotLabOpenState(false);
+			setComponentTreeOpenState(false);
 		}
 		session.setAdvancedMode(advanced);
 		BowlerStudio.runLater(() -> {
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
 			RobotLabDrawer.setVisible(advanced);
+			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
 		});
 

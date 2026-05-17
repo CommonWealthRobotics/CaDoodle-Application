@@ -36,15 +36,22 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.Cursor;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private static final String ROOT_NODE_ID = "__root__";
+	private static final double DEFAULT_WIDTH = 220.0;
+	private static final double MIN_WIDTH = 180.0;
+	private static final double MAX_WIDTH = 520.0;
+	private static final double RESIZE_HANDLE_WIDTH = 7.0;
 
 	private final SelectionSession session;
 	private final ActiveProject ap;
+	private final AnchorPane holder;
 	private final TreeView<CSG> treeView;
 	private final TreeItem<CSG> root;
 	private final ContextMenu contextMenu;
@@ -57,6 +64,8 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private String rootLabel = "Project";
 	private boolean rebuilding = false;
 	private boolean syncingTreeSelection = false;
+	private double resizeStartSceneX;
+	private double resizeStartWidth;
 	private static final String TREE_CELL_GROUP = "component-tree-cell-group";
 	private static final String TREE_CELL_HIDDEN = "component-tree-cell-hidden";
 	private static final String TREE_CELL_SELECTED = "component-tree-cell-selected";
@@ -65,6 +74,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	public ComponentTreePanel(AnchorPane holder, SelectionSession session, ActiveProject ap) {
 		this.session = session;
 		this.ap = ap;
+		this.holder = holder;
 
 		root = new TreeItem<>(null);
 		root.setExpanded(true);
@@ -124,6 +134,45 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		AnchorPane.setRightAnchor(content, 0.0);
 
 		holder.getChildren().add(content);
+		holder.getChildren().add(buildResizeHandle());
+		holder.setMinWidth(MIN_WIDTH);
+		if (holder.getPrefWidth() <= 0)
+			holder.setPrefWidth(DEFAULT_WIDTH);
+	}
+
+	private Region buildResizeHandle() {
+		Region handle = new Region();
+		handle.getStyleClass().add("component-tree-resize-handle");
+		handle.setCursor(Cursor.H_RESIZE);
+		handle.setMinWidth(RESIZE_HANDLE_WIDTH);
+		handle.setPrefWidth(RESIZE_HANDLE_WIDTH);
+		handle.setMaxWidth(RESIZE_HANDLE_WIDTH);
+		AnchorPane.setTopAnchor(handle, 0.0);
+		AnchorPane.setBottomAnchor(handle, 0.0);
+		AnchorPane.setRightAnchor(handle, 0.0);
+		handle.setOnMousePressed(event -> {
+			resizeStartSceneX = event.getSceneX();
+			resizeStartWidth = currentHolderWidth();
+			event.consume();
+		});
+		handle.setOnMouseDragged(event -> {
+			double width = resizeStartWidth + event.getSceneX() - resizeStartSceneX;
+			holder.setPrefWidth(clamp(width, MIN_WIDTH, MAX_WIDTH));
+			event.consume();
+		});
+		return handle;
+	}
+
+	private double currentHolderWidth() {
+		double width = holder.getWidth();
+		if (width > 0)
+			return width;
+		width = holder.getPrefWidth();
+		return width > 0 ? width : DEFAULT_WIDTH;
+	}
+
+	private double clamp(double value, double min, double max) {
+		return Math.max(min, Math.min(max, value));
 	}
 
 	private TreeCell<?> findNonEmptyTreeCell(Node start) {

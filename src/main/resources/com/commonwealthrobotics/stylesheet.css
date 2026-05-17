@@ -295,6 +295,14 @@
     -fx-border-width: 1px;
 }
 
+.component-tree-resize-handle {
+    -fx-background-color: transparent;
+}
+
+.component-tree-resize-handle:hover {
+    -fx-background-color: rgba(38, 61, 140, 0.18); /* logo-blue */
+}
+
 .component-tree-header {
     -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-border-color: #263d8c; /* logo-blue */
