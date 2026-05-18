@@ -17,8 +17,7 @@ This is the source code for the Java Application of Cadoodle.
 
 The installers for specific operating systems can be found here: https://github.com/CommonWealthRobotics/CaDoodle/releases
 
-
-# Build (Linux)
+# Checkout
 
 ```
 git clone https://github.com/CommonWealthRobotics/CaDoodle-Application.git
@@ -27,17 +26,76 @@ cd CaDoodle-Application
 
 git submodule update --init --recursive
 
+cd BowlerStudio/
+
+git checkout development 
+
+cd libraries/bowler-script-kernel/
+
+git checkout development 
+
+cd GithubPasswordManager/
+
+git checkout master 
+
+cd ../
+
+cd java-bowler/
+
+git checkout development 
+
+cd ..
+
+cd JCSG/
+
+git checkout development 
+
+cd ../../../../
+
+```
+
+# Git Update
+
+```
+
+git pull
+
+cd BowlerStudio/
+
+git checkout development && git pull
+
+cd libraries/bowler-script-kernel/
+
+git checkout development && git pull
+
+cd GithubPasswordManager/
+
+git checkout master && git pull
+
+cd ../
+
+cd java-bowler/
+
+git checkout development && git pull
+
+cd ..
+
+cd JCSG/
+
+git checkout development && git pull
+
+cd ../../../../
+
+```
+
+# Build (Linux)
+
+```
 bash build.sh
 ```
 
 # Build (macOS)
 ```
-git clone https://github.com/CommonWealthRobotics/CaDoodle-Application.git
-
-cd CaDoodle-Application
-
-git submodule update --init --recursive
-
 bash buildMac.sh
 ```
 
