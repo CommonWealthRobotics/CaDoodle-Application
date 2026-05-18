@@ -14,6 +14,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
@@ -107,8 +108,7 @@ public class ShapePalletMyDoodles {
 		try {
 			indicator = Vitamins.get(instance, false, caDoodleFile.getSTLThumbnailFile());
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.error(e);
 			caDoodleFile.getSTLThumbnailFile().delete();
 		}
 		CSG in = indicator;

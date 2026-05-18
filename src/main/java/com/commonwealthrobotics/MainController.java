@@ -52,6 +52,7 @@ import eu.mihosoft.vrl.v3d.IDebug3dProvider;
 import eu.mihosoft.vrl.v3d.CSG.OptType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -59,9 +60,11 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -358,6 +361,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button filletButton;
 
 	private Stage newStage;
+	private static Label label;
+	private Button renameBtn;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
@@ -974,10 +979,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setUp3dEngine();
 			setUpColorPicker();
 			timelineManager.set(timelineScroll, timeline, session, engine);
+			label = new Label(shapeConfiguration.getText());
+			renameBtn = new Button("Rename");
 
-			session.set(shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null,
-					engine, colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu,
-					timelineManager, objectWorkplane, dropToWorkplane, memUsage);
+			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
+					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
+					objectWorkplane, dropToWorkplane, memUsage, renameBtn);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
@@ -1029,9 +1036,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			timelineManager.setOpenState(timelineOpen);
 
-			boolean advanced = Boolean
-					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
-			setAdvancedMode(advanced);
+			setAdvancedMode(ap.isAdvancedMode());
 
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
@@ -1043,6 +1048,76 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		timelineHolder.setPrefWidth(32767);
 		// Prevent border color change when selecting the scroll pane
 		// timelineScroll.setFocusTraversable(false);
+		makeEditableTitle(shapeConfiguration);
+	}
+
+	/**
+	 * Makes a TitledPane's title editable on double-click. Call this after adding
+	 * the pane to an Accordion (or any scene).
+	 */
+	public void makeEditableTitle(TitledPane pane) {
+		renameBtn.getStyleClass().add("normal-button");
+		TextField textField = new TextField();
+		textField.setVisible(false);
+		textField.setTextFormatter(new TextFormatter<>(change -> {
+			String newText = change.getControlNewText();
+			if (newText.length() <= 30 && change.getText().matches("[a-zA-Z0-9.,!]*")) {
+				return change;
+			}
+			change.setText(ExportManager.toValidFilename(change.getText()));
+			return change;
+		}));
+		// Label is a class variable — just place it directly in the layout
+		StackPane titleStack = new StackPane(label, textField);
+		StackPane.setAlignment(label, Pos.CENTER_LEFT);
+		StackPane.setAlignment(textField, Pos.CENTER_LEFT);
+		HBox graphic = new HBox(5, titleStack, renameBtn);
+		graphic.setAlignment(Pos.CENTER_LEFT);
+		pane.setText("");
+		pane.setGraphic(graphic);
+
+		// Rename button starts edit mode
+		renameBtn.setOnAction(e -> {
+			if (session.getCurrentStateSelected().size() != 1)
+				return;
+			textField.setText(label.getText());
+			label.setVisible(false);
+			textField.setVisible(true);
+			renameBtn.setDisable(true);
+			textField.selectAll();
+			textField.requestFocus();
+		});
+
+		// Commit on Enter
+		textField.setOnAction(e -> commitTitle(textField, renameBtn));
+
+		// Commit on focus lost
+		textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+			if (!isNowFocused)
+				commitTitle(textField, renameBtn);
+		});
+
+		// Cancel on Escape
+		textField.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.ESCAPE) {
+				textField.setText(label.getText()); // discard
+				commitTitle(textField, renameBtn);
+			}
+		});
+	}
+
+	private void commitTitle(TextField textField, Button renameBtn) {
+
+		String newText = textField.getText().trim();
+		if (newText.contentEquals(label.getText()) && !textField.isVisible())
+			return;
+		if (!newText.isEmpty()) {
+			label.setText(newText);
+		}
+		textField.setVisible(false);
+		label.setVisible(true);
+		renameBtn.setDisable(false); // re-enable when done
+		session.setUserDefinedName(newText);
 	}
 
 	private void onNameTyped() {
@@ -1385,6 +1460,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				workplane.cancel();
 				return;
 			}
+			if (ap.get().isOperationRunning())
+				return;
 			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN)
 					|| (event.getCode() == KeyCode.LEFT) || (event.getCode() == KeyCode.RIGHT)
 					|| (event.getCode() == KeyCode.TAB)) {
@@ -1702,7 +1779,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			} else if (shapeConfigurationBox.getPanes().contains(shapePosition)) {
 				shapeConfigurationBox.getPanes().remove(shapePosition);
 			}
-
+			renameBtn.setVisible(advanced);
 		});
 
 	}

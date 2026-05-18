@@ -54,6 +54,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
 import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
@@ -73,7 +74,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -100,7 +100,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ControlSprites controls;
 	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
 	private final double MAX_NUMBER_FILED = 9999;
-	private TitledPane shapeConfiguration;
+	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
 	private AnchorPane shapeConfigurationHolder;
 	private GridPane configurationGrid;
@@ -169,6 +169,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
+	private Thread timeoutMoveThread = null;
+	private boolean applyingMoveOperation;
+	private Button renameBtn;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -588,7 +591,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<CSG> currentState = getCurrentState();
-		//Exception exp = new Exception(" Time of Exception "+System.currentTimeMillis());
 		BowlerStudio.runLater(() -> {
 			clearScreen();
 
@@ -627,9 +629,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
-			if (!setKeyBindingFocus()) {
-				//exp.printStackTrace();
-			}
 			TickToc.toc();
 			TickToc.setEnabled(false);
 		});
@@ -797,9 +796,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			manipulation.setUnlocked(!lockMove);
-
-			shapeConfiguration.setText("Shape (" + getSelected().size() + ")");
+			String name = "Shapes" + " (" + getSelected().size() + ")";
 			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
+
+			if (csgs.size() == 1) {
+				name = csgs.get(0).getUserDefinedName();
+				renameBtn.setVisible(ap.isAdvancedMode());
+			} else
+				renameBtn.setVisible(false);
+			shapeConfiguration.setText(name);
 			if ((selectedSnapshot.size() == 1) && (csgs.size() > 0)) {
 				CSG sel = csgs.get(0);
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
@@ -1054,11 +1059,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return null;
 	}
 
-	public void set(TitledPane shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
+	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
 			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
-			ProgressIndicator memUsage) {
+			ProgressIndicator memUsage, Button renameBtn) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -1075,6 +1080,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
 		this.memUsage = memUsage;
+		this.renameBtn = renameBtn;
 		setupSnapGrid();
 
 	}
@@ -1526,7 +1532,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 
 						if (workplane.isClicked()) {
-							// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
+							// Move the workplane down from the surface to ensure a solid overlap between
+							// the object and the surface
 							TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 							TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
 
@@ -1950,19 +1957,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TickToc.tic("Start Move Request");
 		if (getSelected().size() == 0)
 			return;
-
+		if (applyingMoveOperation)
+			return;
 		getExecutor().submit(() -> {
 			try {
 				if (moveLock())
 					return;
-
-				MoveCenter m = getActiveMove();
-				MoveCenter mc = null;
-				boolean newMoveHere = false;
-				if (((System.currentTimeMillis() - timeSinceLastMove) > 10000) || (m == null))
-					newMoveHere = true;
-				else
-					mc = m;
 
 				if (ap.get().isOperationRunning()) {
 					TickToc.tic("Process running, bailing on new update");
@@ -2009,7 +2009,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						roundToNearest(stateUnitVector.getY() * incement, incement),
 						roundToNearest(stateUnitVector.getZ() * incement, incement));
 
-				TransformNR current = (mc == null ? new TransformNR() : mc.getLocation());
+				TransformNR current = manipulation.getGlobalPose().copy();
 				TransformNR wp = ap.get().getWorkplane();
 
 				// Convert to workplane-local coordinates
@@ -2038,35 +2038,46 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				List<String> selectedSnapshot = selectedSnapshot();
 
 				CaDoodleOperation op = ap.get().getCurrentOperation();
-				try {
-					if (newMoveHere) // Force a new move event
-						mc = new MoveCenter().setLocation(tf).setNames(selectedSnapshot(), ap.get());
-					else
-						mc.setLocation(tf);
 
-				} catch (InvalidLocationMove e) {
-					Log.error(e);
-				}
+				if (timeoutMoveThread == null) {
+					timeoutMoveThread = new Thread(() -> {
+						try {
+							while ((System.currentTimeMillis() - timeSinceLastMove) < 800) {
+								try {
+									Thread.sleep(100);
+									// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							applyingMoveOperation = true;
+							try {
+								ap.addOp(new MoveCenter().setLocation(manipulation.getGlobalPose().copy())
+										.setNames(selectedSnapshot(), ap.get())).join();
+							} catch (InterruptedException e) {
+								com.neuronrobotics.sdk.common.Log.error(e);
+							} catch (InvalidLocationMove e) {
+								com.neuronrobotics.sdk.common.Log.error(e);
+							}
 
-				if ((op == mc) && compareLists(selectedSnapshot, mc.getNamesAddedInThisOperation())) {
-					// com.neuronrobotics.sdk.common.Log.error("Move " + tf.toSimpleString());
-					TickToc.tic("Update move here");
-					// com.neuronrobotics.sdk.common.Log.debug("Update Operation "+tf);
-					TickToc.tic("regenerate");
-					regenerateCurrent();
-					TickToc.tic("save");
-					save();
-					// TickToc.toc();
-					// TickToc.setEnabled(false);
-					return;
-				} else {
-					// com.neuronrobotics.sdk.common.Log.debug("Add Move Operation "+tf);
-					try {
-						ap.addOp(mc).join();
-					} catch (InterruptedException e) {
-						com.neuronrobotics.sdk.common.Log.error(e);
-					}
+							manipulation.reset();
+							TickToc.tic("save");
+						} catch (Throwable t) {
+							Log.error(t);
+						}
+						save();
+						applyingMoveOperation = false;
+						timeoutMoveThread = null;
+					});
+					timeoutMoveThread.start();
 				}
+				// Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" +
+				// current.toSimpleString());
+				// manipulation.setInReferenceFrame(tf);
+				manipulation.set(tf);
+				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
+
 				TickToc.setEnabled(false);
 			} catch (Throwable t) {
 				Log.error(t);
@@ -2224,9 +2235,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (c.isHide() || c.isHole() || (c.isInGroup() && !c.isAlwaysShow()))
 				continue;
 
-			back.add(c.clone());
+			back.add(c.clone().syncProperties(getDb(), c));
 		}
 		return back;
+	}
+
+	private CSGDatabaseInstance getDb() {
+		return ap.get().getCsgDBinstance();
 	}
 
 	public ArrayList<CSG> getSelectable() {
@@ -2391,6 +2406,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void runFillet() {
 		com.neuronrobotics.sdk.common.Log.debug("onFillet");
 		filletTool.run(selected, ap, this, workplane, ruler);
+	}
+
+	public void setUserDefinedName(String newText) {
+		if (ap.get().isOperationRunning())
+			return;
+		List<CSG> currentStateSelected = getCurrentStateSelected();
+		if (currentStateSelected == null)
+			return;
+		if (currentStateSelected.size() == 0)
+			return;
+		CSG csg = currentStateSelected.get(0);
+		if (csg.getUserDefinedName().contentEquals(newText))
+			return;
+		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
+		ap.addOp(ns);
 	}
 
 }
