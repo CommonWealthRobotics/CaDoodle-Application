@@ -1569,10 +1569,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
+	public void wireMeshModeToggle() {
+		if (ap.get().isOperationRunning()) {
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
+			return;
+		}
+
+		List<String> selectedSnapshot = selectedSnapshot();
+
+		ap.addOp(new WireMeshView().setNames(selectedSnapshot).setToMesh(!isWireMesh(selectedSnapshot)));
+
+	}
+
 	private boolean isLocked(List<String> s) {
 		for (String name : s) {
 			CSG c = getSelectedCSG(name);
 			if ((c != null) && c.isLock())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isWireMesh(List<String> s) {
+		for (String name : s) {
+			CSG c = getSelectedCSG(name);
+			if ((c != null) && c.isWireFrame())
 				return true;
 		}
 		return false;
