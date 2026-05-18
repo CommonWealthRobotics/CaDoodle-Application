@@ -1586,6 +1586,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					case 'L' : // Ctrl+L - Lock Toggle
 						session.lockToggle();
 						break;
+					case 'W' : // Ctrl+L - Lock Toggle
+						session.wireMeshModeToggle();
+						break;
 					default :
 						com.neuronrobotics.sdk.common.Log.error("CTRL+" + key + " unhandled (raw: " + raw + ")");
 						break;
