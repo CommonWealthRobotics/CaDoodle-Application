@@ -1059,7 +1059,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (newText.length() <= 30 && change.getText().matches("[a-zA-Z0-9.,!]*")) {
 				return change;
 			}
-			return null;
+			change.setText(ExportManager.toValidFilename(change.getText()));
+			return change;
 		}));
 		// Label is a class variable — just place it directly in the layout
 		StackPane titleStack = new StackPane(label, textField);
