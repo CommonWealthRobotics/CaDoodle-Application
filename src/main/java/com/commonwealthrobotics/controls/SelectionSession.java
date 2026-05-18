@@ -159,6 +159,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Runnable updateRobotLab = null;
 	private LimbControlManager limbs;
 	private boolean regenerating;
+	private final List<Runnable> selectionListeners = new CopyOnWriteArrayList<>();
 	private ProgressIndicator memUsage;
 	private boolean resizeLiveMode = false;
 	private final Pane overlayPane; // Overlay pane for 2D objects
@@ -623,7 +624,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					toRemove.add(s);
 
 			}
-			getSelected().removeAll(toRemove);
+			if (getSelected().removeAll(toRemove))
+				fireSelectionChanged();
 			if (workplane != null)
 				workplane.updateMeshes(getMeshes());
 
@@ -691,15 +693,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (event.getButton() == MouseButton.PRIMARY) {
 
 				if (event.isShiftDown()) {
-					if (getSelected().contains(name))
-						getSelected().remove(name);
+					if (isSelected(name))
+						removeSelected(name);
 					else
 						getSelected().add(name);
-				} else if (!getSelected().contains(name)) {
+				} else if (!isSelected(name)) {
 					getSelected().clear();
 					getSelected().add(name);
 				}
 
+				fireSelectionChanged();
 				if (getMode() != SpriteDisplayMode.Align)
 					setMode(SpriteDisplayMode.Default);
 
@@ -733,6 +736,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				event.consume();
 			}
 		});
+	}
+
+	private boolean isSelected(CSG target) {
+		if (target == null)
+			return false;
+		for (CSG selectedCsg : getSelected()) {
+			if (selectedCsg.getName().contentEquals(target.getName()))
+				return true;
+		}
+		return false;
+	}
+
+	private void removeSelected(CSG target) {
+		if (target == null)
+			return;
+		Iterator<CSG> iterator = getSelected().iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().getName().contentEquals(target.getName()))
+				iterator.remove();
+		}
 	}
 
 	public void updateControlsDisplayOfSelected() {
@@ -880,6 +903,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetSelectedCSGsFromCurrentState(List<CSG> cs) {
+		Set<String> selectedBefore = new HashSet<>(selectedSnapshot());
 		List<String> namesAddedInThisOperation = new ArrayList<String>();
 		for (CSG c : getSelected()) {
 			namesAddedInThisOperation.add(c.getName());
@@ -893,6 +917,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		getSelected().clear();
 		getSelected().addAll(got);
+		if (!selectedBefore.equals(new HashSet<>(selectedSnapshot())))
+			fireSelectionChanged();
 	}
 
 	public void clearBoundsCache() {
@@ -1130,9 +1156,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
+	public void addSelectionListener(Runnable listener) {
+		selectionListeners.add(listener);
+	}
+
+	private void fireSelectionChanged() {
+		for (Runnable r : selectionListeners)
+			r.run();
+	}
+
 	public void clearSelection() {
 		cancelOperationModes();
 		getSelected().clear();
+		fireSelectionChanged();
 		updateControlsDisplayOfSelected();
 		updateRobotLab.run();
 		setKeyBindingFocus();
@@ -1140,28 +1176,33 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void selectAll(Iterable<String> names) {
 		getExecutor().submit(() -> {
-			getSelected().clear();
-			for (CSG c : getCurrentState()) {
-
-				if ((c.isInGroup() && !c.isAlwaysShow()))
-					continue;
-
-				if (c.isHide())
-					continue;
-
-				for (String s : names)
-					if (s.contentEquals(c.getName())) {
-						getSelected().add(c);
-						break;
-					}
-			}
-
-			BowlerStudio.runLater(() -> {
-				updateControlsDisplayOfSelected();
-			});
-
-			updateRobotLab.run();
+			selectAllFromCurrentState(names);
 		});
+	}
+
+	public void selectAllFromCurrentState(Iterable<String> names) {
+		getSelected().clear();
+		for (CSG c : getCurrentState()) {
+
+			if ((c.isInGroup() && !c.isAlwaysShow()))
+				continue;
+
+			if (c.isHide())
+				continue;
+
+			for (String s : names)
+				if (s.contentEquals(c.getName())) {
+					getSelected().add(c);
+					break;
+				}
+		}
+
+		fireSelectionChanged();
+		BowlerStudio.runLater(() -> {
+			updateControlsDisplayOfSelected();
+		});
+
+		updateRobotLab.run();
 	}
 
 	public void selectAll() {
@@ -1178,6 +1219,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				getSelected().add(c);
 			}
 
+			fireSelectionChanged();
 			BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 			updateRobotLab.run();
 		});
@@ -1667,6 +1709,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 					getSelected().clear();
 					getSelected().addAll(results);
+					fireSelectionChanged();
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 					updateRobotLab.run();
 				} catch (CadoodleConcurrencyException e) {
@@ -1708,6 +1751,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 					getSelected().clear();
 					getSelected().addAll(got);
+					fireSelectionChanged();
 					BowlerStudio.runLater(java.time.Duration.ofMinutes(100), () -> {
 						updateControlsDisplayOfSelected();
 					});
@@ -1750,6 +1794,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (isAGroupSelected()) {
 			getSelected().clear();
 			getSelected().addAll(toSelect);
+			fireSelectionChanged();
 			ap.addOp(new UnGroup().setNames(selectedSnapshot));
 		}
 		updateControlsDisplayOfSelected();
