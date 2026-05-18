@@ -144,15 +144,15 @@ subprojects { subproject ->
 repositories {
 	// Use Maven Central for resolving dependencies.
 	mavenCentral()
-	maven {
-		url "https://repository.ow2.org/nexus/content/repositories/public/"
-		allowInsecureProtocol = true
-	}
+	maven { url "https://clojars.org/repo" }
 	maven {
 		url 'https://commonwealthrobotics.com/maven/'
 		allowInsecureProtocol = true
 	}
-	maven { url "https://clojars.org/repo" }
+	maven {
+		url "https://repository.ow2.org/nexus/content/repositories/public/"
+		allowInsecureProtocol = true
+	}
 }
 
 java {
