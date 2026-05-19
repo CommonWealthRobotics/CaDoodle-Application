@@ -22,7 +22,7 @@ public class ExtrudeUIManager {
 		session.setMode(SpriteDisplayMode.PLACING);
 
 
-		CSG indicator = new Cylinder(5, 0, 5, 20).toCSG();
+		CSG indicator = new Cylinder(5 / 2.0, 0, 5, 20).toCSG();
 
 		workplane.setIndicator(indicator, new Affine());
 
