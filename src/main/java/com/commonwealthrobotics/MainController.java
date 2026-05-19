@@ -1820,6 +1820,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
 			renameBtn.setVisible(advanced);
+			extrudeButton.setVisible(advanced);
 		});
 
 	}
