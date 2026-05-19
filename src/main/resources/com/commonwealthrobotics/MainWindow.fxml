@@ -711,6 +711,18 @@
                <children>
                   <HBox GridPane.columnIndex="2">
                      <children>
+                        <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@extrude.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Extrude Selected Surface" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">

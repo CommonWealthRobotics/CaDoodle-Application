@@ -23,6 +23,7 @@ import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.fillet.ExtrudeUIManager;
 import com.commonwealthrobotics.fillet.FilletUIManager;
 import com.commonwealthrobotics.robot.LimbControlManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
@@ -164,7 +165,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private boolean resizeLiveMode = false;
 	private final Pane overlayPane; // Overlay pane for 2D objects
 	private FilletUIManager filletTool = new FilletUIManager();
-
+	private ExtrudeUIManager extrudeManager = new ExtrudeUIManager();
 	public boolean isResizeLiveMode() {
 		return resizeLiveMode;
 	}
@@ -2472,8 +2473,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void runFillet() {
-		com.neuronrobotics.sdk.common.Log.debug("onFillet");
+		com.neuronrobotics.sdk.common.Log.debug("on Fillet");
 		filletTool.run(selected, ap, this, workplane, ruler);
+	}
+
+	public void runExtrude() {
+		com.neuronrobotics.sdk.common.Log.debug("on Extrude");
+		extrudeManager.run(selected, ap, this, workplane, ruler);
 	}
 
 	public void setUserDefinedName(String newText) {

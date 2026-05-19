@@ -124,6 +124,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	private Button RobotLabDrawer;
+	@FXML
+	private Button extrudeButton;
 
 	@FXML
 	private ImageView RobotLabDrawerImage;
@@ -378,6 +380,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onFillet(ActionEvent ae) {
 		session.runFillet();
+		session.setKeyBindingFocus();
+	}
+
+	@FXML
+	void onExtrude(ActionEvent ae) {
+		session.runExtrude();
 		session.setKeyBindingFocus();
 	}
 
