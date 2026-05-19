@@ -81,8 +81,8 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private static final double VISIBILITY_BUTTON_SIZE = 24.0;
 	private static final double VISIBILITY_ICON_SIZE = 18.0;
 
-	public ComponentTreePanel(AnchorPane holder, SelectionSession session, ActiveProject ap) {
-		this.session = session;
+	public ComponentTreePanel(AnchorPane holder, SelectionSession s, ActiveProject ap) {
+		this.session = s;
 		this.ap = ap;
 		this.holder = holder;
 

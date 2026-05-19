@@ -1177,6 +1177,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void selectAll(Iterable<String> names) {
 		getExecutor().submit(() -> {
 			selectAllFromCurrentState(names);
+			setKeyBindingFocus();
 		});
 	}
 
@@ -1200,6 +1201,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		fireSelectionChanged();
 		BowlerStudio.runLater(() -> {
 			updateControlsDisplayOfSelected();
+			setKeyBindingFocus();
 		});
 
 		updateRobotLab.run();
