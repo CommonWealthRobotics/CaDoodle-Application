@@ -1477,29 +1477,33 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void Duplicate() {
+		Paste paste = new Paste().setNames(selectedSnapshot());
+		paste.setLocation(new TransformNR(0, 0, 0));
 		com.neuronrobotics.sdk.common.Log.debug("Duplicate called ");
-		getExecutor().submit(() -> performPaste(0, selectedSnapshot()));
+		getExecutor().submit(() -> performPaste(paste ));
 	}
 
 	public void onPaste() {
+		Paste paste = new Paste().setNames(copySetinternal);
+		paste.setLocation(new TransformNR(20, 0, 0));
 		com.neuronrobotics.sdk.common.Log.debug("Paste called");
-		getExecutor().submit(() -> performPaste(20, copySetinternal));
+		getExecutor().submit(() -> performPaste(paste));
 	}
+	public void runBoltHole() {
+		RadialDistribution dist = new RadialDistribution().setNames(selectedSnapshot());
 
-	private void performPaste(double distance, List<String> copySet) {
+		getExecutor().submit(() -> performPaste(dist));
+	}
+	private void performPaste(AbstractAddFrom op) {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
 			return;
 		}
 
-		ArrayList<String> copyTarget = new ArrayList<String>();
-		copyTarget.addAll(copySet);
-		copySet.clear();
 		try {
-			Paste paste = new Paste().setNames(copyTarget);
-			paste.setLocation(new TransformNR(distance, 0, 0));
-			ap.addOp(paste).join();
-			HashSet<String> namesAdded = paste.getNamesAdded();
+			
+			ap.addOp(op).join();
+			HashSet<String> namesAdded = op.getNamesAdded();
 			ArrayList<String> namesBack = new ArrayList<String>();
 			for (CSG c : getSelectedCSG(namesBack)) {
 				if (c.isInGroup())
@@ -2496,5 +2500,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
 		ap.addOp(ns);
 	}
+
+
 
 }

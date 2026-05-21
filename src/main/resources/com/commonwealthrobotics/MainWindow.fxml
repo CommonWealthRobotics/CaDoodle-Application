@@ -711,6 +711,18 @@
                <children>
                   <HBox GridPane.columnIndex="2">
                      <children>
+                        <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@boltHolePattern.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Pattern Copy In Circle" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
