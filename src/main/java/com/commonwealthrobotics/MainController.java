@@ -126,7 +126,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button RobotLabDrawer;
 	@FXML
 	private Button extrudeButton;
-
+	@FXML
+	private Button boltHoleButton;
 	@FXML
 	private ImageView RobotLabDrawerImage;
 
@@ -386,6 +387,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onExtrude(ActionEvent ae) {
 		session.runExtrude();
+		session.setKeyBindingFocus();
+	}
+	@FXML
+	void onBoltHole(ActionEvent ae) {
+		session.runBoltHole();
 		session.setKeyBindingFocus();
 	}
 
@@ -1821,6 +1827,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			filletButton.setVisible(advanced);
 			renameBtn.setVisible(advanced);
 			extrudeButton.setVisible(advanced);
+			boltHoleButton.setVisible(advanced);
 		});
 
 	}
