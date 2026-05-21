@@ -143,9 +143,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<FileChangeWatcher, CaDoodleOperation> myWatchers = new HashMap<>();
 	private Button lockButton;
 	private ImageView lockImage;
-	private boolean useButton = false;
-	private Button regenerate = new Button("Re-Generate");
-	private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
+	//private boolean useButton = false;
+	//private Button regenerate = new Button("Re-Generate");
+	//private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
 	private boolean showConstituants = false;
 	private MenuButton advancedGroupMenu;
 	private TimelineManager timeline;
@@ -537,24 +537,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				IFileChangeListener myL = l;
 				File myFile = f;
 
-				if ((parameters.size() > 0) && (regenEvents.get(n.getName()) == null)) {
-					BowlerStudio.runLater(() -> regenerate.setDisable(true));
-					// new RuntimeException("Regester event for " + source.getType() + " " +
-					// nameString).printStackTrace();
-
-					EventHandler<ActionEvent> value = e -> {
-						BowlerStudio.runLater(() -> regenerate.setDisable(true));
-						com.neuronrobotics.sdk.common.Log
-								.error("Button Change updating " + source.getType() + " " + nameString);
-						myRegenerate(source, myL, myFile);
-					};
-					regenEvents.put(n.getName(), value);
-				}
+//				if ((parameters.size() > 0) && (regenEvents.get(n.getName()) == null)) {
+//					//BowlerStudio.runLater(() -> regenerate.setDisable(true));
+//					// new RuntimeException("Regester event for " + source.getType() + " " +
+//					// nameString).printStackTrace();
+//
+//					EventHandler<ActionEvent> value = e -> {
+//						//BowlerStudio.runLater(() -> regenerate.setDisable(true));
+//						com.neuronrobotics.sdk.common.Log
+//								.error("Button Change updating " + source.getType() + " " + nameString);
+//						myRegenerate(source, myL, myFile);
+//					};
+//					regenEvents.put(n.getName(), value);
+//				}
 
 				for (String k : parameters) {
 
-					if (!k.contains(n.getName()))
-						continue;
+//					if (!k.contains(n.getName()))
+//						continue;
 
 					Parameter para = ap.get().getCsgDBinstance().get(k);
 					// com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " +
@@ -573,9 +573,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							return;
 
 						getExecutor().submit(() -> {
-							if (useButton)
-								BowlerStudio.runLater(() -> regenerate.setDisable(false));
-							else
+//							if (useButton)
+//								BowlerStudio.runLater(() -> regenerate.setDisable(false));
+//							else
 								myRegenerate(source, myL, myFile);
 
 						});
@@ -867,24 +867,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 					}
 				}
-
-				if (numCadParaams > 2) {
-					useButton = true;
-					// com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
-					// sel.getName());
-					if (!parametrics.getChildren().contains(regenerate))
-						parametrics.getChildren().add(regenerate);
-
-					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
-					if (value2 != null)
-						regenerate.setOnAction(value2);
-					else
-						com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
-
-				} else {
-					useButton = false;
-					parametrics.getChildren().remove(regenerate);
-				}
+				
+//				if (numCadParaams > 2) {
+//					useButton = true;
+//					// com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
+//					// sel.getName());
+//					if (!parametrics.getChildren().contains(regenerate))
+//						parametrics.getChildren().add(regenerate);
+//
+//					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
+//					if (value2 != null)
+//						regenerate.setOnAction(value2);
+//					else
+//						com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
+//
+//				} else {
+//					useButton = false;
+//					parametrics.getChildren().remove(regenerate);
+//				}
 			}
 		} else {
 			for (CSG c : cs) {
