@@ -389,6 +389,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.runExtrude();
 		session.setKeyBindingFocus();
 	}
+
 	@FXML
 	void onBoltHole(ActionEvent ae) {
 		session.runBoltHole();
