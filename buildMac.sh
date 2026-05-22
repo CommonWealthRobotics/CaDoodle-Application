@@ -4,7 +4,7 @@ export ARCH=x86_64
 JVM=zulu25.32.21-ca-fx-jdk25.0.2-macosx_x64
 set -e
 ZIP=$JVM.tar.gz
-export JAVA_HOME=$HOME/bin/java21/
+export JAVA_HOME=$HOME/bin/java25/
 if test -d $JAVA_HOME/$JVM/; then
   echo "$JAVA_HOME exists."
 else
