@@ -114,7 +114,7 @@ public class AlignManager {
 		this.toAlign.clear();
 		for (CSG c : ta)
 			this.toAlign.add(c);
-		operation = new Align().setNames(selected).setWorkplane(session.getWorkplane()).setCache(inWorkplaneBounds);
+		operation = new Align().setNames(selected).setWorkplane(session.getWorkplane());
 		operation.setBounds(boundNames);
 
 		com.neuronrobotics.sdk.common.Log.error("Align manager reinitialized");

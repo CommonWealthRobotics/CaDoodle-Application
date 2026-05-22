@@ -132,7 +132,7 @@ public class ControlSprites {
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
-			ActiveProject ap, RulerManager ruler, HashMap<CSG, Bounds> cache) {
+			ActiveProject ap, RulerManager ruler) {
 
 		this.session = session;
 		this.ruler = ruler;
@@ -270,7 +270,7 @@ public class ControlSprites {
 		allElems.addAll(tmp);
 		allElems.addAll(scaleSession.getMeshes());
 
-		setUpOperationManagers(session, ap, ruler, cache);
+		setUpOperationManagers(session, ap, ruler);
 		allElems.addAll(align.getElements());
 		allElems.addAll(mirror.getElements());
 		allElems.addAll(rotationManager.getElements());
@@ -346,8 +346,7 @@ public class ControlSprites {
 		});
 	}
 
-	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler,
-			HashMap<CSG, Bounds> cache) {
+	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
 		rotationManager = new RotationSessionManager(selection, ap, session, workplaneOffset, ruler, (tf) -> {
 			try {
 				ap.addOp(new MoveCenter().setLocation(tf).setNames(session.selectedSnapshot(), ap.get()));
@@ -356,7 +355,7 @@ public class ControlSprites {
 			}
 		});
 
-		align = new AlignManager(session, selection, workplaneOffset, ap, cache);
+		align = new AlignManager(session, selection, workplaneOffset, ap, ap.get().getBoundsCache());
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 

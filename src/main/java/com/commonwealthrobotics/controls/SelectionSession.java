@@ -132,7 +132,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			this::sendNewWorldPosition, false, false);
 	private Point3D startingPosition3D;
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
-	private HashMap<CSG, Bounds> inWorkplaneBounds = new HashMap<CSG, Bounds>();
 	private double snapGridValue;
 
 	private WorkplaneManager workplane;
@@ -925,7 +924,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void clearBoundsCache() {
 		Log.debug("Clearing bounds cache");
 		// Log.error(new Exception());
-		inWorkplaneBounds.clear();
+		ap.get().getBoundsCache().clear();
 	}
 
 	private void setUpNumberField(HBox thisLine, String text, Parameter para, int width) {
@@ -1113,7 +1112,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void clearAlignObjectCache() {
-		getControls().clearAlign(inWorkplaneBounds);
+		getControls().clearAlign(ap.get().getBoundsCache());
 	}
 
 	private void setupSnapGrid() {
@@ -1886,7 +1885,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			BowlerStudio.runLater(() -> {
 				updateControlsDisplayOfSelected();
 				getExecutor().submit(() -> {
-					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), inWorkplaneBounds);
+					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), ap.get().getBoundsCache());
 				});
 			});
 		});
@@ -1946,7 +1945,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public Bounds getSellectedBounds(List<CSG> incoming) {
-		return Align.getBounds(incoming, ap.get().getWorkplane(), inWorkplaneBounds);
+		return Align.getBounds(incoming, ap.get().getWorkplane(), ap.get().getBoundsCache());
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) {
@@ -2236,7 +2235,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 				// TickToc.tic("bounds made");
 				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
-						inWorkplaneBounds);
+						ap.get().getBoundsCache());
 				// TickToc.toc();
 				// TickToc.setEnabled(false);
 			});
@@ -2273,7 +2272,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setActiveProject(ActiveProject ap) {
 		if (this.ap == null) {
-			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler, inWorkplaneBounds));
+			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler));
 			getControls().setSnapGrid(snapGridValue);
 		}
 		this.ap = ap;
