@@ -1490,7 +1490,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getExecutor().submit(() -> performPaste(paste));
 	}
 	public void runBoltHole() {
-		RadialDistribution dist = new RadialDistribution().setNames(selectedSnapshot());
+		RadialDistribution dist = new RadialDistribution().setWorkplane(getWorkplane()).setNames(selectedSnapshot());
 
 		getExecutor().submit(() -> performPaste(dist));
 	}
