@@ -730,7 +730,7 @@ public class ControlSprites {
 		resetSelected();
 		try {
 			currentOp = ap.get().getCurrentOperation();
-		}catch(RuntimeException ex) {
+		} catch (RuntimeException ex) {
 			// ignore during loading before the AP initialized
 		}
 	}
