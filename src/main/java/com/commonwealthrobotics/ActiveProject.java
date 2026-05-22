@@ -544,6 +544,9 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public CaDoodleFile get() {
+		if(fromFile==null) {
+			throw new RuntimeException("Can not access file before it is loaded");
+		}
 		return fromFile;
 	}
 

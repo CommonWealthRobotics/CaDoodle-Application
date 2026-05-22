@@ -40,8 +40,7 @@ public class AlignManager {
 	private Bounds b;
 	private ActiveProject ap;
 
-	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset, ActiveProject ap,
-			HashMap<CSG, Bounds> inWorkplaneBounds) {
+	public AlignManager(SelectionSession session, Affine move, Affine workplaneOffset, ActiveProject ap) {
 		this.session = session;
 		this.ap = ap;
 		frontBack = new AlignRadioSet("frontBack", move, workplaneOffset, new Vector3d(1, 0, 0), ap);
@@ -62,7 +61,7 @@ public class AlignManager {
 					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked " + operation);
 					List<String> names = operation.getNamesAddedInThisOperation();
 					session.selectAll(names);
-				}, inWorkplaneBounds);
+				}, ap.get().getBoundsCache());
 
 			});
 		}

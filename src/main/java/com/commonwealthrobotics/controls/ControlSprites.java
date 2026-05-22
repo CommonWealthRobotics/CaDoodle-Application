@@ -355,7 +355,7 @@ public class ControlSprites {
 			}
 		});
 
-		align = new AlignManager(session, selection, workplaneOffset, ap, ap.get().getBoundsCache());
+		align = new AlignManager(session, selection, workplaneOffset, ap);
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
@@ -728,8 +728,11 @@ public class ControlSprites {
 
 		selectionLive = false;
 		resetSelected();
-		if (ap.get() != null)
+		try {
 			currentOp = ap.get().getCurrentOperation();
+		}catch(RuntimeException ex) {
+			// ignore during loading before the AP initialized
+		}
 	}
 
 	public SpriteDisplayMode getMode() {
