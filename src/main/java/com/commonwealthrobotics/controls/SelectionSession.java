@@ -61,7 +61,6 @@ import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
@@ -536,24 +535,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				IFileChangeListener myL = l;
 				File myFile = f;
 
-//				if ((parameters.size() > 0) && (regenEvents.get(n.getName()) == null)) {
-//					//BowlerStudio.runLater(() -> regenerate.setDisable(true));
-//					// new RuntimeException("Regester event for " + source.getType() + " " +
-//					// nameString).printStackTrace();
-//
-//					EventHandler<ActionEvent> value = e -> {
-//						//BowlerStudio.runLater(() -> regenerate.setDisable(true));
-//						com.neuronrobotics.sdk.common.Log
-//								.error("Button Change updating " + source.getType() + " " + nameString);
-//						myRegenerate(source, myL, myFile);
-//					};
-//					regenEvents.put(n.getName(), value);
-//				}
+				//				if ((parameters.size() > 0) && (regenEvents.get(n.getName()) == null)) {
+				//					//BowlerStudio.runLater(() -> regenerate.setDisable(true));
+				//					// new RuntimeException("Regester event for " + source.getType() + " " +
+				//					// nameString).printStackTrace();
+				//
+				//					EventHandler<ActionEvent> value = e -> {
+				//						//BowlerStudio.runLater(() -> regenerate.setDisable(true));
+				//						com.neuronrobotics.sdk.common.Log
+				//								.error("Button Change updating " + source.getType() + " " + nameString);
+				//						myRegenerate(source, myL, myFile);
+				//					};
+				//					regenEvents.put(n.getName(), value);
+				//				}
 
 				for (String k : parameters) {
 
-//					if (!k.contains(n.getName()))
-//						continue;
+					//					if (!k.contains(n.getName()))
+					//						continue;
 
 					Parameter para = ap.get().getCsgDBinstance().get(k);
 					// com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " +
@@ -572,10 +571,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							return;
 
 						getExecutor().submit(() -> {
-//							if (useButton)
-//								BowlerStudio.runLater(() -> regenerate.setDisable(false));
-//							else
-								myRegenerate(source, myL, myFile);
+							//							if (useButton)
+							//								BowlerStudio.runLater(() -> regenerate.setDisable(false));
+							//							else
+							myRegenerate(source, myL, myFile);
 
 						});
 					});
@@ -866,24 +865,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 					}
 				}
-				
-//				if (numCadParaams > 2) {
-//					useButton = true;
-//					// com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
-//					// sel.getName());
-//					if (!parametrics.getChildren().contains(regenerate))
-//						parametrics.getChildren().add(regenerate);
-//
-//					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
-//					if (value2 != null)
-//						regenerate.setOnAction(value2);
-//					else
-//						com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
-//
-//				} else {
-//					useButton = false;
-//					parametrics.getChildren().remove(regenerate);
-//				}
+
+				//				if (numCadParaams > 2) {
+				//					useButton = true;
+				//					// com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
+				//					// sel.getName());
+				//					if (!parametrics.getChildren().contains(regenerate))
+				//						parametrics.getChildren().add(regenerate);
+				//
+				//					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
+				//					if (value2 != null)
+				//						regenerate.setOnAction(value2);
+				//					else
+				//						com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
+				//
+				//				} else {
+				//					useButton = false;
+				//					parametrics.getChildren().remove(regenerate);
+				//				}
 			}
 		} else {
 			for (CSG c : cs) {
@@ -1479,7 +1478,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Paste paste = new Paste().setNames(selectedSnapshot());
 		paste.setLocation(new TransformNR(0, 0, 0));
 		com.neuronrobotics.sdk.common.Log.debug("Duplicate called ");
-		getExecutor().submit(() -> performPaste(paste ));
+		getExecutor().submit(() -> performPaste(paste));
 	}
 
 	public void onPaste() {
@@ -1488,11 +1487,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		com.neuronrobotics.sdk.common.Log.debug("Paste called");
 		getExecutor().submit(() -> performPaste(paste));
 	}
+
 	public void runBoltHole() {
 		RadialDistribution dist = new RadialDistribution().setWorkplane(getWorkplane()).setNames(selectedSnapshot());
 
 		getExecutor().submit(() -> performPaste(dist));
 	}
+
 	private void performPaste(AbstractAddFrom op) {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
@@ -1500,7 +1501,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		try {
-			
+
 			ap.addOp(op).join();
 			HashSet<String> namesAdded = op.getNamesAdded();
 			ArrayList<String> namesBack = new ArrayList<String>();
@@ -1885,7 +1886,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			BowlerStudio.runLater(() -> {
 				updateControlsDisplayOfSelected();
 				getExecutor().submit(() -> {
-					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), ap.get().getBoundsCache());
+					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(),
+							ap.get().getBoundsCache());
 				});
 			});
 		});
@@ -2499,7 +2501,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
 		ap.addOp(ns);
 	}
-
 
 
 }
