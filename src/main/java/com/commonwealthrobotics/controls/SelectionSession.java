@@ -1493,7 +1493,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		getExecutor().submit(() -> performPaste(dist));
 	}
+	public void runHexDistribute() {
+		LinearDistribution dist = new LinearDistribution().setWorkplane(getWorkplane()).setNames(selectedSnapshot());
 
+		getExecutor().submit(() -> performPaste(dist));
+	}
 	private void performPaste(AbstractAddFrom op) {
 		if (ap.get().isOperationRunning()) {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
@@ -2501,6 +2505,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
 		ap.addOp(ns);
 	}
+
+
 
 
 }

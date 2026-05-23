@@ -188,7 +188,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="copyButton"
 	private Button copyButton; // Value injected by FXMLLoader
-
+	@FXML // fx:id="copyButton"
+	private Button 	hexDistributeButton;
 	@FXML // fx:id="cruiseButton"
 	private Button cruiseButton; // Value injected by FXMLLoader
 
@@ -395,7 +396,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.runBoltHole();
 		session.setKeyBindingFocus();
 	}
-
+	@FXML
+	void onHexDistribute(ActionEvent ae) {
+		session.runHexDistribute();
+		session.setKeyBindingFocus();
+	}
 	@FXML
 	void openHomePage(ActionEvent ae) {
 		try {
@@ -1829,6 +1834,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			renameBtn.setVisible(advanced);
 			extrudeButton.setVisible(advanced);
 			boltHoleButton.setVisible(advanced);
+			hexDistributeButton.setVisible(advanced);
 		});
 
 	}
