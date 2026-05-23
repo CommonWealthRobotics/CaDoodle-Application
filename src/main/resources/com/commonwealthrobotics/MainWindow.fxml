@@ -11,6 +11,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -735,6 +736,7 @@
                               <Tooltip text="Pattern Copy In Circle" />
                            </tooltip>
                         </Button>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
                         <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
@@ -759,6 +761,7 @@
                               <Tooltip text="Fillet or Chamfer" />
                            </tooltip>
                         </Button>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fx:id="showAllImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
