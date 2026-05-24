@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -31,7 +32,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -83,6 +87,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private long timeOfLastUpdate = 0;
 	private Thread lastUpdate = null;
 	private boolean saving;
+	private HashSet<Region> panes = new HashSet<Region>();
 
 	public ActiveProject() {
 		// this.listener = listener;
@@ -291,7 +296,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return loadActive();
 	}
 
-	private File getActiveProject() throws Exception {
+	public File getActiveProject() throws Exception {
 		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
 		if (object == null) // Fix legacy typo, try again with corrected spelling
 			object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
@@ -595,7 +600,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
+			;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();
@@ -870,5 +876,25 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return Boolean
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
 
+	}
+	
+	public void resetAllStyleSheets() {
+		for (Iterator<Region> iterator = panes.iterator(); iterator.hasNext();) {
+			Region p = iterator.next();
+			setStyleSheet(p);
+		}
+	}
+
+	public void setStyleSheet(Region node) {
+		if (!panes.contains(node))
+			panes.add(node);
+		boolean darkMode = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleDarkMode", "" + false).toString());
+		String sheet = darkMode ? "/com/commonwealthrobotics/darkmode.css"
+				: "/com/commonwealthrobotics/stylesheet.css";
+
+		String url = Main.class.getResource(sheet).toExternalForm();
+
+		node.getStylesheets().setAll(url);
 	}
 }

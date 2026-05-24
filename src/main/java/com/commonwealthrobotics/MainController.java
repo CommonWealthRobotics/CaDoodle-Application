@@ -1102,6 +1102,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// Prevent border color change when selecting the scroll pane
 		// timelineScroll.setFocusTraversable(false);
 		makeEditableTitle(shapeConfiguration);
+		ap.setStyleSheet(totalApplicationBackground);
 	}
 
 	/**
@@ -1839,5 +1840,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			hexDistributeButton.setVisible(advanced);
 		});
 
+	}
+
+	public ActiveProject getActiveProject() {
+		return ap;
 	}
 }

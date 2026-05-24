@@ -41,11 +41,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ProjectManager {
+	@FXML
+	private AnchorPane 	topLevel;
 
 	@FXML
 	private Button copyDoodle;
@@ -109,7 +112,7 @@ public class ProjectManager {
 		new Thread(() -> {
 			loadFiles();
 		}).start();
-
+		ap.setStyleSheet(topLevel);
 	}
 
 	private void loadFiles() {

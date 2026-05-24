@@ -30,7 +30,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@darkmode.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -522,29 +522,6 @@
                                                 </VBox>
                                              </children>
                                           </GridPane>
-                                          <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">
-                                             <children>
-                                                <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">
-                                                   <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Cadoodle Dashboard" />
-                                                   </tooltip>
-                                                </Button>
-                                                <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                   </padding>
-                                                   <HBox.margin>
-                                                      <Insets right="20.0" />
-                                                   </HBox.margin>
-                                                   <tooltip>
-                                                      <Tooltip text="Change name" />
-                                                   </tooltip>
-                                                </TextField>
-                                             </children>
-                                          </HBox>
                                           <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" translateY="6.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
                                              <graphic>
                                                 <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
@@ -947,7 +924,7 @@
                          <Insets bottom="0" left="0" right="0" top="4" />
                       </padding>
                       <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Memory Usage:" wrappingWidth="59.0" HBox.hgrow="ALWAYS">
+                        <Text fx:id="memoryUsageText" strokeType="OUTSIDE" strokeWidth="0.0" text="Memory Usage:" wrappingWidth="59.0" HBox.hgrow="ALWAYS">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -964,6 +941,29 @@
                   <ImageView fitHeight="90.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
                 </graphic>
             </Button>
+                  <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">
+                     <children>
+                        <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Cadoodle Dashboard" />
+                           </tooltip>
+                        </Button>
+                        <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Change name" />
+                           </tooltip>
+                        </TextField>
+                     </children>
+                  </HBox>
 
                </children>
             </GridPane>

@@ -32,6 +32,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import java.net.URL;
@@ -46,6 +47,9 @@ import java.util.zip.*;
 
 
 public class ExportManager {
+	@FXML
+	private AnchorPane 	topLevel;
+	
 	private static ActiveProject ap;
 
 	private static Stage stage;
@@ -258,6 +262,7 @@ public class ExportManager {
 		assert stl != null : "fx:id=\"stl\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert svg != null : "fx:id=\"svg\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 
+		ap.setStyleSheet(topLevel);
 	}
 
 	public static void launch(SelectionSession session, ActiveProject ap, Runnable onFinish, Runnable clearScreen) {

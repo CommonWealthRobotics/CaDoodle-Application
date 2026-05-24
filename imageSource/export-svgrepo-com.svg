@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg1209"
+   sodipodi:docname="export-svgrepo-com.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:export-filename="../src/main/resources/com/commonwealthrobotics/export-button.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1213" />
+  <sodipodi:namedview
+     id="namedview1211"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.295"
+     inkscape:cx="42.372881"
+     inkscape:cy="401.69492"
+     inkscape:window-width="1737"
+     inkscape:window-height="1133"
+     inkscape:window-x="66"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1209" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="M8.84467 7.90533C9.13756 8.19822 9.61244 8.19822 9.90533 7.90533L11.625 6.18566L11.625 14.375C11.625 14.7892 11.9608 15.125 12.375 15.125C12.7892 15.125 13.125 14.7892 13.125 14.375V6.18566L14.8447 7.90533C15.1376 8.19822 15.6124 8.19822 15.9053 7.90533C16.1982 7.61244 16.1982 7.13756 15.9053 6.84467L12.9053 3.84467C12.6124 3.55178 12.1376 3.55178 11.8447 3.84467L8.84467 6.84467C8.55178 7.13756 8.55178 7.61244 8.84467 7.90533Z"
+     fill="#1C274C"
+     id="path1205"
+     style="fill:#263d8c;fill-opacity:1" />
+  <path
+     d="M12.375 20.375C16.7933 20.375 20.375 16.7933 20.375 12.375L16.625 12.375C15.6822 12.375 15.2108 12.375 14.9179 12.6679C14.625 12.9608 14.625 13.4322 14.625 14.375C14.625 15.6176 13.6176 16.625 12.375 16.625C11.1324 16.625 10.125 15.6176 10.125 14.375C10.125 13.4322 10.125 12.9608 9.83211 12.6679C9.53921 12.375 9.06781 12.375 8.125 12.375H4.375C4.375 16.7933 7.95672 20.375 12.375 20.375Z"
+     fill="#1C274C"
+     id="path1207"
+     style="fill:#263d8c;fill-opacity:1" />
+</svg>

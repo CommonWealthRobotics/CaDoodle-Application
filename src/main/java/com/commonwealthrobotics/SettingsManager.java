@@ -57,7 +57,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-
+import javafx.scene.control.TabPane;
 public class SettingsManager implements ICSGClientEvent {
 	private static CSGServer server = null;
 	private static Stage stage;
@@ -86,7 +86,11 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private RadioButton insertOpt;
+	@FXML
+	private RadioButton darkModeSel;
 
+	@FXML
+	private RadioButton lightModeSel;
 	@FXML
 	private ToggleGroup insertStrat;
 
@@ -124,6 +128,8 @@ public class SettingsManager implements ICSGClientEvent {
 	private File pinFile;
 	private String myVersionFileString;
 	private String bindir;
+	@FXML
+	private javafx.scene.control.TabPane topPane;
 
 	@FXML
 	void onTest(ActionEvent event) {
@@ -164,7 +170,11 @@ public class SettingsManager implements ICSGClientEvent {
 		versionOptions.setDisable(true);
 		pinFile.delete();
 	}
-
+	@FXML
+	void onChangeColor(ActionEvent e){
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", ""+darkModeSel.isSelected());
+		mc.getActiveProject().resetAllStyleSheets();
+	}
 	@FXML
 	void checkServerConfigs(KeyEvent event) {
 		try {
@@ -512,7 +522,12 @@ public class SettingsManager implements ICSGClientEvent {
 			checkOnLaunch.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
+		boolean darkMode = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleDarkMode", "" + false).toString());
+		darkModeSel.setSelected(darkMode);
+		lightModeSel.setSelected(!darkMode);
 		updateVersionOptions();
+		mc.getActiveProject().setStyleSheet(topPane);
 	}
 
 	private void updateVersionOptions() {
