@@ -523,44 +523,28 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (String nameString : namesAdded) {
 
 				CSG n = null;
-				for (CSG c : currentState)
+				for (CSG c : currentState) {
+					if (c.isHide() || c.isInGroup())
+						continue;
 					if (c.getName().contentEquals(nameString))
 						n = c;
-
+				}
 				if (n == null)
 					continue;
 
 				String name = s.getName();
 				// com.neuronrobotics.sdk.common.Log.error("Adding Listeners for " + name);
 				// new Exception().printStackTrace();
-				Set<String> parameters = n.getParameters(ap.get().getCsgDBinstance());
+				CSGDatabaseInstance db = ap.get().getCsgDBinstance();
+				Set<String> parameters = n.getParameters(db);
 				IFileChangeListener myL = l;
 				File myFile = f;
-
-				//				if ((parameters.size() > 0) && (regenEvents.get(n.getName()) == null)) {
-				//					//BowlerStudio.runLater(() -> regenerate.setDisable(true));
-				//					// new RuntimeException("Regester event for " + source.getType() + " " +
-				//					// nameString).printStackTrace();
-				//
-				//					EventHandler<ActionEvent> value = e -> {
-				//						//BowlerStudio.runLater(() -> regenerate.setDisable(true));
-				//						com.neuronrobotics.sdk.common.Log
-				//								.error("Button Change updating " + source.getType() + " " + nameString);
-				//						myRegenerate(source, myL, myFile);
-				//					};
-				//					regenEvents.put(n.getName(), value);
-				//				}
-
 				for (String k : parameters) {
-
-					//					if (!k.contains(n.getName()))
-					//						continue;
-
-					Parameter para = ap.get().getCsgDBinstance().get(k);
+					Parameter para = db.get(k);
 					// com.neuronrobotics.sdk.common.Log.error("Adding listener to " + k + " on " +
 					// nameString);
-					ap.get().getCsgDBinstance().clearParameterListeners(k);
-					ap.get().getCsgDBinstance().addParameterListener(k, (name1, p) -> {
+					db.clearParameterListeners(k);
+					db.addParameterListener(k, (name1, p) -> {
 						if (LengthParameter.class.isInstance(p)) {
 							// new Exception().printStackTrace();
 							com.neuronrobotics.sdk.common.Log
