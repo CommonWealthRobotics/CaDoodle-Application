@@ -2,7 +2,6 @@ package com.commonwealthrobotics;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -142,7 +141,7 @@ public class ShapePalletMyDoodles {
 									AbstractAddFrom setAddFromScript = addFromFile.set(caDoodleFile.getSelf(), ap.get())
 											.setLocation(currentAbsolutePose);
 									ap.addOp(setAddFromScript).join();
-									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
+									List<String> namesAdded = setAddFromScript.getNamesAddedInThisOperation();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
 									session.selectAll(namesAdded);

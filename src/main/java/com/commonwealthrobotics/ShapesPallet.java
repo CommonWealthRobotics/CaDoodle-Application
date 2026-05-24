@@ -273,7 +273,7 @@ public class ShapesPallet {
 									}
 									ap.addOp(setAddFromScript).join();
 
-									HashSet<String> namesAdded = setAddFromScript.getNamesAdded();
+									List<String> namesAdded = setAddFromScript.getNamesAddedInThisOperation();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
 									//

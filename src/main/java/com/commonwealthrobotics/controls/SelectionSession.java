@@ -465,7 +465,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (AbstractAddFrom.class.isInstance(source)) {
 			AbstractAddFrom s = (AbstractAddFrom) source;
 			// com.neuronrobotics.sdk.common.Log.error("Adding A op for "+s.getClass());
-			HashSet<String> namesAdded = s.getNamesAdded();
+			List<String> namesAdded = s.getNamesAddedInThisOperation();
 			// com.neuronrobotics.sdk.common.Log.error(namesAdded.size());
 			File f = null;
 			IFileChangeListener l = null;
@@ -1100,11 +1100,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 				}
 			});
+
+			if (ap.isAdvancedMode()) {
+				opts = new ArrayList<String>(Font.getFontNames());
+			}
 		}
 
-		if (ap.isAdvancedMode()) {
-			opts = new ArrayList<String>(Font.getFontNames());
-		}
 		for (String s : opts) {
 			options.getItems().add(s);
 		}
@@ -1553,7 +1554,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		try {
 
 			ap.addOp(op).join();
-			HashSet<String> namesAdded = op.getNamesAdded();
+			List<String> namesAdded = op.getNamesAddedInThisOperation();
 			ArrayList<String> namesBack = new ArrayList<String>();
 			for (CSG c : getSelectedCSG(namesBack)) {
 				if (c.isInGroup())
@@ -1730,7 +1731,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					List<String> selectedSnapshot = selectedSnapshot();
 					Paste copy = new Paste().setNames(selectedSnapshot);
 					ap.addOp(copy).join();
-					ArrayList<String> n = new ArrayList<>(copy.getNamesAdded());
+					ArrayList<String> n = new ArrayList<>(copy.getNamesAddedInThisOperation());
 					Group groups = new Group().setNames(selectedSnapshot);
 					groups.setHull(false);
 					groups.setIntersect(true);

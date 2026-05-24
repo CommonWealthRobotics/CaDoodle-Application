@@ -3,7 +3,7 @@ package com.commonwealthrobotics.robot;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -447,7 +447,7 @@ public class RobotLab {
 											.setNames(session.selectedSnapshot());
 									ap.addOp(add).join();
 
-									HashSet<String> namesAdded = add.getNamesAdded();
+									List<String> namesAdded = add.getNamesAddedInThisOperation();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
 									//
@@ -526,7 +526,7 @@ public class RobotLab {
 											.setLocation(currentAbsolutePose).setNames(session.selectedSnapshot());
 									ap.addOp(add).join();
 
-									HashSet<String> namesAdded = add.getNamesAdded();
+									List<String> namesAdded = add.getNamesAddedInThisOperation();
 									ArrayList<String> namesBack = new ArrayList<String>();
 									namesBack.addAll(namesAdded);
 									//

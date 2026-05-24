@@ -2,6 +2,7 @@ package com.commonwealthrobotics.fillet;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.commonwealthrobotics.ActiveProject;
@@ -52,7 +53,7 @@ public class FilletUIManager {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					HashSet<String> added = op.getNamesAdded();
+					List<String> added = op.getNamesAddedInThisOperation();
 					session.selectAll(added);
 				});
 				workplane.placeWorkplaneVisualization();
