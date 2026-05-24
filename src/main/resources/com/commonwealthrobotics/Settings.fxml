@@ -173,9 +173,9 @@
       </Tab>
       <Tab closable="false" text="Server">
         <content>
-            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane" stylesheets="stylesheet.css">
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane">
                <children>
-                  <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0">
+                  <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0">
                     <columnConstraints>
                       <ColumnConstraints maxWidth="261.0" minWidth="230.0" prefWidth="259.0" />
                       <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="589.0" minWidth="556.0" prefWidth="556.0" />
