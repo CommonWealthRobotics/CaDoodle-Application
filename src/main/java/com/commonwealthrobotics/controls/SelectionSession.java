@@ -1067,7 +1067,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		//			});
 		//		}
 
-		ComboBox<String> options = new ComboBox<>();
+		ComboBox<String> options = new ComboBox<String>();
+		
 		if (para.getName().toLowerCase().endsWith("font")) {
 
 			javafx.util.Callback<ListView<String>, ListCell<String>> cellFactory = lv -> new javafx.scene.control.ListCell<String>() {
