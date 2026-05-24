@@ -71,6 +71,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
@@ -956,6 +958,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(t);
 				options.setText(para.getMM() + "");
 			}
+			BowlerStudio.runLater(() ->setKeyBindingFocus());
+
 		});
 	}
 
@@ -1000,6 +1004,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(t);
 				options.getSelectionModel().select(para.getMM() + "");
 			}
+			BowlerStudio.runLater(() ->setKeyBindingFocus());
+
 		});
 	}
 
@@ -1007,6 +1013,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
 			para.setStrValue(tf.getText());
+			BowlerStudio.runLater(() ->setKeyBindingFocus());
 		});
 
 		thisLine.getChildren().add(tf);
@@ -1029,6 +1036,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					l.parameterChanged(para.getName(), para);
 
 			}
+			BowlerStudio.runLater(() ->setKeyBindingFocus());
 		});
 
 		Node tf = ec.getControl();
@@ -1038,40 +1046,76 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setUpComboBoxParametrics(HBox thisLine, String text, Parameter para, ArrayList<String> opts,
 			int width) {
-		ComboBox<String> options = new ComboBox<String>();
-		if (para.getName().toLowerCase().endsWith("font")) {
-			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
-				@Override
-				protected void updateItem(String item, boolean empty) {
-					super.updateItem(item, empty);
-					setFont(Font.font(item));
-					setText(item);
-				}
-			});
+//		ComboBox<String> options = new ComboBox<String>();
+//		if (para.getName().toLowerCase().endsWith("font")) {
+//			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
+//				@Override
+//				protected void updateItem(String item, boolean empty) {
+//					super.updateItem(item, empty);
+//					setFont(new Font(item,Font.getDefault().getSize()));
+//					setText(item);
+//				}
+//			});
+//
+//			options.setButtonCell(new javafx.scene.control.ListCell<String>() {
+//				@Override
+//				protected void updateItem(String item, boolean empty) {
+//					super.updateItem(item, empty);
+//					setFont(new Font(item,Font.getDefault().getSize()));
+//					setText(item);
+//				}
+//			});
+//		}
 
-			options.setButtonCell(new javafx.scene.control.ListCell<String>() {
-				@Override
-				protected void updateItem(String item, boolean empty) {
-					super.updateItem(item, empty);
-					setFont(Font.font(item));
-					setText(item);
-				}
-			});
+		ComboBox<String> options = new ComboBox<>();
+		if (para.getName().toLowerCase().endsWith("font")) {
+
+		    javafx.util.Callback<ListView<String>, ListCell<String>> cellFactory = lv ->
+		        new javafx.scene.control.ListCell<String>() {
+		            @Override
+		            protected void updateItem(String item, boolean empty) {
+		                super.updateItem(item, empty);
+		                if (empty || item == null) {
+		                    setText(null);
+		                    setFont(Font.getDefault());
+		                } else {
+		                    setFont(new Font(item, Font.getDefault().getSize()));
+		                    setText(item);
+		                }
+		            }
+		        };
+
+		    options.setCellFactory(cellFactory);
+
+		    options.setButtonCell(new javafx.scene.control.ListCell<String>() {
+		        @Override
+		        protected void updateItem(String item, boolean empty) {
+		            super.updateItem(item, empty);
+		            if (empty || item == null) {
+		                setText(null);
+		                setFont(Font.getDefault());
+		            } else {
+		                setFont(new Font(item, Font.getDefault().getSize()));
+		                setText(item);
+		            }
+		        }
+		    });
 		}
-		thisLine.getChildren().add(options);
+		
+		if(ap.isAdvancedMode()) {
+			opts = new ArrayList<String>(Font.getFontNames());
+		}
 		for (String s : opts) {
 			options.getItems().add(s);
-			BowlerStudio.runLater(() -> options.getSelectionModel().select(s));
 		}
-
 		BowlerStudio.runLater(() -> {
 			options.getSelectionModel().select(para.getStrValue());
+			thisLine.getChildren().add(options);
 			options.setMinWidth(width);
 			options.setOnAction(event -> {
 				com.neuronrobotics.sdk.common.Log.debug(System.currentTimeMillis() + " Event " + event);
 				para.setStrValue(options.getSelectionModel().getSelectedItem());
-				// CSGDatabase.saveDatabase();
-				// com.neuronrobotics.sdk.common.Log.error("Saving "+text);
+				BowlerStudio.runLater(() ->setKeyBindingFocus());
 			});
 		});
 	}
