@@ -73,6 +73,8 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private TextField apiKey;
+	@FXML
+	private TextField numPoints;
 
 	@FXML
 	private RadioButton askOpt;
@@ -529,6 +531,16 @@ public class SettingsManager implements ICSGClientEvent {
 		lightModeSel.setSelected(!darkMode);
 		updateVersionOptions();
 		mc.getActiveProject().setStyleSheet(topPane);
+		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
+	}
+
+	@FXML
+	private void onPointInCurve(ActionEvent event) {
+		int int1 = Integer.parseInt(numPoints.getText());
+		if (int1 < 2)
+			int1 = 2;
+
+		mc.getActiveProject().get().setTextResolutionPoints(int1);
 	}
 
 	private void updateVersionOptions() {

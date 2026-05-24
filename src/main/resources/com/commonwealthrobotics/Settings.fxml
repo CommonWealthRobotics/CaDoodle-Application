@@ -28,12 +28,13 @@
                <children>
                   <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0">
                     <columnConstraints>
-                      <ColumnConstraints maxWidth="261.0" minWidth="230.0" prefWidth="259.0" />
-                      <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="556.0" prefWidth="556.0" />
+                      <ColumnConstraints maxWidth="274.0" minWidth="230.0" prefWidth="270.0" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="541.0" prefWidth="545.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="NEVER" />
                         <RowConstraints minHeight="8.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
@@ -91,7 +92,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </HBox>
-                        <Label text="Use Elalish Manifold" GridPane.rowIndex="4">
+                        <Label text="Use Elalish Manifold" GridPane.rowIndex="5">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -99,12 +100,12 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable advanced features" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable advanced features" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
                         </CheckBox>
-                        <Label text="Default number of sides" GridPane.rowIndex="2">
+                        <Label text="Default number of sides" GridPane.rowIndex="3">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -112,8 +113,8 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <TextField fx:id="numberOfSides" onAction="#onNumberOfSides" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="Check for updates" GridPane.rowIndex="3">
+                        <TextField fx:id="numberOfSides" onAction="#onNumberOfSides" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Check for updates" GridPane.rowIndex="4">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -121,7 +122,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="Check on launch">
                                  <toggleGroup>
@@ -134,7 +135,7 @@
                               <Insets bottom="10.0" left="10.0" top="10.0" />
                            </padding>
                         </HBox>
-                        <Label text="Advanced mode" GridPane.rowIndex="5">
+                        <Label text="Advanced mode" GridPane.rowIndex="6">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -142,12 +143,12 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="Enable Manifold Library" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="Enable Manifold Library" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
                         </CheckBox>
-                        <Label text="Dark Mode" GridPane.rowIndex="6">
+                        <Label text="Dark Mode" GridPane.rowIndex="7">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -155,7 +156,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="7">
                            <children>
                               <RadioButton fx:id="lightModeSel" mnemonicParsing="false" onAction="#onChangeColor" selected="true" text="Light Mode">
                                  <toggleGroup>
@@ -165,6 +166,15 @@
                               <RadioButton fx:id="darkModeSel" mnemonicParsing="false" onAction="#onChangeColor" text="Dark Mode" toggleGroup="$darkmode" />
                            </children>
                         </HBox>
+                        <Label text="Points in Curve (SVG and Text)" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="numPoints" onAction="#onPointInCurve" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </children>
