@@ -1,3 +1,39 @@
+/* ===== BUTTON GRAPHICS via ImageView CSS ===== */
+/* Images are set on the ImageView child so fitHeight/fitWidth in FXML are preserved. */
+/* Dynamic images (drawrImage, showHideImage, showAllImage, timelineImage,            */
+/* RobotLabDrawerImage, componentTreeDrawerArrow, lockImage) stay image-only in FXML. */
+
+#makeRobotButton .image-view     { -fx-image: url("newRobot.png"); }
+#homeButton .image-view          { -fx-image: url("CADoodleHome.png"); }
+#logoButton .image-view          { -fx-image: url("biglogo.png"); }
+#homeViewButton .image-view      { -fx-image: url("home.png"); }
+#fitViewButton .image-view       { -fx-image: url("fit.png"); }
+#zoomInButton .image-view        { -fx-image: url("zoomIn.png"); }
+#zoomOutButton .image-view       { -fx-image: url("zoomOut.png"); }
+#holeButton .image-view          { -fx-image: url("holes.png"); }
+#workplaneButton .image-view     { -fx-image: url("Sketcher.png"); }
+#rulerButton .image-view         { -fx-image: url("ruler.png"); }
+#notesButton .image-view         { -fx-image: url("notes.png"); }
+#searchButton .image-view        { -fx-image: url("search.png"); }
+#hexDistributeButton .image-view { -fx-image: url("distribute.png"); }
+#boltHoleButton .image-view      { -fx-image: url("boltHolePattern.png"); }
+#extrudeButton .image-view       { -fx-image: url("extrude.png"); }
+#filletButton .image-view        { -fx-image: url("fillet.png"); }
+#visbilityButton .image-view     { -fx-image: url("showMenu.png"); }
+#advancedGroupMenu .image-view   { -fx-image: url("intersectMenu.png"); }
+#groupButton .image-view         { -fx-image: url("group.png"); }
+#ungroupButton .image-view       { -fx-image: url("ungroup.png"); }
+#alignButton .image-view         { -fx-image: url("align.png"); }
+#mirronButton .image-view        { -fx-image: url("mirror.png"); }
+#cruiseButton .image-view        { -fx-image: url("magnet.png"); }
+#objectWorkplane .image-view     { -fx-image: url("workplaneToObject.png"); }
+#dropToWorkplane .image-view     { -fx-image: url("drop.png"); }
+#copyButton .image-view          { -fx-image: url("copy.png"); }
+#pasteButton .image-view         { -fx-image: url("paste.png"); }
+#deleteButton .image-view        { -fx-image: url("trash.png"); }
+#undoButton .image-view          { -fx-image: url("back.png"); }
+#redoButton .image-view          { -fx-image: url("forward.png"); }
+
 .image-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;

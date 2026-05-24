@@ -30,7 +30,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@darkmode.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -62,11 +62,7 @@
                                                             <String fx:value="image-button" />
                                                          </styleClass>
                                                          <graphic>
-                                                            <ImageView fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@newRobot.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fitHeight="40.0" pickOnBounds="true" preserveRatio="true" />
                                                          </graphic>
                                                          <padding>
                                                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -379,11 +375,7 @@
                                                                               </ColorPicker>
                                                                               <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3">
                                                                                  <graphic>
-                                                                                    <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                                                       <image>
-                                                                                          <Image url="@holes.png" />
-                                                                                       </image>
-                                                                                    </ImageView>
+                                                                                    <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                                                  </graphic>
                                                                                  <tooltip>
                                                                                     <Tooltip text="Set to Hole" />
@@ -461,11 +453,7 @@
                                                 <AnchorPane fx:id="viewControlCubeHolder" prefHeight="300.0" prefWidth="300.0" />
                                                 <Button fx:id="homeViewButton" mnemonicParsing="false" onAction="#onHomeViewButton" styleClass="image-button" GridPane.rowIndex="1">
                                                    <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@home.png" />
-                                                         </image>
-                                                      </ImageView>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="Home View" />
@@ -473,11 +461,7 @@
                                                 </Button>
                                                 <Button fx:id="fitViewButton" mnemonicParsing="false" onAction="#onFitView" styleClass="image-button" GridPane.rowIndex="2">
                                                    <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@fit.png" />
-                                                         </image>
-                                                      </ImageView>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="Fit View &lt;F&gt;" />
@@ -485,11 +469,7 @@
                                                 </Button>
                                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#onZoomIn" styleClass="image-button" GridPane.rowIndex="3">
                                                    <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@zoomIn.png" />
-                                                         </image>
-                                                      </ImageView>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="Zoom In &lt;+&gt;" />
@@ -497,11 +477,7 @@
                                                 </Button>
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#onZoomOut" styleClass="image-button" GridPane.rowIndex="4">
                                                    <graphic>
-                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@zoomOut.png" />
-                                                         </image>
-                                                      </ImageView>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="Zoom Out &lt;-&gt;" />
@@ -546,6 +522,29 @@
                                                 </VBox>
                                              </children>
                                           </GridPane>
+                                          <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">
+                                             <children>
+                                                <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">
+                                                   <graphic>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Cadoodle Dashboard" />
+                                                   </tooltip>
+                                                </Button>
+                                                <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                   <HBox.margin>
+                                                      <Insets right="20.0" />
+                                                   </HBox.margin>
+                                                   <tooltip>
+                                                      <Tooltip text="Change name" />
+                                                   </tooltip>
+                                                </TextField>
+                                             </children>
+                                          </HBox>
                                           <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" translateY="6.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
                                              <graphic>
                                                 <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
@@ -618,11 +617,7 @@
 
                                     <Button fx:id="workplaneButton" mnemonicParsing="false" onAction="#onWorkplane" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="0">
                                        <graphic>
-                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@Sketcher.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Workplane Tool &lt;W&gt;" />
@@ -631,11 +626,7 @@
 
                                     <Button fx:id="rulerButton" mnemonicParsing="false" onAction="#onRuler" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="1">
                                        <graphic>
-                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@ruler.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Ruler Tool &lt;R&gt;" />
@@ -644,11 +635,7 @@
 
                                     <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="2">
                                        <graphic>
-                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@notes.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Notes &lt;N&gt;" />
@@ -659,11 +646,7 @@
 
                                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" styleClass="image-button">
                                        <graphic>
-                                          <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@search.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                     </Button>
 
@@ -714,11 +697,7 @@
                      <children>
                         <Button fx:id="hexDistributeButton" mnemonicParsing="false" onAction="#onHexDistribute" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@distribute.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Pattern Copy Hexagon or Linear" />
@@ -726,11 +705,7 @@
                         </Button>
                         <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@boltHolePattern.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Pattern Copy In Circle" />
@@ -739,11 +714,7 @@
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
                         <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@extrude.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Extrude Selected Surface" />
@@ -751,11 +722,7 @@
                         </Button>
                         <Button fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@fillet.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Fillet or Chamfer" />
@@ -776,11 +743,7 @@
                         </Button>
                         <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="menu-button2" HBox.hgrow="NEVER">
                             <graphic>
-                                <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@showMenu.png" />
-                                    </image>
-                                </ImageView>
+                                <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" />
                             </graphic>
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
@@ -817,11 +780,7 @@
                         </MenuButton>
                         <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@group.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Group &lt;Ctrl + G&gt;" />
@@ -829,11 +788,7 @@
                         </Button>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@ungroup.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Un-Group &lt;Ctrl + Shift + G&gt;" />
@@ -843,11 +798,7 @@
                            <children>
                               <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="menu-button2">
                                 <graphic>
-                                    <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@intersectMenu.png" />
-                                        </image>
-                                    </ImageView>
+                                    <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" />
                                 </graphic>
                                 <items>
                                   <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="Hull">
@@ -886,11 +837,7 @@
                         </AnchorPane>
                         <Button fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@align.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Align &lt;L&gt;" />
@@ -898,11 +845,7 @@
                         </Button>
                         <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@mirror.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Mirror &lt;M&gt;" />
@@ -910,11 +853,7 @@
                         </Button>
                         <Button fx:id="cruiseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruise" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@magnet.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Cruise &lt;C&gt;" />
@@ -922,11 +861,7 @@
                         </Button>
                         <Button fx:id="objectWorkplane" mnemonicParsing="false" onAction="#onObjectWorkplane" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@workplaneToObject.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Object Workplane &lt;E&gt;" />
@@ -934,11 +869,7 @@
                         </Button>
                         <Button fx:id="dropToWorkplane" mnemonicParsing="false" onAction="#onDropToWorkplane" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@drop.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Drop To Workplane &lt;D&gt;" />
@@ -959,11 +890,7 @@
                      <children>
                         <Button fx:id="copyButton" mnemonicParsing="false" onAction="#onCopy" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@copy.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Copy &lt;Ctrl + C&gt;" />
@@ -971,11 +898,7 @@
                         </Button>
                         <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@paste.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Paste &lt;Ctrl + V&gt;" />
@@ -983,11 +906,7 @@
                         </Button>
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@trash.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Delete &lt;Backspace or Delete&gt;" />
@@ -995,11 +914,7 @@
                         </Button>
                         <Button fx:id="undoButton" mnemonicParsing="false" onAction="#onUndo" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@back.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Undo &lt;Ctrl + Z&gt;" />
@@ -1007,11 +922,7 @@
                         </Button>
                         <Button fx:id="redoButton" mnemonicParsing="false" onAction="#onRedo" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@forward.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Redo &lt;Ctrl + Y&gt;" />
@@ -1031,33 +942,6 @@
                 <RowConstraints maxHeight="100.0" prefHeight="40.0" vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">
-                     <children>
-                        <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">
-                           <graphic>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@CADoodleHome.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Cadoodle Dashboard" />
-                           </tooltip>
-                        </Button>
-                        <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                           <HBox.margin>
-                              <Insets right="20.0" />
-                           </HBox.margin>
-                           <tooltip>
-                              <Tooltip text="Change name" />
-                           </tooltip>
-                        </TextField>
-                     </children>
-                  </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="2">
                      <padding>
                          <Insets bottom="0" left="0" right="0" top="4" />
@@ -1075,13 +959,9 @@
                      </children>
                   </HBox>
 
-            <Button contentDisplay="GRAPHIC_ONLY" onAction="#openHomePage" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
+            <Button fx:id="logoButton" contentDisplay="GRAPHIC_ONLY" onAction="#openHomePage" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
                 <graphic>
-                  <ImageView fitHeight="90.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@biglogo.png" />
-                     </image>
-                    </ImageView>
+                  <ImageView fitHeight="90.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
                 </graphic>
             </Button>
 

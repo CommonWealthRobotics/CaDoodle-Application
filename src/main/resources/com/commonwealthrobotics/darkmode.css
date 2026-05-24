@@ -1,0 +1,209 @@
+/* =====================================================
+   DARK MODE STYLESHEET
+   Drop-in replacement for stylesheet.css
+   ===================================================== */
+
+/* ── Root & backgrounds ─────────────────────────────── */
+.root                       { -fx-background-color: #1e1e2e; }
+.anchor-pane                { -fx-background-color: #1e1e2e; }
+.label                      { -fx-text-fill: #cdd6f4; }
+
+/* ── Image buttons — must stay transparent ──────────── */
+.image-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-background-insets: 3;
+}
+.image-button:focused       { -fx-border-color: #f38ba8; }
+.image-button:pressed       { -fx-background-color: #45475a; }
+.image-button:hover         { -fx-background-color: #313244; }
+.image-button-focus         { -fx-border-color: #f38ba8; }
+.image-button-focus:hover   { -fx-background-color: #313244; }
+.image-button-highlight     { -fx-background-color: #313244; -fx-background-insets: 0; }
+.image-button-highlight:hover { -fx-background-color: #45475a; }
+
+
+}
+.text {
+    -fx-fill: #cdd6f4;
+}
+#memoryUsageText {
+    -fx-fill: #cdd6f4;
+}
+/* ── Normal buttons ─────────────────────────────────── */
+.normal-button {
+    -fx-background-color: #313244;
+    -fx-background-insets: 0;
+    -fx-border-width: 1px;
+    -fx-border-color: #89b4fa;
+    -fx-text-fill: #cdd6f4;
+}
+.normal-button:focused  { -fx-border-width: 1px; -fx-border-color: #f38ba8; }
+.normal-button:pressed  { -fx-background-color: #45475a; }
+
+/* ── Menu button2 ───────────────────────────────────── */
+.menu-button2 {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-background-insets: 0;
+}
+.menu-button2 > .label          { -fx-padding: 0; }
+.menu-button2 > .arrow-button   { -fx-min-width: 0; -fx-pref-width: 0; -fx-max-width: 0; -fx-padding: 0; }
+.menu-button2 > .arrow-button > .arrow { -fx-opacity: 0; -fx-min-width: 0; -fx-pref-width: 0; -fx-max-width: 0; }
+.menu-button2:focused           { -fx-border-color: #f38ba8; }
+.menu-button2:pressed           { -fx-background-color: #45475a; }
+.menu-button2:hover             { -fx-background-color: #313244; }
+.menu-button2-focus             { -fx-border-color: #f38ba8; }
+.menu-button2-focus:hover       { -fx-background-color: #313244; }
+.menu-button2-highlight         { -fx-background-color: #313244; -fx-background-insets: 0; }
+.menu-button2-highlight:hover   { -fx-background-color: #45475a; }
+
+/* ── Text inputs ────────────────────────────────────── */
+.text-field {
+    -fx-background-color: #313244;
+    -fx-border-color: #89b4fa;
+    -fx-border-width: 1px;
+    -fx-text-fill: #cdd6f4;
+    -fx-prompt-text-fill: #6c7086;
+}
+.text-area {
+    -fx-background-color: #313244;
+    -fx-border-color: #89b4fa;
+    -fx-border-width: 1px;
+    -fx-text-fill: #cdd6f4;
+}
+.text-area .content                         { -fx-background-color: #313244; }
+.text-area .viewport                        { -fx-background-color: #313244; }
+.text-area .scroll-pane                     { -fx-background-color: #313244; }
+.text-area .scroll-pane .viewport           { -fx-background-color: #313244; }
+.text-area .scroll-bar:horizontal .track,
+.text-area .scroll-bar:vertical .track      { -fx-background-color: #313244; }
+
+/* ── Scroll panes ───────────────────────────────────── */
+.scroll-pane                                { -fx-background-color: #1e1e2e; }
+.scroll-pane > .viewport                    { -fx-background-color: #1e1e2e; }
+.scroll-pane .scroll-bar:horizontal,
+.scroll-pane .scroll-bar:vertical           { -fx-background-color: #181825; }
+.scroll-pane .scroll-bar:horizontal .thumb,
+.scroll-pane .scroll-bar:vertical .thumb    { -fx-background-color: #89b4fa; }
+.scroll-pane .increment-button,
+.scroll-pane .decrement-button              { -fx-background-color: #313244; }
+.scroll-pane .increment-arrow,
+.scroll-pane .decrement-arrow               { -fx-background-color: #cdd6f4; }
+.scroll-pane .scroll-bar:horizontal .track,
+.scroll-pane .scroll-bar:vertical .track    { -fx-background-color: #181825; }
+.scroll-pane > .corner                      { -fx-background-color: #181825; }
+
+/* ── Layout ─────────────────────────────────────────── */
+.vbox       { -fx-spacing: 10; -fx-padding: 10; }
+.grid-pane  { -fx-grid-line-color: #45475a; -fx-background-color: #1e1e2e; -fx-background-radius: 5; -fx-padding: 10; -fx-hgap: 10; -fx-vgap: 10; }
+.separator  { -fx-background-color: #45475a; }
+
+/* ── Named IDs ──────────────────────────────────────── */
+#drawerButton, #timelineButton  { -fx-border-width: 0; -fx-background-insets: 0 6; }
+#RobotLabDrawer                 { -fx-border-width: 0; }
+#controlBar         { -fx-border-width: 1px; -fx-border-color: #45475a; -fx-background-color: #181825; }
+#drawerArea         { -fx-border-width: 1px; -fx-border-color: #45475a; -fx-background-color: #181825; }
+#shapeConfigurationBox          { -fx-border-width: 1px; -fx-border-color: #45475a; }
+#fileNameBox        { -fx-background-color: #313244; -fx-border-width: 1px; -fx-border-color: #89b4fa; }
+#view3d             { -fx-background-color: radial-gradient(center 50% 50%, radius 30%, #313244 0%, #1e1e2e 90%); }
+#control3d          { -fx-background-color: transparent; }
+#drawerGrid         { -fx-background-color: #181825; }
+#projectGrid        { -fx-background-color: #1e1e2e; }
+#totalApplicationBackground     { -fx-background-color: #1e1e2e; }
+#topBar             { -fx-background-color: #181825; }
+#objectPallet       { -fx-background-color: #1e1e2e; }
+#shapeConfiguration { -fx-background-color: #1e1e2e; }
+#configurationGrid  { -fx-background-color: #1e1e2e; }
+#anchorPanForConfiguration      { -fx-background-color: #1e1e2e; }
+#snapGrid           { -fx-background-color: #313244; }
+#shapeCategory      { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-radius: 4px; -fx-border-width: 1px; }
+
+/* ── Combo boxes ────────────────────────────────────── */
+.combo-box                          { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-radius: 4px; -fx-border-width: 1px; }
+.combo-box .list-cell               { -fx-background-color: #313244; -fx-text-fill: #cdd6f4; }
+.combo-box-popup .list-view         { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-width: 1px; }
+.combo-box-popup .list-cell         { -fx-background-color: #313244; -fx-text-fill: #cdd6f4; }
+.combo-box-popup .list-cell:hover   { -fx-background-color: #45475a; }
+.combo-box-popup .list-cell:selected { -fx-background-color: #585b70; }
+
+/* ── Progress bar ───────────────────────────────────── */
+.progress-bar       { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-width: 1px; -fx-background-radius: 4px; -fx-border-radius: 4px; }
+.progress-bar > .bar { -fx-background-color: #89b4fa; -fx-background-radius: 2px; -fx-padding: 0.25em; }
+
+/* ── Titled pane ────────────────────────────────────── */
+.titled-pane > .title               { -fx-background-color: #313244; -fx-text-fill: #cdd6f4; }
+
+/* ── Tab pane ───────────────────────────────────────── */
+.tab-pane                           { -fx-background-color: #1e1e2e; -fx-border-color: #45475a; -fx-border-width: 1px; }
+.tab-pane .tab-header-area          { -fx-background-color: #181825; -fx-padding: 5px; }
+.tab-pane .tab-header-area .tab-header-background { -fx-background-color: #181825; }
+.tab-pane .tab-header-area .control-buttons-tab   { -fx-background-color: #181825; }
+.tab-pane .tab                      { -fx-background-color: #313244; -fx-background-radius: 5px 5px 0 0; -fx-border-color: #45475a; -fx-border-width: 1px 1px 0 1px; -fx-padding: 8px 16px; -fx-text-fill: #cdd6f4; }
+.tab-pane .tab:hover                { -fx-background-color: #45475a; -fx-cursor: hand; }
+.tab-pane .tab:selected             { -fx-background-color: #585b70; -fx-border-color: #89b4fa; -fx-border-width: 1px 1px 0 1px; -fx-text-fill: #cdd6f4; }
+.tab-pane .tab-content-area         { -fx-background-color: #1e1e2e; -fx-border-color: #45475a; -fx-border-width: 1px; -fx-padding: 10px; }
+.tab-pane .tab .tab-label           { -fx-font-size: 14px; -fx-font-weight: bold; }
+.tab-pane .tab .tab-close-button    { -fx-background-color: transparent; }
+.tab-pane .tab .tab-close-button:hover { -fx-background-color: #f38ba8; }
+.tab-pane .tab-content-area .anchor-pane { -fx-background-color: transparent; -fx-border-width: 0; -fx-padding: 0; }
+
+/* ── Component tree ─────────────────────────────────── */
+.component-tree-panel               { -fx-background-color: #181825; -fx-border-color: #45475a; -fx-border-width: 1px; }
+.component-tree-resize-handle       { -fx-background-color: transparent; }
+.component-tree-resize-handle:hover { -fx-background-color: rgba(137,180,250,0.18); }
+.component-tree-header              { -fx-background-color: #313244; -fx-border-color: #45475a; -fx-border-width: 0 0 1px 0; -fx-font-weight: bold; -fx-padding: 6px 8px; -fx-text-fill: #89b4fa; }
+.component-tree-view                { -fx-background-color: #181825; -fx-border-width: 0; }
+.component-tree-view .tree-cell     { -fx-background-color: #181825; -fx-text-fill: #cdd6f4; }
+.component-tree-view .tree-cell:hover { -fx-background-color: #313244; }
+.component-tree-view .tree-cell:selected,
+.component-tree-view .tree-cell.component-tree-cell-selected { -fx-background-color: #45475a; -fx-text-fill: #cdd6f4; }
+.component-tree-view .tree-cell.component-tree-cell-root,
+.component-tree-view .tree-cell.component-tree-cell-group    { -fx-font-weight: bold; }
+.component-tree-view .tree-cell.component-tree-cell-hidden   { -fx-text-fill: #6c7086; -fx-font-style: italic; }
+.component-tree-visibility-button   { -fx-background-color: transparent; -fx-background-radius: 3px; -fx-border-color: transparent; -fx-padding: 3px; }
+.component-tree-visibility-button:hover { -fx-background-color: rgba(137,180,250,0.14); }
+
+/* ── Anchor pane variants ───────────────────────────── */
+.anchor-pane.button-style           { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-cursor: hand; -fx-border-width: 1px; }
+.anchor-pane.button-style:hover     { -fx-background-color: #45475a; }
+.anchor-pane.button-style:pressed   { -fx-background-color: #585b70; }
+.anchor-pane.light                  { -fx-background-color: #313244; -fx-effect: dropshadow(three-pass-box, rgba(137,180,250,0.2), 5, 0, 0, 2); -fx-border-width: 1px; }
+.anchor-pane.primary                { -fx-background-color: #89b4fa; -fx-border-color: #45475a; -fx-text-fill: #1e1e2e; -fx-border-width: 1px; }
+.anchor-pane.secondary              { -fx-background-color: #a6e3a1; -fx-border-color: #45475a; -fx-text-fill: #1e1e2e; -fx-border-width: 1px; }
+.anchor-pane.card-style             { -fx-background-color: #313244; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 3); -fx-border-width: 1px; -fx-border-color: #45475a; -fx-padding: 20px; }
+.anchor-pane.warning                { -fx-background-color: #45475a; -fx-border-color: #f38ba8; -fx-text-fill: #cdd6f4; -fx-border-width: 1px; }
+
+/* ── Button graphics ────────────────────────────────── */
+#makeRobotButton .image-view        { -fx-image: url("newRobot.png"); }
+#homeButton .image-view             { -fx-image: url("CADoodleHome.png"); }
+#logoButton .image-view             { -fx-image: url("biglogo.png"); }
+#homeViewButton .image-view         { -fx-image: url("home.png"); }
+#fitViewButton .image-view          { -fx-image: url("fit.png"); }
+#zoomInButton .image-view           { -fx-image: url("zoomIn.png"); }
+#zoomOutButton .image-view          { -fx-image: url("zoomOut.png"); }
+#holeButton .image-view             { -fx-image: url("holes.png"); }
+#workplaneButton .image-view        { -fx-image: url("Sketcher.png"); }
+#rulerButton .image-view            { -fx-image: url("ruler.png"); }
+#notesButton .image-view            { -fx-image: url("notes.png"); }
+#searchButton .image-view           { -fx-image: url("search.png"); }
+#hexDistributeButton .image-view    { -fx-image: url("distribute.png"); }
+#boltHoleButton .image-view         { -fx-image: url("boltHolePattern.png"); }
+#extrudeButton .image-view          { -fx-image: url("extrude.png"); }
+#filletButton .image-view           { -fx-image: url("fillet.png"); }
+#visbilityButton .image-view        { -fx-image: url("showMenu.png"); }
+#advancedGroupMenu .image-view      { -fx-image: url("intersectMenu.png"); }
+#groupButton .image-view            { -fx-image: url("group.png"); }
+#ungroupButton .image-view          { -fx-image: url("ungroup.png"); }
+#alignButton .image-view            { -fx-image: url("align.png"); }
+#mirronButton .image-view           { -fx-image: url("mirror.png"); }
+#cruiseButton .image-view           { -fx-image: url("magnet.png"); }
+#objectWorkplane .image-view        { -fx-image: url("workplaneToObject.png"); }
+#dropToWorkplane .image-view        { -fx-image: url("drop.png"); }
+#copyButton .image-view             { -fx-image: url("copy.png"); }
+#pasteButton .image-view            { -fx-image: url("paste.png"); }
+#deleteButton .image-view           { -fx-image: url("trash.png"); }
+#undoButton .image-view             { -fx-image: url("back.png"); }
+#redoButton .image-view             { -fx-image: url("forward.png"); }
