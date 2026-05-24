@@ -370,7 +370,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 
-			onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOperation(), ap.get());
 			if ((f != null) && (l != null)) {
 				FileChangeWatcher w;
 				try {
@@ -2389,6 +2388,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onRegenerateDone() {
 		// com.neuronrobotics.sdk.common.Log.debug("Enable parametrics ");
 		BowlerStudio.runLater(() -> parametrics.setDisable(false));
+		onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOperation(), ap.get());
 
 	}
 
