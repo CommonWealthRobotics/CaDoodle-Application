@@ -32,9 +32,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -600,8 +598,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
-			;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();
@@ -877,7 +874,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
 
 	}
-	
+
 	public void resetAllStyleSheets() {
 		for (Iterator<Region> iterator = panes.iterator(); iterator.hasNext();) {
 			Region p = iterator.next();
@@ -890,8 +887,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			panes.add(node);
 		boolean darkMode = Boolean
 				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleDarkMode", "" + false).toString());
-		String sheet = darkMode ? "/com/commonwealthrobotics/darkmode.css"
-				: "/com/commonwealthrobotics/stylesheet.css";
+		String sheet = darkMode ? "/com/commonwealthrobotics/darkmode.css" : "/com/commonwealthrobotics/stylesheet.css";
 
 		String url = Main.class.getResource(sheet).toExternalForm();
 

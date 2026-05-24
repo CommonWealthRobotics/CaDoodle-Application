@@ -57,7 +57,6 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.TabPane;
 public class SettingsManager implements ICSGClientEvent {
 	private static CSGServer server = null;
 	private static Stage stage;
@@ -170,11 +169,13 @@ public class SettingsManager implements ICSGClientEvent {
 		versionOptions.setDisable(true);
 		pinFile.delete();
 	}
+
 	@FXML
-	void onChangeColor(ActionEvent e){
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", ""+darkModeSel.isSelected());
+	void onChangeColor(ActionEvent e) {
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", "" + darkModeSel.isSelected());
 		mc.getActiveProject().resetAllStyleSheets();
 	}
+
 	@FXML
 	void checkServerConfigs(KeyEvent event) {
 		try {

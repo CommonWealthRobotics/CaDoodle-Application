@@ -48,8 +48,8 @@ import java.util.zip.*;
 
 public class ExportManager {
 	@FXML
-	private AnchorPane 	topLevel;
-	
+	private AnchorPane topLevel;
+
 	private static ActiveProject ap;
 
 	private static Stage stage;

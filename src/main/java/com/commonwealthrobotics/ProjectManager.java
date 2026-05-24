@@ -48,7 +48,7 @@ import javafx.stage.Stage;
 
 public class ProjectManager {
 	@FXML
-	private AnchorPane 	topLevel;
+	private AnchorPane topLevel;
 
 	@FXML
 	private Button copyDoodle;
