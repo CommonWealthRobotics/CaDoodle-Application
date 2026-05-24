@@ -20,16 +20,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane fx:id="topPane" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<TabPane fx:id="topPane" prefHeight="821.0" prefWidth="990.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <tabs>
       <Tab closable="false" text="Basic">
          <content>
-            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane">
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="970.0" styleClass="anchor-pane">
                <children>
-                  <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0">
+                  <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>
-                      <ColumnConstraints maxWidth="274.0" minWidth="230.0" prefWidth="270.0" />
-                      <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="541.0" prefWidth="545.0" />
+                      <ColumnConstraints maxWidth="386.0" minWidth="230.0" prefWidth="374.0" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="519.0" prefWidth="552.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="NEVER" />
@@ -166,7 +166,7 @@
                               <RadioButton fx:id="darkModeSel" mnemonicParsing="false" onAction="#onChangeColor" text="Dark Mode" toggleGroup="$darkmode" />
                            </children>
                         </HBox>
-                        <Label text="Points in Curve (SVG and Text)" GridPane.rowIndex="2">
+                        <Label text="Min length curve segment (SVG and Text)" GridPane.rowIndex="2">
                            <font>
                               <Font size="18.0" />
                            </font>

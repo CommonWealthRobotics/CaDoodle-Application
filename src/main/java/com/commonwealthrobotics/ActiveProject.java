@@ -201,6 +201,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		});
 	}
 
+	public Thread regenerateAll() {
+		return regenerateFrom(get().getOperations().get(0));
+	}
+
 	public Thread regenerateFrom(CaDoodleOperation source) {
 		if (disableRegenerate)
 			return null;

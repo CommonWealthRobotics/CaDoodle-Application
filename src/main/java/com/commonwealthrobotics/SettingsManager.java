@@ -42,6 +42,7 @@ import eu.mihosoft.vrl.v3d.CSGResponse;
 import eu.mihosoft.vrl.v3d.CSGServer;
 import eu.mihosoft.vrl.v3d.ICSGClientEvent;
 import eu.mihosoft.vrl.v3d.JavaFXInitializer;
+import eu.mihosoft.vrl.v3d.Plane;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -57,6 +58,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+
 public class SettingsManager implements ICSGClientEvent {
 	private static CSGServer server = null;
 	private static Stage stage;
@@ -536,11 +538,17 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private void onPointInCurve(ActionEvent event) {
-		int int1 = Integer.parseInt(numPoints.getText());
-		if (int1 < 2)
-			int1 = 2;
-
-		mc.getActiveProject().get().setTextResolutionPoints(int1);
+		try {
+			double int1 = Double.parseDouble(numPoints.getText());
+			if (int1 > 2)
+				int1 = 2;
+			if (int1 < Plane.getEPSILON() * 100)
+				int1 = Plane.getEPSILON() * 100;
+			mc.getActiveProject().get().setTextResolutionPoints(int1);
+			mc.getActiveProject().regenerateAll();
+		} catch (Throwable t) {
+			Log.error(t);
+		}
 	}
 
 	private void updateVersionOptions() {
