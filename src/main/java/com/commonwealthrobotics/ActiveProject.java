@@ -1,5 +1,7 @@
 package com.commonwealthrobotics;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -605,7 +607,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
+			;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();
@@ -887,6 +890,16 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Region p = iterator.next();
 			setStyleSheet(p);
 		}
+	}
+
+	public static ResourceBundle getLangaugePack() {
+		try {
+			return ResourceBundle.getBundle("lang.Messages", Locale.getDefault());
+		} catch (Throwable t) {
+			Log.error(t);
+		}
+		return ResourceBundle.getBundle("lang.Messages", Locale.ENGLISH);
+
 	}
 
 	public void setStyleSheet(Region node) {

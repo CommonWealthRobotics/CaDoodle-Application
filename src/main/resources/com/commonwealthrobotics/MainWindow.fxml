@@ -57,7 +57,7 @@
                                              <children>
                                                 <VBox fx:id="baseRobotBox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <Button fx:id="makeRobotButton" alignment="CENTER" mnemonicParsing="false" onAction="#onMakeRobot" text="Make Robot">
+                                                      <Button fx:id="makeRobotButton" alignment="CENTER" mnemonicParsing="false" onAction="#onMakeRobot" text="%mainwindow.make_robot">
                                                          <styleClass>
                                                             <String fx:value="image-button-focus" />
                                                             <String fx:value="image-button" />
@@ -87,9 +87,9 @@
                                                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                          </padding>
                                                          <children>
-                                                            <Label text="This Is a Robot!" GridPane.columnIndex="1" />
+                                                            <Label text="%mainwindow.this_is_a_robot" GridPane.columnIndex="1" />
                                                             <ImageView fx:id="robotHeaderImage" fitHeight="40.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
-                                                            <Label text="Controllers" textFill="#263d8c" GridPane.rowIndex="1">
+                                                            <Label text="%mainwindow.controllers" textFill="#263d8c" GridPane.rowIndex="1">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
                                                                </font>
@@ -105,7 +105,7 @@
                                                                   <VBox fx:id="controllerConsumedBox" HBox.hgrow="ALWAYS" />
                                                                </children>
                                                             </HBox>
-                                                            <Label text="Capabilities" textFill="#263d8c" GridPane.rowIndex="3">
+                                                            <Label text="%mainwindow.capabilities" textFill="#263d8c" GridPane.rowIndex="3">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
                                                                </font>
@@ -121,7 +121,7 @@
                                           <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" styleClass="robot-tab-icon" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Base of your robot" />
+                                          <Tooltip text="%mainwindow.base_of_your_robot" />
                                        </tooltip>
                                   </Tab>
                                     <Tab fx:id="headTab" disable="true">
@@ -130,7 +130,7 @@
                                              <children>
                                                 <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <Label text="Controllers" textFill="#263d8c">
+                                                      <Label text="%mainwindow.controllers" textFill="#263d8c">
                                                          <font>
                                                             <Font name="System Bold" size="16.0" />
                                                          </font>
@@ -153,7 +153,7 @@
                                                             </AnchorPane>
                                                         </content>
                                                       </ScrollPane>
-                                                      <Label text="Arms" textFill="#263d8c">
+                                                      <Label text="%mainwindow.arms" textFill="#263d8c">
                                                          <font>
                                                             <Font name="System Bold" size="16.0" />
                                                          </font>
@@ -176,7 +176,7 @@
                                                             </AnchorPane>
                                                          </content>
                                                       </ScrollPane>
-                                                      <Label text="Legs" textFill="#263d8c">
+                                                      <Label text="%mainwindow.legs" textFill="#263d8c">
                                                          <font>
                                                             <Font name="System Bold" size="16.0" />
                                                          </font>
@@ -199,7 +199,7 @@
                                                             </AnchorPane>
                                                          </content>
                                                       </ScrollPane>
-                                                      <Label text="Wheels" textFill="#263d8c">
+                                                      <Label text="%mainwindow.wheels" textFill="#263d8c">
                                                          <font>
                                                             <Font name="System Bold" size="16.0" />
                                                          </font>
@@ -232,8 +232,8 @@
                                                             <RowConstraints vgrow="ALWAYS" />
                                                         </rowConstraints>
                                                          <children>
-                                                            <Label text="Provides" />
-                                                            <Label text="Consumes" GridPane.columnIndex="1" />
+                                                            <Label text="%mainwindow.provides" />
+                                                            <Label text="%mainwindow.consumes" GridPane.columnIndex="1" />
                                                             <VBox fx:id="optionProvide" prefWidth="100.0" GridPane.rowIndex="1" />
                                                             <VBox fx:id="optionsConsume" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                          </children>
@@ -246,7 +246,7 @@
                                           <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" styleClass="load-limb-arms-icon" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Head and Brain" />
+                                          <Tooltip text="%mainwindow.head_and_brain" />
                                        </tooltip>
                                     </Tab>
                                     <Tab fx:id="advancedTab" disable="true">
@@ -257,7 +257,7 @@
                                           <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" styleClass="advanced-config-icon" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Advanced controls and features" />
+                                          <Tooltip text="%mainwindow.advanced_controls_and_features" />
                                        </tooltip>
                                     </Tab>
                                 </tabs>
@@ -305,14 +305,14 @@
                                              <children>
                                                     <HBox alignment="CENTER_RIGHT" pickOnBounds="false" spacing="2" GridPane.columnIndex="0">
 
-                                                            <Label minHeight="0.0" text="Snap Grid" />
+                                                            <Label minHeight="0.0" text="%mainwindow.snap_grid" />
                                                             <ComboBox fx:id="snapGrid">
                                                                 <stylesheets>
                                                                     <String fx:value="data:text/css, .combo-box { -fx-border-color: #263D8C; -fx-border-width: 1; }                                                                     .combo-box .arrow { -fx-rotate: 180; -fx-translate-x: -8; }                                                                     .combo-box .arrow-button { -fx-padding: 0 0 0 0; }                                                                     .combo-box .list-cell { -fx-padding: 4 0 4 4; -fx-translate-x: 6;}                                                                     " />
                                                                 </stylesheets>
                                                             </ComboBox>
 
-                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" style="-fx-border-color:#263D8C; -fx-border-width:1;" styleClass="normal-button" text="Settings" GridPane.columnIndex="1" />
+                                                      <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" style="-fx-border-color:#263D8C; -fx-border-width:1;" styleClass="normal-button" text="%mainwindow.settings" GridPane.columnIndex="1" />
                                                       </HBox>
                                                    </children>
                                           </VBox>
@@ -320,7 +320,7 @@
                                              <children>
                                                 <Accordion fx:id="shapeConfigurationBox" style="-fx-border-color:#263D8C; -fx-border-width:1;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <panes>
-                                                    <TitledPane fx:id="shapeConfiguration" animated="false" expanded="false" text="Shape">
+                                                    <TitledPane fx:id="shapeConfiguration" animated="false" expanded="false" text="%mainwindow.shape">
                                                       <content>
                                                         <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0" prefWidth="200.0">
                                                                <children>
@@ -351,7 +351,7 @@
                                                                            <children>
                                                                               <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                                                                                  <tooltip>
-                                                                                    <Tooltip text="Set To Solid" />
+                                                                                    <Tooltip text="%mainwindow.set_to_solid" />
                                                                                  </tooltip>
                                                                               </ColorPicker>
                                                                               <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3">
@@ -359,18 +359,18 @@
                                                                                     <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                                                  </graphic>
                                                                                  <tooltip>
-                                                                                    <Tooltip text="Set to Hole" />
+                                                                                    <Tooltip text="%mainwindow.set_to_hole" />
                                                                                  </tooltip>
                                                                                  <GridPane.margin>
                                                                                     <Insets left="-10.0" />
                                                                                  </GridPane.margin>
                                                                               </Button>
-                                                                              <Label text="Solid" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                                              <Label text="%mainwindow.solid" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                                                  <GridPane.margin>
                                                                                     <Insets left="10.0" />
                                                                                  </GridPane.margin>
                                                                               </Label>
-                                                                              <Label text="Hole" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                                                              <Label text="%mainwindow.hole" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                                                                  <GridPane.margin>
                                                                                     <Insets left="10.0" />
                                                                                  </GridPane.margin>
@@ -384,7 +384,7 @@
                                                                               <ImageView fx:id="showHideImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="dark-bulb-icon" />
                                                                            </graphic>
                                                                            <tooltip>
-                                                                              <Tooltip text="Hide Object &lt;Ctrl + H&gt;" />
+                                                                              <Tooltip text="%mainwindow.hide_object_lt_ctrl_h_gt" />
                                                                            </tooltip>
                                                                         </Button>
 
@@ -393,7 +393,7 @@
                                                                               <ImageView fx:id="lockImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="unlock-icon" />
                                                                            </graphic>
                                                                            <tooltip>
-                                                                              <Tooltip fx:id="lockUnlockTooltip" text="Lock Changes" />
+                                                                              <Tooltip fx:id="lockUnlockTooltip" text="%mainwindow.lock_changes" />
                                                                            </tooltip>
                                                                         </Button>
                                                                      </children>
@@ -429,7 +429,7 @@
                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Home View" />
+                                                      <Tooltip text="%mainwindow.home_view" />
                                                    </tooltip>
                                                 </Button>
                                                 <Button fx:id="fitViewButton" mnemonicParsing="false" onAction="#onFitView" styleClass="image-button" GridPane.rowIndex="2">
@@ -437,7 +437,7 @@
                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Fit View &lt;F&gt;" />
+                                                      <Tooltip text="%mainwindow.fit_view_lt_f_gt" />
                                                    </tooltip>
                                                 </Button>
                                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#onZoomIn" styleClass="image-button" GridPane.rowIndex="3">
@@ -445,7 +445,7 @@
                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Zoom In &lt;+&gt;" />
+                                                      <Tooltip text="%mainwindow.zoom_in_lt_gt" />
                                                    </tooltip>
                                                 </Button>
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#onZoomOut" styleClass="image-button" GridPane.rowIndex="4">
@@ -453,14 +453,14 @@
                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Zoom Out &lt;-&gt;" />
+                                                      <Tooltip text="%mainwindow.zoom_out_lt_gt" />
                                                    </tooltip>
                                                 </Button>
                                                 <VBox alignment="BOTTOM_LEFT" spacing="2.0" GridPane.rowIndex="6">
                                                    <children>
                                                       <Button fx:id="RobotLabDrawer" alignment="BOTTOM_LEFT" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#robotLabDrawerEvent" styleClass="image-button">
                                                          <tooltip>
-                                                            <Tooltip text="Robot: Make a robot" />
+                                                            <Tooltip text="%mainwindow.robot_make_a_robot" />
                                                          </tooltip>
                                                          <graphic>
                                                             <HBox>
@@ -481,7 +481,7 @@
                                                             </HBox>
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="Component Tree" />
+                                                            <Tooltip text="%mainwindow.component_tree" />
                                                          </tooltip>
                                                       </Button>
                                                    </children>
@@ -493,7 +493,7 @@
                                                 <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" styleClass="open-drawer" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="Timeline: Look at previous steps" />
+                                                <Tooltip text="%mainwindow.timeline_look_at_previous_steps" />
                                              </tooltip>
                                              <GridPane.margin>
                                                  <Insets bottom="-8.0" />
@@ -559,7 +559,7 @@
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Workplane Tool &lt;W&gt;" />
+                                          <Tooltip text="%mainwindow.workplane_tool_lt_w_gt" />
                                        </tooltip>
                                     </Button>
 
@@ -568,7 +568,7 @@
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Ruler Tool &lt;R&gt;" />
+                                          <Tooltip text="%mainwindow.ruler_tool_lt_r_gt" />
                                        </tooltip>
                                     </Button>
 
@@ -577,7 +577,7 @@
                                           <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Notes &lt;N&gt;" />
+                                          <Tooltip text="%mainwindow.notes_lt_n_gt" />
                                        </tooltip>
                                     </Button>
                                     <HBox alignment="CENTER_LEFT" maxHeight="26.0" spacing="3" style="-fx-padding: 0 3 0 3;" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1">
@@ -607,8 +607,8 @@
                                  <children>
                                     <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <Button mnemonicParsing="false" text="Placeholder" />
-                                          <Button mnemonicParsing="false" text="Placeholder" />
+                                          <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                          <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
                                        </children>
                                        <padding>
                                           <Insets left="10.0" />
@@ -639,7 +639,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Pattern Copy Hexagon or Linear" />
+                              <Tooltip text="%mainwindow.pattern_copy_hexagon_or_linear" />
                            </tooltip>
                         </Button>
                         <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
@@ -647,7 +647,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Pattern Copy In Circle" />
+                              <Tooltip text="%mainwindow.pattern_copy_in_circle" />
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" />
@@ -656,7 +656,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Extrude Selected Surface" />
+                              <Tooltip text="%mainwindow.extrude_selected_surface" />
                            </tooltip>
                         </Button>
                         <Button fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
@@ -664,7 +664,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Fillet or Chamfer" />
+                              <Tooltip text="%mainwindow.fillet_or_chamfer" />
                            </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" />
@@ -676,7 +676,7 @@
                                  </viewport></ImageView>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Show All  &lt;Ctrl + Shift + H&gt;" />
+                              <Tooltip text="%mainwindow.show_all_lt_ctrl_shift_h_gt" />
                            </tooltip>
                         </Button>
                         <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="menu-button2" HBox.hgrow="NEVER">
@@ -684,17 +684,17 @@
                                 <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" />
                             </graphic>
                           <items>
-                            <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
+                            <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="%mainwindow.show_hidden_shapes">
                                  <graphic>
                                     <ImageView fitHeight="24.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon" />
                                  </graphic>
                               </MenuItem>
-                            <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="Hide Notes">
+                            <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="%mainwindow.hide_notes">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="notes-icon" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="Hide Connectors">
+                              <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="%mainwindow.hide_connectors">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -705,7 +705,7 @@
                               </MenuItem>
                           </items>
                            <tooltip>
-                              <Tooltip text="Visibility" />
+                              <Tooltip text="%mainwindow.visibility" />
                            </tooltip>
                         </MenuButton>
                         <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
@@ -713,7 +713,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Group &lt;Ctrl + G&gt;" />
+                              <Tooltip text="%mainwindow.group_lt_ctrl_g_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
@@ -721,7 +721,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Un-Group &lt;Ctrl + Shift + G&gt;" />
+                              <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
                            </tooltip>
                         </Button>
                         <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
@@ -731,24 +731,24 @@
                                     <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" styleClass="extraGroupImage" />
                                 </graphic>
                                 <items>
-                                  <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="Hull">
+                                  <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="%mainwindow.hull">
                                        <graphic>
                                           <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
                                        </graphic>
                                     </MenuItem>
-                                    <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="Intersect">
+                                    <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="%mainwindow.intersect">
                                        <graphic>
                                           <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
                                        </graphic>
                                     </MenuItem>
-                                    <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="Xor">
+                                    <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="%mainwindow.xor">
                                        <graphic>
                                           <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" fx:id="xorImage" />
                                        </graphic>
                                     </MenuItem>
                                 </items>
                                  <tooltip>
-                                    <Tooltip text="Extra Group Options" />
+                                    <Tooltip text="%mainwindow.extra_group_options" />
                                  </tooltip>
                               </MenuButton>
                            </children>
@@ -758,7 +758,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Align &lt;L&gt;" />
+                              <Tooltip text="%mainwindow.align_lt_l_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">
@@ -766,7 +766,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Mirror &lt;M&gt;" />
+                              <Tooltip text="%mainwindow.mirror_lt_m_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="cruiseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruise" styleClass="image-button">
@@ -774,7 +774,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Cruise &lt;C&gt;" />
+                              <Tooltip text="%mainwindow.cruise_lt_c_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="objectWorkplane" mnemonicParsing="false" onAction="#onObjectWorkplane" styleClass="image-button">
@@ -782,7 +782,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Object Workplane &lt;E&gt;" />
+                              <Tooltip text="%mainwindow.object_workplane_lt_e_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="dropToWorkplane" mnemonicParsing="false" onAction="#onDropToWorkplane" styleClass="image-button">
@@ -790,7 +790,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Drop To Workplane &lt;D&gt;" />
+                              <Tooltip text="%mainwindow.drop_to_workplane_lt_d_gt" />
                            </tooltip>
                         </Button>
                         <Region maxWidth="5" minWidth="5" prefWidth="5" />
@@ -798,9 +798,9 @@
                   <padding>
                     <Insets bottom="0" left="4" right="4" top="0" />
                   </padding>
-                        <Button fx:id="importButton" maxWidth="102.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="Import" />
+                        <Button fx:id="importButton" maxWidth="102.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="%mainwindow.import" />
                   <Region maxWidth="5" minWidth="5" prefWidth="5" />
-                        <Button fx:id="export" maxWidth="102.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="Export" />
+                        <Button fx:id="export" maxWidth="102.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="%mainwindow.export" />
                         </HBox>                       
                      </children>
                   </HBox>
@@ -811,7 +811,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Copy &lt;Ctrl + C&gt;" />
+                              <Tooltip text="%mainwindow.copy_lt_ctrl_c_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
@@ -819,7 +819,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Paste &lt;Ctrl + V&gt;" />
+                              <Tooltip text="%mainwindow.paste_lt_ctrl_v_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
@@ -827,7 +827,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Delete &lt;Backspace or Delete&gt;" />
+                              <Tooltip text="%mainwindow.delete_lt_backspace_or_delete_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="undoButton" mnemonicParsing="false" onAction="#onUndo" styleClass="image-button">
@@ -835,7 +835,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Undo &lt;Ctrl + Z&gt;" />
+                              <Tooltip text="%mainwindow.undo_lt_ctrl_z_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="redoButton" mnemonicParsing="false" onAction="#onRedo" styleClass="image-button">
@@ -843,7 +843,7 @@
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Redo &lt;Ctrl + Y&gt;" />
+                              <Tooltip text="%mainwindow.redo_lt_ctrl_y_gt" />
                            </tooltip>
                         </Button>
                      </children>
@@ -865,7 +865,7 @@
                          <Insets bottom="0" left="0" right="0" top="4" />
                       </padding>
                       <children>
-                        <Text fx:id="memoryUsageText" strokeType="OUTSIDE" strokeWidth="0.0" text="Memory Usage:" wrappingWidth="59.0" HBox.hgrow="ALWAYS">
+                        <Text fx:id="memoryUsageText" strokeType="OUTSIDE" strokeWidth="0.0" text="%mainwindow.memory_usage" wrappingWidth="59.0" HBox.hgrow="ALWAYS">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -889,7 +889,7 @@
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Cadoodle Dashboard" />
+                              <Tooltip text="%mainwindow.cadoodle_dashboard" />
                            </tooltip>
                         </Button>
                         <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
@@ -900,7 +900,7 @@
                               <Insets right="20.0" />
                            </HBox.margin>
                            <tooltip>
-                              <Tooltip text="Change name" />
+                              <Tooltip text="%mainwindow.change_name" />
                            </tooltip>
                         </TextField>
                      </children>

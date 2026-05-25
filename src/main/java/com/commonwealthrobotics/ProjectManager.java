@@ -309,7 +309,7 @@ public class ProjectManager {
 		ProjectManager.clearScreen = clearScreen;
 		try {
 			// Load the FXML file
-			FXMLLoader loader = new FXMLLoader(ProjectManager.class.getResource("ProjectManager.fxml"));
+			FXMLLoader loader = new FXMLLoader(ProjectManager.class.getResource("ProjectManager.fxml"),ActiveProject.getLangaugePack());
 			loader.setController(new ProjectManager());
 			Parent root = loader.load();
 

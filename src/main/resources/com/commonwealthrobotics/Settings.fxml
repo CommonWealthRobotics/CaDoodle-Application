@@ -23,7 +23,7 @@
    <children>
       <TabPane fx:id="topPane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
-            <Tab closable="false" text="Basic">
+            <Tab closable="false" text="%settings.basic">
                <content>
                   <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" styleClass="anchor-pane">
                      <children>
@@ -47,7 +47,7 @@
                            <children>
                               <VBox styleClass="vbox" GridPane.rowIndex="1">
                                  <children>
-                                    <Label minHeight="-Infinity" text="Changes made in timeline">
+                                    <Label minHeight="-Infinity" text="%settings.changes_made_in_timeline">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -55,21 +55,21 @@
                                           <Insets right="10.0" />
                                        </padding>
                                     </Label>
-                                    <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="Always ask">
+                                    <RadioButton fx:id="askOpt" mnemonicParsing="false" onAction="#onAlwaysAsk" selected="true" styleClass="label" text="%settings.always_ask">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="insertStrat" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="Always insert" toggleGroup="$insertStrat" />
-                                    <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="Always continue and erase" toggleGroup="$insertStrat" />
+                                    <RadioButton fx:id="insertOpt" mnemonicParsing="false" onAction="#onAlwaysInsert" styleClass="label" text="%settings.always_insert" toggleGroup="$insertStrat" />
+                                    <RadioButton fx:id="eraseOpt" mnemonicParsing="false" onAction="#onAlwaysContinue" styleClass="label" text="%settings.always_continue_and_erase" toggleGroup="$insertStrat" />
                                  </children>
                               </VBox>
-                              <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" styleClass="label" text="Always ask what I want to do with a popup window every time something is edited " GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                              <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" styleClass="label" text="%settings.always_ask_what_i_want_to_do_with_a_popup_window_every_time_something_is_edited" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>
                               </TextField>
-                              <Label text="Projects location">
+                              <Label text="%settings.projects_location">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -79,7 +79,7 @@
                               </Label>
                               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#onBrowse" styleClass="image-button-focus" text="Browse..." />
+                                    <Button mnemonicParsing="false" onAction="#onBrowse" styleClass="image-button-focus" text="%settings.browse" />
                                     <TextField fx:id="workingDirPath" onAction="#onBrowse" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="10.0" />
@@ -90,7 +90,7 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </HBox>
-                              <Label text="Use Elalish Manifold" GridPane.rowIndex="5">
+                              <Label text="%settings.use_elalish_manifold" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -98,12 +98,12 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="Enable advanced features" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                              <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="%settings.enable_advanced_features" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
                               </CheckBox>
-                              <Label text="Default number of sides" GridPane.rowIndex="3">
+                              <Label text="%settings.default_number_of_sides" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -112,7 +112,7 @@
                                  </padding>
                               </Label>
                               <TextField fx:id="numberOfSides" onAction="#onNumberOfSides" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label text="Check for updates" GridPane.rowIndex="4">
+                              <Label text="%settings.check_for_updates" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -122,19 +122,19 @@
                               </Label>
                               <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
-                                    <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="Check on launch">
+                                    <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="%settings.check_on_launch">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="checkUpdate" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="pinToVersion" mnemonicParsing="false" onAction="#onPinVersion" text="Pin to version" toggleGroup="$checkUpdate" />
+                                    <RadioButton fx:id="pinToVersion" mnemonicParsing="false" onAction="#onPinVersion" text="%settings.pin_to_version" toggleGroup="$checkUpdate" />
                                     <ComboBox fx:id="versionOptions" disable="true" onAction="#onPinVersionSelect" prefWidth="150.0" />
                                  </children>
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" top="10.0" />
                                  </padding>
                               </HBox>
-                              <Label text="Advanced mode" GridPane.rowIndex="6">
+                              <Label text="%settings.advanced_mode" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -142,12 +142,12 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="Enable Manifold Library" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="%settings.enable_manifold_library" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
                               </CheckBox>
-                              <Label text="Style and Colors" GridPane.rowIndex="8">
+                              <Label text="%settings.style_and_colors" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -155,7 +155,7 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <Label text="Min length curve segment (SVG and Text)" GridPane.rowIndex="2">
+                              <Label text="%settings.min_length_curve_segment_svg_and_text" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -165,7 +165,7 @@
                               </Label>
                               <TextField fx:id="numPoints" onAction="#onPointInCurve" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <Label text="Font Size" GridPane.rowIndex="7">
+                              <Label text="%settings.font_size" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -173,14 +173,14 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <TextField fx:id="fontSizeField" onAction="#onFontSize" promptText="Type font point size here" text="12" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <TextField fx:id="fontSizeField" onAction="#onFontSize" promptText="%settings.type_font_point_size_here" text="%settings.12" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                            </children>
                         </GridPane>
                      </children>
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab closable="false" text="Server">
+            <Tab closable="false" text="%settings.server">
               <content>
                   <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="859.0" styleClass="anchor-pane">
                      <children>
@@ -195,7 +195,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Run a server" GridPane.rowIndex="1">
+                              <Label text="%settings.run_a_server" GridPane.rowIndex="1">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
@@ -203,7 +203,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <Label text="Connect to a server">
+                              <Label text="%settings.connect_to_a_server">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -213,12 +213,12 @@
                               </Label>
                               <VBox fx:id="serverStatusBox" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <CheckBox fx:id="startServerCheckbox" mnemonicParsing="false" onAction="#onStartServer" text="Start server">
+                                    <CheckBox fx:id="startServerCheckbox" mnemonicParsing="false" onAction="#onStartServer" text="%settings.start_server">
                                        <padding>
                                           <Insets left="10.0" />
                                        </padding>
                                     </CheckBox>
-                                    <Label fx:id="serverIPDisplay" text="Server not started">
+                                    <Label fx:id="serverIPDisplay" text="%settings.server_not_started">
                                        <padding>
                                           <Insets left="10.0" />
                                        </padding>
@@ -242,20 +242,20 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Address" GridPane.columnIndex="1" />
-                                    <Label text="Port" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label text="API Key" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <TextField fx:id="ipaddressField" onKeyTyped="#checkServerConfigs" promptText="127.0.0.1" GridPane.columnIndex="3" />
-                                    <TextField fx:id="portField" onKeyTyped="#checkServerConfigs" text="3742" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <TextField fx:id="apiKey" onKeyTyped="#checkServerConfigs" promptText="API key here" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                    <Label text="Connect" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label text="%settings.address" GridPane.columnIndex="1" />
+                                    <Label text="%settings.port" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="%settings.api_key" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextField fx:id="ipaddressField" onKeyTyped="#checkServerConfigs" promptText="%settings.127_0_0_1" GridPane.columnIndex="3" />
+                                    <TextField fx:id="portField" onKeyTyped="#checkServerConfigs" text="%settings.3742" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <TextField fx:id="apiKey" onKeyTyped="#checkServerConfigs" promptText="%settings.api_key_here" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <Label text="%settings.connect" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <CheckBox fx:id="connectServer" disable="true" mnemonicParsing="false" onAction="#onConnectServer" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                  </children>
                                  <padding>
                                     <Insets right="10.0" top="10.0" />
                                  </padding>
                               </GridPane>
-                              <Label prefHeight="0.0" prefWidth="116.0" text="Run Test" GridPane.rowIndex="2">
+                              <Label prefHeight="0.0" prefWidth="116.0" text="%settings.run_test" GridPane.rowIndex="2">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
@@ -263,7 +263,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <Button alignment="CENTER" mnemonicParsing="false" onAction="#onTest" text="Test" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <Button alignment="CENTER" mnemonicParsing="false" onAction="#onTest" text="%settings.test" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>

@@ -652,7 +652,7 @@ public class SettingsManager implements ICSGClientEvent {
 			com.neuronrobotics.sdk.common.Log
 					.debug("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
 			FXMLLoader loader = new FXMLLoader(
-					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"));
+					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"),ActiveProject.getLangaugePack());
 			// loader.setController(new SettingsManager());
 			Parent root = loader.load();
 			stage = new Stage();
