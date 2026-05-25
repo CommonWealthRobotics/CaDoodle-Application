@@ -292,3 +292,18 @@
 #exportButton .image-view        { -fx-image: url("dark/export-button.png"); }
 #newDoodle .image-view           { -fx-image: url("dark/newFile.png"); }
 #copyDoodle .image-view          { -fx-image: url("dark/copy.png"); }
+#robotHeaderImage   { -fx-image: url("dark/robot-3.png"); }
+.robot-tab-icon     { -fx-image: url("dark/robot-3.png"); }
+#showHideImage      { -fx-image: url("dark/darkBulb.png"); }
+#showAllImage       { -fx-image: url("dark/litBulb.png"); }
+.lit-bulb-icon      { -fx-image: url("dark/litBulb.png"); }
+#lockImage          { -fx-image: url("dark/unlock.png"); }
+#drawrImage               { -fx-image: url("dark/drawerClose.png"); }
+#componentTreeDrawerArrow { -fx-image: url("dark/drawerClose.png"); }
+#timelineImage            { -fx-image: url("dark/drawerClose.png"); }
+#RobotLabDrawerImage      { -fx-image: url("dark/robot-close.png"); }
+.tree-icon                { -fx-image: url("dark/tree.png"); }
+.load-limb-arms-icon      { -fx-image: url("dark/Load-Limb-Arms.png"); }
+.advanced-config-icon     { -fx-image: url("dark/Advanced-Configuration.png"); }
+.notes-icon               { -fx-image: url("dark/notes.png"); }
+

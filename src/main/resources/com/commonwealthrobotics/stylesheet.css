@@ -43,6 +43,20 @@
 #exportButton .image-view        { -fx-image: url("light/export-button.png"); }
 #newDoodle .image-view           { -fx-image: url("light/newFile.png"); }
 #copyDoodle .image-view          { -fx-image: url("light/copy.png"); }
+#robotHeaderImage   { -fx-image: url("light/robot-3.png"); }
+.robot-tab-icon     { -fx-image: url("light/robot-3.png"); }
+#showHideImage      { -fx-image: url("light/darkBulb.png"); }
+#showAllImage       { -fx-image: url("light/litBulb.png"); }
+.lit-bulb-icon      { -fx-image: url("light/litBulb.png"); }
+#lockImage          { -fx-image: url("light/unlock.png"); }
+#drawrImage               { -fx-image: url("light/drawerClose.png"); }
+#componentTreeDrawerArrow { -fx-image: url("light/drawerClose.png"); }
+#timelineImage            { -fx-image: url("light/drawerClose.png"); }
+#RobotLabDrawerImage      { -fx-image: url("light/robot-close.png"); }
+.tree-icon                { -fx-image: url("light/tree.png"); }
+.load-limb-arms-icon      { -fx-image: url("light/Load-Limb-Arms.png"); }
+.advanced-config-icon     { -fx-image: url("light/Advanced-Configuration.png"); }
+.notes-icon               { -fx-image: url("light/notes.png"); }
 
 /* ── Regular buttons ────────────────────────────────── */
 .button                                  { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 1px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-text-fill: #263d8c; }

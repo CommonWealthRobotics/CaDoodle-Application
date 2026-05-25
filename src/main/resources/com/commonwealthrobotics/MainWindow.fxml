@@ -87,11 +87,7 @@
                                                          </padding>
                                                          <children>
                                                             <Label text="This Is a Robot!" GridPane.columnIndex="1" />
-                                                            <ImageView fitHeight="40.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
-                                                               <image>
-                                                                  <Image url="@robot-3.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="robotHeaderImage" fitHeight="40.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                                             <Label text="Controllers" textFill="#263d8c" GridPane.rowIndex="1">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
@@ -121,11 +117,7 @@
                                           </AnchorPane>
                                     </content>
                                        <graphic>
-                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@robot-3.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView styleClass="robot-tab-icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Base of your robot" />
@@ -250,11 +242,7 @@
                                              </children></AnchorPane>
                                        </content>
                                        <graphic>
-                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@Load-Limb-Arms.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView styleClass="load-limb-arms-icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Head and Brain" />
@@ -265,11 +253,7 @@
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                        </content>
                                        <graphic>
-                                          <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@Advanced-Configuration.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView styleClass="advanced-config-icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Advanced controls and features" />
@@ -311,11 +295,7 @@
                                              <children>
                                                 <Button fx:id="drawerButton" mnemonicParsing="false" onAction="#onDrawer" styleClass="image-button" translateX="5.0" GridPane.columnIndex="1">
                                                    <graphic>
-                                                      <ImageView fx:id="drawrImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@drawerClose.png" />
-                                                         </image>
-                                                      </ImageView>
+                                                      <ImageView fx:id="drawrImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                 </Button>
                                              </children>
@@ -400,11 +380,7 @@
 
                                                                         <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button" GridPane.columnIndex="0">
                                                                            <graphic>
-                                                                              <ImageView fx:id="showHideImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                                                                 <image>
-                                                                                    <Image url="@darkBulb.png" />
-                                                                                 </image>
-                                                                              </ImageView>
+                                                                              <ImageView fx:id="showHideImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                                                                            </graphic>
                                                                            <tooltip>
                                                                               <Tooltip text="Hide Object &lt;Ctrl + H&gt;" />
@@ -413,11 +389,7 @@
 
                                                                         <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="1">
                                                                            <graphic>
-                                                                              <ImageView fx:id="lockImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                                                                 <image>
-                                                                                    <Image url="@unlock.png" />
-                                                                                 </image>
-                                                                              </ImageView>
+                                                                              <ImageView fx:id="lockImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                                                                            </graphic>
                                                                            <tooltip>
                                                                               <Tooltip fx:id="lockUnlockTooltip" text="Lock Changes" />
@@ -489,16 +461,8 @@
                                                          <graphic>
                                                             <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                                <children>
-                                                                  <ImageView fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@tree.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                                  <ImageView fx:id="componentTreeDrawerArrow" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" rotate="180.0">
-                                                                     <image>
-                                                                        <Image url="@drawerClose.png" />
-                                                                     </image>
-                                                                  </ImageView>
+                                                                  <ImageView styleClass="tree-icon" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                                  <ImageView fx:id="componentTreeDrawerArrow" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" rotate="180.0" />
                                                                </children>
                                                             </HBox>
                                                          </graphic>
@@ -508,11 +472,7 @@
                                                       </Button>
                                                       <Button fx:id="RobotLabDrawer" alignment="BOTTOM_LEFT" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#robotLabDrawerEvent" styleClass="image-button">
                                                          <graphic>
-                                                            <ImageView fx:id="RobotLabDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@robot-close.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="RobotLabDrawerImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="Robot: Make a robot" />
@@ -524,11 +484,7 @@
                                           </GridPane>
                                           <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" translateY="6.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
                                              <graphic>
-                                                <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@drawerClose.png" />
-                                                   </image>
-                                                </ImageView>
+                                                <ImageView fx:id="timelineImage" fitHeight="40.0" pickOnBounds="true" preserveRatio="true" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="Timeline: Look at previous steps" />
@@ -708,11 +664,7 @@
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="showAllImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@litBulb.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="showAllImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Show All  &lt;Ctrl + Shift + H&gt;" />
@@ -725,20 +677,12 @@
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="Show Hidden Shapes">
                                  <graphic>
-                                    <ImageView fitHeight="24.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@litBulb.png" />
-                                       </image>
-                                    </ImageView>
+                                    <ImageView styleClass="lit-bulb-icon" fitHeight="24.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                  </graphic>
                               </MenuItem>
                             <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="Hide Notes">
                                  <graphic>
-                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@notes.png" />
-                                       </image>
-                                    </ImageView>
+                                    <ImageView styleClass="notes-icon" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                                  </graphic>
                               </MenuItem>
                               <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="Hide Connectors">

@@ -55,7 +55,6 @@ IMAGES=(
     # MainWindow
     "newRobot.png"
     "CADoodleHome.png"
-    "biglogo.png"
     "home.png"
     "fit.png"
     "zoomIn.png"
@@ -85,7 +84,6 @@ IMAGES=(
     "forward.png"
     # ExportPanel
     "Script-Tab-Stl.png"
-    "Script-Tab-SVG.png"
     "Script-Tab-Blender.png"
     "Script-Tab-FreeCAD.png"
     "ObjImg.png"
@@ -93,6 +91,19 @@ IMAGES=(
     "export-button.png"
     # ProjectPanel
     "newFile.png"
+    "robot-3.png"
+    "litBulb.png"
+    "darkBulb.png"
+    "lock.png"
+    "unlock.png"
+    "robot-close.png"
+    "robot-open.png"
+    "tree.png"
+    "drawerClose.png"
+    "drawerOpen.png"
+    "notes.png"
+    "Load-Limb-Arms.png"
+    "Advanced-Configuration.png"
 )
 
 # ── Process ───────────────────────────────────────────────────────────────────
