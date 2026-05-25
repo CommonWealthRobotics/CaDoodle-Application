@@ -31,7 +31,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="totalApplicationBackground" prefHeight="663.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="totalApplicationBackground" prefHeight="868.0" prefWidth="1139.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -629,7 +629,7 @@
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="470.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="NEVER" />
               </rowConstraints>
                <children>
                   <HBox GridPane.columnIndex="2">
@@ -650,7 +650,7 @@
                               <Tooltip text="Pattern Copy In Circle" />
                            </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
@@ -667,7 +667,7 @@
                               <Tooltip text="Fillet or Chamfer" />
                            </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon">
@@ -794,7 +794,7 @@
                            </tooltip>
                         </Button>
                         <Region maxWidth="5" minWidth="5" prefWidth="5" />
-                        <HBox alignment="CENTER">
+                        <HBox alignment="CENTER" fillHeight="false">
                   <padding>
                     <Insets bottom="0" left="4" right="4" top="0" />
                   </padding>
@@ -804,7 +804,7 @@
                         </HBox>                       
                      </children>
                   </HBox>
-                  <HBox fx:id="buttonBar" style="-fx-background-insets: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
+                  <HBox fx:id="buttonBar" fillHeight="false" style="-fx-background-insets: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
                      <children>
                         <Button fx:id="copyButton" mnemonicParsing="false" onAction="#onCopy" styleClass="image-button">
                            <graphic>
