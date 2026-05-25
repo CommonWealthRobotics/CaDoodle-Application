@@ -669,7 +669,7 @@
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
-                              <ImageView fx:id="showAllImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon" />
+                              <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Show All  &lt;Ctrl + Shift + H&gt;" />
@@ -724,34 +724,22 @@
                            <children>
                               <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="menu-button2">
                                 <graphic>
-                                    <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" styleClass="extraGroupImage" />
                                 </graphic>
                                 <items>
                                   <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="Hull">
                                        <graphic>
-                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@hull.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
                                        </graphic>
                                     </MenuItem>
                                     <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="Intersect">
                                        <graphic>
-                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@intersect.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
                                        </graphic>
                                     </MenuItem>
                                     <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="Xor">
                                        <graphic>
-                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@xor.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" fx:id="xorImage" />
                                        </graphic>
                                     </MenuItem>
                                 </items>

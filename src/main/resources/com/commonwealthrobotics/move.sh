@@ -104,6 +104,9 @@ IMAGES=(
     "notes.png"
     "Load-Limb-Arms.png"
     "Advanced-Configuration.png"
+    "hull.png"
+    "intersect.png"
+    "xor.png"
 )
 
 # ── Process ───────────────────────────────────────────────────────────────────

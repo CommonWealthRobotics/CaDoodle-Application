@@ -20,7 +20,6 @@
 #extrudeButton .image-view       { -fx-image: url("light/extrude.png"); }
 #filletButton .image-view        { -fx-image: url("light/fillet.png"); }
 #visbilityButton .image-view     { -fx-image: url("light/showMenu.png"); }
-#advancedGroupMenu .image-view   { -fx-image: url("light/intersectMenu.png"); }
 #groupButton .image-view         { -fx-image: url("light/group.png"); }
 #ungroupButton .image-view       { -fx-image: url("light/ungroup.png"); }
 #alignButton .image-view         { -fx-image: url("light/align.png"); }
@@ -56,7 +55,10 @@
 .load-limb-arms-icon      { -fx-image: url("light/Load-Limb-Arms.png"); }
 .advanced-config-icon     { -fx-image: url("light/Advanced-Configuration.png"); }
 .notes-icon               { -fx-image: url("light/notes.png"); }
-
+.extraGroupImage { -fx-image: url("light/hull.png"); }
+.hullImage  { -fx-image: url("light/hull.png"); }
+.intersectImage { -fx-image: url("light/intersect.png"); }
+.xorImage  { -fx-image: url("light/xor.png"); }
 /* ── Regular buttons ────────────────────────────────── */
 .button                                  { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 1px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-text-fill: #263d8c; }
 .button:hover                            { -fx-background-color: #e7a436; }
@@ -171,22 +173,7 @@
     -fx-border-width: 1px;
     -fx-background-insets: 0;
 }
-.menu-button2 > .label {
-    -fx-padding: 0 0 0 0;   /* top right bottom left */
-}
-.menu-button2 > .arrow-button {
-    -fx-min-width: 0;
-    -fx-pref-width: 0;
-    -fx-max-width: 0;
-    -fx-padding: 0;
-}
-/* ---------- hide the arrow ---------- */
-.menu-button2 > .arrow-button > .arrow {
-    -fx-opacity: 0;
-    -fx-min-width: 0;
-    -fx-pref-width: 0;
-    -fx-max-width: 0;
-}
+
 .menu-button2:focused {
     -fx-border-color: #bb1f09; /* logo-red */
 }
@@ -832,4 +819,19 @@
 .check-box:selected .mark                { -fx-background-color: #f4ede0; }
 .check-box:indeterminate .box            { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; }
 
+/* ── MenuButton arrow/caret ─────────────────────────── */
+.menu-button .arrow-button {
+    -fx-background-color: transparent;
+}
 
+.menu-button .arrow {
+    -fx-background-color: #263d8c; /* logo-blue */
+}
+
+.menu-button:hover .arrow {
+    -fx-background-color: #263d8c;
+}
+
+.menu-button:pressed .arrow {
+    -fx-background-color: #f4ede0; /* logo-beige */
+}

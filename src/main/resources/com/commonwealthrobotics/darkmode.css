@@ -61,8 +61,6 @@
     -fx-background-insets: 0;
 }
 .menu-button2 > .label          { -fx-padding: 0; }
-.menu-button2 > .arrow-button   { -fx-min-width: 0; -fx-pref-width: 0; -fx-max-width: 0; -fx-padding: 0; }
-.menu-button2 > .arrow-button > .arrow { -fx-opacity: 0; -fx-min-width: 0; -fx-pref-width: 0; -fx-max-width: 0; }
 .menu-button2:focused           { -fx-border-color: #f38ba8; }
 .menu-button2:pressed           { -fx-background-color: #45475a; }
 .menu-button2:hover             { -fx-background-color: #313244; }
@@ -301,6 +299,23 @@
     -fx-background-color: transparent;
 }
 
+/* ── MenuButton arrow/caret ─────────────────────────── */
+.menu-button .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.menu-button .arrow {
+    -fx-background-color: #cdd6f4;
+}
+
+.menu-button:hover .arrow {
+    -fx-background-color: #cdd6f4;
+}
+
+.menu-button:pressed .arrow {
+    -fx-background-color: #1e1e2e;
+}
+
 #makeRobotButton .image-view     { -fx-image: url("dark/newRobot.png"); }
 #homeButton .image-view          { -fx-image: url("dark/CADoodleHome.png"); }
 #logoButton .image-view          { -fx-image: url("dark/biglogo.png"); }
@@ -318,7 +333,6 @@
 #extrudeButton .image-view       { -fx-image: url("dark/extrude.png"); }
 #filletButton .image-view        { -fx-image: url("dark/fillet.png"); }
 #visbilityButton .image-view     { -fx-image: url("dark/showMenu.png"); }
-#advancedGroupMenu .image-view   { -fx-image: url("dark/intersectMenu.png"); }
 #groupButton .image-view         { -fx-image: url("dark/group.png"); }
 #ungroupButton .image-view       { -fx-image: url("dark/ungroup.png"); }
 #alignButton .image-view         { -fx-image: url("dark/align.png"); }
@@ -356,4 +370,7 @@
 .load-limb-arms-icon      { -fx-image: url("dark/Load-Limb-Arms.png"); }
 .advanced-config-icon     { -fx-image: url("dark/Advanced-Configuration.png"); }
 .notes-icon               { -fx-image: url("dark/notes.png"); }
-
+.extraGroupImage { -fx-image: url("dark/hull.png"); }
+.hullImage  { -fx-image: url("dark/hull.png"); }
+.intersectImage { -fx-image: url("dark/intersect.png"); }
+.xorImage  { -fx-image: url("dark/xor.png"); }
