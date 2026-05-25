@@ -376,7 +376,7 @@ public class Main extends Application {
 		} else {
 			SplashManager.renderSplashFrame(2, "No Network");
 		}
-
+		SplashManager.renderSplashFrame(2, "Images Loaded!");
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		CSG.setUseGPU(false);
@@ -402,7 +402,7 @@ public class Main extends Application {
 
 	private static void ensureGitAssetsArePresent() {
 
-		SplashManager.renderSplashFrame(2, "Downloading...");
+		SplashManager.renderSplashFrame(2, "Load Image Assets...");
 
 		String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 		String nowVer = "" + StudioBuildInfo.getSDKVersion();
