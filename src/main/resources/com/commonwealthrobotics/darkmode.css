@@ -8,6 +8,17 @@
 .anchor-pane                { -fx-background-color: #1e1e2e; }
 .label                      { -fx-text-fill: #cdd6f4; }
 
+
+/* ── Regular buttons ────────────────────────────────── */
+.button                                  { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-width: 1px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-text-fill: #cdd6f4; }
+.button:hover                            { -fx-background-color: #45475a; }
+.button:pressed                          { -fx-background-color: #89b4fa; -fx-text-fill: #1e1e2e; }
+.button:focused                          { -fx-border-color: #f38ba8; -fx-border-width: 2px; }
+.button:disabled                         { -fx-opacity: 0.4; }
+
+
+
+
 /* ── Image buttons — must stay transparent ──────────── */
 .image-button {
     -fx-background-color: transparent;
@@ -176,6 +187,70 @@
 .anchor-pane.card-style             { -fx-background-color: #313244; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 3); -fx-border-width: 1px; -fx-border-color: #45475a; -fx-padding: 20px; }
 .anchor-pane.warning                { -fx-background-color: #45475a; -fx-border-color: #f38ba8; -fx-text-fill: #cdd6f4; -fx-border-width: 1px; }
 
+/* ── Scroll bars (global) ───────────────────────────── */
+.scroll-bar                              { -fx-background-color: #181825; }
+.scroll-bar .thumb                       { -fx-background-color: #89b4fa; -fx-background-radius: 4px; }
+.scroll-bar .thumb:hover                 { -fx-background-color: #89b4fa; }
+.scroll-bar .thumb:pressed               { -fx-background-color: #89b4fa; }
+.scroll-bar .track                       { -fx-background-color: #181825; }
+.scroll-bar .track-background            { -fx-background-color: #181825; }
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button            { -fx-background-color: #313244; -fx-padding: 4px; }
+.scroll-bar .increment-button:hover,
+.scroll-bar .decrement-button:hover      { -fx-background-color: #45475a; }
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow             { -fx-background-color: #cdd6f4; }
+
+/* ── Context menus ──────────────────────────────────── */
+.context-menu {
+    -fx-background-color: #313244;
+    -fx-border-color: #45475a;
+    -fx-border-width: 1px;
+    -fx-padding: 4px 0;
+}
+.context-menu .menu-item                 { -fx-background-color: transparent; }
+.context-menu .menu-item .label          { -fx-text-fill: #cdd6f4; }
+.context-menu .menu-item:hover,
+.context-menu .menu-item:focused         { -fx-background-color: #45475a; }
+.context-menu .menu-item:hover .label,
+.context-menu .menu-item:focused .label  { -fx-text-fill: #cdd6f4; }
+.context-menu .menu-item:disabled .label { -fx-text-fill: #6c7086; }
+.context-menu .separator .line           { -fx-border-color: #45475a; -fx-border-width: 1px 0 0 0; }
+.context-menu .menu-item > .right-container > .arrow { -fx-background-color: #cdd6f4; }
+
+/* ── Spinner ────────────────────────────────────────── */
+.spinner                                 { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-width: 1px; -fx-border-radius: 4px; }
+.spinner .text-field                     { -fx-background-color: #1e1e2e; -fx-text-fill: #cdd6f4; -fx-border-width: 0; }
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button         { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-width: 0 0 0 1px; }
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover   { -fx-background-color: #45475a; }
+.spinner .increment-arrow-button:pressed,
+.spinner .decrement-arrow-button:pressed { -fx-background-color: #585b70; }
+.spinner .increment-arrow,
+.spinner .decrement-arrow                { -fx-background-color: #cdd6f4; }
+
+/* ── Editable combo box (setUpNumberChoices) ────────── */
+.combo-box:editable .text-field          { -fx-background-color: #1e1e2e; -fx-text-fill: #cdd6f4; -fx-border-width: 0; }
+.combo-box .arrow-button                 { -fx-background-color: #313244; -fx-border-color: #89b4fa; -fx-border-width: 0 0 0 1px; }
+.combo-box .arrow-button:hover           { -fx-background-color: #45475a; }
+.combo-box .arrow-button .arrow          { -fx-background-color: #cdd6f4; }
+
+/* ── Radio buttons ──────────────────────────────────── */
+.radio-button                            { -fx-text-fill: #cdd6f4; }
+.radio-button .radio                     { -fx-background-color: #1e1e2e; -fx-border-color: #89b4fa; -fx-border-width: 2px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.radio-button:hover .radio               { -fx-border-color: #cdd6f4; }
+.radio-button:selected .radio            { -fx-border-color: #89b4fa; }
+.radio-button:selected .dot              { -fx-background-color: #89b4fa; -fx-background-radius: 50%; }
+
+/* ── Check boxes ────────────────────────────────────── */
+.check-box                               { -fx-text-fill: #cdd6f4; }
+.check-box .box                          { -fx-background-color: #1e1e2e; -fx-border-color: #89b4fa; -fx-border-width: 2px; -fx-border-radius: 3px; -fx-background-radius: 3px; }
+.check-box:hover .box                    { -fx-border-color: #cdd6f4; }
+.check-box:selected .box                 { -fx-background-color: #89b4fa; -fx-border-color: #89b4fa; }
+.check-box:selected .mark                { -fx-background-color: #1e1e2e; }
+.check-box:indeterminate .box            { -fx-background-color: #45475a; -fx-border-color: #89b4fa; }
+
 /* ── Button graphics ────────────────────────────────── */
 #makeRobotButton .image-view        { -fx-image: url("newRobot.png"); }
 #homeButton .image-view             { -fx-image: url("CADoodleHome.png"); }
@@ -207,3 +282,17 @@
 #deleteButton .image-view           { -fx-image: url("trash.png"); }
 #undoButton .image-view             { -fx-image: url("back.png"); }
 #redoButton .image-view             { -fx-image: url("forward.png"); }
+
+/* ── ExportPanel graphics ───────────────────────────── */
+#stl .image-view         { -fx-image: url("Script-Tab-Stl.png"); }
+#manifoldSTL .image-view { -fx-image: url("Script-Tab-Stl.png"); }
+#svg .image-view         { -fx-image: url("Script-Tab-SVG.png"); }
+#blender .image-view     { -fx-image: url("Script-Tab-Blender.png"); }
+#freecad .image-view     { -fx-image: url("Script-Tab-FreeCAD.png"); }
+#obj .image-view         { -fx-image: url("ObjImg.png"); }
+#type3mf .image-view     { -fx-image: url("3mf.png"); }
+#exportButton .image-view { -fx-image: url("export-button.png"); }
+
+/* ── ProjectPanel graphics ──────────────────────────── */
+#newDoodle .image-view  { -fx-image: url("newFile.png"); }
+#copyDoodle .image-view { -fx-image: url("copy.png"); }

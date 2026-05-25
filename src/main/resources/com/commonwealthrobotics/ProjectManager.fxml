@@ -36,11 +36,7 @@
                <children>
                   <Button fx:id="newDoodle" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#onNewProject" styleClass="image-button" text="New Doodle" wrapText="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@newFile.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                      <opaqueInsets>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -51,11 +47,7 @@
                   </Button>
                   <Button fx:id="copyDoodle" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#onCopyProject" styleClass="image-button" text="Copy Doodle..." wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@copy.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                      <opaqueInsets>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

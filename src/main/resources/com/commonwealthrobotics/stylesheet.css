@@ -34,6 +34,28 @@
 #undoButton .image-view          { -fx-image: url("back.png"); }
 #redoButton .image-view          { -fx-image: url("forward.png"); }
 
+/* ── ExportPanel graphics ───────────────────────────── */
+#stl .image-view         { -fx-image: url("Script-Tab-Stl.png"); }
+#manifoldSTL .image-view { -fx-image: url("Script-Tab-Stl.png"); }
+#svg .image-view         { -fx-image: url("Script-Tab-SVG.png"); }
+#blender .image-view     { -fx-image: url("Script-Tab-Blender.png"); }
+#freecad .image-view     { -fx-image: url("Script-Tab-FreeCAD.png"); }
+#obj .image-view         { -fx-image: url("ObjImg.png"); }
+#type3mf .image-view     { -fx-image: url("3mf.png"); }
+#exportButton .image-view { -fx-image: url("export-button.png"); }
+
+/* ── ProjectPanel graphics ──────────────────────────── */
+#newDoodle .image-view  { -fx-image: url("newFile.png"); }
+#copyDoodle .image-view { -fx-image: url("copy.png"); }
+
+/* ── Regular buttons ────────────────────────────────── */
+.button                                  { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 1px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-text-fill: #263d8c; }
+.button:hover                            { -fx-background-color: #e7a436; }
+.button:pressed                          { -fx-background-color: #263d8c; -fx-text-fill: #f4ede0; }
+.button:focused                          { -fx-border-color: #f38ba8; -fx-border-width: 2px; }
+.button:disabled                         { -fx-opacity: 0.4; }
+
+
 .image-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -685,3 +707,72 @@
 .combo-box-popup .list-cell:selected {
     -fx-background-color: #e7a436; /* logo-orange */
 }
+
+/* ── Scroll bars (global) ───────────────────────────── */
+.scroll-bar                              { -fx-background-color: #f4ede0; }
+.scroll-bar .thumb                       { -fx-background-color: #263d8c; -fx-background-radius: 4px; }
+.scroll-bar .thumb:hover                 { -fx-background-color: #e7a436; }
+.scroll-bar .thumb:pressed               { -fx-background-color: #e7a436; }
+.scroll-bar .track                       { -fx-background-color: #f4ede0; }
+.scroll-bar .track-background            { -fx-background-color: #f4ede0; }
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button            { -fx-background-color: #f2c83d; -fx-padding: 4px; }
+.scroll-bar .increment-button:hover,
+.scroll-bar .decrement-button:hover      { -fx-background-color: #e7a436; }
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow             { -fx-background-color: #263d8c; }
+
+/* ── Context menus ──────────────────────────────────── */
+.context-menu {
+    -fx-background-color: #f4ede0;
+    -fx-border-color: #263d8c;
+    -fx-border-width: 1px;
+    -fx-padding: 4px 0;
+}
+.context-menu .menu-item                 { -fx-background-color: transparent; }
+.context-menu .menu-item .label          { -fx-text-fill: #263d8c; }
+.context-menu .menu-item:hover,
+.context-menu .menu-item:focused         { -fx-background-color: #f2c83d; }
+.context-menu .menu-item:hover .label,
+.context-menu .menu-item:focused .label  { -fx-text-fill: #263d8c; }
+.context-menu .menu-item:disabled .label { -fx-text-fill: #aaaaaa; }
+.context-menu .separator .line           { -fx-border-color: #263d8c; -fx-border-width: 1px 0 0 0; }
+.context-menu .menu-item > .right-container > .arrow { -fx-background-color: #263d8c; }
+
+/* ── Text nodes ─────────────────────────────────────── */
+#memoryUsageText { -fx-fill: #263d8c; }
+
+/* ── Spinner ────────────────────────────────────────── */
+.spinner                                 { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 1px; -fx-border-radius: 4px; }
+.spinner .text-field                     { -fx-background-color: #f4ede0; -fx-text-fill: #263d8c; -fx-border-width: 0; }
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button         { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 0 0 0 1px; }
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover   { -fx-background-color: #e7a436; }
+.spinner .increment-arrow-button:pressed,
+.spinner .decrement-arrow-button:pressed { -fx-background-color: #e7a436; }
+.spinner .increment-arrow,
+.spinner .decrement-arrow                { -fx-background-color: #263d8c; }
+
+/* ── Editable combo box (setUpNumberChoices) ────────── */
+.combo-box:editable .text-field          { -fx-background-color: #f4ede0; -fx-text-fill: #263d8c; -fx-border-width: 0; }
+.combo-box .arrow-button                 { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 0 0 0 1px; }
+.combo-box .arrow-button:hover           { -fx-background-color: #e7a436; }
+.combo-box .arrow-button .arrow          { -fx-background-color: #263d8c; }
+
+/* ── Radio buttons ──────────────────────────────────── */
+.radio-button                            { -fx-text-fill: #263d8c; }
+.radio-button .radio                     { -fx-background-color: #f4ede0; -fx-border-color: #263d8c; -fx-border-width: 2px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.radio-button:hover .radio               { -fx-border-color: #e7a436; }
+.radio-button:selected .radio            { -fx-border-color: #263d8c; }
+.radio-button:selected .dot              { -fx-background-color: #263d8c; -fx-background-radius: 50%; }
+
+/* ── Check boxes ────────────────────────────────────── */
+.check-box                               { -fx-text-fill: #263d8c; }
+.check-box .box                          { -fx-background-color: #f4ede0; -fx-border-color: #263d8c; -fx-border-width: 2px; -fx-border-radius: 3px; -fx-background-radius: 3px; }
+.check-box:hover .box                    { -fx-border-color: #e7a436; }
+.check-box:selected .box                 { -fx-background-color: #263d8c; -fx-border-color: #263d8c; }
+.check-box:selected .mark                { -fx-background-color: #f4ede0; }
+.check-box:indeterminate .box            { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; }
+
+

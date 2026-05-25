@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -76,12 +75,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onBrowse" style="-fx-background-color: #d0d0d0; -fx-text-fill: black; -fx-border-color: black !important;                      -fx-border-width: 1 !important; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" text="Browse...">
-                                 <styleClass>
-                                    <String fx:value="image-button-focus" />
-                                    <String fx:value="image-button" />
-                                 </styleClass>
-                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onBrowse" styleClass="image-button-focus" text="Browse..." />
                               <TextField fx:id="workingDirPath" onAction="#onBrowse" HBox.hgrow="ALWAYS">
                                  <HBox.margin>
                                     <Insets left="10.0" />

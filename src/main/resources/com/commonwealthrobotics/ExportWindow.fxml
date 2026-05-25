@@ -35,64 +35,37 @@
          <children>
             <CheckBox fx:id="stl" contentDisplay="TOP" mnemonicParsing="false" onAction="#fstl" text="Fast STL" GridPane.halignment="CENTER">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@Script-Tab-Stl.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
             <CheckBox fx:id="svg" contentDisplay="TOP" mnemonicParsing="false" text="SVG" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@Script-Tab-SVG.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
             <CheckBox fx:id="blender" contentDisplay="TOP" mnemonicParsing="false" text="Blender" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@Script-Tab-Blender.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
             <CheckBox fx:id="freecad" contentDisplay="TOP" mnemonicParsing="false" text="FreeCAD" GridPane.columnIndex="3" GridPane.halignment="CENTER">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@Script-Tab-FreeCAD.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
-            <Button mnemonicParsing="false" onAction="#onExport" styleClass="image-button-highlight" text="Export..." GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#onExport" styleClass="image-button-highlight" text="Export..." GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@export-button.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
             <CheckBox fx:id="obj" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" text="OBJ" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@ObjImg.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
             <CheckBox fx:id="manifoldSTL" contentDisplay="TOP" mnemonicParsing="false" onAction="#mstl" selected="true" text="Manifold STL" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@Script-Tab-Stl.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
                <tooltip>
                   <Tooltip text="This is for low quality slicing engines such as PrusaSlicer and BambooSlicer. They use a Windows only mesh fixing that is not generally available. This step ensures your STL will work in those slicers. NOTE this will take a LONG time to complete. " />
@@ -100,11 +73,7 @@
             </CheckBox>
             <CheckBox fx:id="type3mf" mnemonicParsing="false" text="3mf" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@3mf.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
          </children>
