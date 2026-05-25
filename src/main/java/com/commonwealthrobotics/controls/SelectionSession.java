@@ -31,6 +31,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.creature.LimbOption;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -1061,7 +1062,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						setText(null);
 						setFont(Font.getDefault());
 					} else {
-						setFont(new Font(item, Font.getDefault().getSize()));
+						setFont(new Font(item, FontSizeManager.getDefaultSize()));
 						setText(item);
 					}
 				}
@@ -1077,7 +1078,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						setText(null);
 						setFont(Font.getDefault());
 					} else {
-						setFont(new Font(item, Font.getDefault().getSize()));
+						setFont(new Font(item, FontSizeManager.getDefaultSize()));
 						setText(item);
 					}
 				}

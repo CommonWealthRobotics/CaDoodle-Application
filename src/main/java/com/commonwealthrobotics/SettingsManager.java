@@ -32,6 +32,7 @@ import javax.net.ssl.X509TrustManager;
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -98,6 +99,9 @@ public class SettingsManager implements ICSGClientEvent {
 	private TextField insertionExplanation;
 
 	@FXML
+	private TextField fontSizeField;
+
+	@FXML
 	private TextField ipaddressField;
 	@FXML
 	private TextField numberOfSides;
@@ -132,6 +136,21 @@ public class SettingsManager implements ICSGClientEvent {
 	private String bindir;
 	@FXML
 	private javafx.scene.control.TabPane topPane;
+
+	@FXML
+	void onFontSize(ActionEvent event) {
+		try {
+			int int1 = Integer.parseInt(fontSizeField.getText());
+			if (int1 < 8)
+				int1 = 8;
+			if (int1 > 20)
+				int1 = 20;
+
+			FontSizeManager.setFontSize(int1);
+		} catch (Throwable t) {
+			Log.error(t);
+		}
+	}
 
 	@FXML
 	void onTest(ActionEvent event) {
@@ -535,13 +554,15 @@ public class SettingsManager implements ICSGClientEvent {
 			styleButtons.getChildren().add(opt);
 		}
 
-		//		ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", "" + darkModeSel.isSelected());
-		//		mc.getActiveProject().resetAllStyleSheets();
-		//		darkModeSel.setSelected(darkMode);
-		//		lightModeSel.setSelected(!darkMode);
+		// ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", "" +
+		// darkModeSel.isSelected());
+		// mc.getActiveProject().resetAllStyleSheets();
+		// darkModeSel.setSelected(darkMode);
+		// lightModeSel.setSelected(!darkMode);
 		updateVersionOptions();
 		mc.getActiveProject().setStyleSheet(topPane);
 		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
+		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
 	}
 
 	@FXML

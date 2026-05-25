@@ -18,13 +18,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane fx:id="topPane" prefHeight="821.0" prefWidth="990.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<TabPane fx:id="topPane" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <tabs>
       <Tab closable="false" text="Basic">
          <content>
-            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="970.0" styleClass="anchor-pane">
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" styleClass="anchor-pane">
                <children>
-                  <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
+                  <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>
                       <ColumnConstraints maxWidth="386.0" minWidth="230.0" prefWidth="374.0" />
                       <ColumnConstraints hgrow="ALWAYS" maxWidth="589.0" minWidth="519.0" prefWidth="552.0" />
@@ -32,11 +32,12 @@
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="NEVER" />
                         <RowConstraints minHeight="8.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
                     </rowConstraints>
@@ -115,7 +116,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="Check on launch">
                                  <toggleGroup>
@@ -141,7 +142,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </CheckBox>
-                        <Label text="Style and Colors" GridPane.rowIndex="7">
+                        <Label text="Style and Colors" GridPane.rowIndex="8">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -158,7 +159,16 @@
                            </padding>
                         </Label>
                         <TextField fx:id="numPoints" onAction="#onPointInCurve" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <Label text="Font Size" GridPane.rowIndex="7">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="fontSizeField" onAction="#onFontSize" promptText="Type font point size here" text="12" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                      </children>
                   </GridPane>
                </children>

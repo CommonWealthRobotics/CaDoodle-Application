@@ -46,6 +46,7 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.assets.IFontSizeReciver;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.IApprovalForDownload;
 import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
@@ -889,8 +890,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public void setStyleSheet(Region node) {
-		if (!panes.contains(node))
+		if (!panes.contains(node)) {
+			FontSizeManager.addListener(new IFontSizeReciver() {
+				@Override
+				public void fontSizeChange(int tmp) {
+					node.setStyle("-fx-font-size: " + tmp + "pt");
+				}
+			});
 			panes.add(node);
+		}
 
 		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", getStyleSheetOptions().get(0)).toString();
 

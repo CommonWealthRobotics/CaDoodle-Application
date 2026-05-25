@@ -2,6 +2,8 @@ package com.commonwealthrobotics.numbers;
 
 import com.commonwealthrobotics.RulerManager;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
+import com.neuronrobotics.bowlerstudio.assets.IFontSizeReciver;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -92,7 +94,12 @@ public class ThreedNumber {
 
 		textField.setMinWidth(62);
 		textField.setStyle("-fx-padding: 0; -fx-alignment: center;");
-
+		FontSizeManager.addListener(new IFontSizeReciver() {
+			@Override
+			public void fontSizeChange(int tmp) {
+				textField.setStyle("-fx-padding: 0; -fx-alignment: center; " + "-fx-font-size: " + tmp + "pt");
+			}
+		});
 		// Regular expression: -aaaa.bbb, digitsin "aaaa" is defined in wholeDigits
 		Pattern validPattern = decimalSeparator == '.'
 				? Pattern.compile(String.format("^-?\\d{0,%d}(?:\\.\\d{0,3})?$", wholeDigits))
@@ -120,7 +127,8 @@ public class ThreedNumber {
 		});
 
 		textField.setTextFormatter(textFormatter);
-		textField.prefWidthProperty().bind(textField.textProperty().length().multiply(7).add(20));
+		textField.prefWidthProperty().bind(
+				textField.textProperty().length().multiply(7.0 / 12.0 * FontSizeManager.getDefaultSize()).add(20));
 		textField.setOnKeyPressed(event -> {
 
 			if (lockout)

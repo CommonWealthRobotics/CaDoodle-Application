@@ -39,7 +39,7 @@
          </columnConstraints>
          <rowConstraints>
             <RowConstraints vgrow="NEVER" />
-            <RowConstraints maxHeight="38" minHeight="38" prefHeight="38" vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
             <RowConstraints valignment="TOP" vgrow="NEVER" />
          </rowConstraints>
          <children>
@@ -264,7 +264,7 @@
                               </TabPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="componentTreeHolder" minWidth="200.0" prefWidth="220.0" style="-fx-border-color: #BBBBBB; -fx-border-width: 0 1 0 0;" HBox.hgrow="NEVER" />
+                        <AnchorPane fx:id="componentTreeHolder" style="-fx-border-color: #BBBBBB; -fx-border-width: 0 1 0 0;" HBox.hgrow="NEVER" />
                         <StackPane minHeight="10.0" minWidth="10.0" pickOnBounds="false" scaleShape="false" snapToPixel="false" HBox.hgrow="SOMETIMES">
                            <children>
                                 <AnchorPane fx:id="view3d" minHeight="10.0" minWidth="10.0" pickOnBounds="false" prefHeight="10.0" prefWidth="10.0" snapToPixel="false" style="-fx-background-color: transparent" />
@@ -514,9 +514,9 @@
                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="72.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                    <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="34.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="34.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                                    <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints vgrow="SOMETIMES" />
                                     <RowConstraints vgrow="ALWAYS" />
                                 </rowConstraints>
 
@@ -629,7 +629,7 @@
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="470.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="NEVER" />
+                <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <HBox GridPane.columnIndex="2">

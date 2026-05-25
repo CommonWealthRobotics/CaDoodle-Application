@@ -258,7 +258,7 @@ public class Main extends Application {
 			Log.warning("CaDoodle Version " + StudioBuildInfo.getVersion());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.debug("CaDoodle Exiting Clean");
-				//Log.flush();
+				// Log.flush();
 			}));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -378,7 +378,7 @@ public class Main extends Application {
 		}
 		SplashManager.renderSplashFrame(2, "Images Loaded!");
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
-		FontSizeManager.setFontSize(12);
+		FontSizeManager.getDefaultSize();
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
 		launch();
@@ -418,7 +418,6 @@ public class Main extends Application {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 	}
-
 
 	// public static Thread getLoadDeps() {
 	// return loadDeps;
