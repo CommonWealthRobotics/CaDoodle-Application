@@ -899,7 +899,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				url = ScriptingEngine
 						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css")
-						.getAbsolutePath();
+						.toURI().toURL().toExternalForm();
 			} catch (GitAPIException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -916,7 +916,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					.filesInGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git");
 			for (String s : filesInGit) {
 				if (s.endsWith(".css")) {
-					sheets.add(s.substring(s.length() - 4, s.length()));
+					sheets.add(s.substring(0, s.length() - 4));
 				}
 			}
 		} catch (Exception e) {

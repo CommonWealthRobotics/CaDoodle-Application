@@ -37,7 +37,7 @@
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
                     </rowConstraints>
                      <children>
@@ -158,7 +158,7 @@
                            </padding>
                         </Label>
                         <TextField fx:id="numPoints" onAction="#onPointInCurve" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <VBox fx:id="styleButtons" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                      </children>
                   </GridPane>
                </children>
