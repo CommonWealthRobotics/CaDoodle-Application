@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.commonwealthrobotics.ActiveProject;
-import com.commonwealthrobotics.MainController;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
@@ -78,7 +77,6 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
