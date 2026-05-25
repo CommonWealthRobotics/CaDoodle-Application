@@ -1448,15 +1448,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.onUpdate(currentState, source, fi);
 		ObservableList<String> c = showAllImage.getStyleClass();
 		c.clear();
-		if (session.isAnyHidden())
-			c.add("lit-bulb-icon");
-		else
-			c.add("dark-bulb-icon");
 		if (session.isAnyHidden()) {
+			c.add("lit-bulb-icon");
+
 			BowlerStudio.runLater(() -> {
 				showAllButton.setDisable(false);
 			});
 		} else {
+			c.add("dark-bulb-icon");
+
 			BowlerStudio.runLater(() -> {
 				showAllButton.setDisable(true);
 			});
