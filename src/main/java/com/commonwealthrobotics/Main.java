@@ -380,6 +380,7 @@ public class Main extends Application {
 		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.setFontSize(12);
 		CSG.setUseGPU(false);
+		ActiveProject.getStyleSheetOptions();
 		launch();
 	}
 

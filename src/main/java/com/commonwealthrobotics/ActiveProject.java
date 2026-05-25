@@ -20,6 +20,8 @@ import java.util.function.BooleanSupplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -889,12 +891,38 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public void setStyleSheet(Region node) {
 		if (!panes.contains(node))
 			panes.add(node);
-		boolean darkMode = Boolean
-				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleDarkMode", "" + false).toString());
-		String sheet = darkMode ? "/com/commonwealthrobotics/darkmode.css" : "/com/commonwealthrobotics/stylesheet.css";
 
-		String url = Main.class.getResource(sheet).toExternalForm();
+		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", getStyleSheetOptions().get(0)).toString();
 
+		String url = Main.class.getResource("/com/commonwealthrobotics/stylesheet.css").toExternalForm();
+		if (!sheet.contentEquals("Default")) {
+			try {
+				url = ScriptingEngine
+						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css")
+						.getAbsolutePath();
+			} catch (GitAPIException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		node.getStylesheets().setAll(url);
+	}
+
+	public static ArrayList<String> getStyleSheetOptions() {
+		ArrayList<String> sheets = new ArrayList<String>();
+		sheets.add("Default");
+		try {
+			ArrayList<String> filesInGit = ScriptingEngine
+					.filesInGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git");
+			for (String s : filesInGit) {
+				if (s.endsWith(".css")) {
+					sheets.add(s.substring(s.length() - 4, s.length()));
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sheets;
 	}
 }

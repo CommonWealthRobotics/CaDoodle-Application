@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -89,11 +90,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private RadioButton insertOpt;
-	@FXML
-	private RadioButton darkModeSel;
 
-	@FXML
-	private RadioButton lightModeSel;
 	@FXML
 	private ToggleGroup insertStrat;
 
@@ -111,6 +108,8 @@ public class SettingsManager implements ICSGClientEvent {
 	private Label serverIPDisplay;
 	@FXML
 	private VBox serverStatusBox;
+	@FXML
+	private VBox styleButtons;
 
 	@FXML
 	private CheckBox startServerCheckbox;
@@ -172,12 +171,6 @@ public class SettingsManager implements ICSGClientEvent {
 		Log.debug("onSetCheck");
 		versionOptions.setDisable(true);
 		pinFile.delete();
-	}
-
-	@FXML
-	void onChangeColor(ActionEvent e) {
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", "" + darkModeSel.isSelected());
-		mc.getActiveProject().resetAllStyleSheets();
 	}
 
 	@FXML
@@ -527,10 +520,25 @@ public class SettingsManager implements ICSGClientEvent {
 			checkOnLaunch.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
-		boolean darkMode = Boolean
-				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleDarkMode", "" + false).toString());
-		darkModeSel.setSelected(darkMode);
-		lightModeSel.setSelected(!darkMode);
+		ArrayList<String> styleSheetOptions = mc.getActiveProject().getStyleSheetOptions();
+		String modeSelected = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", styleSheetOptions.get(0))
+				.toString();
+		ToggleGroup styleOptTogle = new ToggleGroup();
+		for (String s : styleSheetOptions) {
+			RadioButton opt = new RadioButton(s);
+			opt.setToggleGroup(styleOptTogle);
+			opt.setOnAction(event -> {
+				ConfigurationDatabase.put("CaDoodle", "CaDoodleStyle", s);
+				mc.getActiveProject().resetAllStyleSheets();
+			});
+			opt.setSelected(modeSelected.contentEquals(s));
+			styleButtons.getChildren().add(opt);
+		}
+
+		//		ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", "" + darkModeSel.isSelected());
+		//		mc.getActiveProject().resetAllStyleSheets();
+		//		darkModeSel.setSelected(darkMode);
+		//		lightModeSel.setSelected(!darkMode);
 		updateVersionOptions();
 		mc.getActiveProject().setStyleSheet(topPane);
 		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
