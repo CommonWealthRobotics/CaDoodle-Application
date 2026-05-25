@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 import javax.net.ssl.HostnameVerifier;
@@ -196,7 +197,7 @@ public class SettingsManager implements ICSGClientEvent {
 	void checkServerConfigs(KeyEvent event) {
 		try {
 			// Create a trust manager that ignores certificate errors
-			TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
@@ -206,7 +207,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 				public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				}
-			}};
+			} };
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init(null, trustAllCerts, null);
@@ -402,18 +403,18 @@ public class SettingsManager implements ICSGClientEvent {
 
 	private void setExplanationText(OperationResult result) {
 		switch (result) {
-			case INSERT :
-				insertionExplanation.setText(
-						"Insert will add this operation at the current position while keeping subsequent operations.");
-				break;
-			case PRUNE :
-				insertionExplanation.setText(
-						"Replace subsequent work with this change.\nThis will remove any work you've done after this point.");
-				break;
-			case ASK :
-				insertionExplanation
-						.setText("Always ask what I want to do with a popup window every time something is edited.");
-				break;
+		case INSERT:
+			insertionExplanation.setText(
+					"Insert will add this operation at the current position while keeping subsequent operations.");
+			break;
+		case PRUNE:
+			insertionExplanation.setText(
+					"Replace subsequent work with this change.\nThis will remove any work you've done after this point.");
+			break;
+		case ASK:
+			insertionExplanation
+					.setText("Always ask what I want to do with a popup window every time something is edited.");
+			break;
 		}
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
@@ -580,6 +581,15 @@ public class SettingsManager implements ICSGClientEvent {
 		}
 	}
 
+	@FXML
+	private void onLang(ActionEvent event) {
+		new Thread(() -> {
+			Locale toUse = ActiveProject.showLanguageSelectionPopup();
+			String country = toUse.getLanguage().toLowerCase();
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleLangauge", country);
+		}).start();
+	}
+
 	private void updateVersionOptions() {
 		try {
 			versionOptions.getItems().clear();
@@ -652,7 +662,8 @@ public class SettingsManager implements ICSGClientEvent {
 			com.neuronrobotics.sdk.common.Log
 					.debug("Resource URL: " + ProjectManager.class.getResource("Settings.fxml"));
 			FXMLLoader loader = new FXMLLoader(
-					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"),ActiveProject.getLangaugePack());
+					SettingsManager.class.getClassLoader().getResource("com/commonwealthrobotics/Settings.fxml"),
+					ActiveProject.getLangaugePack());
 			// loader.setController(new SettingsManager());
 			Parent root = loader.load();
 			stage = new Stage();

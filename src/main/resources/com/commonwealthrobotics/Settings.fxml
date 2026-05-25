@@ -18,7 +18,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <children>
       <TabPane fx:id="topPane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -42,6 +41,7 @@
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
                           </rowConstraints>
                            <children>
@@ -174,6 +174,15 @@
                                  </padding>
                               </Label>
                               <TextField fx:id="fontSizeField" onAction="#onFontSize" promptText="%settings.type_font_point_size_here" text="%settings.12" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label text="%settings.lang" GridPane.rowIndex="9">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                              </Label>
+                              <Button mnemonicParsing="false" onAction="#onLang" styleClass="image-button-focus" text="%settings.lang" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                            </children>
                         </GridPane>
                      </children>

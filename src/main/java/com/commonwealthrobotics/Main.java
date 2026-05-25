@@ -382,6 +382,7 @@ public class Main extends Application {
 		FontSizeManager.getDefaultSize();
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
+		ActiveProject.getLangaugePack();
 		launch();
 	}
 

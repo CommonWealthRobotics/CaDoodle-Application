@@ -1,12 +1,18 @@
 package com.commonwealthrobotics;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,17 +35,22 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
@@ -90,7 +101,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private long timeOfLastUpdate = 0;
 	private Thread lastUpdate = null;
 	private boolean saving;
-	private HashSet<Region> panes = new HashSet<Region>();
+	private static HashSet<Region> panes = new HashSet<Region>();
 
 	public ActiveProject() {
 		// this.listener = listener;
@@ -893,16 +904,160 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public static ResourceBundle getLangaugePack() {
+
+		String stored = ConfigurationDatabase.get("CaDoodle", "CaDoodleLangauge", "").toString();
+		Locale toUse = stored.length() == 0 ? null : Locale.of(stored);
 		try {
-			return ResourceBundle.getBundle("lang.Messages", Locale.getDefault());
+			List<Locale> locales = getAvailableLocales();
+			if(toUse==null)
+				for(Locale l:locales) {
+					if(l.equals(Locale.getDefault())) {
+						toUse= l;
+						break;
+					}
+				}
 		} catch (Throwable t) {
 			Log.error(t);
 		}
-		return ResourceBundle.getBundle("lang.Messages", Locale.ENGLISH);
+		if (toUse == null)
+			toUse = showLanguageSelectionPopup();
+		if (toUse == null)
+			toUse = Locale.of("en");
+		String country = toUse.getLanguage().toLowerCase();
+		Log.debug("Setting country code to "+country);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleLangauge", country);
+		return ResourceBundle.getBundle("lang.Messages", toUse);
 
 	}
 
-	public void setStyleSheet(Region node) {
+	public static Locale showLanguageSelectionPopup() {
+
+		List<Locale> locales = getAvailableLocales();
+
+		ComboBox<Locale> comboBox = new ComboBox<Locale>();
+		comboBox.getItems().addAll(locales);
+
+		comboBox.setCellFactory(list -> new ListCell<Locale>() {
+			@Override
+			protected void updateItem(Locale item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || item == null) {
+					setText(null);
+				} else {
+					setText(item.getDisplayLanguage(item));
+				}
+			}
+		});
+
+		comboBox.setButtonCell(new ListCell<Locale>() {
+			@Override
+			protected void updateItem(Locale item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || item == null) {
+					setText(null);
+				} else {
+					setText(item.getDisplayLanguage(item));
+				}
+			}
+		});
+
+		comboBox.getSelectionModel().selectFirst();
+
+		Button ok = new Button("OK");
+		ok.setDefaultButton(true);
+
+		VBox root = new VBox(15, new Label("Select Language"), comboBox, ok);
+
+		root.setPadding(new Insets(20));
+		root.setAlignment(Pos.CENTER);
+		final Locale[] result = new Locale[1];
+
+		BowlerStudio.runLater(() -> {
+			Stage stage = new Stage();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initStyle(StageStyle.UTILITY);
+			stage.setTitle("Language Selection");
+			stage.setScene(new Scene(root));
+			stage.setResizable(false);
+			setStyleSheet(root);
+			ok.setOnAction(e -> {
+				result[0] = comboBox.getValue();
+				stage.close();
+			});
+
+			stage.setOnCloseRequest(e -> {
+				result[0] = Locale.of("en");
+			});
+
+			stage.showAndWait();
+			panes.remove(root);
+
+		});
+		while(result[0]==null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return result[0];
+	}
+
+	public static List<Locale> getAvailableLocales() {
+		List<Locale> locales = new ArrayList<>();
+
+		try {
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+			URL url = cl.getResource("lang");
+			if (url == null)
+				return locales;
+
+			Path path;
+
+			if (url.toURI().getScheme().equals("jar")) {
+
+				String uri = url.toURI().toString();
+				String jarUri = uri.substring(0, uri.indexOf("!"));
+
+				FileSystem fs;
+
+				try {
+					fs = FileSystems.getFileSystem(URI.create(jarUri));
+				} catch (FileSystemNotFoundException e) {
+					fs = FileSystems.newFileSystem(URI.create(jarUri), Map.of());
+				}
+
+				path = fs.getPath("/lang");
+
+			} else {
+				path = Paths.get(url.toURI());
+			}
+
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "Messages_*.properties")) {
+
+				for (Path file : stream) {
+
+					String name = file.getFileName().toString();
+
+					String code = name.replace("Messages_", "").replace(".properties", "");
+
+					locales.add(Locale.of(code));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return locales;
+	}
+
+	public static void setStyleSheet(Region node) {
 		if (!panes.contains(node)) {
 			FontSizeManager.addListener(new IFontSizeReciver() {
 				@Override
