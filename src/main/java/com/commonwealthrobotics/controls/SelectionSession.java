@@ -61,6 +61,7 @@ import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
@@ -1860,17 +1861,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void updateShowHideButton() {
+		ObservableList<String> c = showHideImage.getStyleClass();
+		c.clear();
 		if (isSelectedHidden())
-			showHideImage.setImage(new Image(MainController.class.getResourceAsStream("litBulb.png")));
+			c.add("lit-bulb-icon");
 		else
-			showHideImage.setImage(new Image(MainController.class.getResourceAsStream("darkBulb.png")));
+			c.add("dark-bulb-icon");
 	}
 
 	private void updateLockButton() {
+		ObservableList<String> c = lockImage.getStyleClass();
+		c.clear();
 		if (isLocked())
-			lockImage.setImage(new Image(MainController.class.getResourceAsStream("lock.png")));
+			c.add("lock-icon");
 		else
-			lockImage.setImage(new Image(MainController.class.getResourceAsStream("unlock.png")));
+			c.add("unlock-icon");
 	}
 
 	public boolean isAnyHidden() {

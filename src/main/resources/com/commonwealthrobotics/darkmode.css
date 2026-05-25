@@ -251,6 +251,55 @@
 .check-box:selected .mark                { -fx-background-color: #1e1e2e; }
 .check-box:indeterminate .box            { -fx-background-color: #45475a; -fx-border-color: #89b4fa; }
 
+/* ── Color Picker ───────────────────────────────────── */
+.color-picker {
+    -fx-background-color: #313244;
+    -fx-border-color: #89b4fa;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.color-picker:hover {
+    -fx-background-color: #45475a;
+}
+
+.color-picker .label {
+    -fx-text-fill: #cdd6f4;
+}
+
+.color-picker .arrow-button {
+    -fx-background-color: #313244;
+    -fx-border-color: #89b4fa;
+    -fx-border-width: 0 0 0 1px;
+}
+
+.color-picker .arrow {
+    -fx-background-color: #cdd6f4;
+}
+
+/* popup palette */
+.color-palette {
+    -fx-background-color: #313244;
+    -fx-border-color: #89b4fa;
+}
+
+.color-palette .hyperlink {
+    -fx-text-fill: #cdd6f4;
+}
+
+/* ── Progress Indicator ─────────────────────────────── */
+.progress-indicator {
+    -fx-progress-color: #89b4fa;
+}
+
+.progress-indicator .percentage {
+    -fx-fill: #cdd6f4;
+}
+
+.progress-indicator .spinner {
+    -fx-background-color: transparent;
+}
 
 #makeRobotButton .image-view     { -fx-image: url("dark/newRobot.png"); }
 #homeButton .image-view          { -fx-image: url("dark/CADoodleHome.png"); }
@@ -294,14 +343,15 @@
 #copyDoodle .image-view          { -fx-image: url("dark/copy.png"); }
 #robotHeaderImage   { -fx-image: url("dark/robot-3.png"); }
 .robot-tab-icon     { -fx-image: url("dark/robot-3.png"); }
-#showHideImage      { -fx-image: url("dark/darkBulb.png"); }
-#showAllImage       { -fx-image: url("dark/litBulb.png"); }
+.dark-bulb-icon      { -fx-image: url("dark/darkBulb.png"); }
 .lit-bulb-icon      { -fx-image: url("dark/litBulb.png"); }
-#lockImage          { -fx-image: url("dark/unlock.png"); }
-#drawrImage               { -fx-image: url("dark/drawerClose.png"); }
-#componentTreeDrawerArrow { -fx-image: url("dark/drawerClose.png"); }
-#timelineImage            { -fx-image: url("dark/drawerClose.png"); }
-#RobotLabDrawerImage      { -fx-image: url("dark/robot-close.png"); }
+.lock-icon         { -fx-image: url("dark/lock.png"); }
+.unlock-icon         { -fx-image: url("dark/unlock.png"); }
+
+.open-drawer              { -fx-image: url("dark/drawerClose.png"); }
+.close-drawer			  { -fx-image: url("dark/drawerOpen.png"); }
+
+#RobotLabDrawerImage      { -fx-image: url("dark/robot-3.png"); }
 .tree-icon                { -fx-image: url("dark/tree.png"); }
 .load-limb-arms-icon      { -fx-image: url("dark/Load-Limb-Arms.png"); }
 .advanced-config-icon     { -fx-image: url("dark/Advanced-Configuration.png"); }

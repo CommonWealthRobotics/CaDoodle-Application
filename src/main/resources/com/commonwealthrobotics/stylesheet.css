@@ -45,14 +45,13 @@
 #copyDoodle .image-view          { -fx-image: url("light/copy.png"); }
 #robotHeaderImage   { -fx-image: url("light/robot-3.png"); }
 .robot-tab-icon     { -fx-image: url("light/robot-3.png"); }
-#showHideImage      { -fx-image: url("light/darkBulb.png"); }
-#showAllImage       { -fx-image: url("light/litBulb.png"); }
+.dark-bulb-icon      { -fx-image: url("light/darkBulb.png"); }
 .lit-bulb-icon      { -fx-image: url("light/litBulb.png"); }
-#lockImage          { -fx-image: url("light/unlock.png"); }
-#drawrImage               { -fx-image: url("light/drawerClose.png"); }
-#componentTreeDrawerArrow { -fx-image: url("light/drawerClose.png"); }
-#timelineImage            { -fx-image: url("light/drawerClose.png"); }
-#RobotLabDrawerImage      { -fx-image: url("light/robot-close.png"); }
+.lock-icon         { -fx-image: url("light/lock.png"); }
+.unlock-icon         { -fx-image: url("light/unlock.png"); }
+.open-drawer              { -fx-image: url("light/drawerClose.png"); }
+.close-drawer			  { -fx-image: url("light/drawerOpen.png"); }
+#RobotLabDrawerImage      { -fx-image: url("light/robot-3.png"); }
 .tree-icon                { -fx-image: url("light/tree.png"); }
 .load-limb-arms-icon      { -fx-image: url("light/Load-Limb-Arms.png"); }
 .advanced-config-icon     { -fx-image: url("light/Advanced-Configuration.png"); }
@@ -65,7 +64,55 @@
 .button:focused                          { -fx-border-color: #f38ba8; -fx-border-width: 2px; }
 .button:disabled                         { -fx-opacity: 0.4; }
 
+/* ── Color Picker ───────────────────────────────────── */
+.color-picker {
+    -fx-background-color: #f2c83d; /* logo-yellow */
+    -fx-border-color: #263d8c;     /* logo-blue */
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
 
+.color-picker:hover {
+    -fx-background-color: #e7a436; /* logo-orange */
+}
+
+.color-picker .label {
+    -fx-text-fill: #263d8c;
+}
+
+.color-picker .arrow-button {
+    -fx-background-color: #f2c83d;
+    -fx-border-color: #263d8c;
+    -fx-border-width: 0 0 0 1px;
+}
+
+.color-picker .arrow {
+    -fx-background-color: #263d8c;
+}
+
+/* popup palette */
+.color-palette {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-color: #263d8c;
+}
+
+.color-palette .hyperlink {
+    -fx-text-fill: #263d8c;
+}
+
+/* ── Progress Indicator ─────────────────────────────── */
+.progress-indicator {
+    -fx-progress-color: #263d8c; /* logo-blue */
+}
+
+.progress-indicator .percentage {
+    -fx-fill: #263d8c;
+}
+
+.progress-indicator .spinner {
+    -fx-background-color: transparent;
+}
 .image-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;

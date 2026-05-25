@@ -50,6 +50,7 @@ import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Debug3dProvider;
 import eu.mihosoft.vrl.v3d.IDebug3dProvider;
 import eu.mihosoft.vrl.v3d.CSG.OptType;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -101,8 +102,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CaDoodleOperation source;
 	private RobotLab robotLab;
 	private boolean componentTreeOpen = true;
-	private final Image imgTreeArrowOpen = new Image(MainController.class.getResourceAsStream("drawerOpen.png"));
-	private final Image imgTreeArrowClose = new Image(MainController.class.getResourceAsStream("drawerClose.png"));
 	private boolean resetArmed;
 	private long timeOfClick;
 	private MeshView ground;
@@ -559,12 +558,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		if (tm == componentTreeOpen)
 			return;
 		componentTreeOpen = tm;
+		ObservableList<String> c = componentTreeDrawerArrow.getStyleClass();
+		c.clear();
 		if (tm) {
-			componentTreeDrawerArrow.setImage(imgTreeArrowClose);
+			c.add("open-drawer");
+			//componentTreeDrawerArrow.setImage(imgTreeArrowClose);
 			componentTreeHolder.setVisible(true);
 			componentTreeHolder.setManaged(true);
 		} else {
-			componentTreeDrawerArrow.setImage(imgTreeArrowOpen);
+			c.add("close-drawer");
+			//componentTreeDrawerArrow.setImage(imgTreeArrowOpen);
 			componentTreeHolder.setVisible(false);
 			componentTreeHolder.setManaged(false);
 		}
@@ -573,12 +576,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private void setTimelineOpenState(boolean tm) {
 		if (tm == timelineOpen)
 			return;
+		ObservableList<String> c = timelineImage.getStyleClass();
+		c.clear();
 		if (tm) {
-			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
+			c.add("open-drawer");
 			timelineHolder.getChildren().add(timelineScroll);
 			timelineHolder.minHeight(150);
 		} else {
-			timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+			c.add("close-drawer");
 			timelineHolder.getChildren().remove(timelineScroll);
 			timelineHolder.minHeight(0);
 		}
@@ -589,11 +594,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onDrawer(ActionEvent event) {
 		drawerOpen = !drawerOpen;
+		ObservableList<String> c = drawrImage.getStyleClass();
+		c.clear();
 		if (drawerOpen) {
-			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerClose.png")));
+			c.add("open-drawer");
 			drawerHolder.getChildren().add(drawerArea);
 		} else {
-			drawrImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
+			c.add("close-drawer");
 			drawerHolder.getChildren().remove(drawerArea);
 		}
 		session.setKeyBindingFocus();
@@ -1081,11 +1088,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			// RobotLabDrawerImage
 			if (!session.isRobotLabOpen()) {
 				RobotLabHolder.getChildren().remove(robotLabTabPane);
-				RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
 			}
 			if (!timelineOpen) {
 				timelineHolder.getChildren().remove(timelineScroll);
-				timelineImage.setImage(new Image(MainController.class.getResourceAsStream("drawerOpen.png")));
 			}
 			timelineManager.setOpenState(timelineOpen);
 
@@ -1441,14 +1446,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			undoButton.setDisable(!ap.get().isBackAvailable());
 		});
 		session.onUpdate(currentState, source, fi);
+		ObservableList<String> c = showAllImage.getStyleClass();
+		c.clear();
+		if (session.isAnyHidden())
+			c.add("lit-bulb-icon");
+		else
+			c.add("dark-bulb-icon");
 		if (session.isAnyHidden()) {
 			BowlerStudio.runLater(() -> {
-				showAllImage.setImage(new Image(MainController.class.getResourceAsStream("litBulb.png")));
 				showAllButton.setDisable(false);
 			});
 		} else {
 			BowlerStudio.runLater(() -> {
-				showAllImage.setImage(new Image(MainController.class.getResourceAsStream("darkBulb.png")));
 				showAllButton.setDisable(true);
 			});
 		}

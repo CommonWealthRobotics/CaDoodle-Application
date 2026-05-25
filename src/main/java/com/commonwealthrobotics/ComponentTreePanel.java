@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -76,8 +78,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	private static final String TREE_CELL_HIDDEN = "component-tree-cell-hidden";
 	private static final String TREE_CELL_SELECTED = "component-tree-cell-selected";
 	private static final String TREE_CELL_ROOT = "component-tree-cell-root";
-	private static final Image LIT_BULB = new Image(ComponentTreePanel.class.getResourceAsStream("litBulb.png"));
-	private static final Image DARK_BULB = new Image(ComponentTreePanel.class.getResourceAsStream("darkBulb.png"));
+
 	private static final double VISIBILITY_BUTTON_SIZE = 24.0;
 	private static final double VISIBILITY_ICON_SIZE = 18.0;
 
@@ -643,7 +644,13 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		private Button visibilityButtonFor(CSG csg) {
 			visibilityTarget = csg;
 			visibilityTooltip.setText(csg.isHide() ? "Show component" : "Hide component");
-			visibilityIcon.setImage(csg.isHide() ? DARK_BULB : LIT_BULB);
+			//visibilityIcon.setImage(csg.isHide() ? DARK_BULB : LIT_BULB);
+			ObservableList<String> c = visibilityIcon.getStyleClass();
+			c.clear();
+			if (csg.isHide())
+				c.add("lit-bulb-icon");
+			else
+				c.add("dark-bulb-icon");
 			return visibilityButton;
 		}
 
