@@ -897,8 +897,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		String url = Main.class.getResource("/com/commonwealthrobotics/stylesheet.css").toExternalForm();
 		if (!sheet.contentEquals("Default")) {
 			try {
-				url = ScriptingEngine
-						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css")
+				File fileFromGit = ScriptingEngine
+						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css");
+				if(fileFromGit.exists())
+				url = fileFromGit
 						.toURI().toURL().toExternalForm();
 			} catch (GitAPIException | IOException e) {
 				// TODO Auto-generated catch block
