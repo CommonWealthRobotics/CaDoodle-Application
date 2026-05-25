@@ -899,9 +899,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			try {
 				File fileFromGit = ScriptingEngine
 						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css");
-				if(fileFromGit.exists())
-				url = fileFromGit
-						.toURI().toURL().toExternalForm();
+				if (fileFromGit.exists())
+					url = fileFromGit.toURI().toURL().toExternalForm();
 			} catch (GitAPIException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
