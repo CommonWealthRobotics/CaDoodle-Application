@@ -68,7 +68,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -129,6 +128,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button boltHoleButton;
 	@FXML
 	private ImageView RobotLabDrawerImage;
+	@FXML
+	private ImageView robotLabDrawerArrow;
 
 	@FXML
 	private AnchorPane RobotLabHolder;
@@ -534,13 +535,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// tm=false;
 		if (tm == session.isRobotLabOpen())
 			return;
+		ObservableList<String> c = robotLabDrawerArrow.getStyleClass();
+		c.clear();
 		if (tm) {
-			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-close.png")));
+			c.add("open-drawer");
 			RobotLabHolder.getChildren().add(robotLabTabPane);
 		} else {
-			RobotLabDrawerImage.setImage(new Image(MainController.class.getResourceAsStream("robot-open.png")));
+			c.add("close-drawer");
 			RobotLabHolder.getChildren().remove(robotLabTabPane);
-
 			BowlerKernel.runLater(() -> RobotLabDrawer.setDisable(session.numberSelected() == 0));
 
 		}
