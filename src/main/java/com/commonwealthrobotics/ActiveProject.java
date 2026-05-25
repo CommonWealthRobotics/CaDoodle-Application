@@ -618,8 +618,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
-			;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();
@@ -909,10 +908,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		Locale toUse = stored.length() == 0 ? null : Locale.of(stored);
 		try {
 			List<Locale> locales = getAvailableLocales();
-			if(toUse==null)
-				for(Locale l:locales) {
-					if(l.equals(Locale.getDefault())) {
-						toUse= l;
+			if (toUse == null)
+				for (Locale l : locales) {
+					if (l.equals(Locale.getDefault())) {
+						toUse = l;
 						break;
 					}
 				}
@@ -924,7 +923,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if (toUse == null)
 			toUse = Locale.of("en");
 		String country = toUse.getLanguage().toLowerCase();
-		Log.debug("Setting country code to "+country);
+		Log.debug("Setting country code to " + country);
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleLangauge", country);
 		return ResourceBundle.getBundle("lang.Messages", toUse);
 
@@ -995,7 +994,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			panes.remove(root);
 
 		});
-		while(result[0]==null) {
+		while (result[0] == null) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

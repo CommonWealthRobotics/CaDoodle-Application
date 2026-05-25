@@ -59,8 +59,8 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		
-		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"),ActiveProject.getLangaugePack());
+
+		FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"), ActiveProject.getLangaugePack());
 		loader.setController(new MainController(stage));
 		Parent root = loader.load();
 

@@ -272,7 +272,8 @@ public class ExportManager {
 		ExportManager.clearScreen = clearScreen;
 		try {
 			// Load the FXML file
-			FXMLLoader loader = new FXMLLoader(ExportManager.class.getResource("ExportWindow.fxml"),ActiveProject.getLangaugePack());
+			FXMLLoader loader = new FXMLLoader(ExportManager.class.getResource("ExportWindow.fxml"),
+					ActiveProject.getLangaugePack());
 			loader.setController(new ExportManager());
 			Parent root = loader.load();
 

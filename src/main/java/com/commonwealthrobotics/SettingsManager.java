@@ -197,7 +197,7 @@ public class SettingsManager implements ICSGClientEvent {
 	void checkServerConfigs(KeyEvent event) {
 		try {
 			// Create a trust manager that ignores certificate errors
-			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
@@ -207,7 +207,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 				public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				}
-			} };
+			}};
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init(null, trustAllCerts, null);
@@ -403,18 +403,18 @@ public class SettingsManager implements ICSGClientEvent {
 
 	private void setExplanationText(OperationResult result) {
 		switch (result) {
-		case INSERT:
-			insertionExplanation.setText(
-					"Insert will add this operation at the current position while keeping subsequent operations.");
-			break;
-		case PRUNE:
-			insertionExplanation.setText(
-					"Replace subsequent work with this change.\nThis will remove any work you've done after this point.");
-			break;
-		case ASK:
-			insertionExplanation
-					.setText("Always ask what I want to do with a popup window every time something is edited.");
-			break;
+			case INSERT :
+				insertionExplanation.setText(
+						"Insert will add this operation at the current position while keeping subsequent operations.");
+				break;
+			case PRUNE :
+				insertionExplanation.setText(
+						"Replace subsequent work with this change.\nThis will remove any work you've done after this point.");
+				break;
+			case ASK :
+				insertionExplanation
+						.setText("Always ask what I want to do with a popup window every time something is edited.");
+				break;
 		}
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
