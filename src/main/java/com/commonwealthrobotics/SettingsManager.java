@@ -98,7 +98,10 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private TextField insertionExplanation;
-
+	@FXML
+	private TextField prineExplanation;
+	@FXML
+	private TextField askExplanation;
 	@FXML
 	private TextField fontSizeField;
 
@@ -404,16 +407,19 @@ public class SettingsManager implements ICSGClientEvent {
 	private void setExplanationText(OperationResult result) {
 		switch (result) {
 			case INSERT :
-				insertionExplanation.setText(
-						"Insert will add this operation at the current position while keeping subsequent operations.");
+				insertionExplanation.setVisible(true);
+				askExplanation.setVisible(false);
+				prineExplanation.setVisible(false);
 				break;
 			case PRUNE :
-				insertionExplanation.setText(
-						"Replace subsequent work with this change.\nThis will remove any work you've done after this point.");
+				insertionExplanation.setVisible(false);
+				askExplanation.setVisible(false);
+				prineExplanation.setVisible(true);
 				break;
 			case ASK :
-				insertionExplanation
-						.setText("Always ask what I want to do with a popup window every time something is edited.");
+				insertionExplanation.setVisible(false);
+				askExplanation.setVisible(true);
+				prineExplanation.setVisible(false);
 				break;
 		}
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
