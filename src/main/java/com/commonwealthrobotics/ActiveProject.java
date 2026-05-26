@@ -158,6 +158,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						alert.getDialogPane().layout();
 						stage.sizeToScene();
 					});
+					setStyleSheet((Region)root);
 					Optional<ButtonType> result = alert.showAndWait();
 					buttonType = result.get();
 					alert.close();
@@ -508,7 +509,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								alert.hide();
 							});
 						});
-
+						setStyleSheet(dialogPane);
 						// Show alert and wait for result
 						alert.showAndWait();
 
