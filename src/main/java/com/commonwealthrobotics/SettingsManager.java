@@ -590,7 +590,7 @@ public class SettingsManager implements ICSGClientEvent {
 	@FXML
 	private void onLang(ActionEvent event) {
 		new Thread(() -> {
-			Locale toUse = ActiveProject.showLanguageSelectionPopup();
+			Locale toUse = ActiveProject.showLanguageSelectionPopup(ActiveProject.getCurrentLocale());
 			String country = toUse.getLanguage().toLowerCase();
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleLangauge", country);
 		}).start();

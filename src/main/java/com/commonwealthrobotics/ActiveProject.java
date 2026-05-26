@@ -904,13 +904,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static ResourceBundle getLangaugePack() {
 
-		String stored = ConfigurationDatabase.get("CaDoodle", "CaDoodleLangauge", "").toString();
-		Locale toUse = stored.length() == 0 ? null : Locale.of(stored);
+		Locale toUse = getCurrentLocale();
 		try {
 			List<Locale> locales = getAvailableLocales();
 			if (toUse == null)
 				for (Locale l : locales) {
-					if (l.equals(Locale.getDefault())) {
+					if (l.getLanguage().contentEquals(Locale.getDefault().getLanguage())) {
 						toUse = l;
 						break;
 					}
@@ -919,7 +918,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Log.error(t);
 		}
 		if (toUse == null)
-			toUse = showLanguageSelectionPopup();
+			toUse = showLanguageSelectionPopup(null);
 		if (toUse == null)
 			toUse = Locale.of("en");
 		String country = toUse.getLanguage().toLowerCase();
@@ -929,7 +928,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	}
 
-	public static Locale showLanguageSelectionPopup() {
+	public static Locale getCurrentLocale() {
+		String stored = ConfigurationDatabase.get("CaDoodle", "CaDoodleLangauge", "").toString();
+		Locale toUse = stored.length() == 0 ? null : Locale.of(stored);
+		return toUse;
+	}
+
+	public static Locale showLanguageSelectionPopup(Locale starting) {
 
 		List<Locale> locales = getAvailableLocales();
 
@@ -961,8 +966,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				}
 			}
 		});
-
 		comboBox.getSelectionModel().selectFirst();
+		if (starting != null)
+			for (Locale l : locales)
+				if (l.getLanguage().contentEquals(starting.getLanguage()))
+					comboBox.getSelectionModel().select(l);;
 
 		Button ok = new Button("OK");
 		ok.setDefaultButton(true);
@@ -1039,7 +1047,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "Messages_*.properties")) {
 
-				for (Path file : stream) {
+				List<Path> files = new ArrayList<>();
+				stream.forEach(files::add);
+				files.sort(Comparator.comparing(p -> p.getFileName().toString()));
+
+				for (Path file : files) {
 
 					String name = file.getFileName().toString();
 
