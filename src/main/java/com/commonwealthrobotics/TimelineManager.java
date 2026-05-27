@@ -262,7 +262,8 @@ public class TimelineManager {
 							continue;
 						int myIndex = i;
 						addrem = true;
-						List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
+						List<CSG> previous = (myIndex == 0)
+								? new ArrayList<CSG>()
 								: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 						File f = ap.get().getTimelineImageFile(myIndex - 1);
 						Image image = new Image(f.toURI().toString());
