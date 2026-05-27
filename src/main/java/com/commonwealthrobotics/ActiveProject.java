@@ -158,7 +158,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						alert.getDialogPane().layout();
 						stage.sizeToScene();
 					});
-					setStyleSheet((Region)root);
+					setStyleSheet((Region) root);
 					Optional<ButtonType> result = alert.showAndWait();
 					buttonType = result.get();
 					alert.close();
