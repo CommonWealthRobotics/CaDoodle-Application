@@ -10,8 +10,10 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FailedToApplyOperation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -57,7 +59,11 @@ public class AlignManager {
 					if (curOp != operation && operation != null)
 						ap.addOp(operation);
 					else
-						ap.get().regenerateCurrent();
+						try {
+							ap.get().regenerateCurrent();
+						} catch (FailedToApplyOperation e) {
+							Log.error(e);
+						}
 					com.neuronrobotics.sdk.common.Log.debug("AlignManager clicked " + operation);
 					List<String> names = operation.getNamesAddedInThisOperation();
 					session.selectAll(names);

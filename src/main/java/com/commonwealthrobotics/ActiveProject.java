@@ -65,6 +65,7 @@ import com.neuronrobotics.bowlerstudio.scripting.IApprovalForDownload;
 import com.neuronrobotics.bowlerstudio.scripting.IDownloadManagerEvents;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FailedToApplyOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.IAcceptPruneForward;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
@@ -218,11 +219,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		});
 	}
 
-	public Thread regenerateAll() {
+	public Thread regenerateAll() throws FailedToApplyOperation {
 		return regenerateFrom(get().getOperations().get(0));
 	}
 
-	public Thread regenerateFrom(CaDoodleOperation source) {
+	public Thread regenerateFrom(CaDoodleOperation source) throws FailedToApplyOperation {
 		if (disableRegenerate)
 			return null;
 		Thread t = get().regenerateFrom(source);

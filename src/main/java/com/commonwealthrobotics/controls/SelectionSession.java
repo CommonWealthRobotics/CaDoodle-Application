@@ -357,17 +357,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 
-			Thread t = ap.regenerateFrom(source);
-			if (t == null) {
-				SplashManager.closeSplash();
-				return;
-			}
+			Thread t;
 			try {
-				t.join();
-			} catch (InterruptedException e) {
-				// Auto-generated catch block
-				com.neuronrobotics.sdk.common.Log.error(e);
+				t = ap.regenerateFrom(source);
+				if (t == null) {
+					SplashManager.closeSplash();
+					return;
+				}
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					// Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			} catch (FailedToApplyOperation e) {
+				Log.error(e);
 			}
+
 
 			if ((f != null) && (l != null)) {
 				FileChangeWatcher w;
@@ -2323,7 +2329,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void regenerateCurrent() {
-		ap.get().regenerateCurrent();
+		try {
+			ap.get().regenerateCurrent();
+		} catch (FailedToApplyOperation e) {
+			Log.error(e);
+		}
 	}
 
 	@Override
