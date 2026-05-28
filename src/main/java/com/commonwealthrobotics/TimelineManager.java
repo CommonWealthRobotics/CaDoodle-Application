@@ -8,6 +8,7 @@ import java.util.List;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FailedToApplyOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
@@ -360,9 +361,13 @@ public class TimelineManager {
 								toAdd.setDisable(true);
 								buttons.remove(toAdd);
 								timeline.getChildren().remove(toAdd);
-								ap.get().deleteOperation(op);
-								for (CSG c : state)
-									engine.removeObject(c);
+								try {
+									ap.get().deleteOperation(op);
+									for (CSG c : state)
+										engine.removeObject(c);
+								} catch (FailedToApplyOperation t) {
+									Log.error(t);
+								}
 							});
 
 							deleteItem.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {

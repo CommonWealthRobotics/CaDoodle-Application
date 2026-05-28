@@ -83,7 +83,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -358,17 +357,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 
-			Thread t = ap.regenerateFrom(source);
-			if (t == null) {
-				SplashManager.closeSplash();
-				return;
-			}
+			Thread t;
 			try {
-				t.join();
-			} catch (InterruptedException e) {
-				// Auto-generated catch block
-				com.neuronrobotics.sdk.common.Log.error(e);
+				t = ap.regenerateFrom(source);
+				if (t == null) {
+					SplashManager.closeSplash();
+					return;
+				}
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					// Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			} catch (FailedToApplyOperation e) {
+				Log.error(e);
 			}
+
 
 			if ((f != null) && (l != null)) {
 				FileChangeWatcher w;
@@ -817,38 +822,41 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
+				GridPane gp = new GridPane(5, 5);
+				parametrics.getChildren().add(gp);
+				int line = 0;
 				for (String key : sortedList) {
 					if (key.contains("CaDoodle") && (key.contains(sel.getName().split("_")[0]))) {
 						numCadParaams++;
 						String[] parts = key.split("_");
-						HBox thisLine = new HBox(5);
 						String text = parts[parts.length - 1];
 						Label e = new Label(text);
 						e.setMinWidth(50);
-						thisLine.getChildren().add(e);
-						parametrics.getChildren().add(thisLine);
+						gp.add(e, 0, line);
+
 						Parameter para = ap.get().getCsgDBinstance().get(key);
 						int width = 120;
 
 						if (StringParameter.class.isInstance(para)) {
 							ArrayList<String> opts = para.getOptions();
 							if (opts.size() > 0)
-								setUpComboBoxParametrics(thisLine, text, para, opts, width);
+								setUpComboBoxParametrics(gp, line, text, para, opts, width);
 							else {
 								File file = new File(para.getStrValue());
 								boolean exists = file.exists();
 								if (exists)
-									setUpFileBox(thisLine, text, para, width, file);
+									setUpFileBox(gp, line, text, para, width, file);
 								else
-									setUpTextBoxEnterData(thisLine, text, para, width);
+									setUpTextBoxEnterData(gp, line, text, para, width);
 							}
 						} else {
 							if (para != null)
-								setUpNumberChoices(thisLine, text, para, width);
+								setUpNumberChoices(gp, line, text, para, width);
 							else
 								Log.error("Failed to set parameter in UI " + key);
 						}
 					}
+					line++;
 				}
 
 				//				if (numCadParaams > 2) {
@@ -911,14 +919,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ap.get().getBoundsCache().clear();
 	}
 
-	private void setUpNumberField(HBox thisLine, String text, Parameter para, int width) {
+	private void setUpNumberField(GridPane gp, int line, String text, Parameter para, int width) {
 		ArrayList<String> options3 = para.getOptions();
 
 		TextField options = new TextField();
 		options.setEditable(true);
 		options.setText(para.getMM() + "");
 		options.setMinWidth(width);
-		thisLine.getChildren().add(options);
+		gp.add(options, 1, line);
 
 		options.setOnAction(event -> {
 			ArrayList<String> options2 = para.getOptions();
@@ -946,12 +954,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-	private void setUpNumberChoices(HBox thisLine, String text, Parameter para, int width) {
+	private void setUpNumberChoices(GridPane gp, int line, String text, Parameter para, int width) {
 
 		ArrayList<String> options2 = para.getOptions();
 		boolean limited = false;
 		if (options2.size() < 2) {
-			setUpNumberField(thisLine, text, para, width);
+			setUpNumberField(gp, line, text, para, width);
 			return;
 		} else
 			limited = true;
@@ -965,7 +973,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		options.setEditable(true);
 		options.getSelectionModel().select(para.getMM() + "");
 		options.setMinWidth(width);
-		thisLine.getChildren().add(options);
+		gp.add(options, 1, line);
 
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
@@ -992,18 +1000,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-	private void setUpTextBoxEnterData(HBox thisLine, String text, Parameter para, int width) {
+	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
 			para.setStrValue(tf.getText());
 			BowlerStudio.runLater(() -> setKeyBindingFocus());
 		});
 
-		thisLine.getChildren().add(tf);
-		thisLine.setMinWidth(width);
+		gp.add(tf, 1, line);
 	}
 
-	private void setUpFileBox(HBox thisLine, String text, Parameter para, int width, File file) {
+	private void setUpFileBox(GridPane gp, int line, String text, Parameter para, int width, File file) {
 		// Button tf = new Button(new File(para.getStrValue()).getName());
 		ExternalEditorController ec = new ExternalEditorController(file, new CheckBox(), () -> {
 			if (file.getName().endsWith("doodle")) {
@@ -1023,11 +1030,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 
 		Node tf = ec.getControl();
-		thisLine.getChildren().add(tf);
-		thisLine.setMinWidth(width);
+		gp.add(tf, 1, line);
 	}
 
-	private void setUpComboBoxParametrics(HBox thisLine, String text, Parameter para, ArrayList<String> opts,
+	private void setUpComboBoxParametrics(GridPane gp, int line, String text, Parameter para, ArrayList<String> opts,
 			int width) {
 		//		ComboBox<String> options = new ComboBox<String>();
 		//		if (para.getName().toLowerCase().endsWith("font")) {
@@ -1094,7 +1100,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		BowlerStudio.runLater(() -> {
 			options.getSelectionModel().select(para.getStrValue());
-			thisLine.getChildren().add(options);
+			gp.add(options, 1, line);
 			options.setMinWidth(width);
 			options.setOnAction(event -> {
 				com.neuronrobotics.sdk.common.Log.debug(System.currentTimeMillis() + " Event " + event);
@@ -2323,7 +2329,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void regenerateCurrent() {
-		ap.get().regenerateCurrent();
+		try {
+			ap.get().regenerateCurrent();
+		} catch (FailedToApplyOperation e) {
+			Log.error(e);
+		}
 	}
 
 	@Override
