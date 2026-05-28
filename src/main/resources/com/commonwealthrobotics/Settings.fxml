@@ -8,6 +8,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <children>
       <TabPane fx:id="topPane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
@@ -67,13 +68,13 @@
                               </VBox>
                               <StackPane GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                                  <children>
-                                    <TextField fx:id="prineExplanation" alignment="TOP_LEFT" text="%settings.always_prune_exp" />
-                                    <TextField fx:id="insertionExplanation" alignment="TOP_LEFT" text="%settings.always_insert_exp" />
-                                    <TextField fx:id="askExplanation" alignment="TOP_LEFT" editable="false" prefHeight="109.0" styleClass="label" text="%settings.always_ask_what_i_want_to_do_with_a_popup_window_every_time_something_is_edited">
+                                    <TextArea fx:id="prineExplanation" editable="false" text="%settings.always_prune_exp" wrapText="true" />
+                                    <TextArea fx:id="insertionExplanation" editable="false" text="%settings.always_insert_exp" wrapText="true" />
+                                    <TextArea fx:id="askExplanation" editable="false" styleClass="label" text="%settings.always_ask_what_i_want_to_do_with_a_popup_window_every_time_something_is_edited" wrapText="true">
                                        <padding>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
-                                    </TextField>
+                                    </TextArea>
                                  </children>
                               </StackPane>
                               <Label text="%settings.projects_location">

@@ -54,6 +54,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
@@ -97,11 +98,11 @@ public class SettingsManager implements ICSGClientEvent {
 	private ToggleGroup insertStrat;
 
 	@FXML
-	private TextField insertionExplanation;
+	private TextArea insertionExplanation;
 	@FXML
-	private TextField prineExplanation;
+	private TextArea prineExplanation;
 	@FXML
-	private TextField askExplanation;
+	private TextArea askExplanation;
 	@FXML
 	private TextField fontSizeField;
 
