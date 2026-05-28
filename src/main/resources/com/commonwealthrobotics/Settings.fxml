@@ -88,7 +88,7 @@
                               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                                  <children>
                                     <Button mnemonicParsing="false" onAction="#onBrowse" styleClass="image-button-focus" text="%settings.browse" />
-                                    <TextField fx:id="workingDirPath" onAction="#onBrowse" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="workingDirPath" editable="false" onAction="#onBrowse" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
