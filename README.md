@@ -17,6 +17,10 @@ This is the source code for the Java Application of Cadoodle.
 
 The installers for specific operating systems can be found here: https://github.com/CommonWealthRobotics/CaDoodle/releases
 
+# Contribution Guide
+
+[Check out the Contribution Guide](ContributionGuide.md)
+
 # Checkout
 
 ```
