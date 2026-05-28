@@ -1049,8 +1049,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setGroup(groupButton);
 			session.setUngroup(ungroupButton);
 			session.setShowHideImage(showHideImage);
-
 			session.setAlignButton(alignButton);
+			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton);
 			// do this after setting up the session
 			setupEngineControls();
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);

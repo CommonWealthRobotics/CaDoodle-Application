@@ -165,6 +165,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private final Pane overlayPane; // Overlay pane for 2D objects
 	private FilletUIManager filletTool = new FilletUIManager();
 	private ExtrudeUIManager extrudeManager = new ExtrudeUIManager();
+
 	public boolean isResizeLiveMode() {
 		return resizeLiveMode;
 	}
@@ -173,6 +174,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Thread timeoutMoveThread = null;
 	private boolean applyingMoveOperation;
 	private Button renameBtn;
+	private Button filletButton;
+	private Button extrudeButton;
+	private Button hexDistributeButton;
+	private Button boltHoleButton;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -1442,7 +1447,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			if (objectWorkplane != null)
 				objectWorkplane.setDisable(true);
-
+			if (hexDistributeButton != null)
+				hexDistributeButton.setDisable(true);
+			if (filletButton != null)
+				filletButton.setDisable(true);
+			if (extrudeButton != null)
+				extrudeButton.setDisable(true);
+			if (boltHoleButton != null)
+				boltHoleButton.setDisable(true);
 		});
 	}
 
@@ -1467,6 +1479,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if ((getSelected().size() > 0) && advanced) {
 				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
+				hexDistributeButton.setDisable(false);
+				filletButton.setDisable(false);
+				extrudeButton.setDisable(false);
+				boltHoleButton.setDisable(false);
 			}
 
 			if (isAGroupSelected())
@@ -2549,6 +2565,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		SetUserDefinedName ns = new SetUserDefinedName().setTarget(csg.getName()).setNewUserDefinedName(newText);
 		ap.addOp(ns);
+	}
+
+	public void setAdvancedButtons(Button filletButton, Button extrudeButton, Button hexDistributeButton,
+			Button boltHoleButton) {
+		this.filletButton = filletButton;
+		this.extrudeButton = extrudeButton;
+		this.hexDistributeButton = hexDistributeButton;
+		this.boltHoleButton = boltHoleButton;
 	}
 
 
