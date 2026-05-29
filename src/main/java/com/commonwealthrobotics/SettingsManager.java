@@ -54,6 +54,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -140,8 +141,10 @@ public class SettingsManager implements ICSGClientEvent {
 	private String myVersionFileString;
 	private String bindir;
 	@FXML
-	private javafx.scene.control.TabPane topPane;
-
+	private TabPane topPane;
+	@FXML
+	private ComboBox<String> styleOptions;
+	
 	@FXML
 	void onFontSize(ActionEvent event) {
 		try {
@@ -547,28 +550,21 @@ public class SettingsManager implements ICSGClientEvent {
 			checkOnLaunch.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
-		ArrayList<String> styleSheetOptions = mc.getActiveProject().getStyleSheetOptions();
+		mc.getActiveProject();
+		ArrayList<String> styleSheetOptions = ActiveProject.getStyleSheetOptions();
 		String modeSelected = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", styleSheetOptions.get(0))
 				.toString();
-		ToggleGroup styleOptTogle = new ToggleGroup();
+		styleOptions.setOnAction(event -> {
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleStyle", styleOptions.getSelectionModel().getSelectedItem());
+			mc.getActiveProject().resetAllStyleSheets();
+		});
 		for (String s : styleSheetOptions) {
-			RadioButton opt = new RadioButton(s);
-			opt.setToggleGroup(styleOptTogle);
-			opt.setOnAction(event -> {
-				ConfigurationDatabase.put("CaDoodle", "CaDoodleStyle", s);
-				mc.getActiveProject().resetAllStyleSheets();
-			});
-			opt.setSelected(modeSelected.contentEquals(s));
-			styleButtons.getChildren().add(opt);
+			styleOptions.getItems().add(s);
 		}
-
-		// ConfigurationDatabase.put("CaDoodle", "CaDoodleDarkMode", "" +
-		// darkModeSel.isSelected());
-		// mc.getActiveProject().resetAllStyleSheets();
-		// darkModeSel.setSelected(darkMode);
-		// lightModeSel.setSelected(!darkMode);
+		styleOptions.getSelectionModel().select(modeSelected);
 		updateVersionOptions();
-		mc.getActiveProject().setStyleSheet(topPane);
+		mc.getActiveProject();
+		ActiveProject.setStyleSheet(topPane);
 		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
 		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
 	}

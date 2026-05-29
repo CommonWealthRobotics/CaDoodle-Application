@@ -172,7 +172,10 @@
                                  </padding>
                               </Label>
                               <TextField fx:id="numPoints" onAction="#onPointInCurve" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                 <children>
+                                    <ComboBox fx:id="styleOptions" />
+                                 </children></VBox>
                               <Label text="%settings.font_size" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="18.0" />

@@ -1113,6 +1113,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Collections.sort(sheets, String.CASE_INSENSITIVE_ORDER);
 		return sheets;
 	}
 }
