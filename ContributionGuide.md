@@ -9,7 +9,7 @@ Go to the main readme and checkout the main branch. Build the code from source u
 
 ## 2) Understand the Repository structure
 
-CaDoodle is an application made up of the UI application
+CaDoodle is an application made up of the UI application Cadoodle-Application and some submodules. 
 
 BowlerStudio robotics engine which provides the 3d engine and the splash screen system
 
