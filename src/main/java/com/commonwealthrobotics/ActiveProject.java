@@ -45,6 +45,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -978,12 +979,18 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		Button ok = new Button("OK");
 		ok.setDefaultButton(true);
 
-		VBox root = new VBox(15, new Label("Select Language"), comboBox, ok);
+		VBox myroot = new VBox(15, new Label("Select Language"), comboBox, ok);
 
-		root.setPadding(new Insets(20));
-		root.setAlignment(Pos.CENTER);
+		myroot.setPadding(new Insets(20));
+		myroot.setAlignment(Pos.CENTER);
+		AnchorPane root = new AnchorPane();
+		root.getChildren().add(myroot);
 		final Locale[] result = new Locale[1];
-
+		myroot.getStyleClass().add("vbox");
+		AnchorPane.setTopAnchor(myroot, 0.0);
+		AnchorPane.setBottomAnchor(myroot, 0.0);
+		AnchorPane.setLeftAnchor(myroot, 0.0);
+		AnchorPane.setRightAnchor(myroot, 0.0);
 		BowlerStudio.runLater(() -> {
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
