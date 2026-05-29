@@ -144,7 +144,7 @@ public class SettingsManager implements ICSGClientEvent {
 	private TabPane topPane;
 	@FXML
 	private ComboBox<String> styleOptions;
-	
+
 	@FXML
 	void onFontSize(ActionEvent event) {
 		try {
