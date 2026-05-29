@@ -90,6 +90,7 @@ import javafx.stage.Stage;
 
 public class ActiveProject implements ICaDoodleStateUpdate {
 
+	private static final String DEFAULT = "Default";
 	private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
 	private CaDoodleFile fromFile = null;
@@ -1081,10 +1082,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			panes.add(node);
 		}
 
-		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", getStyleSheetOptions().get(0)).toString();
+		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", DEFAULT).toString();
 
 		String url = Main.class.getResource("/com/commonwealthrobotics/stylesheet.css").toExternalForm();
-		if (!sheet.contentEquals("Default")) {
+		if (!sheet.contentEquals(DEFAULT)) {
 			try {
 				File fileFromGit = ScriptingEngine
 						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css");
@@ -1100,7 +1101,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static ArrayList<String> getStyleSheetOptions() {
 		ArrayList<String> sheets = new ArrayList<String>();
-		sheets.add("Default");
+		sheets.add(DEFAULT);
 		try {
 			ArrayList<String> filesInGit = ScriptingEngine
 					.filesInGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git");
