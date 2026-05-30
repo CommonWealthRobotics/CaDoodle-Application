@@ -28,6 +28,8 @@ import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.external.GroovyEclipseExternalEditor;
+import com.neuronrobotics.bowlerstudio.vitamins.AskToFixInterface;
+import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -44,11 +46,25 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
+
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 
 public class Main extends Application {
 	private static Thread loadDeps;
@@ -161,69 +177,6 @@ public class Main extends Application {
 		return screenRefreshRate;
 	}
 
-	private void setupTray(Stage stage) {
-		// First check if SystemTray is supported
-		if (!SystemTray.isSupported()) {
-			com.neuronrobotics.sdk.common.Log.debug("SystemTray is not supported");
-			return;
-		}
-
-		try {
-			// Get the system tray
-			SystemTray tray = SystemTray.getSystemTray();
-
-			// Get tray icon size
-			Dimension trayIconSize = tray.getTrayIconSize();
-
-			// Load image for tray icon
-			String name = "CADoodle-Icon.png";
-			java.awt.Image originalImage = ImageIO.read(Main.class.getResource(name));
-
-			// Create a transparent buffered image
-			BufferedImage bufferedImage = new BufferedImage(trayIconSize.width, trayIconSize.height,
-					BufferedImage.TYPE_INT_ARGB);
-
-			// Get graphics context
-			Graphics g = bufferedImage.getGraphics();
-
-			// Draw the original image to the new one, preserving transparency
-			g.drawImage(originalImage, 0, 0, trayIconSize.width, trayIconSize.height, null);
-			g.dispose();
-
-			// Create a popup menu
-			PopupMenu popup = new PopupMenu();
-
-			// Create menu items
-			MenuItem showItem = new MenuItem("Show");
-			showItem.addActionListener(e -> Platform.runLater(() -> {
-				stage.show();
-				stage.setIconified(false);
-				stage.toFront();
-			}));
-
-			MenuItem exitItem = new MenuItem("Exit");
-			exitItem.addActionListener(e -> {
-				Platform.exit();
-
-				System.exit(0);
-			});
-
-			// Add items to popup menu
-			popup.add(showItem);
-			popup.addSeparator();
-			popup.add(exitItem);
-
-			// Create tray icon with the buffered image that preserves transparency
-			TrayIcon trayIcon = new TrayIcon(bufferedImage, "CADoodle", popup);
-
-			// Add icon to system tray
-			tray.add(trayIcon);
-			com.neuronrobotics.sdk.common.Log.debug("Setting transparent tray icon to " + name);
-
-		} catch (AWTException | IOException e) {
-			com.neuronrobotics.sdk.common.Log.error(e);
-		}
-	}
 
 	public static void main(String[] args) {
 		// Set WM_CLASS for GNOME to recognize the app
@@ -383,7 +336,107 @@ public class Main extends Application {
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
 		ActiveProject.getLangaugePack();
+		setupMeshFailPopup();
 		launch();
+	}
+
+	private static void setupMeshFailPopup() {
+		Vitamins.setAskToFix(new AskToFixInterface() {
+
+			@Override
+			public boolean tryToFix(File f, Throwable t) {
+				// Atomic boolean to hold the result, accessible from the FX thread
+				AtomicBoolean result = new AtomicBoolean(false);
+				// CountDownLatch to block this thread until the user responds
+				CountDownLatch latch = new CountDownLatch(1);
+				BooleanSupplier cp = SplashManager.getClosePreventer();
+				SplashManager.setClosePreventer(new BooleanSupplier() {
+					@Override
+					public boolean getAsBoolean() {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				});
+				SplashManager.closeSplash();
+				Platform.runLater(() -> {
+					// Build the dialog
+					Stage dialog = new Stage();
+					dialog.initModality(Modality.APPLICATION_MODAL);
+					dialog.setTitle("STL File Issue Detected");
+					dialog.setResizable(false);
+
+					// Message content
+					String errorMessage = (t != null && t.getMessage() != null)
+							? t.getMessage()
+							: "An unknown error occurred.";
+
+					Label titleLabel = new Label("STL Repair Required");
+					titleLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+
+					Label fileLabel = new Label("File: " + f.getName());
+
+					Label messageLabel = new Label("Error: " + errorMessage);
+					messageLabel.setWrapText(true);
+					messageLabel.setMaxWidth(400);
+
+					Label questionLabel = new Label(
+							"Would you like to attempt to automatically fix this STL file with ADMesh?");
+					questionLabel.setWrapText(true);
+					questionLabel.setMaxWidth(400);
+
+					// Buttons
+					Button yesButton = new Button("Yes, Fix It");
+					Button noButton = new Button("No");
+
+					yesButton.setDefaultButton(true);
+					yesButton.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; "
+							+ " -fx-pref-width: 110px; -fx-pref-height: 32px;");
+					noButton.setStyle("-fx-background-color: #c62828; -fx-text-fill: white; "
+							+ " -fx-pref-width: 110px; -fx-pref-height: 32px;");
+
+					yesButton.setOnAction(e -> {
+						result.set(true);
+						dialog.close();
+					});
+
+					noButton.setOnAction(e -> {
+						result.set(false);
+						dialog.close();
+					});
+
+					// Close via X button = false (already default)
+					dialog.setOnCloseRequest(e -> {
+						result.set(false);
+						latch.countDown();
+					});
+
+					HBox buttonBox = new HBox(12, yesButton, noButton);
+					buttonBox.setAlignment(Pos.CENTER_RIGHT);
+
+					VBox layout = new VBox(12, titleLabel, new Separator(), fileLabel, messageLabel, questionLabel,
+							buttonBox);
+					layout.setPadding(new javafx.geometry.Insets(20));
+					layout.setPrefWidth(440);
+
+					// Count down latch when dialog closes (covers yes/no button paths too)
+					dialog.setOnHidden(e -> latch.countDown());
+					ActiveProject.setStyleSheet(layout);
+					Scene scene = new Scene(layout);
+					dialog.setScene(scene);
+
+					dialog.show();
+				});
+
+				// Block the calling thread until the dialog is dismissed
+				try {
+					latch.await();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+				SplashManager.setClosePreventer(cp);
+				return result.get();
+			}
+		});
 	}
 
 	public static void saveOptionalProjects(HashSet<String> state) {

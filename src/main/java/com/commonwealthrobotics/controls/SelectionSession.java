@@ -1457,10 +1457,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				objectWorkplane.setDisable(true);
 			if (hexDistributeButton != null)
 				hexDistributeButton.setDisable(true);
-//			if (filletButton != null)
-//				filletButton.setDisable(true);
-//			if (extrudeButton != null)
-//				extrudeButton.setDisable(true);
+			//			if (filletButton != null)
+			//				filletButton.setDisable(true);
+			//			if (extrudeButton != null)
+			//				extrudeButton.setDisable(true);
 			if (boltHoleButton != null)
 				boltHoleButton.setDisable(true);
 		});
@@ -1488,8 +1488,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
 				hexDistributeButton.setDisable(false);
-//				filletButton.setDisable(false);
-//				extrudeButton.setDisable(false);
+				//				filletButton.setDisable(false);
+				//				extrudeButton.setDisable(false);
 				boltHoleButton.setDisable(false);
 			}
 
