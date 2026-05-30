@@ -690,10 +690,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					if (isSelected(name))
 						removeSelected(name);
 					else
-						getSelected().add(name);
+						addToSelected(name);
 				} else if (!isSelected(name)) {
 					getSelected().clear();
-					getSelected().add(name);
+					addToSelected(name);
 				}
 
 				fireSelectionChanged();
@@ -730,6 +730,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				event.consume();
 			}
 		});
+	}
+
+	private void addToSelected(CSG name) {
+		if (name.isInGroup()) {
+			Log.error(new Exception("Selected an object in a group"));
+			return;
+		}
+		getSelected().add(name);
 	}
 
 	private boolean isSelected(CSG target) {
@@ -1231,7 +1239,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			for (String s : names)
 				if (s.contentEquals(c.getName())) {
-					getSelected().add(c);
+					addToSelected(c);
 					break;
 				}
 		}
@@ -1256,7 +1264,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (c.isHide())
 					continue;
 
-				getSelected().add(c);
+				addToSelected(c);
 			}
 
 			fireSelectionChanged();
