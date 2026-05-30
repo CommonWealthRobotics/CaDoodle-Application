@@ -377,15 +377,14 @@ public class Main extends Application {
 
 					Label messageLabel = new Label("Error: " + errorMessage);
 					messageLabel.setWrapText(true);
-					messageLabel.setMaxWidth(400);
 
 					Label questionLabel = new Label(
 							"Would you like to attempt to automatically fix this STL file with ADMesh?");
 					questionLabel.setWrapText(true);
-					questionLabel.setMaxWidth(400);
 
 					// Buttons
 					Button yesButton = new Button("Yes, Fix It");
+					yesButton.setDisable(true);
 					Button noButton = new Button("No");
 
 					yesButton.setDefaultButton(true);
@@ -416,7 +415,7 @@ public class Main extends Application {
 					VBox layout = new VBox(12, titleLabel, new Separator(), fileLabel, messageLabel, questionLabel,
 							buttonBox);
 					layout.setPadding(new javafx.geometry.Insets(20));
-					layout.setPrefWidth(440);
+					layout.setPrefWidth(640);
 
 					// Count down latch when dialog closes (covers yes/no button paths too)
 					dialog.setOnHidden(e -> latch.countDown());
