@@ -23,6 +23,7 @@ import com.neuronrobotics.bowlerstudio.assets.AssetFactory;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.assets.StudioBuildInfo;
+import com.neuronrobotics.bowlerstudio.scripting.ADMesh;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
@@ -58,13 +59,13 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 
 public class Main extends Application {
 	private static Thread loadDeps;
@@ -176,7 +177,6 @@ public class Main extends Application {
 	public static int getScreenRefreshRate() {
 		return screenRefreshRate;
 	}
-
 
 	public static void main(String[] args) {
 		// Set WM_CLASS for GNOME to recognize the app
@@ -357,6 +357,12 @@ public class Main extends Application {
 						return false;
 					}
 				});
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				SplashManager.closeSplash();
 				Platform.runLater(() -> {
 					// Build the dialog
@@ -408,8 +414,12 @@ public class Main extends Application {
 						result.set(false);
 						latch.countDown();
 					});
-
-					HBox buttonBox = new HBox(12, yesButton, noButton);
+					CheckBox rev = new CheckBox("Inside-Out-Fix");
+					rev.setSelected(ADMesh.isReverseMesh());
+					rev.setOnAction(ev -> {
+						ADMesh.setReverseMesh(rev.isSelected());
+					});
+					HBox buttonBox = new HBox(12, rev, yesButton, noButton);
 					buttonBox.setAlignment(Pos.CENTER_RIGHT);
 
 					VBox layout = new VBox(12, titleLabel, new Separator(), fileLabel, messageLabel, questionLabel,
