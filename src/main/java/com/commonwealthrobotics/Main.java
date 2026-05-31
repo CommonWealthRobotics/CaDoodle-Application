@@ -384,7 +384,7 @@ public class Main extends Application {
 
 					// Buttons
 					Button yesButton = new Button("Yes, Fix It");
-					yesButton.setDisable(true);
+					// yesButton.setDisable(true);
 					Button noButton = new Button("No");
 
 					yesButton.setDefaultButton(true);
