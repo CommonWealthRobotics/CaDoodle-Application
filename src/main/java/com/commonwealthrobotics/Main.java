@@ -162,7 +162,7 @@ public class Main extends Application {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		FileSelectionFactory.setStage(stage);
-
+		setupMeshFailPopup(stage);
 		stage.show();
 
 		// Get the screen refresh rate
@@ -336,114 +336,115 @@ public class Main extends Application {
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
 		ActiveProject.getLangaugePack();
-		setupMeshFailPopup();
+		
 		launch();
 	}
 
-	private static void setupMeshFailPopup() {
+	private static void setupMeshFailPopup(Stage stage) {
 		Vitamins.setAskToFix(new AskToFixInterface() {
 
 			@Override
 			public boolean tryToFix(File f, Throwable t) {
-				// Atomic boolean to hold the result, accessible from the FX thread
-				AtomicBoolean result = new AtomicBoolean(false);
-				// CountDownLatch to block this thread until the user responds
-				CountDownLatch latch = new CountDownLatch(1);
-				BooleanSupplier cp = SplashManager.getClosePreventer();
-				SplashManager.setClosePreventer(new BooleanSupplier() {
-					@Override
-					public boolean getAsBoolean() {
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
-				try {
-					Thread.sleep(300);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				SplashManager.closeSplash();
-				Platform.runLater(() -> {
-					// Build the dialog
-					Stage dialog = new Stage();
-					dialog.initModality(Modality.APPLICATION_MODAL);
-					dialog.setTitle("STL File Issue Detected");
-					dialog.setResizable(false);
-
-					// Message content
-					String errorMessage = (t != null && t.getMessage() != null)
-							? t.getMessage()
-							: "An unknown error occurred.";
-
-					Label titleLabel = new Label("STL Repair Required");
-					titleLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
-
-					Label fileLabel = new Label("File: " + f.getName());
-
-					Label messageLabel = new Label("Error: " + errorMessage);
-					messageLabel.setWrapText(true);
-
-					Label questionLabel = new Label(
-							"Would you like to attempt to automatically fix this STL file with ADMesh?");
-					questionLabel.setWrapText(true);
-
-					// Buttons
-					Button yesButton = new Button("Yes, Fix It");
-					// yesButton.setDisable(true);
-					Button noButton = new Button("No");
-
-					yesButton.setDefaultButton(true);
-					yesButton.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; "
-							+ " -fx-pref-width: 110px; -fx-pref-height: 32px;");
-					noButton.setStyle("-fx-background-color: #c62828; -fx-text-fill: white; "
-							+ " -fx-pref-width: 110px; -fx-pref-height: 32px;");
-
-					yesButton.setOnAction(e -> {
-						result.set(true);
-						dialog.close();
-					});
-
-					noButton.setOnAction(e -> {
-						result.set(false);
-						dialog.close();
-					});
-
-					// Close via X button = false (already default)
-					dialog.setOnCloseRequest(e -> {
-						result.set(false);
-						latch.countDown();
-					});
-					CheckBox rev = new CheckBox("Inside-Out-Fix");
-					rev.setSelected(ADMesh.isReverseMesh());
-					rev.setOnAction(ev -> {
-						ADMesh.setReverseMesh(rev.isSelected());
-					});
-					HBox buttonBox = new HBox(12, rev, yesButton, noButton);
-					buttonBox.setAlignment(Pos.CENTER_RIGHT);
-
-					VBox layout = new VBox(12, titleLabel, new Separator(), fileLabel, messageLabel, questionLabel,
-							buttonBox);
-					layout.setPadding(new javafx.geometry.Insets(20));
-					layout.setPrefWidth(640);
-
-					// Count down latch when dialog closes (covers yes/no button paths too)
-					dialog.setOnHidden(e -> latch.countDown());
-					ActiveProject.setStyleSheet(layout);
-					Scene scene = new Scene(layout);
-					dialog.setScene(scene);
-
-					dialog.show();
-				});
-
-				// Block the calling thread until the dialog is dismissed
-				try {
-					latch.await();
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-				SplashManager.setClosePreventer(cp);
-				return result.get();
+				return StlRepairDialogController.show(stage, f, t);
+//				// Atomic boolean to hold the result, accessible from the FX thread
+//				AtomicBoolean result = new AtomicBoolean(false);
+//				// CountDownLatch to block this thread until the user responds
+//				CountDownLatch latch = new CountDownLatch(1);
+//				BooleanSupplier cp = SplashManager.getClosePreventer();
+//				SplashManager.setClosePreventer(new BooleanSupplier() {
+//					@Override
+//					public boolean getAsBoolean() {
+//						// TODO Auto-generated method stub
+//						return false;
+//					}
+//				});
+//				try {
+//					Thread.sleep(300);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				SplashManager.closeSplash();
+//				Platform.runLater(() -> {
+//					// Build the dialog
+//					Stage dialog = new Stage();
+//					dialog.initModality(Modality.APPLICATION_MODAL);
+//					dialog.setTitle("STL File Issue Detected");
+//					dialog.setResizable(false);
+//
+//					// Message content
+//					String errorMessage = (t != null && t.getMessage() != null)
+//							? t.getMessage()
+//							: "An unknown error occurred.";
+//
+//					Label titleLabel = new Label("STL Repair Required");
+//					titleLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+//
+//					Label fileLabel = new Label("File: " + f.getName());
+//
+//					Label messageLabel = new Label("Error: " + errorMessage);
+//					messageLabel.setWrapText(true);
+//
+//					Label questionLabel = new Label(
+//							"Would you like to attempt to automatically fix this STL file with ADMesh?");
+//					questionLabel.setWrapText(true);
+//
+//					// Buttons
+//					Button yesButton = new Button("Yes, Fix It");
+//					// yesButton.setDisable(true);
+//					Button noButton = new Button("No");
+//
+//					yesButton.setDefaultButton(true);
+//					yesButton.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; "
+//							+ " -fx-pref-width: 110px; -fx-pref-height: 32px;");
+//					noButton.setStyle("-fx-background-color: #c62828; -fx-text-fill: white; "
+//							+ " -fx-pref-width: 110px; -fx-pref-height: 32px;");
+//
+//					yesButton.setOnAction(e -> {
+//						result.set(true);
+//						dialog.close();
+//					});
+//
+//					noButton.setOnAction(e -> {
+//						result.set(false);
+//						dialog.close();
+//					});
+//
+//					// Close via X button = false (already default)
+//					dialog.setOnCloseRequest(e -> {
+//						result.set(false);
+//						latch.countDown();
+//					});
+//					CheckBox rev = new CheckBox("Inside-Out-Fix");
+//					rev.setSelected(ADMesh.isReverseMesh());
+//					rev.setOnAction(ev -> {
+//						ADMesh.setReverseMesh(rev.isSelected());
+//					});
+//					HBox buttonBox = new HBox(12, rev, yesButton, noButton);
+//					buttonBox.setAlignment(Pos.CENTER_RIGHT);
+//
+//					VBox layout = new VBox(12, titleLabel, new Separator(), fileLabel, messageLabel, questionLabel,
+//							buttonBox);
+//					layout.setPadding(new javafx.geometry.Insets(20));
+//					layout.setPrefWidth(640);
+//
+//					// Count down latch when dialog closes (covers yes/no button paths too)
+//					dialog.setOnHidden(e -> latch.countDown());
+//					ActiveProject.setStyleSheet(layout);
+//					Scene scene = new Scene(layout);
+//					dialog.setScene(scene);
+//
+//					dialog.show();
+//				});
+//
+//				// Block the calling thread until the dialog is dismissed
+//				try {
+//					latch.await();
+//				} catch (InterruptedException e) {
+//					Thread.currentThread().interrupt();
+//				}
+//				SplashManager.setClosePreventer(cp);
+//				return result.get();
 			}
 		});
 	}
