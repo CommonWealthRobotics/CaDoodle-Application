@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<!--
+    Layout: 2 columns, 8 rows
+    Col 0 (hgrow=ALWAYS): text labels
+    Col 1 (hgrow=NEVER):  buttons
+
+    Row 0: header
+    Row 1: choose_how subtext
+    Row 2: continue title
+    Row 3: continue subtitle + detail  (col 1 spans rows 2-4)
+    Row 4: continue detail
+    Row 5: insert title
+    Row 6: insert subtitle             (col 1 spans rows 5-7)
+    Row 7: insert detail
+    Row 8: abort title
+    Row 9: abort subtitle              (col 1 spans rows 8-10)
+    Row 10: abort detail
+-->
+
+<GridPane fx:id="topLevel" hgap="12" styleClass="change-options-root" stylesheets="@stylesheet.css" vgap="6" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.ChangeOptionsController">
+
+    <padding>
+        <Insets bottom="16" left="16" right="16" top="16" />
+    </padding>
+
+    <columnConstraints>
+        <ColumnConstraints fillWidth="true" hgrow="ALWAYS" />
+        <ColumnConstraints hgrow="NEVER" minWidth="120" />
+    </columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints minHeight="24" vgrow="NEVER" />  <!-- row 0: header -->
+        <RowConstraints minHeight="20" vgrow="NEVER" />  <!-- row 1: choose_how -->
+        <RowConstraints minHeight="10" vgrow="NEVER" />  <!-- row 2: spacer -->
+        <RowConstraints minHeight="20" vgrow="NEVER" />  <!-- row 3: continue title -->
+        <RowConstraints minHeight="20" vgrow="SOMETIMES" />  <!-- row 4: continue subtitle -->
+        <RowConstraints minHeight="20" vgrow="SOMETIMES" />  <!-- row 5: continue detail -->
+        <RowConstraints minHeight="10" vgrow="NEVER" />  <!-- row 6: spacer -->
+        <RowConstraints minHeight="20" vgrow="NEVER" />  <!-- row 7: insert title -->
+        <RowConstraints minHeight="20" vgrow="SOMETIMES" />  <!-- row 8: insert subtitle -->
+        <RowConstraints minHeight="20" vgrow="SOMETIMES" />  <!-- row 9: insert detail -->
+        <RowConstraints minHeight="10" vgrow="NEVER" />  <!-- row 10: spacer -->
+        <RowConstraints minHeight="20" vgrow="NEVER" />  <!-- row 11: abort title -->
+        <RowConstraints minHeight="20" vgrow="SOMETIMES" />  <!-- row 12: abort subtitle -->
+        <RowConstraints minHeight="20" vgrow="SOMETIMES" />  <!-- row 13: abort detail -->
+    </rowConstraints>
+
+    <!-- ── Row 0: header ─────────────────────────────────────────────── -->
+    <Label styleClass="dialog-header" text="%changeoptions.header" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+
+    <!-- ── Row 1: subtext ────────────────────────────────────────────── -->
+    <Label styleClass="dialog-subtext" text="%changeoptions.choose_how" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+
+    <!-- ── Rows 3-5: Continue ────────────────────────────────────────── -->
+    <Label styleClass="option-title" text="%changeoptions.continue_title" GridPane.columnIndex="0" GridPane.rowIndex="3">
+      <font>
+         <Font name="System Bold" size="15.0" />
+      </font></Label>
+
+    <Label styleClass="option-subtitle" text="%changeoptions.continue_subtitle" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+
+    <Label styleClass="option-detail" text="%changeoptions.continue_detail" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+
+    <Button fx:id="continueButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#onContinue" styleClass="option-button,prune-button" text="%changeoptions.continue_button" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.rowSpan="3" GridPane.valignment="CENTER" />
+
+    <!-- ── Rows 7-9: Insert ──────────────────────────────────────────── -->
+    <Label styleClass="option-title" text="%changeoptions.insert_title" GridPane.columnIndex="0" GridPane.rowIndex="7">
+      <font>
+         <Font name="System Bold" size="15.0" />
+      </font></Label>
+
+    <Label styleClass="option-subtitle" text="%changeoptions.insert_subtitle" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+
+    <Label styleClass="option-detail" text="%changeoptions.insert_detail" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+
+    <Button fx:id="insertButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInsert" styleClass="option-button,insert-button" text="%changeoptions.insert_button" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.rowSpan="3" GridPane.valignment="CENTER" />
+
+    <!-- ── Rows 11-13: Abort ─────────────────────────────────────────── -->
+    <Label styleClass="option-title" text="%changeoptions.abort_title" GridPane.columnIndex="0" GridPane.rowIndex="11">
+      <font>
+         <Font name="System Bold" size="15.0" />
+      </font></Label>
+
+    <Label styleClass="option-subtitle" text="%changeoptions.abort_subtitle" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="12" />
+
+    <Label styleClass="option-detail" text="%changeoptions.abort_detail" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="13" />
+
+    <Button fx:id="abortButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#onAbort" styleClass="option-button,abort-button" text="%changeoptions.abort_button" GridPane.columnIndex="1" GridPane.rowIndex="11" GridPane.rowSpan="3" GridPane.valignment="CENTER" />
+   <Separator prefWidth="200.0" GridPane.rowIndex="6" />
+   <Separator prefWidth="200.0" GridPane.rowIndex="10" />
+   <Separator prefWidth="200.0" GridPane.rowIndex="2" />
+
+</GridPane>
