@@ -60,6 +60,15 @@ jobs:
       run: pwd; ls -la  
     - name: Run Unit Tests
       run: xvfb-run -s '-screen 0 1024x768x24' ./gradlew test
+    - name: Package Release Bundle
+      run: |
+          rm -rf CaDoodle-ApplicationInstall
+          mkdir -p CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
+          echo ${{ steps.get_version.outputs.VERSION  }} > CaDoodle-ApplicationInstall/currentversion.txt
+          cp CaDoodle-Application.jar CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
+          cp BowlerStudio/jvm.json CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
+          cp gitcache.zip CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
+          zip -r CaDoodle-ApplicationInstall.zip CaDoodle-ApplicationInstall/
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
@@ -68,6 +77,7 @@ jobs:
           CaDoodle-Application.jar
           BowlerStudio/jvm.json
           gitcache.zip
+          CaDoodle-ApplicationInstall.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
