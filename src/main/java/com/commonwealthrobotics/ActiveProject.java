@@ -41,10 +41,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -84,12 +84,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 
 public class ActiveProject implements ICaDoodleStateUpdate {
 
+	private static final String DEFAULT = "Default";
 	private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
 	private CaDoodleFile fromFile = null;
@@ -384,154 +383,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 				@Override
 				public OperationResult accept() {
-					OperationResult insertionStrat = OperationResult.fromString((String) ConfigurationDatabase
-							.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
-					boolean advanced = Boolean.parseBoolean(
-							ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedMode", "" + false).toString());
-					if (!advanced) {
-						insertionStrat = OperationResult.PRUNE;
-					}
-					if (insertionStrat != OperationResult.ASK)
-						return insertionStrat;
-					operationResult = null;
-					boolean isVis = SplashManager.isVisibleSplash();
-					SplashManager.closeSplash();
-					BowlerKernel.runLater(() -> {
-						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-						alert.setTitle("Change Options");
-						alert.setHeaderText("You made a change. How would you like to proceed?");
-						alert.setContentText("Please select one of the following options:");
-
-						// Create custom buttons with specific labels
-						ButtonType eraseButton = new ButtonType("Erase");
-						ButtonType insertButton = new ButtonType("Insert");
-						ButtonType abortButton = new ButtonType("Abort change");
-
-						// Set the buttons for the alert
-						alert.getButtonTypes().setAll(eraseButton, insertButton, abortButton);
-
-						// Get the dialog pane to customize
-						DialogPane dialogPane = alert.getDialogPane();
-
-						// Create a VBox to hold descriptions and stack buttons vertically
-						VBox contentBox = new VBox(10);
-						contentBox.setPadding(new Insets(10, 10, 10, 10));
-						CheckBox alwaysPrune = new CheckBox("Always Continue");
-						CheckBox alwaysInsert = new CheckBox("Always Insert");
-						alwaysInsert.setOnAction(e -> alwaysPrune.setSelected(false));
-						alwaysPrune.setOnAction(e -> alwaysInsert.setSelected(false));
-
-						// Create labeled buttons with descriptions
-						HBox eraseOptionBtn = createOptionButton(null, "Continue From Here",
-								"Replace subsequent work with this change.\nThis will remove any work you've done after this point.",
-								"Erase will prune the subsequent operations and replace them with this change.", e -> {
-									this.operationResult = OperationResult.PRUNE;
-									alert.close();
-								});
-
-						HBox insertOptionBtn = createOptionButton(null, "Insert",
-								"Insert this change at the current position.\nYour subsequent work will be preserved.",
-								"Insert will add this operation at the current position while keeping subsequent operations.",
-								e -> {
-									this.operationResult = OperationResult.INSERT;
-									alert.close();
-								});
-
-						HBox abortOptionBtn = createOptionButton(null, "Abort change",
-								"Cancel this change and keep your work as is.",
-								"Abort will discard this change and maintain your current work.", e -> {
-									this.operationResult = OperationResult.ABORT;
-									alert.close();
-								});
-
-						// Add buttons to the VBox
-						contentBox.getChildren().addAll(new Label(
-								"Choose how to handle your change: (Check the settings menu for default behavior)"),
-								eraseOptionBtn, insertOptionBtn, abortOptionBtn);
-
-						// Replace the default content with our custom content
-						dialogPane.setContent(contentBox);
-
-						// Get the root node and stage for styling
-						Node root = dialogPane;
-						Stage stage = (Stage) dialogPane.getScene().getWindow();
-
-						// Handle close request properly
-						stage.setOnCloseRequest(ev -> alert.hide());
-
-						// Set up font size management
-						FontSizeManager.addListener(fontNum -> {
-							int tmp = fontNum - 10;
-							if (tmp < 12)
-								tmp = 12;
-							root.setStyle("-fx-font-size: " + tmp + "pt");
-							dialogPane.applyCss();
-							dialogPane.layout();
-							stage.sizeToScene();
-						});
-
-						// Hide the default buttons as we're using custom ones
-						dialogPane.getButtonTypes().clear();
-						dialogPane.getButtonTypes().add(ButtonType.CANCEL); // Add a hidden button to make dialog work
-						Node buttonBar = dialogPane.lookup(".button-bar");
-						if (buttonBar != null) {
-							buttonBar.setVisible(false);
-							buttonBar.setManaged(false);
-						}
-
-						SplashManager.closeSplash();
-
-						// Keyboard shortcut [Escape]=Abort
-						alert.setOnShown(e -> {
-							DialogPane pane = alert.getDialogPane();
-							pane.getScene().setOnKeyPressed(ke -> {
-								if (ke.getCode() == KeyCode.ESCAPE) {
-									this.operationResult = OperationResult.ABORT;
-									alert.hide();
-									ke.consume();
-								}
-							});
-
-							// Keyboard shortcut C=Continue
-							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> {
-								this.operationResult = OperationResult.PRUNE;
-								alert.hide();
-							});
-
-							// Keyboard shortcut I=Insert
-							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> {
-								this.operationResult = OperationResult.INSERT;
-								alert.hide();
-							});
-
-							// Keyboard shortcut A=Abort
-							pane.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.A), () -> {
-								this.operationResult = OperationResult.ABORT;
-								alert.hide();
-							});
-						});
-						setStyleSheet(dialogPane);
-						// Show alert and wait for result
-						alert.showAndWait();
-
-						if (this.operationResult == null)
-							this.operationResult = OperationResult.ABORT;
-						alert.close();
-					});
-
-					while (operationResult == null) {
-						try {
-							Thread.sleep(100);
-							SplashManager.closeSplash();
-						} catch (InterruptedException e) {
-							// Auto-generated catch block
-							com.neuronrobotics.sdk.common.Log.error(e);
-						}
-
-					}
-					if (isVis)
-						SplashManager.renderSplashFrame(0, "Processing ");
-					return operationResult;
+					return ChangeOptionsController.launch();
 				}
 			});
 			// fromFile.setImageEngine(new ThumbnailImage());
@@ -977,12 +829,18 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		Button ok = new Button("OK");
 		ok.setDefaultButton(true);
 
-		VBox root = new VBox(15, new Label("Select Language"), comboBox, ok);
+		VBox myroot = new VBox(15, new Label("Select Language"), comboBox, ok);
 
-		root.setPadding(new Insets(20));
-		root.setAlignment(Pos.CENTER);
+		myroot.setPadding(new Insets(20));
+		myroot.setAlignment(Pos.CENTER);
+		AnchorPane root = new AnchorPane();
+		root.getChildren().add(myroot);
 		final Locale[] result = new Locale[1];
-
+		myroot.getStyleClass().add("vbox");
+		AnchorPane.setTopAnchor(myroot, 0.0);
+		AnchorPane.setBottomAnchor(myroot, 0.0);
+		AnchorPane.setLeftAnchor(myroot, 0.0);
+		AnchorPane.setRightAnchor(myroot, 0.0);
 		BowlerStudio.runLater(() -> {
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
@@ -1081,10 +939,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			panes.add(node);
 		}
 
-		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", getStyleSheetOptions().get(0)).toString();
+		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", DEFAULT).toString();
 
 		String url = Main.class.getResource("/com/commonwealthrobotics/stylesheet.css").toExternalForm();
-		if (!sheet.contentEquals("Default")) {
+		if (!sheet.contentEquals(DEFAULT)) {
 			try {
 				File fileFromGit = ScriptingEngine
 						.fileFromGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git", sheet + ".css");
@@ -1100,7 +958,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public static ArrayList<String> getStyleSheetOptions() {
 		ArrayList<String> sheets = new ArrayList<String>();
-		sheets.add("Default");
+		sheets.add(DEFAULT);
 		try {
 			ArrayList<String> filesInGit = ScriptingEngine
 					.filesInGit("https://github.com/CommonWealthRobotics/Style-Cadoodle.git");

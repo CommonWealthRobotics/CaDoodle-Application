@@ -28,6 +28,8 @@ import com.neuronrobotics.bowlerstudio.scripting.GitHubWebFlow;
 import com.neuronrobotics.bowlerstudio.scripting.PasswordManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.external.GroovyEclipseExternalEditor;
+import com.neuronrobotics.bowlerstudio.vitamins.AskToFixInterface;
+import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -44,10 +46,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import javafx.application.Platform;
+import javafx.stage.Stage;
+
+
+import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -145,7 +150,7 @@ public class Main extends Application {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		FileSelectionFactory.setStage(stage);
-
+		setupMeshFailPopup(stage);
 		stage.show();
 
 		// Get the screen refresh rate
@@ -159,70 +164,6 @@ public class Main extends Application {
 
 	public static int getScreenRefreshRate() {
 		return screenRefreshRate;
-	}
-
-	private void setupTray(Stage stage) {
-		// First check if SystemTray is supported
-		if (!SystemTray.isSupported()) {
-			com.neuronrobotics.sdk.common.Log.debug("SystemTray is not supported");
-			return;
-		}
-
-		try {
-			// Get the system tray
-			SystemTray tray = SystemTray.getSystemTray();
-
-			// Get tray icon size
-			Dimension trayIconSize = tray.getTrayIconSize();
-
-			// Load image for tray icon
-			String name = "CADoodle-Icon.png";
-			java.awt.Image originalImage = ImageIO.read(Main.class.getResource(name));
-
-			// Create a transparent buffered image
-			BufferedImage bufferedImage = new BufferedImage(trayIconSize.width, trayIconSize.height,
-					BufferedImage.TYPE_INT_ARGB);
-
-			// Get graphics context
-			Graphics g = bufferedImage.getGraphics();
-
-			// Draw the original image to the new one, preserving transparency
-			g.drawImage(originalImage, 0, 0, trayIconSize.width, trayIconSize.height, null);
-			g.dispose();
-
-			// Create a popup menu
-			PopupMenu popup = new PopupMenu();
-
-			// Create menu items
-			MenuItem showItem = new MenuItem("Show");
-			showItem.addActionListener(e -> Platform.runLater(() -> {
-				stage.show();
-				stage.setIconified(false);
-				stage.toFront();
-			}));
-
-			MenuItem exitItem = new MenuItem("Exit");
-			exitItem.addActionListener(e -> {
-				Platform.exit();
-
-				System.exit(0);
-			});
-
-			// Add items to popup menu
-			popup.add(showItem);
-			popup.addSeparator();
-			popup.add(exitItem);
-
-			// Create tray icon with the buffered image that preserves transparency
-			TrayIcon trayIcon = new TrayIcon(bufferedImage, "CADoodle", popup);
-
-			// Add icon to system tray
-			tray.add(trayIcon);
-			com.neuronrobotics.sdk.common.Log.debug("Setting transparent tray icon to " + name);
-
-		} catch (AWTException | IOException e) {
-			com.neuronrobotics.sdk.common.Log.error(e);
-		}
 	}
 
 	public static void main(String[] args) {
@@ -383,7 +324,18 @@ public class Main extends Application {
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
 		ActiveProject.getLangaugePack();
+
 		launch();
+	}
+
+	private static void setupMeshFailPopup(Stage stage) {
+		Vitamins.setAskToFix(new AskToFixInterface() {
+
+			@Override
+			public boolean tryToFix(File f, Throwable t) {
+				return StlRepairDialogController.show(stage, f, t);
+			}
+		});
 	}
 
 	public static void saveOptionalProjects(HashSet<String> state) {

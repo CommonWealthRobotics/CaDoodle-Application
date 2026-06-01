@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<!--
+    STL Repair Dialog
+    Shown as an APPLICATION_MODAL stage when an STL file has an issue.
+
+    Keys used (prefix: stlrepair.):
+        stlrepair.title           – stage title
+        stlrepair.header          – bold headline
+        stlrepair.file_label      – "File:" prefix label (filename appended in controller)
+        stlrepair.error_label     – "Error:" prefix label (message appended in controller)
+        stlrepair.question        – "Would you like to attempt …" question
+        stlrepair.inside_out_fix  – CheckBox label
+        stlrepair.yes_button      – "Yes, Fix It"
+        stlrepair.no_button       – "No"
+-->
+
+<VBox fx:id="root" prefWidth="640" spacing="12" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.StlRepairDialogController">
+
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <Label fx:id="headerLabel" styleClass="dialog-header" text="%stlrepair.header" wrapText="true">
+        <font>
+            <Font name="System Bold" size="15.0" />
+        </font>
+    </Label>
+
+    <Separator />
+
+    <!-- ── File name (prefix from bundle, value set in controller) ───── -->
+    <Label fx:id="fileLabel" text="%stlrepair.file_label" wrapText="true" />
+
+    <!-- ── Error message (prefix from bundle, detail set in controller) ─ -->
+    <Label fx:id="errorLabel" text="%stlrepair.error_label" wrapText="true" />
+
+    <!-- ── Question ──────────────────────────────────────────────────── -->
+    <Label fx:id="questionLabel" text="%stlrepair.question" wrapText="true" />
+
+    <!-- ── Button row ────────────────────────────────────────────────── -->
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <CheckBox fx:id="insideOutCheckBox" onAction="#onInsideOutToggled" text="%stlrepair.inside_out_fix" />
+        <Button fx:id="yesButton" defaultButton="true" onAction="#onYes" prefHeight="32" prefWidth="110" styleClass="repair-yes-button" text="%stlrepair.yes_button" />
+        <Button fx:id="noButton" cancelButton="true" onAction="#onNo" prefHeight="32" prefWidth="110" styleClass="repair-no-button" text="%stlrepair.no_button" />
+    </HBox>
+
+</VBox>
