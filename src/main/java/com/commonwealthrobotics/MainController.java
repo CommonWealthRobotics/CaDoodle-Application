@@ -1016,6 +1016,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
+			//engine.setOrthographicMode(true);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
@@ -1101,6 +1102,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 			com.neuronrobotics.sdk.common.Log.error(e);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.exit(1);
 		}
 
