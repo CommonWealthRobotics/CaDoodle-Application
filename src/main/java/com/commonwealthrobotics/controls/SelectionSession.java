@@ -92,6 +92,7 @@ import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
+import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
@@ -774,6 +775,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		parametrics.getChildren().clear();
 		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
+		GridPane gp = new GridPane(5, 5);
+		int line = 0;
+		parametrics.getChildren().add(gp);
+		int width = 120;
 		if (getSelected().size() > 0) {
 			dropToWorkplane.setDisable(false);
 			objectWorkplane.setDisable(getSelected().size() != 1);
@@ -830,14 +835,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			} else
 				renameBtn.setVisible(false);
 			shapeConfiguration.setText(name);
+	
+
 			if ((selectedSnapshot.size() == 1) && (csgs.size() > 0)) {
 				CSG sel = csgs.get(0);
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
-				GridPane gp = new GridPane(5, 5);
-				parametrics.getChildren().add(gp);
-				int line = 0;
 				for (String key : sortedList) {
 					if (key.contains("CaDoodle") && (key.contains(sel.getName().split("_")[0]))) {
 						numCadParaams++;
@@ -848,7 +852,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						gp.add(e, 0, line);
 
 						Parameter para = ap.get().getCsgDBinstance().get(key);
-						int width = 120;
+						
 
 						if (StringParameter.class.isInstance(para)) {
 							ArrayList<String> opts = para.getOptions();
@@ -903,6 +907,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			shapeConfigurationHolder.getChildren().clear();
 			hideButtons();
 			getControls().clearSelection();
+		}
+		double volume =0;
+		double sa=0;
+		for(CSG c:getSelected()) {
+			volume+=c.getVolume();
+			sa+=c.getSurfaceArea();
+		}
+		setUpTextBox(gp, line++, "Volume",String.format(Locale.US, "%.2f mm^3",volume), width);
+		if(getSelected().size()==1) {
+			setUpTextBox(gp, line++, "Area",String.format(Locale.US, "%.2f mm^2",sa), width);
 		}
 		updateControls();
 	}
@@ -1012,7 +1026,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		});
 	}
+	private void setUpTextBox(GridPane gp, int line, String label, String value, int width) {
+		gp.add(new Label(label), 0, line);
 
+
+		Label child = new Label(value);
+	    GridPane.setHalignment(child, HPos.RIGHT);
+	    child.setMinWidth(width);
+		gp.add(child, 1, line);
+	}
 	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
