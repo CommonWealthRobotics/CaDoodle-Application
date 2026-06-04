@@ -879,7 +879,7 @@
 
             <Button fx:id="logoButton" contentDisplay="GRAPHIC_ONLY" onAction="#openHomePage" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
                 <graphic>
-                  <ImageView fitHeight="90.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="bigLogoImage" fitHeight="40.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" styleClass="biglogo-cadoodle" />
                 </graphic>
             </Button>
                   <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">

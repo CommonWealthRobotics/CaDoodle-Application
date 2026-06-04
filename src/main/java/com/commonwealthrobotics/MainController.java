@@ -130,6 +130,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private ImageView RobotLabDrawerImage;
 	@FXML
 	private ImageView robotLabDrawerArrow;
+	@FXML
+	private ImageView bigLogoImage;
 
 	@FXML
 	private AnchorPane RobotLabHolder;
@@ -1846,6 +1848,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setComponentTreeOpenState(false);
 		}
 		session.setAdvancedMode(advanced);
+		bigLogoImage.getStyleClass().clear();
+		bigLogoImage.getStyleClass().add((advanced?"biglogo-advanced":"biglogo-cadoodle"));
+			
 		BowlerStudio.runLater(() -> {
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
@@ -1856,6 +1861,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			extrudeButton.setVisible(advanced);
 			boltHoleButton.setVisible(advanced);
 			hexDistributeButton.setVisible(advanced);
+			
 		});
 
 	}

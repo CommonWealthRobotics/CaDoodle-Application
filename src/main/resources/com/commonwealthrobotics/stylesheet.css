@@ -5,7 +5,8 @@
 
 #makeRobotButton .image-view     { -fx-image: url("light/newRobot.png"); }
 #homeButton .image-view          { -fx-image: url("light/CADoodleHome.png"); }
-#logoButton .image-view          { -fx-image: url("light/biglogo.png"); }
+.biglogo-cadoodle        		 { -fx-image: url("light/biglogo.png"); }
+.biglogo-advanced        		 { -fx-image: url("light/fission180.png"); }
 #homeViewButton .image-view      { -fx-image: url("light/home.png"); }
 #fitViewButton .image-view       { -fx-image: url("light/fit.png"); }
 #zoomInButton .image-view        { -fx-image: url("light/zoomIn.png"); }
