@@ -1849,8 +1849,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		}
 		session.setAdvancedMode(advanced);
 		bigLogoImage.getStyleClass().clear();
-		bigLogoImage.getStyleClass().add((advanced?"biglogo-advanced":"biglogo-cadoodle"));
-			
+		bigLogoImage.getStyleClass().add((advanced ? "biglogo-advanced" : "biglogo-cadoodle"));
+
 		BowlerStudio.runLater(() -> {
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
@@ -1861,7 +1861,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			extrudeButton.setVisible(advanced);
 			boltHoleButton.setVisible(advanced);
 			hexDistributeButton.setVisible(advanced);
-			
+
 		});
 
 	}
