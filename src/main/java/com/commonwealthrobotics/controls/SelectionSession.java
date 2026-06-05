@@ -22,8 +22,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
@@ -942,16 +940,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		gp.add(new Label("Material"), 0, line);
 		Label massDisp = new Label("0.0");
-		Button child = createPrintSettingsButton(getSelected(),volume,massDisp);
+		Button child = createPrintSettingsButton(getSelected(), volume, massDisp);
 		GridPane.setHalignment(child, HPos.RIGHT);
 		gp.add(child, 1, line);
 		line++;
-		
+
 		gp.add(new Label("Mass"), 0, line);
 		GridPane.setHalignment(massDisp, HPos.RIGHT);
 		gp.add(massDisp, 1, line);
 		line++;
-		
+
 		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.2f cm^3", volume / 1000.0), width);
 		if (getSelected().size() == 1) {
 			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.2f cm^2", sa / 100), width);
@@ -1087,9 +1085,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String defInfil = 20 + "";
 
 		// Mutable holders so the lambda can write back
-		String[] currentType = { defType };
-		String[] currentMat = { defMat };
-		String[] currentInfill = { defInfil };
+		String[] currentType = {defType};
+		String[] currentMat = {defMat};
+		String[] currentInfill = {defInfil};
+		double[] density = {1.0};
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1103,7 +1102,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = { null };
+		Runnable[] updateLabel = {null};
 
 		// --- Type menu ---
 		Menu typeMenu = new Menu("Type");
@@ -1202,6 +1201,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (!currentInfill[0].isEmpty())
 				label += " / " + currentInfill[0] + "%";
 			button.setText(label);
+
+			massDisplay.setText(String.format(Locale.US, "%.2f mg", volume * density[0]));
 		};
 
 		// --- Apply defaults ---
@@ -1235,6 +1236,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				button.localToScreen(0, 0).getY() + button.getHeight()));
 
 		return button;
+
 	}
 
 	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
@@ -1390,8 +1392,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		List<String> grids = Arrays.asList(String.format(Locale.US, "%.4f mm", 0.1000),
 				String.format(Locale.US, "%.4f mm", 0.2500), String.format(Locale.US, "%.4f mm", 0.5000),
 				String.format(Locale.US, "%.4f mm", 1.0000), String.format(Locale.US, "%.4f mm 1/16 inch", inch / 16.0),
-				String.format(Locale.US, "%.4f mm", 2.0000), String.format(Locale.US, "%.4f mm 1/8 inch", inch / 8.0),
-				String.format(Locale.US, "%.4f mm", 5.0000), String.format(Locale.US, "%.4f mm 1/4 inch", inch / 4.0),
+				String.format(Locale.US, "%.4f mm", 2.0000), String.format(Locale.US, "%.4f mm Pi", 3.1416),
+				String.format(Locale.US, "%.4f mm 1/8 inch", inch / 8.0), String.format(Locale.US, "%.4f mm", 5.0000),
+				String.format(Locale.US, "%.4f mm 1/4 inch", inch / 4.0),
 				String.format(Locale.US, "%.4f mm Brick", 8.0000), String.format(Locale.US, "%.4f mm", 10.000),
 				String.format(Locale.US, "%.4f mm 1/2 inch", inch / 2.0), String.format(Locale.US, "%.4f mm", 20.000),
 				String.format(Locale.US, "%.4f mm 1 inch", inch));
