@@ -1,22 +1,29 @@
 package com.commonwealthrobotics.controls;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
@@ -25,6 +32,9 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.fillet.ExtrudeUIManager;
 import com.commonwealthrobotics.fillet.FilletUIManager;
 import com.commonwealthrobotics.robot.LimbControlManager;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.neuronrobotics.bowlerkernel.Bezier3d.IInteractiveUIElementProvider;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -71,12 +81,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -145,9 +160,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private HashMap<FileChangeWatcher, CaDoodleOperation> myWatchers = new HashMap<>();
 	private Button lockButton;
 	private ImageView lockImage;
-	//private boolean useButton = false;
-	//private Button regenerate = new Button("Re-Generate");
-	//private HashMap<String, EventHandler<ActionEvent>> regenEvents = new HashMap<>();
+	// private boolean useButton = false;
+	// private Button regenerate = new Button("Re-Generate");
+	// private HashMap<String, EventHandler<ActionEvent>> regenEvents = new
+	// HashMap<>();
 	private boolean showConstituants = false;
 	private MenuButton advancedGroupMenu;
 	private TimelineManager timeline;
@@ -382,7 +398,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Log.error(e);
 			}
 
-
 			if ((f != null) && (l != null)) {
 				FileChangeWatcher w;
 				try {
@@ -569,9 +584,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							return;
 
 						getExecutor().submit(() -> {
-							//							if (useButton)
-							//								BowlerStudio.runLater(() -> regenerate.setDisable(false));
-							//							else
+							// if (useButton)
+							// BowlerStudio.runLater(() -> regenerate.setDisable(false));
+							// else
 							myRegenerate(source, myL, myFile);
 
 						});
@@ -849,7 +864,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				renameBtn.setVisible(false);
 			shapeConfiguration.setText(name);
 
-
 			if ((selectedSnapshot.size() == 1) && (csgs.size() > 0)) {
 				CSG sel = csgs.get(0);
 				List<String> sortedList = new ArrayList<>(sel.getParameters(ap.get().getCsgDBinstance()));
@@ -865,7 +879,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						gp.add(e, 0, line);
 
 						Parameter para = ap.get().getCsgDBinstance().get(key);
-
 
 						if (StringParameter.class.isInstance(para)) {
 							ArrayList<String> opts = para.getOptions();
@@ -889,23 +902,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					line++;
 				}
 
-				//				if (numCadParaams > 2) {
-				//					useButton = true;
-				//					// com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
-				//					// sel.getName());
-				//					if (!parametrics.getChildren().contains(regenerate))
-				//						parametrics.getChildren().add(regenerate);
+				// if (numCadParaams > 2) {
+				// useButton = true;
+				// // com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
+				// // sel.getName());
+				// if (!parametrics.getChildren().contains(regenerate))
+				// parametrics.getChildren().add(regenerate);
 				//
-				//					EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
-				//					if (value2 != null)
-				//						regenerate.setOnAction(value2);
-				//					else
-				//						com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
+				// EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
+				// if (value2 != null)
+				// regenerate.setOnAction(value2);
+				// else
+				// com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
 				//
-				//				} else {
-				//					useButton = false;
-				//					parametrics.getChildren().remove(regenerate);
-				//				}
+				// } else {
+				// useButton = false;
+				// parametrics.getChildren().remove(regenerate);
+				// }
 			}
 		} else {
 			for (CSG c : cs) {
@@ -927,7 +940,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
 		}
-
+		gp.add(new Label("Material"), 0, line);
+		Label massDisp = new Label("0.0");
+		Button child = createPrintSettingsButton(getSelected(),volume,massDisp);
+		GridPane.setHalignment(child, HPos.RIGHT);
+		gp.add(child, 1, line);
+		line++;
+		
+		gp.add(new Label("Mass"), 0, line);
+		GridPane.setHalignment(massDisp, HPos.RIGHT);
+		gp.add(massDisp, 1, line);
+		line++;
+		
 		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.2f cm^3", volume / 1000.0), width);
 		if (getSelected().size() == 1) {
 			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.2f cm^2", sa / 100), width);
@@ -1048,6 +1072,171 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		gp.add(child, 1, line);
 	}
 
+	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, double volume, Label massDisplay) {
+		Button button = new Button("Print Settings");
+		File f;
+		try {
+			f = ScriptingEngine.fileFromGit("https://github.com/madhephaestus/CaDoodle-Example-Objects.git",
+					"materials_density.json");
+		} catch (GitAPIException | IOException e) {
+			Log.error(e);
+			return button;
+		}
+		String defType = "FDM";
+		String defMat = "PLA";
+		String defInfil = 20 + "";
+
+		// Mutable holders so the lambda can write back
+		String[] currentType = { defType };
+		String[] currentMat = { defMat };
+		String[] currentInfill = { defInfil };
+
+		// --- Parse JSON with Gson ---
+		Gson gson = new Gson();
+		JsonObject root;
+		try (FileReader reader = new FileReader(f)) {
+			root = gson.fromJson(reader, JsonObject.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Button("Print Settings");
+		}
+
+		// --- Helper to build button label ---
+		// Declared as an array so lambdas below can call it
+		Runnable[] updateLabel = { null };
+
+		// --- Type menu ---
+		Menu typeMenu = new Menu("Type");
+		ToggleGroup typeGroup = new ToggleGroup();
+		for (Map.Entry<String, JsonElement> typeEntry : root.entrySet()) {
+			RadioMenuItem item = new RadioMenuItem(typeEntry.getKey());
+			item.setToggleGroup(typeGroup);
+			typeMenu.getItems().add(item);
+		}
+
+		// --- Material menu ---
+		Menu materialMenu = new Menu("Material");
+		ToggleGroup materialGroup = new ToggleGroup();
+
+		// --- Infill % menu ---
+		Menu infillMenu = new Menu("Infill %");
+		ToggleGroup infillGroup = new ToggleGroup();
+
+		if (root.has("FDM")) {
+			JsonObject fdmSection = root.get("FDM").getAsJsonObject();
+			List<String> infillKeys = new ArrayList<>();
+			for (Map.Entry<String, JsonElement> entry : fdmSection.entrySet()) {
+				try {
+					int val = Integer.parseInt(entry.getKey());
+					if (val >= 10 && val <= 100)
+						infillKeys.add(entry.getKey());
+				} catch (NumberFormatException ignored) {
+				}
+			}
+			Collections.sort(infillKeys, Comparator.comparingInt(Integer::parseInt));
+			for (String pct : infillKeys) {
+				RadioMenuItem item = new RadioMenuItem(pct + "%");
+				item.setToggleGroup(infillGroup);
+				infillMenu.getItems().add(item);
+			}
+		}
+
+		// --- Populate materials for a given type and optionally pre-select one ---
+		java.util.function.BiConsumer<String, String> populateMaterials = (typeName, selectMat) -> {
+			materialMenu.getItems().clear();
+			materialGroup.getToggles().clear();
+			JsonObject section = root.get(typeName).getAsJsonObject();
+			for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
+				JsonObject matObj = entry.getValue().getAsJsonObject();
+				if (!matObj.has("density_g_cm3"))
+					continue;
+				RadioMenuItem item = new RadioMenuItem(entry.getKey());
+				item.setToggleGroup(materialGroup);
+				materialMenu.getItems().add(item);
+				if (entry.getKey().equals(selectMat))
+					item.setSelected(true);
+			}
+		};
+
+		// --- Infill listener ---
+		infillGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal == null)
+				return;
+			String raw = ((RadioMenuItem) newVal).getText();
+			currentInfill[0] = raw.replace("%", "");
+			if (updateLabel[0] != null)
+				updateLabel[0].run();
+		});
+
+		// --- Material listener ---
+		materialGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal == null)
+				return;
+			currentMat[0] = ((RadioMenuItem) newVal).getText();
+			if (updateLabel[0] != null)
+				updateLabel[0].run();
+		});
+
+		// --- Type listener ---
+		typeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal == null)
+				return;
+			String selectedType = ((RadioMenuItem) newVal).getText();
+			boolean isFDM = "FDM".equals(selectedType);
+			currentType[0] = selectedType;
+
+			populateMaterials.accept(selectedType, null);
+
+			infillMenu.setDisable(!isFDM);
+			if (!isFDM) {
+				infillGroup.selectToggle(null);
+				currentInfill[0] = "";
+			}
+			if (updateLabel[0] != null)
+				updateLabel[0].run();
+		});
+
+		// --- Label updater ---
+		updateLabel[0] = () -> {
+			String label = currentType[0] + " / " + currentMat[0];
+			if (!currentInfill[0].isEmpty())
+				label += " / " + currentInfill[0] + "%";
+			button.setText(label);
+		};
+
+		// --- Apply defaults ---
+		// 1. Populate materials for the default type with the default material
+		// pre-selected
+		populateMaterials.accept(defType, defMat);
+
+		// 2. Select the default type (triggers type listener)
+		for (Toggle t : typeGroup.getToggles()) {
+			if (((RadioMenuItem) t).getText().equals(defType)) {
+				t.setSelected(true);
+				break;
+			}
+		}
+
+		// 3. Select the default infill
+		for (Toggle t : infillGroup.getToggles()) {
+			if (((RadioMenuItem) t).getText().equals(defInfil + "%")) {
+				t.setSelected(true);
+				break;
+			}
+		}
+
+		// 4. Set initial label
+		updateLabel[0].run();
+
+		// --- Assemble context menu ---
+		ContextMenu contextMenu = new ContextMenu(typeMenu, materialMenu, infillMenu);
+
+		button.setOnAction(e -> contextMenu.show(button, button.localToScreen(0, 0).getX(),
+				button.localToScreen(0, 0).getY() + button.getHeight()));
+
+		return button;
+	}
+
 	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
@@ -1083,26 +1272,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setUpComboBoxParametrics(GridPane gp, int line, String text, Parameter para, ArrayList<String> opts,
 			int width) {
-		//		ComboBox<String> options = new ComboBox<String>();
-		//		if (para.getName().toLowerCase().endsWith("font")) {
-		//			options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
-		//				@Override
-		//				protected void updateItem(String item, boolean empty) {
-		//					super.updateItem(item, empty);
-		//					setFont(new Font(item,Font.getDefault().getSize()));
-		//					setText(item);
-		//				}
-		//			});
+		// ComboBox<String> options = new ComboBox<String>();
+		// if (para.getName().toLowerCase().endsWith("font")) {
+		// options.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
+		// @Override
+		// protected void updateItem(String item, boolean empty) {
+		// super.updateItem(item, empty);
+		// setFont(new Font(item,Font.getDefault().getSize()));
+		// setText(item);
+		// }
+		// });
 		//
-		//			options.setButtonCell(new javafx.scene.control.ListCell<String>() {
-		//				@Override
-		//				protected void updateItem(String item, boolean empty) {
-		//					super.updateItem(item, empty);
-		//					setFont(new Font(item,Font.getDefault().getSize()));
-		//					setText(item);
-		//				}
-		//			});
-		//		}
+		// options.setButtonCell(new javafx.scene.control.ListCell<String>() {
+		// @Override
+		// protected void updateItem(String item, boolean empty) {
+		// super.updateItem(item, empty);
+		// setFont(new Font(item,Font.getDefault().getSize()));
+		// setText(item);
+		// }
+		// });
+		// }
 
 		ComboBox<String> options = new ComboBox<String>();
 
@@ -1492,10 +1681,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				objectWorkplane.setDisable(true);
 			if (hexDistributeButton != null)
 				hexDistributeButton.setDisable(true);
-			//			if (filletButton != null)
-			//				filletButton.setDisable(true);
-			//			if (extrudeButton != null)
-			//				extrudeButton.setDisable(true);
+			// if (filletButton != null)
+			// filletButton.setDisable(true);
+			// if (extrudeButton != null)
+			// extrudeButton.setDisable(true);
 			if (boltHoleButton != null)
 				boltHoleButton.setDisable(true);
 		});
@@ -1523,8 +1712,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
 				hexDistributeButton.setDisable(false);
-				//				filletButton.setDisable(false);
-				//				extrudeButton.setDisable(false);
+				// filletButton.setDisable(false);
+				// extrudeButton.setDisable(false);
 				boltHoleButton.setDisable(false);
 			}
 
@@ -2617,6 +2806,5 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.hexDistributeButton = hexDistributeButton;
 		this.boltHoleButton = boltHoleButton;
 	}
-
 
 }
