@@ -82,9 +82,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
@@ -778,7 +780,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		GridPane gp = new GridPane(5, 5);
 		int line = 0;
 		parametrics.getChildren().add(gp);
-		int width = 120;
+		int width = 200;
+		int c1Width = 100;
+		ColumnConstraints col0 = new ColumnConstraints();
+		col0.setHgrow(Priority.NEVER);
+		col0.setMinWidth(c1Width);
+		col0.setPrefWidth(c1Width);
+		col0.setMaxWidth(c1Width);
+		ColumnConstraints col1 = new ColumnConstraints();
+		col1.setMinWidth(width);
+		col1.setHgrow(Priority.ALWAYS);
+
+		gp.getColumnConstraints().setAll(col0, col1);
 		if (getSelected().size() > 0) {
 			dropToWorkplane.setDisable(false);
 			objectWorkplane.setDisable(getSelected().size() != 1);
@@ -914,9 +927,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
 		}
-		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.2f mm^3", volume), width);
+
+		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.2f cm^3", volume / 1000.0), width);
 		if (getSelected().size() == 1) {
-			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.2f mm^2", sa), width);
+			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.2f cm^2", sa / 100), width);
 		}
 		updateControls();
 	}
@@ -1029,11 +1043,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void setUpTextBox(GridPane gp, int line, String label, String value, int width) {
 		gp.add(new Label(label), 0, line);
-
-
 		Label child = new Label(value);
 		GridPane.setHalignment(child, HPos.RIGHT);
-		child.setMinWidth(width);
 		gp.add(child, 1, line);
 	}
 
