@@ -1185,6 +1185,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			currentType[0] = selectedType;
 
 			populateMaterials.accept(selectedType, null);
+			materialGroup.selectToggle(null);
+			currentMat[0] = "";
+			density[0] = 1.0;
 
 			infillMenu.setDisable(!isFDM);
 			if (!isFDM) {
@@ -1197,7 +1200,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Label updater ---
 		updateLabel[0] = () -> {
-			String label = currentType[0] + " / " + currentMat[0];
+			String label = currentType[0];
+			if (currentMat[0] != null && !currentMat[0].isEmpty())
+				label += " / " + currentMat[0];
 			if (!currentInfill[0].isEmpty())
 				label += " / " + currentInfill[0] + "%";
 			button.setText(label);
@@ -1218,7 +1223,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 				}
 			}
-			massDisplay.setText(String.format(Locale.US, "%.2f mg", volume * density[0]));
+			massDisplay.setText(String.format(Locale.US, "%.4f g", volume * density[0]/1000.0));
 		};
 
 		// --- Apply defaults ---
