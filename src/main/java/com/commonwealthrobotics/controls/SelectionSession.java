@@ -938,21 +938,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
 		}
-		gp.add(new Label("Material"), 0, line);
-		Label massDisp = new Label("0.0");
-		Button child = createPrintSettingsButton(getSelected(), volume, massDisp);
-		GridPane.setHalignment(child, HPos.RIGHT);
-		gp.add(child, 1, line);
-		line++;
-
-		gp.add(new Label("Mass"), 0, line);
-		GridPane.setHalignment(massDisp, HPos.RIGHT);
-		gp.add(massDisp, 1, line);
-		line++;
-
-		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.2f cm^3", volume / 1000.0), width);
 		if (getSelected().size() == 1) {
-			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.2f cm^2", sa / 100), width);
+			gp.add(new Label("Material"), 0, line);
+			Label massDisp = new Label("0.0");
+			Button child = createPrintSettingsButton(getSelected(), volume, massDisp);
+			GridPane.setHalignment(child, HPos.RIGHT);
+			gp.add(child, 1, line);
+			line++;
+
+			gp.add(new Label("Mass"), 0, line);
+			GridPane.setHalignment(massDisp, HPos.RIGHT);
+			gp.add(massDisp, 1, line);
+			line++;
+		}
+		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+		if (getSelected().size() == 1) {
+			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
 		}
 		updateControls();
 	}
@@ -1083,12 +1084,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String defType = "FDM";
 		String defMat = "PLA";
 		String defInfil = 20 + "";
+		for (CSG c : linkedHashSet) {
+			defType = c.getMaterialType().get();
+			defMat = c.getMaterial().get();
+			defInfil = c.getMateriaInfillPercent().get() + "";
+		}
 
 		// Mutable holders so the lambda can write back
-		String[] currentType = {defType};
-		String[] currentMat = {defMat};
-		String[] currentInfill = {defInfil};
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1102,7 +1105,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 
 		// --- Type menu ---
 		Menu typeMenu = new Menu("Type");
@@ -1162,7 +1165,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (newVal == null)
 				return;
 			String raw = ((RadioMenuItem) newVal).getText();
-			currentInfill[0] = raw.replace("%", "");
+			for (CSG c : linkedHashSet) {
+				c.setMaterialInfillPercent(Integer.parseInt(raw.replace("%", "")));
+			}
 			if (updateLabel[0] != null)
 				updateLabel[0].run();
 		});
@@ -1171,7 +1176,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		materialGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal == null)
 				return;
-			currentMat[0] = ((RadioMenuItem) newVal).getText();
+			for (CSG c : linkedHashSet) {
+				c.setMaterial(((RadioMenuItem) newVal).getText());
+			}
 			if (updateLabel[0] != null)
 				updateLabel[0].run();
 		});
@@ -1182,17 +1189,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			String selectedType = ((RadioMenuItem) newVal).getText();
 			boolean isFDM = "FDM".equals(selectedType);
-			currentType[0] = selectedType;
+			//currentType[0] = selectedType;
+			
+			for (CSG c : linkedHashSet) {
+				c.setMaterialType(selectedType);
 
+			}
 			populateMaterials.accept(selectedType, null);
 			materialGroup.selectToggle(null);
-			currentMat[0] = "";
 			density[0] = 1.0;
 
 			infillMenu.setDisable(!isFDM);
 			if (!isFDM) {
 				infillGroup.selectToggle(null);
-				currentInfill[0] = "";
 			}
 			if (updateLabel[0] != null)
 				updateLabel[0].run();
@@ -1223,7 +1232,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 				}
 			}
-			massDisplay.setText(String.format(Locale.US, "%.4f g", volume * density[0]/1000.0));
+			massDisplay.setText(String.format(Locale.US, "%.4f g", volume * density[0] / 1000.0));
 		};
 
 		// --- Apply defaults ---
