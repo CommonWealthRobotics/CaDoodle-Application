@@ -1189,8 +1189,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			String selectedType = ((RadioMenuItem) newVal).getText();
 			boolean isFDM = "FDM".equals(selectedType);
-			//currentType[0] = selectedType;
-			
+			// c.getMaterialType().get() = selectedType;
+
 			for (CSG c : linkedHashSet) {
 				c.setMaterialType(selectedType);
 
@@ -1209,25 +1209,27 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Label updater ---
 		updateLabel[0] = () -> {
-			String label = currentType[0];
-			if (currentMat[0] != null && !currentMat[0].isEmpty())
-				label += " / " + currentMat[0];
-			if (!currentInfill[0].isEmpty())
-				label += " / " + currentInfill[0] + "%";
-			button.setText(label);
+			for (CSG c : linkedHashSet) {
+				String label = c.getMaterialType().get();
+				if (c.getMaterial().get() != null && !c.getMaterial().get().isEmpty())
+					label += " / " + c.getMaterial().get();
+				if (!(c.getMateriaInfillPercent().get() + "").isEmpty())
+					label += " / " + (c.getMateriaInfillPercent().get() + "") + "%";
+				button.setText(label);
 
-			// Look up density from JSON
-			if (root.has(currentType[0])) {
-				JsonObject section = root.get(currentType[0]).getAsJsonObject();
-				if (section.has(currentMat[0])) {
-					JsonObject matObj = section.get(currentMat[0]).getAsJsonObject();
-					if (matObj.has("density_g_cm3")) {
-						density[0] = matObj.get("density_g_cm3").getAsDouble();
-						if ("FDM".equals(currentType[0]) && !currentInfill[0].isEmpty()
-								&& section.has(currentInfill[0])) {
-							JsonObject infillObj = section.get(currentInfill[0]).getAsJsonObject();
-							if (infillObj.has("effective_density_multiplier"))
-								density[0] *= infillObj.get("effective_density_multiplier").getAsDouble();
+				// Look up density from JSON
+				if (root.has(c.getMaterialType().get())) {
+					JsonObject section = root.get(c.getMaterialType().get()).getAsJsonObject();
+					if (section.has(c.getMaterial().get())) {
+						JsonObject matObj = section.get(c.getMaterial().get()).getAsJsonObject();
+						if (matObj.has("density_g_cm3")) {
+							density[0] = matObj.get("density_g_cm3").getAsDouble();
+							if ("FDM".equals(c.getMaterialType().get()) && !(c.getMateriaInfillPercent().get() + "").isEmpty()
+									&& section.has((c.getMateriaInfillPercent().get() + ""))) {
+								JsonObject infillObj = section.get((c.getMateriaInfillPercent().get() + "")).getAsJsonObject();
+								if (infillObj.has("effective_density_multiplier"))
+									density[0] *= infillObj.get("effective_density_multiplier").getAsDouble();
+							}
 						}
 					}
 				}
