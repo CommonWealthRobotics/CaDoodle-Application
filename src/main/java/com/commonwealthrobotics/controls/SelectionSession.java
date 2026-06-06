@@ -1227,13 +1227,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		};
 
 		// --- Apply defaults ---
-		// 1. Populate materials for the default type with the default material
-		// pre-selected
-		populateMaterials.accept(defType, defMat);
-
-		// 2. Select the default type (triggers type listener)
+		// 1. Select the default type (triggers type listener, clears material)
 		for (Toggle t : typeGroup.getToggles()) {
 			if (((RadioMenuItem) t).getText().equals(defType)) {
+				t.setSelected(true);
+				break;
+			}
+		}
+
+		// 2. Select the default material
+		for (Toggle t : materialGroup.getToggles()) {
+			if (((RadioMenuItem) t).getText().equals(defMat)) {
 				t.setSelected(true);
 				break;
 			}
