@@ -1202,6 +1202,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				label += " / " + currentInfill[0] + "%";
 			button.setText(label);
 
+			// Look up density from JSON
+			if (root.has(currentType[0])) {
+				JsonObject section = root.get(currentType[0]).getAsJsonObject();
+				if (section.has(currentMat[0])) {
+					JsonObject matObj = section.get(currentMat[0]).getAsJsonObject();
+					if (matObj.has("density_g_cm3")) {
+						density[0] = matObj.get("density_g_cm3").getAsDouble();
+						if ("FDM".equals(currentType[0]) && !currentInfill[0].isEmpty()
+								&& section.has(currentInfill[0])) {
+							JsonObject infillObj = section.get(currentInfill[0]).getAsJsonObject();
+							if (infillObj.has("effective_density_multiplier"))
+								density[0] *= infillObj.get("effective_density_multiplier").getAsDouble();
+						}
+					}
+				}
+			}
 			massDisplay.setText(String.format(Locale.US, "%.2f mg", volume * density[0]));
 		};
 
