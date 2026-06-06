@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -1085,9 +1086,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String defMat = "PLA";
 		String defInfil = 20 + "";
 		for (CSG c : linkedHashSet) {
-			defType = c.getMaterialType().get();
-			defMat = c.getMaterial().get();
-			defInfil = c.getMateriaInfillPercent().get() + "";
+			Optional<String> materialType = c.getMaterialType();
+			if (materialType.isPresent())
+				defType = materialType.get();
+			Optional<String> material = c.getMaterial();
+			if (material.isPresent())
+				defMat = material.get();
+			Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
+			if (materiaInfillPercent.isPresent())
+				defInfil = materiaInfillPercent.get() + "";
 		}
 
 		// Mutable holders so the lambda can write back
@@ -1224,9 +1231,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						JsonObject matObj = section.get(c.getMaterial().get()).getAsJsonObject();
 						if (matObj.has("density_g_cm3")) {
 							density[0] = matObj.get("density_g_cm3").getAsDouble();
-							if ("FDM".equals(c.getMaterialType().get()) && !(c.getMateriaInfillPercent().get() + "").isEmpty()
+							if ("FDM".equals(c.getMaterialType().get())
+									&& !(c.getMateriaInfillPercent().get() + "").isEmpty()
 									&& section.has((c.getMateriaInfillPercent().get() + ""))) {
-								JsonObject infillObj = section.get((c.getMateriaInfillPercent().get() + "")).getAsJsonObject();
+								JsonObject infillObj = section.get((c.getMateriaInfillPercent().get() + ""))
+										.getAsJsonObject();
 								if (infillObj.has("effective_density_multiplier"))
 									density[0] *= infillObj.get("effective_density_multiplier").getAsDouble();
 							}
