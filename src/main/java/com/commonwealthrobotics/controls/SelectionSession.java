@@ -939,19 +939,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
 		}
-		if (getSelected().size() == 1) {
-			gp.add(new Label("Material"), 0, line);
-			Label massDisp = new Label("0.0");
-			Button child = createPrintSettingsButton(getSelected(), volume, massDisp);
-			GridPane.setHalignment(child, HPos.RIGHT);
-			gp.add(child, 1, line);
-			line++;
+		// if (getSelected().size() == 1) {
+		gp.add(new Label("Material"), 0, line);
+		Label massDisp = new Label("0.0");
+		Button child = createPrintSettingsButton(getSelected(), massDisp);
+		GridPane.setHalignment(child, HPos.RIGHT);
+		gp.add(child, 1, line);
+		line++;
 
-			gp.add(new Label("Mass"), 0, line);
-			GridPane.setHalignment(massDisp, HPos.RIGHT);
-			gp.add(massDisp, 1, line);
-			line++;
-		}
+		gp.add(new Label("Mass"), 0, line);
+		GridPane.setHalignment(massDisp, HPos.RIGHT);
+		gp.add(massDisp, 1, line);
+		line++;
+		// }
 		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
 		if (getSelected().size() == 1) {
 			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
@@ -1072,7 +1072,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		gp.add(child, 1, line);
 	}
 
-	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, double volume, Label massDisplay) {
+	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, Label massDisplay) {
 		Button button = new Button("Print Settings");
 		File f;
 		try {
@@ -1114,172 +1114,180 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// Declared as an array so lambdas below can call it
 		Runnable[] updateLabel = { null };
 
-		// --- Type menu ---
-		Menu typeMenu = new Menu("Type");
-		ToggleGroup typeGroup = new ToggleGroup();
-		for (Map.Entry<String, JsonElement> typeEntry : root.entrySet()) {
-			RadioMenuItem item = new RadioMenuItem(typeEntry.getKey());
-			item.setToggleGroup(typeGroup);
-			typeMenu.getItems().add(item);
-		}
+		if (linkedHashSet.size() == 1) {
+			// --- Type menu ---
+			Menu typeMenu = new Menu("Type");
+			ToggleGroup typeGroup = new ToggleGroup();
+			for (Map.Entry<String, JsonElement> typeEntry : root.entrySet()) {
+				RadioMenuItem item = new RadioMenuItem(typeEntry.getKey());
+				item.setToggleGroup(typeGroup);
+				typeMenu.getItems().add(item);
+			}
 
-		// --- Material menu ---
-		Menu materialMenu = new Menu("Material");
-		ToggleGroup materialGroup = new ToggleGroup();
+			// --- Material menu ---
+			Menu materialMenu = new Menu("Material");
+			ToggleGroup materialGroup = new ToggleGroup();
 
-		// --- Infill % menu ---
-		Menu infillMenu = new Menu("Infill %");
-		ToggleGroup infillGroup = new ToggleGroup();
+			// --- Infill % menu ---
+			Menu infillMenu = new Menu("Infill %");
+			ToggleGroup infillGroup = new ToggleGroup();
 
-		if (root.has("FDM")) {
-			JsonObject fdmSection = root.get("FDM").getAsJsonObject();
-			List<String> infillKeys = new ArrayList<>();
-			for (Map.Entry<String, JsonElement> entry : fdmSection.entrySet()) {
-				try {
-					int val = Integer.parseInt(entry.getKey());
-					if (val >= 10 && val <= 100)
-						infillKeys.add(entry.getKey());
-				} catch (NumberFormatException ignored) {
+			if (root.has("FDM")) {
+				JsonObject fdmSection = root.get("FDM").getAsJsonObject();
+				List<String> infillKeys = new ArrayList<>();
+				for (Map.Entry<String, JsonElement> entry : fdmSection.entrySet()) {
+					try {
+						int val = Integer.parseInt(entry.getKey());
+						if (val >= 10 && val <= 100)
+							infillKeys.add(entry.getKey());
+					} catch (NumberFormatException ignored) {
+					}
+				}
+				Collections.sort(infillKeys, Comparator.comparingInt(Integer::parseInt));
+				for (String pct : infillKeys) {
+					RadioMenuItem item = new RadioMenuItem(pct + "%");
+					item.setToggleGroup(infillGroup);
+					infillMenu.getItems().add(item);
 				}
 			}
-			Collections.sort(infillKeys, Comparator.comparingInt(Integer::parseInt));
-			for (String pct : infillKeys) {
-				RadioMenuItem item = new RadioMenuItem(pct + "%");
-				item.setToggleGroup(infillGroup);
-				infillMenu.getItems().add(item);
+
+			// --- Populate materials for a given type and optionally pre-select one ---
+			java.util.function.BiConsumer<String, String> populateMaterials = (typeName, selectMat) -> {
+				materialMenu.getItems().clear();
+				materialGroup.getToggles().clear();
+				JsonObject section = root.get(typeName).getAsJsonObject();
+				for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
+					JsonObject matObj = entry.getValue().getAsJsonObject();
+					if (!matObj.has("density_g_cm3"))
+						continue;
+					RadioMenuItem item = new RadioMenuItem(entry.getKey());
+					item.setToggleGroup(materialGroup);
+					materialMenu.getItems().add(item);
+					if (entry.getKey().equals(selectMat))
+						item.setSelected(true);
+				}
+			};
+
+			// --- Infill listener ---
+			infillGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+				if (newVal == null)
+					return;
+				String raw = ((RadioMenuItem) newVal).getText();
+				for (CSG c : linkedHashSet) {
+					c.setMaterialInfillPercent(Integer.parseInt(raw.replace("%", "")));
+				}
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+			});
+
+			// --- Material listener ---
+			materialGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+				if (newVal == null)
+					return;
+				for (CSG c : linkedHashSet) {
+					c.setMaterial(((RadioMenuItem) newVal).getText());
+				}
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+			});
+
+			// --- Type listener ---
+			typeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+				if (newVal == null)
+					return;
+				String selectedType = ((RadioMenuItem) newVal).getText();
+				boolean isFDM = "FDM".equals(selectedType);
+				// c.getMaterialType().get() = selectedType;
+
+				for (CSG c : linkedHashSet) {
+					c.setMaterialType(selectedType);
+
+				}
+				populateMaterials.accept(selectedType, null);
+				materialGroup.selectToggle(null);
+				density[0] = 1.0;
+
+				infillMenu.setDisable(!isFDM);
+				if (!isFDM) {
+					infillGroup.selectToggle(null);
+				}
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+			});
+
+			// --- Apply defaults ---
+			// 1. Select the default type (triggers type listener, clears material)
+			for (Toggle t : typeGroup.getToggles()) {
+				if (((RadioMenuItem) t).getText().equals(defType)) {
+					t.setSelected(true);
+					break;
+				}
 			}
+
+			// 2. Select the default material
+			for (Toggle t : materialGroup.getToggles()) {
+				if (((RadioMenuItem) t).getText().equals(defMat)) {
+					t.setSelected(true);
+					break;
+				}
+			}
+
+			// 3. Select the default infill
+			for (Toggle t : infillGroup.getToggles()) {
+				if (((RadioMenuItem) t).getText().equals(defInfil + "%")) {
+					t.setSelected(true);
+					break;
+				}
+			}
+			// --- Assemble context menu ---
+			ContextMenu contextMenu = new ContextMenu(typeMenu, materialMenu, infillMenu);
+
+			button.setOnAction(e -> contextMenu.show(button, button.localToScreen(0, 0).getX(),
+					button.localToScreen(0, 0).getY() + button.getHeight()));
 		}
-
-		// --- Populate materials for a given type and optionally pre-select one ---
-		java.util.function.BiConsumer<String, String> populateMaterials = (typeName, selectMat) -> {
-			materialMenu.getItems().clear();
-			materialGroup.getToggles().clear();
-			JsonObject section = root.get(typeName).getAsJsonObject();
-			for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
-				JsonObject matObj = entry.getValue().getAsJsonObject();
-				if (!matObj.has("density_g_cm3"))
-					continue;
-				RadioMenuItem item = new RadioMenuItem(entry.getKey());
-				item.setToggleGroup(materialGroup);
-				materialMenu.getItems().add(item);
-				if (entry.getKey().equals(selectMat))
-					item.setSelected(true);
-			}
-		};
-
-		// --- Infill listener ---
-		infillGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-			if (newVal == null)
-				return;
-			String raw = ((RadioMenuItem) newVal).getText();
-			for (CSG c : linkedHashSet) {
-				c.setMaterialInfillPercent(Integer.parseInt(raw.replace("%", "")));
-			}
-			if (updateLabel[0] != null)
-				updateLabel[0].run();
-		});
-
-		// --- Material listener ---
-		materialGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-			if (newVal == null)
-				return;
-			for (CSG c : linkedHashSet) {
-				c.setMaterial(((RadioMenuItem) newVal).getText());
-			}
-			if (updateLabel[0] != null)
-				updateLabel[0].run();
-		});
-
-		// --- Type listener ---
-		typeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-			if (newVal == null)
-				return;
-			String selectedType = ((RadioMenuItem) newVal).getText();
-			boolean isFDM = "FDM".equals(selectedType);
-			// c.getMaterialType().get() = selectedType;
-
-			for (CSG c : linkedHashSet) {
-				c.setMaterialType(selectedType);
-
-			}
-			populateMaterials.accept(selectedType, null);
-			materialGroup.selectToggle(null);
-			density[0] = 1.0;
-
-			infillMenu.setDisable(!isFDM);
-			if (!isFDM) {
-				infillGroup.selectToggle(null);
-			}
-			if (updateLabel[0] != null)
-				updateLabel[0].run();
-		});
 
 		// --- Label updater ---
 		updateLabel[0] = () -> {
+			double mass = 0;
 			for (CSG c : linkedHashSet) {
-				String label = c.getMaterialType().get();
-				if (c.getMaterial().get() != null && !c.getMaterial().get().isEmpty())
-					label += " / " + c.getMaterial().get();
-				if (!(c.getMateriaInfillPercent().get() + "").isEmpty())
-					label += " / " + (c.getMateriaInfillPercent().get() + "") + "%";
-				button.setText(label);
+				Optional<String> materialType = c.getMaterialType();
+				String type = materialType.isPresent() ? materialType.get() : "FDM";
+				Optional<String> material2 = c.getMaterial();
+				String material = material2.isPresent() ? material2.get() : "PLA";
+				if (material2.isPresent())
+					type += " / " + material;
+				Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
+				String infill = (materiaInfillPercent.isPresent() ? materiaInfillPercent.get() : 20) + "";
+				if (materiaInfillPercent.isPresent())
+					type += " / " + infill + "%";
+				button.setText(type);
 
 				// Look up density from JSON
-				if (root.has(c.getMaterialType().get())) {
-					JsonObject section = root.get(c.getMaterialType().get()).getAsJsonObject();
-					if (section.has(c.getMaterial().get())) {
-						JsonObject matObj = section.get(c.getMaterial().get()).getAsJsonObject();
+				if (root.has(materialType.get())) {
+					JsonObject section = root.get(materialType.get()).getAsJsonObject();
+					if (section.has(material)) {
+						JsonObject matObj = section.get(material).getAsJsonObject();
 						if (matObj.has("density_g_cm3")) {
 							density[0] = matObj.get("density_g_cm3").getAsDouble();
-							if ("FDM".equals(c.getMaterialType().get())
-									&& !(c.getMateriaInfillPercent().get() + "").isEmpty()
-									&& section.has((c.getMateriaInfillPercent().get() + ""))) {
-								JsonObject infillObj = section.get((c.getMateriaInfillPercent().get() + ""))
-										.getAsJsonObject();
+							if ("FDM".equals(materialType.get()) && !infill.isEmpty() && section.has(infill)) {
+								JsonObject infillObj = section.get(infill).getAsJsonObject();
 								if (infillObj.has("effective_density_multiplier"))
 									density[0] *= infillObj.get("effective_density_multiplier").getAsDouble();
 							}
 						}
 					}
 				}
+				mass += (c.getVolume() * density[0] / 1000.0);
 			}
-			massDisplay.setText(String.format(Locale.US, "%.4f g", volume * density[0] / 1000.0));
+			massDisplay.setText(String.format(Locale.US, "%.4f g", mass));
 		};
-
-		// --- Apply defaults ---
-		// 1. Select the default type (triggers type listener, clears material)
-		for (Toggle t : typeGroup.getToggles()) {
-			if (((RadioMenuItem) t).getText().equals(defType)) {
-				t.setSelected(true);
-				break;
-			}
-		}
-
-		// 2. Select the default material
-		for (Toggle t : materialGroup.getToggles()) {
-			if (((RadioMenuItem) t).getText().equals(defMat)) {
-				t.setSelected(true);
-				break;
-			}
-		}
-
-		// 3. Select the default infill
-		for (Toggle t : infillGroup.getToggles()) {
-			if (((RadioMenuItem) t).getText().equals(defInfil + "%")) {
-				t.setSelected(true);
-				break;
-			}
-		}
 
 		// 4. Set initial label
 		updateLabel[0].run();
 
-		// --- Assemble context menu ---
-		ContextMenu contextMenu = new ContextMenu(typeMenu, materialMenu, infillMenu);
 
-		button.setOnAction(e -> contextMenu.show(button, button.localToScreen(0, 0).getX(),
-				button.localToScreen(0, 0).getY() + button.getHeight()));
-
+		if (linkedHashSet.size() > 1)
+			button.setDisable(true);
 		return button;
 
 	}

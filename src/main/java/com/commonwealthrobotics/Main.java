@@ -50,7 +50,6 @@ import java.io.IOException;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
-
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -324,8 +323,19 @@ public class Main extends Application {
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
 		ActiveProject.getLangaugePack();
-
-		launch();
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Thread.setDefaultUncaughtExceptionHandler((ex,source)->{
+					Log.error(ex);
+				});
+			}
+		});
+		try {
+			launch();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private static void setupMeshFailPopup(Stage stage) {
