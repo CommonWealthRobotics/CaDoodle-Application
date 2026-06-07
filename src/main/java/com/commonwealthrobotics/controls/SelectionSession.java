@@ -87,7 +87,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -1084,20 +1086,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Log.error(e);
 			return button;
 		}
+		
 		String defType = "FDM";
 		String defMat = "PLA";
 		String defInfil = 20 + "";
-		for (CSG c : linkedHashSet) {
-			Optional<String> materialType = c.getMaterialType();
-			if (materialType.isPresent())
-				defType = materialType.get();
-			Optional<String> material = c.getMaterial();
-			if (material.isPresent())
-				defMat = material.get();
-			Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
-			if (materiaInfillPercent.isPresent())
-				defInfil = materiaInfillPercent.get() + "";
-		}
+//		for (CSG c : linkedHashSet) {
+//			Optional<String> materialType = c.getMaterialType();
+//			if (materialType.isPresent())
+//				defType = materialType.get();
+//			Optional<String> material = c.getMaterial();
+//			if (material.isPresent())
+//				defMat = material.get();
+//			Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
+//			if (materiaInfillPercent.isPresent())
+//				defInfil = materiaInfillPercent.get() + "";
+//		}
 
 		// Mutable holders so the lambda can write back
 		double[] density = { 1.0 };
@@ -1118,6 +1121,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
+			String label = "";
+			double localDensity = 1.0;
 			for (CSG c : linkedHashSet) {
 				String type = c.getMaterialType().orElse("FDM"); // raw type, keep pristine
 				String material = c.getMaterial().orElse("PLA");
@@ -1125,13 +1130,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				String infill = (int) infillPct + "";
 
 				// Build display label separately — don't corrupt 'type'
-				String label = type + " / " + material;
+				label = type + " / " + material;
 				if ("FDM".equals(type))
 					label += " / " + infill + "%";
-				button.setText(label);
 
 				// Look up density using the original type key
-				double localDensity = 1.0;
+
 				if (root.has(type)) {
 					JsonObject section = root.get(type).getAsJsonObject();
 					if (section.has(material)) {
@@ -1149,6 +1153,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 				mass += (c.getVolume() * localDensity / 1000.0);
 			}
+			if (linkedHashSet.size() == 1)
+				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
+			else
+				button.setText("Asorted");
 			massDisplay.setText(String.format(Locale.US, "%.4f g", mass));
 		};
 		if (linkedHashSet.size() == 1) {
@@ -1166,122 +1174,174 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void showStagedMaterialPopup(Button anchor, CSG csg, JsonObject root, Runnable[] updateLabel) {
-
-		// --- Shared popup ---
 		Popup popup = new Popup();
-		popup.setAutoHide(true); // click-away cancels
-
-		// --- Step renderer ---
-		// We'll call showStep() to replace popup content at each stage
-
+		popup.setAutoHide(true);
 		showTypeStep(popup, anchor, csg, root, updateLabel);
 		popup.show(anchor, anchor.localToScreen(0, 0).getX(), anchor.localToScreen(0, 0).getY() + anchor.getHeight());
 	}
 
-	private VBox makePopupShell(String title, Popup popup) {
-		VBox box = new VBox(4);
-		box.setStyle(
-				"-fx-background-color: #2b2b2b; -fx-border-color: #555; -fx-border-width: 1; -fx-padding: 6 8 6 8; -fx-background-radius: 4; -fx-border-radius: 4;");
+	private static class PopupShell {
+		final GridPane buttonBar;
+		final GridPane content;
 
+		PopupShell(GridPane buttonBar, GridPane content) {
+			this.buttonBar = buttonBar;
+			this.content = content;
+		}
+	}
+
+	private PopupShell makePopupShell(String title, Popup popup) {
 		Label header = new Label(title);
-		header.setStyle("-fx-text-fill: #aaa; -fx-font-size: 10px; -fx-padding: 0 0 4 0;");
-
 		Button cancel = new Button("Cancel");
-		cancel.setStyle("-fx-font-size: 10px;");
 		cancel.setOnAction(e -> popup.hide());
 
-		box.getChildren().addAll(header, new Separator(), cancel);
-		return box;
+		GridPane buttonBar = new GridPane();
+		buttonBar.setHgap(4);
+		buttonBar.setVgap(4);
+		buttonBar.add(header, 0, 0, 2, 1); // span 2 cols
+		buttonBar.add(new Separator(), 0, 1, 2, 1);
+		buttonBar.add(cancel, 0, 2);
+		ActiveProject.setStyleSheet(buttonBar);
+
+		GridPane content = new GridPane();
+		content.setHgap(4);
+		content.setVgap(4);
+		ActiveProject.setStyleSheet(content);
+
+		ScrollPane scroll = new ScrollPane(content);
+		scroll.setFitToWidth(true);
+		scroll.setPrefHeight(300);
+		ActiveProject.setStyleSheet(scroll);
+
+		GridPane root = new GridPane();
+		root.setVgap(4);
+		root.add(buttonBar, 0, 0);
+		root.add(scroll, 0, 1);
+		ActiveProject.setStyleSheet(root);
+
+		popup.getContent().setAll(root);
+		return new PopupShell(buttonBar, content);
 	}
 
-	// ── Step 1: Type ─────────────────────────────────────────────────────────────
 	private void showTypeStep(Popup popup, Button anchor, CSG csg, JsonObject root, Runnable[] updateLabel) {
-		VBox box = makePopupShell("Step 1 of 3 — Select Type", popup);
+		PopupShell shell = makePopupShell("Step 1 of 3 — Select Type", popup);
 
 		ToggleGroup group = new ToggleGroup();
-		for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
-			RadioMenuItem rb = new RadioMenuItem(entry.getKey()); // reuse style; or use RadioButton
-			// Use RadioButton for a VBox, not RadioMenuItem
-			javafx.scene.control.RadioButton btn = new javafx.scene.control.RadioButton(entry.getKey());
-			btn.setToggleGroup(group);
-			btn.setStyle("-fx-text-fill: #ddd;");
+		String currentType = csg.getMaterialType().orElse("FDM");
 
-			String currentType = csg.getMaterialType().orElse("FDM");
+		Button continueBtn = new Button("Continue");
+		continueBtn.setOnAction(e -> {
+			Toggle selected = group.getSelectedToggle();
+			if (selected == null)
+				return;
+			String typeName = ((RadioButton) selected).getText();
+			csg.setMaterialType(typeName);
+			popup.getContent().clear();
+			showMaterialStep(popup, anchor, csg, root, updateLabel, typeName);
+		});
+		// Continue goes in col 1, row 2 (next to Cancel)
+		shell.buttonBar.add(continueBtn, 1, 2);
+
+		int row = 0;
+		for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+			RadioButton btn = new RadioButton(entry.getKey());
+			btn.setToggleGroup(group);
 			if (entry.getKey().equals(currentType))
 				btn.setSelected(true);
-
 			btn.setOnAction(e -> {
-				csg.setMaterialType(entry.getKey());
-				// Advance to material step
+				String typeName = btn.getText();
+				csg.setMaterialType(typeName);
 				popup.getContent().clear();
-				showMaterialStep(popup, anchor, csg, root, updateLabel, entry.getKey());
+				showMaterialStep(popup, anchor, csg, root, updateLabel, typeName);
 			});
-			box.getChildren().add(box.getChildren().size() - 1, btn); // insert before Cancel
+			shell.content.add(btn, 0, row++);
+			boolean typeIsDefault = !csg.getMaterialType().isPresent();
+			// ...
+			if (typeIsDefault && entry.getKey().equals(currentType))
+			    btn.setSelected(true);
 		}
-
-		popup.getContent().setAll(box);
+		
 	}
 
-	// ── Step 2: Material ─────────────────────────────────────────────────────────
 	private void showMaterialStep(Popup popup, Button anchor, CSG csg, JsonObject root, Runnable[] updateLabel,
 			String typeName) {
 		boolean isFDM = "FDM".equals(typeName);
 		String stepLabel = isFDM ? "Step 2 of 3 — Select Material" : "Step 2 of 2 — Select Material";
-		VBox box = makePopupShell(stepLabel, popup);
+		PopupShell shell = makePopupShell(stepLabel, popup);
 
 		ToggleGroup group = new ToggleGroup();
 		JsonObject section = root.get(typeName).getAsJsonObject();
 		String currentMat = csg.getMaterial().orElse("PLA");
 
+		Button back = new Button("← Back");
+		back.setOnAction(e -> {
+			popup.getContent().clear();
+			showTypeStep(popup, anchor, csg, root, updateLabel);
+		});
+
+		Button continueBtn = new Button("Continue");
+		continueBtn.setOnAction(e -> {
+			Toggle selected = group.getSelectedToggle();
+			if (selected == null)
+				return;
+			String material = ((RadioButton) selected).getText();
+			csg.setMaterial(material);
+			if (isFDM) {
+				popup.getContent().clear();
+				showInfillStep(popup, anchor, csg, root, updateLabel, typeName, material);
+			} else {
+				ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(material));
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+				popup.hide();
+			}
+			
+		});
+
+		// row 2: Cancel(col0) Back(col1) Continue(col2)
+		shell.buttonBar.add(back, 1, 2);
+		shell.buttonBar.add(continueBtn, 2, 2);
+		// widen header and separator to 3 cols now
+		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(0), 3); // header
+		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(1), 3); // separator
+
+		int row = 0;
 		for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
 			if (!entry.getValue().getAsJsonObject().has("density_g_cm3"))
 				continue;
-
-			javafx.scene.control.RadioButton btn = new javafx.scene.control.RadioButton(entry.getKey());
+			RadioButton btn = new RadioButton(entry.getKey());
 			btn.setToggleGroup(group);
-			btn.setStyle("-fx-text-fill: #ddd;");
-
 			if (entry.getKey().equals(currentMat))
 				btn.setSelected(true);
-
 			btn.setOnAction(e -> {
-				csg.setMaterial(entry.getKey());
+				String material = btn.getText();
+				csg.setMaterial(material);
 				if (isFDM) {
 					popup.getContent().clear();
-					showInfillStep(popup, anchor, csg, root, updateLabel, typeName, entry.getKey());
+					showInfillStep(popup, anchor, csg, root, updateLabel, typeName, material);
 				} else {
-					// Last step for non-FDM — commit and close
-					ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterial(entry.getKey()));
+					ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(material));
 					if (updateLabel[0] != null)
 						updateLabel[0].run();
 					popup.hide();
 				}
 			});
-			box.getChildren().add(box.getChildren().size() - 1, btn);
+			shell.content.add(btn, 0, row++);
+			boolean matIsDefault = !csg.getMaterial().isPresent();
+			// ...
+			if (matIsDefault && entry.getKey().equals(currentMat))
+			    btn.setSelected(true);
+
 		}
-
-		// Back button
-		Button back = new Button("← Back");
-		back.setStyle("-fx-font-size: 10px;");
-		back.setOnAction(e -> {
-			popup.getContent().clear();
-			showTypeStep(popup, anchor, csg, root, updateLabel);
-		});
-		box.getChildren().add(box.getChildren().size() - 1, back); // before Cancel
-
-		popup.getContent().setAll(box);
 	}
 
-	// ── Step 3: Infill (FDM only)
-	// ─────────────────────────────────────────────────
 	private void showInfillStep(Popup popup, Button anchor, CSG csg, JsonObject root, Runnable[] updateLabel,
 			String typeName, String materialName) {
-		VBox box = makePopupShell("Step 3 of 3 — Select Infill %", popup);
+		PopupShell shell = makePopupShell("Step 3 of 3 — Select Infill %", popup);
 
 		ToggleGroup group = new ToggleGroup();
 		JsonObject section = root.get(typeName).getAsJsonObject();
 
-		// Collect and sort numeric infill keys
 		List<String> infillKeys = new ArrayList<>();
 		for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
 			try {
@@ -1295,39 +1355,64 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		int currentInfill = csg.getMateriaInfillPercent().map(v -> (int) v.doubleValue()).orElse(20);
 
-		for (String pct : infillKeys) {
-			javafx.scene.control.RadioButton btn = new javafx.scene.control.RadioButton(pct + "%");
-			btn.setToggleGroup(group);
-			btn.setStyle("-fx-text-fill: #ddd;");
-
-			if (Integer.parseInt(pct) == currentInfill)
-				btn.setSelected(true);
-
-			btn.setOnAction(e -> {
-				int val = Integer.parseInt(pct);
-				csg.setMaterialInfillPercent(val);
-				// Last step — commit and close
-				ap.addOp(
-						new SetMaterial().setNames(selectedSnapshot()).setMaterial(materialName).setInfillPercent(val));
-				if (updateLabel[0] != null)
-					updateLabel[0].run();
-				popup.hide();
-			});
-			box.getChildren().add(box.getChildren().size() - 1, btn);
-		}
-
-		// Back button
 		Button back = new Button("← Back");
-		back.setStyle("-fx-font-size: 10px;");
 		back.setOnAction(e -> {
 			popup.getContent().clear();
 			showMaterialStep(popup, anchor, csg, root, updateLabel, typeName);
 		});
-		box.getChildren().add(box.getChildren().size() - 1, back);
 
-		popup.getContent().setAll(box);
+		Button continueBtn = new Button("Continue");
+		continueBtn.setOnAction(e -> {
+			Toggle selected = group.getSelectedToggle();
+			if (selected == null)
+				return;
+			int val = Integer.parseInt(((RadioButton) selected).getText().replace("%", ""));
+			csg.setMaterialInfillPercent(val);
+			ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(materialName).setInfillPercent(val));
+			if (updateLabel[0] != null)
+				updateLabel[0].run();
+			popup.hide();
+		});
+
+		// row 2: Cancel(col0) Back(col1) Continue(col2)
+		shell.buttonBar.add(back, 1, 2);
+		shell.buttonBar.add(continueBtn, 2, 2);
+		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(0), 3); // header
+		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(1), 3); // separator
+
+		int row = 0;
+		for (String pct : infillKeys) {
+			RadioButton btn = new RadioButton(pct + "%");
+			btn.setToggleGroup(group);
+			if (Integer.parseInt(pct) == currentInfill)
+				btn.setSelected(true);
+			btn.setOnAction(e -> {
+				int val = Integer.parseInt(btn.getText().replace("%", ""));
+				csg.setMaterialInfillPercent(val);
+				ap.addOp(
+						new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(materialName).setInfillPercent(val));
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+				popup.hide();
+			});
+			shell.content.add(btn, 0, row++);
+			boolean infillIsDefault = !csg.getMateriaInfillPercent().isPresent();
+			//int currentInfill = csg.getMateriaInfillPercent().orElse(20.0).intValue();
+			// ...
+			if (infillIsDefault && Integer.parseInt(pct) == currentInfill)
+			    btn.setSelected(true);
+		}
 	}
 
+	/**
+	 * setUpTextBoxEnterData
+	 * 
+	 * @param gp
+	 * @param line
+	 * @param text
+	 * @param para
+	 * @param width
+	 */
 	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
