@@ -16,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -80,15 +79,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
@@ -943,22 +939,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
 		}
-		// if (getSelected().size() == 1) {
-		gp.add(new Label("Material"), 0, line);
-		Label massDisp = new Label("0.0");
-		Button child = createPrintSettingsButton(getSelected(), massDisp);
-		GridPane.setHalignment(child, HPos.RIGHT);
-		gp.add(child, 1, line);
-		line++;
+		if (ap.isAdvancedMode()) {
+			// if (getSelected().size() == 1) {
+			gp.add(new Label("Material"), 0, line);
+			Label massDisp = new Label("0.0");
+			Button child = createPrintSettingsButton(getSelected(), massDisp);
+			GridPane.setHalignment(child, HPos.RIGHT);
+			gp.add(child, 1, line);
+			line++;
 
-		gp.add(new Label("Mass"), 0, line);
-		GridPane.setHalignment(massDisp, HPos.RIGHT);
-		gp.add(massDisp, 1, line);
-		line++;
-		// }
-		setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
-		if (getSelected().size() == 1) {
-			setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+			gp.add(new Label("Mass"), 0, line);
+			GridPane.setHalignment(massDisp, HPos.RIGHT);
+			gp.add(massDisp, 1, line);
+			line++;
+			// }
+			setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+			if (getSelected().size() == 1) {
+				setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+			}
 		}
 		updateControls();
 	}
@@ -1086,24 +1084,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Log.error(e);
 			return button;
 		}
-		
+
 		String defType = "FDM";
 		String defMat = "PLA";
 		String defInfil = 20 + "";
-//		for (CSG c : linkedHashSet) {
-//			Optional<String> materialType = c.getMaterialType();
-//			if (materialType.isPresent())
-//				defType = materialType.get();
-//			Optional<String> material = c.getMaterial();
-//			if (material.isPresent())
-//				defMat = material.get();
-//			Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
-//			if (materiaInfillPercent.isPresent())
-//				defInfil = materiaInfillPercent.get() + "";
-//		}
+		//		for (CSG c : linkedHashSet) {
+		//			Optional<String> materialType = c.getMaterialType();
+		//			if (materialType.isPresent())
+		//				defType = materialType.get();
+		//			Optional<String> material = c.getMaterial();
+		//			if (material.isPresent())
+		//				defMat = material.get();
+		//			Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
+		//			if (materiaInfillPercent.isPresent())
+		//				defInfil = materiaInfillPercent.get() + "";
+		//		}
 
 		// Mutable holders so the lambda can write back
-		double[] density = { 1.0 };
+		double[] density = {1.0};
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1117,7 +1115,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = { null };
+		Runnable[] updateLabel = {null};
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -1218,7 +1216,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		root.add(buttonBar, 0, 0);
 		root.add(scroll, 0, 1);
 		ActiveProject.setStyleSheet(root);
-
+		// root.setBackground(new Background(new BackgroundFill(Color.DARKGRAY,
+		// CornerRadii.EMPTY, Insets.EMPTY)));
+		root.getStyleClass().add("anchor-pane");
 		popup.getContent().setAll(root);
 		return new PopupShell(buttonBar, content);
 	}
@@ -1258,9 +1258,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			boolean typeIsDefault = !csg.getMaterialType().isPresent();
 			// ...
 			if (typeIsDefault && entry.getKey().equals(currentType))
-			    btn.setSelected(true);
+				btn.setSelected(true);
 		}
-		
+
 	}
 
 	private void showMaterialStep(Popup popup, Button anchor, CSG csg, JsonObject root, Runnable[] updateLabel,
@@ -1290,17 +1290,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				popup.getContent().clear();
 				showInfillStep(popup, anchor, csg, root, updateLabel, typeName, material);
 			} else {
-				ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(material));
+				ap.addOp(
+						new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(material));
 				if (updateLabel[0] != null)
 					updateLabel[0].run();
 				popup.hide();
 			}
-			
+
 		});
 
 		// row 2: Cancel(col0) Back(col1) Continue(col2)
-		shell.buttonBar.add(back, 1, 2);
-		shell.buttonBar.add(continueBtn, 2, 2);
+		shell.buttonBar.add(back, 2, 2);
+		shell.buttonBar.add(continueBtn, 1, 2);
 		// widen header and separator to 3 cols now
 		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(0), 3); // header
 		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(1), 3); // separator
@@ -1320,7 +1321,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					popup.getContent().clear();
 					showInfillStep(popup, anchor, csg, root, updateLabel, typeName, material);
 				} else {
-					ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(material));
+					ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName)
+							.setMaterial(material));
 					if (updateLabel[0] != null)
 						updateLabel[0].run();
 					popup.hide();
@@ -1330,7 +1332,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			boolean matIsDefault = !csg.getMaterial().isPresent();
 			// ...
 			if (matIsDefault && entry.getKey().equals(currentMat))
-			    btn.setSelected(true);
+				btn.setSelected(true);
 
 		}
 	}
@@ -1368,15 +1370,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			int val = Integer.parseInt(((RadioButton) selected).getText().replace("%", ""));
 			csg.setMaterialInfillPercent(val);
-			ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(materialName).setInfillPercent(val));
+			ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(materialName)
+					.setInfillPercent(val));
 			if (updateLabel[0] != null)
 				updateLabel[0].run();
 			popup.hide();
 		});
 
 		// row 2: Cancel(col0) Back(col1) Continue(col2)
-		shell.buttonBar.add(back, 1, 2);
-		shell.buttonBar.add(continueBtn, 2, 2);
+		shell.buttonBar.add(back, 2, 2);
+		shell.buttonBar.add(continueBtn, 1, 2);
 		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(0), 3); // header
 		GridPane.setColumnSpan(shell.buttonBar.getChildren().get(1), 3); // separator
 
@@ -1389,24 +1392,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			btn.setOnAction(e -> {
 				int val = Integer.parseInt(btn.getText().replace("%", ""));
 				csg.setMaterialInfillPercent(val);
-				ap.addOp(
-						new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName).setMaterial(materialName).setInfillPercent(val));
+				ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterialType(typeName)
+						.setMaterial(materialName).setInfillPercent(val));
 				if (updateLabel[0] != null)
 					updateLabel[0].run();
 				popup.hide();
 			});
 			shell.content.add(btn, 0, row++);
 			boolean infillIsDefault = !csg.getMateriaInfillPercent().isPresent();
-			//int currentInfill = csg.getMateriaInfillPercent().orElse(20.0).intValue();
+			// int currentInfill = csg.getMateriaInfillPercent().orElse(20.0).intValue();
 			// ...
 			if (infillIsDefault && Integer.parseInt(pct) == currentInfill)
-			    btn.setSelected(true);
+				btn.setSelected(true);
 		}
 	}
 
 	/**
 	 * setUpTextBoxEnterData
-	 * 
+	 *
 	 * @param gp
 	 * @param line
 	 * @param text
