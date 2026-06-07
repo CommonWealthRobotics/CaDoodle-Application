@@ -326,7 +326,7 @@ public class Main extends Application {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				Thread.setDefaultUncaughtExceptionHandler((ex,source)->{
+				Thread.setDefaultUncaughtExceptionHandler((ex, source) -> {
 					Log.error(ex);
 				});
 			}
