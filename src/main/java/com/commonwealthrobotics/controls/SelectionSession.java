@@ -1113,7 +1113,43 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
 		Runnable[] updateLabel = {null};
+		// --- Label updater ---
+		updateLabel[0] = () -> {
+		    double mass = 0;
+		    for (CSG c : linkedHashSet) {
+		        String type = c.getMaterialType().orElse("FDM");     // raw type, keep pristine
+		        String material = c.getMaterial().orElse("PLA");
+		        double infillPct = c.getMateriaInfillPercent().orElse(20.0);
+		        String infill = (int) infillPct + "";
 
+		        // Build display label separately — don't corrupt 'type'
+		        String label = type + " / " + material;
+		        if ("FDM".equals(type))
+		            label += " / " + infill + "%";
+		        button.setText(label);
+
+		        // Look up density using the original type key
+		        double localDensity = 1.0;
+		        if (root.has(type)) {
+		            JsonObject section = root.get(type).getAsJsonObject();
+		            if (section.has(material)) {
+		                JsonObject matObj = section.get(material).getAsJsonObject();
+		                if (matObj.has("density_g_cm3")) {
+		                    localDensity = matObj.get("density_g_cm3").getAsDouble();
+		                    // Now 'type' is still "FDM", so this check works correctly
+		                    if ("FDM".equals(type) && c.getMateriaInfillPercent().isPresent()
+		                            && section.has(infill)) {
+		                        JsonObject infillObj = section.get(infill).getAsJsonObject();
+		                        if (infillObj.has("effective_density_multiplier"))
+		                            localDensity *= infillObj.get("effective_density_multiplier").getAsDouble();
+		                    }
+		                }
+		            }
+		        }
+		        mass += (c.getVolume() * localDensity / 1000.0);
+		    }
+		    massDisplay.setText(String.format(Locale.US, "%.4f g", mass));
+		};
 		if (linkedHashSet.size() == 1) {
 			// --- Type menu ---
 			Menu typeMenu = new Menu("Type");
@@ -1150,7 +1186,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					infillMenu.getItems().add(item);
 				}
 			}
-
 			// --- Populate materials for a given type and optionally pre-select one ---
 			java.util.function.BiConsumer<String, String> populateMaterials = (typeName, selectMat) -> {
 				materialMenu.getItems().clear();
@@ -1167,30 +1202,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						item.setSelected(true);
 				}
 			};
-
-			// --- Infill listener ---
-			infillGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-				if (newVal == null)
-					return;
-				String raw = ((RadioMenuItem) newVal).getText();
-				for (CSG c : linkedHashSet) {
-					c.setMaterialInfillPercent(Integer.parseInt(raw.replace("%", "")));
-				}
-				if (updateLabel[0] != null)
-					updateLabel[0].run();
-			});
-
-			// --- Material listener ---
-			materialGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-				if (newVal == null)
-					return;
-				for (CSG c : linkedHashSet) {
-					c.setMaterial(((RadioMenuItem) newVal).getText());
-				}
-				if (updateLabel[0] != null)
-					updateLabel[0].run();
-			});
-
 			// --- Type listener ---
 			typeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
 				if (newVal == null)
@@ -1200,8 +1211,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// c.getMaterialType().get() = selectedType;
 
 				for (CSG c : linkedHashSet) {
+					Optional<String> type = c.getMaterialType();
+					if (type.isPresent()) {
+						if (type.get().contentEquals(selectedType)) {
+							continue;
+						}
+					}
 					c.setMaterialType(selectedType);
-
 				}
 				populateMaterials.accept(selectedType, null);
 				materialGroup.selectToggle(null);
@@ -1214,7 +1230,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (updateLabel[0] != null)
 					updateLabel[0].run();
 			});
-
 			// --- Apply defaults ---
 			// 1. Select the default type (triggers type listener, clears material)
 			for (Toggle t : typeGroup.getToggles()) {
@@ -1239,6 +1254,55 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					break;
 				}
 			}
+
+			// --- Infill listener ---
+			infillGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+				if (newVal == null)
+					return;
+				String raw = ((RadioMenuItem) newVal).getText();
+				int int1 = Integer.parseInt(raw.replace("%", ""));
+				boolean run = false;
+				for (CSG c : linkedHashSet) {
+					Optional<Double> mat = c.getMateriaInfillPercent();
+					if (mat.isPresent()) {
+						if (Math.abs(mat.get() - int1) > 0.1)
+							run = true;
+					} else
+						run = true;
+					c.setMaterialInfillPercent(int1);
+				}
+				if (run)
+					ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setInfillPercent(int1));
+
+				for (CSG c : linkedHashSet) {
+					c.setMaterialInfillPercent(int1);
+				}
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+			});
+
+			// --- Material listener ---
+			materialGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+				if (newVal == null)
+					return;
+				String material = ((RadioMenuItem) newVal).getText();
+				boolean run = false;
+				for (CSG c : linkedHashSet) {
+					Optional<String> mat = c.getMaterial();
+					if (mat.isPresent()) {
+						if (!mat.get().contentEquals(material))
+							run = true;
+					} else
+						run = true;
+					c.setMaterial(material);
+				}
+				if (run)
+					ap.addOp(new SetMaterial().setNames(selectedSnapshot()).setMaterial(material));
+
+				if (updateLabel[0] != null)
+					updateLabel[0].run();
+			});
+
 			// --- Assemble context menu ---
 			ContextMenu contextMenu = new ContextMenu(typeMenu, materialMenu, infillMenu);
 
@@ -1246,45 +1310,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					button.localToScreen(0, 0).getY() + button.getHeight()));
 		}
 
-		// --- Label updater ---
-		updateLabel[0] = () -> {
-			double mass = 0;
-			for (CSG c : linkedHashSet) {
-				Optional<String> materialType = c.getMaterialType();
-				String type = materialType.isPresent() ? materialType.get() : "FDM";
-				Optional<String> material2 = c.getMaterial();
-				String material = material2.isPresent() ? material2.get() : "PLA";
-				if (material2.isPresent())
-					type += " / " + material;
-				Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
-				String infill = (materiaInfillPercent.isPresent() ? materiaInfillPercent.get() : 20) + "";
-				if (materiaInfillPercent.isPresent())
-					type += " / " + infill + "%";
-				button.setText(type);
-
-				// Look up density from JSON
-				if (root.has(materialType.get())) {
-					JsonObject section = root.get(materialType.get()).getAsJsonObject();
-					if (section.has(material)) {
-						JsonObject matObj = section.get(material).getAsJsonObject();
-						if (matObj.has("density_g_cm3")) {
-							density[0] = matObj.get("density_g_cm3").getAsDouble();
-							if ("FDM".equals(materialType.get()) && !infill.isEmpty() && section.has(infill)) {
-								JsonObject infillObj = section.get(infill).getAsJsonObject();
-								if (infillObj.has("effective_density_multiplier"))
-									density[0] *= infillObj.get("effective_density_multiplier").getAsDouble();
-							}
-						}
-					}
-				}
-				mass += (c.getVolume() * density[0] / 1000.0);
-			}
-			massDisplay.setText(String.format(Locale.US, "%.4f g", mass));
-		};
-
 		// 4. Set initial label
 		updateLabel[0].run();
-
 
 		if (linkedHashSet.size() > 1)
 			button.setDisable(true);
