@@ -161,6 +161,9 @@
 .image-button-focus {
     -fx-border-color: #bb1f09; /* logo-red */
 }
+
+
+
 .image-button-focus:hover {
     -fx-background-color: #f2c83d; /* logo-yellow */
 }
@@ -310,6 +313,31 @@
 }
 .separator {
     -fx-background-color: #263d8c; /* logo-blue */
+}
+
+.timeline-place {
+    -fx-pref-width: 6px;   /* vertical separator width */
+}
+
+.timeline-place .line {
+    -fx-background-color: #bb1f09;
+    -fx-border-width: 6px;
+}
+.timeline-none {
+    -fx-pref-width: 2px;   /* vertical separator width */
+}
+
+.timeline-none .line {
+    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-border-width: 2px;
+}
+.timeline-block {
+    -fx-pref-width: 8px;   /* vertical separator width */
+}
+
+.timeline-block .line {
+    -fx-background-color: #e7a436; /* logo-yellow */
+    -fx-border-width: 8px;
 }
 
 #controlBar{

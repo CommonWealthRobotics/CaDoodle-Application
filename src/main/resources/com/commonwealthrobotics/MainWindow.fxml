@@ -595,9 +595,18 @@
                         <GridPane fx:id="timelineGridPane" alignment="CENTER" layoutY="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="10.0" prefWidth="70.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="75.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="2.0" prefWidth="75.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="75.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                            </columnConstraints>
                            <rowConstraints>
@@ -605,6 +614,14 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
+                              <CheckBox fx:id="timelineShowAll" mnemonicParsing="false" selected="true" text="%timeline.all">
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                 <opaqueInsets>
+                                    <Insets left="5.0" right="5.0" />
+                                 </opaqueInsets>
+                              </CheckBox>
                               <ScrollPane fx:id="timelineScroll" hbarPolicy="ALWAYS" minHeight="150.0" vbarPolicy="NEVER" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-padding: 0 10 0 0;">
@@ -612,7 +629,11 @@
                                           <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
                                                 <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                                <Separator orientation="VERTICAL" styleClass="timeline-none" />
                                                 <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                                <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="timeline-place" />
+                                                <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                                <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="timeline-block" />
                                              </children>
                                              <padding>
                                                 <Insets left="10.0" />
@@ -622,29 +643,69 @@
                                     </AnchorPane>
                                 </content>
                               </ScrollPane>
-                              <CheckBox fx:id="timelineShowAll" mnemonicParsing="false" text="%timeline.all" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                 <padding>
-                                    <Insets left="5.0" right="5.0" />
-                                 </padding>
-                              </CheckBox>
-                              <CheckBox fx:id="timelineAddOpShow" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="addObject" />
-                                 </graphic>
+                              <HBox GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <children>
+                                    <CheckBox fx:id="timelineAddOpShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="addObject" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fx:id="timelineMoveObjectShow" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="moveObject" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineResizeShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fx:id="timelineMoveObjectShow1" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="resizeObject" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineAllignShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="alignButton-mage-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineGroupShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineHideShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineMirrorShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="mirronButton-image-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                 </children>
                                  <padding>
                                     <Insets right="5.0" />
                                  </padding>
-                              </CheckBox>
-                              <CheckBox mnemonicParsing="false" GridPane.columnIndex="2">
-                                 <graphic>
-                                    <ImageView fx:id="timelineMoveObjectShow" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="moveObject" />
-                                 </graphic>
-                              </CheckBox>
-                              <CheckBox fx:id="timelineResizeShow" mnemonicParsing="false" GridPane.columnIndex="3">
-                                 <graphic>
-                                    <ImageView fx:id="timelineMoveObjectShow1" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="resizeObject" />
-                                 </graphic>
-                              </CheckBox>
+                              </HBox>
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
