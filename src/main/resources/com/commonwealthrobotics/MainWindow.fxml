@@ -701,9 +701,17 @@
                                           <Insets left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </CheckBox>
-                                    <CheckBox fx:id="timelineHideShow1" mnemonicParsing="false" selected="true">
+                                    <CheckBox fx:id="timelineFilletShow" mnemonicParsing="false" selected="true">
                                        <graphic>
                                           <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="filletButton-image-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineExtrudeShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="extrudeButton-image-view" />
                                        </graphic>
                                        <padding>
                                           <Insets left="5.0" right="5.0" top="5.0" />

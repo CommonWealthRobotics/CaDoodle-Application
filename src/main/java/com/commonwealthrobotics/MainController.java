@@ -358,6 +358,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CheckBox timelineMirrorShow;
 	@FXML
 	private CheckBox timelineFilletShow;
+	@FXML
+	private CheckBox timelineExtrudeShow;
 	@FXML // fx:id="zoomInButton"@FXML
 	private CheckBox timelineMoveObjectShow;
 
@@ -1062,7 +1064,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setUp3dEngine();
 			setUpColorPicker();
 			timelineManager.set(timelineScroll, timeline, session, engine, timelineShowAll, timelineAddOpShow,
-					timelineResizeShow, timelineAllignShow, timelineGroupShow, timelineHideShow, timelineMirrorShow,timelineFilletShow);
+					timelineResizeShow, timelineAllignShow, timelineGroupShow, timelineHideShow, 
+					timelineMirrorShow,timelineFilletShow,timelineExtrudeShow);
 			label = new Label(shapeConfiguration.getText());
 			renameBtn = new Button("Rename");
 

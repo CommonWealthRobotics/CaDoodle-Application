@@ -65,6 +65,7 @@ public class TimelineManager {
 	private CheckBox timelineHideShow;
 	private CheckBox timelineMirrorShow;
 	private CheckBox timelineFilletShow;
+	private CheckBox timelineExtrudeShow;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -133,7 +134,7 @@ public class TimelineManager {
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine, CheckBox timelineShowAll, CheckBox timelineAddOpShow, CheckBox timelineResizeShow, CheckBox timelineAllignShow, CheckBox timelineGroupShow, CheckBox timelineHideShow, CheckBox timelineMirrorShow, CheckBox timelineFilletShow) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine, CheckBox timelineShowAll, CheckBox timelineAddOpShow, CheckBox timelineResizeShow, CheckBox timelineAllignShow, CheckBox timelineGroupShow, CheckBox timelineHideShow, CheckBox timelineMirrorShow, CheckBox timelineFilletShow, CheckBox timelineExtrudeShow) {
 		this.timelineScroll = timelineScroll;
 		this.baseBox = timeline;
 		this.session = session;
@@ -146,6 +147,7 @@ public class TimelineManager {
 		this.timelineHideShow = timelineHideShow;
 		this.timelineMirrorShow = timelineMirrorShow;
 		this.timelineFilletShow = timelineFilletShow;
+		this.timelineExtrudeShow = timelineExtrudeShow;
 	}
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
