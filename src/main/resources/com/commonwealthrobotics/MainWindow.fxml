@@ -605,10 +605,10 @@
                         <GridPane fx:id="timelineGridPane" alignment="CENTER" layoutY="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="75.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="2.0" prefWidth="75.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="75.0" />
+                              <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -632,8 +632,26 @@
                                     </AnchorPane>
                                 </content>
                               </ScrollPane>
-                              <CheckBox mnemonicParsing="false" text="%timeline.all" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                              <CheckBox fx:id="timelineShowAll" mnemonicParsing="false" text="%timeline.all" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <padding>
+                                    <Insets right="5.0" />
+                                 </padding>
+                              </CheckBox>
+                              <CheckBox fx:id="timelineAddOpShow" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <graphic>
+                                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="addObject" />
+                                 </graphic>
+                                 <padding>
+                                    <Insets right="5.0" />
+                                 </padding>
+                              </CheckBox>
                            </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
                         </GridPane>
                      </children>
                   </AnchorPane>

@@ -58,6 +58,7 @@ public class TimelineManager {
 	private boolean timelineOpen;
 	private int buttonSize = 80;
 	private CheckBox timelineShowAll;
+	private CheckBox timelineAddOpShow;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -126,12 +127,13 @@ public class TimelineManager {
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine, CheckBox timelineShowAll) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine, CheckBox timelineShowAll, CheckBox timelineAddOpShow) {
 		this.timelineScroll = timelineScroll;
 		this.baseBox = timeline;
 		this.session = session;
 		this.engine = engine;
 		this.timelineShowAll = timelineShowAll;
+		this.timelineAddOpShow = timelineAddOpShow;
 	}
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
