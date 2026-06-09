@@ -30,7 +30,7 @@
 #dropToWorkplane .image-view     { -fx-image: url("light/drop.png"); }
 #copyButton .image-view          { -fx-image: url("light/copy.png"); }
 .pasteButton-mage-view         { -fx-image: url("light/paste.png"); }
-#deleteButton .image-view        { -fx-image: url("light/trash.png"); }
+.deleteButton-image-view        { -fx-image: url("light/trash.png"); }
 #undoButton .image-view          { -fx-image: url("light/back.png"); }
 #redoButton .image-view          { -fx-image: url("light/forward.png"); }
 #stl .image-view                 { -fx-image: url("light/Script-Tab-Stl.png"); }

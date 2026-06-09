@@ -717,6 +717,30 @@
                                           <Insets left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </CheckBox>
+                                    <CheckBox fx:id="timelineRadialShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="boltHoleButtonImage-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineLinearShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="hexDistributeButtonImage" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineDeleteShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="deleteButton-image-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
                                  </children>
                                  <padding>
                                     <Insets right="5.0" />
@@ -907,7 +931,7 @@
                         </Button>
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="deleteButton-image-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.delete_lt_backspace_or_delete_gt" />
