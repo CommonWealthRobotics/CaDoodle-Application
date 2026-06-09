@@ -808,7 +808,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		gp.getColumnConstraints().setAll(col0, col1);
 		if (getSelected().size() > 0) {
 			dropToWorkplane.setDisable(false);
-			objectWorkplane.setDisable(getSelected().size() != 1);
+			if(objectWorkplane!=null)
+				objectWorkplane.setDisable(getSelected().size() != 1);
 
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
