@@ -653,9 +653,9 @@
                                           <Insets left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </CheckBox>
-                                    <CheckBox mnemonicParsing="false" selected="true">
+                                    <CheckBox fx:id="timelineMoveObjectShow" mnemonicParsing="false" selected="true">
                                        <graphic>
-                                          <ImageView fx:id="timelineMoveObjectShow" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="moveObject" />
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="moveObject" />
                                        </graphic>
                                        <padding>
                                           <Insets left="5.0" right="5.0" top="5.0" />

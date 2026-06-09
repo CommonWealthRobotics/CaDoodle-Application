@@ -334,6 +334,8 @@ public class Main extends Application {
 		try {
 			launch();
 		} catch (Exception ex) {
+			Log.error(ex);
+			Log.flush();
 			ex.printStackTrace();
 		}
 	}
