@@ -59,6 +59,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -338,7 +339,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private HBox timeline;
 
 	@FXML
+	private GridPane timelineGridPane;
+	@FXML
 	private ScrollPane timelineScroll;
+	@FXML
+	private CheckBox timelineShowAll;
+	
 	@FXML // fx:id="zoomInButton"
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
@@ -584,11 +590,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		c.clear();
 		if (tm) {
 			c.add("open-drawer");
-			timelineHolder.getChildren().add(timelineScroll);
+			timelineHolder.getChildren().add(timelineGridPane);
 			timelineHolder.minHeight(150);
 		} else {
 			c.add("close-drawer");
-			timelineHolder.getChildren().remove(timelineScroll);
+			timelineHolder.getChildren().remove(timelineGridPane);
 			timelineHolder.minHeight(0);
 		}
 		timelineOpen = tm;
@@ -1040,7 +1046,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setUpNavigationCube();
 			setUp3dEngine();
 			setUpColorPicker();
-			timelineManager.set(timelineScroll, timeline, session, engine);
+			timelineManager.set(timelineScroll, timeline, session, engine,timelineShowAll);
 			label = new Label(shapeConfiguration.getText());
 			renameBtn = new Button("Rename");
 

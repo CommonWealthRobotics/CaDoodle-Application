@@ -21,6 +21,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -56,6 +57,7 @@ public class TimelineManager {
 	private boolean firstTime;
 	private boolean timelineOpen;
 	private int buttonSize = 80;
+	private CheckBox timelineShowAll;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -124,11 +126,12 @@ public class TimelineManager {
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine, CheckBox timelineShowAll) {
 		this.timelineScroll = timelineScroll;
 		this.baseBox = timeline;
 		this.session = session;
 		this.engine = engine;
+		this.timelineShowAll = timelineShowAll;
 	}
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {

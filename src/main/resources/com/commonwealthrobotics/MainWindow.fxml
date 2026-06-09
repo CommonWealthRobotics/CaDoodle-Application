@@ -5,6 +5,7 @@
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -601,23 +602,39 @@
 
                   <AnchorPane fx:id="timelineHolder" style="-fx-border-width: 1 0 0 0; -fx-border-color: #BBBBBB;" VBox.vgrow="NEVER">
                      <children>
-                        <ScrollPane fx:id="timelineScroll" hbarPolicy="ALWAYS" minHeight="150.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-padding: 0 10 0 0;">
-                                 <children>
-                                    <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane fx:id="timelineGridPane" alignment="CENTER" layoutY="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <ScrollPane fx:id="timelineScroll" hbarPolicy="ALWAYS" minHeight="150.0" vbarPolicy="NEVER" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-padding: 0 10 0 0;">
                                        <children>
-                                          <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
-                                          <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                          <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                                <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="10.0" />
+                                             </padding>
+                                          </HBox>
                                        </children>
-                                       <padding>
-                                          <Insets left="10.0" />
-                                       </padding>
-                                    </HBox>
-                                 </children>
-                              </AnchorPane>
-                          </content>
-                        </ScrollPane>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
+                              <CheckBox mnemonicParsing="false" text="%timeline.all" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                           </children>
+                        </GridPane>
                      </children>
                   </AnchorPane>
                </children>
