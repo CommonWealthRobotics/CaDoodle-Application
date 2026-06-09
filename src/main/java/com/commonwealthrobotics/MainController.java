@@ -346,8 +346,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CheckBox timelineShowAll;
 	@FXML
 	private CheckBox timelineAddOpShow;
+	@FXML
+	private CheckBox timelineResizeShow;
+	@FXML // fx:id="zoomInButton"@FXML
+	private CheckBox timelineMoveObjectShow;
 	
-	@FXML // fx:id="zoomInButton"
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;

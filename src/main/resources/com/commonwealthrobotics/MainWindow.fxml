@@ -19,7 +19,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -572,15 +571,6 @@
                                           <Tooltip text="%mainwindow.ruler_tool_lt_r_gt" />
                                        </tooltip>
                                     </Button>
-
-                                    <Button fx:id="notesButton" disable="true" mnemonicParsing="false" onAction="#onNotesClick" style="-fx-translate-y: 2" styleClass="image-button" GridPane.columnIndex="2">
-                                       <graphic>
-                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="%mainwindow.notes_lt_n_gt" />
-                                       </tooltip>
-                                    </Button>
                                     <HBox alignment="CENTER_LEFT" maxHeight="26.0" spacing="3" style="-fx-padding: 0 3 0 3;" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1">
                                         <TextField fx:id="searchField" disable="true" maxWidth="152" prefHeight="26.0" />
 
@@ -634,16 +624,26 @@
                               </ScrollPane>
                               <CheckBox fx:id="timelineShowAll" mnemonicParsing="false" text="%timeline.all" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                                  <padding>
-                                    <Insets right="5.0" />
+                                    <Insets left="5.0" right="5.0" />
                                  </padding>
                               </CheckBox>
                               <CheckBox fx:id="timelineAddOpShow" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                                  <graphic>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="addObject" />
+                                    <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="addObject" />
                                  </graphic>
                                  <padding>
                                     <Insets right="5.0" />
                                  </padding>
+                              </CheckBox>
+                              <CheckBox mnemonicParsing="false" GridPane.columnIndex="2">
+                                 <graphic>
+                                    <ImageView fx:id="timelineMoveObjectShow" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="moveObject" />
+                                 </graphic>
+                              </CheckBox>
+                              <CheckBox fx:id="timelineResizeShow" mnemonicParsing="false" GridPane.columnIndex="3">
+                                 <graphic>
+                                    <ImageView fx:id="timelineMoveObjectShow1" fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="resizeObject" />
+                                 </graphic>
                               </CheckBox>
                            </children>
                            <padding>
@@ -671,7 +671,7 @@
                      <children>
                         <Button fx:id="hexDistributeButton" mnemonicParsing="false" onAction="#onHexDistribute" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hexDistributeButtonImage" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.pattern_copy_hexagon_or_linear" />
@@ -679,7 +679,7 @@
                         </Button>
                         <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="boltHoleButtonImage-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.pattern_copy_in_circle" />
@@ -688,7 +688,7 @@
                         <Separator orientation="VERTICAL" />
                         <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="extrudeButton-image-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.extrude_selected_surface" />
@@ -696,7 +696,7 @@
                         </Button>
                         <Button fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="filletButton-image-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.fillet_or_chamfer" />
@@ -714,38 +714,9 @@
                               <Tooltip text="%mainwindow.show_all_lt_ctrl_shift_h_gt" />
                            </tooltip>
                         </Button>
-                        <MenuButton fx:id="visbilityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onVisibility" styleClass="menu-button2" HBox.hgrow="NEVER">
-                            <graphic>
-                                <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" />
-                            </graphic>
-                          <items>
-                            <MenuItem mnemonicParsing="false" onAction="#onShowHidden" text="%mainwindow.show_hidden_shapes">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon" />
-                                 </graphic>
-                              </MenuItem>
-                            <MenuItem mnemonicParsing="false" onAction="#onHideNotes" text="%mainwindow.hide_notes">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="notes-icon" />
-                                 </graphic>
-                              </MenuItem>
-                              <MenuItem mnemonicParsing="false" onAction="#onHideConnections" text="%mainwindow.hide_connectors">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@CoM.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </MenuItem>
-                          </items>
-                           <tooltip>
-                              <Tooltip text="%mainwindow.visibility" />
-                           </tooltip>
-                        </MenuButton>
                         <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.group_lt_ctrl_g_gt" />
@@ -753,7 +724,7 @@
                         </Button>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="ungroupButton-image-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
@@ -790,7 +761,7 @@
                         </AnchorPane>
                         <Button fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="alignButton-mage-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.align_lt_l_gt" />
@@ -798,7 +769,7 @@
                         </Button>
                         <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="mirronButton-image-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.mirror_lt_m_gt" />
@@ -851,7 +822,7 @@
                         </Button>
                         <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
                            <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="pasteButton-mage-view" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.paste_lt_ctrl_v_gt" />
@@ -912,7 +883,7 @@
                      </children>
                   </HBox>
 
-            <Button fx:id="logoButton" contentDisplay="GRAPHIC_ONLY" onAction="#openHomePage" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
+            <Button fx:id="logoButton" contentDisplay="GRAPHIC_ONLY" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
                 <graphic>
                   <ImageView fx:id="bigLogoImage" fitHeight="40.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" styleClass="biglogo-cadoodle" />
                 </graphic>
