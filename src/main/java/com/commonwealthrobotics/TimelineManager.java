@@ -2,6 +2,7 @@ package com.commonwealthrobotics;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -9,15 +10,21 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FailedToApplyOperation;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -69,6 +76,15 @@ public class TimelineManager {
 	private CheckBox timelineRadialShow;
 	private CheckBox timelineLinearShow;
 	private CheckBox timelineDeleteShow;
+	private ArrayList<CheckBox> boxes;
+	private EventHandler<ActionEvent> showAllAction;
+	private HBox timelineShowButtons;
+	private CheckBox timelineMoveObjectShow;
+	private ArrayList<Button> addButtons = new ArrayList<Button>();
+	private ArrayList<Button> moveButtons = new ArrayList<Button>();
+	private ArrayList<Button> otherButtons = new ArrayList<Button>();
+
+	private CheckBox timelineOtherShow;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -137,11 +153,17 @@ public class TimelineManager {
 		});
 	}
 
-	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine, CheckBox timelineShowAll, CheckBox timelineAddOpShow, CheckBox timelineResizeShow, CheckBox timelineAllignShow, CheckBox timelineGroupShow, CheckBox timelineHideShow, CheckBox timelineMirrorShow, CheckBox timelineFilletShow, CheckBox timelineExtrudeShow, CheckBox timelineRadialShow, CheckBox timelineLinearShow, CheckBox timelineDeleteShow) {
+	public void set(ScrollPane timelineScroll, HBox timeline, SelectionSession session, BowlerStudio3dEngine engine,
+			HBox timelineShowButtons, CheckBox timelineShowAll, CheckBox timelineAddOpShow, CheckBox timelineResizeShow,
+			CheckBox timelineAllignShow, CheckBox timelineGroupShow, CheckBox timelineHideShow,
+			CheckBox timelineMirrorShow, CheckBox timelineFilletShow, CheckBox timelineExtrudeShow,
+			CheckBox timelineRadialShow, CheckBox timelineLinearShow, CheckBox timelineDeleteShow,
+			CheckBox timelineMoveObjectShow, CheckBox timelineOtherShow) {
 		this.timelineScroll = timelineScroll;
 		this.baseBox = timeline;
 		this.session = session;
 		this.engine = engine;
+		this.timelineShowButtons = timelineShowButtons;
 		this.timelineShowAll = timelineShowAll;
 		this.timelineAddOpShow = timelineAddOpShow;
 		this.timelineResizeShow = timelineResizeShow;
@@ -154,6 +176,14 @@ public class TimelineManager {
 		this.timelineRadialShow = timelineRadialShow;
 		this.timelineLinearShow = timelineLinearShow;
 		this.timelineDeleteShow = timelineDeleteShow;
+		this.timelineMoveObjectShow = timelineMoveObjectShow;
+		this.timelineOtherShow = timelineOtherShow;
+		boxes = new ArrayList<CheckBox>(Arrays.asList(timelineAddOpShow, timelineResizeShow, timelineAllignShow,
+				timelineGroupShow, timelineHideShow, timelineMirrorShow, timelineFilletShow, timelineExtrudeShow,
+				timelineRadialShow, timelineLinearShow, timelineDeleteShow, timelineMoveObjectShow, timelineOtherShow));
+
+		timelineShowButtons.getChildren().clear();
+		clear();
 	}
 
 	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
@@ -243,6 +273,7 @@ public class TimelineManager {
 		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
 
 		BowlerStudio.runLater(() -> {
+
 			if (timeline != null) {
 				if (clear)
 					clear();
@@ -279,16 +310,17 @@ public class TimelineManager {
 				}
 				addrem = false;
 				int s = operations.size();
+
 				for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
 					try {
 						CaDoodleOperation op = operations.get(i);
+
 						List<CSG> state = ap.get().getStateAtOperation(op);
 						if (op == null)
 							continue;
 						int myIndex = i;
 						addrem = true;
-						List<CSG> previous = (myIndex == 0)
-								? new ArrayList<CSG>()
+						List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
 								: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 						File f = ap.get().getTimelineImageFile(myIndex - 1);
 						Image image = new Image(f.toURI().toString());
@@ -297,6 +329,17 @@ public class TimelineManager {
 							ImageView value = new ImageView(resizeImage(image, buttonSize, buttonSize));
 							String text = (myIndex + 1) + "\n" + op.getType();
 							Button toAdd = new Button(text);
+							if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
+									|| Sweep.class.isInstance(op)) {
+								addButtons.add(toAdd);
+								setupCheckBox(addButtons, timelineAddOpShow);
+							} else if (MoveCenter.class.isInstance(op)) {
+								moveButtons.add(toAdd);
+								setupCheckBox(moveButtons, timelineMoveObjectShow);
+							} else {
+								otherButtons.add(toAdd);
+								setupCheckBox(otherButtons, timelineOtherShow);
+							}
 							buttons.add(toAdd);
 							BowlerStudio.runLater(() -> timeline.add(toAdd, myIndex, 0));
 
@@ -459,10 +502,47 @@ public class TimelineManager {
 		});
 	}
 
+	private void setupCheckBox(ArrayList<Button> moveButtons, CheckBox tmp) {
+		if (!timelineShowButtons.getChildren().contains(tmp)) {
+			timelineShowButtons.getChildren().add(tmp);
+			tmp.setOnAction((ev) -> {
+				setupCHeckboxEvent(moveButtons, tmp);
+			});
+		}
+	}
+
+	private void setupCHeckboxEvent(ArrayList<Button> moveButtons, CheckBox cb) {
+		boolean value = !cb.isSelected();
+		for (Button b : moveButtons) {
+			b.setVisible(!value);
+			b.getStyleClass().clear();
+			if (value)
+				b.getStyleClass().add("image-button-highlight");
+			else
+				b.getStyleClass().add("image-button");
+		}
+		if (!cb.isSelected())
+			timelineShowAll.setSelected(false);
+	}
+
 	public void clear() {
 		// com.neuronrobotics.sdk.common.Log.debug("Old Timeline buttons cleared");
-		buttons.clear();
-		timeline.getChildren().clear();
+		if (buttons != null)
+			buttons.clear();
+		if (timeline != null)
+			timeline.getChildren().clear();
+
+		showAllAction = e -> {
+			for (CheckBox cb : boxes) {
+				cb.setSelected(timelineShowAll.isSelected());
+				EventHandler<ActionEvent> onAction = cb.getOnAction();
+				if (onAction != null)
+					onAction.handle(e);
+			}
+		};
+		timelineShowAll.setSelected(true);
+		timelineShowAll.setOnAction(showAllAction);
+		timelineShowButtons.getChildren().clear();
 	}
 
 	public void updateSelected(LinkedHashSet<CSG> selected) {

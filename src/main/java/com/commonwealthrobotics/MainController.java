@@ -337,7 +337,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="drawerHolder"
 	private HBox timeline;
-
+	@FXML // fx:id="drawerHolder"
+	private HBox timelineShowButtons;
 	@FXML
 	private GridPane timelineGridPane;
 	@FXML
@@ -348,6 +349,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CheckBox timelineAddOpShow;
 	@FXML
 	private CheckBox timelineResizeShow;
+	
 	@FXML
 	private CheckBox timelineAllignShow;
 	@FXML
@@ -368,7 +370,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CheckBox timelineDeleteShow;
 	@FXML // fx:id="zoomInButton"@FXML
 	private CheckBox timelineMoveObjectShow;
-
+	@FXML // fx:id="zoomInButton"@FXML
+	private CheckBox timelineOtherShow;
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;
@@ -1069,9 +1072,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			setUpNavigationCube();
 			setUp3dEngine();
 			setUpColorPicker();
-			timelineManager.set(timelineScroll, timeline, session, engine, timelineShowAll, timelineAddOpShow,
+			timelineManager.set(timelineScroll, timeline, session, engine,timelineShowButtons, timelineShowAll, timelineAddOpShow,
 					timelineResizeShow, timelineAllignShow, timelineGroupShow, timelineHideShow, 
-					timelineMirrorShow,timelineFilletShow,timelineExtrudeShow,timelineRadialShow,timelineLinearShow,timelineDeleteShow);
+					timelineMirrorShow,timelineFilletShow,timelineExtrudeShow,timelineRadialShow,timelineLinearShow,timelineDeleteShow,timelineMoveObjectShow,timelineOtherShow);
 			label = new Label(shapeConfiguration.getText());
 			renameBtn = new Button("Rename");
 

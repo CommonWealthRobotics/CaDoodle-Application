@@ -594,8 +594,8 @@
                      <children>
                         <GridPane fx:id="timelineGridPane" alignment="CENTER" layoutY="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="10.0" prefWidth="70.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="119.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="10.0" prefWidth="41.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="75.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="2.0" prefWidth="75.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="75.0" />
@@ -643,7 +643,7 @@
                                     </AnchorPane>
                                 </content>
                               </ScrollPane>
-                              <HBox GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                              <HBox fx:id="timelineShowButtons" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                                  <children>
                                     <CheckBox fx:id="timelineAddOpShow" mnemonicParsing="false" selected="true">
                                        <graphic>
@@ -736,6 +736,14 @@
                                     <CheckBox fx:id="timelineDeleteShow" mnemonicParsing="false" selected="true">
                                        <graphic>
                                           <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="deleteButton-image-view" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </CheckBox>
+                                    <CheckBox fx:id="timelineOtherShow" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="advanced-config-icon" />
                                        </graphic>
                                        <padding>
                                           <Insets left="5.0" right="5.0" top="5.0" />
