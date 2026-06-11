@@ -328,7 +328,7 @@
 }
 
 .timeline-none .line {
-    -fx-background-color: #f4ede0; /* logo-beige */
+    -fx-background-color: transparent; /* logo-beige */
     -fx-border-width: 2px;
 }
 .timeline-block {

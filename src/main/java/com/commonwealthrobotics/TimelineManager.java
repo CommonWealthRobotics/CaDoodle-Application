@@ -3,26 +3,20 @@ package com.commonwealthrobotics;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FailedToApplyOperation;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MoveCenter;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -39,21 +33,73 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 public class TimelineManager {
+	private class timelineButton extends Button {
+
+		private StackPane stack;
+		private ImageView toolimage;
+		private Image image;
+		Separator separator = new Separator(Orientation.VERTICAL);
+		private ImageView value;
+		private HBox hbox;
+
+		public timelineButton(String text, Image image) {
+			super(text);
+			this.image = image;
+			getStyleClass().add("image-button");
+			setContentDisplay(ContentDisplay.TOP);
+//			separator.getStyleClass().clear();
+//			separator.getStyleClass().add("timeline-block");
+
+		}
+
+		public void setButtonImageType(ObservableList<String> styleClass) {
+			value = new ImageView(resizeImage(image, buttonSize, buttonSize));
+			value.setFitWidth(buttonSize);
+			value.setFitHeight(buttonSize);
+
+			ImageView toolimage = new ImageView();
+			toolimage.getStyleClass().addAll(styleClass);
+			double overlaySize = buttonSize / 3.0;
+			toolimage.setFitWidth(overlaySize);
+			toolimage.setFitHeight(overlaySize);
+
+			double radius = overlaySize * Math.sqrt(2) / 2.0;
+			Circle bg = new Circle(radius, Color.web("#263d8c"));
+
+			StackPane badge = new StackPane( toolimage);
+			badge.setAlignment(Pos.CENTER);
+			badge.setMaxSize(radius * 2, radius * 2);
+
+			StackPane stack = new StackPane();
+			stack.setPrefSize(buttonSize, buttonSize);
+			stack.getChildren().add(value);
+			stack.getChildren().add(badge);
+			StackPane.setAlignment(badge, Pos.BOTTOM_RIGHT);
+
+			hbox = new HBox(this, separator);
+			hbox.setAlignment(Pos.CENTER);
+
+			setGraphic(stack);
+		}
+	}
 
 	private ScrollPane timelineScroll;
 	private HBox baseBox;
 	private GridPane timeline;
 	private ActiveProject ap;
-	private ArrayList<Button> buttons = new ArrayList<Button>();
+	private ArrayList<timelineButton> buttons = new ArrayList<timelineButton>();
 	private boolean updating = false;
 	private SelectionSession session;
 	private boolean clear;
@@ -80,9 +126,12 @@ public class TimelineManager {
 	private EventHandler<ActionEvent> showAllAction;
 	private HBox timelineShowButtons;
 	private CheckBox timelineMoveObjectShow;
-	private ArrayList<Button> addButtons = new ArrayList<Button>();
-	private ArrayList<Button> moveButtons = new ArrayList<Button>();
-	private ArrayList<Button> otherButtons = new ArrayList<Button>();
+	private HashMap<CheckBox, ArrayList<timelineButton>> buttonTypes = new HashMap<CheckBox, ArrayList<timelineButton>>();
+//	private ArrayList<Button> addButtons = new ArrayList<Button>();
+//	private ArrayList<Button> moveButtons = new ArrayList<Button>();
+//	private ArrayList<Button> resizeButtons = new ArrayList<Button>();
+//
+//	private ArrayList<Button> otherButtons = new ArrayList<Button>();
 
 	private CheckBox timelineOtherShow;
 
@@ -111,9 +160,9 @@ public class TimelineManager {
 				ArrayList<CaDoodleOperation> ops = ap.get().getOperations();
 				ArrayList<Button> toRem = new ArrayList<Button>();
 				for (int i = Math.max(0, ap.get().getCurrentIndex()); i < buttons.size(); i++) {
-					Button b = buttons.get(i);
+					timelineButton b = buttons.get(i);
 					toRem.add(b);
-					BowlerStudio.runLater(() -> timeline.getChildren().remove(b));
+					BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
 				}
 				buttons.removeAll(toRem);
 			}
@@ -326,22 +375,26 @@ public class TimelineManager {
 						Image image = new Image(f.toURI().toString());
 
 						BowlerStudio.runLater(() -> {
-							ImageView value = new ImageView(resizeImage(image, buttonSize, buttonSize));
 							String text = (myIndex + 1) + "\n" + op.getType();
-							Button toAdd = new Button(text);
+							timelineButton toAdd = new timelineButton(text, image);
 							if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 									|| Sweep.class.isInstance(op)) {
-								addButtons.add(toAdd);
-								setupCheckBox(addButtons, timelineAddOpShow);
+								setupCheckBox(timelineAddOpShow, toAdd);
 							} else if (MoveCenter.class.isInstance(op)) {
-								moveButtons.add(toAdd);
-								setupCheckBox(moveButtons, timelineMoveObjectShow);
+								setupCheckBox(timelineMoveObjectShow, toAdd);
+							} else if (Resize.class.isInstance(op)) {
+								setupCheckBox(timelineResizeShow, toAdd);
+							} else if (Align.class.isInstance(op)) {
+								setupCheckBox(timelineAllignShow, toAdd);
+							} else if (Group.class.isInstance(op)) {
+								setupCheckBox(timelineGroupShow, toAdd);
+							} else if (Hide.class.isInstance(op) || Show.class.isInstance(op)) {
+								setupCheckBox(timelineHideShow, toAdd);
 							} else {
-								otherButtons.add(toAdd);
-								setupCheckBox(otherButtons, timelineOtherShow);
+								setupCheckBox(timelineOtherShow, toAdd);
 							}
 							buttons.add(toAdd);
-							BowlerStudio.runLater(() -> timeline.add(toAdd, myIndex, 0));
+							BowlerStudio.runLater(() -> timeline.add(toAdd.hbox, myIndex, 0));
 
 							int my = myIndex;
 							ContextMenu contextMenu = new ContextMenu();
@@ -405,16 +458,6 @@ public class TimelineManager {
 										engine.removeObject(c);
 							});
 
-							ImageView toolimage = new ImageView(image);
-							toolimage.setFitHeight(300);
-							toolimage.setFitWidth(300);
-							toAdd.getStyleClass().add("image-button");
-							toAdd.setContentDisplay(ContentDisplay.TOP);
-							toAdd.setGraphic(value);
-							Tooltip tooltip = new Tooltip(text);
-							tooltip.setGraphic(toolimage);
-							tooltip.setContentDisplay(ContentDisplay.TOP);
-							// toAdd.setTooltip(tooltip);
 							Separator verticalSeparator = new Separator();
 							verticalSeparator.setOrientation(Orientation.VERTICAL);
 							verticalSeparator.setPrefHeight(buttonSize); // Set height to 80 units
@@ -428,7 +471,7 @@ public class TimelineManager {
 									return;
 								toAdd.setDisable(true);
 								buttons.remove(toAdd);
-								timeline.getChildren().remove(toAdd);
+								timeline.getChildren().remove(toAdd.hbox);
 								try {
 									ap.get().deleteOperation(op);
 									for (CSG c : state)
@@ -502,24 +545,26 @@ public class TimelineManager {
 		});
 	}
 
-	private void setupCheckBox(ArrayList<Button> moveButtons, CheckBox tmp) {
+	private void setupCheckBox(CheckBox tmp, timelineButton toAdd) {
+		if (buttonTypes.get(tmp) == null) {
+			buttonTypes.put(tmp, new ArrayList<timelineButton>());
+		}
+		ArrayList<timelineButton> moveButtons = buttonTypes.get(tmp);
 		if (!timelineShowButtons.getChildren().contains(tmp)) {
+			moveButtons.clear();
 			timelineShowButtons.getChildren().add(tmp);
 			tmp.setOnAction((ev) -> {
-				setupCHeckboxEvent(moveButtons, tmp);
+				setupCheckboxEvent(moveButtons, tmp);
 			});
 		}
+		moveButtons.add(toAdd);
+		toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
 	}
 
-	private void setupCHeckboxEvent(ArrayList<Button> moveButtons, CheckBox cb) {
+	private void setupCheckboxEvent(ArrayList<timelineButton> moveButtons, CheckBox cb) {
 		boolean value = !cb.isSelected();
-		for (Button b : moveButtons) {
-			b.setVisible(!value);
-			b.getStyleClass().clear();
-			if (value)
-				b.getStyleClass().add("image-button-highlight");
-			else
-				b.getStyleClass().add("image-button");
+		for (timelineButton b : moveButtons) {
+			b.getGraphic().setVisible(!value);
 		}
 		if (!cb.isSelected())
 			timelineShowAll.setSelected(false);
@@ -551,16 +596,16 @@ public class TimelineManager {
 		if (caDoodleFile == null)
 			return;
 		ArrayList<CaDoodleOperation> operations = caDoodleFile.getOperations();
+		int index = caDoodleFile.getCurrentIndex() - 1;
+
 		for (int i = 0; ((i < operations.size()) && (i < buttons.size())); i++) {
 			CaDoodleOperation op = operations.get(i);
 			if (op == null)
 				continue;
-			Button b = buttons.get(i);
+			timelineButton b = buttons.get(i);
 			boolean applyToMe = false;
-			int index = caDoodleFile.getCurrentIndex() - 1;
 			if (index >= buttons.size())
 				continue;
-			Button sel = buttons.get(index < 0 ? 0 : index);
 			for (String s : op.getNamesAddedInThisOperation()) {
 				for (CSG p : selected) {
 					if (s.contentEquals(p.getName()))
@@ -568,14 +613,18 @@ public class TimelineManager {
 				}
 			}
 			b.getStyleClass().clear();
-			if (sel == b) {
-				b.getStyleClass().add("image-button-focus");
-			}
+			b.separator.getStyleClass().clear();
+			b.separator.getStyleClass().add("separator");
 			if (applyToMe)
 				b.getStyleClass().add("image-button-highlight");
 			else
 				b.getStyleClass().add("image-button");
+			if(i!=index)
+				b.separator.getStyleClass().clear();
+			else
+				b.separator.getStyleClass().add("timeline-place");
 		}
+
 	}
 
 	public void setOpenState(boolean timelineOpen) {
