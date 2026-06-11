@@ -11,6 +11,7 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ExtrudeSurface;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
@@ -33,12 +34,12 @@ public class ExtrudeUIManager {
 		workplane.setOnSelectEvent(() -> {
 
 			if (workplane.isClicked()) {
-				//				if (workplane.isClickOnGround()) {
-				//					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
-				//					ap.get().setWorkplane(new TransformNR());
-				//				} else {
-				//					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-				//				}
+				if (workplane.isClickOnGround()) {
+					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
+					ap.get().setWorkplane(new TransformNR());
+				} else {
+					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+				}
 				Set<String> selectedSet = new HashSet<String>();
 				for (CSG c : selected)
 					selectedSet.add(c.getName());

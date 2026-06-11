@@ -808,7 +808,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		gp.getColumnConstraints().setAll(col0, col1);
 		if (getSelected().size() > 0) {
 			dropToWorkplane.setDisable(false);
-			if(objectWorkplane!=null)
+			if (objectWorkplane != null)
 				objectWorkplane.setDisable(getSelected().size() != 1);
 
 			shapeConfigurationHolder.getChildren().clear();
@@ -1089,20 +1089,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String defType = "FDM";
 		String defMat = "PLA";
 		String defInfil = 20 + "";
-		//		for (CSG c : linkedHashSet) {
-		//			Optional<String> materialType = c.getMaterialType();
-		//			if (materialType.isPresent())
-		//				defType = materialType.get();
-		//			Optional<String> material = c.getMaterial();
-		//			if (material.isPresent())
-		//				defMat = material.get();
-		//			Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
-		//			if (materiaInfillPercent.isPresent())
-		//				defInfil = materiaInfillPercent.get() + "";
-		//		}
+		// for (CSG c : linkedHashSet) {
+		// Optional<String> materialType = c.getMaterialType();
+		// if (materialType.isPresent())
+		// defType = materialType.get();
+		// Optional<String> material = c.getMaterial();
+		// if (material.isPresent())
+		// defMat = material.get();
+		// Optional<Double> materiaInfillPercent = c.getMateriaInfillPercent();
+		// if (materiaInfillPercent.isPresent())
+		// defInfil = materiaInfillPercent.get() + "";
+		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1116,7 +1116,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -2440,19 +2440,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		isObjectWorkplane = !isObjectWorkplane;
-		com.neuronrobotics.sdk.common.Log.debug("Setting Object Workplane " + isObjectWorkplane);
-		objectWorkplane.getStyleClass().clear();
+		if (objectWorkplane != null) {
+			com.neuronrobotics.sdk.common.Log.debug("Setting Object Workplane " + isObjectWorkplane);
+			objectWorkplane.getStyleClass().clear();
+		}
 		if (isObjectWorkplane) {
 			CSG c = getSelectedCSG(selectedSnapshot().get(0));
 			TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
 			previousWP = ap.get().getWorkplane();
 			ap.get().setWorkplane(nrToCSG);
 			workplane.placeWorkplaneVisualization();
-			objectWorkplane.getStyleClass().add("image-button-focus");
+			if (objectWorkplane != null)objectWorkplane.getStyleClass().add("image-button-focus");
 		} else {
 			ap.get().setWorkplane(previousWP);
 			workplane.placeWorkplaneVisualization();
-			objectWorkplane.getStyleClass().add("image-button");
+			if (objectWorkplane != null)objectWorkplane.getStyleClass().add("image-button");
 		}
 		updateControls();
 	}
