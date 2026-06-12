@@ -379,31 +379,31 @@ public class TimelineManager {
 							timelineButton toAdd = new timelineButton(text, image);
 							if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 									|| Sweep.class.isInstance(op)) {
-								setupCheckBox(timelineAddOpShow, toAdd,op);
+								setupCheckBox(timelineAddOpShow, toAdd, op);
 							} else if (MoveCenter.class.isInstance(op)) {
-								setupCheckBox(timelineMoveObjectShow, toAdd,op);
+								setupCheckBox(timelineMoveObjectShow, toAdd, op);
 							} else if (Resize.class.isInstance(op)) {
-								setupCheckBox(timelineResizeShow, toAdd,op);
+								setupCheckBox(timelineResizeShow, toAdd, op);
 							} else if (Align.class.isInstance(op)) {
-								setupCheckBox(timelineAllignShow, toAdd,op);
+								setupCheckBox(timelineAllignShow, toAdd, op);
 							} else if (Group.class.isInstance(op)) {
-								setupCheckBox(timelineGroupShow, toAdd,op);
+								setupCheckBox(timelineGroupShow, toAdd, op);
 							} else if (Hide.class.isInstance(op) || Show.class.isInstance(op)) {
-								setupCheckBox(timelineHideShow, toAdd,op);
+								setupCheckBox(timelineHideShow, toAdd, op);
 							} else if (Mirror.class.isInstance(op)) {
-								setupCheckBox(timelineMirrorShow, toAdd,op);
+								setupCheckBox(timelineMirrorShow, toAdd, op);
 							} else if (FilletChamfer.class.isInstance(op)) {
-								setupCheckBox(timelineFilletShow, toAdd,op);
+								setupCheckBox(timelineFilletShow, toAdd, op);
 							} else if (ExtrudeSurface.class.isInstance(op)) {
-								setupCheckBox(timelineExtrudeShow, toAdd,op);
+								setupCheckBox(timelineExtrudeShow, toAdd, op);
 							} else if (RadialDistribution.class.isInstance(op)) {
-								setupCheckBox(timelineRadialShow, toAdd,op);
+								setupCheckBox(timelineRadialShow, toAdd, op);
 							} else if (LinearDistribution.class.isInstance(op)) {
-								setupCheckBox(timelineLinearShow, toAdd,op);
+								setupCheckBox(timelineLinearShow, toAdd, op);
 							} else if (Delete.class.isInstance(op)) {
-								setupCheckBox(timelineDeleteShow, toAdd,op);
+								setupCheckBox(timelineDeleteShow, toAdd, op);
 							} else {
-								setupCheckBox(timelineOtherShow, toAdd,op);
+								setupCheckBox(timelineOtherShow, toAdd, op);
 							}
 							buttons.add(toAdd);
 							BowlerStudio.runLater(() -> timeline.add(toAdd.hbox, myIndex, 0));
@@ -573,10 +573,10 @@ public class TimelineManager {
 		String hideLabel = ActiveProject.getLangaugePack().getString("timeline.hideobj");
 		Tooltip tt = tmp.getTooltip();
 		if (tt == null)
-		    tt = new Tooltip(op.getType() + " : " + hideLabel);
+			tt = new Tooltip(op.getType() + " : " + hideLabel);
 		else {
-		    if (!tt.getText().contains(op.getType()))
-		        tt = new Tooltip(op.getType() + " , " + tt.getText());
+			if (!tt.getText().contains(op.getType()))
+				tt = new Tooltip(op.getType() + " , " + tt.getText());
 		}
 		tmp.setTooltip(tt);
 		moveButtons.add(toAdd);
