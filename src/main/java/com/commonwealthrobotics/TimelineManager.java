@@ -386,7 +386,7 @@ public class TimelineManager {
 								setupCheckBox(timelineResizeShow, toAdd, op);
 							} else if (Align.class.isInstance(op)) {
 								setupCheckBox(timelineAllignShow, toAdd, op);
-							} else if (Group.class.isInstance(op)) {
+							} else if (Group.class.isInstance(op) || UnGroup.class.isInstance(op)) {
 								setupCheckBox(timelineGroupShow, toAdd, op);
 							} else if (Hide.class.isInstance(op) || Show.class.isInstance(op)) {
 								setupCheckBox(timelineHideShow, toAdd, op);
