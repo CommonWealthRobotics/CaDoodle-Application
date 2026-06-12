@@ -28,7 +28,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -39,7 +38,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -59,8 +57,8 @@ public class TimelineManager {
 			this.image = image;
 			getStyleClass().add("image-button");
 			setContentDisplay(ContentDisplay.TOP);
-//			separator.getStyleClass().clear();
-//			separator.getStyleClass().add("timeline-block");
+			//			separator.getStyleClass().clear();
+			//			separator.getStyleClass().add("timeline-block");
 
 		}
 
@@ -78,7 +76,7 @@ public class TimelineManager {
 			double radius = overlaySize * Math.sqrt(2) / 2.0;
 			Circle bg = new Circle(radius, Color.web("#263d8c"));
 
-			StackPane badge = new StackPane( toolimage);
+			StackPane badge = new StackPane(toolimage);
 			badge.setAlignment(Pos.CENTER);
 			badge.setMaxSize(radius * 2, radius * 2);
 
@@ -127,11 +125,11 @@ public class TimelineManager {
 	private HBox timelineShowButtons;
 	private CheckBox timelineMoveObjectShow;
 	private HashMap<CheckBox, ArrayList<timelineButton>> buttonTypes = new HashMap<CheckBox, ArrayList<timelineButton>>();
-//	private ArrayList<Button> addButtons = new ArrayList<Button>();
-//	private ArrayList<Button> moveButtons = new ArrayList<Button>();
-//	private ArrayList<Button> resizeButtons = new ArrayList<Button>();
-//
-//	private ArrayList<Button> otherButtons = new ArrayList<Button>();
+	//	private ArrayList<Button> addButtons = new ArrayList<Button>();
+	//	private ArrayList<Button> moveButtons = new ArrayList<Button>();
+	//	private ArrayList<Button> resizeButtons = new ArrayList<Button>();
+	//
+	//	private ArrayList<Button> otherButtons = new ArrayList<Button>();
 
 	private CheckBox timelineOtherShow;
 
@@ -369,7 +367,8 @@ public class TimelineManager {
 							continue;
 						int myIndex = i;
 						addrem = true;
-						List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
+						List<CSG> previous = (myIndex == 0)
+								? new ArrayList<CSG>()
 								: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 						File f = ap.get().getTimelineImageFile(myIndex - 1);
 						Image image = new Image(f.toURI().toString());
@@ -390,6 +389,18 @@ public class TimelineManager {
 								setupCheckBox(timelineGroupShow, toAdd);
 							} else if (Hide.class.isInstance(op) || Show.class.isInstance(op)) {
 								setupCheckBox(timelineHideShow, toAdd);
+							} else if (Mirror.class.isInstance(op)) {
+								setupCheckBox(timelineMirrorShow, toAdd);
+							} else if (FilletChamfer.class.isInstance(op)) {
+								setupCheckBox(timelineFilletShow, toAdd);
+							} else if (ExtrudeSurface.class.isInstance(op)) {
+								setupCheckBox(timelineExtrudeShow, toAdd);
+							} else if (RadialDistribution.class.isInstance(op)) {
+								setupCheckBox(timelineRadialShow, toAdd);
+							} else if (LinearDistribution.class.isInstance(op)) {
+								setupCheckBox(timelineLinearShow, toAdd);
+							} else if (Delete.class.isInstance(op)) {
+								setupCheckBox(timelineDeleteShow, toAdd);
 							} else {
 								setupCheckBox(timelineOtherShow, toAdd);
 							}
@@ -619,7 +630,7 @@ public class TimelineManager {
 				b.getStyleClass().add("image-button-highlight");
 			else
 				b.getStyleClass().add("image-button");
-			if(i!=index)
+			if (i != index)
 				b.separator.getStyleClass().clear();
 			else
 				b.separator.getStyleClass().add("timeline-place");
