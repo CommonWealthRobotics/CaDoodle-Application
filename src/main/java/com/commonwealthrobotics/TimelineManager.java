@@ -92,6 +92,10 @@ public class TimelineManager {
 
 			setGraphic(stack);
 		}
+
+		public void updatemainImage(Image resizeImage) {
+			value.setImage(resizeImage);
+		}
 	}
 
 	private ScrollPane timelineScroll;
@@ -188,11 +192,11 @@ public class TimelineManager {
 			@Override
 			public void onTimelineUpdate(int num, File imageFile) {
 				if (buttons.size() > num) {
-					Button b = buttons.get(num);
-					ImageView img = (ImageView) b.getGraphic();
+					timelineButton b = buttons.get(num);
+
 					Image image = new Image(imageFile.toURI().toString());
 					BowlerStudio.runLater(() -> {
-						img.setImage(resizeImage(image, buttonSize, buttonSize));
+						b.updatemainImage(resizeImage(image, buttonSize, buttonSize));
 					});
 					Log.debug("Updating " + imageFile);
 				} else
