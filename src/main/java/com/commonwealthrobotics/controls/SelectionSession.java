@@ -2816,8 +2816,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onWorkplaneChange(TransformNR newWP) {
 		clearBoundsCache();
 		if (!workplane.isWorkplaneNotOrigin()) {
-			objectWorkplane.getStyleClass().clear();
-			objectWorkplane.getStyleClass().add("image-button");
+			if(objectWorkplane!=null) {
+				objectWorkplane.getStyleClass().clear();
+				objectWorkplane.getStyleClass().add("image-button");
+			}
 			isObjectWorkplane = false;
 		}
 
