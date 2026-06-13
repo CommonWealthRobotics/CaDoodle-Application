@@ -299,12 +299,7 @@ public class AlignHandle {
 	}
 
 	public void recomputeOps(HashMap<CSG, Bounds> cache) {
-		if (visualizationObjects != null) {
-			for (CSG c : visualizationObjects)
-				engine.removeUserNode(visualizers.get(c));
-			visualizationObjects.clear();
-		}
-		visualizationObjects = null;
+		clear();
 		if (operation == null)
 			return;
 		Align tmp = operation.copy();
@@ -338,7 +333,16 @@ public class AlignHandle {
 		operation = prev;
 	}
 
+	private void clear() {
+		if (visualizationObjects != null) {
+			for (CSG c : visualizationObjects)
+				engine.removeUserNode(visualizers.get(c));
+			visualizationObjects.clear();
+		}
+		visualizationObjects = null;
+	}
+
 	public void clear(HashMap<CSG, Bounds> cache) {
-		recomputeOps(cache);
+		clear();
 	}
 }
