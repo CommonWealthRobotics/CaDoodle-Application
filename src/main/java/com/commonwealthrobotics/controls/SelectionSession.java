@@ -1142,7 +1142,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						if (matObj.has("density_g_cm3")) {
 							localDensity = matObj.get("density_g_cm3").getAsDouble();
 							// Now 'type' is still "FDM", so this check works correctly
-							if ("FDM".equals(type) && c.getMateriaInfillPercent().isPresent() && section.has(infill)) {
+							if ("FDM".equals(type) && section.has(infill)) {
 								JsonObject infillObj = section.get(infill).getAsJsonObject();
 								if (infillObj.has("effective_density_multiplier"))
 									localDensity *= infillObj.get("effective_density_multiplier").getAsDouble();
