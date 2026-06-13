@@ -776,7 +776,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if (toUse == null)
 			toUse = Locale.of("en");
 		String country = toUse.getLanguage().toLowerCase();
-		Log.debug("Setting country code to " + country);
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleLangauge", country);
 		return ResourceBundle.getBundle("lang.Messages", toUse);
 
