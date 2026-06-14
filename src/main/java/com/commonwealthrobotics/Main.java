@@ -331,6 +331,14 @@ public class Main extends Application {
 				});
 			}
 		});
+		String string = ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", "64").toString();
+		try {
+			int numberOfSidesInt = Integer.parseInt(string);
+		} catch (Exception ex) {
+			Log.error(ex);
+			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "64");
+		}
+		
 		try {
 			launch();
 		} catch (Exception ex) {
