@@ -787,7 +787,7 @@ public class ResizeSessionManager {
 				for (ResizingHandle ctrl : controls)
 					ctrl.manipulator.set(0, 0, 0);
 
-				Resize setResize = new Resize().setNames(session.selectedSnapshot(), session.getSelected())
+				Resize setResize = new Resize().setNames(session.selectedSnapshot())
 						.setWorkplane(wp).setResize(tcC, lfC, rrC);
 
 				if (resizeAllowed) {
