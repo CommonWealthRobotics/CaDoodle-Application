@@ -69,6 +69,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	private Affine cameraOrient = new Affine();
 	private double scale;
 	private Mirror op;
+	private Color myColor;
 	public MirrorHandle(MirrorOrientation ax, Affine translate, Affine vr, MirrorSessionManager rotationSessionManager,
 			ActiveProject ap, ControlSprites cs, Affine workplaneOffset) {
 		this.ax = ax;
@@ -81,17 +82,31 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		CSG arrow = getDoubbleArrow();
 		mesh = arrow.newMesh();
 		material = new PhongMaterial();
+		switch(ax) {
+		case x:
+			myColor=Color.RED;
+			break;
+		case y:
+			myColor=Color.GREEN;
+			break;
+		case z:
+			myColor=Color.BLUE;
+			break;
+		default:
+			break;
+		
+		}
 
 		mesh.setCullFace(CullFace.NONE);
 		mesh.setMaterial(material);
 		exited = event -> {
-			material.setDiffuseColor(Color.BLACK);
+			material.setDiffuseColor(myColor);
 			for (CSG key : visualizers.keySet()) {
 				visualizers.get(key).setVisible(false);
 			}
 		};
 		entered = event -> {
-			material.setDiffuseColor(new Color(1, 0, 0, 1));
+			material.setDiffuseColor(new Color(1, 0, 1, 1));
 			// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
 			// orientation);
 			for (CSG key : visualizers.keySet()) {
@@ -99,7 +114,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 			}
 		};
 		onClickEvent = event -> {
-			material.setDiffuseColor(Color.BLACK);
+			material.setDiffuseColor(myColor);
 			com.neuronrobotics.sdk.common.Log.error("Handle clicked ");
 			setMyOperation();
 		};
@@ -231,7 +246,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		this.ta = t;
 		this.selected = sel;
 		this.meshes = meshes;
-		material.setDiffuseColor(Color.BLACK);
+		material.setDiffuseColor(myColor);
 		BowlerStudio.runLater(() -> mesh.setVisible(true));
 		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, exited);
 		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
@@ -300,7 +315,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 			CSG pin = new Cylinder(height / 4, height).toCSG();
 			CSG arrow = cone.union(pin).rotx(90);
 			doubbleArrow = arrow.union(arrow.rotx(180));
-			// doubbleArrow.setColor(Color.BLACK);
+			// doubbleArrow.setColor(myColor);
 		}
 		return doubbleArrow;
 	}
