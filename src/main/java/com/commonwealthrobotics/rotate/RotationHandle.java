@@ -89,7 +89,7 @@ public class RotationHandle {
 			runSaveAndReset();
 		};
 
-		TDnumber = new ThreedNumber(translate, workplaneOffset, onChange, TextFieldDimension.None, ruler, 3);
+		TDnumber = new ThreedNumber(translate, workplaneOffset, onChange, TextFieldDimension.None, ruler, 3, null);
 		// TDnumber.getTextField();
 		TDnumber.hide();
 		handle.setImage(rotateImage);

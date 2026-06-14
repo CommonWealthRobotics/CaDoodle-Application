@@ -320,16 +320,22 @@ public class ControlSprites {
 			updateLinesAndCubes();
 		};
 
-		xdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4);
-		ydimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4);
-		zdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4);
-		xOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.X, ruler, 4);
-		yOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.Y, ruler, 4);
-		zOffset = new ThreedNumber(selection, workplaneOffset, offsetZChange, TextFieldDimension.Z, ruler, 4);
+		xdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4,
+				new Vector3d(1, 0, 0));
+		ydimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4,
+				new Vector3d(0, 1, 0));
+		zdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4,
+				new Vector3d(0, 0, 1));
+		xOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.X, ruler, 4,
+				new Vector3d(1, 0, 0));
+		yOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.Y, ruler, 4,
+				new Vector3d(0, 1, 0));
+		zOffset = new ThreedNumber(selection, workplaneOffset, offsetZChange, TextFieldDimension.Z, ruler, 4,
+				new Vector3d(0, 0, 1));
 		numbers = Arrays.asList(xdimen, ydimen, zdimen, xOffset, yOffset, zOffset);
 
 		for (ThreedNumber t : numbers)
-			allElems.add(t.getTextField());
+			allElems.addAll(t.getTextField());
 
 		clearSelection();
 		setUpUIComponents();
@@ -617,14 +623,13 @@ public class ControlSprites {
 			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
 					scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, linesZ), cf);
 
-			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z - (numberOffset / 2)),
-					cf);
+			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z / 2), cf);
 
-			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x - numberOffset, min.y, linesZ), cf);
+			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x / 2, min.y, linesZ), cf);
 
-			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y - numberOffset, linesZ), cf);
+			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y / 2, linesZ), cf);
 
-			zOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, min.z), cf);
+			zOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, min.z / 2), cf);
 
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());

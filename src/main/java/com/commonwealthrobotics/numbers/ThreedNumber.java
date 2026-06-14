@@ -8,14 +8,21 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
+import eu.mihosoft.vrl.v3d.Cube;
+import eu.mihosoft.vrl.v3d.Vector3d;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.application.Platform;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -34,8 +41,11 @@ public class ThreedNumber {
 	private double mostRecentValue = 20;
 
 	private Affine location = new Affine();
+	private Affine lineOffset = new Affine();
 	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
+	private Scale scaleMesh = new Scale();
+
 	private double scale;
 	// private Affine resizeHandleLocation = new Affine();
 	private Runnable onChange;
@@ -48,6 +58,10 @@ public class ThreedNumber {
 	private int wholeDigits; // Allowed whole digits before the dot
 	private char decimalSeparator = '.';
 	public boolean canceled = false; // Edit was canceled, keep old value
+	private MeshView mesh = new Cube(1, 1, 1).toCSG().setColor(Color.GREY).getMesh();
+	private PhongMaterial material;
+	private Affine alignLoc = new Affine();
+	private Vector3d vector3d;
 
 	// DISABLE TIMEOUT FOR NOW
 	/*
@@ -70,7 +84,7 @@ public class ThreedNumber {
 	 */
 
 	public ThreedNumber(Affine move, Affine workplaneOffset, Runnable onChange, TextFieldDimension tfDimension,
-			RulerManager ruler, int wholeDigits) {
+			RulerManager ruler, int wholeDigits, Vector3d vector3d) {
 		// startThread(); // TIMEOUT DISABLED
 		// this.session = session;
 		this.move = move;
@@ -79,6 +93,22 @@ public class ThreedNumber {
 		this.tfDimension = tfDimension;
 		this.ruler = ruler;
 		this.wholeDigits = wholeDigits;
+		this.vector3d = vector3d;
+
+		mesh.getTransforms().add(move);
+		mesh.getTransforms().add(alignLoc);
+		mesh.getTransforms().add(workplaneOffset);
+		mesh.getTransforms().add(location);
+		//mesh.getTransforms().add(cameraOrient);
+		mesh.getTransforms().add(scaleMesh);
+		mesh.setVisible(false);
+		material = new PhongMaterial();
+		if (vector3d != null) {
+			material.setDiffuseColor(new Color(vector3d.x, vector3d.y, vector3d.z, 0.75));
+			material.setSpecularColor(new Color(vector3d.x, vector3d.y, vector3d.z, 0.75));
+		}
+		mesh.setCullFace(CullFace.BACK);
+		mesh.setMaterial(material);
 
 		getSystemDecimalSeparator();
 
@@ -257,12 +287,18 @@ public class ThreedNumber {
 		// validate();
 	}
 
-	public Node getTextField() {
-		return textField;
+	public ArrayList<Node> getTextField() {
+		ArrayList<Node> parts = new ArrayList<Node>();
+		parts.add(textField);
+		if (vector3d != null)
+			parts.add(mesh);
+
+		return parts;
 	}
 
 	public void hide() {
 		textField.setVisible(false);
+		mesh.setVisible(false);
 	}
 
 	public void show() {
@@ -270,6 +306,7 @@ public class ThreedNumber {
 		initialValue = getMostRecentValue();
 		setValue(initialValue);
 		textField.setVisible(true);
+		mesh.setVisible(true);
 	}
 
 	public void threeDTarget(double w, double h, double zo, TransformNR positionPin, TransformNR c) {
@@ -295,10 +332,10 @@ public class ThreedNumber {
 		double baseDistance = 1000.0;
 
 		// Calculate the scale factor
-		double scaleFactor = ((distance / baseDistance) * baseScale);
+		double sf = ((distance / baseDistance) * baseScale);
 
 		// Clamp the scale factor to a reasonable range
-		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
+		double scaleFactor = Math.max(0.001, Math.min(90.0, sf));
 
 		setScale(scaleFactor * 1.25);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
@@ -317,6 +354,34 @@ public class ThreedNumber {
 			TransformFactory.nrToAffine(pr, cameraOrient);
 			TransformFactory.nrToAffine(positionPin.setRotation(new RotationNR()), location);
 		});
+		if (vector3d != null)
+			BowlerStudio.runLater(() -> {
+				boolean isX = isXvector();
+				boolean isY = isYvector();
+				boolean isZ = isZvector();
+				double X = 0;
+				double Y = 0;
+				double Z = 0;
+				double length = getMostRecentValue();
+
+				double barsize = scaleFactor * 5;
+				scaleMesh.setX(isX ? length : barsize);
+				scaleMesh.setY(isY ? length : barsize);
+				scaleMesh.setZ(isZ ? length : barsize);
+				mesh.setViewOrder(2);
+			});
+	}
+
+	private boolean isZvector() {
+		return vector3d.z > 0;
+	}
+
+	private boolean isYvector() {
+		return vector3d.y > 0;
+	}
+
+	private boolean isXvector() {
+		return vector3d.x > 0;
 	}
 
 	public double getScale() {

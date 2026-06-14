@@ -46,7 +46,7 @@ public class RotationSessionManager {
 			result.add(r.handle);
 			result.add(r.controlCircle);
 			result.add(r.arc);
-			result.add(r.TDnumber.getTextField());
+			result.addAll(r.TDnumber.getTextField());
 		}
 		return result;
 	}
