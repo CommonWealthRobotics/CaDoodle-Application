@@ -99,7 +99,7 @@ public class ThreedNumber {
 		mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(workplaneOffset);
 		mesh.getTransforms().add(location);
-		//mesh.getTransforms().add(cameraOrient);
+		mesh.getTransforms().add(lineOffset);
 		mesh.getTransforms().add(scaleMesh);
 		mesh.setVisible(false);
 		material = new PhongMaterial();
@@ -229,6 +229,7 @@ public class ThreedNumber {
 		// textField.getTransforms().add(resizeHandleLocation);
 		textField.getTransforms().add(workplaneOffset);
 		textField.getTransforms().add(location);
+		textField.getTransforms().add(lineOffset);
 		textField.getTransforms().add(cameraOrient);
 		textField.getTransforms().add(scaleTF);
 		textField.getTransforms().add(reOrient);
@@ -359,9 +360,9 @@ public class ThreedNumber {
 				boolean isX = isXvector();
 				boolean isY = isYvector();
 				boolean isZ = isZvector();
-				double X = 0;
-				double Y = 0;
-				double Z = 0;
+				double X = -move.getTx() * vector3d.x / 2;
+				double Y = -move.getTy() * vector3d.y / 2;
+				double Z = -move.getTz() * vector3d.z / 2;
 				double length = getMostRecentValue();
 
 				double barsize = scaleFactor * 5;
@@ -369,6 +370,8 @@ public class ThreedNumber {
 				scaleMesh.setY(isY ? length : barsize);
 				scaleMesh.setZ(isZ ? length : barsize);
 				mesh.setViewOrder(2);
+				TransformFactory.nrToAffine(new TransformNR(X, Y, Z), lineOffset);
+
 			});
 	}
 
