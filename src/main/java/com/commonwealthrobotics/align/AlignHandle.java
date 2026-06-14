@@ -11,6 +11,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Alignment;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.*;
 import javafx.event.EventHandler;
@@ -305,30 +306,34 @@ public class AlignHandle {
 		Align tmp = operation.copy();
 		Align prev = operation;
 		operation = tmp;
-		setMyOperation();
-		tmp.setCaDoodleFile(ap.get());
-		tmp.setCache(cache);
-		visualizationObjects = tmp.process(toAlign);
-		for (int i = 0; i < visualizationObjects.size(); i++) {
-			CSG indicator = visualizationObjects.get(i);
-			MeshView indicatorMesh = indicator.newMesh();
-			indicatorMesh.setMouseTransparent(true);
-			// indicatorMesh.getTransforms().addAll(workplaneOffset);
-			PhongMaterial material = new PhongMaterial();
+		try {
+			setMyOperation();
+			tmp.setCaDoodleFile(ap.get());
+			tmp.setCache(cache);
+			visualizationObjects = tmp.process(toAlign);
+			for (int i = 0; i < visualizationObjects.size(); i++) {
+				CSG indicator = visualizationObjects.get(i);
+				MeshView indicatorMesh = indicator.newMesh();
+				indicatorMesh.setMouseTransparent(true);
+				// indicatorMesh.getTransforms().addAll(workplaneOffset);
+				PhongMaterial material = new PhongMaterial();
 
-			if (indicator.isHole()) {
-				// material.setDiffuseMap(texture);
-				material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-			} else {
-				Color c = indicator.getColor();
-				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
-				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				if (indicator.isHole()) {
+					// material.setDiffuseMap(texture);
+					material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				} else {
+					Color c = indicator.getColor();
+					material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				}
+				indicatorMesh.setMaterial(material);
+				engine.addUserNode(indicatorMesh);
+				indicatorMesh.setVisible(false);
+				visualizers.put(indicator, indicatorMesh);
 			}
-			indicatorMesh.setMaterial(material);
-			engine.addUserNode(indicatorMesh);
-			indicatorMesh.setVisible(false);
-			visualizers.put(indicator, indicatorMesh);
+		} catch (Exception ex) {
+			Log.error(ex);
 		}
 		operation = prev;
 	}
@@ -343,6 +348,6 @@ public class AlignHandle {
 	}
 
 	public void clear(HashMap<CSG, Bounds> cache) {
-		clear();
+		recomputeOps(cache);
 	}
 }
