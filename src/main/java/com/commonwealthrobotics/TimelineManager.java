@@ -384,6 +384,8 @@ public class TimelineManager {
 							if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 									|| Sweep.class.isInstance(op)) {
 								setupCheckBox(timelineAddOpShow, toAdd, op);
+							} else if (Mirror.class.isInstance(op)) {
+								setupCheckBox(timelineMirrorShow, toAdd, op);
 							} else if (MoveCenter.class.isInstance(op)) {
 								setupCheckBox(timelineMoveObjectShow, toAdd, op);
 							} else if (Resize.class.isInstance(op)) {
@@ -394,8 +396,6 @@ public class TimelineManager {
 								setupCheckBox(timelineGroupShow, toAdd, op);
 							} else if (Hide.class.isInstance(op) || Show.class.isInstance(op)) {
 								setupCheckBox(timelineHideShow, toAdd, op);
-							} else if (Mirror.class.isInstance(op)) {
-								setupCheckBox(timelineMirrorShow, toAdd, op);
 							} else if (FilletChamfer.class.isInstance(op)) {
 								setupCheckBox(timelineFilletShow, toAdd, op);
 							} else if (ExtrudeSurface.class.isInstance(op)) {
