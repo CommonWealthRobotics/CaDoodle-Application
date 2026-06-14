@@ -338,7 +338,7 @@ public class Main extends Application {
 			Log.error(ex);
 			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "64");
 		}
-		
+
 		try {
 			launch();
 		} catch (Exception ex) {
