@@ -530,7 +530,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					Log.error("Error face index came back: " + faceIndex);
 
 			}
-
+			if (pureRot == null)
+				pureRot= new TransformNR();
 			TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = manipulatorNR.times(t.times(pureRot));
