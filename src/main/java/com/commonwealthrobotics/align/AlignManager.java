@@ -96,6 +96,7 @@ public class AlignManager {
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
+
 	}
 
 	public List<Node> getElements() {
