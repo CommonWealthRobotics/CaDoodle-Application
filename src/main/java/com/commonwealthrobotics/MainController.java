@@ -616,11 +616,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		c.clear();
 		if (tm) {
 			c.add("open-drawer");
-			timelineHolder.getChildren().add(timelineGridPane);
+			if (!timelineHolder.getChildren().contains(timelineGridPane))
+				timelineHolder.getChildren().add(timelineGridPane);
 			timelineHolder.minHeight(150);
 		} else {
 			c.add("close-drawer");
-			timelineHolder.getChildren().remove(timelineGridPane);
+			if (timelineHolder.getChildren().contains(timelineGridPane))
+				timelineHolder.getChildren().remove(timelineGridPane);
 			timelineHolder.minHeight(0);
 		}
 		timelineOpen = tm;
@@ -1122,7 +1124,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			});
 			setupCSGEngine();
 			SplashManager.setClosePreventer(() -> ap.get().getPercentInitialized() < 0.99);
-			timelineOpen = (boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false);
+			setTimelineOpenState((boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false));
 			session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
 			timeline.getChildren().clear();
 			// RobotLabDrawerImage
