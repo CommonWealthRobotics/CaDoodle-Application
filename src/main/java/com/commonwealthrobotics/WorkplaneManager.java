@@ -531,7 +531,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 			}
 			if (pureRot == null)
-				pureRot= new TransformNR();
+				pureRot = new TransformNR();
 			TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
 			TransformNR t = new TransformNR(x, y, z);
 			screenLocation = manipulatorNR.times(t.times(pureRot));

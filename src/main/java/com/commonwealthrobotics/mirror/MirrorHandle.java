@@ -82,19 +82,19 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		CSG arrow = getDoubbleArrow();
 		mesh = arrow.newMesh();
 		material = new PhongMaterial();
-		switch(ax) {
-		case x:
-			myColor=Color.RED;
-			break;
-		case y:
-			myColor=Color.GREEN;
-			break;
-		case z:
-			myColor=Color.BLUE;
-			break;
-		default:
-			break;
-		
+		switch (ax) {
+			case x :
+				myColor = Color.RED;
+				break;
+			case y :
+				myColor = Color.GREEN;
+				break;
+			case z :
+				myColor = Color.BLUE;
+				break;
+			default :
+				break;
+
 		}
 
 		mesh.setCullFace(CullFace.NONE);
