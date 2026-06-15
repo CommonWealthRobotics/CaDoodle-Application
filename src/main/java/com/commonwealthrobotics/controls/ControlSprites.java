@@ -678,7 +678,7 @@ public class ControlSprites {
 					if (!xymoving)
 						zOffset.show();
 
-					if (!zmoving && ruler.isActive()) {
+					if (!zmoving) {
 						xOffset.show();
 						yOffset.show();
 					} else {
