@@ -623,7 +623,8 @@ public class ControlSprites {
 			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
 					scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, linesZ), cf);
 
-			zdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, max.z / 2), cf);
+			zdimen.threeDTarget(screenW, screenH, zoom,
+					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf);
 
 			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x / 2, min.y, linesZ), cf);
 
