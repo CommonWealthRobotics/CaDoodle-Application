@@ -678,11 +678,9 @@ public class ControlSprites {
 					if (!xymoving)
 						zOffset.show();
 
-					if (!zmoving) {
+					else {
 						xOffset.show();
 						yOffset.show();
-					} else {
-						// com.neuronrobotics.sdk.common.Log.error("Z is moving");
 					}
 				} else {
 					xOffset.hide();
