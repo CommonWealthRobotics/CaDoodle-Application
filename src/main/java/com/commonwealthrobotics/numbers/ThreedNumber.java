@@ -84,7 +84,7 @@ public class ThreedNumber {
 	 */
 
 	public ThreedNumber(Affine move, Affine workplaneOffset, Runnable onChange, TextFieldDimension tfDimension,
-			RulerManager ruler, int wholeDigits, Vector3d vector3d) {
+			RulerManager ruler, int wholeDigits, Vector3d orent) {
 		// startThread(); // TIMEOUT DISABLED
 		// this.session = session;
 		this.move = move;
@@ -93,7 +93,7 @@ public class ThreedNumber {
 		this.tfDimension = tfDimension;
 		this.ruler = ruler;
 		this.wholeDigits = wholeDigits;
-		this.vector3d = vector3d;
+		this.vector3d = orent;
 
 		mesh.getTransforms().add(move);
 		mesh.getTransforms().add(alignLoc);
