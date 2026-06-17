@@ -29,7 +29,7 @@ public class ResizeSessionManager {
 	private ResizingHandle leftFront = null;
 	private ResizingHandle leftRear = null;
 
-	// Edge-midpoint handles — each rescales only one axis (X or Y)
+	// Edge-midpoint handles — each rescales one axis by default; Shift+drag gives uniform resize
 	//
 	// leftRear --[leftMid]-- leftFront
 	// | |
@@ -563,7 +563,7 @@ public class ResizeSessionManager {
 		});
 
 		// -----------------------------------------------------------------------
-		// EDGE-MIDPOINT HANDLES — single-axis rescale, no shift-uniform mode
+		// EDGE-MIDPOINT HANDLES — single-axis rescale (Shift+drag: uniform resize)
 		// -----------------------------------------------------------------------
 
 		// --- frontMid: sits at (maxX, midY, cornerZ) — rescales X only ---
@@ -586,6 +586,50 @@ public class ResizeSessionManager {
 				return;
 
 			controlSprites.hideRotationHandles();
+
+			// Uniform scaling with shift key
+			if ((ev != null) && ev.isShiftDown()) {
+
+				frontMid.manipulator.setSnapGridStatus(false);
+				double original_tx = originalBounds.getTotalX();
+				double original_ty = originalBounds.getTotalY();
+
+				double mouseX = frontMid.getCurrentInReferenceFrame().getX() - originalBounds.getMaxX();
+				double scale = mouseX / original_tx;
+
+				double rawNewX = original_tx * (1.0 + scale);
+				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
+				double rawNewY = original_ty * (1.0 + scale);
+				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
+
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
+						? (gridNewX / original_tx) - 1.0
+						: (gridNewY / original_ty) - 1.0;
+
+				scalingFlag = true;
+				frontMid.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -(original_ty * gs), 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(0, -original_ty * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(0, original_ty * gs, 0);
+
+				gs = gs + 1;
+
+				Transform scaleXYZ = null;
+				try {
+					scaleXYZ = new Transform()
+							.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), 1.0)
+							.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
+				updateHandleCenters(frontMid);
+				BowlerStudio.runLater(() -> updateTopCenter());
+				if (scaleXYZ != null)
+					rescaleMeshes(workplaneOffset, scaleXYZ);
+				return;
+			}
 
 			// frontMid moves in X only; derive sx from its current X position
 			// relative to the fixed rear edge (originalBounds.getMinX()).
@@ -635,6 +679,50 @@ public class ResizeSessionManager {
 
 			controlSprites.hideRotationHandles();
 
+			// Uniform scaling with shift key
+			if ((ev != null) && ev.isShiftDown()) {
+
+				rearMid.manipulator.setSnapGridStatus(false);
+				double original_tx = originalBounds.getTotalX();
+				double original_ty = originalBounds.getTotalY();
+
+				double mouseX = -rearMid.getCurrentInReferenceFrame().getX() + originalBounds.getMinX();
+				double scale = mouseX / original_tx;
+
+				double rawNewX = original_tx * (1.0 + scale);
+				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
+				double rawNewY = original_ty * (1.0 + scale);
+				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
+
+				double gs = Math.abs(rawNewX - gridNewX) < Math.abs(rawNewY - gridNewY)
+						? (gridNewX / original_tx) - 1.0
+						: (gridNewY / original_ty) - 1.0;
+
+				scalingFlag = true;
+				rearMid.manipulator.setInReferenceFrame(-(original_tx * gs), 0, 0);
+				rightRear.manipulator.setInReferenceFrame(-(original_tx * gs), -(original_ty * gs), 0);
+				leftRear.manipulator.setInReferenceFrame(-(original_tx * gs), original_ty * gs, 0);
+				rightFront.manipulator.setInReferenceFrame(0, -original_ty * gs, 0);
+				leftFront.manipulator.setInReferenceFrame(0, original_ty * gs, 0);
+
+				gs = gs + 1;
+
+				Transform scaleXYZ = null;
+				try {
+					scaleXYZ = new Transform()
+							.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), 1.0)
+							.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
+				updateHandleCenters(rearMid);
+				BowlerStudio.runLater(() -> updateTopCenter());
+				if (scaleXYZ != null)
+					rescaleMeshes(workplaneOffset, scaleXYZ);
+				return;
+			}
+
 			// rearMid moves in X only; derive sx relative to the fixed front edge.
 			double newMinX = rearMid.getCurrentInReferenceFrame().getX();
 			double sx = (originalBounds.getMaxX() - newMinX) / originalBounds.getTotalX();
@@ -683,6 +771,50 @@ public class ResizeSessionManager {
 
 			controlSprites.hideRotationHandles();
 
+			// Uniform scaling with shift key
+			if ((ev != null) && ev.isShiftDown()) {
+
+				leftMid.manipulator.setSnapGridStatus(false);
+				double original_tx = originalBounds.getTotalX();
+				double original_ty = originalBounds.getTotalY();
+
+				double mouseY = leftMid.getCurrentInReferenceFrame().getY() - originalBounds.getMaxY();
+				double scale = mouseY / original_ty;
+
+				double rawNewY = original_ty * (1.0 + scale);
+				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
+				double rawNewX = original_tx * (1.0 + scale);
+				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
+
+				double gs = Math.abs(rawNewY - gridNewY) < Math.abs(rawNewX - gridNewX)
+						? (gridNewY / original_ty) - 1.0
+						: (gridNewX / original_tx) - 1.0;
+
+				scalingFlag = true;
+				leftMid.manipulator.setInReferenceFrame(0, (original_ty * gs), 0);
+				leftFront.manipulator.setInReferenceFrame((original_tx * gs), (original_ty * gs), 0);
+				leftRear.manipulator.setInReferenceFrame((original_tx * gs), 0, 0);
+				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+
+				gs = gs + 1;
+
+				Transform scaleXYZ = null;
+				try {
+					scaleXYZ = new Transform()
+							.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), 1.0)
+							.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
+				updateHandleCenters(leftMid);
+				BowlerStudio.runLater(() -> updateTopCenter());
+				if (scaleXYZ != null)
+					rescaleMeshes(workplaneOffset, scaleXYZ);
+				return;
+			}
+
 			// leftMid moves in Y only; derive sy relative to the fixed right edge.
 			double newMaxY = leftMid.getCurrentInReferenceFrame().getY();
 			double sy = (newMaxY - originalBounds.getMinY()) / originalBounds.getTotalY();
@@ -729,6 +861,50 @@ public class ResizeSessionManager {
 				return;
 
 			controlSprites.hideRotationHandles();
+
+			// Uniform scaling with shift key
+			if ((ev != null) && ev.isShiftDown()) {
+
+				rightMid.manipulator.setSnapGridStatus(false);
+				double original_tx = originalBounds.getTotalX();
+				double original_ty = originalBounds.getTotalY();
+
+				double mouseY = -rightMid.getCurrentInReferenceFrame().getY() + originalBounds.getMinY();
+				double scale = mouseY / original_ty;
+
+				double rawNewY = original_ty * (1.0 + scale);
+				double gridNewY = Math.round(rawNewY / snapGrid) * snapGrid;
+				double rawNewX = original_tx * (1.0 + scale);
+				double gridNewX = Math.round(rawNewX / snapGrid) * snapGrid;
+
+				double gs = Math.abs(rawNewY - gridNewY) < Math.abs(rawNewX - gridNewX)
+						? (gridNewY / original_ty) - 1.0
+						: (gridNewX / original_tx) - 1.0;
+
+				scalingFlag = true;
+				rightMid.manipulator.setInReferenceFrame(0, -(original_ty * gs), 0);
+				rightFront.manipulator.setInReferenceFrame((original_tx * gs), -(original_ty * gs), 0);
+				rightRear.manipulator.setInReferenceFrame((original_tx * gs), 0, 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+
+				gs = gs + 1;
+
+				Transform scaleXYZ = null;
+				try {
+					scaleXYZ = new Transform()
+							.translate(originalBounds.getMinX(), originalBounds.getMaxY(), originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), 1.0)
+							.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
+				updateHandleCenters(rightMid);
+				BowlerStudio.runLater(() -> updateTopCenter());
+				if (scaleXYZ != null)
+					rescaleMeshes(workplaneOffset, scaleXYZ);
+				return;
+			}
 
 			// rightMid moves in Y only; derive sy relative to the fixed left edge.
 			double newMinY = rightMid.getCurrentInReferenceFrame().getY();
