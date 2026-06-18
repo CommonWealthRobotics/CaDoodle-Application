@@ -607,13 +607,27 @@ public class ResizeSessionManager {
 						: (gridNewY / original_ty) - 1.0;
 
 				scalingFlag = true;
+
+				// Rear edge (minX) is the anchor — rear corners keep original Y offsets
+				rightRear.manipulator.setInReferenceFrame(0, -original_ty, 0);
+				leftRear.manipulator.setInReferenceFrame(0, original_ty, 0);
+
+				// Front corners scale with gs relative to the rear edge anchor
+				rightFront.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
+
+				// Sync mid handles to new positions
 				frontMid.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
-				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -(original_ty * gs), 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(0, -original_ty * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(0, original_ty * gs, 0);
+				rearMid.manipulator.setInReferenceFrame(0, 0, 0);
+				leftMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, -original_ty * gs / 2.0, 0);
+				rightMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, -original_ty / 2.0, 0);
 
 				gs = gs + 1;
+
+				// Scale Z proportionally
+				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
+				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
 
 				Transform scaleXYZ = null;
 				try {
@@ -624,7 +638,6 @@ public class ResizeSessionManager {
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
-				updateHandleCenters(frontMid);
 				BowlerStudio.runLater(() -> updateTopCenter());
 				if (scaleXYZ != null)
 					rescaleMeshes(workplaneOffset, scaleXYZ);
@@ -699,13 +712,27 @@ public class ResizeSessionManager {
 						: (gridNewY / original_ty) - 1.0;
 
 				scalingFlag = true;
-				rearMid.manipulator.setInReferenceFrame(-(original_tx * gs), 0, 0);
-				rightRear.manipulator.setInReferenceFrame(-(original_tx * gs), -(original_ty * gs), 0);
-				leftRear.manipulator.setInReferenceFrame(-(original_tx * gs), original_ty * gs, 0);
-				rightFront.manipulator.setInReferenceFrame(0, -original_ty * gs, 0);
-				leftFront.manipulator.setInReferenceFrame(0, original_ty * gs, 0);
+
+				// Front edge (maxX) is the anchor — front corners keep original Y offsets
+				rightFront.manipulator.setInReferenceFrame(original_tx, 0, 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx, -original_ty * gs, 0);
+
+				// Rear corners scale with gs relative to the front edge anchor
+				rightRear.manipulator.setInReferenceFrame(-original_tx * (gs - 1.0), -original_ty, 0);
+				leftRear.manipulator.setInReferenceFrame(-original_tx * (gs - 1.0), original_ty, 0);
+
+				// Sync mid handles to new positions
+				rearMid.manipulator.setInReferenceFrame(-original_tx * (gs - 1.0), -original_ty / 2.0, 0);
+				frontMid.manipulator.setInReferenceFrame(original_tx, -original_ty * gs / 2.0, 0);
+				leftMid.manipulator.setInReferenceFrame((original_tx - original_tx * (gs - 1.0)) / 2.0, -original_ty * gs / 2.0, 0);
+				rightMid.manipulator.setInReferenceFrame((original_tx - original_tx * (gs - 1.0)) / 2.0, -original_ty / 2.0, 0);
 
 				gs = gs + 1;
+
+				// Scale Z proportionally
+				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
+				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
 
 				Transform scaleXYZ = null;
 				try {
@@ -716,7 +743,6 @@ public class ResizeSessionManager {
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
-				updateHandleCenters(rearMid);
 				BowlerStudio.runLater(() -> updateTopCenter());
 				if (scaleXYZ != null)
 					rescaleMeshes(workplaneOffset, scaleXYZ);
@@ -791,13 +817,27 @@ public class ResizeSessionManager {
 						: (gridNewX / original_tx) - 1.0;
 
 				scalingFlag = true;
-				leftMid.manipulator.setInReferenceFrame(0, (original_ty * gs), 0);
-				leftFront.manipulator.setInReferenceFrame((original_tx * gs), (original_ty * gs), 0);
-				leftRear.manipulator.setInReferenceFrame((original_tx * gs), 0, 0);
-				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+
+				// Right edge (x=0) is the anchor — right corners keep original X offset
+				rightFront.manipulator.setInReferenceFrame(original_tx, -original_ty * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(original_tx, 0, 0);
+
+				// Left corners scale with gs relative to the right edge anchor
+				leftFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+
+				// Sync mid handles to new positions
+				leftMid.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+				rightMid.manipulator.setInReferenceFrame(original_tx, -original_ty * gs / 2.0, 0);
+				frontMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, -original_ty * gs, 0);
+				rearMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, 0, 0);
 
 				gs = gs + 1;
+
+				// Scale Z proportionally
+				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
+				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
 
 				Transform scaleXYZ = null;
 				try {
@@ -808,7 +848,6 @@ public class ResizeSessionManager {
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
-				updateHandleCenters(leftMid);
 				BowlerStudio.runLater(() -> updateTopCenter());
 				if (scaleXYZ != null)
 					rescaleMeshes(workplaneOffset, scaleXYZ);
@@ -882,13 +921,27 @@ public class ResizeSessionManager {
 						: (gridNewX / original_tx) - 1.0;
 
 				scalingFlag = true;
-				rightMid.manipulator.setInReferenceFrame(0, -(original_ty * gs), 0);
-				rightFront.manipulator.setInReferenceFrame((original_tx * gs), -(original_ty * gs), 0);
-				rightRear.manipulator.setInReferenceFrame((original_tx * gs), 0, 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+
+				// Left edge (x=tx) is the anchor — left corners keep original X offset
+				leftFront.manipulator.setInReferenceFrame(original_tx, original_ty * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(original_tx, 0, 0);
+
+				// Right corners scale with gs relative to the left edge anchor
+				rightFront.manipulator.setInReferenceFrame(original_tx - original_tx * (gs - 1.0), -original_ty * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(original_tx - original_tx * (gs - 1.0), 0, 0);
+
+				// Sync mid handles to new positions
+				rightMid.manipulator.setInReferenceFrame(original_tx - original_tx * (gs - 1.0), -original_ty * gs / 2.0, 0);
+				leftMid.manipulator.setInReferenceFrame(original_tx, original_ty * gs / 2.0, 0);
+				frontMid.manipulator.setInReferenceFrame((original_tx + original_tx - original_tx * (gs - 1.0)) / 2.0, -original_ty * gs, 0);
+				rearMid.manipulator.setInReferenceFrame((original_tx + original_tx - original_tx * (gs - 1.0)) / 2.0, 0, 0);
 
 				gs = gs + 1;
+
+				// Scale Z proportionally
+				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
+				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
 
 				Transform scaleXYZ = null;
 				try {
@@ -899,7 +952,6 @@ public class ResizeSessionManager {
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
-				updateHandleCenters(rightMid);
 				BowlerStudio.runLater(() -> updateTopCenter());
 				if (scaleXYZ != null)
 					rescaleMeshes(workplaneOffset, scaleXYZ);
