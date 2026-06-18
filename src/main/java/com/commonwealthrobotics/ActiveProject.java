@@ -695,7 +695,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				}
 
 				while (isOpen()) {
-					if (needsSave && (get().timeSinceLastUpdate() > 1000)) {
+					if (needsSave && (get().timeSinceLastUpdate() > 1000) && get().getPercentInitialized()>=.9999999) {
 						ICadoodleSaveStatusUpdate saveDisplay = get().getSaveUpdate();
 						get().setSaveUpdate(null);
 
