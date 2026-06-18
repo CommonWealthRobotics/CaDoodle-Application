@@ -284,7 +284,14 @@ public class ControlSprites {
 			}
 
 			com.neuronrobotics.sdk.common.Log.error("Typed position update");
-			scaleSession.set(xdimen.getMostRecentValue(), ydimen.getMostRecentValue(), zdimen.getMostRecentValue());
+			BowlerKernel.runLater(() -> {
+				try {
+					scaleSession.set(xdimen.getMostRecentValue(), ydimen.getMostRecentValue(),
+							zdimen.getMostRecentValue());
+				} catch (NowFXThreadException e1) {
+					Log.error(e1);
+				}
+			});;
 			updateLinesAndCubes();
 		};
 
