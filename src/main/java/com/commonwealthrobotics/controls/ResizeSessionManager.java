@@ -29,7 +29,8 @@ public class ResizeSessionManager {
 	private ResizingHandle leftFront = null;
 	private ResizingHandle leftRear = null;
 
-	// Edge-midpoint handles — each rescales one axis by default; Shift+drag gives uniform resize
+	// Edge-midpoint handles — each rescales one axis by default; Shift+drag gives
+	// uniform resize
 	//
 	// leftRear --[leftMid]-- leftFront
 	// | |
@@ -590,7 +591,7 @@ public class ResizeSessionManager {
 			// Uniform scaling with shift key
 			if ((ev != null) && ev.isShiftDown()) {
 
-				frontMid.manipulator.setSnapGridStatus(false);
+				// frontMid.manipulator.setSnapGridStatus(false);
 				double original_tx = originalBounds.getTotalX();
 				double original_ty = originalBounds.getTotalY();
 
@@ -608,33 +609,39 @@ public class ResizeSessionManager {
 
 				scalingFlag = true;
 
-				// Rear edge (minX) is the anchor — rear corners keep original Y offsets
-				rightRear.manipulator.setInReferenceFrame(0, -original_ty, 0);
-				leftRear.manipulator.setInReferenceFrame(0, original_ty, 0);
+				// Anchor: rear midpoint (minX, midY). Each corner's delta =
+				// its vector from the anchor * gs.
+				// rightFront (maxX, minY): rel=(tx, -ty/2) → delta=(tx*gs, -ty/2*gs)
+				// rightRear (minX, minY): rel=(0, -ty/2) → delta=(0, -ty/2*gs)
+				// leftFront (maxX, maxY): rel=(tx, ty/2) → delta=(tx*gs, ty/2*gs)
+				// leftRear (minX, maxY): rel=(0, ty/2) → delta=(0, ty/2*gs)
+				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty / 2.0 * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(0, -original_ty / 2.0 * gs, 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty / 2.0 * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(0, original_ty / 2.0 * gs, 0);
 
-				// Front corners scale with gs relative to the rear edge anchor
-				rightFront.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
+				// frontMid (maxX, midY): rel=(tx, 0) → delta=(tx*gs, 0)
+				// rearMid (minX, midY): anchor → stays (0, 0, 0)
+				// leftMid (midX, maxY): rel=(tx/2, ty/2) → delta=(tx/2*gs, ty/2*gs)
+				// rightMid (midX, minY): rel=(tx/2, -ty/2) → delta=(tx/2*gs, -ty/2*gs)
+				// frontMid.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+				// rearMid.manipulator.setInReferenceFrame(0, 0, 0);
+				// leftMid.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, original_ty /
+				// 2.0 * gs, 0);
+				// rightMid.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, -original_ty
+				// / 2.0 * gs, 0);
 
-				// Sync mid handles to new positions
-				frontMid.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
-				rearMid.manipulator.setInReferenceFrame(0, 0, 0);
-				leftMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, -original_ty * gs / 2.0, 0);
-				rightMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, -original_ty / 2.0, 0);
-
+				updateHandleCenters(frontMid);
 				gs = gs + 1;
-
-				// Scale Z proportionally
-				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
-				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
+				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * gs);
 
 				Transform scaleXYZ = null;
 				try {
-					scaleXYZ = new Transform()
-							.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
-							.scale(notZero(gs), notZero(gs), 1.0)
-							.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+					// Pivot = anchor = (minX, midY, minZ)
+					double midY = (originalBounds.getMinY() + originalBounds.getMaxY()) / 2.0;
+					scaleXYZ = new Transform().translate(originalBounds.getMinX(), midY, originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), notZero(gs))
+							.translate(-originalBounds.getMinX(), -midY, -originalBounds.getMinZ());
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
@@ -695,7 +702,7 @@ public class ResizeSessionManager {
 			// Uniform scaling with shift key
 			if ((ev != null) && ev.isShiftDown()) {
 
-				rearMid.manipulator.setSnapGridStatus(false);
+				// rearMid.manipulator.setSnapGridStatus(false);
 				double original_tx = originalBounds.getTotalX();
 				double original_ty = originalBounds.getTotalY();
 
@@ -713,33 +720,39 @@ public class ResizeSessionManager {
 
 				scalingFlag = true;
 
-				// Front edge (maxX) is the anchor — front corners keep original Y offsets
-				rightFront.manipulator.setInReferenceFrame(original_tx, 0, 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx, -original_ty * gs, 0);
+				// Anchor: front midpoint (maxX, midY). Each corner's delta =
+				// its vector from the anchor * gs.
+				// rightFront (maxX, minY): rel=(0, -ty/2) → delta=(0, -ty/2*gs)
+				// rightRear (minX, minY): rel=(-tx,-ty/2) → delta=(-tx*gs, -ty/2*gs)
+				// leftFront (maxX, maxY): rel=(0, ty/2) → delta=(0, ty/2*gs)
+				// leftRear (minX, maxY): rel=(-tx, ty/2)→ delta=(-tx*gs, ty/2*gs)
+				rightFront.manipulator.setInReferenceFrame(0, -original_ty / 2.0 * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(-original_tx * gs, -original_ty / 2.0 * gs, 0);
+				leftFront.manipulator.setInReferenceFrame(0, original_ty / 2.0 * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(-original_tx * gs, original_ty / 2.0 * gs, 0);
 
-				// Rear corners scale with gs relative to the front edge anchor
-				rightRear.manipulator.setInReferenceFrame(-original_tx * (gs - 1.0), -original_ty, 0);
-				leftRear.manipulator.setInReferenceFrame(-original_tx * (gs - 1.0), original_ty, 0);
+				// rearMid (minX, midY): rel=(-tx, 0) → delta=(-tx*gs, 0)
+				// frontMid (maxX, midY): anchor → stays (0, 0, 0)
+				// leftMid (midX, maxY): rel=(-tx/2, ty/2) → delta=(-tx/2*gs, ty/2*gs)
+				// rightMid (midX, minY): rel=(-tx/2,-ty/2) → delta=(-tx/2*gs,-ty/2*gs)
+				// rearMid.manipulator.setInReferenceFrame(-original_tx * gs, 0, 0);
+				// frontMid.manipulator.setInReferenceFrame(0, 0, 0);
+				// leftMid.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, original_ty
+				// / 2.0 * gs, 0);
+				// rightMid.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs,
+				// -original_ty / 2.0 * gs, 0);
 
-				// Sync mid handles to new positions
-				rearMid.manipulator.setInReferenceFrame(-original_tx * (gs - 1.0), -original_ty / 2.0, 0);
-				frontMid.manipulator.setInReferenceFrame(original_tx, -original_ty * gs / 2.0, 0);
-				leftMid.manipulator.setInReferenceFrame((original_tx - original_tx * (gs - 1.0)) / 2.0, -original_ty * gs / 2.0, 0);
-				rightMid.manipulator.setInReferenceFrame((original_tx - original_tx * (gs - 1.0)) / 2.0, -original_ty / 2.0, 0);
-
+				updateHandleCenters(rearMid);
 				gs = gs + 1;
-
-				// Scale Z proportionally
-				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
-				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
+				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * gs);
 
 				Transform scaleXYZ = null;
 				try {
-					scaleXYZ = new Transform()
-							.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
-							.scale(notZero(gs), notZero(gs), 1.0)
-							.translate(-originalBounds.getMaxX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+					// Pivot = anchor = (maxX, midY, minZ)
+					double midY = (originalBounds.getMinY() + originalBounds.getMaxY()) / 2.0;
+					scaleXYZ = new Transform().translate(originalBounds.getMaxX(), midY, originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), notZero(gs))
+							.translate(-originalBounds.getMaxX(), -midY, -originalBounds.getMinZ());
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
@@ -800,7 +813,7 @@ public class ResizeSessionManager {
 			// Uniform scaling with shift key
 			if ((ev != null) && ev.isShiftDown()) {
 
-				leftMid.manipulator.setSnapGridStatus(false);
+				// leftMid.manipulator.setSnapGridStatus(false);
 				double original_tx = originalBounds.getTotalX();
 				double original_ty = originalBounds.getTotalY();
 
@@ -818,33 +831,39 @@ public class ResizeSessionManager {
 
 				scalingFlag = true;
 
-				// Right edge (x=0) is the anchor — right corners keep original X offset
-				rightFront.manipulator.setInReferenceFrame(original_tx, -original_ty * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(original_tx, 0, 0);
+				// Anchor: right midpoint (midX, minY). Each corner's delta =
+				// its vector from the anchor * gs.
+				// rightFront (maxX, minY): rel=( tx/2, 0) → delta=( tx/2*gs, 0)
+				// rightRear (minX, minY): rel=(-tx/2, 0) → delta=(-tx/2*gs, 0)
+				// leftFront (maxX, maxY): rel=( tx/2, ty) → delta=( tx/2*gs, ty*gs)
+				// leftRear (minX, maxY): rel=(-tx/2, ty) → delta=(-tx/2*gs, ty*gs)
+				rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
+				rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, original_ty * gs, 0);
+				leftRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, original_ty * gs, 0);
 
-				// Left corners scale with gs relative to the right edge anchor
-				leftFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
+				// leftMid (midX, maxY): rel=(0, ty) → delta=(0, ty*gs)
+				// rightMid (midX, minY): anchor → stays (0, 0, 0)
+				// frontMid (maxX, midY): rel=(tx/2, ty/2) → delta=(tx/2*gs, ty/2*gs)
+				// rearMid (minX, midY): rel=(-tx/2,ty/2) → delta=(-tx/2*gs,ty/2*gs)
+				// leftMid.manipulator.setInReferenceFrame(0, original_ty * gs, 0);
+				// rightMid.manipulator.setInReferenceFrame(0, 0, 0);
+				// frontMid.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, original_ty
+				// / 2.0 * gs, 0);
+				// rearMid.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, original_ty
+				// / 2.0 * gs, 0);
 
-				// Sync mid handles to new positions
-				leftMid.manipulator.setInReferenceFrame(original_tx * gs, 0, 0);
-				rightMid.manipulator.setInReferenceFrame(original_tx, -original_ty * gs / 2.0, 0);
-				frontMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, -original_ty * gs, 0);
-				rearMid.manipulator.setInReferenceFrame(original_tx * gs / 2.0, 0, 0);
-
+				updateHandleCenters(leftMid);
 				gs = gs + 1;
-
-				// Scale Z proportionally
-				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
-				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
+				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * gs);
 
 				Transform scaleXYZ = null;
 				try {
-					scaleXYZ = new Transform()
-							.translate(originalBounds.getMinX(), originalBounds.getMinY(), originalBounds.getMinZ())
-							.scale(notZero(gs), notZero(gs), 1.0)
-							.translate(-originalBounds.getMinX(), -originalBounds.getMinY(), -originalBounds.getMinZ());
+					// Pivot = anchor = (midX, minY, minZ)
+					double midX = (originalBounds.getMinX() + originalBounds.getMaxX()) / 2.0;
+					scaleXYZ = new Transform().translate(midX, originalBounds.getMinY(), originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), notZero(gs))
+							.translate(-midX, -originalBounds.getMinY(), -originalBounds.getMinZ());
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
@@ -904,7 +923,7 @@ public class ResizeSessionManager {
 			// Uniform scaling with shift key
 			if ((ev != null) && ev.isShiftDown()) {
 
-				rightMid.manipulator.setSnapGridStatus(false);
+				// rightMid.manipulator.setSnapGridStatus(false);
 				double original_tx = originalBounds.getTotalX();
 				double original_ty = originalBounds.getTotalY();
 
@@ -922,33 +941,39 @@ public class ResizeSessionManager {
 
 				scalingFlag = true;
 
-				// Left edge (x=tx) is the anchor — left corners keep original X offset
-				leftFront.manipulator.setInReferenceFrame(original_tx, original_ty * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(original_tx, 0, 0);
+				// Anchor: left midpoint (midX, maxY). Each corner's delta =
+				// its vector from the anchor * gs.
+				// rightFront (maxX, minY): rel=( tx/2, -ty) → delta=( tx/2*gs, -ty*gs)
+				// rightRear (minX, minY): rel=(-tx/2, -ty) → delta=(-tx/2*gs, -ty*gs)
+				// leftFront (maxX, maxY): rel=( tx/2, 0) → delta=( tx/2*gs, 0)
+				// leftRear (minX, maxY): rel=(-tx/2, 0) → delta=(-tx/2*gs, 0)
+				rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, -original_ty * gs, 0);
+				rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, -original_ty * gs, 0);
+				leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
+				leftRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
 
-				// Right corners scale with gs relative to the left edge anchor
-				rightFront.manipulator.setInReferenceFrame(original_tx - original_tx * (gs - 1.0), -original_ty * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(original_tx - original_tx * (gs - 1.0), 0, 0);
+				// rightMid (midX, minY): rel=(0, -ty) → delta=(0, -ty*gs)
+				// leftMid (midX, maxY): anchor → stays (0, 0, 0)
+				// frontMid (maxX, midY): rel=(tx/2, -ty/2) → delta=(tx/2*gs, -ty/2*gs)
+				// rearMid (minX, midY): rel=(-tx/2,-ty/2) → delta=(-tx/2*gs, -ty/2*gs)
+				// rightMid.manipulator.setInReferenceFrame(0, -original_ty * gs, 0);
+				// leftMid.manipulator.setInReferenceFrame(0, 0, 0);
+				// frontMid.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, -original_ty
+				// / 2.0 * gs, 0);
+				// rearMid.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, -original_ty
+				// / 2.0 * gs, 0);
 
-				// Sync mid handles to new positions
-				rightMid.manipulator.setInReferenceFrame(original_tx - original_tx * (gs - 1.0), -original_ty * gs / 2.0, 0);
-				leftMid.manipulator.setInReferenceFrame(original_tx, original_ty * gs / 2.0, 0);
-				frontMid.manipulator.setInReferenceFrame((original_tx + original_tx - original_tx * (gs - 1.0)) / 2.0, -original_ty * gs, 0);
-				rearMid.manipulator.setInReferenceFrame((original_tx + original_tx - original_tx * (gs - 1.0)) / 2.0, 0, 0);
-
+				updateHandleCenters(rightMid);
 				gs = gs + 1;
-
-				// Scale Z proportionally
-				double zOffset = originalBounds.getTotalZ() * (gs - 1.0);
-				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-				topCenter.setInReferenceFrame(0, 0, tcC.getZ() + zOffset);
+				topCenter.setInReferenceFrame(0, 0, originalBounds.getMinZ() + originalBounds.getTotalZ() * gs);
 
 				Transform scaleXYZ = null;
 				try {
-					scaleXYZ = new Transform()
-							.translate(originalBounds.getMinX(), originalBounds.getMaxY(), originalBounds.getMinZ())
-							.scale(notZero(gs), notZero(gs), 1.0)
-							.translate(-originalBounds.getMinX(), -originalBounds.getMaxY(), -originalBounds.getMinZ());
+					// Pivot = anchor = (midX, maxY, minZ)
+					double midX = (originalBounds.getMinX() + originalBounds.getMaxX()) / 2.0;
+					scaleXYZ = new Transform().translate(midX, originalBounds.getMaxY(), originalBounds.getMinZ())
+							.scale(notZero(gs), notZero(gs), notZero(gs))
+							.translate(-midX, -originalBounds.getMaxY(), -originalBounds.getMinZ());
 				} catch (Exception ex) {
 					Log.error(ex);
 				}
@@ -1014,25 +1039,27 @@ public class ResizeSessionManager {
 				bounds = getBounds();
 				for (ResizingHandle ctrl : controls)
 					ctrl.manipulator.set(0, 0, 0);
+				try {
+					Resize setResize = new Resize().setNames(session.selectedSnapshot()).setWorkplane(wp).setResize(tcC,
+							lfC, rrC);
 
-				Resize setResize = new Resize().setNames(session.selectedSnapshot()).setWorkplane(wp).setResize(tcC,
-						lfC, rrC);
-
-				if (resizeAllowed) {
-					Thread t = ap.addOp(setResize);
-					try {
-						t.join();
-					} catch (InterruptedException e) {
-						com.neuronrobotics.sdk.common.Log.error(e);
+					if (resizeAllowed) {
+						Thread t = ap.addOp(setResize);
+						try {
+							t.join();
+						} catch (InterruptedException e) {
+							com.neuronrobotics.sdk.common.Log.error(e);
+						}
 					}
+					beingUpdated = null;
+					originalBounds = null;
+				} catch (Exception ex) {
+					Log.error(ex);
 				}
-				beingUpdated = null;
-				originalBounds = null;
 				BowlerStudio.runLater(() -> threeDTarget());
 			});
 		}
 	}
-
 
 	private void updateHandleCenters(ResizingHandle source) {
 
@@ -1063,15 +1090,30 @@ public class ResizeSessionManager {
 		}
 		if (source == frontMid) {
 			nX = (frontMid.manipulator.getCurrentPose().getX() - rearMid.manipulator.getCurrentPose().getX()) / 2;
+			nY = frontMid.manipulator.getCurrentPose().getY();
+			ry = rightRear.manipulator.getinLocalInReferenceFrame().getY();
+			ly = leftRear.manipulator.getinLocalInReferenceFrame().getY();
 		}
 		if (source == rearMid) {
 			nX = (-frontMid.manipulator.getCurrentPose().getX() + rearMid.manipulator.getCurrentPose().getX()) / 2;
+			nY = rearMid.manipulator.getCurrentPose().getY();
+			ry = rightRear.manipulator.getinLocalInReferenceFrame().getY();
+			ly = leftRear.manipulator.getinLocalInReferenceFrame().getY();
 		}
 		if (source == rightMid) {
-			nY = (rightMid.manipulator.getCurrentPose().getY() - leftMid.manipulator.getCurrentPose().getY()) / 2;
+			nY = (rightMid.manipulator.getCurrentPose().getY()
+					- leftMid.manipulator.getinLocalInReferenceFrame().getY()) / 2;
+			nX = rightMid.manipulator.getCurrentPose().getX();
+			fx = leftFront.manipulator.getinLocalInReferenceFrame().getX();
+			rmx = rightRear.manipulator.getinLocalInReferenceFrame().getX();
+			com.neuronrobotics.sdk.common.Log.debug("Mid Right update x " + fx);
 		}
 		if (source == leftMid) {
 			nY = (-rightMid.manipulator.getCurrentPose().getY() + leftMid.manipulator.getCurrentPose().getY()) / 2;
+			nX = leftMid.manipulator.getCurrentPose().getX();
+
+			fx = leftFront.manipulator.getinLocalInReferenceFrame().getX();
+			rmx = rightRear.manipulator.getinLocalInReferenceFrame().getX();
 		}
 		if (source != frontMid)
 			frontMid.manipulator.setInReferenceFrame(fx, nY, z);
