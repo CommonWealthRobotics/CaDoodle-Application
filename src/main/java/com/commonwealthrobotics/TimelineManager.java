@@ -172,7 +172,7 @@ public class TimelineManager {
 
 			@Override
 			public void onRegenerateDone() {
-				// update(false);
+				update(false);
 			}
 
 			@Override
