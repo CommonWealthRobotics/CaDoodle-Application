@@ -1,6 +1,5 @@
 package com.commonwealthrobotics;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -76,17 +75,17 @@ public class ChangeOptionsController {
 
 		BooleanSupplier ogcp = SplashManager.getClosePreventer();
 		BooleanSupplier ogop = SplashManager.getOpenPreventer();
-		
-		SplashManager.setOpenPreventer(()->true);
+
+		SplashManager.setOpenPreventer(() -> true);
 		SplashManager.setClosePreventer(() -> false);
-		
-		
+
+
 		BowlerStudio.runLater(() -> {
 			try {
 				com.neuronrobotics.sdk.common.Log
 						.debug("Resource URL: " + ProjectManager.class.getResource("ChangeOptionsDialog.fxml"));
 				FXMLLoader loader = new FXMLLoader(SettingsManager.class.getClassLoader().getResource(
-				        "com/commonwealthrobotics/ChangeOptionsDialog.fxml"), ActiveProject.getLangaugePack());
+						"com/commonwealthrobotics/ChangeOptionsDialog.fxml"), ActiveProject.getLangaugePack());
 				Parent root = loader.load();
 				ChangeOptionsController controller = loader.getController();
 				SplashManager.closeSplash();
@@ -107,30 +106,30 @@ public class ChangeOptionsController {
 					latch.countDown();
 				});
 				scene.setOnKeyPressed(event -> {
-				    switch (event.getCode()) {
-				        case C:
-				            controller.onContinue();
-				            break;
-				        case I:
-				            controller.onInsert();
-				            break;
-				        case A:
-				            controller.onAbort();
-				            break;
-				        default:
-				            break;
-				    }
+					switch (event.getCode()) {
+						case C :
+							controller.onContinue();
+							break;
+						case I :
+							controller.onInsert();
+							break;
+						case A :
+							controller.onAbort();
+							break;
+						default :
+							break;
+					}
 				});
 				stage.setOnShown(event -> {
-					BowlerStudio.runLater(200, ()->{
-					    stage.toFront();
-					    stage.requestFocus();
-					    controller.topLevel.requestFocus();
+					BowlerStudio.runLater(200, () -> {
+						stage.toFront();
+						stage.requestFocus();
+						controller.topLevel.requestFocus();
 					});
 				});
 				stage.show();
-				
-				
+
+
 			} catch (IOException e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
 				latch.countDown(); // Unblock the waiting thread even on failure

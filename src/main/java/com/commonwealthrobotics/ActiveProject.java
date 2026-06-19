@@ -381,11 +381,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			fromFile.setAccept(new IAcceptPruneForward() {
 				@Override
 				public OperationResult accept() {
-					if(!isAdvancedMode()) {
+					if (!isAdvancedMode()) {
 						return OperationResult.PRUNE;
 					}
 					OperationResult launch = ChangeOptionsController.launch();
-					
+
 					return launch;
 				}
 			});
