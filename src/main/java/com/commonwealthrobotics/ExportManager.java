@@ -165,9 +165,10 @@ public class ExportManager {
 				if (type3mf.isSelected()) {
 					c.addExportFormat("3mf");
 				}
-				String nameToSet = toValidFilename(c.getUserDefinedName());
-				if (namesUnique.contains(nameToSet)) {
-					nameToSet += "_" + index;
+				String nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName());
+				index = 0;
+				while (namesUnique.contains(nameToSet)) {
+					nameToSet = toValidFilename(c.getUserDefinedName()) + "_" + index;
 					index++;
 				}
 				namesUnique.add(nameToSet);
