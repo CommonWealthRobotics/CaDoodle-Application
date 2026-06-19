@@ -379,11 +379,14 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				}
 			});
 			fromFile.setAccept(new IAcceptPruneForward() {
-				private OperationResult operationResult = null;
-
 				@Override
 				public OperationResult accept() {
-					return ChangeOptionsController.launch();
+					if(!isAdvancedMode()) {
+						return OperationResult.PRUNE;
+					}
+					OperationResult launch = ChangeOptionsController.launch();
+					
+					return launch;
 				}
 			});
 			// fromFile.setImageEngine(new ThumbnailImage());
