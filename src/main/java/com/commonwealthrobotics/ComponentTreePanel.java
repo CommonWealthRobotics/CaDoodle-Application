@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.commonwealthrobotics.controls.SelectionSession;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
@@ -94,10 +95,10 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.setCellFactory(tv -> new ComponentTreeCell());
 		treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		treeView.getStyleClass().add("component-tree-view");
-		session.addSelectionListener(() -> BowlerStudio.runLater(() -> {
+		session.addSelectionListener(() -> Platform.runLater(() -> BowlerStudio.runLater(() -> {
 			syncTreeSelectionFromSession();
 			treeView.refresh();
-		}));
+		})));
 
 		treeView.focusedProperty().addListener((obs, old, focused) -> treeView.refresh());
 
@@ -559,11 +560,28 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onInitializationDone() {
+	public void onInitializationStart() {
+		BowlerStudio.runLater(() -> {
+			rootLabel = "Project";
+			rebuilding = true;
+			try {
+				root.getChildren().clear();
+			} finally {
+				rebuilding = false;
+			}
+			treeView.refresh();
+		});
 	}
 
 	@Override
-	public void onInitializationStart() {
+	public void onInitializationDone() {
+		BowlerStudio.runLater(() -> {
+			CaDoodleFile file = ap.get();
+			rootLabel = file.getMyProjectName() != null && !file.getMyProjectName().isBlank()
+					? file.getMyProjectName()
+					: "Project";
+			treeView.refresh();
+		});
 	}
 
 	@Override
