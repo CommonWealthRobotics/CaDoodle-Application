@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.commonwealthrobotics.controls.SelectionSession;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
@@ -94,10 +95,10 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 		treeView.setCellFactory(tv -> new ComponentTreeCell());
 		treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		treeView.getStyleClass().add("component-tree-view");
-		session.addSelectionListener(() -> BowlerStudio.runLater(() -> {
+		session.addSelectionListener(() -> Platform.runLater(() -> BowlerStudio.runLater(() -> {
 			syncTreeSelectionFromSession();
 			treeView.refresh();
-		}));
+		})));
 
 		treeView.focusedProperty().addListener((obs, old, focused) -> treeView.refresh());
 
