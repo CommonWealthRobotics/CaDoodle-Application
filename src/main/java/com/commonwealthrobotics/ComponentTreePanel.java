@@ -560,11 +560,28 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onInitializationDone() {
+	public void onInitializationStart() {
+		BowlerStudio.runLater(() -> {
+			rootLabel = "Project";
+			rebuilding = true;
+			try {
+				root.getChildren().clear();
+			} finally {
+				rebuilding = false;
+			}
+			treeView.refresh();
+		});
 	}
 
 	@Override
-	public void onInitializationStart() {
+	public void onInitializationDone() {
+		BowlerStudio.runLater(() -> {
+			CaDoodleFile file = ap.get();
+			rootLabel = file.getMyProjectName() != null && !file.getMyProjectName().isBlank()
+					? file.getMyProjectName()
+					: "Project";
+			treeView.refresh();
+		});
 	}
 
 	@Override
