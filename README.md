@@ -99,7 +99,11 @@ bash build.sh
 ```
 
 # Build (macOS)
+
 ```
+brew install --cask blender freecad meshlab
+brew install --cask openscad@snapshot
+
 bash buildMac.sh
 ```
 
