@@ -92,7 +92,7 @@ public class ShapesPallet {
 	}
 
 	public void updateShapesPalletOptions(boolean advanced) {
-		if(this.advanced == advanced && shapeCategory.getItems().size()>0)
+		if (this.advanced == advanced && shapeCategory.getItems().size() > 0)
 			return;
 		this.advanced = advanced;
 		BowlerKernel.runLater(() -> {
@@ -104,7 +104,7 @@ public class ShapesPallet {
 				Collections.sort(sortedList);
 				shapeCategory.getItems().add(mine.getName());
 				for (String f : sortedList) {
-					if ((f.startsWith("advanced") &&  !advanced)) {
+					if ((f.startsWith("advanced") && !advanced)) {
 						Log.debug(f + " skipped");
 						continue;
 					}
@@ -333,9 +333,9 @@ public class ShapesPallet {
 		return button;
 	}
 
-//	public static String getGitULR() {
-//		return gitULR;
-//	}
+	//	public static String getGitULR() {
+	//		return gitULR;
+	//	}
 
 	public boolean isSearchMode() {
 		return searchMode;
@@ -408,8 +408,7 @@ public class ShapesPallet {
 							mine.setupButton(caDoodleFile, col, row);
 							i++;
 						} catch (Exception ex) {
-							com.neuronrobotics.sdk.common.Log.error(ex);
-							;
+							com.neuronrobotics.sdk.common.Log.error(ex);;
 						}
 					}
 				}

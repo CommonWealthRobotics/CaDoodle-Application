@@ -18,7 +18,6 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -34,8 +33,8 @@ public class ShapePalletMyDoodles {
 	private ActiveProject ap;
 	private WorkplaneManager workplane;
 
-	public ShapePalletMyDoodles( GridPane objectPallet, SelectionSession session,
-			ActiveProject ap, WorkplaneManager workplane) {
+	public ShapePalletMyDoodles(GridPane objectPallet, SelectionSession session, ActiveProject ap,
+			WorkplaneManager workplane) {
 		//this.shapeCategory = shapeCategory;
 		this.objectPallet = objectPallet;
 		this.session = session;

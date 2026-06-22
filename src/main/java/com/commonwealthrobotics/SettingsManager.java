@@ -579,7 +579,7 @@ public class SettingsManager implements ICSGClientEvent {
 			Log.error(ex);
 			renderPipelineDisplay.setText(ex.getMessage());
 		}
-		
+
 	}
 
 	@FXML
