@@ -36,6 +36,7 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.application.Application;
+import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -45,14 +46,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
-import java.awt.*;
-import java.io.IOException;
-import javafx.application.Platform;
-import javafx.stage.Stage;
-
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import com.sun.prism.GraphicsPipeline;
 
 public class Main extends Application {
 	private static Thread loadDeps;
@@ -156,7 +150,7 @@ public class Main extends Application {
 		Screen screen = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight())
 				.get(0);
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getScreenDevices()[Screen.getScreens().indexOf(screen)];
+		java.awt.GraphicsDevice gd = ge.getScreenDevices()[Screen.getScreens().indexOf(screen)];
 		Main.screenRefreshRate = gd.getDisplayMode().getRefreshRate();
 		com.neuronrobotics.sdk.common.Log.debug("Screen refresh rate = " + Main.screenRefreshRate + " Hz");
 	}
@@ -205,6 +199,7 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
+		checkRendering();
 		// String currentVersionString = StudioBuildInfo.getVersion();
 		String bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
 				+ delim();
@@ -345,6 +340,19 @@ public class Main extends Application {
 			Log.error(ex);
 			Log.flush();
 			ex.printStackTrace();
+		}
+	}
+
+	public static void checkRendering() {
+		boolean hw3d = Platform.isSupported(ConditionalFeature.SCENE3D);
+		try {
+			// Optionally dig deeper with internal API (may break across JFX versions)
+			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
+			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
+
+			Log.debug("3D supported: " + hw3d + " | Pipeline: " + name);
+		} catch (Throwable ex) {
+			Log.error(ex);
 		}
 	}
 

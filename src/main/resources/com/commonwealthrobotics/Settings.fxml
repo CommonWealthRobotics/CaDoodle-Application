@@ -39,6 +39,7 @@
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
@@ -98,7 +99,7 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </HBox>
-                              <Label text="%settings.use_elalish_manifold" GridPane.rowIndex="5">
+                              <Label text="%settings.use_elalish_manifold" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -106,7 +107,7 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="%settings.enable_advanced_features" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                              <CheckBox fx:id="advancedSelector" mnemonicParsing="false" onAction="#onAdvancedMode" text="%settings.enable_advanced_features" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
@@ -142,7 +143,7 @@
                                     <Insets bottom="10.0" left="10.0" top="10.0" />
                                  </padding>
                               </HBox>
-                              <Label text="%settings.advanced_mode" GridPane.rowIndex="6">
+                              <Label text="%settings.advanced_mode" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -150,12 +151,12 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="%settings.enable_manifold_library" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <CheckBox fx:id="manifoldCheck" mnemonicParsing="false" onAction="#onManifoldCheck" text="%settings.enable_manifold_library" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
                               </CheckBox>
-                              <Label text="%settings.style_and_colors" GridPane.rowIndex="8">
+                              <Label text="%settings.style_and_colors" GridPane.rowIndex="9">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -172,11 +173,11 @@
                                  </padding>
                               </Label>
                               <TextField fx:id="numPoints" onAction="#onPointInCurve" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                  <children>
                                     <ComboBox fx:id="styleOptions" />
                                  </children></VBox>
-                              <Label text="%settings.font_size" GridPane.rowIndex="7">
+                              <Label text="%settings.font_size" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -184,8 +185,8 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <TextField fx:id="fontSizeField" onAction="#onFontSize" promptText="%settings.type_font_point_size_here" text="%settings.12" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <Label text="%settings.lang" GridPane.rowIndex="9">
+                              <TextField fx:id="fontSizeField" onAction="#onFontSize" promptText="%settings.type_font_point_size_here" text="%settings.12" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <Label text="%settings.lang" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -193,7 +194,20 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#onLang" styleClass="image-button-focus" text="%settings.lang" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <Button mnemonicParsing="false" onAction="#onLang" styleClass="image-button-focus" text="%settings.lang" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label text="3D" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                              </Label>
+                              <Label fx:id="renderPipelineDisplay" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <padding>
+                                    <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>
