@@ -28,15 +28,15 @@ import javafx.scene.transform.Affine;
 
 public class ShapePalletMyDoodles {
 
-	private ComboBox<String> shapeCategory;
+	//private ComboBox<String> shapeCategory;
 	private GridPane objectPallet;
 	private SelectionSession session;
 	private ActiveProject ap;
 	private WorkplaneManager workplane;
 
-	public ShapePalletMyDoodles(ComboBox<String> shapeCategory, GridPane objectPallet, SelectionSession session,
+	public ShapePalletMyDoodles( GridPane objectPallet, SelectionSession session,
 			ActiveProject ap, WorkplaneManager workplane) {
-		this.shapeCategory = shapeCategory;
+		//this.shapeCategory = shapeCategory;
 		this.objectPallet = objectPallet;
 		this.session = session;
 		this.ap = ap;

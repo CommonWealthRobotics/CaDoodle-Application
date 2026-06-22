@@ -11,6 +11,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
@@ -22,6 +23,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
@@ -52,7 +54,7 @@ public class ShapesPallet {
 	 * Statics
 	 */
 
-	private static String gitULR = "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
+	//private static String gitULR = "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
 
 	/**
 	 * Class variables
@@ -73,9 +75,10 @@ public class ShapesPallet {
 	private boolean threadComplete = true;
 	private boolean searchMode = false;
 
-	private List<String> sortedList;
 	private Thread searchThread = null;
 	private ShapePalletMyDoodles mine;
+
+	private boolean advanced;
 
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
@@ -84,33 +87,47 @@ public class ShapesPallet {
 		this.session = session;
 		ap = active;
 		workplane = workplane2;
-		mine = new ShapePalletMyDoodles(shapeCategory, objectPallet, session, ap, workplane);
-		// new Thread(() -> {
-		try {
-			ArrayList<String> files = ScriptingEngine.filesInGit(getGitULR());
-			sortedList = new ArrayList<>(files);
-			Collections.sort(sortedList);
-			shapeCategory.getItems().add(mine.getName());
-			for (String f : sortedList) {
-				if (f.toLowerCase().endsWith(".json")) {
-					String contents = ScriptingEngine.codeFromGit(getGitULR(), f)[0];
-					File fileFromGit = ScriptingEngine.fileFromGit(getGitULR(), f);
-					String name = fileFromGit.getName();
-					String[] split = name.split(".json");
-					String filename = split[0];
-					HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
-					nameToFile.put(filename, tmp);
-					shapeCategory.getItems().add(filename);
+		mine = new ShapePalletMyDoodles(objectPallet, session, ap, workplane);
+
+	}
+
+	public void updateShapesPalletOptions(boolean advanced) {
+		if(this.advanced == advanced && shapeCategory.getItems().size()>0)
+			return;
+		this.advanced = advanced;
+		BowlerKernel.runLater(() -> {
+			try {
+				String gitULR = "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
+				shapeCategory.getItems().clear();
+				ArrayList<String> files = ScriptingEngine.filesInGit(gitULR);
+				List<String> sortedList = new ArrayList<>(files);
+				Collections.sort(sortedList);
+				shapeCategory.getItems().add(mine.getName());
+				for (String f : sortedList) {
+					if ((f.startsWith("advanced") &&  !advanced)) {
+						Log.debug(f + " skipped");
+						continue;
+					}
+					if (f.toLowerCase().endsWith(".json")) {
+						String contents = ScriptingEngine.codeFromGit(gitULR, f)[0];
+						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
+						String name = fileFromGit.getName();
+						String[] split = name.split(".json");
+						String filename = split[0];
+						HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
+						nameToFile.put(filename, tmp);
+						shapeCategory.getItems().add(filename);
+						Log.debug(f + " added");
+					}
 				}
+				String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+				BowlerStudio.runLater(() -> shapeCategory.getSelectionModel().select(starting));
+				onSetCategory();
+			} catch (Exception e) {
+				//
+				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-		} catch (Exception e) {
-			//
-			com.neuronrobotics.sdk.common.Log.error(e);
-		}
-		String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-		BowlerStudio.runLater(() -> shapeCategory.getSelectionModel().select(starting));
-		onSetCategory();
-		// }).start();
+		});
 	}
 
 	public void onSetCategory() {
@@ -222,7 +239,8 @@ public class ShapesPallet {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
-									// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
+									// Move the workplane down from the surface to ensure a solid overlap between
+									// the object and the surface
 									TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose().times(downset);
 									AbstractAddFrom setAddFromScript = new AddFromScript()
@@ -315,9 +333,9 @@ public class ShapesPallet {
 		return button;
 	}
 
-	public static String getGitULR() {
-		return gitULR;
-	}
+//	public static String getGitULR() {
+//		return gitULR;
+//	}
 
 	public boolean isSearchMode() {
 		return searchMode;
@@ -390,7 +408,8 @@ public class ShapesPallet {
 							mine.setupButton(caDoodleFile, col, row);
 							i++;
 						} catch (Exception ex) {
-							com.neuronrobotics.sdk.common.Log.error(ex);;
+							com.neuronrobotics.sdk.common.Log.error(ex);
+							;
 						}
 					}
 				}
