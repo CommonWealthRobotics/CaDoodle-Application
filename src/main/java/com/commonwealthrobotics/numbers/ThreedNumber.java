@@ -266,7 +266,7 @@ public class ThreedNumber {
 			return;
 		}
 		try {
-			setMostRecentValue(Double.parseDouble(t) + ruler.getOffset(tfDimension));
+			setMostRecentValue(Double.parseDouble(t) + getMyOffset());
 		} catch (NumberFormatException ex) {
 			com.neuronrobotics.sdk.common.Log.error(ex);
 			setValue(getMostRecentValue());
@@ -279,7 +279,7 @@ public class ThreedNumber {
 		double maxValue = Math.pow(10, wholeDigits) - Math.pow(10, -3); // 9999.999
 		v = Math.max(-maxValue, Math.min(maxValue, v));
 		v += 0.0; // Kill -0.000
-		double offset = ruler.getOffset(tfDimension);
+		double offset = getMyOffset();
 		com.neuronrobotics.sdk.common.Log.info(tfDimension + " to " + v + " offset by " + offset);
 		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - offset);
 		textField.setText(formatted3);
@@ -363,7 +363,9 @@ public class ThreedNumber {
 				double X = -move.getTx() * vector3d.x / 2;
 				double Y = -move.getTy() * vector3d.y / 2;
 				double Z = -move.getTz() * vector3d.z / 2;
-				double length = getMostRecentValue();
+				double offset = getMyOffset();
+
+				double length = getMostRecentValue() - offset;
 
 				double barsize = scaleFactor * 5;
 				scaleMesh.setX(isX ? length : barsize);
@@ -373,6 +375,10 @@ public class ThreedNumber {
 				TransformFactory.nrToAffine(new TransformNR(X, Y, Z), lineOffset);
 
 			});
+	}
+
+	public double getMyOffset() {
+		return ruler.getOffset(tfDimension);
 	}
 
 	private boolean isZvector() {

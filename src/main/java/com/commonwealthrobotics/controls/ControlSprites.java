@@ -633,11 +633,14 @@ public class ControlSprites {
 			zdimen.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf);
 
-			xOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x / 2, min.y, linesZ), cf);
+			xOffset.threeDTarget(screenW, screenH, zoom,
+					new TransformNR((min.x / 2.0) + xOffset.getMyOffset() / 2, min.y, linesZ), cf);
 
-			yOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(min.x, min.y / 2, linesZ), cf);
+			yOffset.threeDTarget(screenW, screenH, zoom,
+					new TransformNR(min.x, (min.y / 2) + yOffset.getMyOffset() / 2, linesZ), cf);
 
-			zOffset.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x, center.y, min.z / 2), cf);
+			zOffset.threeDTarget(screenW, screenH, zoom,
+					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf);
 
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
