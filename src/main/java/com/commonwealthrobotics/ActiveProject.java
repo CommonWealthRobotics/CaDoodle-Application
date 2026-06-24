@@ -386,10 +386,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					if (!isAdvancedMode()) {
 						return OperationResult.PRUNE;
 					}
-					OperationResult insertionStrat = OperationResult.fromString(
-							(String) ConfigurationDatabase.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
-					if(insertionStrat == OperationResult.ASK)
-						return  ChangeOptionsController.launch();
+					OperationResult insertionStrat = OperationResult.fromString((String) ConfigurationDatabase
+							.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
+					if (insertionStrat == OperationResult.ASK)
+						return ChangeOptionsController.launch();
 
 					return insertionStrat;
 				}
