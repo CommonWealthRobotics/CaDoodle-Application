@@ -390,7 +390,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 							.get("CaDoodle", "Insertion Stratagy", OperationResult.ASK.name()));
 					if (insertionStrat == OperationResult.ASK)
 						return ChangeOptionsController.launch();
-
 					return insertionStrat;
 				}
 			});
