@@ -274,6 +274,8 @@ public class ThreedNumber {
 	}
 
 	public void setValue(double v) {
+		if(Math.abs(v-mostRecentValue)<0.0001)
+			return;
 		lockout = true;
 		canceled = false;
 		double maxValue = Math.pow(10, wholeDigits) - Math.pow(10, -3); // 9999.999
