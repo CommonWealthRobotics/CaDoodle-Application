@@ -1021,7 +1021,7 @@ public class ResizeSessionManager {
 		for (ResizingHandle c : Arrays.asList(frontMid, rearMid, leftMid, rightMid)) {
 			c.setMyColor(Color.BLACK, Color.RED);
 		}
-
+		topCenter.setMyColor(new Color(0.5, 0.5, 0.5, 1), Color.RED);
 		for (ResizingHandle c : controls) {
 			meshControls.add(c.getMesh());
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());

@@ -16,7 +16,7 @@ public class MoveUpArrow {
 	private MeshView meshview;
 	private boolean selected;
 	private PhongMaterial material = new PhongMaterial();
-	private Color color = Color.DARKGRAY;
+	private Color color = new Color(0.2, 0.2, 0.2, 1);
 	private Color selectedColor = new Color(1, 0, 0, 1);
 	private Point3D startingPosition3D;
 	private final Affine selectionTransform;
@@ -47,8 +47,8 @@ public class MoveUpArrow {
 		meshview.getTransforms().add(moveUpLocation);
 		meshview.getTransforms().add(scaleTF);
 		meshview.addEventFilter(MouseEvent.ANY, zMoveManipulator.getMouseEvents());
-		material.setDiffuseColor(Color.GRAY);
-		material.setSpecularColor(Color.LIGHTGRAY);
+		resetColor();
+		material.setSpecularColor(Color.BLACK);
 		meshview.setMaterial(material);
 
 		meshview.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
