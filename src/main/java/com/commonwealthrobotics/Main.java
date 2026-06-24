@@ -199,7 +199,46 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
+		BowlerKernel.setKernelMode(false);
+		if (args != null) {
+			String all = "";
+			for (String argument : args)
+				all += argument + " ";
+
+			String replace = all.replace('"', ' ').trim();
+			com.neuronrobotics.sdk.common.Log.debug("Got command argument: \"" + replace + "\"");
+			File f = new File(replace);
+			com.neuronrobotics.sdk.common.Log.debug("Passed In File at " + f.getAbsolutePath());
+			if (replace.toLowerCase().endsWith(".doodle")) {
+				if (f.exists()) {
+					ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
+					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
+					HashSet<String> externals = Main.getOptionalProjects();
+					externals.add(f.getAbsolutePath());
+					Main.saveOptionalProjects(externals);
+
+				} else
+					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
+			} else
+				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file " + replace.toLowerCase());
+
+		}
+		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
+		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
+
+		PsudoSplash.setTextColor(Color.BLACK);
+		PsudoSplash.setVersionX(670);
+		PsudoSplash.setVersionY(120);
+
+		PsudoSplash.setLogX(250);
+		PsudoSplash.setLogY(400);
+
+		PsudoSplash.setMessageX(400);
+		PsudoSplash.setMessageY(250);
+
+		SplashManager.renderSplashFrame(1, "Cache Extraction...");
 		checkRendering();
+
 		// String currentVersionString = StudioBuildInfo.getVersion();
 		String bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall"
 				+ delim();
@@ -254,44 +293,6 @@ public class Main extends Application {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 
-		BowlerKernel.setKernelMode(false);
-		if (args != null) {
-			String all = "";
-			for (String argument : args)
-				all += argument + " ";
-
-			String replace = all.replace('"', ' ').trim();
-			com.neuronrobotics.sdk.common.Log.debug("Got command argument: \"" + replace + "\"");
-			File f = new File(replace);
-			com.neuronrobotics.sdk.common.Log.debug("Passed In File at " + f.getAbsolutePath());
-			if (replace.toLowerCase().endsWith(".doodle")) {
-				if (f.exists()) {
-					ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
-					com.neuronrobotics.sdk.common.Log.debug("Passed In File Exists! ");
-					HashSet<String> externals = Main.getOptionalProjects();
-					externals.add(f.getAbsolutePath());
-					Main.saveOptionalProjects(externals);
-
-				} else
-					com.neuronrobotics.sdk.common.Log.debug("Fail! Passed In File Does Not Exists! ");
-			} else
-				com.neuronrobotics.sdk.common.Log.debug("Not a doodle file " + replace.toLowerCase());
-
-		}
-		PsudoSplash.setResource(Main.class.getResource("SourceIcon.png"));
-		PsudoSplash.setTrayIcon(Main.class.getResource("CADoodle-Icon.png"));
-
-		PsudoSplash.setTextColor(Color.BLACK);
-		PsudoSplash.setVersionX(670);
-		PsudoSplash.setVersionY(120);
-
-		PsudoSplash.setLogX(250);
-		PsudoSplash.setLogY(400);
-
-		PsudoSplash.setMessageX(400);
-		PsudoSplash.setMessageY(250);
-
-		SplashManager.renderSplashFrame(1, "Main Window Show");
 
 		ScriptingEngine.setAppName("CaDoodle");
 
