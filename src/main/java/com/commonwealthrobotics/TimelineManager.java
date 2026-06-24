@@ -58,8 +58,8 @@ public class TimelineManager {
 			this.image = image;
 			getStyleClass().add("image-button");
 			setContentDisplay(ContentDisplay.TOP);
-			//			separator.getStyleClass().clear();
-			//			separator.getStyleClass().add("timeline-block");
+			// separator.getStyleClass().clear();
+			// separator.getStyleClass().add("timeline-block");
 
 		}
 
@@ -130,11 +130,11 @@ public class TimelineManager {
 	private HBox timelineShowButtons;
 	private CheckBox timelineMoveObjectShow;
 	private HashMap<CheckBox, ArrayList<timelineButton>> buttonTypes = new HashMap<CheckBox, ArrayList<timelineButton>>();
-	//	private ArrayList<Button> addButtons = new ArrayList<Button>();
-	//	private ArrayList<Button> moveButtons = new ArrayList<Button>();
-	//	private ArrayList<Button> resizeButtons = new ArrayList<Button>();
+	// private ArrayList<Button> addButtons = new ArrayList<Button>();
+	// private ArrayList<Button> moveButtons = new ArrayList<Button>();
+	// private ArrayList<Button> resizeButtons = new ArrayList<Button>();
 	//
-	//	private ArrayList<Button> otherButtons = new ArrayList<Button>();
+	// private ArrayList<Button> otherButtons = new ArrayList<Button>();
 
 	private CheckBox timelineOtherShow;
 
@@ -638,17 +638,25 @@ public class TimelineManager {
 						applyToMe = true;
 				}
 			}
-			b.getStyleClass().clear();
-			b.separator.getStyleClass().clear();
-			b.separator.getStyleClass().add("separator");
-			if (applyToMe)
-				b.getStyleClass().add("image-button-highlight");
-			else
-				b.getStyleClass().add("image-button");
-			if (i != index)
-				b.separator.getStyleClass().clear();
-			else
-				b.separator.getStyleClass().add("timeline-place");
+			// Determine the desired states
+			String desiredButtonClass = applyToMe ? "image-button-highlight" : "image-button";
+			String desiredSeparatorClass = (i == index) ? "timeline-place" : "separator";
+
+			// Guard button style — only touch it if it doesn't already match
+			List<String> btnClasses = b.getStyleClass();
+			if (btnClasses.size() != 1 || !btnClasses.get(0).equals(desiredButtonClass)) {
+				btnClasses.clear();
+				btnClasses.add(desiredButtonClass);
+			}
+
+			// Guard separator style — only touch it if it doesn't already match
+			List<String> sepClasses = b.separator.getStyleClass();
+			if (sepClasses.size() != 1 || !sepClasses.get(0).equals(desiredSeparatorClass)) {
+				sepClasses.clear();
+				sepClasses.add("separator"); // separator is always the base
+				if (i == index)
+					sepClasses.add("timeline-place"); // then stack the active class on top
+			}
 		}
 
 	}
