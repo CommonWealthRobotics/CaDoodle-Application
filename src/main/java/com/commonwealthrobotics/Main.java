@@ -236,7 +236,7 @@ public class Main extends Application {
 		PsudoSplash.setMessageX(400);
 		PsudoSplash.setMessageY(250);
 
-		SplashManager.renderSplashFrame(1, "Cache Extraction...");
+		SplashManager.renderSplashFrame(1, "Extract Examples...");
 		checkRendering();
 
 		// String currentVersionString = StudioBuildInfo.getVersion();
