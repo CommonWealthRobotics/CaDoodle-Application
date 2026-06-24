@@ -31,7 +31,6 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 //import eu.mihosoft.vrl.v3d.Cylinder;
 import eu.mihosoft.vrl.v3d.Vector3d;
-import javafx.application.Platform;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
@@ -349,14 +348,12 @@ public class ControlSprites {
 	}
 
 	private void updateLinesAndCubes() {
-		session.getExecutor().submit(() -> {
-			List<CSG> selectedCSG = ap.get().getSelect(session.selectedSnapshot());
-			List<CSG> cur = session.getCurrentStateSelected();
-			Platform.runLater(() -> {
-				updateCubes(selectedCSG, cur);
-				updateLines();
-			});
+		List<CSG> cur = session.getCurrentStateSelected();
+		BowlerKernel.runLater(() -> {
+			updateCubes(session.getCurrentStateSelected(), cur);
+			updateLines();
 		});
+
 	}
 
 	private void setUpOperationManagers(SelectionSession session, ActiveProject ap, RulerManager ruler) {
@@ -550,45 +547,20 @@ public class ControlSprites {
 				linesZ = max.z;
 
 			// Draw dotted lines between handles
-			frontLine.setStartX(max.x);
-			frontLine.setStartY(min.y);
-			frontLine.setEndX(max.x);
-			frontLine.setEndY(max.y);
-			frontLine.setStartZ(linesZ);
-			frontLine.setEndZ(linesZ);
+			frontLine.setPoints(max.x, min.y, linesZ, max.x, max.y, linesZ);
 			frontLine.setVisible(true);
 
-			backLine.setStartX(min.x);
-			backLine.setStartY(min.y);
-			backLine.setEndX(min.x);
-			backLine.setEndY(max.y);
-			backLine.setStartZ(linesZ);
-			backLine.setEndZ(linesZ);
+			backLine.setPoints(min.x, min.y, linesZ, min.x, max.y, linesZ);
 			backLine.setVisible(true);
 
-			leftLine.setStartX(min.x);
-			leftLine.setStartY(max.y);
-			leftLine.setEndX(max.x);
-			leftLine.setEndY(max.y);
-			leftLine.setStartZ(linesZ);
-			leftLine.setEndZ(linesZ);
+			leftLine.setPoints(min.x, max.y, linesZ, max.x, max.y, linesZ);
 			leftLine.setVisible(true);
 
-			rightLine.setStartX(min.x);
-			rightLine.setStartY(min.y);
-			rightLine.setEndX(max.x);
-			rightLine.setEndY(min.y);
-			rightLine.setStartZ(linesZ);
-			rightLine.setEndZ(linesZ);
+			rightLine.setPoints(min.x, min.y, linesZ, max.x, min.y, linesZ);
 			rightLine.setVisible(true);
 
 			// Draw Z-handle dotted line
-			heightLine.setStartX(center.x);
-			heightLine.setStartY(center.y);
-			heightLine.setStartZ(min.z);
-			heightLine.setEndY(center.y);
-			heightLine.setEndX(center.x);
-			heightLine.setEndZ(max.z);
+			heightLine.setPoints(center.x, center.y, min.z, center.x, center.y, max.z);
 			heightLine.setVisible(true);
 
 			// Distance between handle and label
