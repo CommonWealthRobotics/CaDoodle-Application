@@ -305,6 +305,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		//TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
 		clearBoundsCache();
+		if (f.isInitialized())
+			getSellectedBounds(currentState);
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
@@ -985,7 +987,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void clearBoundsCache() {
 		Log.debug("Clearing bounds cache");
-		// Log.error(new Exception());
+		//Log.error(new Exception());
 		ap.get().getBoundsCache().clear();
 	}
 
