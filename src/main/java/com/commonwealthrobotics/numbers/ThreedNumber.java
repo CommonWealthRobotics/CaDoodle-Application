@@ -274,7 +274,7 @@ public class ThreedNumber {
 	}
 
 	public void setValue(double v) {
-		if (Math.abs(v - mostRecentValue) < 0.0001)
+		if (Math.abs(v - mostRecentValue) < 0.001)
 			return;
 		lockout = true;
 		canceled = false;

@@ -310,6 +310,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if (fromFile != null) {
 			fromFile.removeListener(this);
 		}
+		if (autosaveThread != null)
+			autosaveThread.interrupt();
 		autosaveThread = null;
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleActiveFile", f.getAbsolutePath());
 		return loadActive();
@@ -694,6 +696,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+						return;
 					}
 				}
 
@@ -718,6 +721,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 							Thread.sleep(50);
 						} catch (InterruptedException e) {
 							com.neuronrobotics.sdk.common.Log.error(e);
+							return;
 						}
 
 						get().setSaveUpdate(saveDisplay);
@@ -726,6 +730,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								t.join();
 							} catch (InterruptedException e) {
 								com.neuronrobotics.sdk.common.Log.error(e);
+								return;
 							}
 						}
 
@@ -738,6 +743,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
 						com.neuronrobotics.sdk.common.Log.error(e);
+						return;
 					}
 				}
 			});

@@ -603,24 +603,28 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<CSG> currentState = getCurrentState();
+		HashMap<CSG, MeshView> transport = new HashMap<CSG, MeshView>();
+		for (CSG c : process) {
+			MeshView meshView = c.newMesh();
+			transport.put(c, meshView);
+		}
 		BowlerStudio.runLater(() -> {
 			clearScreen();
-
-			if (isShowConstituants()) {
-				for (CSG c : ap.get().getCurrentState()) {
-					if (c.isInGroup() || c.isHide())
-						c.setIsWireFrame(true);
-					else
-						c.setIsWireFrame(false);
-
-					displayCSG(c);
-					if ((c.isInGroup() && !c.isAlwaysShow()) || c.isHide())
-						getMeshes().get(c).setMouseTransparent(true);
-				}
-			} else
-				for (CSG c : process)
-					displayCSG(c);
-
+			//			if (isShowConstituants()) {
+			//				for (CSG c : ap.get().getCurrentState()) {
+			//					if (c.isInGroup() || c.isHide())
+			//						c.setIsWireFrame(true);
+			//					else
+			//						c.setIsWireFrame(false);
+			//
+			//					displayCSG(c);
+			//					if ((c.isInGroup() && !c.isAlwaysShow()) || c.isHide())
+			//						getMeshes().get(c).setMouseTransparent(true);
+			//				}
+			//			} else
+			for (CSG c : process)
+				displayCSG(c, transport.get(c));
+			transport.clear();
 			ArrayList<CSG> toRemove = new ArrayList<>();
 			for (CSG s : getSelected()) {
 				boolean exists = false;
@@ -658,9 +662,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getMeshes().clear();
 	}
 
-	private void displayCSG(CSG c) {
-
-		MeshView meshView = c.newMesh();
+	private void displayCSG(CSG c, MeshView meshView) {
 
 		if (c.isHole() && !c.isWireFrame()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
@@ -2702,23 +2704,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		List<String> selectedSnapshot = selectedSnapshot();
 
-		getExecutor().submit(() -> {
-			List<CSG> selectedCSG = ap.get().getSelect(selectedSnapshot);
+		//		getExecutor().submit(() -> {
+		List<CSG> selectedCSG = new ArrayList<CSG>(getSelected());
 
-			if (selectedCSG.size() == 0)
-				return;
+		if (selectedCSG.size() == 0)
+			return;
 
-			BowlerStudio.runLater(() -> {
-				// TickToc.setEnabled(true);
-				// TickToc.tic("Start bounds");
-				Bounds sellectedBounds = getSellectedBounds(selectedCSG);
-				// TickToc.tic("bounds made");
-				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
-						ap.get().getBoundsCache());
-				// TickToc.toc();
-				// TickToc.setEnabled(false);
-			});
+		BowlerStudio.runLater(() -> {
+			// TickToc.setEnabled(true);
+			// TickToc.tic("Start bounds");
+			Bounds sellectedBounds = getSellectedBounds(selectedCSG);
+			// TickToc.tic("bounds made");
+			getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
+					ap.get().getBoundsCache());
+			// TickToc.toc();
+			// TickToc.setEnabled(false);
 		});
+		//		});
 	}
 
 	// public void setCadoodle(ActiveProject ap) {
