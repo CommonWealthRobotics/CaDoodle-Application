@@ -302,7 +302,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
 
-		// TickToc.setEnabled(true);
+		//TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
 		clearBoundsCache();
 		// this.source = source;
@@ -324,7 +324,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		updateMemoryDisplay();
 		TickToc.tic("Finish On Update In Selected Session");
 		TickToc.toc();
-		// TickToc.setEnabled(false);
+		//TickToc.setEnabled(false);
 	}
 
 	public void updateMemoryDisplay() {
@@ -780,10 +780,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void updateControlsDisplayOfSelected() {
-		getExecutor().submit(() -> {
-			List<CSG> cs = getCurrentState();
-			BowlerStudio.runLater(() -> UpdateUIControls(cs));
-		});
+		//getExecutor().submit(() -> {
+		List<CSG> cs = getCurrentState();
+		BowlerStudio.runLater(() -> UpdateUIControls(cs));
+		//});
 	}
 
 	private void UpdateUIControls(List<CSG> cs) {
@@ -1530,7 +1530,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private CSG getSelectedCSG(String string) {
-		for (CSG c : new ArrayList<CSG>(getMeshes().keySet()))
+		for (CSG c : getSelectable())
 			if (c.getName().contentEquals(string))
 				return c;
 
@@ -2408,11 +2408,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentStateSelected() {
-		ArrayList<CSG> back = new ArrayList<CSG>();
-		for (CSG c : getCurrentState())
-			for (CSG s : getSelected())
-				if (c.getName().contentEquals(s.getName()))
-					back.add(c);
+		ArrayList<CSG> back = new ArrayList<CSG>(getSelected());
 
 		return back;
 	}
