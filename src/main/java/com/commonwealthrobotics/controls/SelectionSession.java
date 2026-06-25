@@ -151,7 +151,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 	private double snapGridValue;
 
-	private WorkplaneManager workplane;
+	public WorkplaneManager workplane;
 	boolean intitialization = false;
 
 	private VBox parametrics;
@@ -198,11 +198,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button boltHoleButton;
 
 	@SuppressWarnings("static-access")
-	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
+	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler, MeshView ground) {
 		this.engine = e;
 		this.ruler = ruler;
+		workplane = new WorkplaneManager(ap, ground, engine, this);
+
 		this.overlayPane = engine.getOverlayPane();
-		setActiveProject(ap);
+		setActiveProject(ap, workplane);
 		manipulation.addSaveListener(() -> {
 
 			if (intitialization)
@@ -2735,10 +2737,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		workplane.setIncrement(snapGridValue);
 	}
 
-	public void setWorkplaneManager(WorkplaneManager workplane) {
-		this.workplane = workplane;
-		setSnapGrid(currentGrid);
-	}
 
 	@Override
 	public void onSaveSuggestion() {
@@ -2749,9 +2747,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return ap.get().getWorkplane();
 	}
 
-	public void setActiveProject(ActiveProject ap) {
+	public void setActiveProject(ActiveProject ap, WorkplaneManager workplane) {
 		if (this.ap == null) {
-			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler));
+			setControls(new ControlSprites(this, engine, selection, manipulation, ap, ruler, workplane));
 			getControls().setSnapGrid(snapGridValue);
 		}
 		this.ap = ap;

@@ -104,7 +104,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
-		setManager(new LimbControlManager(engine, session, ap, ruler));
+		setManager(new LimbControlManager(engine, session, ap, ruler, workplane));
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -107,7 +108,8 @@ public class ResizeSessionManager {
 	}
 
 	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
-			SelectionSession session, Affine workplaneOffset, MoveUpArrow upArrow, ControlSprites controlSprites) {
+			SelectionSession session, Affine workplaneOffset, MoveUpArrow upArrow, ControlSprites controlSprites,
+			WorkplaneManager workplane) {
 
 		this.session = session;
 		this.engine = engine;
@@ -123,25 +125,25 @@ public class ResizeSessionManager {
 			upArrow.resetSelected();
 		};
 
-		topCenter = new ResizingHandle("topCenter", engine, selection, new Vector3d(0, 0, 1), workplaneOffset,
-				updateLines, onReset);
-		rightFront = new ResizingHandle("rightFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines, onReset);
-		rightRear = new ResizingHandle("rightRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines, onReset);
-		leftFront = new ResizingHandle("leftFront", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines, onReset);
-		leftRear = new ResizingHandle("leftRear", engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
+		topCenter = new ResizingHandle("topCenter", workplane, engine, selection, new Vector3d(0, 0, 1),
+				workplaneOffset, updateLines, onReset);
+		rightFront = new ResizingHandle("rightFront", workplane, engine, selection, new Vector3d(1, 1, 0),
+				workplaneOffset, updateLines, onReset);
+		rightRear = new ResizingHandle("rightRear", workplane, engine, selection, new Vector3d(1, 1, 0),
+				workplaneOffset, updateLines, onReset);
+		leftFront = new ResizingHandle("leftFront", workplane, engine, selection, new Vector3d(1, 1, 0),
+				workplaneOffset, updateLines, onReset);
+		leftRear = new ResizingHandle("leftRear", workplane, engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
 				updateLines, onReset);
 
 		// Edge-midpoint handles: single-axis constraint vectors
-		frontMid = new ResizingHandle("frontMid", engine, selection, new Vector3d(1, 0, 0), workplaneOffset,
+		frontMid = new ResizingHandle("frontMid", workplane, engine, selection, new Vector3d(1, 0, 0), workplaneOffset,
 				updateLines, onReset);
-		rearMid = new ResizingHandle("rearMid", engine, selection, new Vector3d(1, 0, 0), workplaneOffset, updateLines,
-				onReset);
-		leftMid = new ResizingHandle("leftMid", engine, selection, new Vector3d(0, 1, 0), workplaneOffset, updateLines,
-				onReset);
-		rightMid = new ResizingHandle("rightMid", engine, selection, new Vector3d(0, 1, 0), workplaneOffset,
+		rearMid = new ResizingHandle("rearMid", workplane, engine, selection, new Vector3d(1, 0, 0), workplaneOffset,
+				updateLines, onReset);
+		leftMid = new ResizingHandle("leftMid", workplane, engine, selection, new Vector3d(0, 1, 0), workplaneOffset,
+				updateLines, onReset);
+		rightMid = new ResizingHandle("rightMid", workplane, engine, selection, new Vector3d(0, 1, 0), workplaneOffset,
 				updateLines, onReset);
 
 		objectBottomZ = 0; // Keep track of the object bottom position
@@ -1496,6 +1498,18 @@ public class ResizeSessionManager {
 		rearMid.hide();
 		leftMid.hide();
 		rightMid.hide();
+	}
+
+	public void show() {
+		topCenter.show();
+		leftFront.show();
+		leftRear.show();
+		rightFront.show();
+		rightRear.show();
+		frontMid.show();
+		rearMid.show();
+		leftMid.show();
+		rightMid.show();
 	}
 
 	public void updateOrientation(TransformNR cameraFrame) {

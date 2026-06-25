@@ -2,6 +2,7 @@ package com.commonwealthrobotics.controls;
 
 import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixException;
 
+import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
@@ -59,16 +60,19 @@ public class ResizingHandle {
 	private boolean zMove = false; // Is the move a XY or a Z-move
 	private double snapGridValue = 0;
 
+	private WorkplaneManager workplane;
+
 	// private Tooltip hover = new Tooltip();
-	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
-			Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
-		this(name, engine, move, vector3d, workplaneOffset, onSelect, onReset,
+	public ResizingHandle(String name, WorkplaneManager workplane, BowlerStudio3dEngine engine, Affine move,
+			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
+		this(name, workplane, engine, move, vector3d, workplaneOffset, onSelect, onReset,
 				new ChamferedCube(getSize(), getSize(), getSize() / 2.4, getSize() / 5).toCSG().toZMin());
 	}
 
-	public ResizingHandle(String name, BowlerStudio3dEngine engine, Affine move, Vector3d vector3d,
-			Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
+	public ResizingHandle(String name, WorkplaneManager workplane, BowlerStudio3dEngine engine, Affine move,
+			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
 		this.name = name;
+		this.workplane = workplane;
 		this.workplaneOffset = workplaneOffset;
 		this.baseMove = move;
 		// Different behavior for different moves
@@ -95,13 +99,22 @@ public class ResizingHandle {
 		meshview.addEventFilter(MouseEvent.MOUSE_EXITED, event -> {
 			if (!selected)
 				resetColor();
+			if (workplane.isActive()) {
+				workplane.setPin(null);
+			}
 		});
 
 		meshview.addEventFilter(MouseEvent.MOUSE_ENTERED, event -> {
 			setSelectedColor();
+			if (workplane.isActive()) {
+				workplane.setPin(getCurrentInReferenceFrame());
+			}
 		});
 
 		meshview.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			if (workplane.isActive()) {
+				return;
+			}
 			com.neuronrobotics.sdk.common.Log.debug("Corner selected");
 			onReset.run();
 			selected = true;

@@ -62,6 +62,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private double snapGridValue = 1.0;
 	private IWorkplaneUpdate updater = null;
 	private Runnable onCancel;
+	private TransformNR pinedValue;
 
 	// Not used anymore
 	public Group createWireframeWorkplane(double xSizeMM, double ySizeMM) {
@@ -729,5 +730,14 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void onCancel(Runnable onCancel) {
 		this.onCancel = onCancel;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setPin(TransformNR pinedValue) {
+		this.pinedValue = pinedValue;
+		setCurrentAbsolutePose(pinedValue);
 	}
 }

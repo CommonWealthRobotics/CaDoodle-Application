@@ -93,7 +93,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	// private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = null;
-	private WorkplaneManager workplane;
+	// private WorkplaneManager workplane;
 	private ShapesPallet pallet;
 	private ActiveProject ap = new ActiveProject();
 	private SelectionBox selectionBox = null;
@@ -914,7 +914,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onWorkplane(ActionEvent event) {
 		session.setMode(SpriteDisplayMode.PLACING);
-		workplane.pickPlane(() -> {
+		session.workplane.pickPlane(() -> {
 			ruler.disableRulerMode();
 			session.save();
 			// session.setMode(SpriteDisplayMode.Default);
@@ -1061,9 +1061,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			engine.setOverlayPane(paneOverlay2D);
 
 			ap.addListener(this);
-			session = new SelectionSession(engine, ap, ruler);
-
-			selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
 			try {
 				ap.loadActive();
 			} catch (Exception e) {
@@ -1071,6 +1068,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				Log.flush();
 				System.exit(2);
 			}
+			createGroundPlane();
+			session = new SelectionSession(engine, ap, ruler, ground);
+
+			selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
+
 
 			setUpNavigationCube();
 			setUp3dEngine();
@@ -1392,7 +1394,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			engine.setHeight(newValue.doubleValue());
 			onChange(engine.getFlyingCamera());
 		});
-		createGroundPlane();
 		// Handle drag over event
 		engine.setOnDragOver(event -> {
 			if (!engine.isSubScene(event.getGestureSource()) && event.getDragboard().hasFiles()) {
@@ -1526,15 +1527,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setCadoodleFile() {
 		// All this needs to be instantiated after the engine is created
-		workplane = new WorkplaneManager(ap, ground, engine, session);
-		ruler.setWorkplane(workplane);
+		ruler.setWorkplane(session.workplane);
 		ruler.setWP(ap.get().getWorkplane());
-		session.setWorkplaneManager(workplane);
-		pallet = new ShapesPallet(shapeCategory, objectPallet, session, ap, workplane);
-		workplane.placeWorkplaneVisualization();
-		selectionBox.setWorkplaneManager(workplane);
+		pallet = new ShapesPallet(shapeCategory, objectPallet, session, ap, session.workplane);
+		session.workplane.placeWorkplaneVisualization();
+		selectionBox.setWorkplaneManager(session.workplane);
 		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab,
-				advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, workplane, controllersVBox,
+				advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, session.workplane, controllersVBox,
 				controllerConsumedBox, capabilitiesVBox, optionProvide, optionsConsume, wheelOptionGrid, legsOptionGrid,
 				armsOptionGrid, engine, ruler);
 		BowlerStudio.runLater(() -> {
@@ -1569,7 +1568,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 			if (event.getCode() == KeyCode.ESCAPE) {
-				workplane.cancel();
+				session.workplane.cancel();
 				return;
 			}
 			if (ap.get().isOperationRunning())
@@ -1629,7 +1628,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				switch (key) {
 					case 'Z' : // Ctrl+Z / Ctrl+Shift+Z - Undo
 						com.neuronrobotics.sdk.common.Log.debug("Undo");
-						workplane.cancel();
+						session.workplane.cancel();
 						ap.get().back();
 						break;
 					case 'Y' : // Ctrl+Y - Redo
@@ -1787,10 +1786,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		com.neuronrobotics.sdk.common.Log.debug("MainController:Cancel event");
 		try {
 			session.setMode(SpriteDisplayMode.Default);
-			if (workplane.isTemporaryPlane()) {
+			if (session.workplane.isTemporaryPlane()) {
 				ap.get().setWorkplane(new TransformNR());
-				workplane.placeWorkplaneVisualization();
-				workplane.clearTemporaryPlane();
+				session.workplane.placeWorkplaneVisualization();
+				session.workplane.clearTemporaryPlane();
 			}
 			session.clearSelection();
 		} catch (Exception ex) {
@@ -1805,7 +1804,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && !engine.isSubScene(in) && in != workplane.getPlacementPlane()
+		if (in != ground && !engine.isSubScene(in) && in != session.workplane.getPlacementPlane()
 				&& in != selectionBox.getSelectionPlane())
 			return false;
 		if (event.isControlDown())

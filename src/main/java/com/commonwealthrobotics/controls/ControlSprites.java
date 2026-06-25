@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
+import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.align.AlignManager;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.TextFieldDimension;
@@ -131,7 +132,7 @@ public class ControlSprites {
 	}
 
 	public ControlSprites(SelectionSession session, BowlerStudio3dEngine e, Affine sel, Manipulation m,
-			ActiveProject ap, RulerManager ruler) {
+			ActiveProject ap, RulerManager ruler, WorkplaneManager workplane) {
 
 		this.session = session;
 		this.ruler = ruler;
@@ -262,7 +263,8 @@ public class ControlSprites {
 			// com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
 		};
 
-		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, upArrow, this);
+		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, upArrow, this,
+				workplane);
 		List<Node> tmp = Arrays.asList(footprint, frontLine, backLine, leftLine, rightLine, heightLine,
 				upArrow.getMesh());
 
@@ -803,7 +805,7 @@ public class ControlSprites {
 				case PLACING :
 					for (DottedLine l : lines)
 						l.setVisible(true);
-
+					scaleSession.show();
 					break;
 				case Clear :
 					for (ThreedNumber t : numbers)

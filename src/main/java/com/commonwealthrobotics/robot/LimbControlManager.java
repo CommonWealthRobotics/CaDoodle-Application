@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
+import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.ResizingHandle;
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -56,7 +57,7 @@ public class LimbControlManager {
 	private VirtualCameraMobileBase camera;
 
 	public LimbControlManager(BowlerStudio3dEngine engine, SelectionSession session, ActiveProject ap,
-			RulerManager ruler) {
+			RulerManager ruler, WorkplaneManager workplane) {
 		this.engine = engine;
 		camera = engine.getFlyingCamera();
 
@@ -104,7 +105,7 @@ public class LimbControlManager {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			updateControls();
-		}, ap, engine, workplaneOffset, onSelect, onReset);
+		}, ap, engine, workplaneOffset, onSelect, onReset, workplane);
 
 		baseManipulator = new ArmPointManipulator(r, ev -> {
 			BowlerStudio.runLater(() -> {
@@ -122,7 +123,7 @@ public class LimbControlManager {
 			limb.setRobotToFiducialTransform(tf);
 			mod.setTip(limb.getCurrentTaskSpaceTransform());
 			updateControls();
-		}, ap, engine, workplaneOffset, onSelect, onReset);
+		}, ap, engine, workplaneOffset, onSelect, onReset, workplane);
 
 		rotationManager = new RotationSessionManager(new Affine(), ap, session, workplaneOffset, ruler, (tf) -> {
 			r.run();
