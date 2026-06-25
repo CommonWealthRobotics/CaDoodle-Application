@@ -40,6 +40,7 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.ICameraChangeListener;
 import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
+import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase.ProjectionMode;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -1052,6 +1053,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
+			engine.getFlyingCamera().setProjectionMode(ProjectionMode.ORTHOGRAPHIC);
 			// engine.setOrthographicMode(true);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");

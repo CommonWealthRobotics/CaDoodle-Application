@@ -728,23 +728,23 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 						get().setSaveUpdate(saveDisplay);
 						if (saving) {
-							try {
-								t.join();
-							} catch (InterruptedException e) {
-								com.neuronrobotics.sdk.common.Log.error(e);
-								return;
-							}
+							do {
+								try {
+									Thread.sleep(20);
+								} catch (InterruptedException e) {
+									return;
+								}
+							} while (t.isAlive());
 						}
-
+						com.neuronrobotics.sdk.common.Log.debug("Save finished");
 						SplashManager.closeSplash();
-
 					}
 
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						// Auto-generated catch block
-						com.neuronrobotics.sdk.common.Log.error(e);
+						// com.neuronrobotics.sdk.common.Log.error(e);
 						return;
 					}
 				}
