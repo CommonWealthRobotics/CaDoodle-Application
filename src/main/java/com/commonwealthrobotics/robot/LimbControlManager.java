@@ -200,11 +200,12 @@ public class LimbControlManager {
 		double screenW = engine.getWidth();
 		double screenH = engine.getHeight();
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
-		threeDTarget(screenW, screenH, zoom, cf, false);
+		threeDTarget(screenW, screenH, zoom, cf, false, engine.getFlyingCamera().getCamera().getFieldOfView());
 		builder.getCadManager().render();
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked) {
+	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR cf, boolean locked,
+			double cameraFieldOfView) {
 		if (limb == null)
 			return;
 		double az = camera.getPanAngle();
@@ -221,7 +222,7 @@ public class LimbControlManager {
 			tipManipulator.threeDTarget(screenW, screenH, zoom,
 					workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf, locked);
 
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView);
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(workplane, workplaneOffset);
 		});

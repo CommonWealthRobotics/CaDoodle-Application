@@ -70,9 +70,11 @@ public class DottedLine extends Group {
 	}
 
 	public void setScale(double d) {
-		scale.setX(d);
-		scale.setY(d);
-		scale.setZ(d);
+		if (d < 0.1)
+			d = 0.1;
+		scale.setX(d * 2);
+		scale.setY(d * 2);
+		scale.setZ(d * 2);
 	}
 
 	public void updateLine() {

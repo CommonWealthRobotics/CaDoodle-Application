@@ -103,6 +103,7 @@ public class ControlSprites {
 	private final Pane overlayPane; // Overlay pane for 2D objects
 	private Point3D startingPosition3D;
 	private double objectHeight = 0;
+	private double cameraFovDegrees;
 
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
@@ -414,9 +415,11 @@ public class ControlSprites {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds) {
+			double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds,
+			double cameraFovDegrees) {
 
 		this.b = b;
+		this.cameraFovDegrees = cameraFovDegrees;
 		if (!selectionLive) {
 			// TickToc.tic("!selectionLive");
 			selectionLive = true;
@@ -469,7 +472,7 @@ public class ControlSprites {
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
 			double y, double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds) {
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov());
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		// TickToc.tic("aligned update");
 		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds);
@@ -598,23 +601,27 @@ public class ControlSprites {
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 
 			// Position value labels
-			xdimen.threeDTarget(screenW, screenH, zoom, new TransformNR(center.x,
-					scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ), cf);
+			xdimen.threeDTarget(
+					screenW, screenH, zoom, new TransformNR(center.x,
+							scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ),
+					cf, cameraFovDegrees);
 
-			ydimen.threeDTarget(screenW, screenH, zoom, new TransformNR(
-					scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset, center.y, linesZ), cf);
+			ydimen.threeDTarget(screenW, screenH, zoom,
+					new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset,
+							center.y, linesZ),
+					cf, cameraFovDegrees);
 
 			zdimen.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf);
+					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf, cameraFovDegrees);
 
 			xOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR((min.x / 2.0) + xOffset.getMyOffset() / 2, min.y, linesZ), cf);
+					new TransformNR((min.x / 2.0) + xOffset.getMyOffset() / 2, min.y, linesZ), cf, cameraFovDegrees);
 
 			yOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(min.x, (min.y / 2) + yOffset.getMyOffset() / 2, linesZ), cf);
+					new TransformNR(min.x, (min.y / 2) + yOffset.getMyOffset() / 2, linesZ), cf, cameraFovDegrees);
 
 			zOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf);
+					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, cameraFovDegrees);
 
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
@@ -704,7 +711,7 @@ public class ControlSprites {
 			return;
 
 		TransformNR cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
-		session.getLimbs().threeDTarget(screenW, screenH, zoom, cf, session.isLocked());
+		session.getLimbs().threeDTarget(screenW, screenH, zoom, cf, session.isLocked(), engine.getFov());
 	}
 
 	public void clearSelection() {

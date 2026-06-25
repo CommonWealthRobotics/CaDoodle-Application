@@ -2684,11 +2684,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		double z = camera.getGlobalZ();
 		double screenW = engine.getWidth();
 		double screenH = engine.getHeight();
-		onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
+		onCameraChange(screenW, screenH, zoom, az, el, x, y, z, camera.getCamera().getFieldOfView());
 	}
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z) {
+			double z, double cameraFovDegrees) {
 
 		this.screenW = screenW;
 		this.screenH = screenH;
@@ -2716,7 +2716,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Bounds sellectedBounds = getSellectedBounds(selectedCSG);
 			// TickToc.tic("bounds made");
 			getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
-					ap.get().getBoundsCache());
+					ap.get().getBoundsCache(), cameraFovDegrees);
 			// TickToc.toc();
 			// TickToc.setEnabled(false);
 		});

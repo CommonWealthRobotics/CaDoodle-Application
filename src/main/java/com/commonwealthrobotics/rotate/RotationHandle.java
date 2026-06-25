@@ -257,7 +257,7 @@ public class RotationHandle {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double cameraFieldOfView) {
 
 		this.bounds = b;
 		Vector3d center = bounds.getCenter();
@@ -339,7 +339,7 @@ public class RotationHandle {
 		arc.setRadiusY(radius / 2);
 
 		positionPin = input3.times(input.times(new TransformNR(0, 0, 0)));
-		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf);
+		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf, cameraFieldOfView);
 
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);

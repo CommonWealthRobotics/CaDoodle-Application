@@ -1832,7 +1832,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		double z = camera.getGlobalZ();
 		double screenW = engine.getWidth();
 		double screenH = engine.getHeight();
-		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
+		session.onCameraChange(screenW, screenH, zoom, az, el, x, y, z, camera.getCamera().getFieldOfView());
 		selectionBox.onCameraChange(screenW, screenH, zoom, az, el, x, y, z);
 		// session.setKeyBindingFocus();
 	}

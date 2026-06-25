@@ -312,37 +312,55 @@ public class ThreedNumber {
 		mesh.setVisible(true);
 	}
 
-	public void threeDTarget(double w, double h, double zo, TransformNR positionPin, TransformNR c) {
+	public void threeDTarget(double w, double h, double zo, TransformNR pp, TransformNR c, double cameraFovDegrees) {
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = zo;
-		this.positionPin = positionPin;
+		this.positionPin = pp;
 		this.cf = c;
 		if (c == null)
 			return;
+		TransformNR wpnr = TransformFactory.affineToNr(workplaneOffset);
+		TransformNR abs = pp.times(wpnr);
+		TransformNR camAbs = cf;//cf.times(wpnr);
+		// Vector from camera to label
+		double dx = abs.getX() - camAbs.getX();
+		double dy = abs.getY() - camAbs.getY();
+		double dz = abs.getZ() - camAbs.getZ();
 
-		// com.neuronrobotics.sdk.common.Log.error(cf.toSimpleString());
-		// Calculate the vector from camera to target
-		double x = positionPin.getX() - cf.getX();
-		double y = positionPin.getY() - cf.getY();
-		double z = positionPin.getZ() - cf.getZ();
+		// Camera forward vector in world space.
+		// Replace with your actual camera forward calculation if needed.
+		RotationNR rot = camAbs.getRotation();
+		double fx = rot.getRotationMatrix()[0][2];
+		double fy = rot.getRotationMatrix()[1][2];
+		double fz = rot.getRotationMatrix()[2][2];
 
-		// Calculate the distance between camera and target
-		double distance = Math.sqrt(x * x + y * y + z * z);
+		// Depth along camera view direction
+		double depth = dx * fx + dy * fy + dz * fz;
 
-		// Define a base scale and distance
-		double baseScale = 0.75;
-		double baseDistance = 1000.0;
+		// Prevent instability near the camera
+		//depth = Math.max(depth, 50.0); // 50 mm minimum depth
 
-		// Calculate the scale factor
-		double sf = ((distance / baseDistance) * baseScale);
+		double fovRad = Math.toRadians(cameraFovDegrees);
 
-		// Clamp the scale factor to a reasonable range
-		double scaleFactor = Math.max(0.001, Math.min(90.0, sf));
+		// World-space height visible at this depth
+		double worldHeightAtDepth = 2.0 * depth * Math.tan(fovRad * 0.5);
 
-		setScale(scaleFactor * 1.25);
+		// Desired label size on screen
+		double desiredPixelHeight = 20.0;
+
+		// Convert pixels to world units
+		double scaleFactor = desiredPixelHeight * worldHeightAtDepth / screenH;
+
+		// Optional tuning constant
+		scaleFactor *= 0.08;
+		scaleFactor = Math.max(0.006, scaleFactor);
+		//		if(textField.isVisible())
+		//			com.neuronrobotics.sdk.common.Log.debug("depth=" + depth + " scale=" + scaleFactor+" My:"+abs.toSimpleString()+" Cam:"+camAbs.toSimpleString());
+
+		setScale(scaleFactor);
 		TransformNR pureRot = new TransformNR(cf.getRotation());
-		TransformNR wp = new TransformNR(TransformFactory.affineToNr(workplaneOffset).getRotation());
+		TransformNR wp = new TransformNR(wpnr.getRotation());
 		TransformNR pr = wp.inverse().times(pureRot);
 
 		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+"
@@ -369,7 +387,7 @@ public class ThreedNumber {
 
 				double length = getMostRecentValue() - offset;
 
-				double barsize = scaleFactor * 5;
+				double barsize = scale * 5;
 				scaleMesh.setX(isX ? length : barsize);
 				scaleMesh.setY(isY ? length : barsize);
 				scaleMesh.setZ(isZ ? length : barsize);
