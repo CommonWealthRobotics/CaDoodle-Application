@@ -353,7 +353,7 @@ public class ThreedNumber {
 		double scaleFactor = desiredPixelHeight * worldHeightAtDepth / screenH;
 
 		// Optional tuning constant
-		scaleFactor *= 0.08;
+		scaleFactor *= 0.06;
 		scaleFactor = Math.max(0.006, scaleFactor);
 		//		if(textField.isVisible())
 		//			com.neuronrobotics.sdk.common.Log.debug("depth=" + depth + " scale=" + scaleFactor+" My:"+abs.toSimpleString()+" Cam:"+camAbs.toSimpleString());
