@@ -40,7 +40,6 @@ import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.ICameraChangeListener;
 import com.neuronrobotics.bowlerstudio.threed.IControlsMap;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
-import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase.ProjectionMode;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
