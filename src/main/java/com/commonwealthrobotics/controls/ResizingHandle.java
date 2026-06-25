@@ -113,6 +113,7 @@ public class ResizingHandle {
 
 		meshview.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			if (workplane.isActive()) {
+				workplane.doClickEvent(event);
 				return;
 			}
 			com.neuronrobotics.sdk.common.Log.debug("Corner selected");

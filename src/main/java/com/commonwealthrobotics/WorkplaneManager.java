@@ -422,18 +422,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		Node intersectedNode = pickResult.getIntersectedNode();
 
 		if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
-			clicked = true;
-			// onCancel = null;// non cancel but instead completed
-
-			cancel();
-
-			ev.consume();
-			session.updateControls();
-			engine.getWorkplaneGroup().setMouseTransparent(true);
-
-			session.getControls().hideRotationHandles();
-
-			wpPick.setMouseTransparent(true);
+			doClickEvent(ev);
 
 		} else if ((ev.getEventType() == MouseEvent.MOUSE_MOVED) || (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
 			// com.neuronrobotics.sdk.common.Log.error(ev);
@@ -546,6 +535,21 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 			setCurrentAbsolutePose(screenLocation);
 		}
+	}
+
+	public void doClickEvent(MouseEvent ev) {
+		clicked = true;
+		// onCancel = null;// non cancel but instead completed
+
+		cancel();
+
+		ev.consume();
+		session.updateControls();
+		engine.getWorkplaneGroup().setMouseTransparent(true);
+
+		session.getControls().hideRotationHandles();
+
+		wpPick.setMouseTransparent(true);
 	}
 
 	public static Polygon getPolygonFromFaceIndex(int faceIndex, CSG polygons) {
@@ -738,6 +742,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setPin(TransformNR pinedValue) {
 		this.pinedValue = pinedValue;
+		if (pinedValue == null)
+			return;
+		if (updater != null)
+			updater.setWorkplaneLocation(pinedValue);
 		setCurrentAbsolutePose(pinedValue);
 	}
 }
