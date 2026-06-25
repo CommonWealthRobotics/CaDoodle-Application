@@ -464,15 +464,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 					if (source != null) {
 						Polygon p = getPolygonFromFaceIndex(faceIndex, source);
-						// Polygon p =null;
-						//
-						// try {
-						// p=source.getPolygonByIndex(faceIndex);
-						// } catch (ColinearPointsException e) {
-						// // TODO Auto-generated catch block
-						// e.printStackTrace();
-						// }
-
 						if (p != null) {
 							try {
 								Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
@@ -741,11 +732,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void setPin(TransformNR pinedValue) {
-		this.pinedValue = pinedValue;
 		if (pinedValue == null)
 			return;
+		pinedValue = ap.get().getWorkplane().times(pinedValue);
+		this.pinedValue = pinedValue;
+
 		if (updater != null)
-			updater.setWorkplaneLocation(pinedValue);
+			updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(pinedValue));
 		setCurrentAbsolutePose(pinedValue);
 	}
 }
