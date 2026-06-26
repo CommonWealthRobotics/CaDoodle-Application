@@ -19,6 +19,7 @@ import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
@@ -43,6 +44,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
@@ -687,7 +689,22 @@ public class ControlSprites {
 				}
 			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
-
+			for (CSG c : session.getSelected()) {
+				Bounds b = Align.getBounds(Arrays.asList(c), ap.get().getWorkplane(), ap.get().getBoundsCache());
+				double haloDIstance = 60000;
+				double scalex = 1.02 - (b.getTotalX() / (b.getTotalX() + (haloDIstance * zdimen.getScale())));
+				double scaley = 1.02 - (b.getTotalY() / (b.getTotalY() + (haloDIstance * zdimen.getScale())));
+				double scalez = 1.02 - (b.getTotalZ() / (b.getTotalZ() + (haloDIstance * zdimen.getScale())));
+				//com.neuronrobotics.sdk.common.Log.debug("Scale "+scalex+"|"+scaley+"|"+scalez);
+				for (Transform t : session.getMeshes().get(c).halo.getTransforms()) {
+					if (Scale.class.isInstance(t)) {
+						Scale s = (Scale) t;
+						s.setX(scalex);
+						s.setY(scaley);
+						s.setX(scalez);
+					}
+				}
+			}
 		});
 
 	}

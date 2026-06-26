@@ -705,8 +705,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset.inverse()));
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
-		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.8));
-		haloMat.setSpecularColor(new Color(0.1, 0.5, 1, 0.8));
+		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
+		haloMat.setSpecularColor(new Color(0.1, 0.5, 1, 0.));
 		halo.setCullFace(CullFace.BACK);
 		halo.setDrawMode(DrawMode.FILL);
 		halo.setDepthTest(DepthTest.ENABLE);
