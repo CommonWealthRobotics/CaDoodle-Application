@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -63,7 +64,7 @@ public class ResizeSessionManager {
 	private boolean locked;
 	private boolean resizeAllowed;
 	private volatile Bounds originalBounds = null;
-	private final Map<CSG, MeshView> meshes;
+	private final Map<CSG, MeshHolder> meshes;
 	private final SelectionSession session;
 	private volatile double objectBottomZ = 0;
 
@@ -85,7 +86,8 @@ public class ResizeSessionManager {
 	}
 
 	private void regenerateMesh(CSG key, CSG scaledCSG) {
-		MeshView old = meshes.get(key); // lookup with original key
+		MeshHolder meshHolder = meshes.get(key);
+		MeshView old = meshHolder.display; // lookup with original key
 		if (old == null)
 			return;
 
@@ -96,7 +98,7 @@ public class ResizeSessionManager {
 
 		engine.removeUserNode(old);
 		engine.addUserNode(fresh);
-		meshes.put(key, fresh);
+		meshHolder.display= fresh;
 	}
 
 	// Prevent 0-value for scaling

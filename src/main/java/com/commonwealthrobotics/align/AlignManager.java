@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.SelectionSession;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
@@ -33,7 +34,7 @@ public class AlignManager {
 	private ArrayList<CSG> toAlign = new ArrayList<CSG>();
 	private SelectionSession session;
 	private boolean alignemntSelected = false;
-	private HashMap<CSG, MeshView> meshes;
+	private HashMap<CSG, MeshHolder> meshes;
 	private HashMap<CSG, EventHandler<? super MouseEvent>> events = new HashMap<CSG, EventHandler<? super MouseEvent>>();
 	private double screenW;
 	private double screenH;
@@ -112,7 +113,7 @@ public class AlignManager {
 	}
 
 	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
-			HashMap<CSG, MeshView> meshes, HashMap<CSG, Bounds> inWorkplaneBounds) {
+			HashMap<CSG, MeshHolder> meshes, HashMap<CSG, Bounds> inWorkplaneBounds) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
 			BowlerStudio.runLater(() -> n.setVisible(true));;
@@ -130,7 +131,7 @@ public class AlignManager {
 		}
 		recompute(null, inWorkplaneBounds);
 		for (CSG c : toAlign) {
-			MeshView mv = meshes.get(c);
+			MeshView mv = meshes.get(c).display;
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if (operation == null)
 					return;
@@ -169,7 +170,7 @@ public class AlignManager {
 		}
 		hide();
 		for (CSG c : toAlign) {
-			MeshView mv = meshes.get(c);
+			MeshView mv = meshes.get(c).display;
 			EventHandler<? super MouseEvent> eventFilter = events.remove(c);
 			mv.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
 		}

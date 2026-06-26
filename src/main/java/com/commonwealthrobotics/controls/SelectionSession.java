@@ -116,7 +116,16 @@ import javafx.geometry.Point3D;
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	private ControlSprites controls;
-	private HashMap<CSG, MeshView> meshes = new HashMap<CSG, MeshView>();
+	public class MeshHolder{
+		public MeshView display;
+		public MeshView halo;
+		public MeshHolder( MeshView display,MeshView halo) {
+			this.display = display;
+			this.halo = halo;
+			
+		}
+	}
+	private HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -607,10 +616,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 
 		List<CSG> currentState = getCurrentState();
-		HashMap<CSG, MeshView> transport = new HashMap<CSG, MeshView>();
+		HashMap<CSG, MeshHolder> transport = new HashMap<CSG, MeshHolder>();
 		for (CSG c : process) {
 			MeshView meshView = c.newMesh();
-			transport.put(c, meshView);
+			Bounds bounds =  c.getBounds();
+			MeshView halo = c.scaleToMeasurmentX(bounds.getTotalX()+1)
+					.scaleToMeasurmentY(bounds.getTotalY()+1)
+					.scaleToMeasurmentZ(bounds.getTotalZ()+1).newMesh();
+			halo.setMouseTransparent(true);
+			transport.put(c, new MeshHolder(meshView, halo));
 		}
 		BowlerStudio.runLater(() -> {
 			clearScreen();
@@ -660,14 +674,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (getMeshes() == null)
 			return;
 
-		for (CSG c : getMeshes().keySet())
-			engine.removeUserNode(getMeshes().get(c));
+		for (CSG c : getMeshes().keySet()) {
+			MeshHolder meshHolder = getMeshes().get(c);
+			engine.removeUserNode(meshHolder.display);
+			engine.removeUserNode(meshHolder.halo);
+		}
 
 		getMeshes().clear();
 	}
 
-	private void displayCSG(CSG c, MeshView meshView) {
+	private void displayCSG(CSG c, MeshHolder holder) {
 
+		MeshView meshView=holder.display;
 		if (c.isHole() && !c.isWireFrame()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
@@ -692,7 +710,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
-		getMeshes().put(c, meshView);
+		getMeshes().put(c, holder);
 
 		// Allow move on first click for unlocked meshes only
 		if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
@@ -836,7 +854,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateLockButton();
 
 			for (CSG c : cs) {
-				MeshView meshView = getMeshes().get(c);
+				MeshView meshView = getMeshes().get(c).display;
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
@@ -849,7 +867,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			boolean lockMove = moveLock();
 			List<String> selectedSnapshot = selectedSnapshot();
 			for (CSG c : getSelectedCSG(selectedSnapshot)) {
-				MeshView meshView = getMeshes().get(c);
+				MeshView meshView = getMeshes().get(c).display;
 
 				if (meshView != null) {
 					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
@@ -928,7 +946,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		} else {
 			for (CSG c : cs) {
-				MeshView meshView = getMeshes().get(c);
+				MeshView meshView = getMeshes().get(c).display;
 				if (meshView != null) {
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
@@ -1764,7 +1782,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				CSG c = s;
 
 				if (!c.isHole()) {
-					MeshView mesh = getMeshes().get(c);
+					MeshView mesh = getMeshes().get(c).display;
 
 					if (mesh == null)
 						continue;
@@ -2034,7 +2052,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					});
 
 					for (CSG c : selectedCSG) {
-						MeshView meshView = getMeshes().get(c);
+						MeshView meshView = getMeshes().get(c).display;
 
 						if (meshView != null)
 							BowlerKernel.runLater(() -> {
@@ -2048,7 +2066,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					workplane.setOnSelectEvent(() -> {
 
 						for (CSG c : selectedCSG) {
-							MeshView meshView = getMeshes().get(c);
+							MeshView meshView = getMeshes().get(c).display;
 
 							if (meshView != null)
 								BowlerKernel.runLater(() -> meshView.setVisible(true));
@@ -2865,11 +2883,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return getControls().alignIsActive();
 	}
 
-	public HashMap<CSG, MeshView> getMeshes() {
+	public HashMap<CSG, MeshHolder> getMeshes() {
 		return meshes;
 	}
 
-	public void setMeshes(HashMap<CSG, MeshView> meshes) {
+	public void setMeshes(HashMap<CSG, MeshHolder> meshes) {
 		this.meshes = meshes;
 	}
 

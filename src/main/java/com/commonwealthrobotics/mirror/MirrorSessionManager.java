@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.MirrorOrientation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -28,7 +29,7 @@ public class MirrorSessionManager {
 	private BowlerStudio3dEngine engine;
 	private List<CSG> ta;
 	private List<String> selected;
-	private HashMap<CSG, MeshView> meshes;
+	private HashMap<CSG, MeshHolder> meshes;
 	private boolean active = false;
 
 	public MirrorSessionManager(Affine selection, ActiveProject ap, ControlSprites controlSprites,
@@ -68,7 +69,7 @@ public class MirrorSessionManager {
 	}
 
 	public void initialize(Bounds b, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
-			HashMap<CSG, MeshView> meshes) {
+			HashMap<CSG, MeshHolder> meshes) {
 		this.b = b;
 		this.engine = engine;
 		this.ta = ta;

@@ -10,6 +10,7 @@ import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.align.AlignManager;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.commonwealthrobotics.mirror.MirrorSessionManager;
 import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.commonwealthrobotics.numbers.ThreedNumber;
@@ -478,13 +479,13 @@ public class ControlSprites {
 		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds);
 	}
 
-	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshView> meshes,
+	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshHolder> meshes,
 			HashMap<CSG, Bounds> inWorkplaneBounds) {
 		align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes, inWorkplaneBounds);
 
 	}
 
-	public void initializeMirror(List<CSG> toAlign, Bounds b, HashMap<CSG, MeshView> meshes) {
+	public void initializeMirror(List<CSG> toAlign, Bounds b, HashMap<CSG, MeshHolder> meshes) {
 		mirror.initialize(b, engine, toAlign, session.selectedSnapshot(), meshes);
 	}
 

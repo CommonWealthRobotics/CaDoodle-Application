@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import com.commonwealthrobotics.controls.SelectionSession;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -167,9 +168,9 @@ public class SelectionBox {
 			rect2.setSmooth(false);
 
 			// show.clear();
-			HashMap<CSG, MeshView> meshes = session.getMeshes();
+			HashMap<CSG, MeshHolder> meshes = session.getMeshes();
 			for (CSG key : meshes.keySet())
-				meshes.get(key).setMouseTransparent(true);
+				meshes.get(key).display.setMouseTransparent(true);
 
 		}
 
@@ -208,9 +209,9 @@ public class SelectionBox {
 		// for (Rectangle r : show) {
 		// engine.removeUserNode(r);
 		// }
-		HashMap<CSG, MeshView> meshes = session.getMeshes();
+		HashMap<CSG, MeshHolder> meshes = session.getMeshes();
 		for (CSG key : meshes.keySet())
-			meshes.get(key).setMouseTransparent(false);
+			meshes.get(key).display.setMouseTransparent(false);
 
 		new Thread(() -> {
 			double width = Math.abs(event.getX() - xStart2);

@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.controls.SelectionSession;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -44,7 +45,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	private MeshView ground;
 	private Group wpPick;
-	private HashMap<CSG, MeshView> meshes;
+	private HashMap<CSG, MeshHolder> meshes;
 	private HashMap<MeshView, CSG> meshesReverseLookup;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
@@ -341,13 +342,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		engine.addUserNode(indicatorMesh);
 	}
 
-	public void updateMeshes(HashMap<CSG, MeshView> meshes) {
+	public void updateMeshes(HashMap<CSG, MeshHolder> meshes) {
 
 		this.meshes = meshes;
 		meshesReverseLookup = new HashMap<MeshView, CSG>();
 
 		for (CSG c : meshes.keySet())
-			meshesReverseLookup.put(meshes.get(c), c);
+			meshesReverseLookup.put(meshes.get(c).display, c);
 	}
 
 	public void cancel() {
@@ -361,7 +362,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		if (meshes != null)
 			for (CSG key : meshes.keySet()) {
-				MeshView mv = meshes.get(key);
+				MeshView mv = meshes.get(key).display;
 				mv.removeEventFilter(MouseEvent.ANY, this);
 			}
 
@@ -408,7 +409,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		// Make user meshes pickable
 		if (meshes != null)
 			for (CSG key : meshes.keySet()) {
-				MeshView mv = meshes.get(key);
+				MeshView mv = meshes.get(key).display;
 				mv.addEventFilter(MouseEvent.ANY, this);
 			}
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.ControlSprites;
+import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
@@ -56,7 +57,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	private BowlerStudio3dEngine engine;
 	private List<CSG> ta;
 	private List<String> selected;
-	private HashMap<CSG, MeshView> meshes;
+	private HashMap<CSG, MeshHolder> meshes;
 	private boolean active = false;
 	private EventHandler<? super MouseEvent> entered;
 
@@ -240,7 +241,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	}
 
 	public void initialize(Bounds b, BowlerStudio3dEngine eng, List<CSG> t, List<String> sel,
-			HashMap<CSG, MeshView> meshes) {
+			HashMap<CSG, MeshHolder> meshes) {
 		this.b = b;
 		this.engine = eng;
 		this.ta = t;
