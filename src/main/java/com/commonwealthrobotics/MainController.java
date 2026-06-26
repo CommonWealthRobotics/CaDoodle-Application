@@ -288,6 +288,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="shapeConfigurationHolder"
 	private AnchorPane shapeConfigurationHolder; // Value injected by FXMLLoader
 
+	@FXML
+	private AnchorPane shapePositionAnchorPane;
+	@FXML // fx:id="shapeConfiguration"
+	private TitledPane shapePosition; // Value injected by FXMLLoader
+
 	@FXML // fx:id="showAllButton"
 	private Button showAllButton; // Value injected by FXMLLoader
 
@@ -1894,6 +1899,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			RobotLabDrawer.setVisible(advanced);
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
+			if (advanced) {
+				if (!shapeConfigurationBox.getPanes().contains(shapePosition))
+					shapeConfigurationBox.getPanes().add(shapePosition);
+			} else if (shapeConfigurationBox.getPanes().contains(shapePosition)) {
+				shapeConfigurationBox.getPanes().remove(shapePosition);
+			}
 			renameBtn.setVisible(advanced);
 			extrudeButton.setVisible(advanced);
 			boltHoleButton.setVisible(advanced);
