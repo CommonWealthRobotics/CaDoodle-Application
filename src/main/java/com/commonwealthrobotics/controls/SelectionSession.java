@@ -883,8 +883,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			updateLockButton();
 
 			for (CSG c : cs) {
-				MeshView meshView = getMeshes().get(c).display;
-				if (meshView != null) {
+				MeshHolder meshHolder = getMeshes().get(c);
+
+				if (meshHolder != null) {
+					MeshView meshView = meshHolder.display;
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
@@ -896,11 +898,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			boolean lockMove = moveLock();
 			List<String> selectedSnapshot = selectedSnapshot();
 			for (CSG c : getSelectedCSG(selectedSnapshot)) {
-				MeshView meshView = getMeshes().get(c).display;
-
-				if (meshView != null) {
+				MeshHolder meshHolder = getMeshes().get(c);
+				if (meshHolder != null) {
+					MeshView meshView = meshHolder.display;
 					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
-
 					if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
 						meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
@@ -975,8 +976,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		} else {
 			for (CSG c : cs) {
-				MeshView meshView = getMeshes().get(c).display;
-				if (meshView != null) {
+				MeshHolder meshHolder = getMeshes().get(c);
+				if (meshHolder != null) {
+					MeshView meshView = meshHolder.display;
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
@@ -1816,10 +1818,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				CSG c = s;
 
 				if (!c.isHole()) {
-					MeshView mesh = getMeshes().get(c).display;
-
-					if (mesh == null)
+					MeshHolder meshHolder = getMeshes().get(c);
+					if (meshHolder == null)
 						continue;
+					MeshView mesh = meshHolder.display;
 
 					PhongMaterial phongMaterial = (PhongMaterial) mesh.getMaterial();
 					Color diffuseColor = phongMaterial.getDiffuseColor();
@@ -2086,10 +2088,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					});
 
 					for (CSG c : selectedCSG) {
-						MeshView meshView = getMeshes().get(c).display;
+						MeshHolder meshHolder = getMeshes().get(c);
 
-						if (meshView != null)
+						if (meshHolder != null)
 							BowlerKernel.runLater(() -> {
+								MeshView meshView = meshHolder.display;
 								if (!isResizeLiveMode())
 									meshView.setVisible(false);
 							});
