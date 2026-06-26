@@ -778,6 +778,7 @@ public class ControlSprites {
 						xOffset.show();
 						yOffset.show();
 					}
+					session.hideHalos();
 					break;
 
 				case MoveZ :
@@ -787,6 +788,7 @@ public class ControlSprites {
 					upArrow.show();
 					footprint.setVisible(true);
 					zOffset.show();
+					session.hideHalos();
 					break;
 
 				case ResizeX :

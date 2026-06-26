@@ -15,7 +15,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.Node;
-import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 
 public class MirrorSessionManager {

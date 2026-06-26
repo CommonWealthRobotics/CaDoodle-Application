@@ -98,7 +98,7 @@ public class ResizeSessionManager {
 
 		engine.removeUserNode(old);
 		engine.addUserNode(fresh);
-		meshHolder.display= fresh;
+		meshHolder.display = fresh;
 	}
 
 	// Prevent 0-value for scaling
