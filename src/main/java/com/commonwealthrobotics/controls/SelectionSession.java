@@ -620,9 +620,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			MeshView meshView = c.newMesh();
 			Bounds bounds =  c.getBounds();
-			MeshView halo = c.scaleToMeasurmentX(bounds.getTotalX()+1)
-					.scaleToMeasurmentY(bounds.getTotalY()+1)
-					.scaleToMeasurmentZ(bounds.getTotalZ()+1).newMesh();
+//			scaleToMeasurmentX(bounds.getTotalX()+1)
+//			.scaleToMeasurmentY(bounds.getTotalY()+1)
+//			.scaleToMeasurmentZ(bounds.getTotalZ()+1)
+			MeshView halo = c.newMesh();
 			halo.setMouseTransparent(true);
 			transport.put(c, new MeshHolder(meshView, halo));
 		}
