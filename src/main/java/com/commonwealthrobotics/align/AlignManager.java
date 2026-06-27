@@ -10,6 +10,7 @@ import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.BoundsComputFailure;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FailedToApplyOperation;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -93,7 +94,11 @@ public class AlignManager {
 
 	private void updateHandles(HashMap<CSG, Bounds> inWorkplaneBounds) {
 		if (operation != null)
-			b = operation.getBounds(ap.get().getCurrentState(), inWorkplaneBounds);
+			try {
+				b = operation.getBounds(new ArrayList<CSG>(session.getSelected()), inWorkplaneBounds);
+			} catch (BoundsComputFailure e) {
+				Log.error(e);;
+			}
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
 		upDown.threeDTarget(screenW, screenH, zoom, b, cf);

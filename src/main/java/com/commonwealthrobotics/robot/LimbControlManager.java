@@ -15,12 +15,14 @@ import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation.DragState;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.BoundsComputFailure;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.sdk.addons.kinematics.DHParameterKinematics;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
@@ -173,7 +175,12 @@ public class LimbControlManager {
 
 	public void show(DHParameterKinematics limb) {
 		this.limb = limb;
-		b = session.getBounds(limb);
+		try {
+			b = session.getBounds(limb);
+		} catch (BoundsComputFailure e) {
+			Log.error(e);
+			b = null;
+		}
 		if (b == null)
 			throw new RuntimeException("Limb has no parts");
 		selectedCSG = session.selectedSnapshot();

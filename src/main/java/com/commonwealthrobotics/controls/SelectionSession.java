@@ -321,7 +321,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		TickToc.tic("Start On Update In Selected Session");
 		clearBoundsCache();
 		if (f.isInitialized())
-			getSellectedBounds(currentState);
+			try {
+				getSellectedBounds(currentState);
+			} catch (BoundsComputFailure e) {
+				Log.error(e);
+			}
 		// this.source = source;
 		intitialization = true;
 		manipulation.set(0, 0, 0);
@@ -693,16 +697,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		MeshView meshView = holder.display;
 		MeshView halo = holder.halo;
-		Bounds b = Align.getBounds(Arrays.asList(c), ap.get().getWorkplane(), ap.get().getBoundsCache());
-		double haloDIstance = 1;
-		double scalex = 1 - (b.getTotalX() / (b.getTotalX() + haloDIstance));
-		double scaley = 1 - (b.getTotalY() / (b.getTotalY() + haloDIstance));
-		double scalez = 1 - (b.getTotalZ() / (b.getTotalZ() + haloDIstance));
+		Bounds b;
+		try {
+			b = Align.getBounds(Arrays.asList(c), ap.get().getWorkplane(), ap.get().getBoundsCache());
+			double haloDIstance = 1;
+			double scalex = 1 - (b.getTotalX() / (b.getTotalX() + haloDIstance));
+			double scaley = 1 - (b.getTotalY() / (b.getTotalY() + haloDIstance));
+			double scalez = 1 - (b.getTotalZ() / (b.getTotalZ() + haloDIstance));
 
-		TransformNR centerOffset = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
-		halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset));
-		halo.getTransforms().add(new Scale(1.0 + scalex, 1.0 + scaley, 1.0 + scalez));
-		halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset.inverse()));
+			TransformNR centerOffset = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
+			halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset));
+			halo.getTransforms().add(new Scale(1.0 + scalex, 1.0 + scaley, 1.0 + scalez));
+			halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset.inverse()));
+		} catch (BoundsComputFailure e) {
+			Log.error(e);
+		}
+
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
@@ -1870,11 +1880,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (getSelected().size() == 0)
 			return new TransformNR();
 
-		Bounds b = getSellectedBounds();
-
-		TransformNR tf = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
-		TransformNR wp = ap.get().getWorkplane();
-		return wp.times(tf);
+		Bounds b;
+		try {
+			b = getSellectedBounds();
+			TransformNR tf = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
+			TransformNR wp = ap.get().getWorkplane();
+			return wp.times(tf);
+		} catch (BoundsComputFailure e) {
+			Log.error(e);
+		}
+		return new TransformNR();
 	}
 
 	public Thread addOp(CaDoodleOperation h) {
@@ -2435,8 +2450,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getExecutor().submit(() -> {
 			getControls().setMode(SpriteDisplayMode.Mirror);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
-			Bounds b = getSellectedBounds(selectedCSG);
-			getControls().initializeMirror(selectedCSG, b, getMeshes());
+			Bounds b;
+			try {
+				b = getSellectedBounds(selectedCSG);
+				getControls().initializeMirror(selectedCSG, b, getMeshes());
+			} catch (BoundsComputFailure e) {
+				Log.error(e);
+			}
 		});
 	}
 
@@ -2472,15 +2492,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return back;
 	}
 
-	public Bounds getSellectedBounds() {
+	public Bounds getSellectedBounds() throws BoundsComputFailure {
 		return getSellectedBounds(getCurrentStateSelected());
 	}
 
-	public Bounds getSellectedBounds(List<CSG> incoming) {
+	public Bounds getSellectedBounds(List<CSG> incoming) throws BoundsComputFailure {
 		return Align.getBounds(incoming, ap.get().getWorkplane(), ap.get().getBoundsCache());
 	}
 
-	public Bounds getBounds(DHParameterKinematics limb) {
+	public Bounds getBounds(DHParameterKinematics limb) throws BoundsComputFailure {
 		ArrayList<CSG> parts = new ArrayList<CSG>();
 		for (CSG c : getCurrentState()) {
 			if (c.getLimbName().isPresent() && c.getLimbName().get().contentEquals(limb.getScriptingName()))
@@ -2768,11 +2788,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		BowlerStudio.runLater(() -> {
 			// TickToc.setEnabled(true);
 			// TickToc.tic("Start bounds");
-			Bounds sellectedBounds = getSellectedBounds(selectedCSG);
-			// TickToc.tic("bounds made");
-			getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
-					ap.get().getBoundsCache(), cameraFovDegrees);
-			// TickToc.toc();
+			Bounds sellectedBounds;
+			try {
+				sellectedBounds = getSellectedBounds(selectedCSG);
+				// TickToc.tic("bounds made");
+				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
+						ap.get().getBoundsCache(), cameraFovDegrees);
+				// TickToc.toc();
+			} catch (BoundsComputFailure e) {
+				Log.error(e);
+			}
+
 			// TickToc.setEnabled(false);
 		});
 		// });
