@@ -67,6 +67,7 @@ public class ResizeSessionManager {
 	private final Map<CSG, MeshHolder> meshes;
 	private final SelectionSession session;
 	private volatile double objectBottomZ = 0;
+	private ControlSprites controlSprites;
 
 	public void rescaleMeshes(Affine workplaneOffset, Transform xyzScale) {
 
@@ -83,6 +84,7 @@ public class ResizeSessionManager {
 			CSG globalCSG = scaledCSG.transformed(workplaneTransform);
 			regenerateMesh(c, globalCSG);
 		}
+		controlSprites.setMode(SpriteDisplayMode.Resize);
 	}
 
 	private void regenerateMesh(CSG key, CSG scaledCSG) {
@@ -115,6 +117,7 @@ public class ResizeSessionManager {
 
 		this.session = session;
 		this.engine = engine;
+		this.controlSprites = controlSprites;
 		this.meshes = session.getMeshes();
 
 		if (engine == null)
@@ -1045,6 +1048,7 @@ public class ResizeSessionManager {
 				bounds = getBounds();
 				for (ResizingHandle ctrl : controls)
 					ctrl.manipulator.set(0, 0, 0);
+				controlSprites.setMode(SpriteDisplayMode.Default);
 				try {
 					Resize setResize = new Resize().setNames(session.selectedSnapshot()).setWorkplane(wp).setResize(tcC,
 							lfC, rrC);

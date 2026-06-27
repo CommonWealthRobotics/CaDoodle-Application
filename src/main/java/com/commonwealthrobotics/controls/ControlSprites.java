@@ -636,14 +636,11 @@ public class ControlSprites {
 			yOffset.setValue(min.y + pose.getY());
 
 			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
-
-			if (scaleSession.zScaleSelected() && (mode == SpriteDisplayMode.Default)
-					|| (mode == SpriteDisplayMode.ResizeZ))
-				zdimen.show();
-			else
-				zdimen.hide();
-
-			if ((mode == SpriteDisplayMode.Default)) {
+			if (mode == SpriteDisplayMode.Resize) {
+				if (scaleSession.zScaleSelected())
+					zdimen.show();
+				else
+					zdimen.hide();
 				if (scaleSession.rightSelected() || scaleSession.leftSelected())
 					xdimen.show();
 				else
@@ -652,9 +649,20 @@ public class ControlSprites {
 					ydimen.show();
 				else
 					ydimen.hide();
-			} else {
-				xdimen.hide();
-				ydimen.hide();
+			}
+			if ((mode == SpriteDisplayMode.Default)) {
+				if (scaleSession.zScaleSelected())
+					zdimen.show();
+				else
+					zdimen.hide();
+				if (scaleSession.rightSelected() || scaleSession.leftSelected())
+					xdimen.show();
+				else
+					xdimen.hide();
+				if (scaleSession.frontSelected() || scaleSession.rearSelected())
+					ydimen.show();
+				else
+					ydimen.hide();
 			}
 
 			CaDoodleOperation currentOperation = ap.get().getCurrentOperation();
@@ -818,13 +826,14 @@ public class ControlSprites {
 					session.hideHalos();
 					break;
 
-				case ResizeX :
-					break;
-				case ResizeXY :
-					break;
-				case ResizeY :
-					break;
-				case ResizeZ :
+				case Resize :
+					for (DottedLine l : lines) {
+						l.setVisible(true);
+					}
+					align.hide();
+					mirror.hide();
+					scaleSession.show();
+					session.hideHalos();
 					break;
 				case Rotating :
 					break;
