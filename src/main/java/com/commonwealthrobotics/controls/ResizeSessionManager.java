@@ -9,6 +9,7 @@ import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.BoundsComputFailure;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Resize;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -111,7 +112,7 @@ public class ResizeSessionManager {
 		return in;
 	}
 
-	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable updateLines, ActiveProject ap,
+	public ResizeSessionManager(BowlerStudio3dEngine engine, Affine selection, Runnable ul, ActiveProject ap,
 			SelectionSession session, Affine workplaneOffset, MoveUpArrow upArrow, ControlSprites controlSprites,
 			WorkplaneManager workplane) {
 
@@ -123,33 +124,36 @@ public class ResizeSessionManager {
 		if (engine == null)
 			throw new NullPointerException();
 
-		this.updateLines = updateLines;
+		this.updateLines = () -> {
+			ul.run();
+		};
 
 		Runnable onReset = () -> {
 			resetSelected();
 			upArrow.resetSelected();
+			controlSprites.setMode(SpriteDisplayMode.Default);
 		};
 
 		topCenter = new ResizingHandle("topCenter", workplane, engine, selection, new Vector3d(0, 0, 1),
-				workplaneOffset, updateLines, onReset);
+				workplaneOffset, updateLines, onReset, controlSprites);
 		rightFront = new ResizingHandle("rightFront", workplane, engine, selection, new Vector3d(1, 1, 0),
-				workplaneOffset, updateLines, onReset);
+				workplaneOffset, updateLines, onReset, controlSprites);
 		rightRear = new ResizingHandle("rightRear", workplane, engine, selection, new Vector3d(1, 1, 0),
-				workplaneOffset, updateLines, onReset);
+				workplaneOffset, updateLines, onReset, controlSprites);
 		leftFront = new ResizingHandle("leftFront", workplane, engine, selection, new Vector3d(1, 1, 0),
-				workplaneOffset, updateLines, onReset);
+				workplaneOffset, updateLines, onReset, controlSprites);
 		leftRear = new ResizingHandle("leftRear", workplane, engine, selection, new Vector3d(1, 1, 0), workplaneOffset,
-				updateLines, onReset);
+				updateLines, onReset, controlSprites);
 
 		// Edge-midpoint handles: single-axis constraint vectors
 		frontMid = new ResizingHandle("frontMid", workplane, engine, selection, new Vector3d(1, 0, 0), workplaneOffset,
-				updateLines, onReset);
+				updateLines, onReset, controlSprites);
 		rearMid = new ResizingHandle("rearMid", workplane, engine, selection, new Vector3d(1, 0, 0), workplaneOffset,
-				updateLines, onReset);
+				updateLines, onReset, controlSprites);
 		leftMid = new ResizingHandle("leftMid", workplane, engine, selection, new Vector3d(0, 1, 0), workplaneOffset,
-				updateLines, onReset);
+				updateLines, onReset, controlSprites);
 		rightMid = new ResizingHandle("rightMid", workplane, engine, selection, new Vector3d(0, 1, 0), workplaneOffset,
-				updateLines, onReset);
+				updateLines, onReset, controlSprites);
 
 		objectBottomZ = 0; // Keep track of the object bottom position
 
@@ -1253,14 +1257,27 @@ public class ResizeSessionManager {
 		return leftSelected() || rightSelected();
 	}
 
-	public Bounds getBounds() {
+	public boolean anySelected() {
+		return leftSelected() || rightSelected() || zScaleSelected();
+	}
 
+	public Bounds getBounds() {
+		if (anySelected())
+			return getBoundsDynamic();
+		try {
+			return session.getSellectedBounds();
+		} catch (BoundsComputFailure e) {
+			Log.error(e);
+		}
+		return getBoundsDynamic();
+	}
+
+	public Bounds getBoundsDynamic() {
 		TransformNR lr = rightRear.getCurrentInReferenceFrame();
 		TransformNR rf = leftFront.getCurrentInReferenceFrame();
 		TransformNR tc = topCenter.getCurrentInReferenceFrame();
 		Vector3d min = new Vector3d(lr.getX(), lr.getY(), objectBottomZ);
 		Vector3d max = new Vector3d(rf.getX(), rf.getY(), tc.getZ());
-
 		return new Bounds(min, max);
 	}
 
