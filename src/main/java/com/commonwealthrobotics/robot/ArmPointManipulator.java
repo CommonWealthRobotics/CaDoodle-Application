@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.MoveUpArrow;
 import com.commonwealthrobotics.controls.ResizingHandle;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation.DragState;
@@ -29,10 +30,10 @@ public class ArmPointManipulator {
 	private MoveUpArrow up;
 	public ArmPointManipulator(Runnable saveListener, EventHandler<MouseEvent> moveListener, ActiveProject ap,
 			BowlerStudio3dEngine engine, Affine workplaneOffset, Runnable onSelect, Runnable onReset,
-			WorkplaneManager workplane) {
+			WorkplaneManager workplane, ControlSprites controlSprites) {
 		this.saveListener = saveListener;
 		tip = new ResizingHandle("Limb Base", workplane, engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset,
-				onSelect, onReset, new Cylinder(5, 1).toCSG());
+				onSelect, onReset, new Cylinder(5, 1).toCSG(), controlSprites);
 		tip.setMyColor(Color.PINK, Color.TEAL);
 		tip.setBaseScale(1.25);
 		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());

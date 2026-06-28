@@ -13,6 +13,7 @@ import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
+import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -78,7 +79,7 @@ public class RobotLab {
 			GridPane controllerGrid, GridPane controllerFeaturesGrid, WorkplaneManager workplane, VBox controllersVBox,
 			VBox controllerConsumedBox, VBox capabilitiesVBox, VBox optionProvide, VBox optionsConsume,
 			GridPane wheelOptionGrid, GridPane legsOptionGrid, GridPane armsOptionGrid, BowlerStudio3dEngine engine,
-			RulerManager ruler) {
+			RulerManager ruler, ControlSprites controlSprites) {
 		this.session = session;
 		this.ap = ap;
 		this.baseRobotBox = baseRobotBox;
@@ -104,7 +105,7 @@ public class RobotLab {
 			updateDisplay();
 		});
 		updateDisplay();
-		setManager(new LimbControlManager(engine, session, ap, ruler, workplane));
+		setManager(new LimbControlManager(engine, session, ap, ruler, workplane, controlSprites));
 	}
 
 	public void setRobotLabOpenState(boolean isOpen) {
