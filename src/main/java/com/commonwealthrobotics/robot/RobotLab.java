@@ -68,7 +68,7 @@ public class RobotLab {
 	private GridPane legsOptionGrid;
 	private GridPane armsOptionGrid;
 	private VBox controllerConsumedBox;
-	private boolean controllersLoaded;
+	private boolean controllersLoaded = true; // disable laoding for performance checks
 	private boolean limmbsLoaded;
 	private LimbControlManager manager;
 	private boolean updating;
