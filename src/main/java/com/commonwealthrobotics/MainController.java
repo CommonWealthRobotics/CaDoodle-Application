@@ -1514,10 +1514,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// session.save();
 		// }
 		this.source = source;
-		BowlerStudio.runLater(() -> {
-			onChange(engine.getFlyingCamera());
-
-		});
 	}
 
 	private boolean isInitializing() {
@@ -1534,7 +1530,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		robotLab = new RobotLab(session, ap, baseRobotBox, makeRobotButton, robotLabTabPane, bodyTab, headTab,
 				advancedTab, RobotBasePanel, controllerGrid, controllerFeaturesGrid, session.workplane, controllersVBox,
 				controllerConsumedBox, capabilitiesVBox, optionProvide, optionsConsume, wheelOptionGrid, legsOptionGrid,
-				armsOptionGrid, engine, ruler);
+				armsOptionGrid, engine, ruler, session.getControls());
 		BowlerStudio.runLater(() -> {
 			onChange(engine.getFlyingCamera());
 		});
