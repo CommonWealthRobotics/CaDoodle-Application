@@ -20,7 +20,6 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.BoundsComputFailure;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICaDoodleStateUpdate;
@@ -108,6 +107,7 @@ public class ControlSprites {
 	private Point3D startingPosition3D;
 	private double objectHeight = 0;
 	private double cameraFovDegrees;
+	private Affine zMoveOffsetFootprint;
 
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
@@ -203,7 +203,7 @@ public class ControlSprites {
 			xymoving = false;
 		});
 
-		Affine zMoveOffsetFootprint = new Affine();
+		zMoveOffsetFootprint = new Affine();
 		zMoveManipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(),
 				this::sendNewWorldPosition, true, false);
 		zMoveManipulator.setFrameOfReference(() -> ap.get().getWorkplane());
@@ -224,12 +224,9 @@ public class ControlSprites {
 			} catch (InvalidLocationMove e1) {
 				Log.error(e1);
 			}
-			//resetManipulator();
-			//			zMoveManipulator.set(0, 0, 0);
-			//			BowlerKernel.runLater(() -> {
-			//				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
-			//			});
-
+			BowlerKernel.runLater(() -> {
+				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
+			});
 			zmoving = false;
 			setMode(SpriteDisplayMode.Default);
 			updateLines();
@@ -244,7 +241,7 @@ public class ControlSprites {
 			globalPose = wp.times(globalPose);
 			globalPose.setRotation(new RotationNR());
 			TransformNR inverse = globalPose.inverse();
-			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse.translateZ(0.1), zMoveOffsetFootprint));
+			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(inverse.translateZ(0.01), zMoveOffsetFootprint));
 			updateLines();
 		});
 
@@ -265,7 +262,7 @@ public class ControlSprites {
 
 		Runnable updateLines = () -> {
 			updateLines();
-			// com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
+			//com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
 		};
 
 		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, upArrow, this,
@@ -355,7 +352,11 @@ public class ControlSprites {
 	}
 
 	void resetManipulator() {
-		zMoveManipulator.reset();
+		zMoveManipulator.set(0, 0, 0);
+		//zMoveManipulator.reset();
+		BowlerKernel.runLater(() -> {
+			TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
+		});
 	}
 
 	private void updateLinesAndCubes() {
@@ -529,6 +530,10 @@ public class ControlSprites {
 
 	public void updateLines() {
 
+		if (session.getSelected().size() == 0) {
+			Log.debug("Nothing selected, no line updates");
+			return;
+		}
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
@@ -537,8 +542,10 @@ public class ControlSprites {
 			Vector3d max = bounds.getMax();
 
 			// Don't draw anything for zero size objects
-			if ((max.x - min.x) < 0.0001)
+			if ((max.x - min.x) < 0.0001) {
+				Log.debug(" Don't draw anything for zero size objects");
 				return;
+			}
 
 			// Set footprint of shape
 			footprint.setHeight(Math.abs(max.y - min.y));
@@ -654,7 +661,8 @@ public class ControlSprites {
 				else
 					ydimen.hide();
 			}
-			if ((mode == SpriteDisplayMode.Default)) {
+			boolean isDefault = mode == SpriteDisplayMode.Default;
+			if (isDefault) {
 				if (scaleSession.zScaleSelected())
 					zdimen.show();
 				else
@@ -670,25 +678,20 @@ public class ControlSprites {
 			}
 
 			CaDoodleOperation currentOperation = ap.get().getCurrentOperation();
-			boolean isThisADisplayMode = (mode == SpriteDisplayMode.MoveZ) || (mode == SpriteDisplayMode.MoveXY)
-					|| ((mode == SpriteDisplayMode.Default) && MoveCenter.class.isInstance(currentOperation)
-							&& (currentOp != currentOperation));
+			boolean isMoveZ = mode == SpriteDisplayMode.MoveZ;
+			boolean isThisADisplayMode = isMoveZ || (mode == SpriteDisplayMode.MoveXY)
+					|| (isDefault && MoveCenter.class.isInstance(currentOperation) && (currentOp != currentOperation));
 
 			if (!ruler.isActive()) {
-				if (upArrow.isSelected() && (mode == SpriteDisplayMode.Default) || (mode == SpriteDisplayMode.MoveZ))
+				boolean selected = upArrow.isSelected();
+				boolean isZMove = selected && (isDefault || isMoveZ);
+				if (isZMove)
 					zOffset.show();
 				else
 					zOffset.hide();
-
-				if (isThisADisplayMode && !scaleSession.xySelected() && !scaleSession.zScaleSelected()) {
-
-					if (!xymoving)
-						zOffset.show();
-
-					else {
-						xOffset.show();
-						yOffset.show();
-					}
+				if (isThisADisplayMode && !scaleSession.xySelected() && !scaleSession.zScaleSelected() && !isZMove) {
+					xOffset.show();
+					yOffset.show();
 				} else {
 					xOffset.hide();
 					yOffset.hide();
@@ -703,27 +706,21 @@ public class ControlSprites {
 			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
 			for (CSG c : session.getSelected()) {
-				Bounds b;
-				try {
-					b = Align.getBounds(Arrays.asList(c), ap.get().getWorkplane(), ap.get().getBoundsCache());
+				MeshHolder meshHolder = session.getMeshes().get(c);
+				if (meshHolder != null) {
+					Bounds b = meshHolder.bouds;
 					double haloDIstance = 60000;
 					double scalex = 1.02 - (b.getTotalX() / (b.getTotalX() + (haloDIstance * zdimen.getScale())));
 					double scaley = 1.02 - (b.getTotalY() / (b.getTotalY() + (haloDIstance * zdimen.getScale())));
 					double scalez = 1.02 - (b.getTotalZ() / (b.getTotalZ() + (haloDIstance * zdimen.getScale())));
-					// com.neuronrobotics.sdk.common.Log.debug("Scale
-					// "+scalex+"|"+scaley+"|"+scalez);
-					MeshHolder meshHolder = session.getMeshes().get(c);
-					if (meshHolder != null)
-						for (Transform t : meshHolder.halo.getTransforms()) {
-							if (Scale.class.isInstance(t)) {
-								Scale s = (Scale) t;
-								s.setX(scalex);
-								s.setY(scaley);
-								s.setX(scalez);
-							}
+					for (Transform t : meshHolder.halo.getTransforms()) {
+						if (Scale.class.isInstance(t)) {
+							Scale s = (Scale) t;
+							s.setX(scalex);
+							s.setY(scaley);
+							s.setX(scalez);
 						}
-				} catch (BoundsComputFailure e) {
-					Log.error(e);
+					}
 				}
 
 			}
