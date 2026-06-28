@@ -319,7 +319,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
-		clearBoundsCache();
+		ArrayList<CSG> toCleal = new ArrayList<CSG>();
+		for (CSG c : currentState) {
+			for (String s : source.getNamesAddedInThisOperation()) {
+				if (c.getName().contentEquals(s))
+					toCleal.add(c);
+			}
+
+		}
+		clearBoundsCache(toCleal);
+		toCleal.clear();
 		if (f.isInitialized())
 			try {
 				getSellectedBounds(currentState);
@@ -634,6 +643,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		BowlerStudio.runLater(() -> {
 			clearScreen();
+			resetManipulator();
+			controls.resetManipulator();
 			// if (isShowConstituants()) {
 			// for (CSG c : ap.get().getCurrentState()) {
 			// if (c.isInGroup() || c.isHide())
@@ -1047,10 +1058,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			fireSelectionChanged();
 	}
 
-	public void clearBoundsCache() {
+	public void clearBoundsCache(List<CSG> toclear) {
 		Log.debug("Clearing bounds cache");
 		// Log.error(new Exception());
-		ap.get().getBoundsCache().clear();
+		if (toclear == null)
+			ap.get().getBoundsCache().clear();
+		else
+			for (CSG c : toclear)
+				ap.get().getBoundsCache().remove(c);
 	}
 
 	private void setUpNumberField(GridPane gp, int line, String text, Parameter para, int width) {
@@ -2501,14 +2516,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) throws BoundsComputFailure {
+		ArrayList<CSG> parts = getLimbParts(limb);
+
+		return getSellectedBounds(parts);
+	}
+
+	public ArrayList<CSG> getLimbParts(DHParameterKinematics limb) {
 		ArrayList<CSG> parts = new ArrayList<CSG>();
 		for (CSG c : getCurrentState()) {
 			if (c.getLimbName().isPresent() && c.getLimbName().get().contentEquals(limb.getScriptingName()))
 				parts.add(c);
 
 		}
-
-		return getSellectedBounds(parts);
+		return parts;
 	}
 
 	public void objectWorkplane() {
@@ -2689,7 +2709,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								com.neuronrobotics.sdk.common.Log.error(e);
 							}
 
-							manipulation.reset();
+							//resetManipulator();
 							TickToc.tic("save");
 						} catch (Throwable t) {
 							Log.error(t);
@@ -2711,6 +2731,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Log.error(t);
 			}
 		});
+	}
+
+	private void resetManipulator() {
+		manipulation.reset();
 	}
 
 	public void save() {
@@ -2892,7 +2916,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
-		clearBoundsCache();
+		clearBoundsCache(null);
 		if (!workplane.isWorkplaneNotOrigin()) {
 			if (objectWorkplane != null) {
 				objectWorkplane.getStyleClass().clear();
