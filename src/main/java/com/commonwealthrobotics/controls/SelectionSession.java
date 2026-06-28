@@ -2908,6 +2908,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
+		if (Platform.isFxApplicationThread()) {
+			Log.error(new Exception("SetWorking plane recaluclates baounds and can not be in ui thread"));
+		}
 		clearBoundsCache(null);
 		if (!workplane.isWorkplaneNotOrigin()) {
 			if (objectWorkplane != null) {
@@ -2916,10 +2919,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			isObjectWorkplane = false;
 		}
+		try {
+			getSellectedBounds(getAllVisible());
+			BowlerStudio.runLater(() -> {
+				updateControls();
+			});
+		} catch (BoundsComputFailure e) {
+			Log.error(e);
+		}
 
-		BowlerStudio.runLater(() -> {
-			updateControls();
-		});
 	}
 
 	@Override
