@@ -64,13 +64,16 @@ public class ResizingHandle {
 
 	// private Tooltip hover = new Tooltip();
 	public ResizingHandle(String name, WorkplaneManager workplane, BowlerStudio3dEngine engine, Affine move,
-			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
+			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset,
+			ControlSprites controlSprites) {
 		this(name, workplane, engine, move, vector3d, workplaneOffset, onSelect, onReset,
-				new ChamferedCube(getSize(), getSize(), getSize() / 2.4, getSize() / 5).toCSG().toZMin());
+				new ChamferedCube(getSize(), getSize(), getSize() / 2.4, getSize() / 5).toCSG().toZMin(),
+				controlSprites);
 	}
 
 	public ResizingHandle(String name, WorkplaneManager workplane, BowlerStudio3dEngine engine, Affine move,
-			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape) {
+			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape,
+			ControlSprites controlSprites) {
 		this.name = name;
 		this.workplane = workplane;
 		this.workplaneOffset = workplaneOffset;
@@ -116,8 +119,11 @@ public class ResizingHandle {
 				workplane.doClickEvent(event);
 				return;
 			}
-			com.neuronrobotics.sdk.common.Log.debug("Corner selected");
+			com.neuronrobotics.sdk.common.Log.debug(name + " selected");
 			onReset.run();
+			if (!selected) {
+				controlSprites.setMode(SpriteDisplayMode.Resize);
+			}
 			selected = true;
 			setUniform(event.isShiftDown());
 			onSelect.run();
