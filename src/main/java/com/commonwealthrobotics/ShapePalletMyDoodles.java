@@ -11,12 +11,10 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
-import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
@@ -92,8 +90,8 @@ public class ShapePalletMyDoodles {
 		button.setTooltip(hover);
 		button.getStyleClass().add("image-button");
 
-		CSGDatabaseInstance instance = caDoodleFile.getCsgDBinstance();
-		if (!caDoodleFile.getSTLThumbnailFile().exists()) {
+		//CSGDatabaseInstance instance = caDoodleFile.getCsgDBinstance();
+		if (!caDoodleFile.get3mfThumbnailFile().exists()) {
 			// Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
 			// CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
 			// caDoodleFile.initialize();
@@ -102,14 +100,14 @@ public class ShapePalletMyDoodles {
 			// if (!caDoodleFile.getSTLThumbnailFile().exists())
 			throw new Exception("Failed to initialize model " + caDoodleFile.getMyProjectName());
 		}
-		CSG indicator = null;
+		List<CSG> indicator = null;
 		try {
-			indicator = Vitamins.get(instance, false, caDoodleFile.getSTLThumbnailFile());
+			indicator = CSG.fromThreeMF(caDoodleFile.get3mfThumbnailFile().toPath());
 		} catch (Throwable e) {
 			Log.error(e);
-			caDoodleFile.getSTLThumbnailFile().delete();
+			caDoodleFile.get3mfThumbnailFile().delete();
 		}
-		CSG in = indicator;
+		List<CSG> in = indicator;
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = caDoodleFile.loadImageFromFile();

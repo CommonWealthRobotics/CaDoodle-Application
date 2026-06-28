@@ -1,7 +1,9 @@
 package com.commonwealthrobotics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
@@ -49,7 +51,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private HashMap<MeshView, CSG> meshesReverseLookup;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
-	private MeshView indicatorMesh;
+	private List<MeshView> indicatorMeshs;
 	private TransformNR currentAbsolutePose;
 	private Runnable onSelectEvent = () -> {
 	};
@@ -321,25 +323,37 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
+		setIndicator(Arrays.asList(indicator), centerOffset);
+	}
 
-		if (indicatorMesh != null)
-			engine.removeUserNode(indicatorMesh);
-		indicatorMesh = indicator.newMesh();
-		indicatorMesh.getTransforms().addAll(getWorkplaneLocation(), centerOffset);
-		indicatorMesh.setMouseTransparent(true);
+	public void setIndicator(List<CSG> indicators, Affine centerOffset) {
 
-		PhongMaterial material = new PhongMaterial();
-
-		if (indicator.isHole()) {
-			material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-			material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-		} else {
-			Color c = indicator.getColor();
-			material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
-			material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+		if (indicatorMeshs != null) {
+			for (MeshView indicatorMesh : indicatorMeshs) {
+				engine.removeUserNode(indicatorMesh);
+			}
+			indicatorMeshs.clear();
 		}
-		indicatorMesh.setMaterial(material);
-		engine.addUserNode(indicatorMesh);
+		indicatorMeshs = new ArrayList<MeshView>();
+		for (CSG indicator : indicators) {
+			MeshView indicatorMesh = indicator.newMesh();
+			indicatorMesh.getTransforms().addAll(getWorkplaneLocation(), centerOffset);
+			indicatorMesh.setMouseTransparent(true);
+
+			PhongMaterial material = new PhongMaterial();
+
+			if (indicator.isHole()) {
+				material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+			} else {
+				Color c = indicator.getColor();
+				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
+				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+			}
+			indicatorMesh.setMaterial(material);
+			indicatorMeshs.add(indicatorMesh);
+			engine.addUserNode(indicatorMesh);
+		}
 	}
 
 	public void updateMeshes(HashMap<CSG, MeshHolder> meshes) {
@@ -366,8 +380,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				mv.removeEventFilter(MouseEvent.ANY, this);
 			}
 
-		if (indicatorMesh != null)
-			indicatorMesh.setVisible(false);
+		if (indicatorMeshs != null)
+			for (MeshView indicatorMesh : indicatorMeshs)
+				indicatorMesh.setVisible(false);
 
 		// indicatorMesh = null;
 
@@ -413,8 +428,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				mv.addEventFilter(MouseEvent.ANY, this);
 			}
 
-		if (indicatorMesh != null)
-			indicatorMesh.setVisible(true);
+		if (indicatorMeshs != null)
+			for (MeshView indicatorMesh : indicatorMeshs)
+				indicatorMesh.setVisible(true);
 	}
 
 	@Override
@@ -627,7 +643,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 						new Vector3d(pointerWidth, pointerWidth, 0), new Vector3d(0, 0, pointerHeight))))
 				.setColor(Color.YELLOWGREEN);
 
-		this.setIndicator(indicator, new Affine());
+		this.setIndicator(Arrays.asList(indicator), new Affine());
 
 		ap.get().setWorkplane(new TransformNR());
 		session.updateHandleOrientations(engine.getFlyingCamera().getCamerFrame());
@@ -642,7 +658,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					ap.get().setWorkplane(new TransformNR());
 					ruler.disableRulerMode();
 				} else {
-					// Move the workplane down from the surface to ensure a solid overlap between the object and the surface
+					// Move the workplane down from the surface to ensure a solid overlap between
+					// the object and the surface
 					TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 					TransformNR currentAbsolutePose = this.getCurrentAbsolutePose().times(downset);
 
