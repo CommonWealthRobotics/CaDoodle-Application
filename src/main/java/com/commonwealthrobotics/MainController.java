@@ -10,6 +10,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,8 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.creature.ImagePorviderInterface;
+import com.neuronrobotics.bowlerstudio.creature.NoImageException;
 import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.FreecadLoader;
@@ -50,6 +53,7 @@ import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Debug3dProvider;
 import eu.mihosoft.vrl.v3d.IDebug3dProvider;
 import eu.mihosoft.vrl.v3d.CSG.OptType;
+import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -70,6 +74,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
@@ -1073,7 +1078,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 			selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
 
-
 			setUpNavigationCube();
 			setUp3dEngine();
 			setUpColorPicker();
@@ -1427,6 +1431,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			event.setDropCompleted(true);
 			event.consume();
 		});
+		CaDoodleFile.setImageEngine(new ImagePorviderInterface() {
+			@Override
+			public WritableImage get(CSGDatabaseInstance instance, List<CSG> incomingToDisplay, File destination)
+					throws NoImageException, IOException {
+				// TODO Auto-generated method stub
+				return engine.saveViewToPng(destination, 80, 80);
+			}
+		});
 	}
 
 	private void createGroundPlane() {
@@ -1779,21 +1791,23 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void cancel() {
 		com.neuronrobotics.sdk.common.Log.debug("MainController:Cancel event");
-		try {
-			session.setMode(SpriteDisplayMode.Default);
-			if (session.workplane.isTemporaryPlane()) {
-				ap.get().setWorkplane(new TransformNR());
-				session.workplane.placeWorkplaneVisualization();
-				session.workplane.clearTemporaryPlane();
+		session.getExecutor().submit(() -> {
+			try {
+				session.setMode(SpriteDisplayMode.Default);
+				if (session.workplane.isTemporaryPlane()) {
+					ap.get().setWorkplane(new TransformNR());
+					session.workplane.placeWorkplaneVisualization();
+					session.workplane.clearTemporaryPlane();
+				}
+			} catch (Exception ex) {
+				Log.error(ex);
 			}
 			session.clearSelection();
-		} catch (Exception ex) {
-			Log.error(ex);
-		}
-		BowlerStudio.runLater(() -> {
-			session.setKeyBindingFocus();
-			robotLab.onCancel();
-			onChange(engine.getFlyingCamera());
+			BowlerStudio.runLater(() -> {
+				session.setKeyBindingFocus();
+				robotLab.onCancel();
+				onChange(engine.getFlyingCamera());
+			});
 		});
 	}
 
