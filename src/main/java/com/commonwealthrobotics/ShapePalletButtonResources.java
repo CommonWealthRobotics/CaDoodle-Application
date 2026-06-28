@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.neuronrobotics.bowlerstudio.creature.NoImageException;
+import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
@@ -36,6 +36,7 @@ public class ShapePalletButtonResources {
 	CSG indicator = null;
 	File imageFile = null;
 	File stlFile = null;
+	private ThumbnailImage imageengine;
 
 	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name, ActiveProject ap) {
 		String string = key.get("plugin");
@@ -118,7 +119,7 @@ public class ShapePalletButtonResources {
 				c.setIsHole(false);
 			}
 		try {
-			image = ap.get().getImageEngine().get(ap.get().getCsgDBinstance(), so);
+			image = getImageengine().get(ap.get().getCsgDBinstance(), so, imageFile);
 			BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 			try {
 				ImageIO.write(bufferedImage, "png", imageFile);
@@ -129,7 +130,7 @@ public class ShapePalletButtonResources {
 				// e.getMessage());
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-		} catch (NoImageException e) {
+		} catch (Exception e) {
 			Log.error(e);
 			image = new WritableImage(100, 100);
 		}
@@ -157,5 +158,15 @@ public class ShapePalletButtonResources {
 	public CSG getIndicator() {
 
 		return indicator;
+	}
+
+	public ThumbnailImage getImageengine() {
+		if (imageengine == null)
+			imageengine = new ThumbnailImage();
+		return imageengine;
+	}
+
+	public void setImageengine(ThumbnailImage imageengine) {
+		this.imageengine = imageengine;
 	}
 }
