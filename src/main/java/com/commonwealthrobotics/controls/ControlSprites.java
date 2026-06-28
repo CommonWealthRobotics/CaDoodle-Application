@@ -224,11 +224,11 @@ public class ControlSprites {
 			} catch (InvalidLocationMove e1) {
 				Log.error(e1);
 			}
-
-			zMoveManipulator.set(0, 0, 0);
-			BowlerKernel.runLater(() -> {
-				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
-			});
+			//resetManipulator();
+			//			zMoveManipulator.set(0, 0, 0);
+			//			BowlerKernel.runLater(() -> {
+			//				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
+			//			});
 
 			zmoving = false;
 			setMode(SpriteDisplayMode.Default);
@@ -352,6 +352,10 @@ public class ControlSprites {
 
 		clearSelection();
 		setUpUIComponents();
+	}
+
+	void resetManipulator() {
+		zMoveManipulator.reset();
 	}
 
 	private void updateLinesAndCubes() {
