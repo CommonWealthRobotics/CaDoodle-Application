@@ -1495,7 +1495,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			redoButton.setDisable(!ap.get().isForwardAvailable());
 			undoButton.setDisable(!ap.get().isBackAvailable());
 		});
-		session.onUpdate(currentState, source, fi);
 		ObservableList<String> c = showAllImage.getStyleClass();
 		c.clear();
 		if (session.isAnyHidden()) {
