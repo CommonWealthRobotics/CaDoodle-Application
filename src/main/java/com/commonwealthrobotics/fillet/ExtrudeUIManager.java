@@ -23,7 +23,6 @@ public class ExtrudeUIManager {
 			RulerManager ruler) {
 		session.setMode(SpriteDisplayMode.PLACING);
 
-
 		CSG indicator = new Cylinder(5 / 2.0, 0, 5, 20).toCSG();
 
 		workplane.setIndicator(indicator, new Affine());
@@ -34,20 +33,21 @@ public class ExtrudeUIManager {
 		workplane.setOnSelectEvent(() -> {
 
 			if (workplane.isClicked()) {
-				if (workplane.isClickOnGround()) {
-					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
-					ap.get().setWorkplane(new TransformNR());
-				} else {
-					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-				}
-				Set<String> selectedSet = new HashSet<String>();
-				for (CSG c : selected)
-					selectedSet.add(c.getName());
-				ExtrudeSurface op = new ExtrudeSurface().setWorkplane(workplane.getCurrentAbsolutePose())
-						.setToExtrude(selectedSet);
-				Thread thread = ap.addOp(op);
-				session.clearSelection();
+
 				session.getExecutor().execute(() -> {
+					if (workplane.isClickOnGround()) {
+						// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
+						ap.get().setWorkplane(new TransformNR());
+					} else {
+						ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+					}
+					Set<String> selectedSet = new HashSet<String>();
+					for (CSG c : selected)
+						selectedSet.add(c.getName());
+					ExtrudeSurface op = new ExtrudeSurface().setWorkplane(workplane.getCurrentAbsolutePose())
+							.setToExtrude(selectedSet);
+					Thread thread = ap.addOp(op);
+					session.clearSelection();
 					try {
 						thread.join();
 					} catch (InterruptedException e) {
@@ -56,13 +56,15 @@ public class ExtrudeUIManager {
 					}
 					List<String> added = op.getNamesAddedInThisOperation();
 					session.selectAll(added);
+
+					workplane.placeWorkplaneVisualization();
+					ruler.disableRulerMode();
+					session.save();
+					session.setMode(SpriteDisplayMode.Default);
+					session.updateControls();
 				});
-				workplane.placeWorkplaneVisualization();
-				ruler.disableRulerMode();
-				session.save();
 			}
-			session.setMode(SpriteDisplayMode.Default);
-			session.updateControls();
+
 
 		});
 
