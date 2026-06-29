@@ -918,17 +918,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWorkplane(ActionEvent event) {
-		session.setMode(SpriteDisplayMode.PLACING);
-		session.workplane.pickPlane(() -> {
-			ruler.disableRulerMode();
-			session.save();
-			// session.setMode(SpriteDisplayMode.Default);
-			// session.updateControls();
-		}, () -> { // Run always
-			session.setMode(SpriteDisplayMode.Default);
-			session.updateControls();
-		}, ruler);
-		session.setKeyBindingFocus();
+		session.getExecutor().submit(() -> {
+			session.setMode(SpriteDisplayMode.PLACING);
+			session.workplane.pickPlane(() -> {
+				ruler.disableRulerMode();
+				session.save();
+				// session.setMode(SpriteDisplayMode.Default);
+				// session.updateControls();
+			}, () -> { // Run always
+				session.setMode(SpriteDisplayMode.Default);
+				session.updateControls();
+			}, ruler);
+			session.setKeyBindingFocus();
+		});
 	}
 
 	@FXML
@@ -1881,7 +1883,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	@Override
-	public void onTimelineUpdate(int num, File image) {
+	public void onTimelineUpdate(int num, WritableImage image) {
 		// TODO Auto-generated method stub
 
 	}
