@@ -4,6 +4,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixExce
 
 import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -346,7 +347,7 @@ public class ResizingHandle {
 
 		TransformNR orient = new TransformNR();
 		orient.setRotation(rot);
-		TransformFactory.nrToAffine(orient, cameraOrient);
+		BowlerKernel.runLater(() -> TransformFactory.nrToAffine(orient, cameraOrient));
 	}
 
 	public void hide() {
