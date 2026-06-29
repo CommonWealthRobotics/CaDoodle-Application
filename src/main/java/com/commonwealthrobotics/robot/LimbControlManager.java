@@ -79,7 +79,7 @@ public class LimbControlManager {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			try {
-				session.getSellectedBounds(session.getLimbParts(limb), session.getLimbParts(limb));
+				session.getSellectedBounds(session.getLimbParts(limb));
 			} catch (BoundsComputFailure e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
