@@ -18,8 +18,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -92,6 +94,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -347,10 +350,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		intitialization = false;
 		setUpParametrics(currentState, source);
 		displayCurrent(source);
-		TickToc.tic("Update memory display");
-		updateMemoryDisplay();
-		TickToc.tic("Finish On Update In Selected Session");
-		TickToc.toc();
+
 		// TickToc.setEnabled(false);
 	}
 
@@ -638,7 +638,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			MeshView halo = c.newMesh(true);
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c)));
 		}
-
+		CountDownLatch latch = new CountDownLatch(1);
 		BowlerStudio.runLater(() -> {
 			if (isAlignActive() && Align.class.isInstance(source))
 				getControls().setMode(SpriteDisplayMode.Align);
@@ -687,9 +687,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
-			TickToc.toc();
 			TickToc.setEnabled(false);
+			TickToc.tic("Update memory display");
+			updateMemoryDisplay();
+			TickToc.tic("Finish On Update In Selected Session");
+			TickToc.toc();
+			latch.countDown();
 		});
+		// force the UI update to complete before moving on to other operations
+		try {
+			latch.await(100, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void clearScreen() {
@@ -775,6 +786,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			throw new RuntimeException("Name can not be null");
 
 		meshView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			if (workplane.isActive())
+				return;
 			if (event.getButton() == MouseButton.PRIMARY) {
 
 				if (event.isShiftDown()) {
@@ -1708,6 +1721,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void selectAll(Iterable<String> names) {
+		//Log.error(new Exception("selectAll"));
 		getExecutor().submit(() -> {
 			selectAllFromCurrentState(names);
 			setKeyBindingFocus();
@@ -1732,6 +1746,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		fireSelectionChanged();
+		//Log.error(new Exception("selectAllFromCurrentState"));
 		BowlerStudio.runLater(() -> {
 			updateControlsDisplayOfSelected();
 			setKeyBindingFocus();
@@ -2920,10 +2935,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			isObjectWorkplane = false;
 		}
 		try {
-			getSellectedBounds(getAllVisible());
+			getSellectedBounds(getCurrentState());
+			CountDownLatch latch = new CountDownLatch(1);
 			BowlerStudio.runLater(() -> {
 				updateControls();
+				latch.countDown();
 			});
+			try {
+				latch.await(5, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (BoundsComputFailure e) {
 			Log.error(e);
 		}
@@ -2978,7 +3001,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate(int num, File image) {
+	public void onTimelineUpdate(int num, WritableImage image) {
 	}
 
 	public void setAdvancedMode(boolean advanced) {
