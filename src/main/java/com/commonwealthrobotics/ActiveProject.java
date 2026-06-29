@@ -446,12 +446,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
-		try {
-			Thread.sleep(16);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//		try {
+		//			Thread.sleep(16);
+		//		} catch (InterruptedException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 	}
 
 	@Override
@@ -610,7 +610,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate(int num, File image) {
+	public void onTimelineUpdate(int num, WritableImage image) {
 		for (ICaDoodleStateUpdate l : listeners) {
 			try {
 				l.onTimelineUpdate(num, image);
