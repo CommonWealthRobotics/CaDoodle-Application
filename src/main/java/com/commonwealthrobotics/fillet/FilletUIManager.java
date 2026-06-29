@@ -22,7 +22,6 @@ public class FilletUIManager {
 			RulerManager ruler) {
 		session.setMode(SpriteDisplayMode.PLACING);
 
-
 		CSG indicator = new Fillet(2, 2).toCSG().rotz(90);
 
 		workplane.setIndicator(indicator, new Affine());
@@ -31,37 +30,38 @@ public class FilletUIManager {
 		workplane.placeWorkplaneVisualization();
 
 		workplane.setOnSelectEvent(() -> {
-
-			if (workplane.isClicked()) {
-				//				if (workplane.isClickOnGround()) {
-				//					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
-				//					ap.get().setWorkplane(new TransformNR());
-				//				} else {
-				//					ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
-				//				}
-				Set<String> selectedSet = new HashSet<String>();
-				for (CSG c : selected)
-					selectedSet.add(c.getName());
-				FilletChamfer op = new FilletChamfer().setWorkplane(workplane.getCurrentAbsolutePose())
-						.setToFillet(selectedSet);
-				Thread thread = ap.addOp(op);
-				session.clearSelection();
-				session.getExecutor().execute(() -> {
-					try {
-						thread.join();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					List<String> added = op.getNamesAddedInThisOperation();
-					session.selectAll(added);
-				});
-				workplane.placeWorkplaneVisualization();
-				ruler.disableRulerMode();
-				session.save();
-			}
-			session.setMode(SpriteDisplayMode.Default);
-			session.updateControls();
+			session.getExecutor().submit(() -> {
+				if (workplane.isClicked()) {
+					// if (workplane.isClickOnGround()) {
+					// // com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
+					// ap.get().setWorkplane(new TransformNR());
+					// } else {
+					// ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+					// }
+					Set<String> selectedSet = new HashSet<String>();
+					for (CSG c : selected)
+						selectedSet.add(c.getName());
+					FilletChamfer op = new FilletChamfer().setWorkplane(workplane.getCurrentAbsolutePose())
+							.setToFillet(selectedSet);
+					Thread thread = ap.addOp(op);
+					session.clearSelection();
+					session.getExecutor().execute(() -> {
+						try {
+							thread.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						List<String> added = op.getNamesAddedInThisOperation();
+						session.selectAll(added);
+					});
+					workplane.placeWorkplaneVisualization();
+					ruler.disableRulerMode();
+					session.save();
+				}
+				session.setMode(SpriteDisplayMode.Default);
+				session.updateControls();
+			});
 
 		});
 
