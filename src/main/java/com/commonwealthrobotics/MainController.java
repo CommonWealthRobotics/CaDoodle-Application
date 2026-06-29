@@ -1438,7 +1438,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			public WritableImage get(CSGDatabaseInstance instance, List<CSG> incomingToDisplay, File destination)
 					throws NoImageException, IOException {
 				// TODO Auto-generated method stub
-				return engine.saveViewToPng(destination, 80, 80);
+				return engine.saveViewToPng(destination, 320, 320);
 			}
 		});
 	}
@@ -1638,11 +1638,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					case 'Z' : // Ctrl+Z / Ctrl+Shift+Z - Undo
 						com.neuronrobotics.sdk.common.Log.debug("Undo");
 						session.workplane.cancel();
-						ap.get().back();
+						session.submit(() -> ap.get().back());
+
 						break;
 					case 'Y' : // Ctrl+Y - Redo
 						com.neuronrobotics.sdk.common.Log.debug("Redo");
-						ap.get().forward();
+						session.submit(() -> ap.get().forward());
 						break;
 					case 'G' :
 						if (shift) { // Ctrl+Shift+G - Ungroup
