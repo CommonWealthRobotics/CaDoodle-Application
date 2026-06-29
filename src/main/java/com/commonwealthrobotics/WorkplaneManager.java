@@ -407,7 +407,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void activate(boolean enableGroundPick) {
-
 		active = true;
 		tempory = false;
 		setClickOnGround(false);
@@ -547,17 +546,22 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void doClickEvent(MouseEvent ev) {
 		clicked = true;
-		// onCancel = null;// non cancel but instead completed
+		session.getExecutor().submit(() -> {
 
-		cancel();
+			// onCancel = null;// non cancel but instead completed
+			// this must not be in UI thread
+			cancel();
 
-		ev.consume();
-		session.updateControls();
-		engine.getWorkplaneGroup().setMouseTransparent(true);
+			ev.consume();
+			BowlerKernel.runLater(() -> {
+				engine.getWorkplaneGroup().setMouseTransparent(true);
 
-		session.getControls().hideRotationHandles();
+				session.getControls().hideRotationHandles();
 
-		wpPick.setMouseTransparent(true);
+				wpPick.setMouseTransparent(true);
+				session.getControls().setMode(SpriteDisplayMode.Default);
+			});
+		});
 	}
 
 	public static Polygon getPolygonFromFaceIndex(int faceIndex, CSG polygons) {
