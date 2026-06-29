@@ -39,6 +39,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -137,7 +138,7 @@ public class ProjectManager {
 				int col = (i + offsetFromStartingButton) % 4;
 				com.neuronrobotics.sdk.common.Log.debug(
 						"File " + c.getMyProjectName() + " on " + formattedDateTime + " row=" + row + " col=" + col);
-
+				WritableImage imageFromFile = c.loadImageFromFile();
 				BowlerStudio.runLater(() -> {
 					Button b = new Button(c.getMyProjectName());
 					Label e = new Label(formattedDateTime);
@@ -178,7 +179,7 @@ public class ProjectManager {
 
 					b.getStyleClass().add("image-button");
 					b.setContentDisplay(ContentDisplay.TOP);
-					ImageView value = new ImageView(c.loadImageFromFile());
+					ImageView value = new ImageView(imageFromFile);
 					value.setFitWidth(80);
 					value.setFitHeight(80);
 					b.setGraphic(value);
