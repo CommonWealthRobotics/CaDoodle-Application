@@ -94,7 +94,7 @@ public class RulerManager {
 			// com.neuronrobotics.sdk.common.Log.error(new Exception("Clear ruler"));
 			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), wp));
 			BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), rulerOffset));
-			ap.get().setRulerLocation(new TransformNR());
+			new Thread(() -> ap.get().setRulerLocation(new TransformNR())).start();
 		} else
 			setWP(newWP);
 
