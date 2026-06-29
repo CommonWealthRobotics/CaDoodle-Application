@@ -166,7 +166,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Point3D startingPosition3D;
 	private EventHandler<MouseEvent> mouseMover = manipulation.getMouseEvents();
 
-
 	public WorkplaneManager workplane;
 	boolean intitialization = false;
 
@@ -327,21 +326,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.source = source;
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
-		ArrayList<CSG> toCleal = new ArrayList<CSG>();
-		for (CSG c : currentState) {
-			for (String s : source.getNamesAddedInThisOperation()) {
-				if (c.getName().contentEquals(s))
-					toCleal.add(c);
-			}
 
-		}
-		toCleal.clear();
-		// if (f.isInitialized())
-		try {
-			getSellectedBounds(currentState, toCleal);
-		} catch (BoundsComputFailure e) {
-			Log.error(e);
-		}
 		// this.source = source;
 		intitialization = true;
 		// manipulation.set(0, 0, 0);
@@ -725,16 +710,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		MeshView meshView = holder.display;
 		MeshView halo = holder.halo;
 		Bounds b = holder.bouds;
-		double haloDIstance = 1;
-		double scalex = 1 - (b.getTotalX() / (b.getTotalX() + haloDIstance));
-		double scaley = 1 - (b.getTotalY() / (b.getTotalY() + haloDIstance));
-		double scalez = 1 - (b.getTotalZ() / (b.getTotalZ() + haloDIstance));
+		double haloDistance = 1;
 
-		TransformNR centerOffset = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
-		halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset));
-		halo.getTransforms().add(new Scale(1.0 + scalex, 1.0 + scaley, 1.0 + scalez));
-		halo.getTransforms().add(TransformFactory.nrToAffine(centerOffset.inverse()));
+		double scaleX = 1.02;
+		double scaleY = 1.02;
+		double scaleZ = 1.02;
 
+		double cx = b.getCenterX();
+		double cy = b.getCenterY();
+		double cz = b.getCenterZ();
+		Scale haloScale = new Scale();
+		haloScale.setX(scaleX);
+		haloScale.setY(scaleY);
+		haloScale.setZ(scaleZ);
+
+		haloScale.setPivotX(cx);
+		haloScale.setPivotY(cy);
+		haloScale.setPivotZ(cz);
+
+		halo.getTransforms().setAll(haloScale);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
@@ -1071,15 +1065,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			fireSelectionChanged();
 	}
 
-	//	public void clearBoundsCache(List<CSG> toclear) {
-	//		Log.debug("Clearing bounds cache " + toclear);
-	//		// Log.error(new Exception());
-	//		if (toclear == null)
-	//			ap.get().getBoundsCache().clear();
-	//		else
-	//			for (CSG c : toclear)
-	//				ap.get().getBoundsCache().remove(c);
-	//	}
+	// public void clearBoundsCache(List<CSG> toclear) {
+	// Log.debug("Clearing bounds cache " + toclear);
+	// // Log.error(new Exception());
+	// if (toclear == null)
+	// ap.get().getBoundsCache().clear();
+	// else
+	// for (CSG c : toclear)
+	// ap.get().getBoundsCache().remove(c);
+	// }
 
 	private void setUpNumberField(GridPane gp, int line, String text, Parameter para, int width) {
 		ArrayList<String> options3 = para.getOptions();
@@ -1720,7 +1714,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void selectAll(Iterable<String> names) {
-		//Log.error(new Exception("selectAll"));
+		// Log.error(new Exception("selectAll"));
 		getExecutor().submit(() -> {
 			selectAllFromCurrentState(names);
 			setKeyBindingFocus();
@@ -1745,7 +1739,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		fireSelectionChanged();
-		//Log.error(new Exception("selectAllFromCurrentState"));
+		// Log.error(new Exception("selectAllFromCurrentState"));
 		BowlerStudio.runLater(() -> {
 			updateControlsDisplayOfSelected();
 			setKeyBindingFocus();
@@ -2481,7 +2475,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b;
 			try {
-				b = getSellectedBounds(selectedCSG, null);
+				b = getSellectedBounds(selectedCSG);
 				getControls().initializeMirror(selectedCSG, b, getMeshes());
 			} catch (BoundsComputFailure e) {
 				Log.error(e);
@@ -2522,17 +2516,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public Bounds getSellectedBounds() throws BoundsComputFailure {
-		return getSellectedBounds(getCurrentStateSelected(), null);
+		return getSellectedBounds(getCurrentStateSelected());
 	}
 
-	public Bounds getSellectedBounds(List<CSG> incoming, List<CSG> toClear) throws BoundsComputFailure {
-		return Align.getBounds(incoming, ap.get().getWorkplane(), ap.get().getBoundsCache(), toClear);
+	public Bounds getSellectedBounds(List<CSG> incoming) throws BoundsComputFailure {
+		return ap.get().getBounds(incoming);
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) throws BoundsComputFailure {
 		ArrayList<CSG> parts = getLimbParts(limb);
 
-		return getSellectedBounds(parts, null);
+		return getSellectedBounds(parts);
 	}
 
 	public ArrayList<CSG> getLimbParts(DHParameterKinematics limb) {
@@ -2824,7 +2818,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		Bounds sellectedBounds;
 		try {
-			sellectedBounds = getSellectedBounds(selectedCSG, null);
+			sellectedBounds = getSellectedBounds(selectedCSG);
 			BowlerStudio.runLater(() -> {
 				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
 						ap.get().getBoundsCache(), cameraFovDegrees);
@@ -2932,21 +2926,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			isObjectWorkplane = false;
 		}
+
+		CountDownLatch latch = new CountDownLatch(1);
+		BowlerStudio.runLater(() -> {
+			updateControls();
+			latch.countDown();
+		});
 		try {
-			getSellectedBounds(getCurrentState(), getCurrentState());
-			CountDownLatch latch = new CountDownLatch(1);
-			BowlerStudio.runLater(() -> {
-				updateControls();
-				latch.countDown();
-			});
-			try {
-				latch.await(5, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (BoundsComputFailure e) {
-			Log.error(e);
+			latch.await(5, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
