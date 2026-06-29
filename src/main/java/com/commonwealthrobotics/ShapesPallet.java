@@ -235,7 +235,7 @@ public class ShapesPallet {
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
-						new Thread(() -> {
+						session.getExecutor().submit(() -> {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
@@ -290,15 +290,7 @@ public class ShapesPallet {
 										}
 									}
 									ap.addOp(setAddFromScript).join();
-
-									List<String> namesAdded = setAddFromScript.getNamesAddedInThisOperation();
-									ArrayList<String> namesBack = new ArrayList<String>();
-									namesBack.addAll(namesAdded);
-									//
-									// MoveCenter mc = new MoveCenter().setNames(namesBack)
-									// .setLocation(currentAbsolutePose);
-									// ap.addOp(mc).join();
-									session.selectAll(namesAdded);
+									List<String> names = setAddFromScript.getNamesAddedInThisOperation();
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
@@ -310,13 +302,15 @@ public class ShapesPallet {
 									workplane.placeWorkplaneVisualization();
 									if (workplaneInOrigin)
 										workplane.setTemporaryPlane();
+									session.selectAllFromCurrentState(names);
+									session.setKeyBindingFocus();
 								} catch (CadoodleConcurrencyException e) {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								} catch (InterruptedException e) {
 									com.neuronrobotics.sdk.common.Log.error(e);
 								}
 
-						}).start();
+						});
 					});
 					workplane.activate();
 
