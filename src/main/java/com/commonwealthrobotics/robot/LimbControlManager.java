@@ -78,7 +78,12 @@ public class LimbControlManager {
 				// TODO Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
-			session.clearBoundsCache(session.getLimbParts(limb));
+			try {
+				session.getSellectedBounds(session.getLimbParts(limb), session.getLimbParts(limb));
+			} catch (BoundsComputFailure e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			BowlerStudio.runLater(() -> session.updateControls());
 		};
 

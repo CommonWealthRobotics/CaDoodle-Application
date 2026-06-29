@@ -569,8 +569,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		try {
 			return polygons.getPolygonByIndex(faceIndex);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return null;
 	}

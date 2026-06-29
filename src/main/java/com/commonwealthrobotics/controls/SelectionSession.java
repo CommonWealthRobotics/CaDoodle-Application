@@ -335,11 +335,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 		}
-		clearBoundsCache(toCleal);
 		toCleal.clear();
 		// if (f.isInitialized())
 		try {
-			getSellectedBounds(currentState);
+			getSellectedBounds(currentState, toCleal);
 		} catch (BoundsComputFailure e) {
 			Log.error(e);
 		}
@@ -1072,15 +1071,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			fireSelectionChanged();
 	}
 
-	public void clearBoundsCache(List<CSG> toclear) {
-		Log.debug("Clearing bounds cache " + toclear);
-		// Log.error(new Exception());
-		if (toclear == null)
-			ap.get().getBoundsCache().clear();
-		else
-			for (CSG c : toclear)
-				ap.get().getBoundsCache().remove(c);
-	}
+	//	public void clearBoundsCache(List<CSG> toclear) {
+	//		Log.debug("Clearing bounds cache " + toclear);
+	//		// Log.error(new Exception());
+	//		if (toclear == null)
+	//			ap.get().getBoundsCache().clear();
+	//		else
+	//			for (CSG c : toclear)
+	//				ap.get().getBoundsCache().remove(c);
+	//	}
 
 	private void setUpNumberField(GridPane gp, int line, String text, Parameter para, int width) {
 		ArrayList<String> options3 = para.getOptions();
@@ -2482,7 +2481,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b;
 			try {
-				b = getSellectedBounds(selectedCSG);
+				b = getSellectedBounds(selectedCSG, null);
 				getControls().initializeMirror(selectedCSG, b, getMeshes());
 			} catch (BoundsComputFailure e) {
 				Log.error(e);
@@ -2523,17 +2522,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public Bounds getSellectedBounds() throws BoundsComputFailure {
-		return getSellectedBounds(getCurrentStateSelected());
+		return getSellectedBounds(getCurrentStateSelected(), null);
 	}
 
-	public Bounds getSellectedBounds(List<CSG> incoming) throws BoundsComputFailure {
-		return Align.getBounds(incoming, ap.get().getWorkplane(), ap.get().getBoundsCache());
+	public Bounds getSellectedBounds(List<CSG> incoming, List<CSG> toClear) throws BoundsComputFailure {
+		return Align.getBounds(incoming, ap.get().getWorkplane(), ap.get().getBoundsCache(), toClear);
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) throws BoundsComputFailure {
 		ArrayList<CSG> parts = getLimbParts(limb);
 
-		return getSellectedBounds(parts);
+		return getSellectedBounds(parts, null);
 	}
 
 	public ArrayList<CSG> getLimbParts(DHParameterKinematics limb) {
@@ -2825,7 +2824,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		Bounds sellectedBounds;
 		try {
-			sellectedBounds = getSellectedBounds(selectedCSG);
+			sellectedBounds = getSellectedBounds(selectedCSG, null);
 			BowlerStudio.runLater(() -> {
 				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
 						ap.get().getBoundsCache(), cameraFovDegrees);
@@ -2926,7 +2925,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (Platform.isFxApplicationThread()) {
 			Log.error(new Exception("SetWorking plane recaluclates baounds and can not be in ui thread"));
 		}
-		clearBoundsCache(null);
 		if (!workplane.isWorkplaneNotOrigin()) {
 			if (objectWorkplane != null) {
 				objectWorkplane.getStyleClass().clear();
@@ -2935,7 +2933,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			isObjectWorkplane = false;
 		}
 		try {
-			getSellectedBounds(getCurrentState());
+			getSellectedBounds(getCurrentState(), getCurrentState());
 			CountDownLatch latch = new CountDownLatch(1);
 			BowlerStudio.runLater(() -> {
 				updateControls();
