@@ -1,6 +1,5 @@
 package com.commonwealthrobotics;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -41,6 +40,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -593,7 +593,7 @@ public class ComponentTreePanel implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate(int numberOfNew, File image) {
+	public void onTimelineUpdate(int numberOfNew, WritableImage image) {
 	}
 
 	private class ComponentTreeCell extends TreeCell<CSG> {
