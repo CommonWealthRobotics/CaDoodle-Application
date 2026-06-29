@@ -1,6 +1,5 @@
 package com.commonwealthrobotics.controls;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +37,7 @@ import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.Node;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
@@ -115,7 +115,7 @@ public class ControlSprites {
 	}
 
 	public void updateHandleOrientations(TransformNR cameraFrame) {
-		TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
+		BowlerKernel.runLater(() -> TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset));
 
 		scaleSession.updateOrientation(cameraFrame);
 	}
@@ -186,7 +186,7 @@ public class ControlSprites {
 			}
 
 			@Override
-			public void onTimelineUpdate(int num, File image) {
+			public void onTimelineUpdate(int num, WritableImage image) {
 				// TODO Auto-generated method stub
 			}
 		});
@@ -262,7 +262,6 @@ public class ControlSprites {
 
 		Runnable updateLines = () -> {
 			updateLines();
-			//com.neuronrobotics.sdk.common.Log.error("Lines updated from scale session");
 		};
 
 		scaleSession = new ResizeSessionManager(e, selection, updateLines, ap, session, workplaneOffset, upArrow, this,
@@ -353,7 +352,7 @@ public class ControlSprites {
 
 	void resetManipulator() {
 		zMoveManipulator.set(0, 0, 0);
-		//zMoveManipulator.reset();
+		// zMoveManipulator.reset();
 		BowlerKernel.runLater(() -> {
 			TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
 		});
@@ -788,7 +787,7 @@ public class ControlSprites {
 		BowlerStudio.runLater(() -> {
 
 			for (Node r : allElems)
-				r.setVisible(mode == SpriteDisplayMode.Default);
+				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
 			switch (this.mode) {
 
@@ -850,9 +849,11 @@ public class ControlSprites {
 					rotationManager.hide();
 					break;
 				case PLACING :
-					for (DottedLine l : lines)
-						l.setVisible(true);
-					scaleSession.show();
+					if (session.getSelected().size() > 0) {
+						for (DottedLine l : lines)
+							l.setVisible(true);
+						scaleSession.show();
+					}
 					break;
 				case Clear :
 					for (ThreedNumber t : numbers)
