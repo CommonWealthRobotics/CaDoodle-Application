@@ -44,7 +44,6 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
@@ -704,25 +703,7 @@ public class ControlSprites {
 				}
 			}
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
-			for (CSG c : session.getSelected()) {
-				MeshHolder meshHolder = session.getMeshes().get(c);
-				if (meshHolder != null) {
-					Bounds b = meshHolder.bouds;
-					double haloDIstance = 60000;
-					double scalex = 1.02 - (b.getTotalX() / (b.getTotalX() + (haloDIstance * zdimen.getScale())));
-					double scaley = 1.02 - (b.getTotalY() / (b.getTotalY() + (haloDIstance * zdimen.getScale())));
-					double scalez = 1.02 - (b.getTotalZ() / (b.getTotalZ() + (haloDIstance * zdimen.getScale())));
-					for (Transform t : meshHolder.halo.getTransforms()) {
-						if (Scale.class.isInstance(t)) {
-							Scale s = (Scale) t;
-							s.setX(scalex);
-							s.setY(scaley);
-							s.setX(scalez);
-						}
-					}
-				}
 
-			}
 		});
 
 	}
