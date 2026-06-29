@@ -1,6 +1,5 @@
 package com.commonwealthrobotics.mirror;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +23,7 @@ import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -371,7 +371,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	}
 
 	@Override
-	public void onTimelineUpdate(int num, File image) {
+	public void onTimelineUpdate(int num, WritableImage image) {
 		// TODO Auto-generated method stub
 
 	}
