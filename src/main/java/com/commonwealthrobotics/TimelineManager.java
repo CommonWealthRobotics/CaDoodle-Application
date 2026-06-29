@@ -190,13 +190,11 @@ public class TimelineManager {
 			}
 
 			@Override
-			public void onTimelineUpdate(int num, File imageFile) {
+			public void onTimelineUpdate(int num, WritableImage imageFile) {
 				if (buttons.size() > num) {
 					timelineButton b = buttons.get(num);
-
-					Image image = new Image(imageFile.toURI().toString());
 					BowlerStudio.runLater(() -> {
-						b.updatemainImage(resizeImage(image, buttonSize, buttonSize));
+						b.updatemainImage(imageFile);
 					});
 					Log.debug("Updating " + imageFile);
 				} else
