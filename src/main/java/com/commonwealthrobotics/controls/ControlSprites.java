@@ -817,6 +817,7 @@ public class ControlSprites {
 					session.hideHalos();
 					break;
 				case Rotating :
+					session.hideHalos();
 					break;
 				case Align :
 					for (DottedLine l : lines)
@@ -835,6 +836,7 @@ public class ControlSprites {
 							l.setVisible(true);
 						scaleSession.show();
 					}
+					session.hideHalos();
 					break;
 				case Clear :
 					for (ThreedNumber t : numbers)
@@ -849,6 +851,7 @@ public class ControlSprites {
 					footprint.setVisible(false);
 					zOffset.hide();
 					scaleSession.hide();
+					session.hideHalos();
 					break;
 			}
 
