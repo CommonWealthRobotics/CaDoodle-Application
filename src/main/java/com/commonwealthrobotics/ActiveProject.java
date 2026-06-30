@@ -235,7 +235,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 			if (t.isAlive()) {
-				while (!SplashManager.isVisibleSplash()) {
+				while (t.isAlive()) {
 					SplashManager.renderSplashFrame((int) (get().getPercentInitialized() * 100), " Re-Generating");
 					try {
 						Thread.sleep(100);
