@@ -610,8 +610,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		@SuppressWarnings("unchecked")
 		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get(), true);
-		if (ap.get().isRegenerating())
-			return;
+		//		if (ap.get().isRegenerating())
+		//			return;
 
 		List<CSG> currentState = getCurrentState();
 		HashMap<CSG, MeshHolder> transport = new HashMap<CSG, MeshHolder>();
@@ -714,7 +714,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		double scaleX = 1.02;
 		double scaleY = 1.02;
-		double scaleZ = 1.02;
+		double scaleZ = 1.03;
 
 		double cx = b.getCenterX();
 		double cy = b.getCenterY();
@@ -2540,30 +2540,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void objectWorkplane() {
+		getExecutor().submit(() -> {
+			if ((getSelected().size() != 1) && !isObjectWorkplane)
+				return;
 
-		if ((getSelected().size() != 1) && !isObjectWorkplane)
-			return;
-
-		isObjectWorkplane = !isObjectWorkplane;
-		if (objectWorkplane != null) {
-			com.neuronrobotics.sdk.common.Log.debug("Setting Object Workplane " + isObjectWorkplane);
-			objectWorkplane.getStyleClass().clear();
-		}
-		if (isObjectWorkplane) {
-			CSG c = getSelectedCSG(selectedSnapshot().get(0));
-			TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
-			previousWP = ap.get().getWorkplane();
-			ap.get().setWorkplane(nrToCSG);
-			workplane.placeWorkplaneVisualization();
-			if (objectWorkplane != null)
-				objectWorkplane.getStyleClass().add("image-button-focus");
-		} else {
-			ap.get().setWorkplane(previousWP);
-			workplane.placeWorkplaneVisualization();
-			if (objectWorkplane != null)
-				objectWorkplane.getStyleClass().add("image-button");
-		}
-		updateControls();
+			isObjectWorkplane = !isObjectWorkplane;
+			if (objectWorkplane != null) {
+				com.neuronrobotics.sdk.common.Log.debug("Setting Object Workplane " + isObjectWorkplane);
+				objectWorkplane.getStyleClass().clear();
+			}
+			if (isObjectWorkplane) {
+				CSG c = getSelectedCSG(selectedSnapshot().get(0));
+				TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
+				previousWP = ap.get().getWorkplane();
+				ap.get().setWorkplane(nrToCSG);
+				workplane.placeWorkplaneVisualization();
+				if (objectWorkplane != null)
+					objectWorkplane.getStyleClass().add("image-button-focus");
+			} else {
+				ap.get().setWorkplane(previousWP);
+				workplane.placeWorkplaneVisualization();
+				if (objectWorkplane != null)
+					objectWorkplane.getStyleClass().add("image-button");
+			}
+			updateControls();
+		});
 	}
 
 	public void onDrop() {
