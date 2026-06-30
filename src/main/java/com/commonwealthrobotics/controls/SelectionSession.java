@@ -2544,12 +2544,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
 				previousWP = ap.get().getWorkplane();
 				ap.get().setWorkplane(nrToCSG);
-				workplane.placeWorkplaneVisualization();
+				//workplane.placeWorkplaneVisualization();
 				if (objectWorkplane != null)
 					objectWorkplane.getStyleClass().add("image-button-focus");
 			} else {
 				ap.get().setWorkplane(previousWP);
-				workplane.placeWorkplaneVisualization();
+				//workplane.placeWorkplaneVisualization();
 				if (objectWorkplane != null)
 					objectWorkplane.getStyleClass().add("image-button");
 			}
@@ -2864,7 +2864,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onInitializationDone() {
-		// Auto-generated method stub
+		TransformNR workplane2 = ap.get().getWorkplane();
+		ap.get().setWorkplane(workplane2);
 	}
 
 	public SpriteDisplayMode getMode() {
@@ -2917,7 +2918,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 			isObjectWorkplane = false;
 		}
-
+		workplane.placeWorkplaneVisualization();
 		CountDownLatch latch = new CountDownLatch(1);
 		BowlerStudio.runLater(() -> {
 			updateControls();
