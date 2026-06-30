@@ -941,6 +941,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						numCadParaams++;
 						String[] parts = key.split("_");
 						String text = parts[parts.length - 1];
+						if (key.contains("CubeGeneration_Y"))
+							text = "X";
+						if (key.contains("CubeGeneration_X"))
+							text = "Y";
 						Label e = new Label(text);
 						e.setMinWidth(50);
 						gp.add(e, 0, line);
