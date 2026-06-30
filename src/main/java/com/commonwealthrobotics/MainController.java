@@ -1581,6 +1581,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			if (event.getCode() == KeyCode.ESCAPE) {
 				session.workplane.cancel();
+				BowlerStudio.runLater(() -> {
+					session.setKeyBindingFocus();
+					robotLab.onCancel();
+					onChange(engine.getFlyingCamera());
+				});
 				return;
 			}
 			if (ap.get().isOperationRunning())
