@@ -133,7 +133,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
-	private HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
+	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -609,7 +609,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void displayCurrent(CaDoodleOperation source) {
 
 		@SuppressWarnings("unchecked")
-		List<CSG> process = (List<CSG>) CaDoodleLoader.process(ap.get(), true);
+		List<CSG> process = (List<CSG>) CaDoodleLoader.filterForDisplay(ap.get(), true);
 		//		if (ap.get().isRegenerating())
 		//			return;
 
@@ -635,19 +635,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			clearScreen();
 			resetManipulator();
 			controls.resetManipulator();
-			// if (isShowConstituants()) {
-			// for (CSG c : ap.get().getCurrentState()) {
-			// if (c.isInGroup() || c.isHide())
-			// c.setIsWireFrame(true);
-			// else
-			// c.setIsWireFrame(false);
-			//
-			// displayCSG(c);
-			// if ((c.isInGroup() && !c.isAlwaysShow()) || c.isHide())
-			// getMeshes().get(c).setMouseTransparent(true);
-			// }
-			// } else
-			for (CSG c : process)
+			for (CSG c : transport.keySet())
 				displayCSG(c, transport.get(c));
 			transport.clear();
 			ArrayList<CSG> toRemove = new ArrayList<>();
@@ -659,15 +647,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						break;
 					}
 				}
-
 				if (!exists)
 					toRemove.add(s);
 
 			}
 			if (getSelected().removeAll(toRemove))
 				fireSelectionChanged();
-			if (workplane != null)
-				workplane.updateMeshes(getMeshes());
 
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
@@ -2106,8 +2091,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (!moveLock()) {
 					com.neuronrobotics.sdk.common.Log.error("On Cruise");
 					CSG indicator = selectedCSG.get(0);
-					if (selectedCSG.size() > 1)
-						indicator = CSG.unionAll(selectedCSG);
+//					if (selectedCSG.size() > 1)
+//						indicator = CSG.unionAll(selectedCSG);
 
 					List<String> seleectedNames = selectedSnapshot();
 					TransformNR o = new TransformNR(RotationNR.getRotationZ(90));
@@ -2136,10 +2121,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							});
 					}
 
-					workplane.setIndicator(indicator, gemoAffine);
+					workplane.setIndicator(selectedCSG, gemoAffine);
 
 					workplane.setOnSelectEvent(() -> {
-
+						controls.setMode(SpriteDisplayMode.Default);
 						for (CSG c : selectedCSG) {
 							MeshView meshView = getMeshes().get(c).display;
 
@@ -2163,6 +2148,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							}
 						}
 					});
+					controls.setMode(SpriteDisplayMode.PLACING);
 
 					workplane.setCurrentAbsolutePose(copy.inverse());
 					workplane.activate();
@@ -2985,9 +2971,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return meshes;
 	}
 
-	public void setMeshes(HashMap<CSG, MeshHolder> meshes) {
-		this.meshes = meshes;
-	}
 
 	@Override
 	public void onTimelineUpdate(int num, WritableImage image) {
