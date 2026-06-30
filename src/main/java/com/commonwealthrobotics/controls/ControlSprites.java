@@ -635,7 +635,6 @@ public class ControlSprites {
 
 			zOffset.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, cameraFovDegrees);
-
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
 			zdimen.setValue(bounds.getTotalZ());
@@ -651,13 +650,13 @@ public class ControlSprites {
 				else
 					zdimen.hide();
 				if (scaleSession.rightSelected() || scaleSession.leftSelected())
-					xdimen.show();
-				else
-					xdimen.hide();
-				if (scaleSession.frontSelected() || scaleSession.rearSelected())
 					ydimen.show();
 				else
 					ydimen.hide();
+				if (scaleSession.frontSelected() || scaleSession.rearSelected())
+					xdimen.show();
+				else
+					xdimen.hide();
 			}
 			boolean isDefault = mode == SpriteDisplayMode.Default;
 			if (isDefault) {
@@ -666,13 +665,13 @@ public class ControlSprites {
 				else
 					zdimen.hide();
 				if (scaleSession.rightSelected() || scaleSession.leftSelected())
-					xdimen.show();
-				else
-					xdimen.hide();
-				if (scaleSession.frontSelected() || scaleSession.rearSelected())
 					ydimen.show();
 				else
 					ydimen.hide();
+				if (scaleSession.frontSelected() || scaleSession.rearSelected())
+					xdimen.show();
+				else
+					xdimen.hide();
 			}
 
 			CaDoodleOperation currentOperation = ap.get().getCurrentOperation();
