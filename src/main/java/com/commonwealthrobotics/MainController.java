@@ -27,6 +27,7 @@ import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.ImagePorviderInterface;
 import com.neuronrobotics.bowlerstudio.creature.NoImageException;
+import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.FreecadLoader;
@@ -413,6 +414,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Stage newStage;
 	private static Label label;
 	private Button renameBtn;
+	private ThumbnailImage img;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
@@ -1433,12 +1435,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			event.setDropCompleted(true);
 			event.consume();
 		});
+		img = new ThumbnailImage();
 		CaDoodleFile.setImageEngine(new ImagePorviderInterface() {
 			@Override
 			public WritableImage get(CSGDatabaseInstance instance, List<CSG> incomingToDisplay, File destination)
 					throws NoImageException, IOException {
 				// TODO Auto-generated method stub
-				return engine.saveViewToPng(destination, 320, 320);
+				return img.get(instance, incomingToDisplay, destination);
 			}
 		});
 	}
