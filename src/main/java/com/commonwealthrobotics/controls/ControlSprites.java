@@ -234,7 +234,8 @@ public class ControlSprites {
 		zMoveManipulator.addEventListener(ev -> {
 			zmoving = true;
 			xymoving = false;
-			setMode(SpriteDisplayMode.MoveZ);
+			if (getMode() != SpriteDisplayMode.Align)
+				setMode(SpriteDisplayMode.MoveZ);
 			TransformNR globalPose = zMoveManipulator.getCurrentPose();
 			TransformNR wp = new TransformNR(ap.get().getWorkplane().getRotation());
 			globalPose = wp.times(globalPose);
@@ -751,6 +752,7 @@ public class ControlSprites {
 	}
 
 	public void setMode(SpriteDisplayMode mode) {
+		new Exception("Mode Set to " + mode).printStackTrace();
 
 		if (mode == this.mode)
 			return;
@@ -763,7 +765,6 @@ public class ControlSprites {
 		// Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
 		// zMove.setStartingWorkplanePosition(startingPos);
 		// }
-		// new Exception("Mode Set to " + mode).printStackTrace();
 		BowlerStudio.runLater(() -> {
 
 			for (Node r : allElems)
