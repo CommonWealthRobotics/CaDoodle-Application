@@ -17,6 +17,7 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.ColinearPointsException;
 import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Polygon;
@@ -48,7 +49,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	private MeshView ground;
 	private Group wpPick;
 	private HashMap<CSG, MeshHolder> meshes;
-	private HashMap<MeshView, CSG> meshesReverseLookup;
 	private BowlerStudio3dEngine engine;
 	private Affine workplaneLocation = new Affine();
 	private List<MeshView> indicatorMeshs;
@@ -359,10 +359,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void updateMeshes(HashMap<CSG, MeshHolder> meshes) {
 
 		this.meshes = meshes;
-		meshesReverseLookup = new HashMap<MeshView, CSG>();
-
-		for (CSG c : meshes.keySet())
-			meshesReverseLookup.put(meshes.get(c).display, c);
 	}
 
 	public void cancel() {
@@ -441,106 +437,109 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			doClickEvent(ev);
 
 		} else if ((ev.getEventType() == MouseEvent.MOUSE_MOVED) || (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
-			// com.neuronrobotics.sdk.common.Log.error(ev);
-			Point3D intersectedPoint = pickResult.getIntersectedPoint();
-			double x = intersectedPoint.getX();
-			double y = intersectedPoint.getY();
-			double z = intersectedPoint.getZ();
+			session.getExecutor().submit(() -> {
+				// com.neuronrobotics.sdk.common.Log.error(ev);
+				Point3D intersectedPoint = pickResult.getIntersectedPoint();
+				double x = intersectedPoint.getX();
+				double y = intersectedPoint.getY();
+				double z = intersectedPoint.getZ();
 
-			if (ev.getSource() == wpPick) {
-				x *= MainController.groundScale();
-				y *= MainController.groundScale();
-				z *= MainController.groundScale();
-			}
-
-			TransformNR screenLocation;
-			TransformNR pureRot = null;
-			Affine manipulator = new Affine();
-			CSG source = null;
-
-			if (intersectedNode instanceof MeshView) {
-				MeshView meshView = (MeshView) intersectedNode;
-
-				if (meshesReverseLookup != null) {
-					source = meshesReverseLookup.get(meshView);
-
-					if ((source != null) && (source.hasManipulator()))
-						try {
-							manipulator = source.getManipulator();
-						} catch (MissingManipulatorException e) {
-							e.printStackTrace();
-						}
+				if (ev.getSource() == wpPick) {
+					x *= MainController.groundScale();
+					y *= MainController.groundScale();
+					z *= MainController.groundScale();
 				}
 
-				TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
+				TransformNR screenLocation;
+				TransformNR pureRot = null;
+				Affine manipulator = new Affine();
+				CSG source = null;
 
-				int faceIndex = pickResult.getIntersectedFace();
+				if (intersectedNode instanceof MeshView) {
+					MeshView meshView = (MeshView) intersectedNode;
 
-				if (faceIndex >= 0) {
-
-					if (source != null) {
-						Polygon p = getPolygonFromFaceIndex(faceIndex, source);
-						if (p != null) {
+					for (CSG csg : meshes.keySet()) {
+						if (meshView == meshes.get(csg).display) {
+							source = csg;
 							try {
-								Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
-								npTF.set(0, 0, 0);
-								// npTF=new Transform();
-								pureRot = TransformFactory.csgToNR(npTF).inverse();
-								// an in-plane snapping here by transforming the points into the plane
-								// orientation, then snapping in plane, then transforming the points back.
-								TransformNR t = new TransformNR(x, y, z);
-								TransformNR screenLocationtmp = t; // manipulatorNR.times(t);
-								TransformNR npTFNR = TransformFactory.csgToNR(npTF);
-								Polygon flattened = p.transformed(npTF);
-								TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
-								// Log.debug("Polygon " + flattened);
-								// Log.debug("Point " + flattenedTouch.toSimpleString());
-								TransformNR adjusted = new TransformNR( // Snap in plane
-										SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),
-										SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
-										flattened.getPoints().get(0).z); // adhere to the plane of the polygon
-								// flip the point back to its original orientation in the plane post snap
-								TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
-								x = adjustedBack.getX();
-								y = adjustedBack.getY();
-								z = adjustedBack.getZ();
+								manipulator = source.getManipulator();
+							} catch (MissingManipulatorException e) {
 
-								// Log.debug("Polygon snapped " + adjusted);
-							} catch (Exception e) {
-								e.printStackTrace();
 							}
-
-						} else
-							Log.error("Polygon not found " + faceIndex);
-
-					} else {
-						x = SelectionSession.roundToNearest(x, snapGridValue);
-						y = SelectionSession.roundToNearest(y, snapGridValue);
-						z = SelectionSession.roundToNearest(z, snapGridValue);
+							break;
+						}
 					}
 
-					if (pureRot == null)
-						pureRot = getFaceNormalAngles(mesh, faceIndex).inverse();
+					TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
 
-				} else
-					Log.error("Error face index came back: " + faceIndex);
+					int faceIndex = pickResult.getIntersectedFace();
 
-			}
-			if (pureRot == null)
-				pureRot = new TransformNR();
-			TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
-			TransformNR t = new TransformNR(x, y, z);
-			screenLocation = manipulatorNR.times(t.times(pureRot));
+					if (faceIndex >= 0) {
 
-			if ((intersectedNode == wpPick) || (intersectedNode.getParent() == wpPick)) {
-				if (updater != null)
-					updater.setWorkplaneLocation(screenLocation);
+						if (source != null) {
+							Polygon p = getPolygonFromFaceIndex(faceIndex, source);
+							if (p != null) {
+								try {
+									Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
+									npTF.set(0, 0, 0);
+									// npTF=new Transform();
+									// pureRot = TransformFactory.csgToNR(npTF).inverse();
+									// an in-plane snapping here by transforming the points into the plane
+									// orientation, then snapping in plane, then transforming the points back.
+									TransformNR t = new TransformNR(x, y, z);
+									TransformNR screenLocationtmp = t; // manipulatorNR.times(t);
+									TransformNR npTFNR = TransformFactory.csgToNR(npTF);
+									Polygon flattened = p.transformed(npTF);
+									TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
+									// Log.debug("Polygon " + flattened);
+									// Log.debug("Point " + flattenedTouch.toSimpleString());
+									TransformNR adjusted = new TransformNR( // Snap in plane
+											SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),
+											SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
+											flattened.getPoints().get(0).z); // adhere to the plane of the polygon
+									// flip the point back to its original orientation in the plane post snap
+									TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
+									x = adjustedBack.getX();
+									y = adjustedBack.getY();
+									z = adjustedBack.getZ();
 
-				screenLocation = ap.get().getWorkplane().times(screenLocation);
-			} else if (updater != null)
-				updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
+									// Log.debug("Polygon snapped " + adjusted);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 
-			setCurrentAbsolutePose(screenLocation);
+							} else
+								return;
+
+						} else {
+							x = SelectionSession.roundToNearest(x, snapGridValue);
+							y = SelectionSession.roundToNearest(y, snapGridValue);
+							z = SelectionSession.roundToNearest(z, snapGridValue);
+						}
+
+						if (pureRot == null)
+							pureRot = getFaceNormalAngles(mesh, faceIndex).inverse();
+
+					} else
+						Log.error("Error face index came back: " + faceIndex);
+
+				}
+				if (pureRot == null)
+					pureRot = new TransformNR();
+				TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
+				TransformNR t = new TransformNR(x, y, z);
+				screenLocation = manipulatorNR.times(t.times(pureRot));
+
+				if ((intersectedNode == wpPick) || (intersectedNode.getParent() == wpPick)) {
+					if (updater != null)
+						updater.setWorkplaneLocation(screenLocation);
+
+					screenLocation = ap.get().getWorkplane().times(screenLocation);
+				} else if (updater != null)
+					updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
+				TransformNR toSet = screenLocation;
+				BowlerKernel.runLater(() -> setCurrentAbsolutePose(toSet));
+			});
 		}
 	}
 
@@ -564,15 +563,53 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		});
 	}
 
-	public static Polygon getPolygonFromFaceIndex(int faceIndex, CSG polygons) {
+	private Polygon getPolygonFromFaceIndex(int faceIndex, CSG source) {
+		long[] triangles = source.getTriangles();
 
+		int i0 = (int) triangles[faceIndex * 3 + 0];
+		int i1 = (int) triangles[faceIndex * 3 + 1];
+		int i2 = (int) triangles[faceIndex * 3 + 2];
+
+		Polygon p = null;
 		try {
-			return polygons.getPolygonByIndex(faceIndex);
-		} catch (Exception e) {
-			Log.error(e);
+			p = Polygon.fromPoints(
+					Arrays.asList(new Vector3d(source.getVertex_X(i0), source.getVertex_Y(i0), source.getVertex_Z(i0)),
+							new Vector3d(source.getVertex_X(i1), source.getVertex_Y(i1), source.getVertex_Z(i1)),
+							new Vector3d(source.getVertex_X(i2), source.getVertex_Y(i2), source.getVertex_Z(i2))));
+		} catch (ColinearPointsException e) {
+			//			// TODO Auto-generated catch block
+			//			e.printStackTrace();
 		}
-		return null;
+
+		return p;
 	}
+
+	private TransformNR getFaceNormalAngles(CSG source, int faceIndex) throws ColinearPointsException {
+
+		long[] triangles = source.getTriangles();
+
+		int i0 = (int) triangles[faceIndex * 3 + 0];
+		int i1 = (int) triangles[faceIndex * 3 + 1];
+		int i2 = (int) triangles[faceIndex * 3 + 2];
+
+		Vector3d p0 = new Vector3d(source.getVertex_X(i0), source.getVertex_Y(i0), source.getVertex_Z(i0));
+		Vector3d p1 = new Vector3d(source.getVertex_X(i1), source.getVertex_Y(i1), source.getVertex_Z(i1));
+		Vector3d p2 = new Vector3d(source.getVertex_X(i2), source.getVertex_Y(i2), source.getVertex_Z(i2));
+
+		Vector3d normal = p1.minus(p0).cross(p2.minus(p0)).normalized();
+
+		return TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(normal));
+	}
+
+	// public static Polygon getPolygonFromFaceIndex(int faceIndex, CSG polygons) {
+	//
+	// try {
+	// return polygons.getPolygonByIndex(faceIndex);
+	// } catch (Exception e) {
+	// Log.error(e);
+	// }
+	// return null;
+	// }
 
 	private Vector3d toV(javafx.geometry.Point3D p) {
 		return new Vector3d(p.getX(), p.getY(), p.getZ());
