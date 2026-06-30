@@ -700,10 +700,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		double scaleX = 1.02;
 		double scaleY = 1.02;
 		double scaleZ = 1.03;
-
-		double cx = b.getCenterX();
-		double cy = b.getCenterY();
-		double cz = b.getCenterZ();
+		TransformNR wp = getWorkplane();
+		double cx = b.getCenterX() + wp.getX();
+		double cy = b.getCenterY() + wp.getY();
+		double cz = b.getCenterZ() + wp.getZ();
 		Scale haloScale = new Scale();
 		haloScale.setX(scaleX);
 		haloScale.setY(scaleY);
