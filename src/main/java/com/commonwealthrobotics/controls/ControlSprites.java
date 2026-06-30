@@ -752,7 +752,7 @@ public class ControlSprites {
 	}
 
 	public void setMode(SpriteDisplayMode mode) {
-		new Exception("Mode Set to " + mode).printStackTrace();
+		// new Exception("Mode Set to " + mode).printStackTrace();
 
 		if (mode == this.mode)
 			return;
