@@ -2,13 +2,11 @@ package com.commonwealthrobotics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.controls.SelectionSession;
-import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -356,7 +354,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 
-
 	public void cancel() {
 
 		if (!active)
@@ -367,10 +364,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		wpPick.setVisible(isWorkplaneNotOrigin());
 
 
-			for (CSG key : session.getMeshes().keySet()) {
-				MeshView mv = session.getMeshes().get(key).display;
-				mv.removeEventFilter(MouseEvent.ANY, this);
-			}
+		for (CSG key : session.getMeshes().keySet()) {
+			MeshView mv = session.getMeshes().get(key).display;
+			mv.removeEventFilter(MouseEvent.ANY, this);
+		}
 
 		if (indicatorMeshs != null)
 			for (MeshView indicatorMesh : indicatorMeshs)
@@ -413,11 +410,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		engine.getWorkplaneGroup().setMouseTransparent(false);
 
 		// Make user meshes pickable
-	
-			for (CSG key : session.getMeshes().keySet()) {
-				MeshView mv = session.getMeshes().get(key).display;
-				mv.addEventFilter(MouseEvent.ANY, this);
-			}
+
+		for (CSG key : session.getMeshes().keySet()) {
+			MeshView mv = session.getMeshes().get(key).display;
+			mv.addEventFilter(MouseEvent.ANY, this);
+		}
 
 		if (indicatorMeshs != null)
 			for (MeshView indicatorMesh : indicatorMeshs)
@@ -471,16 +468,18 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					int faceIndex = pickResult.getIntersectedFace();
 
 					if (faceIndex >= 0) {
-						Polygon fromMesh =getFaceNormalAngles(mesh, faceIndex);
+						Polygon fromMesh = getFaceNormalAngles(mesh, faceIndex);
 						try {
-							pureRot =TransformFactory.csgToNR(PolygonUtil.calculateNormalTransform(fromMesh.getPlane().getNormal())).inverse();
+							pureRot = TransformFactory
+									.csgToNR(PolygonUtil.calculateNormalTransform(fromMesh.getPlane().getNormal()))
+									.inverse();
 						} catch (ColinearPointsException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						if (source != null) {
 							Polygon p = fromMesh;//getPolygonFromFaceIndex(faceIndex, source);
-							
+
 							if (p != null) {
 								try {
 									Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
@@ -511,14 +510,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 									e.printStackTrace();
 								}
 
-							} 
+							}
 
 						} else {
 							x = SelectionSession.roundToNearest(x, snapGridValue);
 							y = SelectionSession.roundToNearest(y, snapGridValue);
 							z = SelectionSession.roundToNearest(z, snapGridValue);
 						}
-
 
 
 					} else
