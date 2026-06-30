@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
@@ -182,15 +181,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 			@Override
 			public void onInstallFail(String url) {
-				if (!ap.get().isInitialized()) {
-					return;
-				}
-				try {
-					BowlerStudio.openExternalWebpage(new URL(url));
-				} catch (MalformedURLException e) {
-					// Auto-generated catch block
-					com.neuronrobotics.sdk.common.Log.error(e);
-				}
+				//				if (!ap.get().isInitialized()) {
+				//					return;
+				//				}
+				//				try {
+				//					BowlerStudio.openExternalWebpage(new URL(url));
+				//				} catch (MalformedURLException e) {
+				//					// Auto-generated catch block
+				//					com.neuronrobotics.sdk.common.Log.error(e);
+				//				}
 			}
 
 			public void notifyOfFailure(String name) {
@@ -703,8 +702,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				}
 
 				while (isOpen()) {
-					if (needsSave && (get().timeSinceLastUpdate() > 1000)
-							&& get().getPercentInitialized() >= .9999999) {
+					if (needsSave && (get().timeSinceLastUpdate() > 1000) && (!(get().getPercentInitialized() < 1))) {
 						ICadoodleSaveStatusUpdate saveDisplay = get().getSaveUpdate();
 						get().setSaveUpdate(null);
 
@@ -716,9 +714,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 								Log.error(e);
 							}
 						});
-						t.start();
-
 						needsSave = false;
+						t.start();
 						try {
 							Thread.sleep(50);
 						} catch (InterruptedException e) {
