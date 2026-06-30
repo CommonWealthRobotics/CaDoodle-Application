@@ -1120,7 +1120,6 @@ public class ResizeSessionManager {
 			nX = rightMid.manipulator.getCurrentPose().getX();
 			fx = leftFront.manipulator.getinLocalInReferenceFrame().getX();
 			rmx = rightRear.manipulator.getinLocalInReferenceFrame().getX();
-			com.neuronrobotics.sdk.common.Log.debug("Mid Right update x " + fx);
 		}
 		if (source == leftMid) {
 			nY = (-rightMid.manipulator.getCurrentPose().getY() + leftMid.manipulator.getCurrentPose().getY()) / 2;
@@ -1234,19 +1233,19 @@ public class ResizeSessionManager {
 	}
 
 	boolean leftSelected() {
-		return leftFront.isSelected() || leftRear.isSelected() || frontMid.isSelected() || rearMid.isSelected();
+		return leftFront.isSelected() || leftRear.isSelected()|| leftMid.isSelected()  ;
 	}
 
 	boolean rightSelected() {
-		return rightFront.isSelected() || rightRear.isSelected();
+		return rightFront.isSelected() || rightRear.isSelected()|| rightMid.isSelected();
 	}
 
 	boolean frontSelected() {
-		return rightFront.isSelected() || leftFront.isSelected() || leftMid.isSelected() || rightMid.isSelected();
+		return rightFront.isSelected() || leftFront.isSelected() || frontMid.isSelected();
 	}
 
 	boolean rearSelected() {
-		return rightRear.isSelected() || leftRear.isSelected();
+		return rightRear.isSelected() || leftRear.isSelected()|| rearMid.isSelected();
 	}
 
 	public boolean zScaleSelected() {
@@ -1254,11 +1253,11 @@ public class ResizeSessionManager {
 	}
 
 	public boolean xySelected() {
-		return leftSelected() || rightSelected();
+		return leftSelected() || rightSelected()||frontSelected()||rearSelected();
 	}
 
 	public boolean anySelected() {
-		return leftSelected() || rightSelected() || zScaleSelected();
+		return xySelected()  || zScaleSelected();
 	}
 
 	public Bounds getBounds() {
