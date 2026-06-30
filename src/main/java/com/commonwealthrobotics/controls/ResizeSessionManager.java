@@ -1233,11 +1233,11 @@ public class ResizeSessionManager {
 	}
 
 	boolean leftSelected() {
-		return leftFront.isSelected() || leftRear.isSelected()|| leftMid.isSelected()  ;
+		return leftFront.isSelected() || leftRear.isSelected() || leftMid.isSelected();
 	}
 
 	boolean rightSelected() {
-		return rightFront.isSelected() || rightRear.isSelected()|| rightMid.isSelected();
+		return rightFront.isSelected() || rightRear.isSelected() || rightMid.isSelected();
 	}
 
 	boolean frontSelected() {
@@ -1245,7 +1245,7 @@ public class ResizeSessionManager {
 	}
 
 	boolean rearSelected() {
-		return rightRear.isSelected() || leftRear.isSelected()|| rearMid.isSelected();
+		return rightRear.isSelected() || leftRear.isSelected() || rearMid.isSelected();
 	}
 
 	public boolean zScaleSelected() {
@@ -1253,11 +1253,11 @@ public class ResizeSessionManager {
 	}
 
 	public boolean xySelected() {
-		return leftSelected() || rightSelected()||frontSelected()||rearSelected();
+		return leftSelected() || rightSelected() || frontSelected() || rearSelected();
 	}
 
 	public boolean anySelected() {
-		return xySelected()  || zScaleSelected();
+		return xySelected() || zScaleSelected();
 	}
 
 	public Bounds getBounds() {

@@ -2091,8 +2091,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (!moveLock()) {
 					com.neuronrobotics.sdk.common.Log.error("On Cruise");
 					CSG indicator = selectedCSG.get(0);
-//					if (selectedCSG.size() > 1)
-//						indicator = CSG.unionAll(selectedCSG);
+					//					if (selectedCSG.size() > 1)
+					//						indicator = CSG.unionAll(selectedCSG);
 
 					List<String> seleectedNames = selectedSnapshot();
 					TransformNR o = new TransformNR(RotationNR.getRotationZ(90));
