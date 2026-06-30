@@ -744,6 +744,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				session.setKeyBindingFocus();
 			com.neuronrobotics.sdk.common.Log.error("ProjectManager Close");
 			BowlerStudio.runLater(() -> homeButton.setDisable(false));
+
 		};
 		Runnable onClear = () -> {
 			if (session == null)
