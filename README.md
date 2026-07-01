@@ -168,3 +168,7 @@ The Windows CaDoodle application is located in the Windows user directory: ```us
 # Icons 
 
 https://www.svgrepo.com/collection/solar-bold-icons/
+
+# Themes
+
+https://github.com/CommonWealthRobotics/Style-Cadoodle
