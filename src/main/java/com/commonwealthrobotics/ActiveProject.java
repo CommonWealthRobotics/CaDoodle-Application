@@ -409,7 +409,8 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
 		try {
-			cf.save();
+			if (cf.isInitialized())
+				cf.save();
 		} catch (IOException e) {
 			// Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
