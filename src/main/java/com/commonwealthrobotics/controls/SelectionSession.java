@@ -2346,28 +2346,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous has not finished!");
 			return;
 		}
+		getExecutor().submit(() -> {
+			ArrayList<CSG> toSelect = new ArrayList<>();
+			for (CSG c : getSelectedCSG(selectedSnapshot())) {
+				if (c.isGroupResult()) {
+					String name = c.getName();
+					for (CSG inG : getCurrentState())
+						if (inG.isInGroup() && inG.checkGroupMembership(name))
+							toSelect.add(inG);
 
-		ArrayList<CSG> toSelect = new ArrayList<>();
-		for (CSG c : getSelectedCSG(selectedSnapshot())) {
-			if (c.isGroupResult()) {
-				String name = c.getName();
-				for (CSG inG : getCurrentState())
-					if (inG.isInGroup() && inG.checkGroupMembership(name))
-						toSelect.add(inG);
-
+				}
 			}
-		}
 
-		List<String> selectedSnapshot = selectedSnapshot();
+			List<String> selectedSnapshot = selectedSnapshot();
 
-		if (isAGroupSelected()) {
-			getSelected().clear();
-			getSelected().addAll(toSelect);
-			fireSelectionChanged();
-			ap.addOp(new UnGroup().setNames(selectedSnapshot));
-		}
-		updateControlsDisplayOfSelected();
-		updateRobotLab.run();
+			if (isAGroupSelected()) {
+				getSelected().clear();
+				getSelected().addAll(toSelect);
+				fireSelectionChanged();
+				try {
+					ap.addOp(new UnGroup().setNames(selectedSnapshot)).join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			BowlerKernel.runLater(() -> {
+				updateControlsDisplayOfSelected();
+				updateRobotLab.run();
+			});
+
+		});
 
 	}
 
