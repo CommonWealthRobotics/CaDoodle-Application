@@ -16,7 +16,7 @@ import javafx.scene.shape.Circle;
 
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 
-public class TimelineButton extends Button {
+public class ButtonWithOverlayImage extends Button {
 
 	private StackPane stack;
 	private ImageView toolimage;
@@ -24,25 +24,22 @@ public class TimelineButton extends Button {
 	Separator separator = new Separator(Orientation.VERTICAL);
 	private ImageView value;
 	public HBox hbox;
-	public static int buttonSize = 80;
 
-	public TimelineButton(String text, Image image) {
+
+	public ButtonWithOverlayImage(String text, Image image, int buttonSize, double overlaySize) {
 		super(text);
 		this.image = image;
 		getStyleClass().add("image-button");
 		setContentDisplay(ContentDisplay.TOP);
 		separator.getStyleClass().clear();
 		separator.getStyleClass().add("timeline-block");
-	}
-
-	public void setButtonImageType(ObservableList<String> styleClass) {
 		value = new ImageView(TimelineManager.resizeImage(image, buttonSize, buttonSize));
 		value.setFitWidth(buttonSize);
 		value.setFitHeight(buttonSize);
 
 		toolimage = new ImageView();
-		toolimage.getStyleClass().addAll(styleClass);
-		double overlaySize = buttonSize / 3.0;
+
+
 		toolimage.setFitWidth(overlaySize);
 		toolimage.setFitHeight(overlaySize);
 
@@ -63,6 +60,10 @@ public class TimelineButton extends Button {
 		hbox.setAlignment(Pos.CENTER);
 
 		setGraphic(stack);
+	}
+
+	public void setButtonImageType(ObservableList<String> styleClass) {
+		toolimage.getStyleClass().addAll(styleClass);
 	}
 
 	public void updatemainImage(Image resizeImage) {

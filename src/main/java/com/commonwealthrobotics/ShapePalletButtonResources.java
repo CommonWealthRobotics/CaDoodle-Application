@@ -39,11 +39,11 @@ public class ShapePalletButtonResources {
 	private ThumbnailImage imageengine;
 
 	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name, ActiveProject ap) {
-		String string = key.get("plugin");
+		String pluginType = key.get("plugin");
 
 		boolean isPluginMissing = false;
-		if (string != null) {
-			isPluginMissing = !DownloadManager.isDownloadedAlready(string);
+		if (pluginType != null) {
+			isPluginMissing = !DownloadManager.isDownloadedAlready(pluginType);
 		}
 		// String absolutePath = ConfigurationDatabase.getAppDataDirectory().toString();
 		String absolutePath = ScriptingEngine.getWorkspace().getAbsolutePath() + delim() + "uicache";

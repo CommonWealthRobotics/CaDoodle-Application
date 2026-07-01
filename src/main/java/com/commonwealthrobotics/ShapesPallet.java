@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -27,7 +30,7 @@ import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
-import javafx.scene.control.Button;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
@@ -54,7 +57,8 @@ public class ShapesPallet {
 	 * Statics
 	 */
 
-	//private static String gitULR = "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
+	// private static String gitULR =
+	// "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
 
 	/**
 	 * Class variables
@@ -204,20 +208,18 @@ public class ShapesPallet {
 		t.start();
 	}
 
-	private Button setupButton(String name, HashMap<String, String> key, int col, int row, String typeOfShapes) {
+	private ButtonWithOverlayImage setupButton(String name, HashMap<String, String> key, int col, int row,
+			String typeOfShapes) {
 		String sweep = key.get("sweep");
 
 		boolean isSweep = (sweep != null) ? Boolean.parseBoolean(sweep) : false;
 		Tooltip hover = new Tooltip(name);
-		Button button = new Button();
-		button.setTooltip(hover);
-		button.getStyleClass().add("image-button");
-		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
 
+		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
+		ArrayList<ButtonWithOverlayImage> buttonHolder = new ArrayList<ButtonWithOverlayImage>();
+		CountDownLatch cl = new CountDownLatch(1);
 		BowlerStudio.runLater(() -> {
-			objectPallet.add(button, col, row);
 			Image thumb = resources.getImage();
-			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50));
 			ImageView toolimage = new ImageView(thumb);
 
 			toolimage.setFitHeight(300);
@@ -226,7 +228,29 @@ public class ShapesPallet {
 			hover.setContentDisplay(ContentDisplay.TOP);
 			// tIv.setFitHeight(50);
 			// tIv.setFitWidth(50);
-			button.setGraphic(tIv);
+			ObservableList<String> styleClass = null;
+			String pluginType = key.get("plugin");
+			String text = null;
+			if (pluginType != null) {
+				Optional<PluginType> fromString = PluginType.fromString(pluginType);
+				if (fromString.isPresent()) {
+					PluginType pluginType2 = fromString.get();
+					styleClass = pluginType2.getStyleClass();
+					text = pluginType2.toString();
+					if (pluginType2 == PluginType.SVG) {
+						text = "Inkscape";
+					}
+					hover.setText(hover.getText() + " ( " + text + " ) ");
+				}
+			}
+			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", thumb, 60, 25);
+			button.setTooltip(hover);
+			button.getStyleClass().add("image-button");
+			objectPallet.add(button, col, row);
+			buttonHolder.add(button);
+			if (styleClass != null && ap.isAdvancedMode())
+				button.setButtonImageType(styleClass);
+
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {
 					CSG indicator = resources.getIndicator();
@@ -317,19 +341,19 @@ public class ShapesPallet {
 				}).start();
 				session.setKeyBindingFocus();
 			});
+			cl.countDown();
 		});
-		// try {
-		// Thread.sleep(30);
-		// } catch (InterruptedException e) {
-		// com.neuronrobotics.sdk.common.Log.error(e);
-		// }
-
-		return button;
+		try {
+			cl.await(500, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			return null;
+		}
+		return buttonHolder.get(0);
 	}
 
-	//	public static String getGitULR() {
-	//		return gitULR;
-	//	}
+	// public static String getGitULR() {
+	// return gitULR;
+	// }
 
 	public boolean isSearchMode() {
 		return searchMode;

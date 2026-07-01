@@ -48,7 +48,7 @@ public class TimelineManager {
 	private HBox baseBox;
 	private GridPane timeline;
 	private ActiveProject ap;
-	private ArrayList<TimelineButton> buttons = new ArrayList<TimelineButton>();
+	private ArrayList<ButtonWithOverlayImage> buttons = new ArrayList<ButtonWithOverlayImage>();
 	private boolean updating = false;
 	private SelectionSession session;
 	private boolean clear;
@@ -74,7 +74,7 @@ public class TimelineManager {
 	private EventHandler<ActionEvent> showAllAction;
 	private HBox timelineShowButtons;
 	private CheckBox timelineMoveObjectShow;
-	private HashMap<CheckBox, ArrayList<TimelineButton>> buttonTypes = new HashMap<CheckBox, ArrayList<TimelineButton>>();
+	private HashMap<CheckBox, ArrayList<ButtonWithOverlayImage>> buttonTypes = new HashMap<CheckBox, ArrayList<ButtonWithOverlayImage>>();
 	// private ArrayList<Button> addButtons = new ArrayList<Button>();
 	// private ArrayList<Button> moveButtons = new ArrayList<Button>();
 	// private ArrayList<Button> resizeButtons = new ArrayList<Button>();
@@ -82,7 +82,7 @@ public class TimelineManager {
 	// private ArrayList<Button> otherButtons = new ArrayList<Button>();
 
 	private CheckBox timelineOtherShow;
-
+	private int buttonSize = 80;
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
 
@@ -104,10 +104,10 @@ public class TimelineManager {
 			@Override
 			public void onRegenerateStart(CaDoodleOperation source) {
 				ArrayList<CaDoodleOperation> ops = ap.get().getOperations();
-				ArrayList<TimelineButton> toRem = new ArrayList<TimelineButton>();
+				ArrayList<ButtonWithOverlayImage> toRem = new ArrayList<ButtonWithOverlayImage>();
 
 				for (int i = Math.max(0, ap.get().opToIndex(source) + 1); i < buttons.size(); i++) {
-					TimelineButton b = buttons.get(i);
+					ButtonWithOverlayImage b = buttons.get(i);
 					toRem.add(b);
 					BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
 				}
@@ -138,7 +138,7 @@ public class TimelineManager {
 				if (updating)
 					return;
 				if (buttons.size() > num) {
-					TimelineButton b = buttons.get(num);
+					ButtonWithOverlayImage b = buttons.get(num);
 					BowlerStudio.runLater(() -> {
 						b.updatemainImage(imageFile);
 					});
@@ -381,7 +381,7 @@ public class TimelineManager {
 			CountDownLatch latch = new CountDownLatch(1);
 			BowlerStudio.runLater(() -> {
 				String text = (myIndex + 1) + "\n" + op.getType();
-				TimelineButton toAdd = new TimelineButton(text, image);
+				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0);
 				if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 						|| Sweep.class.isInstance(op)) {
 					setupCheckBox(timelineAddOpShow, toAdd, op);
@@ -477,7 +477,7 @@ public class TimelineManager {
 
 				Separator verticalSeparator = new Separator();
 				verticalSeparator.setOrientation(Orientation.VERTICAL);
-				verticalSeparator.setPrefHeight(TimelineButton.buttonSize); // Set height to 80 units
+				verticalSeparator.setPrefHeight(80); // Set height to 80 units
 				// timeline.getChildren().add(verticalSeparator);
 
 				// Create a delete menu item
@@ -534,11 +534,11 @@ public class TimelineManager {
 		}
 	}
 
-	private void setupCheckBox(CheckBox tmp, TimelineButton toAdd, CaDoodleOperation op) {
+	private void setupCheckBox(CheckBox tmp, ButtonWithOverlayImage toAdd, CaDoodleOperation op) {
 		if (buttonTypes.get(tmp) == null) {
-			buttonTypes.put(tmp, new ArrayList<TimelineButton>());
+			buttonTypes.put(tmp, new ArrayList<ButtonWithOverlayImage>());
 		}
-		ArrayList<TimelineButton> moveButtons = buttonTypes.get(tmp);
+		ArrayList<ButtonWithOverlayImage> moveButtons = buttonTypes.get(tmp);
 		if (!timelineShowButtons.getChildren().contains(tmp)) {
 			moveButtons.clear();
 			timelineShowButtons.getChildren().add(new Separator(Orientation.VERTICAL));
@@ -560,9 +560,9 @@ public class TimelineManager {
 		toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
 	}
 
-	private void setupCheckboxEvent(ArrayList<TimelineButton> moveButtons, CheckBox cb) {
+	private void setupCheckboxEvent(ArrayList<ButtonWithOverlayImage> moveButtons, CheckBox cb) {
 		boolean value = !cb.isSelected();
-		for (TimelineButton b : moveButtons) {
+		for (ButtonWithOverlayImage b : moveButtons) {
 			b.getGraphic().setVisible(!value);
 		}
 		if (!cb.isSelected())
@@ -601,7 +601,7 @@ public class TimelineManager {
 			CaDoodleOperation op = operations.get(i);
 			if (op == null)
 				continue;
-			TimelineButton b = buttons.get(i);
+			ButtonWithOverlayImage b = buttons.get(i);
 			boolean applyToMe = false;
 			if (index >= buttons.size())
 				continue;
