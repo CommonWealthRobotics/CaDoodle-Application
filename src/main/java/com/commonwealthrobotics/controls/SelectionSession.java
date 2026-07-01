@@ -723,7 +723,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		halo.setBlendMode(BlendMode.SRC_OVER);
 		halo.setVisible(false);
 
-		if (c.isHole() && !c.isWireFrame()) {
+		if (c.isHole()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
 			pm.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.55));
 			pm.setSpecularColor(new Color(0.55, 0.55, 0.55, 1));
@@ -744,7 +744,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					diffuseColor.getOpacity()));
 			meshView.setCullFace(CullFace.BACK);
 		}
-
+		if (c.isWireFrame())
+			meshView.setDrawMode(DrawMode.LINE);
+		else
+			meshView.setDrawMode(DrawMode.FILL);
 		meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		engine.addUserNode(halo);
