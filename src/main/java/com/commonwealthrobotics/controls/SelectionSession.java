@@ -321,8 +321,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
-		if (source == this.source)
-			return;
+
 		this.source = source;
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
@@ -610,8 +609,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		@SuppressWarnings("unchecked")
 		List<CSG> process = (List<CSG>) CaDoodleLoader.filterForDisplay(ap.get(), true);
-		//		if (ap.get().isRegenerating())
-		//			return;
+		// if (ap.get().isRegenerating())
+		// return;
 
 		List<CSG> currentState = getCurrentState();
 		HashMap<CSG, MeshHolder> transport = new HashMap<CSG, MeshHolder>();
@@ -1011,7 +1010,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : getSelected()) {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
-			meshes.get(c).halo.setVisible(true);
+			MeshHolder meshHolder = meshes.get(c);
+			if (meshHolder != null)
+				meshHolder.halo.setVisible(true);
 		}
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
@@ -2095,8 +2096,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (!moveLock()) {
 					com.neuronrobotics.sdk.common.Log.error("On Cruise");
 					CSG indicator = selectedCSG.get(0);
-					//					if (selectedCSG.size() > 1)
-					//						indicator = CSG.unionAll(selectedCSG);
+					// if (selectedCSG.size() > 1)
+					// indicator = CSG.unionAll(selectedCSG);
 
 					List<String> seleectedNames = selectedSnapshot();
 					TransformNR o = new TransformNR(RotationNR.getRotationZ(90));
@@ -2544,12 +2545,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
 				previousWP = ap.get().getWorkplane();
 				ap.get().setWorkplane(nrToCSG);
-				//workplane.placeWorkplaneVisualization();
+				// workplane.placeWorkplaneVisualization();
 				if (objectWorkplane != null)
 					objectWorkplane.getStyleClass().add("image-button-focus");
 			} else {
 				ap.get().setWorkplane(previousWP);
-				//workplane.placeWorkplaneVisualization();
+				// workplane.placeWorkplaneVisualization();
 				if (objectWorkplane != null)
 					objectWorkplane.getStyleClass().add("image-button");
 			}
@@ -2973,7 +2974,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public HashMap<CSG, MeshHolder> getMeshes() {
 		return meshes;
 	}
-
 
 	@Override
 	public void onTimelineUpdate(int num, WritableImage image) {
