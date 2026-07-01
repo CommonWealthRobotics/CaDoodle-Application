@@ -665,7 +665,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 		// force the UI update to complete before moving on to other operations
 		try {
-			latch.await(100, TimeUnit.MILLISECONDS);
+			latch.await(500, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2942,8 +2942,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onRegenerateDone() {
 		// com.neuronrobotics.sdk.common.Log.debug("Enable parametrics ");
 		BowlerStudio.runLater(() -> parametrics.setDisable(false));
-		onUpdate(ap.get().getCurrentState(), ap.get().getCurrentOperation(), ap.get());
-
 	}
 
 	@Override
