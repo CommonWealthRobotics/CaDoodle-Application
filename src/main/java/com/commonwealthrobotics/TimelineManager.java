@@ -47,65 +47,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 public class TimelineManager {
-	private class timelineButton extends Button {
 
-		private StackPane stack;
-		private ImageView toolimage;
-		private Image image;
-		Separator separator = new Separator(Orientation.VERTICAL);
-		private ImageView value;
-		private HBox hbox;
-
-		public timelineButton(String text, Image image) {
-			super(text);
-			this.image = image;
-			getStyleClass().add("image-button");
-			setContentDisplay(ContentDisplay.TOP);
-			separator.getStyleClass().clear();
-			separator.getStyleClass().add("timeline-block");
-
-		}
-
-		public void setButtonImageType(ObservableList<String> styleClass) {
-			value = new ImageView(resizeImage(image, buttonSize, buttonSize));
-			value.setFitWidth(buttonSize);
-			value.setFitHeight(buttonSize);
-
-			ImageView toolimage = new ImageView();
-			toolimage.getStyleClass().addAll(styleClass);
-			double overlaySize = buttonSize / 3.0;
-			toolimage.setFitWidth(overlaySize);
-			toolimage.setFitHeight(overlaySize);
-
-			double radius = overlaySize * Math.sqrt(2) / 2.0;
-			Circle bg = new Circle(radius, Color.web("#263d8c"));
-
-			StackPane badge = new StackPane(toolimage);
-			badge.setAlignment(Pos.CENTER);
-			badge.setMaxSize(radius * 2, radius * 2);
-
-			StackPane stack = new StackPane();
-			stack.setPrefSize(buttonSize, buttonSize);
-			stack.getChildren().add(value);
-			stack.getChildren().add(badge);
-			StackPane.setAlignment(badge, Pos.BOTTOM_RIGHT);
-
-			hbox = new HBox(this, separator);
-			hbox.setAlignment(Pos.CENTER);
-
-			setGraphic(stack);
-		}
-
-		public void updatemainImage(Image resizeImage) {
-			value.setImage(resizeImage);
-		}
-	}
 
 	private ScrollPane timelineScroll;
 	private HBox baseBox;
 	private GridPane timeline;
 	private ActiveProject ap;
-	private ArrayList<timelineButton> buttons = new ArrayList<timelineButton>();
+	private ArrayList<TimelineButton> buttons = new ArrayList<TimelineButton>();
 	private boolean updating = false;
 	private SelectionSession session;
 	private boolean clear;
@@ -115,7 +63,6 @@ public class TimelineManager {
 	private boolean addrem;
 	private boolean firstTime;
 	private boolean timelineOpen;
-	private int buttonSize = 80;
 	private CheckBox timelineShowAll;
 	private CheckBox timelineAddOpShow;
 	private CheckBox timelineResizeShow;
@@ -132,7 +79,7 @@ public class TimelineManager {
 	private EventHandler<ActionEvent> showAllAction;
 	private HBox timelineShowButtons;
 	private CheckBox timelineMoveObjectShow;
-	private HashMap<CheckBox, ArrayList<timelineButton>> buttonTypes = new HashMap<CheckBox, ArrayList<timelineButton>>();
+	private HashMap<CheckBox, ArrayList<TimelineButton>> buttonTypes = new HashMap<CheckBox, ArrayList<TimelineButton>>();
 	// private ArrayList<Button> addButtons = new ArrayList<Button>();
 	// private ArrayList<Button> moveButtons = new ArrayList<Button>();
 	// private ArrayList<Button> resizeButtons = new ArrayList<Button>();
@@ -162,10 +109,10 @@ public class TimelineManager {
 			@Override
 			public void onRegenerateStart(CaDoodleOperation source) {
 				ArrayList<CaDoodleOperation> ops = ap.get().getOperations();
-				ArrayList<timelineButton> toRem = new ArrayList<timelineButton>();
+				ArrayList<TimelineButton> toRem = new ArrayList<TimelineButton>();
 
 				for (int i = Math.max(0, ap.get().opToIndex(source) + 1); i < buttons.size(); i++) {
-					timelineButton b = buttons.get(i);
+					TimelineButton b = buttons.get(i);
 					toRem.add(b);
 					BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
 				}
@@ -196,7 +143,7 @@ public class TimelineManager {
 				if (updating)
 					return;
 				if (buttons.size() > num) {
-					timelineButton b = buttons.get(num);
+					TimelineButton b = buttons.get(num);
 					BowlerStudio.runLater(() -> {
 						b.updatemainImage(imageFile);
 					});
@@ -439,7 +386,7 @@ public class TimelineManager {
 			CountDownLatch latch = new CountDownLatch(1);
 			BowlerStudio.runLater(() -> {
 				String text = (myIndex + 1) + "\n" + op.getType();
-				timelineButton toAdd = new timelineButton(text, image);
+				TimelineButton toAdd = new TimelineButton(text, image);
 				if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 						|| Sweep.class.isInstance(op)) {
 					setupCheckBox(timelineAddOpShow, toAdd, op);
@@ -535,7 +482,7 @@ public class TimelineManager {
 
 				Separator verticalSeparator = new Separator();
 				verticalSeparator.setOrientation(Orientation.VERTICAL);
-				verticalSeparator.setPrefHeight(buttonSize); // Set height to 80 units
+				verticalSeparator.setPrefHeight(TimelineButton.buttonSize); // Set height to 80 units
 				// timeline.getChildren().add(verticalSeparator);
 
 				// Create a delete menu item
@@ -592,11 +539,11 @@ public class TimelineManager {
 		}
 	}
 
-	private void setupCheckBox(CheckBox tmp, timelineButton toAdd, CaDoodleOperation op) {
+	private void setupCheckBox(CheckBox tmp, TimelineButton toAdd, CaDoodleOperation op) {
 		if (buttonTypes.get(tmp) == null) {
-			buttonTypes.put(tmp, new ArrayList<timelineButton>());
+			buttonTypes.put(tmp, new ArrayList<TimelineButton>());
 		}
-		ArrayList<timelineButton> moveButtons = buttonTypes.get(tmp);
+		ArrayList<TimelineButton> moveButtons = buttonTypes.get(tmp);
 		if (!timelineShowButtons.getChildren().contains(tmp)) {
 			moveButtons.clear();
 			timelineShowButtons.getChildren().add(new Separator(Orientation.VERTICAL));
@@ -618,9 +565,9 @@ public class TimelineManager {
 		toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
 	}
 
-	private void setupCheckboxEvent(ArrayList<timelineButton> moveButtons, CheckBox cb) {
+	private void setupCheckboxEvent(ArrayList<TimelineButton> moveButtons, CheckBox cb) {
 		boolean value = !cb.isSelected();
-		for (timelineButton b : moveButtons) {
+		for (TimelineButton b : moveButtons) {
 			b.getGraphic().setVisible(!value);
 		}
 		if (!cb.isSelected())
@@ -659,7 +606,7 @@ public class TimelineManager {
 			CaDoodleOperation op = operations.get(i);
 			if (op == null)
 				continue;
-			timelineButton b = buttons.get(i);
+			TimelineButton b = buttons.get(i);
 			boolean applyToMe = false;
 			if (index >= buttons.size())
 				continue;
