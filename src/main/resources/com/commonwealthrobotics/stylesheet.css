@@ -35,9 +35,14 @@
 #redoButton .image-view          { -fx-image: url("light/forward.png"); }
 #stl .image-view                 { -fx-image: url("light/Script-Tab-Stl.png"); }
 #manifoldSTL .image-view         { -fx-image: url("light/Script-Tab-Stl.png"); }
-#svg .image-view                 { -fx-image: url("light/Script-Tab-SVG.png"); }
-#blender .image-view             { -fx-image: url("light/Script-Tab-Blender.png"); }
-#freecad .image-view             { -fx-image: url("light/Script-Tab-FreeCAD.png"); }
+
+.svg-image-view                 { -fx-image: url("light/Script-Tab-SVG.png"); }
+.blender-image-view             { -fx-image: url("light/Script-Tab-Blender.png"); }
+.freecad-image-view             { -fx-image: url("light/Script-Tab-FreeCAD.png"); }
+.build123d-image-view             { -fx-image: url("light/build123d.png"); }
+.openscad-image-view             { -fx-image: url("Script-Tab-OpenSCAD.png"); }
+.eclipse-image-view             { -fx-image: url("eclipse.png"); }
+
 #obj .image-view                 { -fx-image: url("light/ObjImg.png"); }
 #type3mf .image-view             { -fx-image: url("light/3mf.png"); }
 #exportButton .image-view        { -fx-image: url("light/export-button.png"); }
