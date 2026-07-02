@@ -82,7 +82,7 @@ public class TimelineManager {
 	// private ArrayList<Button> otherButtons = new ArrayList<Button>();
 
 	private CheckBox timelineOtherShow;
-	private int buttonSize = 80;
+	private int buttonSize = 100;
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
 

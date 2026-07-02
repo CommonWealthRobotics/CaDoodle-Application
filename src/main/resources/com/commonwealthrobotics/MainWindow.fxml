@@ -507,7 +507,7 @@
                         </StackPane>
                         <AnchorPane fx:id="drawerArea" style="-fx-padding: 0 0 2 3; -fx-border-color: #BBBBBB; -fx-border-width: 0 0 1 1;" HBox.hgrow="NEVER">
                            <children>
-                              <GridPane fx:id="drawerGrid" style="-fx-padding: 0 5 0 3; -fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0">
+                              <GridPane fx:id="drawerGrid" minWidth="240.0" style="-fx-padding: 0 5 0 3; -fx-border-width: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0">
                                 <columnConstraints>
                                     <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="72.0" minWidth="72.0" />
                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="72.0" />
@@ -528,7 +528,7 @@
                                     <AnchorPane GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                                        <children>
 
-                                          <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="220.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <content>
                                               <AnchorPane minHeight="0.0" minWidth="0.0">
                                                    <children>
