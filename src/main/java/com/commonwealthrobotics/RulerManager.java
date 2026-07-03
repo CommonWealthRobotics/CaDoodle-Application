@@ -109,7 +109,7 @@ public class RulerManager {
 		workplane.setUpdater(tf -> {
 			TransformNR tmp = tf.copy();
 			tmp.setRotation(new RotationNR());
-			BowlerKernel.runLater(()-> TransformFactory.nrToAffine(tmp, rulerOffset));
+			BowlerKernel.runLater(() -> TransformFactory.nrToAffine(tmp, rulerOffset));
 		});
 		workplane.onCancel(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Canceling active ruler pick session");
