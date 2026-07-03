@@ -1,6 +1,7 @@
 package com.commonwealthrobotics;
 
 import com.commonwealthrobotics.numbers.TextFieldDimension;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -108,7 +109,7 @@ public class RulerManager {
 		workplane.setUpdater(tf -> {
 			TransformNR tmp = tf.copy();
 			tmp.setRotation(new RotationNR());
-			TransformFactory.nrToAffine(tmp, rulerOffset);
+			BowlerKernel.runLater(()-> TransformFactory.nrToAffine(tmp, rulerOffset));
 		});
 		workplane.onCancel(() -> {
 			com.neuronrobotics.sdk.common.Log.debug("Canceling active ruler pick session");
