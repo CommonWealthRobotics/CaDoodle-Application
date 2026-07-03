@@ -3,6 +3,7 @@ package com.commonwealthrobotics.align;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.commonwealthrobotics.ActiveProject;
@@ -95,7 +96,10 @@ public class AlignManager {
 	private void updateHandles(HashMap<CSG, Bounds> inWorkplaneBounds) {
 		if (operation != null)
 			try {
-				b = operation.getBounds(new ArrayList<CSG>(session.getSelected()), inWorkplaneBounds);
+				LinkedHashSet<CSG> selected = session.getSelected();
+				if (selected.size() < 1)
+					return;
+				b = operation.getBounds(new ArrayList<CSG>(selected), inWorkplaneBounds);
 			} catch (BoundsComputFailure e) {
 				Log.error(e);;
 			}
