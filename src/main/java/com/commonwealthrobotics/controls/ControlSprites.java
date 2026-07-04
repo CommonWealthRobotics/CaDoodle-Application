@@ -488,7 +488,8 @@ public class ControlSprites {
 
 	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshHolder> meshes,
 			HashMap<CSG, Bounds> inWorkplaneBounds) {
-		align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes, inWorkplaneBounds);
+		if (toAlign.size() > 1)
+			align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes, inWorkplaneBounds);
 
 	}
 
