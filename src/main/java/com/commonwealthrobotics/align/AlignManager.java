@@ -101,7 +101,8 @@ public class AlignManager {
 					return;
 				b = operation.getBounds(new ArrayList<CSG>(selected), inWorkplaneBounds);
 			} catch (BoundsComputFailure e) {
-				Log.error(e);;
+				// Log.error(e);;
+				return;
 			}
 		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
 		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
