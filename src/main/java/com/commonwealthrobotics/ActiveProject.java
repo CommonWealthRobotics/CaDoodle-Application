@@ -29,6 +29,7 @@ import java.util.zip.ZipInputStream;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -45,8 +46,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -181,15 +184,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 			@Override
 			public void onInstallFail(String url) {
-				//				if (!ap.get().isInitialized()) {
-				//					return;
-				//				}
-				//				try {
-				//					BowlerStudio.openExternalWebpage(new URL(url));
-				//				} catch (MalformedURLException e) {
-				//					// Auto-generated catch block
-				//					com.neuronrobotics.sdk.common.Log.error(e);
-				//				}
+				// if (!ap.get().isInitialized()) {
+				// return;
+				// }
+				// try {
+				// BowlerStudio.openExternalWebpage(new URL(url));
+				// } catch (MalformedURLException e) {
+				// // Auto-generated catch block
+				// com.neuronrobotics.sdk.common.Log.error(e);
+				// }
 			}
 
 			public void notifyOfFailure(String name) {
@@ -446,12 +449,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
-		//		try {
-		//			Thread.sleep(16);
-		//		} catch (InterruptedException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
+		// try {
+		// Thread.sleep(16);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	@Override
@@ -948,6 +951,30 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			panes.add(node);
 		}
 
+		String url = getStyleSheetURL();
+		node.getStylesheets().setAll(url);
+	}
+
+	public static Color getLabelTextColor() {
+		if (!Platform.isFxApplicationThread()) {
+			throw new IllegalStateException("Must be called on the JavaFX Application Thread");
+		}
+
+		Label label = new Label("test");
+
+		Pane root = new Pane(label);
+		Scene scene = new Scene(root);
+
+		scene.getStylesheets().add(getStyleSheetURL());
+
+		// Force CSS to be applied
+		root.applyCss();
+		label.applyCss();
+
+		return (Color) label.getTextFill();
+	}
+
+	public static String getStyleSheetURL() {
 		String sheet = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", DEFAULT).toString();
 
 		String url = Main.class.getResource("/com/commonwealthrobotics/stylesheet.css").toExternalForm();
@@ -962,7 +989,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
-		node.getStylesheets().setAll(url);
+		return url;
 	}
 
 	public static ArrayList<String> getStyleSheetOptions() {
