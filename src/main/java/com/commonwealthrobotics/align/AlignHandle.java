@@ -272,6 +272,8 @@ public class AlignHandle {
 		this.operation = operation;
 		// Auto-generated method stub
 		this.engine = engine;
+		if (toAlign.size() < 2)
+			throw new RuntimeException("Can not set the allign handle to have less than 2 objects to allign");
 		this.toAlign = toAlign;
 		this.selected = selected;
 		reset();
