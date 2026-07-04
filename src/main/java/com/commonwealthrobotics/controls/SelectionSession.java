@@ -646,7 +646,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				boolean exists = false;
 				for (CSG c : currentState) {
 					if (c.getName().contentEquals(s) && !c.isInGroup()) {
-						selected.add(c);
+						addToSelected(c);
 					}
 				}
 			}
@@ -820,8 +820,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Log.error(new Exception("Selected an object in a group"));
 			return;
 		}
-		getSelected().add(name);
-		meshes.get(name).halo.setVisible(true);
+		selected.add(name);
+		MeshHolder meshHolder = meshes.get(name);
+		if (meshHolder != null)
+			meshHolder.halo.setVisible(true);
 	}
 
 	private boolean isSelected(CSG target) {
@@ -1052,7 +1054,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		}
 		getSelected().clear();
-		getSelected().addAll(got);
+		for (CSG c : got)
+			addToSelected(c);
 		if (!selectedBefore.equals(new HashSet<>(selectedSnapshot())))
 			fireSelectionChanged();
 	}
@@ -1732,17 +1735,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		fireSelectionChanged();
 		// Log.error(new Exception("selectAllFromCurrentState"));
-		if (getSelected().size() > 0)
+		if (getSelected().size() > 0) {
 			try {
 				getSellectedBounds();
 			} catch (BoundsComputFailure e) {
 				Log.error(e);
 			}
-		BowlerStudio.runLater(() -> {
-			updateControlsDisplayOfSelected();
-			setKeyBindingFocus();
-		});
-
+			BowlerStudio.runLater(() -> {
+				updateControlsDisplayOfSelected();
+				setKeyBindingFocus();
+			});
+		} else {
+			controls.clearSelection();
+		}
 		updateRobotLab.run();
 	}
 
@@ -2282,7 +2287,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					}
 
 					getSelected().clear();
-					getSelected().addAll(results);
+					for (CSG c : results)
+						addToSelected(c);
 					fireSelectionChanged();
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 					updateRobotLab.run();
@@ -2324,7 +2330,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 					}
 					getSelected().clear();
-					getSelected().addAll(got);
+					for (CSG c : got)
+						addToSelected(c);
 					fireSelectionChanged();
 					BowlerStudio.runLater(java.time.Duration.ofMinutes(100), () -> {
 						updateControlsDisplayOfSelected();
@@ -2367,7 +2374,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			if (isAGroupSelected()) {
 				getSelected().clear();
-				getSelected().addAll(toSelect);
+				for (CSG c : toSelect)
+					addToSelected(c);
 				fireSelectionChanged();
 				try {
 					ap.addOp(new UnGroup().setNames(selectedSnapshot)).join();
