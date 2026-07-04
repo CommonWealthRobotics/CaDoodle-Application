@@ -305,39 +305,41 @@ public class AlignHandle {
 		clear();
 		if (operation == null)
 			return;
-		Align tmp = operation.copy();
-		Align prev = operation;
-		operation = tmp;
-		try {
-			setMyOperation();
-			tmp.setCaDoodleFile(ap.get());
-			tmp.setCache(cache);
-			visualizationObjects = tmp.process(toAlign);
-			for (int i = 0; i < visualizationObjects.size(); i++) {
-				CSG indicator = visualizationObjects.get(i);
-				MeshView indicatorMesh = indicator.newMesh();
-				indicatorMesh.setMouseTransparent(true);
-				// indicatorMesh.getTransforms().addAll(workplaneOffset);
-				PhongMaterial material = new PhongMaterial();
+		if (toAlign.size() > 1) {
+			Align tmp = operation.copy();
+			Align prev = operation;
+			operation = tmp;
+			try {
+				setMyOperation();
+				tmp.setCaDoodleFile(ap.get());
+				tmp.setCache(cache);
+				visualizationObjects = tmp.process(toAlign);
+				for (int i = 0; i < visualizationObjects.size(); i++) {
+					CSG indicator = visualizationObjects.get(i);
+					MeshView indicatorMesh = indicator.newMesh();
+					indicatorMesh.setMouseTransparent(true);
+					// indicatorMesh.getTransforms().addAll(workplaneOffset);
+					PhongMaterial material = new PhongMaterial();
 
-				if (indicator.isHole()) {
-					// material.setDiffuseMap(texture);
-					material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-				} else {
-					Color c = indicator.getColor();
-					material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
-					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+					if (indicator.isHole()) {
+						// material.setDiffuseMap(texture);
+						material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+						material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+					} else {
+						Color c = indicator.getColor();
+						material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
+						material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+					}
+					indicatorMesh.setMaterial(material);
+					engine.addUserNode(indicatorMesh);
+					indicatorMesh.setVisible(false);
+					visualizers.put(indicator, indicatorMesh);
 				}
-				indicatorMesh.setMaterial(material);
-				engine.addUserNode(indicatorMesh);
-				indicatorMesh.setVisible(false);
-				visualizers.put(indicator, indicatorMesh);
+			} catch (Exception ex) {
+				Log.error(ex);
 			}
-		} catch (Exception ex) {
-			Log.error(ex);
+			operation = prev;
 		}
-		operation = prev;
 	}
 
 	private void clear() {
