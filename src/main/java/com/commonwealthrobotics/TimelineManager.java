@@ -43,7 +43,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class TimelineManager {
 
-
 	private ScrollPane timelineScroll;
 	private HBox baseBox;
 	private GridPane timeline;
@@ -83,6 +82,7 @@ public class TimelineManager {
 
 	private CheckBox timelineOtherShow;
 	private int buttonSize = 100;
+
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
 
@@ -116,7 +116,8 @@ public class TimelineManager {
 
 			@Override
 			public void onRegenerateDone() {
-				update(false);
+				session.submit(() -> update(false));
+
 			}
 
 			@Override
@@ -128,23 +129,26 @@ public class TimelineManager {
 
 			@Override
 			public void onInitializationDone() {
-
-				firstTime = true;
-				update(true);
+				session.submit(() -> {
+					firstTime = true;
+					update(true);
+				});
 			}
 
 			@Override
 			public void onTimelineUpdate(int num, WritableImage imageFile) {
 				if (updating)
 					return;
-				if (buttons.size() > num) {
-					ButtonWithOverlayImage b = buttons.get(num);
-					BowlerStudio.runLater(() -> {
-						b.updatemainImage(imageFile);
-					});
-					Log.debug("Updating " + imageFile);
-				} else
-					makeButton(num, imageFile, ap.get().getOperations().get(num));
+				session.submit(() -> {
+					if (buttons.size() > num) {
+						ButtonWithOverlayImage b = buttons.get(num);
+						BowlerStudio.runLater(() -> {
+							b.updatemainImage(imageFile);
+						});
+						Log.debug("Updating " + imageFile);
+					} else
+						makeButton(num, imageFile, ap.get().getOperations().get(num));
+				});
 			}
 		});
 	}
@@ -367,7 +371,6 @@ public class TimelineManager {
 		if (getNodeAt(timeline, i, 0) != null)
 			return;
 		try {
-
 
 			List<CSG> state = ap.get().getStateAtOperation(op);
 			if (op == null)
