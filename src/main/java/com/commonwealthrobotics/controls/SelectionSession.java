@@ -621,7 +621,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				continue;
 			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
-			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c)));
+			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		BowlerStudio.runLater(() -> {
