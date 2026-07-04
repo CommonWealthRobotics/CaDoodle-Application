@@ -141,7 +141,7 @@ public class ShapesPallet {
 		Thread t = new Thread(() -> {
 			SplashManager.renderSplashFrame(50, "Loading Shapes");
 			while (!threadComplete) {
-				com.neuronrobotics.sdk.common.Log.error("Waiting for shapesThread to exit");
+				com.neuronrobotics.sdk.common.Log.debug("Waiting for shapesThread to exit");
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -344,7 +344,7 @@ public class ShapesPallet {
 			cl.countDown();
 		});
 		try {
-			cl.await(500, TimeUnit.MILLISECONDS);
+			cl.await(2500, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			return null;
 		}
