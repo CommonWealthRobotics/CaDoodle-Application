@@ -640,21 +640,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				displayCSG(c, transport.get(c));
 			transport.clear();
 			ArrayList<CSG> toRemove = new ArrayList<>();
-			for (CSG s : getSelected()) {
+			List<String> selectedSnapshot = selectedSnapshot();
+			selected.clear();
+			for (String s : selectedSnapshot) {
 				boolean exists = false;
 				for (CSG c : currentState) {
-					if (c.getName().contentEquals(s.getName()) && !c.isInGroup()) {
-						exists = true;
-						break;
+					if (c.getName().contentEquals(s) && !c.isInGroup()) {
+						selected.add(c);
 					}
 				}
-				if (!exists)
-					toRemove.add(s);
-
 			}
-			if (getSelected().removeAll(toRemove))
-				fireSelectionChanged();
 
+			fireSelectionChanged();
 			updateControlsDisplayOfSelected();
 			updateRobotLab.run();
 			TickToc.setEnabled(false);
