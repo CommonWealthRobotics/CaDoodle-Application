@@ -498,7 +498,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onRedo(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Redo");
+		com.neuronrobotics.sdk.common.Log.debug("On Redo");
 		session.getExecutor().submit(() -> {
 			ap.get().forward();
 		});
@@ -507,7 +507,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onUndo(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Undo");
+		com.neuronrobotics.sdk.common.Log.debug("On Undo");
 		session.getExecutor().submit(() -> {
 			ap.get().back();
 			session.setKeyBindingFocus();
@@ -516,21 +516,21 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onPaste(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Paste");
+		com.neuronrobotics.sdk.common.Log.debug("On Paste");
 		session.onPaste();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onCopy(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On copy");
+		com.neuronrobotics.sdk.common.Log.debug("On copy");
 		session.setCopyListToCurrentSelected();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onDelete(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Delete");
+		com.neuronrobotics.sdk.common.Log.debug("On Delete");
 		session.onDelete();
 		session.setKeyBindingFocus();
 	}
@@ -680,47 +680,47 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	// onXorOperation
 	@FXML
 	void onXorOperation(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Xor");
+		com.neuronrobotics.sdk.common.Log.debug("On Xor");
 		session.onXor();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onGroup(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Group");
+		com.neuronrobotics.sdk.common.Log.debug("On Group");
 		session.onGroup(false, false);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHullOperation(ActionEvent e) {
-		com.neuronrobotics.sdk.common.Log.error("On Hull");
+		com.neuronrobotics.sdk.common.Log.debug("On Hull");
 		session.onGroup(true, false);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onIntersectOperation(ActionEvent e) {
-		com.neuronrobotics.sdk.common.Log.error("On Intersect");
+		com.neuronrobotics.sdk.common.Log.debug("On Intersect");
 		session.onGroup(false, true);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideConnections(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error(" on Hide Physics Connections");
+		com.neuronrobotics.sdk.common.Log.debug(" on Hide Physics Connections");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideNotes(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Hide Notes ");
+		com.neuronrobotics.sdk.common.Log.debug("On Hide Notes ");
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHideShow(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Hide Show");
+		com.neuronrobotics.sdk.common.Log.debug("On Hide Show");
 		session.onHideShowOperation();
 
 		session.setKeyBindingFocus();
@@ -728,21 +728,21 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHoleButton(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Set to Hole ");
+		com.neuronrobotics.sdk.common.Log.debug("Set to Hole ");
 		session.setToHole();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onHome(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Open the Project Select UI");
+		com.neuronrobotics.sdk.common.Log.debug("Open the Project Select UI");
 		// session.setKeyBindingFocus();
 		if (holeButton != null)
 			homeButton.setDisable(true);
 		Runnable onFinish = () -> {
 			if (session != null)
 				session.setKeyBindingFocus();
-			com.neuronrobotics.sdk.common.Log.error("ProjectManager Close");
+			com.neuronrobotics.sdk.common.Log.debug("ProjectManager Close");
 			BowlerStudio.runLater(() -> homeButton.setDisable(false));
 
 		};
@@ -840,7 +840,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onLock(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Lock Selected");
+		com.neuronrobotics.sdk.common.Log.debug("On Lock Selected");
 		session.lockToggle();
 		session.setKeyBindingFocus();
 	}
@@ -859,7 +859,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onNotesClick(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Notes");
+		com.neuronrobotics.sdk.common.Log.debug("On Notes");
 		session.setKeyBindingFocus();
 	}
 	//
@@ -871,7 +871,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onRuler(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Add Ruler");
+		com.neuronrobotics.sdk.common.Log.debug("On Add Ruler");
 		ruler.setActive(true);
 		session.setMode(SpriteDisplayMode.PLACING);
 		ruler.startPick(() -> {
@@ -886,28 +886,28 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onSetCategory(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Set Category, re-lod object pallet");
+		com.neuronrobotics.sdk.common.Log.debug("On Set Category, re-lod object pallet");
 		pallet.onSetCategory();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onSettings(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Settings");
+		com.neuronrobotics.sdk.common.Log.debug("On Settings");
 		SettingsManager.launch(this);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onShowHidden(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Show Hidden");
+		com.neuronrobotics.sdk.common.Log.debug("On Show Hidden");
 		session.showAll();
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onUngroup(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Ungroup");
+		com.neuronrobotics.sdk.common.Log.debug("On Ungroup");
 
 		session.onUngroup();
 		session.setKeyBindingFocus();
@@ -915,7 +915,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onVisibility(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Visibility Menu opening");
+		com.neuronrobotics.sdk.common.Log.debug("On Visibility Menu opening");
 		session.setKeyBindingFocus();
 	}
 
@@ -938,14 +938,14 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onZoomIn(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Zoom In");
+		com.neuronrobotics.sdk.common.Log.debug("Zoom In");
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() + 40);
 		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onZoomOut(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Zoom Out");
+		com.neuronrobotics.sdk.common.Log.debug("Zoom Out");
 
 		engine.setZoom((int) engine.getFlyingCamera().getZoomDepth() - 40);
 		session.setKeyBindingFocus();
@@ -953,7 +953,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void setName(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
+		com.neuronrobotics.sdk.common.Log.debug("Set Project Name to " + fileNameBox.getText());
 		ap.get().setProjectName(fileNameBox.getText());
 		session.setKeyBindingFocus();
 		session.save();
@@ -961,7 +961,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void showAll(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Show All");
+		com.neuronrobotics.sdk.common.Log.debug("On Show All");
 		session.showAll();
 		session.setKeyBindingFocus();
 	}
