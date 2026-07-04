@@ -105,13 +105,17 @@ public class TimelineManager {
 			public void onRegenerateStart(CaDoodleOperation source) {
 				ArrayList<CaDoodleOperation> ops = ap.get().getOperations();
 				ArrayList<ButtonWithOverlayImage> toRem = new ArrayList<ButtonWithOverlayImage>();
-
-				for (int i = Math.max(0, ap.get().opToIndex(source) + 1); i < buttons.size(); i++) {
-					ButtonWithOverlayImage b = buttons.get(i);
-					toRem.add(b);
-					BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
+				try {
+					int opToIndex = ap.get().opToIndex(source);
+					for (int i = Math.max(0, opToIndex + 1); i < buttons.size(); i++) {
+						ButtonWithOverlayImage b = buttons.get(i);
+						toRem.add(b);
+						BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
+					}
+					buttons.removeAll(toRem);
+				} catch (IndexOutOfBoundsException ex) {
+					// do not remove any
 				}
-				buttons.removeAll(toRem);
 			}
 
 			@Override
