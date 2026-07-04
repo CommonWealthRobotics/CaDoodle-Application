@@ -478,15 +478,18 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							e.printStackTrace();
 						}
 						if (source != null) {
-							Polygon p = fromMesh;//getPolygonFromFaceIndex(faceIndex, source);
+							Polygon p = fromMesh;
+							Polygon sourcePoly = getPolygonFromFaceIndex(faceIndex, source);
+							if (p.getBounds().isBoundsTouching(sourcePoly.getBounds())) {
+								// use the more accurate polygon
+								p = sourcePoly;
+							}
 
 							if (p != null) {
 								try {
 									Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
-									//npTF = TransformFactory.nrToCSG(pureRot);
 									npTF.set(0, 0, 0);
-									// npTF=new Transform();
-									//pureRot = TransformFactory.csgToNR(npTF).inverse();
+									pureRot = TransformFactory.csgToNR(npTF).inverse();
 									// an in-plane snapping here by transforming the points into the plane
 									// orientation, then snapping in plane, then transforming the points back.
 									TransformNR t = new TransformNR(x, y, z);
