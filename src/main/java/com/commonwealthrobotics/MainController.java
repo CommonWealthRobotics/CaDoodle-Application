@@ -765,7 +765,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onImport(ActionEvent event) {
-		com.neuronrobotics.sdk.common.Log.error("On Import");
+		com.neuronrobotics.sdk.common.Log.debug("On Import");
 		session.getExecutor().submit(() -> {
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			ArrayList<String> extensions = getExtension();
@@ -1251,7 +1251,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					}
 
 				}
-				com.neuronrobotics.sdk.common.Log.error("Set Project Name to " + fileNameBox.getText());
+				com.neuronrobotics.sdk.common.Log.debug("Set Project Name to " + fileNameBox.getText());
 				ap.get().setProjectName(fileNameBox.getText());
 				session.save();
 				nameTypeDelay = null;
@@ -1319,7 +1319,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void setUpColorPicker() {
 		colorPicker.setOnMousePressed(event -> {
-			com.neuronrobotics.sdk.common.Log.error("Set to Solid");
+			com.neuronrobotics.sdk.common.Log.debug("Set to Solid");
 			session.setToSolid();
 		});
 
