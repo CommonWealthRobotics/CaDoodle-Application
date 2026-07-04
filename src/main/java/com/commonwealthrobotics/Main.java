@@ -174,8 +174,8 @@ public class Main extends Application {
 			logfile.delete();
 		try {
 			logfile.createNewFile();
-			Log.enableDebugPrint(true);
-			// Log.enableErrorPrint();
+			// Log.enableDebugPrint(true);
+			Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
 
@@ -314,7 +314,6 @@ public class Main extends Application {
 			SplashManager.renderSplashFrame(2, "No Network");
 		}
 		SplashManager.renderSplashFrame(2, "Images Loaded!");
-		// com.neuronrobotics.sdk.common.Log.enableErrorPrint();
 		FontSizeManager.getDefaultSize();
 		CSG.setUseGPU(false);
 		ActiveProject.getStyleSheetOptions();
