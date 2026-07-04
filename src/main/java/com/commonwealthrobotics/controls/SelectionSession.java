@@ -805,11 +805,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 
 				// Inform the controls about the total selected object(s) height
-				try {
-					getControls().setObjectHeight(getSellectedBounds().getTotalZ());
-				} catch (Exception ex) {
-					Log.error(ex);
-				}
+				if (getSelected().size() > 0)
+					try {
+						getControls().setObjectHeight(getSellectedBounds().getTotalZ());
+					} catch (Exception ex) {
+						Log.error(ex);
+					}
 				event.consume();
 			}
 		});
@@ -2374,20 +2375,37 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			if (isAGroupSelected()) {
 				getSelected().clear();
-				for (CSG c : toSelect)
-					addToSelected(c);
-				fireSelectionChanged();
+				//				for (CSG c : toSelect)
+				//					addToSelected(c);
+				//				fireSelectionChanged();
 				try {
-					ap.addOp(new UnGroup().setNames(selectedSnapshot)).join();
+					UnGroup setNames = new UnGroup().setNames(selectedSnapshot);
+					ap.addOp(setNames).join();
+					List<CSG> currentState = ap.get().getCurrentState();
+					BowlerKernel.runLater(() -> {
+						updateControlsDisplayOfSelected();
+						updateRobotLab.run();
+						getExecutor().submit(() -> {
+							try {
+								List<String> namesAddedInThisOperation = setNames.getNamesAddedInThisOperation();
+								for (String s : namesAddedInThisOperation) {
+									CSG selectedCSG = getSelectedCSG(s);
+									addToSelected(selectedCSG);
+								}
+								fireSelectionChanged();
+								BowlerKernel.runLater(() -> {
+									updateControlsDisplayOfSelected();
+								});
+							} catch (Throwable t) {
+								Log.error(t);
+							}
+						});
+					});
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			BowlerKernel.runLater(() -> {
-				updateControlsDisplayOfSelected();
-				updateRobotLab.run();
-			});
 
 		});
 
