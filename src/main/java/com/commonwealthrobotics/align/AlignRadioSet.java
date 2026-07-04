@@ -177,13 +177,13 @@ public class AlignRadioSet {
 		}
 	}
 
-	public void recomputeOps(HashMap<CSG, Bounds> cache) {
+	public void recomputeOps(HashMap<String, Bounds> cache) {
 		for (AlignHandle ah : asList) {
 			ah.recomputeOps(cache);
 		}
 	}
 
-	public void clear(HashMap<CSG, Bounds> cache) {
+	public void clear(HashMap<String, Bounds> cache) {
 		for (AlignHandle ah : asList) {
 			ah.clear(cache);
 		}

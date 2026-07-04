@@ -301,7 +301,7 @@ public class AlignHandle {
 		material.setDiffuseColor(Color.BLACK);
 	}
 
-	public void recomputeOps(HashMap<CSG, Bounds> cache) {
+	public void recomputeOps(HashMap<String, Bounds> cache) {
 		clear();
 		if (operation == null)
 			return;
@@ -351,7 +351,7 @@ public class AlignHandle {
 		visualizationObjects = null;
 	}
 
-	public void clear(HashMap<CSG, Bounds> cache) {
+	public void clear(HashMap<String, Bounds> cache) {
 		recomputeOps(cache);
 	}
 }

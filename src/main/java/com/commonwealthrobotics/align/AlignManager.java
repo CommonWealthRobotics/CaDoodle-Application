@@ -77,13 +77,13 @@ public class AlignManager {
 		hide();
 	}
 
-	public void clear(HashMap<CSG, Bounds> cache) {
+	public void clear(HashMap<String, Bounds> cache) {
 		for (AlignRadioSet r : AS_LIST)
 			r.clear(cache);
 	}
 
 	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c,
-			HashMap<CSG, Bounds> inWorkplaneBounds) {
+			HashMap<String, Bounds> inWorkplaneBounds) {
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = z;
@@ -93,7 +93,7 @@ public class AlignManager {
 
 	}
 
-	private void updateHandles(HashMap<CSG, Bounds> inWorkplaneBounds) {
+	private void updateHandles(HashMap<String, Bounds> inWorkplaneBounds) {
 		if (operation != null)
 			try {
 				LinkedHashSet<CSG> selected = session.getSelected();
@@ -122,7 +122,7 @@ public class AlignManager {
 	}
 
 	public void initialize(List<String> boundNames, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,
-			HashMap<CSG, MeshHolder> meshes, HashMap<CSG, Bounds> inWorkplaneBounds) {
+			HashMap<CSG, MeshHolder> meshes, HashMap<String, Bounds> inWorkplaneBounds) {
 		this.meshes = meshes;
 		for (Node n : getElements()) {
 			BowlerStudio.runLater(() -> n.setVisible(true));;
@@ -153,7 +153,7 @@ public class AlignManager {
 		}
 	}
 
-	private void recompute(Runnable r, HashMap<CSG, Bounds> cache) {
+	private void recompute(Runnable r, HashMap<String, Bounds> cache) {
 		new Thread(() -> {
 			for (AlignRadioSet rs : AS_LIST) {
 				rs.recomputeOps(cache);

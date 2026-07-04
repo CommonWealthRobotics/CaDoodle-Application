@@ -380,7 +380,7 @@ public class ControlSprites {
 		mirror = new MirrorSessionManager(selection, ap, this, workplaneOffset);
 	}
 
-	public void clearAlign(HashMap<CSG, Bounds> cache) {
+	public void clearAlign(HashMap<String, Bounds> cache) {
 		align.clear(cache);
 	}
 
@@ -423,7 +423,7 @@ public class ControlSprites {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds,
+			double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
 			double cameraFovDegrees) {
 
 		this.b = b;
@@ -479,7 +479,7 @@ public class ControlSprites {
 	}
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
-			double y, double z, List<String> selectedCSG, Bounds b, HashMap<CSG, Bounds> inWorkplaneBounds) {
+			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds) {
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov());
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
 		// TickToc.tic("aligned update");
@@ -487,7 +487,7 @@ public class ControlSprites {
 	}
 
 	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshHolder> meshes,
-			HashMap<CSG, Bounds> inWorkplaneBounds) {
+			HashMap<String, Bounds> inWorkplaneBounds) {
 		if (toAlign.size() > 1)
 			align.initialize(boundNames, engine, toAlign, session.selectedSnapshot(), meshes, inWorkplaneBounds);
 
@@ -536,6 +536,10 @@ public class ControlSprites {
 		}
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
+			if (session.getSelected().size() == 0) {
+				runClear();
+				return;
+			}
 			this.bounds = scaleSession.getBounds();
 			Vector3d center = bounds.getCenter();
 			Vector3d min = bounds.getMin();
@@ -840,25 +844,29 @@ public class ControlSprites {
 					session.hideHalos();
 					break;
 				case Clear :
-					for (ThreedNumber t : numbers)
-						t.hide();
-
-					align.hide();
-					mirror.hide();
-					for (DottedLine l : lines)
-						l.setVisible(false);
-
-					upArrow.hide();
-					footprint.setVisible(false);
-					zOffset.hide();
-					scaleSession.hide();
-					session.hideHalos();
+					runClear();
 					break;
 			}
 
 			if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
 				updateLines();
 		});
+	}
+
+	private void runClear() {
+		for (ThreedNumber t : numbers)
+			t.hide();
+
+		align.hide();
+		mirror.hide();
+		for (DottedLine l : lines)
+			l.setVisible(false);
+
+		upArrow.hide();
+		footprint.setVisible(false);
+		zOffset.hide();
+		scaleSession.hide();
+		session.hideHalos();
 	}
 
 	public boolean mirrorIsActive() {

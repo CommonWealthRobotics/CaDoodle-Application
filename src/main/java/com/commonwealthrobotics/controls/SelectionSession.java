@@ -127,6 +127,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		public Bounds bouds;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
+			if (display == null || halo == null || bouds == null)
+				throw new NullPointerException();
 			this.display = display;
 			this.halo = halo;
 			this.bouds = bouds;
@@ -2827,15 +2829,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (selectedCSG.size() == 0)
 			return;
 		Bounds sellectedBounds;
-		try {
-			sellectedBounds = getSellectedBounds(selectedCSG);
-			BowlerStudio.runLater(() -> {
-				getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot, sellectedBounds,
-						ap.get().getBoundsCache(), cameraFovDegrees);
-			});
-		} catch (BoundsComputFailure e) {
-			Log.error(e);
-		}
+		if (selectedCSG.size() > 0)
+			try {
+				sellectedBounds = getSellectedBounds(selectedCSG);
+				BowlerStudio.runLater(() -> {
+					getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
+							sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
+				});
+			} catch (BoundsComputFailure e) {
+				Log.error(e);
+			}
 	}
 
 	// public void setCadoodle(ActiveProject ap) {

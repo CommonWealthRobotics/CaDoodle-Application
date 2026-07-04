@@ -1261,7 +1261,7 @@ public class ResizeSessionManager {
 	}
 
 	public Bounds getBounds() {
-		if (anySelected())
+		if (anySelected() || session.getSelected().size() == 0)
 			return getBoundsDynamic();
 		try {
 			return session.getSellectedBounds();
