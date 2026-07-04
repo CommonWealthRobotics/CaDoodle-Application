@@ -1733,6 +1733,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		fireSelectionChanged();
 		// Log.error(new Exception("selectAllFromCurrentState"));
+		try {
+			getSellectedBounds();
+		} catch (BoundsComputFailure e) {
+			Log.error(e);
+		}
 		BowlerStudio.runLater(() -> {
 			updateControlsDisplayOfSelected();
 			setKeyBindingFocus();
