@@ -214,6 +214,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button hexDistributeButton;
 	private Button boltHoleButton;
 	private CaDoodleOperation source;
+	private TransformNR screenPositionOfLatestMeshClick = null;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler, MeshView ground) {
@@ -792,8 +793,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
-					TransformNR scenePos = new TransformNR(localPoint.getX(), localPoint.getY(), localPoint.getZ());
-					TransformNR wpLocal = wp.inverse().times(scenePos);
+					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
+							localPoint.getZ());
+					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
 							new Point3D(manipulation.snapToGrid(startingPosition3D.getX()),
@@ -1906,7 +1908,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public TransformNR getFocusCenter() {
 		if (getSelected().size() == 0)
 			return new TransformNR();
-
+		if (screenPositionOfLatestMeshClick != null)
+			return screenPositionOfLatestMeshClick;
 		Bounds b;
 		try {
 			b = getSellectedBounds();
