@@ -34,7 +34,7 @@ spotless {
 	java {
 		lineEndings = com.diffplug.spotless.LineEnding.UNIX
 		custom('eclipseFormatterDirect') { String source ->
-			def configFile = new File(rootDir, 'BowlerStudio/libraries/bowler-script-kernel/config/eclipse-formatter.xml')
+			def configFile = new File(projectDir, 'BowlerStudio/libraries/bowler-script-kernel/config/eclipse-formatter.xml')
 			def options = new HashMap<String, String>()
 			def xml = new XmlSlurper().parse(configFile)
 			xml.profile.setting.each { setting ->
