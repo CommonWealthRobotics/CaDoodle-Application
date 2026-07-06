@@ -90,6 +90,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.BlendMode;
@@ -214,7 +215,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button hexDistributeButton;
 	private Button boltHoleButton;
 	private CaDoodleOperation source;
-	private TransformNR screenPositionOfLatestMeshClick = null;;
+	private TransformNR screenPositionOfLatestMeshClick = null;
+	private GridPane materialGrid;
+	private TitledPane materialPanel;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler, MeshView ground) {
@@ -1030,21 +1033,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
-			gp.add(new Label("Material"), 0, line);
+			materialGrid.getChildren().clear();
+			materialGrid.add(new Label("Material"), 0, line);
 			Label massDisp = new Label("0.0");
-			Button child = createPrintSettingsButton(getSelected(), massDisp);
+			
+			Button child = createPrintSettingsButton(getSelected(), massDisp,materialPanel);
 			GridPane.setHalignment(child, HPos.RIGHT);
-			gp.add(child, 1, line);
+			materialGrid.add(child, 1, line);
 			line++;
 
-			gp.add(new Label("Mass"), 0, line);
+			materialGrid.add(new Label("Mass"), 0, line);
 			GridPane.setHalignment(massDisp, HPos.RIGHT);
-			gp.add(massDisp, 1, line);
+			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
-			setUpTextBox(gp, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+			setUpTextBox(materialGrid, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
-				setUpTextBox(gp, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+				setUpTextBox(materialGrid, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1168,7 +1173,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		gp.add(child, 1, line);
 	}
 
-	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, Label massDisplay) {
+	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, Label massDisplay, TitledPane materialPanel2) {
 		Button button = new Button("Print Settings");
 		File f;
 		try {
@@ -1249,7 +1254,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
 			else
 				button.setText("Asorted");
-			massDisplay.setText(String.format(Locale.US, "%.4f g", mass));
+			String format = String.format(Locale.US, "%.4f g", mass);
+			massDisplay.setText(format);
+			materialPanel2.setText("Material    ----   ( "+format+" )");
 		};
 		if (linkedHashSet.size() == 1) {
 			CSG singleCSG = linkedHashSet.iterator().next();
@@ -1632,7 +1639,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
 			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
-			ProgressIndicator memUsage, Button renameBtn) {
+			ProgressIndicator memUsage, Button renameBtn,GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
@@ -1650,6 +1657,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.dropToWorkplane = dropToWorkplane;
 		this.memUsage = memUsage;
 		this.renameBtn = renameBtn;
+		materialGrid = MaterialGrid;
+		this.materialPanel = materialPanel;
 		setupSnapGrid();
 
 	}
