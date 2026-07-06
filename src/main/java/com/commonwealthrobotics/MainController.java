@@ -1913,7 +1913,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		BowlerStudio.runLater(() -> {
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
-			RobotLabDrawer.setVisible(advanced);
+			RobotLabDrawer.setVisible(false); // Disabled Robot lab while it is not feaature complete
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
 			renameBtn.setVisible(advanced);
