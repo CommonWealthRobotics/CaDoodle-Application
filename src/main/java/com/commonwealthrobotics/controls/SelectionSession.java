@@ -625,50 +625,57 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
-		BowlerStudio.runLater(() -> {
-			if (isAlignActive() && Align.class.isInstance(source))
-				getControls().setMode(SpriteDisplayMode.Align);
-			else if (isMirrorActive() && Mirror.class.isInstance(source)) {
-				getControls().setMode(SpriteDisplayMode.Mirror);
-				onMirror();
-			} else
-				getControls().setMode(SpriteDisplayMode.Default);
+		try {
+			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
+			BowlerStudio.runLater(() -> {
+				if (isAlignActive() && Align.class.isInstance(source))
+					getControls().setMode(SpriteDisplayMode.Align);
+				else if (isMirrorActive() && Mirror.class.isInstance(source)) {
+					getControls().setMode(SpriteDisplayMode.Mirror);
+					onMirror();
+				} else
+					getControls().setMode(SpriteDisplayMode.Default);
 
-			clearScreen();
-			resetManipulator();
-			controls.resetManipulator();
-			for (CSG c : transport.keySet())
-				displayCSG(c, transport.get(c));
-			transport.clear();
-			ArrayList<CSG> toRemove = new ArrayList<>();
-			List<String> selectedSnapshot = selectedSnapshot();
-			selected.clear();
-			for (String s : selectedSnapshot) {
-				boolean exists = false;
-				for (CSG c : currentState) {
-					if (c.getName().contentEquals(s) && !c.isInGroup()) {
-						addToSelected(c);
+				clearScreen();
+				resetManipulator();
+				controls.resetManipulator(b);
+				for (CSG c : transport.keySet())
+					displayCSG(c, transport.get(c));
+				transport.clear();
+				ArrayList<CSG> toRemove = new ArrayList<>();
+				List<String> selectedSnapshot = selectedSnapshot();
+				selected.clear();
+				for (String s : selectedSnapshot) {
+					boolean exists = false;
+					for (CSG c : currentState) {
+						if (c.getName().contentEquals(s) && !c.isInGroup()) {
+							addToSelected(c);
+						}
 					}
 				}
-			}
 
-			fireSelectionChanged();
-			updateControlsDisplayOfSelected();
-			updateRobotLab.run();
-			TickToc.setEnabled(false);
-			TickToc.tic("Update memory display");
-			updateMemoryDisplay();
-			TickToc.tic("Finish On Update In Selected Session");
-			TickToc.toc();
-			latch.countDown();
-		});
-		// force the UI update to complete before moving on to other operations
-		try {
-			latch.await(500, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
+				fireSelectionChanged();
+				updateControlsDisplayOfSelected();
+				updateRobotLab.run();
+				TickToc.setEnabled(false);
+				TickToc.tic("Update memory display");
+				updateMemoryDisplay();
+				TickToc.tic("Finish On Update In Selected Session");
+				TickToc.toc();
+				latch.countDown();
+			});
+			// force the UI update to complete before moving on to other operations
+			try {
+				latch.await(500, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (BoundsComputFailure e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	public void clearScreen() {
