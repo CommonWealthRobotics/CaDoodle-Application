@@ -1036,8 +1036,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.getChildren().clear();
 			materialGrid.add(new Label("Material"), 0, line);
 			Label massDisp = new Label("0.0");
-			
-			Button child = createPrintSettingsButton(getSelected(), massDisp,materialPanel);
+
+			Button child = createPrintSettingsButton(getSelected(), massDisp, materialPanel);
 			GridPane.setHalignment(child, HPos.RIGHT);
 			materialGrid.add(child, 1, line);
 			line++;
@@ -1173,7 +1173,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		gp.add(child, 1, line);
 	}
 
-	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, Label massDisplay, TitledPane materialPanel2) {
+	private Button createPrintSettingsButton(LinkedHashSet<CSG> linkedHashSet, Label massDisplay,
+			TitledPane materialPanel2) {
 		Button button = new Button("Print Settings");
 		File f;
 		try {
@@ -1256,7 +1257,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				button.setText("Asorted");
 			String format = String.format(Locale.US, "%.4f g", mass);
 			massDisplay.setText(format);
-			materialPanel2.setText("Material    ----   ( "+format+" )");
+			materialPanel2.setText("Material    ----   ( " + format + " )");
 		};
 		if (linkedHashSet.size() == 1) {
 			CSG singleCSG = linkedHashSet.iterator().next();
@@ -1639,7 +1640,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
 			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
 			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
-			ProgressIndicator memUsage, Button renameBtn,GridPane MaterialGrid, TitledPane materialPanel) {
+			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;

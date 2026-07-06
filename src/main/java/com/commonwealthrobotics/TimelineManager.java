@@ -391,7 +391,8 @@ public class TimelineManager {
 				return;
 			int myIndex = i;
 			addrem = true;
-			List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
+			List<CSG> previous = (myIndex == 0)
+					? new ArrayList<CSG>()
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 
 			CountDownLatch latch = new CountDownLatch(1);
