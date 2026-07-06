@@ -341,8 +341,10 @@ public class TimelineManager {
 						if (updateNeeded)
 							update(clear);
 						try {
-							session.getSellectedBounds();
-							session.updateControlsDisplayOfSelected();
+							if (session.getSelected().size() > 0) {
+								session.getSellectedBounds();
+								session.updateControlsDisplayOfSelected();
+							}
 						} catch (BoundsComputFailure e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -389,8 +391,7 @@ public class TimelineManager {
 				return;
 			int myIndex = i;
 			addrem = true;
-			List<CSG> previous = (myIndex == 0)
-					? new ArrayList<CSG>()
+			List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 
 			CountDownLatch latch = new CountDownLatch(1);
