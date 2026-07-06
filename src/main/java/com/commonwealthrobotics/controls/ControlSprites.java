@@ -350,7 +350,7 @@ public class ControlSprites {
 		setUpUIComponents();
 	}
 
-	void resetManipulator() {
+	void resetManipulator(Bounds b2) {
 		zMoveManipulator.set(0, 0, 0);
 		// zMoveManipulator.reset();
 		BowlerKernel.runLater(() -> {
@@ -848,8 +848,8 @@ public class ControlSprites {
 					break;
 			}
 
-			if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
-				updateLines();
+			//			if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
+			//				updateLines();
 		});
 	}
 
