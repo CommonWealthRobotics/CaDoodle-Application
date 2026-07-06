@@ -1165,6 +1165,12 @@ public class ResizeSessionManager {
 		leftFront.manipulator.setInReferenceFrame(newX2, newY2, z);
 		rightFront.manipulator.setInReferenceFrame(newX2, newY1, z);
 		leftRear.manipulator.setInReferenceFrame(newX1, newY2, z);
+
+		// Update mid handles using bounds to get center positions
+		frontMid.manipulator.setInReferenceFrame(newX2, 0.0, z);
+		rearMid.manipulator.setInReferenceFrame(newX1, 0.0, z);
+		leftMid.manipulator.setInReferenceFrame(0.0, newY2, z);
+		rightMid.manipulator.setInReferenceFrame(0.0, newY1, z);
 	}
 
 	private void updateTopCenter() {
