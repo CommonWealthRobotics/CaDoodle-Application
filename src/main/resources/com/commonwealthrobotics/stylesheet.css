@@ -68,6 +68,7 @@
 .addObject  { -fx-image: url("light/addObject.png"); }
 .moveObject  { -fx-image: url("light/moveObject.png"); }
 .resizeObject  { -fx-image: url("light/resizeObject.png"); }
+.bendSurface  { -fx-image: url("light/bend.png"); }
 
 /* ── Regular buttons ────────────────────────────────── */
 .button                                  { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 1px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-text-fill: #263d8c; }
