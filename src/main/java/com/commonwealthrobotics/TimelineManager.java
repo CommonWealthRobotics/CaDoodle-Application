@@ -396,6 +396,11 @@ public class TimelineManager {
 			CountDownLatch latch = new CountDownLatch(1);
 			BowlerStudio.runLater(() -> {
 				String text = (myIndex + 1) + "\n" + op.getType();
+				if (MoveCenter.class.isInstance(op)) {
+					if (((MoveCenter) op).isDropMode()) {
+						text = (myIndex + 1) + "\n" + "Drop To Workplane";
+					}
+				}
 				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0);
 				if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 						|| Sweep.class.isInstance(op)) {
