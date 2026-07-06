@@ -2621,26 +2621,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			List<CSG> cur = getCurrentStateSelected();
 			TransformNR wp = ap.get().getWorkplane();
-			Transform t = TransformFactory.nrToCSG(wp);
+
 			// Run a down move for each object, since each will move a different amount
 			// based on its own bottom
 			for (CSG c : sel) {
-				double downMove = -c.transformed(t.inverse()).getMinZ();
-				TransformNR location = wp.times(new TransformNR(0, 0, downMove)).times(wp.inverse());
 				Thread op;
+				op = ap.addOp(new MoveCenter().setDropMode(wp).setNames(Arrays.asList(c.getName()), ap.get()));
 				try {
-					op = ap.addOp(
-							new MoveCenter().setLocation(location).setNames(Arrays.asList(c.getName()), ap.get()));
-					try {
-						op.join(); // wait for the move of this object to finish
-					} catch (InterruptedException e) {
-						// Auto-generated catch block
-						com.neuronrobotics.sdk.common.Log.error(e);
+					op.join(); // wait for the move of this object to finish
+				} catch (InterruptedException e) {
+					// Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(e);
 
-					}
-				} catch (InvalidLocationMove e) {
-					Log.error(e);
 				}
+
 
 			}
 		});
