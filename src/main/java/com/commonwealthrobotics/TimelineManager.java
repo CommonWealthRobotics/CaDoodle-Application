@@ -107,6 +107,8 @@ public class TimelineManager {
 				ArrayList<ButtonWithOverlayImage> toRem = new ArrayList<ButtonWithOverlayImage>();
 				try {
 					int opToIndex = ap.get().opToIndex(source);
+					Log.debug("Timeline Regeneration staart, removing buttons " + opToIndex + " forward");
+
 					for (int i = Math.max(0, opToIndex + 1); i < buttons.size(); i++) {
 						ButtonWithOverlayImage b = buttons.get(i);
 						toRem.add(b);
@@ -338,7 +340,13 @@ public class TimelineManager {
 						updating = false;
 						if (updateNeeded)
 							update(clear);
-						session.updateControlsDisplayOfSelected();
+						try {
+							session.getSellectedBounds();
+							session.updateControlsDisplayOfSelected();
+						} catch (BoundsComputFailure e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					});
 				} else {
 					updating = false;
