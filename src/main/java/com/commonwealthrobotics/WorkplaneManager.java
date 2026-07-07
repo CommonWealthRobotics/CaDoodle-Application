@@ -353,42 +353,43 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		}
 	}
 
-
 	public void cancel() {
 
 		if (!active)
 			return;
 
-		updater = null;
-		engine.getWorkplaneGroup().removeEventFilter(MouseEvent.ANY, this);
-		wpPick.setVisible(isWorkplaneNotOrigin());
+		BowlerKernel.runLater(() -> {
+			active = false;
+			updater = null;
+			engine.getWorkplaneGroup().removeEventFilter(MouseEvent.ANY, this);
+			wpPick.setVisible(isWorkplaneNotOrigin());
 
+			for (CSG key : session.getMeshes().keySet()) {
+				MeshView mv = session.getMeshes().get(key).display;
+				mv.removeEventFilter(MouseEvent.ANY, this);
+			}
 
-		for (CSG key : session.getMeshes().keySet()) {
-			MeshView mv = session.getMeshes().get(key).display;
-			mv.removeEventFilter(MouseEvent.ANY, this);
-		}
+			if (indicatorMeshs != null)
+				for (MeshView indicatorMesh : indicatorMeshs)
+					indicatorMesh.setVisible(false);
 
-		if (indicatorMeshs != null)
-			for (MeshView indicatorMesh : indicatorMeshs)
-				indicatorMesh.setVisible(false);
+			// indicatorMesh = null;
 
-		// indicatorMesh = null;
+			if (onSelectEvent != null)
+				onSelectEvent.run();
 
-		if (onSelectEvent != null)
-			onSelectEvent.run();
+			onSelectEvent = null;
 
-		onSelectEvent = null;
-		active = false;
+			engine.getWorkplaneGroup().setVisible(true);
+			engine.getWorkplaneGroup().setMouseTransparent(true);
+			session.setMode(SpriteDisplayMode.Default);
 
-		engine.getWorkplaneGroup().setVisible(true);
-		engine.getWorkplaneGroup().setMouseTransparent(true);
-		session.setMode(SpriteDisplayMode.Default);
-
-		if (onCancel != null) {
-			onCancel.run();
-			onCancel = null;
-		}
+			if (onCancel != null) {
+				onCancel.run();
+				onCancel = null;
+			}
+			placeWorkplaneVisualization();
+		});
 	}
 
 	public void activate() {
@@ -521,7 +522,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							z = SelectionSession.roundToNearest(z, snapGridValue);
 						}
 
-
 					} else
 						Log.error("Error face index came back: " + faceIndex);
 
@@ -579,8 +579,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 							new Vector3d(source.getVertex_X(i1), source.getVertex_Y(i1), source.getVertex_Z(i1)),
 							new Vector3d(source.getVertex_X(i2), source.getVertex_Y(i2), source.getVertex_Z(i2))));
 		} catch (ColinearPointsException e) {
-			//			// TODO Auto-generated catch block
-			//			e.printStackTrace();
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
 		}
 
 		return p;
@@ -691,26 +691,27 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		placeWorkplaneVisualization();
 
 		this.setOnSelectEvent(() -> {
+			session.submit(() -> {
+				if (this.isClicked()) {
 
-			if (this.isClicked()) {
+					if (this.isClickOnGround()) {
+						// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
+						ap.get().setWorkplane(new TransformNR());
+						ruler.disableRulerMode();
+					} else {
+						// Move the workplane down from the surface to ensure a solid overlap between
+						// the object and the surface
+						TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
+						TransformNR currentAbsolutePose = this.getCurrentAbsolutePose().times(downset);
 
-				if (this.isClickOnGround()) {
-					// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
-					ap.get().setWorkplane(new TransformNR());
-					ruler.disableRulerMode();
-				} else {
-					// Move the workplane down from the surface to ensure a solid overlap between
-					// the object and the surface
-					TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
-					TransformNR currentAbsolutePose = this.getCurrentAbsolutePose().times(downset);
-
-					ap.get().setWorkplane(currentAbsolutePose);
+						ap.get().setWorkplane(currentAbsolutePose);
+					}
+					placeWorkplaneVisualization();
+					r.run();
 				}
-				placeWorkplaneVisualization();
-				r.run();
-			}
 
-			always.run();
+				always.run();
+			});
 
 		});
 
