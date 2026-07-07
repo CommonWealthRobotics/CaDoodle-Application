@@ -828,6 +828,14 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
+                              <Button fx:id="bendButton" mnemonicParsing="false" onAction="#onBend" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="bendSurface" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.extrude_selected_surface" />
+                                 </tooltip>
+                              </Button>
                               <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="extrudeButton-image-view" />
@@ -845,6 +853,35 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
+                              <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
+                                 <children>
+                                    <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="menu-button2">
+                                      <graphic>
+                                          <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" styleClass="extraGroupImage" />
+                                      </graphic>
+                                      <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="%mainwindow.hull">
+                                             <graphic>
+                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
+                                             </graphic>
+                                          </MenuItem>
+                                          <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="%mainwindow.intersect">
+                                             <graphic>
+                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
+                                             </graphic>
+                                          </MenuItem>
+                                          <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="%mainwindow.xor">
+                                             <graphic>
+                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" fx:id="xorImage" />
+                                             </graphic>
+                                          </MenuItem>
+                                      </items>
+                                       <tooltip>
+                                          <Tooltip text="%mainwindow.extra_group_options" />
+                                       </tooltip>
+                                    </MenuButton>
+                                 </children>
+                              </AnchorPane>
                            </children>
                         </HBox>
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
@@ -874,35 +911,6 @@
                               <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
                            </tooltip>
                         </Button>
-                        <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
-                           <children>
-                              <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="menu-button2">
-                                <graphic>
-                                    <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" styleClass="extraGroupImage" />
-                                </graphic>
-                                <items>
-                                  <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="%mainwindow.hull">
-                                       <graphic>
-                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
-                                       </graphic>
-                                    </MenuItem>
-                                    <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="%mainwindow.intersect">
-                                       <graphic>
-                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
-                                       </graphic>
-                                    </MenuItem>
-                                    <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="%mainwindow.xor">
-                                       <graphic>
-                                          <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" fx:id="xorImage" />
-                                       </graphic>
-                                    </MenuItem>
-                                </items>
-                                 <tooltip>
-                                    <Tooltip text="%mainwindow.extra_group_options" />
-                                 </tooltip>
-                              </MenuButton>
-                           </children>
-                        </AnchorPane>
                         <Button fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="alignButton-mage-view" />
