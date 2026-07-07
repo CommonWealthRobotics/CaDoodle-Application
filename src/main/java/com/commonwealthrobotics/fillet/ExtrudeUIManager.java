@@ -15,15 +15,17 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cylinder;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 public class ExtrudeUIManager {
 
 	public void run(LinkedHashSet<CSG> selected, ActiveProject ap, SelectionSession session, WorkplaneManager workplane,
-			RulerManager ruler) {
+			RulerManager ruler, boolean sweep) {
 		session.setMode(SpriteDisplayMode.PLACING);
 
 		CSG indicator = new Cylinder(5 / 2.0, 0, 5, 20).toCSG();
+		indicator.setColor(sweep ? Color.BLUE : Color.PINK);
 
 		workplane.setIndicator(indicator, new Affine());
 
@@ -45,7 +47,7 @@ public class ExtrudeUIManager {
 					for (CSG c : selected)
 						selectedSet.add(c.getName());
 					ExtrudeSurface op = new ExtrudeSurface().setWorkplane(workplane.getCurrentAbsolutePose())
-							.setToExtrude(selectedSet);
+							.setToExtrude(selectedSet).setSweep(sweep);
 					Thread thread = ap.addOp(op);
 					session.clearSelection();
 					try {
