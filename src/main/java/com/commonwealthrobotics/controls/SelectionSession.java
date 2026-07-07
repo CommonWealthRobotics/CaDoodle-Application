@@ -3124,9 +3124,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		filletTool.run(selected, ap, this, workplane, ruler);
 	}
 
-	public void runExtrude() {
+	public void runExtrude(boolean sweep) {
+		if (selected.size() == 0)
+			return;
 		com.neuronrobotics.sdk.common.Log.debug("on Extrude");
-		extrudeManager.run(selected, ap, this, workplane, ruler);
+		extrudeManager.run(selected, ap, this, workplane, ruler, sweep);
 	}
 
 	public void setUserDefinedName(String newText) {
