@@ -1320,7 +1320,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(100);
 				}
 				ap.get().initialize();
-				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				do {
 					Thread.sleep(100);
@@ -1892,33 +1891,30 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationDone() {
-		//		if (mcpServer == null) {
-		//
-		//			session.submit(() -> {
-		//				mcpServer = new MCPServer();
-		//				System.out.println("Starting MCP server...");
-		//				try {
-		//					mcpServer.start();
-		//					System.out.println("MCP server.start() completed");
-		//				} catch (Exception e) {
-		//					System.out.println("Exception in MCP server thread: " + e.getMessage());
-		//					e.printStackTrace();
-		//				}
-		//
-		//				Log.info("MCP Server started on port " + MCPServer.DEFAULT_PORT);
-		//				Log.flush();
-		//
-		//				// Register shutdown hook to stop MCP server
-		//				Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-		//					if (mcpServer != null) {
-		//						mcpServer.stop();
-		//					}
-		//				}));
-		//				mcpServer.setDependencies(ap, session);
-		//			});
-		//
-		//		} else
-		//			session.submit(() -> mcpServer.setDependencies(ap, session));
+		if (mcpServer == null) {
+			session.submit(() -> {
+				mcpServer = new MCPServer();
+				System.out.println("Starting MCP server...");
+				try {
+					session.submit(() -> mcpServer.start());
+					System.out.println("MCP server.start() completed");
+				} catch (Exception e) {
+					System.out.println("Exception in MCP server thread: " + e.getMessage());
+					e.printStackTrace();
+				}
+
+				Log.info("MCP Server started on port " + MCPServer.DEFAULT_PORT);
+
+				// Register shutdown hook to stop MCP server
+				Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+					if (mcpServer != null) {
+						mcpServer.stop();
+					}
+				}));
+				mcpServer.setDependencies(ap, session);
+			});
+		} else
+			session.submit(() -> mcpServer.setDependencies(ap, session));
 
 		BowlerStudio.runLater(() -> {
 			fileNameBox.setText(ap.get().getMyProjectName());
