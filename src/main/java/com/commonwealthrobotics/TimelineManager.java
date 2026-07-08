@@ -317,10 +317,26 @@ public class TimelineManager {
 				addrem = false;
 				int s = operations.size();
 
-				for (int i = buttons.size(); i < Math.max(s, ap.get().getCurrentIndex()); i++) {
+				CaDoodleFile caDoodleFile = null;
+				do {
+					try {
+						caDoodleFile = ap.get();
+					} catch (Throwable t) {
+						Log.error(t);
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				} while (caDoodleFile == null);
+				for (int i = buttons.size(); i < Math.max(s, caDoodleFile.getCurrentIndex()); i++) {
 					CaDoodleOperation op = operations.get(i);
-					File f = ap.get().getTimelineImageFile(op);
-					Image image = new Image(f.toURI().toString());
+					caDoodleFile.ensureImageFileExists(i);
+					Image image;
+					File f = caDoodleFile.getTimelineImageFile(op);
+					image = new Image(f.toURI().toString());
 					makeButton(i, image, op);
 				}
 
