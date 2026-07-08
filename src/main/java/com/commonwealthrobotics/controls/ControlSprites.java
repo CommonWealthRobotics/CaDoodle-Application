@@ -462,7 +462,10 @@ public class ControlSprites {
 		if (session.isLocked() || session.isInOperationMode()) {
 			upArrow.hide();
 			rotationManager.hide();
-			scaleSession.hide();
+			if (session.isAlignActive())
+				scaleSession.show();
+			else
+				scaleSession.hide();
 		} else {
 			if (!session.moveLock()) {
 				upArrow.show();
