@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -81,6 +82,12 @@ public class MCPHandler implements Runnable {
                 case "state.getCurrent":
                     result = handleGetCurrentState(params);
                     break;
+                case "state.getSelected":
+                    result = handleGetSelected(params);
+                    break;
+                case "state.select":
+                    result = handleSelect(params);
+                    break;
                 case "state.getCSGs":
                     result = handleGetCSGs(params);
                     break;
@@ -115,12 +122,11 @@ public class MCPHandler implements Runnable {
     private JsonObject handleAddOperation(JsonObject params) {
         try {
             String operationType = params.get("operationType").getAsString();
-            // Add operation logic here
-            // This will need to be implemented based on CaDoodleOperation types
-            return createSuccessResponse(idFromParams(params), new HashMap<String, Object>() {{
-                put("success", true);
-                put("message", "Operation added: " + operationType);
-            }});
+            // Parse params as a Map
+            @SuppressWarnings("unchecked")
+            Map<String, Object> paramMap = gson.fromJson(params, Map.class);
+            Map<String, Object> result = api.addOperation(operationType, paramMap);
+            return createSuccessResponse(idFromParams(params), result);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add operation", e);
         }
@@ -159,6 +165,29 @@ public class MCPHandler implements Runnable {
             return createSuccessResponse(idFromParams(params), api.getCurrentState());
         } catch (Exception e) {
             throw new RuntimeException("Failed to get current state", e);
+        }
+    }
+    
+    private JsonObject handleGetSelected(JsonObject params) {
+        try {
+            // Get currently selected CSG names
+            List<String> selected = api.getSelectedNames();
+            return createSuccessResponse(idFromParams(params), new HashMap<String, Object>() {{
+                put("selected", selected);
+            }});
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get selected items", e);
+        }
+    }
+    
+    private JsonObject handleSelect(JsonObject params) {
+        try {
+            // Select CSGs by names
+            List<String> names = gson.fromJson(params.get("names"), List.class);
+            Map<String, Object> result = api.selectCSGs(names);
+            return createSuccessResponse(idFromParams(params), result);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to select CSGs", e);
         }
     }
     
@@ -202,10 +231,11 @@ public class MCPHandler implements Runnable {
     
     private JsonObject handleGetShapesPalette(JsonObject params) {
         try {
-            // Get shapes palette JSON
-            String paletteJson = ShapesPalette.getPaletteJSON();
+            // Get shapes palette as structured JSON
+            ShapesPalette shapesPalette = new ShapesPalette();
+            List<Map<String, Object>> categories = shapesPalette.getShapes();
             return createSuccessResponse(idFromParams(params), new HashMap<String, Object>() {{
-                put("palette", paletteJson);
+                put("categories", categories);
             }});
         } catch (Exception e) {
             throw new RuntimeException("Failed to get shapes palette", e);

@@ -5,76 +5,126 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.sdk.common.Log;
 
 /**
  * Loads and provides access to the CaDoodle shapes palette JSON.
+ * Loads from the local git cache.
  */
 public class ShapesPalette {
-    private static String paletteJSON = null;
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+    
+    // Cache of shapes: category -> List of shape items
+    private static List<Map<String, Object>> shapesCache = null;
     
     static {
-        loadPalette();
+        loadShapes();
     }
     
-    private static void loadPalette() {
-        try {
-            // Load from the resource path
-            String path = "/doodle/CSGdatabase.json";
-            // Try multiple paths
-            String[] possiblePaths = {
-                "/doodle/CSGdatabase.json",
-                "/com/neuronrobotics/bowlerstudio/scripting/cadoodle/doodle/CSGdatabase.json",
-                "/doodle/csgDatabase.json"
-            };
-            
-            for (String pathToTry : possiblePaths) {
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(
-                                ShapesPalette.class.getResourceAsStream(pathToTry),
-                                StandardCharsets.UTF_8))) {
-                    StringBuilder content = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        content.append(line);
-                    }
-                    paletteJSON = content.toString();
-                    if (paletteJSON != null && !paletteJSON.isEmpty()) {
-                        Log.info("Loaded shapes palette from " + pathToTry);
-                        return;
-                    }
-                } catch (IOException e) {
-                    // Try next path
-                }
-            }
-            
-            // If we can't load from resources, try to load from file system
-            File cadoodleDir = new File(System.getProperty("user.home"), "bin/CaDoodle-ApplicationInstall/doodle");
-            if (cadoodleDir.exists()) {
-                File dbFile = new File(cadoodleDir, "CSGdatabase.json");
-                if (dbFile.exists()) {
-                    paletteJSON = new String(java.nio.file.Files.readAllBytes(dbFile.toPath()), StandardCharsets.UTF_8);
-                    Log.info("Loaded shapes palette from " + dbFile.getAbsolutePath());
-                    return;
-                }
-            }
-            
-            // Fallback to empty JSON
-            paletteJSON = "{}";
-            Log.warning("Could not load shapes palette, using empty JSON");
-            
-        } catch (Exception e) {
-            Log.error("Error loading shapes palette");
-            paletteJSON = "{}";
+    private static void loadShapes() {
+        shapesCache = new ArrayList<>();
+        String gitULR = "https://github.com/CommonWealthRobotics/CaDoodle-ShapesPalet-Content.git";
+        File shapesDir = ScriptingEngine.getRepositoryCloneDirectory(gitULR);
+        if (!shapesDir.exists() || !shapesDir.isDirectory()) {
+            Log.error("Shapes palette directory not found: " + gitULR);
+            return;
         }
+        
+        File[] jsonFiles = shapesDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
+        if (jsonFiles == null || jsonFiles.length == 0) {
+            Log.error("No JSON files found in shapes palette directory");
+            return;
+        }
+        
+        // Sort files alphabetically
+        List<File> sortedFiles = new ArrayList<>();
+        for (File f : jsonFiles) {
+            sortedFiles.add(f);
+        }
+        sortedFiles.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        
+        for (File jsonFile : sortedFiles) {
+            try {
+                // Parse JSON file
+                String content = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+                @SuppressWarnings("unchecked")
+                Map<String, Object> shapeMap = gson.fromJson(content, Map.class);
+                
+                if (shapeMap != null) {
+                    String category = jsonFile.getName().replace(".json", "");
+                    
+                    // Convert shapeMap to a list of items with order
+                    List<Map<String, Object>> items = new ArrayList<>();
+                    
+                    for (Map.Entry<String, Object> entry : shapeMap.entrySet()) {
+                        String shapeName = entry.getKey();
+                        Map<String, Object> shapeInfo = new TreeMap<>();
+                        
+                        Object value = entry.getValue();
+                        if (value instanceof Map) {
+                            // Full metadata: git, file, order, etc.
+                            shapeInfo.putAll((Map<String, Object>) value);
+                        } else {
+                            // Simple name reference
+                            shapeInfo.put("name", value);
+                            shapeInfo.put("order", 0);
+                        }
+                        
+                        // Ensure order is set (default to 0 if not present)
+                        if (!shapeInfo.containsKey("order")) {
+                            shapeInfo.put("order", 0);
+                        }
+                        
+                        items.add(shapeInfo);
+                    }
+                    
+                    Map<String, Object> categoryEntry = new TreeMap<>();
+                    categoryEntry.put("category", category);
+                    categoryEntry.put("items", items);
+                    shapesCache.add(categoryEntry);
+                    
+                    Log.info("Loaded shapes category: " + category + " with " + items.size() + " items");
+                }
+                
+            } catch (IOException e) {
+                Log.error("Failed to load shapes file: " + jsonFile.getName());
+                Log.error(e);
+            }
+        }
+        
+        Log.info("Loaded " + shapesCache.size() + " shapes categories");
     }
     
     /**
-     * Get the shapes palette JSON as a string.
-     * @return The palette JSON.
+     * Get the shapes palette as a list of categories with items.
+     * @return List of categories, each containing "category" and "items".
      */
-    public static String getPaletteJSON() {
-        return paletteJSON;
+    public List<Map<String, Object>> getShapes() {
+        return shapesCache;
+    }
+    
+    /**
+     * Get a specific category's shapes.
+     * @param categoryName The category name.
+     * @return List of shape items in the category, or empty list if not found.
+     */
+    public List<Map<String, Object>> getCategoryShapes(String categoryName) {
+        for (Map<String, Object> category : shapesCache) {
+            if (category.get("category").equals(categoryName)) {
+                return (List<Map<String, Object>>) category.get("items");
+            }
+        }
+        return new ArrayList<>();
     }
 }

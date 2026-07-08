@@ -22,28 +22,42 @@ public class MCPServer {
     private ServerSocket serverSocket;
     private ExecutorService executor;
     private volatile boolean running;
-    private final CaDoodleAPI cadoodleAPI;
+    private CaDoodleAPI cadoodleAPI;
     
     public MCPServer(int port) {
         this.port = port;
-        this.cadoodleAPI = new CaDoodleAPI();
+        // cadoodleAPI will be set via setDependencies
     }
     
     public MCPServer() {
         this(DEFAULT_PORT);
     }
     
+    /**
+     * Set dependencies after UI initialization.
+     * This should be called from the JavaFX application thread.
+     */
+    public void setDependencies(com.commonwealthrobotics.ActiveProject activeProject, 
+                                com.commonwealthrobotics.controls.SelectionSession selectionSession) {
+        this.cadoodleAPI = new CaDoodleAPI(activeProject, selectionSession);
+    }
+    
     public void start() {
+        System.out.println("MCPServer.start() called");
         running = true;
         executor = Executors.newFixedThreadPool(10);
         
         try {
             serverSocket = new ServerSocket(port);
+            System.out.println("Server socket bound to port " + port);
             Log.info("MCP Server started on port " + port);
+            Log.flush();
+            System.out.println("Ready to accept connections");
             
             while (running) {
                 try {
                     Socket clientSocket = serverSocket.accept();
+                    System.out.println("Accepted client connection");
                     
                     // Only allow localhost connections
                     String host = clientSocket.getInetAddress().getHostAddress();
@@ -54,15 +68,29 @@ public class MCPServer {
                     }
                     
                     Log.info("Client connected from: " + host);
+                    Log.flush();
+                    System.out.println("Submitting handler to executor");
                     executor.submit(new MCPHandler(clientSocket, cadoodleAPI));
                 } catch (IOException e) {
                     if (running) {
-                        Log.error("Error accepting connection");
+                        Log.error("Error accepting connection: " + e.getMessage());
+                        e.printStackTrace();
+                        Log.flush();
+                        System.out.println("Error: " + e.getMessage());
                     }
                 }
             }
         } catch (IOException e) {
-            Log.error("Failed to start MCP server");
+            Log.error("Failed to start MCP server: " + e.getMessage());
+            e.printStackTrace();
+            Log.flush();
+            System.out.println("Failed: " + e.getMessage());
+        } finally {
+            running = false;
+            if (executor != null) {
+                executor.shutdown();
+            }
+            System.out.println("MCPServer.start() finished");
         }
     }
     
