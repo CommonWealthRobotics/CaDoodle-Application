@@ -37,25 +37,27 @@ public class MCPServer {
 	 */
 	public void setDependencies(com.commonwealthrobotics.ActiveProject activeProject,
 			com.commonwealthrobotics.controls.SelectionSession selectionSession) {
+		Log.debug("Setting Up API with new project");
+		if(cadoodleAPI!=null)
+			cadoodleAPI.close();
 		this.cadoodleAPI = new CaDoodleAPI(activeProject, selectionSession);
 	}
 
 	public void start() {
-		System.out.println("MCPServer.start() called");
+		Log.debug("MCPServer.start() called");
 		running = true;
 		executor = Executors.newFixedThreadPool(10);
 
 		try {
 			serverSocket = new ServerSocket(port);
-			System.out.println("Server socket bound to port " + port);
+			Log.debug("Server socket bound to port " + port);
 			Log.info("MCP Server started on port " + port);
-			Log.flush();
-			System.out.println("Ready to accept connections");
+			Log.debug("Ready to accept connections");
 
 			while (running) {
 				try {
 					Socket clientSocket = serverSocket.accept();
-					System.out.println("Accepted client connection");
+					Log.debug("Accepted client connection");
 
 					// Only allow localhost connections
 					String host = clientSocket.getInetAddress().getHostAddress();
@@ -66,29 +68,27 @@ public class MCPServer {
 					}
 
 					Log.info("Client connected from: " + host);
-					Log.flush();
-					System.out.println("Submitting handler to executor");
+
+					Log.debug("Submitting handler to executor");
 					executor.submit(new MCPHandler(clientSocket, cadoodleAPI));
 				} catch (IOException e) {
 					if (running) {
 						Log.error("Error accepting connection: " + e.getMessage());
 						e.printStackTrace();
-						Log.flush();
-						System.out.println("Error: " + e.getMessage());
+						Log.debug("Error: " + e.getMessage());
 					}
 				}
 			}
 		} catch (IOException e) {
 			Log.error("Failed to start MCP server: " + e.getMessage());
 			e.printStackTrace();
-			Log.flush();
-			System.out.println("Failed: " + e.getMessage());
+			Log.debug("Failed: " + e.getMessage());
 		} finally {
 			running = false;
 			if (executor != null) {
 				executor.shutdown();
 			}
-			System.out.println("MCPServer.start() finished");
+			Log.debug("MCPServer.start() finished");
 		}
 	}
 

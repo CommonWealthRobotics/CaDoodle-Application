@@ -37,9 +37,12 @@ public class MCPHandler implements Runnable {
 			String line;
 			while ((line = in.readLine()) != null) {
 				try {
+					Log.debug("Got: >> "+line);
 					JsonObject request = gson.fromJson(line, JsonObject.class);
 					JsonObject response = processRequest(request);
-					out.write(gson.toJson(response));
+					String json = gson.toJson(response);
+					Log.debug("Sent:>> "+json);
+					out.write(json);
 					out.flush();
 				} catch (Exception e) {
 					Log.error("Error processing request from client");
