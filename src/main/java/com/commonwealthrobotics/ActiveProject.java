@@ -369,7 +369,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public CaDoodleFile loadActive() throws Exception {
 		if (fromFile != null) {
 			fromFile.close();
-			fromFile = null;
 		}
 
 		FileChangeWatcher.clearAll();
@@ -398,6 +397,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			// fromFile.setImageEngine(new ThumbnailImage());
 			return fromFile;
 		} catch (Exception e) {
+			Log.error(e);
 			newProject();
 			return fromFile;
 		}
@@ -691,6 +691,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public void save() {
+		if (fromFile == null) {
+			Log.error(new Exception("Can not save before loading"));
+			return;
+		}
+
 		// com.neuronrobotics.sdk.common.Log.error("Save Requested");
 		needsSave = true;
 		// new Exception("Auto-save called here").printStackTrace();
