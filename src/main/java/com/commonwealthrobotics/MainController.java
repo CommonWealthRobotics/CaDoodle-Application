@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
+import com.commonwealthrobotics.mcp.MCPServer;
 import com.commonwealthrobotics.robot.RobotLab;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -423,6 +424,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private static Label label;
 	private Button renameBtn;
 	private ThumbnailImage img;
+	private static MCPServer mcpServer;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
@@ -1062,6 +1064,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert optionsConsume != null : "optionsConsume button failed";
 
 		try {
+			// Start MCP server for AI integration
+			mcpServer = new MCPServer();
+			new Thread(() -> mcpServer.start()).start();
+			Log.info("MCP Server started on port " + MCPServer.DEFAULT_PORT);
+
+			// Register shutdown hook to stop MCP server
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				if (mcpServer != null) {
+					mcpServer.stop();
+				}
+			}));
+
 			// BowlerStudio3dEngine.setThemeColors(ActiveProject.getLabelTextColor());
 			engine = new BowlerStudio3dEngine("CAD window");
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
