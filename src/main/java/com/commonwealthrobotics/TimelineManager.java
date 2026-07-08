@@ -316,65 +316,81 @@ public class TimelineManager {
 				// }
 				addrem = false;
 				int s = operations.size();
-
-				CaDoodleFile caDoodleFile = null;
-				do {
-					try {
-						caDoodleFile = ap.get();
-					} catch (Throwable t) {
-						Log.error(t);
+				session.submit(() -> {
+					CaDoodleFile caDoodleFile = null;
+					do {
 						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							caDoodleFile = ap.get();
+						} catch (Throwable t) {
+							Log.error(t);
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
-					}
-				} while (caDoodleFile == null);
-				for (int i = buttons.size(); i < Math.max(s, caDoodleFile.getCurrentIndex()); i++) {
-					CaDoodleOperation op = operations.get(i);
-					caDoodleFile.ensureImageFileExists(i);
-					Image image;
-					File f = caDoodleFile.getTimelineImageFile(op);
-					image = new Image(f.toURI().toString());
-					makeButton(i, image, op);
-				}
+					} while (caDoodleFile == null);
+					CaDoodleFile myFile = caDoodleFile;
+					for (int i = buttons.size(); i < Math.max(s, caDoodleFile.getCurrentIndex()); i++) {
+						int index = i;
 
-				com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
-				if (addrem || firstTime) {
-					BowlerStudio.runLater(java.time.Duration.ofMillis(16), () -> {
-						// Scroll only to end if not inserting operation
-						if (ap.get().getCurrentIndex() == operations.size()) {
-							timelineScroll.applyCss();
-							timelineScroll.layout();
-							timelineScroll.setHvalue(1.0);
-						}
-						// Don't auto scroll
-						// timelineScroll.setHvalue(((double) ap.get().getCurrentIndex()) / ((double)
-						// operations.size()));
-						// }
+						CaDoodleOperation op = operations.get(index);
+						Image image = null;
+						int count = 0;
+						do {
+							try {
+								myFile.ensureImageFileExists(index);
+								File f = myFile.getTimelineImageFile(op);
+								image = new Image(f.toURI().toString());
+							} catch (Throwable t) {
+								Log.error(t);
+								try {
+									Thread.sleep(100);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						} while (image == null && count++ < 10);
+						makeButton(index, image, op);
+					}
+
+					com.neuronrobotics.sdk.common.Log.debug("Timeline updated");
+					if (addrem || firstTime) {
+						BowlerStudio.runLater(java.time.Duration.ofMillis(16), () -> {
+							// Scroll only to end if not inserting operation
+							if (ap.get().getCurrentIndex() == operations.size()) {
+								timelineScroll.applyCss();
+								timelineScroll.layout();
+								timelineScroll.setHvalue(1.0);
+							}
+							// Don't auto scroll
+							// timelineScroll.setHvalue(((double) ap.get().getCurrentIndex()) / ((double)
+							// operations.size()));
+							// }
+							updating = false;
+							if (updateNeeded)
+								update(clear);
+							try {
+								if (session.getSelected().size() > 0) {
+									session.getSellectedBounds();
+									session.updateControlsDisplayOfSelected();
+								}
+							} catch (BoundsComputFailure e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						});
+					} else {
 						updating = false;
 						if (updateNeeded)
 							update(clear);
-						try {
-							if (session.getSelected().size() > 0) {
-								session.getSellectedBounds();
-								session.updateControlsDisplayOfSelected();
-							}
-						} catch (BoundsComputFailure e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					});
-				} else {
-					updating = false;
-					if (updateNeeded)
-						update(clear);
-					else
-						BowlerStudio.runLater(() -> session.updateControlsDisplayOfSelected());
-				}
-				session.setKeyBindingFocus();
-
+						else
+							BowlerStudio.runLater(() -> session.updateControlsDisplayOfSelected());
+					}
+					session.setKeyBindingFocus();
+				});
 			}).start();
 		});
 	}
@@ -407,8 +423,7 @@ public class TimelineManager {
 				return;
 			int myIndex = i;
 			addrem = true;
-			List<CSG> previous = (myIndex == 0)
-					? new ArrayList<CSG>()
+			List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 
 			CountDownLatch latch = new CountDownLatch(1);
