@@ -1134,6 +1134,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton);
 			// do this after setting up the session
 			setupEngineControls();
+			
+			// Configure MCP server with dependencies
+			if (mcpServer != null) {
+				mcpServer.setDependencies(ap.get(), session);
+			}
+			
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
 			ap.addListener(componentTreePanel);
 			setComponentTreeOpenState(false);
