@@ -3021,11 +3021,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return isAlignActive() || isMirrorActive();
 	}
 
-	private boolean isMirrorActive() {
+	public boolean isMirrorActive() {
 		return getControls().mirrorIsActive();
 	}
 
-	private boolean isAlignActive() {
+	public boolean isAlignActive() {
 		return getControls().alignIsActive();
 	}
 
