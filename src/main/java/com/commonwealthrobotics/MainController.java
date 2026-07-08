@@ -1137,7 +1137,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			
 			// Configure MCP server with dependencies
 			if (mcpServer != null) {
-				mcpServer.setDependencies(ap.get(), session);
+				mcpServer.setDependencies(ap, session);
 			}
 			
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
