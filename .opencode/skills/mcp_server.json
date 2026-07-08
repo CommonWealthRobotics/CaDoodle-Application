@@ -1,0 +1,125 @@
+{
+  "name": "mcp_server",
+  "description": "MCP Server for CaDoodle Application - Provides tools to interact with the CaDoodle 3D modeling MCP server over TCP",
+  "version": "1.0.0",
+  "author": "CaDoodle Team",
+  "enabled": true,
+  "tools": [
+    {
+      "name": "mcp_initialize",
+      "description": "Initialize connection to the MCP server",
+      "parameters": {}
+    },
+    {
+      "name": "mcp_get_current_state",
+      "description": "Get current state of the CaDoodleFile including operation count and CSG list",
+      "parameters": {}
+    },
+    {
+      "name": "mcp_get_selected",
+      "description": "Get currently selected CSG names",
+      "parameters": {}
+    },
+    {
+      "name": "mcp_get_csgs",
+      "description": "Get list of all CSGs with details including bounds, vertex count, and properties",
+      "parameters": {}
+    },
+    {
+      "name": "mcp_select_csgs",
+      "description": "Select CSGs by their names",
+      "parameters": {
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of CSG names to select"
+        }
+      }
+    },
+    {
+      "name": "mcp_add_operation",
+      "description": "Add an operation to the CaDoodleFile",
+      "parameters": {
+        "operation_type": {
+          "type": "string",
+          "description": "Type of operation (Align, Delete, ExtrudeSurface, Fillet, Group, Hide, LinearDistribution, Lock, Mirror, Paste, RadialDistribution, Resize, SetMaterial, Show, ToHole, ToSolid, UnGroup, UnLock, WireMeshView)"
+        },
+        "params": {
+          "type": "object",
+          "description": "Operation-specific parameters"
+        }
+      }
+    },
+    {
+      "name": "mcp_remove_operation",
+      "description": "Remove an operation from the CaDoodleFile",
+      "parameters": {
+        "operation_id": {
+          "type": "string",
+          "description": "ID of the operation to remove"
+        }
+      }
+    },
+    {
+      "name": "mcp_regenerate",
+      "description": "Regenerate operations from a source operation",
+      "parameters": {
+        "source_operation_id": {
+          "type": "string",
+          "description": "Source operation ID (optional)"
+        }
+      }
+    },
+    {
+      "name": "mcp_get_parameters",
+      "description": "Get parameters for a specific CSG",
+      "parameters": {
+        "csg_name": {
+          "type": "string",
+          "description": "Name of the CSG"
+        }
+      }
+    },
+    {
+      "name": "mcp_set_bounds",
+      "description": "Set bounds for a specific CSG",
+      "parameters": {
+        "csg_name": {
+          "type": "string",
+          "description": "Name of the CSG"
+        },
+        "min_x": {
+          "type": "number",
+          "description": "Minimum X coordinate"
+        },
+        "min_y": {
+          "type": "number",
+          "description": "Minimum Y coordinate"
+        },
+        "min_z": {
+          "type": "number",
+          "description": "Minimum Z coordinate"
+        },
+        "max_x": {
+          "type": "number",
+          "description": "Maximum X coordinate"
+        },
+        "max_y": {
+          "type": "number",
+          "description": "Maximum Y coordinate"
+        },
+        "max_z": {
+          "type": "number",
+          "description": "Maximum Z coordinate"
+        }
+      }
+    },
+    {
+      "name": "mcp_get_shapes_palette",
+      "description": "Get shapes palette as structured JSON",
+      "parameters": {}
+    }
+  ]
+}
