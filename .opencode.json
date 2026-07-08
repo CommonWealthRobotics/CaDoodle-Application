@@ -1,8 +1,0 @@
-{
-  "skills": [
-    {
-      "path": ".opencode/skills/mcp_server.py",
-      "config": ".opencode/skills/mcp_server.json"
-    }
-  ]
-}
