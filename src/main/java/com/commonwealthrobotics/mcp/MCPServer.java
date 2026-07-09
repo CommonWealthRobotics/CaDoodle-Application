@@ -74,7 +74,7 @@ public class MCPServer {
 					Log.error("Error accepting connection: " + e.getMessage());
 					e.printStackTrace();
 					Log.debug("Error: " + e.getMessage());
-					
+
 				}
 			}
 		} catch (IOException e) {
@@ -91,7 +91,7 @@ public class MCPServer {
 	}
 
 	public void stop() {
-	
+
 		if (serverSocket != null) {
 			try {
 				serverSocket.close();
@@ -99,7 +99,7 @@ public class MCPServer {
 				Log.error("Error closing server socket");
 			}
 		}
-		serverSocket=null;
+		serverSocket = null;
 		if (executor != null) {
 			executor.shutdown();
 		}
