@@ -151,7 +151,7 @@ public class TimelineManager {
 						BowlerStudio.runLater(() -> {
 							b.updatemainImage(imageFile);
 						});
-						Log.debug("Updating " + imageFile);
+						Log.debug("Updating Image In Timeline " + imageFile);
 					} else
 						makeButton(num, imageFile, ap.get().getOperations().get(num));
 				});

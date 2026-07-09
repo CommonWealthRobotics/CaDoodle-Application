@@ -17,9 +17,8 @@ public class MCPServer {
 	private static final String ALLOWED_HOST = "127.0.0.1";
 
 	private final int port;
-	private ServerSocket serverSocket;
+	private ServerSocket serverSocket = null;
 	private ExecutorService executor;
-	private volatile boolean running;
 	private CaDoodleAPI cadoodleAPI;
 
 	public MCPServer(int port) {
@@ -32,8 +31,8 @@ public class MCPServer {
 	}
 
 	/**
-	 * Set dependencies after UI initialization.
-	 * This should be called from the JavaFX application thread.
+	 * Set dependencies after UI initialization. This should be called from the
+	 * JavaFX application thread.
 	 */
 	public void setDependencies(com.commonwealthrobotics.ActiveProject activeProject,
 			com.commonwealthrobotics.controls.SelectionSession selectionSession) {
@@ -44,7 +43,7 @@ public class MCPServer {
 
 	public void start() {
 		Log.debug("MCPServer.start() called");
-		running = true;
+
 		executor = Executors.newFixedThreadPool(10);
 
 		try {
@@ -53,7 +52,7 @@ public class MCPServer {
 			Log.info("MCP Server started on port " + port);
 			Log.debug("Ready to accept connections");
 
-			while (running) {
+			while (serverSocket != null) {
 				try {
 					Socket clientSocket = serverSocket.accept();
 					Log.debug("Accepted client connection");
@@ -70,12 +69,12 @@ public class MCPServer {
 
 					Log.debug("Submitting handler to executor");
 					executor.submit(new MCPHandler(clientSocket, cadoodleAPI));
-				} catch (IOException e) {
-					if (running) {
-						Log.error("Error accepting connection: " + e.getMessage());
-						e.printStackTrace();
-						Log.debug("Error: " + e.getMessage());
-					}
+				} catch (Throwable e) {
+					serverSocket = null;
+					Log.error("Error accepting connection: " + e.getMessage());
+					e.printStackTrace();
+					Log.debug("Error: " + e.getMessage());
+					
 				}
 			}
 		} catch (IOException e) {
@@ -83,7 +82,7 @@ public class MCPServer {
 			e.printStackTrace();
 			Log.debug("Failed: " + e.getMessage());
 		} finally {
-			running = false;
+			serverSocket = null;
 			if (executor != null) {
 				executor.shutdown();
 			}
@@ -92,7 +91,7 @@ public class MCPServer {
 	}
 
 	public void stop() {
-		running = false;
+	
 		if (serverSocket != null) {
 			try {
 				serverSocket.close();
@@ -100,6 +99,7 @@ public class MCPServer {
 				Log.error("Error closing server socket");
 			}
 		}
+		serverSocket=null;
 		if (executor != null) {
 			executor.shutdown();
 		}
