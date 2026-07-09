@@ -38,8 +38,7 @@ public class MCPServer {
 	public void setDependencies(com.commonwealthrobotics.ActiveProject activeProject,
 			com.commonwealthrobotics.controls.SelectionSession selectionSession) {
 		Log.debug("Setting Up API with new project");
-		if(cadoodleAPI!=null)
-			cadoodleAPI.close();
+
 		this.cadoodleAPI = new CaDoodleAPI(activeProject, selectionSession);
 	}
 
@@ -104,7 +103,7 @@ public class MCPServer {
 		if (executor != null) {
 			executor.shutdown();
 		}
-		cadoodleAPI.close();
+		// cadoodleAPI.close(); // CaDoodleAPI doesn't have a close() method
 		Log.info("MCP Server stopped");
 	}
 

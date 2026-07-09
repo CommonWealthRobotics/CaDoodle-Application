@@ -71,6 +71,7 @@ def main():
         
     command = sys.argv[1]
     args = sys.argv[2:]
+    client = None
     
     try:
         client = CaDoodleMCPClient()
@@ -134,14 +135,23 @@ def main():
             if len(args) < 7:
                 raise Exception("Missing bounds arguments")
             csg_name = args[0]
+            try:
+                minX = float(args[1])
+                minY = float(args[2])
+                minZ = float(args[3])
+                maxX = float(args[4])
+                maxY = float(args[5])
+                maxZ = float(args[6])
+            except ValueError:
+                raise Exception("Invalid numeric value in bounds parameters")
             bounds = {
                 "csgName": csg_name,
-                "minX": float(args[1]),
-                "minY": float(args[2]),
-                "minZ": float(args[3]),
-                "maxX": float(args[4]),
-                "maxY": float(args[5]),
-                "maxZ": float(args[6])
+                "minX": minX,
+                "minY": minY,
+                "minZ": minZ,
+                "maxX": maxX,
+                "maxY": maxY,
+                "maxZ": maxZ
             }
             result = client.send_request("csg.setBounds", bounds)
             print(json.dumps(result))
@@ -150,13 +160,22 @@ def main():
             result = client.send_request("shapes.getPalette")
             print(json.dumps(result))
             
+        elif command == "add_shape_by_name":
+            if len(args) < 1:
+                raise Exception("Missing name argument")
+            name = args[0]
+            result = client.send_request("shapes.addByName", {"name": name})
+            print(json.dumps(result))
+            
         else:
             print(json.dumps({"error": f"Unknown command: {command}"}))
             
     except Exception as e:
         print(json.dumps({"error": str(e)}))
+        sys.exit(1)
     finally:
-        client.disconnect()
+        if client:
+            client.disconnect()
 
 
 if __name__ == "__main__":

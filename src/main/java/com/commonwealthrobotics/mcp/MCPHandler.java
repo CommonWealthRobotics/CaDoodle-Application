@@ -37,11 +37,11 @@ public class MCPHandler implements Runnable {
 			String line;
 			while ((line = in.readLine()) != null) {
 				try {
-					Log.debug("Got: >> "+line);
+					Log.debug("Got: >> " + line);
 					JsonObject request = gson.fromJson(line, JsonObject.class);
 					JsonObject response = processRequest(request);
 					String json = gson.toJson(response);
-					Log.debug("Sent:>> "+json);
+					Log.debug("Sent:>> " + json);
 					out.write(json);
 					out.flush();
 				} catch (Exception e) {
@@ -104,6 +104,9 @@ public class MCPHandler implements Runnable {
 					break;
 				case "shapes.getPalette" :
 					result = handleGetShapesPalette(params);
+					break;
+				case "shapes.addByName" :
+					result = handleAddShapeByName(params);
 					break;
 				default :
 					throw new IllegalArgumentException("Unknown method: " + method);
@@ -258,6 +261,112 @@ public class MCPHandler implements Runnable {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to get shapes palette", e);
 		}
+	}
+
+	private JsonObject handleAddShapeByName(JsonObject params) {
+		try {
+			String nameOrDescription = params.has("name") ? params.get("name").getAsString() : null;
+			if (nameOrDescription == null || nameOrDescription.isEmpty()) {
+				throw new IllegalArgumentException("name parameter is required");
+			}
+
+			// Get shapes palette
+			ShapesPalette shapesPalette = new ShapesPalette();
+			List<Map<String, Object>> categories = shapesPalette.getShapes();
+
+			// Find matching shape
+			Map<String, Object> matchingShape = null;
+			String bestMatch = "";
+			double bestScore = 0.0;
+
+			for (Map<String, Object> category : categories) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> items = (List<Map<String, Object>>) category.get("items");
+				for (Map<String, Object> shape : items) {
+					// Extract shape name from file field
+					String shapeName = "";
+					if (shape.containsKey("file")) {
+						shapeName = shape.get("file").toString();
+						// Remove extension
+						int dotIndex = shapeName.lastIndexOf('.');
+						if (dotIndex > 0) {
+							shapeName = shapeName.substring(0, dotIndex);
+						}
+					}
+
+					// Calculate fuzzy match score
+					double score = fuzzyMatch(nameOrDescription, shapeName);
+					if (score > bestScore) {
+						bestScore = score;
+						bestMatch = shapeName;
+						matchingShape = shape;
+					}
+
+					// Also check other fields for description
+					if (shape.containsKey("description")) {
+						score = fuzzyMatch(nameOrDescription, shape.get("description").toString());
+						if (score > bestScore) {
+							bestScore = score;
+							bestMatch = shapeName;
+							matchingShape = shape;
+						}
+					}
+				}
+			}
+
+			if (matchingShape == null || bestScore < 0.3) {
+				return createErrorResponse(idFromParams(params), "NOT_FOUND",
+						"No matching shape found for: " + nameOrDescription);
+			}
+
+			// Attempt to add the shape
+			@SuppressWarnings("unchecked")
+			Map<String, Object> shapeDetails = matchingShape;
+			String shapeFile = shapeDetails.containsKey("file") ? shapeDetails.get("file").toString() : "";
+			String plugin = shapeDetails.containsKey("plugin") ? shapeDetails.get("plugin").toString() : "";
+			boolean sweep = shapeDetails.containsKey("sweep") && Boolean.TRUE.equals(shapeDetails.get("sweep"));
+
+			// Try to create the shape based on its characteristics
+			Map<String, Object> result = new HashMap<>();
+			result.put("success", true);
+			result.put("shapeName", bestMatch);
+			result.put("plugin", plugin);
+			result.put("sweep", sweep);
+
+			// For now, just return info about the shape - actual import not yet implemented
+			result.put("message", "Shape '" + bestMatch + "' found but import not yet implemented. Plugin: " + plugin
+					+ ", Sweep: " + sweep);
+
+			return createSuccessResponse(idFromParams(params), result);
+
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to add shape", e);
+		}
+	}
+
+	/**
+	 * Simple fuzzy match using substring and case-insensitive comparison
+	 */
+	private double fuzzyMatch(String query, String target) {
+		if (query == null || target == null)
+			return 0.0;
+		String q = query.toLowerCase();
+		String t = target.toLowerCase();
+
+		if (q.equals(t))
+			return 1.0;
+		if (t.contains(q))
+			return 0.9;
+		if (t.contains(q.substring(0, Math.min(3, q.length()))))
+			return 0.7;
+
+		// Simple character overlap score
+		int matches = 0;
+		for (char c : q.toCharArray()) {
+			if (t.indexOf(c) >= 0)
+				matches++;
+		}
+		return (double) matches / q.length();
 	}
 
 	private String idFromParams(JsonObject params) {

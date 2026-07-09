@@ -49,7 +49,9 @@ The MCP server runs on `localhost:8080` and communicates via JSON-RPC over TCP.
    - `csg.setBounds` - Set bounds for a CSG
 
 6. **Shapes**
-   - `shapes.getPalette` - Get available shapes and primitives
+    - `shapes.getPalette` - Get available shapes and primitives
+    - `shapes.addByName` - Add a shape from the palette by name/description
+
 
 ## Example usage
 

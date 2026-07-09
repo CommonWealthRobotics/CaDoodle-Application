@@ -9,7 +9,6 @@ import java.util.Set;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Align;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Delete;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ExtrudeSurface;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.FilletChamfer;
@@ -38,12 +37,12 @@ import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 
 /**
  * API wrapper for CaDoodle operations.
- * This class provides a clean interface for MCP to interact with CaDoodleFile.
+ * This class provides a clean interface for MCP to interact with activeProject.get().
  */
 public class CaDoodleAPI {
 	private final ActiveProject activeProject;
 	private final SelectionSession selectionSession;
-	private CaDoodleFile cadoodleFile;
+
 
 	// Operation type registry
 	private static final Map<String, Class<? extends com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleOperation>> OPERATION_TYPES = new HashMap<>();
@@ -72,27 +71,11 @@ public class CaDoodleAPI {
 	public CaDoodleAPI(ActiveProject activeProject, SelectionSession selectionSession) {
 		this.activeProject = activeProject;
 		this.selectionSession = selectionSession;
-		try {
-			this.cadoodleFile = activeProject.loadActive();
-		} catch (Exception e) {
-			Log.error("Failed to load active project");
-			try {
-				activeProject.newProject();
-				this.cadoodleFile = activeProject.loadActive();
-			} catch (Exception ex) {
-				Log.error("Failed to create new project");
-			}
-		}
 	}
 
-	public void close() {
-		if (cadoodleFile != null) {
-			cadoodleFile.close();
-		}
-	}
 
 	/**
-	 * Add an operation to the CaDoodleFile.
+	 * Add an operation to the activeProject.get().
 	 * @param operationType The type of operation to add.
 	 * @param params Parameters for the operation.
 	 * @return Result as JSON-serializable map.
@@ -337,14 +320,14 @@ public class CaDoodleAPI {
 	}
 
 	/**
-	 * Remove an operation from the CaDoodleFile.
+	 * Remove an operation from the activeProject.get().
 	 * @param operationId The ID of the operation to remove.
 	 * @return Result as JSON-serializable map.
 	 */
 	public Map<String, Object> removeOperation(String operationId) {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			// Implementation would call cadoodleFile.deleteOperation()
+			// Implementation would call activeProject.get().deleteOperation()
 			// This is complex because operations are stored in a list and deletion requires
 			// regenerating from a previous operation. For now, return error.
 			result.put("success", false);
@@ -412,22 +395,22 @@ public class CaDoodleAPI {
 	}
 
 	/**
-	 * Get the current state of the CaDoodleFile.
+	 * Get the current state of the activeProject.get().
 	 * @return Current state as JSON-serializable map.
 	 */
 	public Map<String, Object> getCurrentState() {
 		Map<String, Object> state = new HashMap<>();
 		try {
-			if (cadoodleFile == null || !cadoodleFile.isInitialized()) {
+			if (!activeProject.get().isInitialized()) {
 				state.put("initialized", false);
 				return state;
 			}
 
-			List<CSG> currentState = cadoodleFile.getCurrentState();
+			List<CSG> currentState = activeProject.get().getCurrentState();
 			state.put("initialized", true);
-			state.put("operationCount", cadoodleFile.getOperations().size());
-			state.put("currentOperationIndex", cadoodleFile.getCurrentIndex());
-			state.put("projectName", cadoodleFile.getMyProjectName());
+			state.put("operationCount", activeProject.get().getOperations().size());
+			state.put("currentOperationIndex", activeProject.get().getCurrentIndex());
+			state.put("projectName", activeProject.get().getMyProjectName());
 
 			// Add CSG list
 			List<Map<String, Object>> csgList = new ArrayList<>();
@@ -455,12 +438,12 @@ public class CaDoodleAPI {
 	public Map<String, Object> getCSGs() {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			if (cadoodleFile == null || !cadoodleFile.isInitialized()) {
-				result.put("error", "CaDoodleFile not initialized");
+			if (activeProject.get() == null || !activeProject.get().isInitialized()) {
+				result.put("error", "activeProject.get() not initialized");
 				return result;
 			}
 
-			List<CSG> currentState = cadoodleFile.getCurrentState();
+			List<CSG> currentState = activeProject.get().getCurrentState();
 			List<Map<String, Object>> csgDetails = new ArrayList<>();
 
 			for (CSG csg : currentState) {
@@ -516,12 +499,12 @@ public class CaDoodleAPI {
 	public Map<String, Object> getCSGParameters(String csgName) {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			if (cadoodleFile == null) {
-				result.put("error", "CaDoodleFile not initialized");
+			if (activeProject.get() == null) {
+				result.put("error", "activeProject.get() not initialized");
 				return result;
 			}
 
-			List<CSG> currentState = cadoodleFile.getCurrentState();
+			List<CSG> currentState = activeProject.get().getCurrentState();
 			CSG target = null;
 			for (CSG csg : currentState) {
 				if (csg.getName().equals(csgName)) {
@@ -537,9 +520,9 @@ public class CaDoodleAPI {
 
 			// Get parameters from CSG database
 			Map<String, Object> parameters = new HashMap<>();
-			Set<String> paramNames = target.getParameters(cadoodleFile.getCsgDBinstance());
+			Set<String> paramNames = target.getParameters(activeProject.get().getCsgDBinstance());
 			if (paramNames != null) {
-				CSGDatabaseInstance dbInstance = cadoodleFile.getCsgDBinstance();
+				CSGDatabaseInstance dbInstance = activeProject.get().getCsgDBinstance();
 				for (String paramName : paramNames) {
 					Parameter param = dbInstance.get(paramName);
 					if (param != null) {
@@ -575,12 +558,12 @@ public class CaDoodleAPI {
 	public Map<String, Object> setCSGBounds(String csgName, Map<String, Double> boundsMap) {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			if (cadoodleFile == null) {
-				result.put("error", "CaDoodleFile not initialized");
+			if (activeProject.get() == null) {
+				result.put("error", "activeProject.get() not initialized");
 				return result;
 			}
 
-			List<CSG> currentState = cadoodleFile.getCurrentState();
+			List<CSG> currentState = activeProject.get().getCurrentState();
 			CSG target = null;
 			for (CSG csg : currentState) {
 				if (csg.getName().equals(csgName)) {
