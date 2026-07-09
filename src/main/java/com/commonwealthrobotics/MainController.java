@@ -746,6 +746,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setToHole();
 		session.setKeyBindingFocus();
 	}
+
 	@FXML
 	void onNewDoodle(ActionEvent event) {
 		try {
@@ -758,6 +759,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			e.printStackTrace();
 		}
 	}
+
 	@FXML
 	void onHome(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("Open the Project Select UI");
