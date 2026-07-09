@@ -1015,7 +1015,7 @@
                 <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="100.0" prefHeight="40.0" vgrow="NEVER" />
+                <RowConstraints maxHeight="100.0" prefHeight="50.0" vgrow="NEVER" />
               </rowConstraints>
                <children>
                   <HBox alignment="CENTER" GridPane.columnIndex="2">
@@ -1047,6 +1047,14 @@
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.cadoodle_dashboard" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="newDoodle" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="16.0" layoutY="13.0" mnemonicParsing="false" onAction="#onNewDoodle" styleClass="image-button" text="New Doodle">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Make A New Doodle!" />
                            </tooltip>
                         </Button>
                         <TextField fx:id="fileNameBox" alignment="BOTTOM_LEFT" maxHeight="-Infinity" minHeight="-Infinity" onAction="#setName" onInputMethodTextChanged="#setName" style="-fx-border-color:#BBBBBB; -fx-border-width:1;" HBox.hgrow="SOMETIMES">
