@@ -1064,10 +1064,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert optionsConsume != null : "optionsConsume button failed";
 
 		try {
-			// Start MCP server for AI integration
-
-			System.out.println("Shutdown hook registered");
-
 			// BowlerStudio3dEngine.setThemeColors(ActiveProject.getLabelTextColor());
 			engine = new BowlerStudio3dEngine("CAD window");
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
@@ -1126,12 +1122,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton);
 			// do this after setting up the session
 			setupEngineControls();
-
-			// Configure MCP server with dependencies
-			if (mcpServer != null) {
-				mcpServer.setDependencies(ap, session);
-			}
-
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
 			ap.addListener(componentTreePanel);
 			setComponentTreeOpenState(false);
