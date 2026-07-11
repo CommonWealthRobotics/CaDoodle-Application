@@ -12,6 +12,11 @@ import java.util.TreeMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
+import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 /**
@@ -122,5 +127,24 @@ public class ShapesPalette {
 			}
 		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Create the palette add operation for a shape entry (same rules as the UI).
+	 * Does not set CSG parameters — use setCSGParameter after the op completes.
+	 */
+	public AbstractAddFrom createAddOperation(Map<String, Object> shape, CaDoodleFile project, TransformNR location)
+			throws Exception {
+		String git = shape.containsKey("git") ? shape.get("git").toString() : "";
+		String file = shape.containsKey("file") ? shape.get("file").toString() : "";
+		if (git.isEmpty() || file.isEmpty()) {
+			throw new IllegalArgumentException("Shape is missing git/file metadata");
+		}
+		boolean isSweep = shape.containsKey("sweep") && Boolean.parseBoolean(shape.get("sweep").toString());
+		if (isSweep) {
+			File svg = ScriptingEngine.fileFromGit(git, file);
+			return new Sweep().set(svg, project).setPreventBoM(true).setLocation(location);
+		}
+		return new AddFromScript().set(git, file).setPreventBoM(true).setLocation(location);
 	}
 }
