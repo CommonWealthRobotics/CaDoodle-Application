@@ -322,7 +322,8 @@ public class McpProtocol {
 		tools.add(tool("add_operation",
 				"Add a new operation. operationType is one of: Align, Delete, ExtrudeSurface, Fillet, Group, Hide, "
 						+ "LinearDistribution, Lock, Mirror, MoveCenter, Paste, RadialDistribution, Resize, SetMaterial, Show, "
-						+ "ToHole, ToSolid, UnGroup, UnLock, WireMeshView",
+						+ "ToHole, ToSolid, UnGroup, UnLock, WireMeshView. "
+						+ "Group accepts optional params.intersect and params.hull booleans for boolean intersection / convex hull.",
 				objectSchema(prop("operationType", stringProp("Type of operation"), true),
 						prop("params", mapProp("Parameters for the operation"), false))));
 		tools.add(tool("remove_operation", "Remove an operation by timeline index or name",

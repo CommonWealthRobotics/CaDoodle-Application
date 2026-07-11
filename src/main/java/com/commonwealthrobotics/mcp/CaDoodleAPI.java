@@ -204,7 +204,6 @@ public class CaDoodleAPI {
 				}
 				break;
 			case "Delete" :
-			case "Group" :
 			case "Hide" :
 			case "Show" :
 			case "Lock" :
@@ -214,6 +213,17 @@ public class CaDoodleAPI {
 			case "UnGroup" :
 			case "WireMeshView" :
 				// Configured via setNames above
+				break;
+			case "Group" :
+				if (op instanceof Group) {
+					Group group = (Group) op;
+					if (params.containsKey("intersect")) {
+						group.setIntersect(Boolean.parseBoolean(params.get("intersect").toString()));
+					}
+					if (params.containsKey("hull")) {
+						group.setHull(Boolean.parseBoolean(params.get("hull").toString()));
+					}
+				}
 				break;
 			case "ExtrudeSurface" :
 				if (op instanceof ExtrudeSurface) {
