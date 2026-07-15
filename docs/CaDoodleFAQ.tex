@@ -28,7 +28,7 @@
 
 % Colors from OpenSaucePoster
 \definecolor{posterblue}{RGB}{38, 61, 140}
-\definecolor{posterrred}{RGB}{187, 31, 9}
+\definecolor{posterred}{RGB}{187, 31, 9}
 \definecolor{posterorange}{RGB}{231, 164, 54}
 \definecolor{posteryellow}{RGB}{242, 200, 61}
 \definecolor{posterbeige}{RGB}{244, 237, 224}
@@ -49,12 +49,12 @@
 
 
 % ================== PAGE 1: FRONT ==================
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ccc}
 % PANEL 1: QUICK START & FEATURES
-\begin{minipage}[t]{\linewidth}
+\begin{minipage}[t]{0.30\textwidth}
     {\color{posterblue}\large\textbf{Key Features}}\\[0.2cm]
     \begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
-    	\item Open Source with CC-1.0
+    	\item Open Source with CC0-1.0
         \item Easy Drag-And-Drop Workflow
         \item Local Application / No Internet
         \item Keep Files Local
@@ -69,11 +69,11 @@
             \begin{itemize}
                 \item Fillet/Chamfer
                 \item Convex Hull (Shrinkwrap)
-                \item Intersection and Xor
+                \item Intersection and XOR
                 \item Extrude Surface
                 \item Bend (Sweep surface)
                 \item Hexagonal Pattern
-                \item Radial patterns
+                \item Radial Patterns
             \end{itemize}
         \item Plugin support
             \begin{itemize}
@@ -86,55 +86,49 @@
             \end{itemize}
     \end{itemize}
     \vspace{0.2cm}
-    {\color{posterrred}\large\textbf{Community:}}\\[0.2cm]
+    {\color{posterred}\large\textbf{Support:}}\\[0.2cm]
     \begin{center}
         \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cc}
-            \small Active Discord Community & \small Active Github Project \\
+            \small Active Discord Community & \small Active GitHub Project \\
             \qrcode[height=25mm]{https://discord.gg/fuJc3cbB7w} & \qrcode[height=25mm]{https://github.com/CommonWealthRobotics/CaDoodle-Application}
         \end{tabular*}
     \end{center}
 \end{minipage}
 &
 % PANEL 2: DOWNLOADS & FAQs
-\begin{center}
-\begin{minipage}[t]{\linewidth}
-    {\color{posterblue}\large\textbf{FAQs}}\\[0.2cm]
-    \footnotesize
-    \textbf{Q: Is it free?} A: For Linux CaDoodle is free. Apple App Store or Microsoft Store versions require payment. Unsigned installers for all platforms are free.\\[0.1cm]
-    \textbf{Q: Do I need to be online?} A: No, CaDoodle only needs internet for updates.\\[0.1cm]
-    \textbf{Q: What formats can I Export?} A: 3MF, STL, SVG, OBJ, Blender, FreeCAD\\[0.1cm]
-    \textbf{Q: What if I only know TinkerCAD?} A: Everything learned in TinkerCAD translates to CaDoodle. Additional features can be learned over time, but aren't needed to get started.\\[0.1cm]
-    \textbf{Q: What is Advanced Mode?} A: Adds more CAD tools and UI features. The Tinkercad-like workflow still works with extra capabilities.\\[0.1cm]
-    \textbf{Q: If I bring my blender model in, will it mess it up?} A: No, CaDoodle is a non-destructive editor. It makes a copy when importing, then applies each step non-destructively.
-    \\[0.3cm]
-
-    {\color{posterrred}\large\textbf{Links:}}\\[0.2cm]
+\begin{minipage}[t]{0.30\textwidth}
+    {\color{posterblue}\large\textbf{Downloads}}\\[0.2cm]
     \textbf{Windows:} Standalone EXE, User Local, System-Wide\\[0.1cm]
-    \textbf{Mac OS:} Apple Silicon (ARM), Intel (x86$_64$)\\[0.1cm]
+    \textbf{Mac OS:} Apple Silicon (ARM), Intel (x86\_64)\\[0.1cm]
     \textbf{Linux:} ARM/x86 AppImage, ARM/x86 Deb\\[0.1cm]
     \textbf{Chrome OS:} ARM/x86 Deb\\[0.1cm]
-    \textbf{Stores:} Windows Store available
-    \small\textbf{Scan to visit: cadoodlecad.com}\\[0.3cm]
+    \textbf{Stores:} Windows Store available\\[0.2cm]
+    {\color{posterred}\large\textbf{Links:}}\\[0.2cm]
     \begin{center}
-    	\qrcode[height=30mm]{https://cadoodlecad.com}
+    \qrcode[height=30mm]{https://cadoodlecad.com}
     \end{center}
+    \small\textbf{Scan to visit: cadoodlecad.com}\\[0.3cm]
+    {\color{posterblue}\large\textbf{FAQs}}\\[0.2cm]
+    \textbf{Q: Is it free?} A: For Linux, CADoodle is free. To access a signed installer of CADoodle from the Apple App Store or the Microsoft Store is not free. There are also unsigned installers available for all platforms for free. \\[0.1cm]
+    \textbf{Q: Do I need to be online to use CADoodle ?} A: No, CADoodle only needs the internet if you would like to update to the latest version. \\[0.1cm]
+    \textbf{Q: What formats can I export?} A: 	3MF, STL, SVG, OBJ, Blender, FreeCAD\\[0.1cm]
+    \textbf{Q: What if I only know TinkerCAD?} A: You are in luck! Everything learned for TinkerCAD will translate to CaDoodle. Over time there are some additional features that you can learn, but you do not need to know them to get started. \\[0.1cm]
+    \textbf{Q: What is Advanced Mode?} A: Advanced mode adds a few more CAD tools and UI features. All of the TinkerCAD-like workflow still works, but you have some more features. \\[0.1cm]
+    \textbf{Q: If I bring my Blender model into CADoodle, will it mess it up?} A: No, CADoodle is a non-destructive editor. When you import a model, CADoodle makes a copy. Then each CADoodle step is applied non-destructively to the steps before.  
 \end{minipage}
-\end{center}
 &
 % PANEL 3: COVER
-\begin{flushright}
 \begin{minipage}[t]{0.30\textwidth}
     \centering
     {\Huge\textbf{\color{posterblue}CADoodle}}\\[0.1cm]
     \rule{0.8\linewidth}{2pt}\\[0.1cm]
-    {\large\textbf{\color{posterrred}FAQ Sheet}}\\[0.2cm]
+    {\large\textbf{\color{posterred}FAQ Sheet}}\\[0.2cm]
     \includegraphics[width=0.7\linewidth]{OpenSaucePoster.pdf}\\[0.2cm]
     {\large\textbf{\color{posterorange}Free Offline CAD}}\\
     {\large\textbf{\color{posteryellow}for Education}}\\[0.3cm]
     {\small\textbf{Made in Worcester, MA}}\\
     {\small\textbf{at Technocopia Makerspace}}\\[0.5cm]
 \end{minipage}
-\end{flushright}
 \end{tabular*}
 
 \vspace{0.3cm}
@@ -142,9 +136,9 @@
 \newpage
 
 % ================== PAGE 2: BACK ==================
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ccc}
 % PANEL 1: SCREENSHOTS
-\begin{minipage}[t]{\linewidth}
+\begin{minipage}[t]{0.30\textwidth}
     \centering
     {\color{posterblue}\large\textbf{Interface Preview}}\\[0.2cm]
     \includegraphics[width=0.7\linewidth]{CaDoodleScreenshot.png}\\[0.2cm]
@@ -156,7 +150,7 @@
 \end{minipage}
 &
 % PANEL 2: BACK COVER
-\begin{minipage}[t]{\linewidth}
+\begin{minipage}[t]{0.30\textwidth}
     \color{posterblue}\large\textbf{History}\\[0.2cm]
     \footnotesize 
     \setlength{\parindent}{1em}
@@ -173,14 +167,14 @@
     \normalsize\textbf{Supporting CaDoodle Development}\\[0.2cm]
 
     \centering
-    \qrcode[height=30mm]{https://venmo.com/u/Kevin-Harrington-17?txn=pay&amount=25&note=Donation} \quad
-    \qrcode[height=30mm]{https://www.paypal.com/ncp/payment/FASUCA2FEFAJE}\\[0.1cm]
+    \qrcode[height=15mm]{https://venmo.com/u/Kevin-Harrington-17?txn=pay&amount=25&note=Donation} \quad
+    \qrcode[height=15mm]{https://www.paypal.com/ncp/payment/FASUCA2FEFAJE}\\[0.1cm]
     \small{\textbf{Venmo}} \quad \small{\textbf{PayPal}}
 
 \end{minipage}
 &
 % PANEL 3: EDUCATIONAL USE
-\begin{minipage}[t]{\linewidth}
+\begin{minipage}[t]{0.30\textwidth}
     {\color{posterblue}\large\textbf{Educational Use}}\\[0.2cm]
     \textbf{Schools:} No internet required, safe local storage\\[0.2cm]
     \textbf{Classroom Features:}\\
@@ -191,15 +185,16 @@
         \item Multiple language support
     \end{itemize}
     \vspace{0.2cm}
-    {\color{posterrred}\large\textbf{Contact:}}\\[0.2cm]
+    {\color{posterred}\large\textbf{Contact:}}\\[0.2cm]
     \small \textbf{Technocopia Makerspace}\\
     \small Worcester, MA\\[0.1cm]
-    \small \url{support@cadoodlecad.com}\\[0.1cm]
+    \small \url{technocopia.org}\\[0.1cm]
     \small \textbf{Questions?} Scan to join:\\[0.1cm]
     \begin{center}
     \qrcode[height=30mm]{https://discord.gg/fuJc3cbB7w}
     \end{center}
-
+    {\color{posterblue}\large\textbf{Info}}\\[0.2cm]
+    \small Version 1.0 | July 2025
 \end{minipage}
 \end{tabular*}
 
