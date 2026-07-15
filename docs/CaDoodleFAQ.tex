@@ -14,10 +14,10 @@
 \usepackage{qrcode}
 \usepackage{eso-pic}
 
-% Add vertical fold lines at 1/3 and 2/3 of page width (landscape: 11" wide)
-% NOTE: using the non-starred \AddToShipoutPictureFG so the fold lines are
-% drawn on EVERY page (front and back), not just the next single page.
-\AddToShipoutPictureFG{
+% Fold-line overlay at 1/3 and 2/3 of page width (landscape: 11" wide).
+% Defined as a command so we can choose exactly which page(s) it's drawn on,
+% rather than using \AddToShipoutPictureFG (which draws on every page).
+\newcommand{\foldlines}{%
 	\begin{tikzpicture}[remember picture, overlay]
 		\draw[gray, dashed, line width=0.5pt]
 		([xshift=3.666in] current page.south west) --
@@ -25,7 +25,7 @@
 		\draw[gray, dashed, line width=0.5pt]
 		([xshift=7.333in] current page.south west) --
 		([xshift=7.333in] current page.north west);
-	\end{tikzpicture}
+	\end{tikzpicture}%
 }
 
 % Colors from OpenSaucePoster
@@ -52,6 +52,10 @@
 		\newcommand{\panelend}{\end{minipage}\end{minipage}}
 
 \begin{document}
+	
+	% \AddToShipoutPictureFG* only affects the very next page shipped out,
+	% so the fold lines appear on page 1 (front) only, not page 2 (back/inside).
+	\AddToShipoutPictureFG*{\foldlines}
 	
 	% ================== PAGE 1: FRONT ==================
 	\begin{minipage}[c][\textheight][c]{\textwidth}
@@ -145,6 +149,7 @@
 	\newpage
 	
 	% ================== PAGE 2: BACK ==================
+	% (no \AddToShipoutPictureFG* call here, so no fold lines on this page)
 	\begin{minipage}[c][\textheight][c]{\textwidth}
 		\begin{center}
 			\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
