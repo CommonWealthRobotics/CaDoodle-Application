@@ -54,153 +54,162 @@
 \begin{document}
 	
 	% ================== PAGE 1: FRONT ==================
-	\begin{center}
-		\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
-			% PANEL 1: QUICK START & FEATURES
-			\panelstart
-			{\color{posterblue}\large\textbf{Key Features}}\\[0.2cm]
-			\begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
-				\item Open Source with CC-1.0
-				\item Easy Drag-And-Drop Workflow
-				\item Local Application / No Internet
-				\item Keep Files Local
-				\item Non-Destructive workflow
-				\item Advanced UI Features
-				\begin{itemize}
-					\item Timeline
-					\item Feature Tree
-					\item Focus to Clicked Point
+	\begin{minipage}[c][\textheight][c]{\textwidth}
+		\begin{center}
+			\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
+				% PANEL 1: QUICK START & FEATURES
+				\panelstart
+				{\color{posterblue}\large\textbf{Key Features}}\\[0.2cm]
+				\begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
+					\item Open Source with CC-1.0
+					\item Easy Drag-And-Drop Workflow
+					\item Local Application / No Internet
+					\item Keep Files Local
+					\item Non-Destructive workflow
+					\item Advanced UI Features
+					\begin{itemize}
+						\item Timeline
+						\item Feature Tree
+						\item Focus to Clicked Point
+					\end{itemize}
+					\item Advanced CAD Features
+					\begin{itemize}
+						\item Fillet/Chamfer
+						\item Convex Hull (Shrinkwrap)
+						\item Intersection and Xor
+						\item Extrude Surface
+						\item Bend (Sweep surface)
+						\item Hexagonal Pattern
+						\item Radial patterns
+					\end{itemize}
+					\item Plugin support
+					\begin{itemize}
+						\item Blender
+						\item OpenSCAD
+						\item FreeCAD
+						\item Build123d
+						\item Inkscape
+						\item BowlerKernel
+					\end{itemize}
 				\end{itemize}
-				\item Advanced CAD Features
-				\begin{itemize}
-					\item Fillet/Chamfer
-					\item Convex Hull (Shrinkwrap)
-					\item Intersection and Xor
-					\item Extrude Surface
-					\item Bend (Sweep surface)
-					\item Hexagonal Pattern
-					\item Radial patterns
-				\end{itemize}
-				\item Plugin support
-				\begin{itemize}
-					\item Blender
-					\item OpenSCAD
-					\item FreeCAD
-					\item Build123d
-					\item Inkscape
-					\item BowlerKernel
-				\end{itemize}
-			\end{itemize}
-			\vspace{0.2cm}
-			{\color{posterrred}\large\textbf{Community:}}\\[0.2cm]
-			\begin{center}
-				\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}cc}
-					\small Active Discord Community & \small Active Github Project \\
-					\qrcode[height=25mm]{https://discord.gg/fuJc3cbB7w} & \qrcode[height=25mm]{https://github.com/CommonWealthRobotics/CaDoodle-Application}
-				\end{tabular*}
-			\end{center}
-			\panelend
-			&
-			% PANEL 2: DOWNLOADS & FAQs
-			\panelstart
-			{\color{posterblue}\large\textbf{FAQs}}\\[0.2cm]
-			\footnotesize
-			\textbf{Q: Is it free?} A: For Linux CaDoodle is free. Apple App Store or Microsoft Store versions require payment. Unsigned installers for all platforms are free.\\[0.1cm]
-			\textbf{Q: Do I need to be online?} A: No, CaDoodle only needs internet for updates.\\[0.1cm]
-			\textbf{Q: What formats can I Export?} A: 3MF, STL, SVG, OBJ, Blender, FreeCAD\\[0.1cm]
-			\textbf{Q: What if I only know TinkerCAD?} A: Everything learned in TinkerCAD translates to CaDoodle. Additional features can be learned over time, but aren't needed to get started.\\[0.1cm]
-			\textbf{Q: What is Advanced Mode?} A: Adds more CAD tools and UI features. The Tinkercad-like workflow still works with extra capabilities.\\[0.1cm]
-			\textbf{Q: If I bring my blender model in, will it mess it up?} A: No, CaDoodle is a non-destructive editor. It makes a copy when importing, then applies each step non-destructively.
-			\\[0.3cm]
-			
-			{\color{posterrred}\large\textbf{Links:}}\\[0.2cm]
-			\textbf{Windows:} Standalone EXE, User Local, System-Wide\\[0.1cm]
-			\textbf{Mac OS:} Apple Silicon (ARM), Intel (x86$_64$)\\[0.1cm]
-			\textbf{Linux:} ARM/x86 AppImage, ARM/x86 Deb\\[0.1cm]
-			\textbf{Chrome OS:} ARM/x86 Deb\\[0.1cm]
-			\textbf{Stores:} Windows Store available
-			\small\textbf{Scan to visit: cadoodlecad.com}\\[0.3cm]
-			\begin{center}
-				\qrcode[height=30mm]{https://cadoodlecad.com}
-			\end{center}
-			\panelend
-			&
-			% PANEL 3: COVER
-			\panelstart
-			{\Huge\textbf{\color{posterblue}CADoodle}}\\[0.1cm]
-			\rule{0.8\linewidth}{2pt}\\[0.1cm]
-			{\large\textbf{\color{posterrred}FAQ Sheet}}\\[0.2cm]
-			\includegraphics[width=0.7\linewidth]{OpenSaucePoster.pdf}\\[0.2cm]
-			{\large\textbf{\color{posterorange}Free Offline CAD}}\\
-			{\large\textbf{\color{posteryellow}for Education}}\\[0.3cm]
-			{\small\textbf{Made in Worcester, MA}}\\
-			{\small\textbf{at Technocopia Makerspace}}\\[0.5cm]
-			\panelend
-		\end{tabular*}
-	\end{center}
+				\vspace{0.2cm}
+				{\color{posterrred}\large\textbf{Community:}}\\[0.2cm]
+				\begin{center}
+					\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}cc}
+						\small Active Discord Community & \small Active Github Project \\
+						\qrcode[height=25mm]{https://discord.gg/fuJc3cbB7w} & \qrcode[height=25mm]{https://github.com/CommonWealthRobotics/CaDoodle-Application}
+					\end{tabular*}
+				\end{center}
+				\panelend
+				&
+				% PANEL 2: DOWNLOADS & FAQs
+				\panelstart
+				{\color{posterblue}\large\textbf{FAQs}}\\[0.2cm]
+				\footnotesize
+				\textbf{Q: Is it free?} A: For Linux CaDoodle is free. Apple App Store or Microsoft Store versions require payment. Unsigned installers for all platforms are free.\\[0.1cm]
+				\textbf{Q: Do I need to be online?} A: No, CaDoodle only needs internet for updates.\\[0.1cm]
+				\textbf{Q: What formats can I Export?} A: 3MF, STL, SVG, OBJ, Blender, FreeCAD\\[0.1cm]
+				\textbf{Q: What if I only know TinkerCAD?} A: Everything learned in TinkerCAD translates to CaDoodle. Additional features can be learned over time, but aren't needed to get started.\\[0.1cm]
+				\textbf{Q: What is Advanced Mode?} A: Adds more CAD tools and UI features. The Tinkercad-like workflow still works with extra capabilities.\\[0.1cm]
+				\textbf{Q: If I bring my blender model in, will it mess it up?} A: No, CaDoodle is a non-destructive editor. It makes a copy when importing, then applies each step non-destructively.
+				\\[0.3cm]
+				
+				{\color{posterrred}\large\textbf{Links:}}\\[0.2cm]
+				\textbf{Windows:} Standalone EXE, User Local, System-Wide\\[0.1cm]
+				\textbf{Mac OS:} Apple Silicon (ARM), Intel (x86$_64$)\\[0.1cm]
+				\textbf{Linux:} ARM/x86 AppImage, ARM/x86 Deb\\[0.1cm]
+				\textbf{Chrome OS:} ARM/x86 Deb\\[0.1cm]
+				\textbf{Stores:} Windows Store available
+				\small\textbf{Scan to visit: cadoodlecad.com}\\[0.3cm]
+				\begin{center}
+					\qrcode[height=30mm]{https://cadoodlecad.com}
+				\end{center}
+				\panelend
+				&
+				% PANEL 3: COVER
+				\panelstart
+				\centering
+				{\Huge\textbf{\color{posterblue}CADoodle}}\\[0.1cm]
+				\rule{0.8\linewidth}{2pt}\\[0.1cm]
+				{\large\textbf{\color{posterblue}FAQ Sheet}}\\[0.2cm]
+				\includegraphics[width=0.7\linewidth]{OpenSaucePoster.pdf}\\[0.2cm]
+				{\large\textbf{\color{posterblue}Free Offline CAD}}\\
+				{\large\textbf{\color{posterblue}for Education}}\\[0.3cm]
+				{\small\textbf{Made in Worcester, MA}}\\
+				{\small\textbf{at Technocopia Makerspace}}\\[0.5cm]
+				\panelend
+			\end{tabular*}
+		\end{center}
+	\end{minipage}
 	
 	\newpage
 	
 	% ================== PAGE 2: BACK ==================
-	\begin{center}
-		\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
-			% PANEL 1: SCREENSHOTS
-			\panelstart
-			{\color{posterblue}\large\textbf{Interface Preview}}\\[0.2cm]
-			\includegraphics[width=0.7\linewidth]{CaDoodleScreenshot.png}\\[0.2cm]
-			\small{\textbf{Main Interface}}\\[0.2cm]
-			\includegraphics[width=0.7\linewidth]{BasicMode.png}\\[0.1cm]
-			\small{\textbf{Basic Mode}}\\[0.2cm]
-			\includegraphics[width=0.7\linewidth]{AdvancedMode.png}\\[0.1cm]
-			\small{\textbf{Advanced Mode}}\\[0.2cm]
-			\panelend
-			&
-			% PANEL 2: BACK COVER
-			\panelstart
-			\raggedright
-			\color{posterblue}\large\textbf{History}\\[0.2cm]
-			\footnotesize
-			\setlength{\parindent}{1em}
-			In July 2024, the founder of CaDoodle, an elementary school technology teacher, began developing this project after years of using TinkerCAD with students as young as 1st grade.
-			\\[0.2cm]
-			The initial inspiration came from the need for an accessible, intuitive CAD tool that could engage young learners in creative design and problem-solving. However, the limitations of TinkerCAD became increasingly apparent: the proprietary nature of the source files meant students' work was trapped on Autodesk servers, inaccessible once the browser session ended.
-			\\[0.2cm]
-			A particularly memorable incident involved a complex student model that crashed the TinkerCAD website, resulting in total data loss with no recovery option. This experience highlighted the fragility of cloud-based design tools and the importance of local storage. Another pivotal moment occurred when a student wanted to continue her work during a long bus ride home—an hour each way—without internet access, demonstrating the impracticality of web-only solutions for students in rural or underserved areas.
-			\\[0.2cm]
-			The founder also became increasingly concerned about the pedagogical implications of teaching students skills mediated by a single corporation, fearing that this approach trained students to depend on proprietary ecosystems rather than fostering true computational thinking and creative autonomy.
-			\\[0.2cm]
-			These concerns led to the creation of CaDoodle: a locally installed, open-source CAD application that stores models on the user's own computer, uses open file formats, and runs offline without any internet connection. By July 2024, the project was under serious development, and by April 2025, it reached feature completeness for beta testing. Today, CaDoodle stands as a commitment to educational equity, digital sovereignty, and open-source collaboration.\\[0.2cm]
-			
-			\normalsize\textbf{Supporting CaDoodle Development}\\[0.2cm]
-			
-			\centering
-			\qrcode[height=30mm]{https://venmo.com/u/Kevin-Harrington-17?txn=pay&amount=25&note=Donation} \quad
-			\qrcode[height=30mm]{https://www.paypal.com/ncp/payment/FASUCA2FEFAJE}\\[0.1cm]
-			\small{\textbf{Venmo}} \quad \small{\textbf{PayPal}}
-			\panelend
-			&
-			% PANEL 3: EDUCATIONAL USE
-			\panelstart
-			{\color{posterblue}\large\textbf{Educational Use}}\\[0.2cm]
-			\textbf{Schools:} No internet required, safe local storage\\[0.2cm]
-			\textbf{Classroom Features:}\\
-			\begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
-				\item Simplified basic mode for beginners
-				\item Advanced mode for experienced users
-				\item Theme switching
-				\item Multiple language support
-			\end{itemize}
-			\vspace{0.2cm}
-			{\color{posterrred}\large\textbf{Contact:}}\\[0.2cm]
-			\small \textbf{Technocopia Makerspace}\\
-			\small Worcester, MA\\[0.1cm]
-			\small \url{support@cadoodlecad.com}\\[0.1cm]
-			\small \textbf{Questions?} Scan to join:\\[0.1cm]
-			\begin{center}
-				\qrcode[height=30mm]{https://discord.gg/fuJc3cbB7w}
-			\end{center}
-			\panelend
-		\end{tabular*}
-	\end{center}
+	\begin{minipage}[c][\textheight][c]{\textwidth}
+		\begin{center}
+			\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
+				% PANEL 1: SCREENSHOTS
+				\panelstart
+				{\color{posterblue}\large\textbf{Interface Preview}}\\[0.2cm]
+				\includegraphics[width=0.7\linewidth]{CaDoodleScreenshot.png}\\[0.2cm]
+				\small{\textbf{Main Interface}}\\[0.2cm]
+				\includegraphics[width=0.7\linewidth]{BasicMode.png}\\[0.1cm]
+				\small{\textbf{Basic Mode}}\\[0.2cm]
+				\includegraphics[width=0.7\linewidth]{AdvancedMode.png}\\[0.1cm]
+				\small{\textbf{Advanced Mode}}\\[0.2cm]
+				\panelend
+				&
+				% PANEL 2: BACK COVER
+				\panelstart
+				\raggedright
+				\color{posterblue}\large\textbf{History}\\[0.2cm]
+				\footnotesize
+				\setlength{\parindent}{1em}
+				In July 2024, the founder of CaDoodle, an elementary school technology teacher, began developing this project after years of using TinkerCAD with students as young as 1st grade.
+				\\[0.2cm]
+				The initial inspiration came from the need for an accessible, intuitive CAD tool that could engage young learners in creative design and problem-solving. However, the limitations of TinkerCAD became increasingly apparent: the proprietary nature of the source files meant students' work was trapped on Autodesk servers, inaccessible once the browser session ended.
+				\\[0.2cm]
+				A particularly memorable incident involved a complex student model that crashed the TinkerCAD website, resulting in total data loss with no recovery option. This experience highlighted the fragility of cloud-based design tools and the importance of local storage. Another pivotal moment occurred when a student wanted to continue her work during a long bus ride home—an hour each way—without internet access, demonstrating the impracticality of web-only solutions for students in rural or underserved areas.
+				\\[0.2cm]
+				The founder also became increasingly concerned about the pedagogical implications of teaching students skills mediated by a single corporation, fearing that this approach trained students to depend on proprietary ecosystems rather than fostering true computational thinking and creative autonomy.
+				\\[0.2cm]
+				These concerns led to the creation of CaDoodle: a locally installed, open-source CAD application that stores models on the user's own computer, uses open file formats, and runs offline without any internet connection. By July 2024, the project was under serious development, and by April 2025, it reached feature completeness for beta testing. Today, CaDoodle stands as a commitment to educational equity, digital sovereignty, and open-source collaboration.\\[0.2cm]
+				
+				\normalsize\textbf{Supporting CaDoodle Development}\\[0.2cm]
+				
+				\centering
+				\qrcode[height=30mm]{https://venmo.com/u/Kevin-Harrington-17?txn=pay&amount=25&note=Donation} \quad
+				\qrcode[height=30mm]{https://www.paypal.com/ncp/payment/FASUCA2FEFAJE}\\[0.1cm]
+				\small{\textbf{Venmo}} \quad \small{\textbf{PayPal}}
+				\panelend
+				&
+				% PANEL 3: EDUCATIONAL USE
+				\panelstart
+				{\color{posterblue}\large\textbf{Educational Use}}\\[0.2cm]
+				\textbf{Schools:} No internet required, safe local storage\\[0.2cm]
+				\textbf{Classroom Features:}\\
+				\begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
+					\item No Accounts for easy on-boarding
+					\item Support Fleet Deployment
+					\item Simplified basic mode for beginners
+					\item Timeline to fix students mistakes
+					\item Advanced mode for experienced Students
+					\item CAD tool grows with Students
+					\item Free for Educators and Families
+					\item Multiple language support
+				\end{itemize}
+				\vspace{0.2cm}
+				{\color{posterrred}\large\textbf{Contact:}}\\[0.2cm]
+				\small \textbf{Technocopia Makerspace}\\
+				\small Worcester, MA\\[0.1cm]
+				\small \url{support@cadoodlecad.com}\\[0.1cm]
+				\small \textbf{Questions?} Scan to join:\\[0.1cm]
+				\begin{center}
+					\qrcode[height=30mm]{https://cadoodlecad.com/landing.html}
+				\end{center}
+				\panelend
+			\end{tabular*}
+		\end{center}
+	\end{minipage}
 	
 \end{document}
