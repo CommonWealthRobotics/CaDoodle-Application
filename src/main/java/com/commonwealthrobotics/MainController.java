@@ -1917,7 +1917,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					e.printStackTrace();
 				}
 
-				Log.info("MCP Server started on port " + MCPServer.DEFAULT_PORT);
+				Log.info("MCP Server (Streamable HTTP) started on http://127.0.0.1:" + MCPServer.DEFAULT_PORT
+						+ MCPServer.MCP_PATH);
 
 				// Register shutdown hook to stop MCP server
 				Runtime.getRuntime().addShutdownHook(new Thread(() -> {

@@ -1,110 +1,230 @@
 package com.commonwealthrobotics.mcp;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.neuronrobotics.sdk.common.Log;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 
 /**
- * MCP Server for CaDoodle. Provides JSON-RPC interface to CaDoodle operations.
- * Only accepts localhost connections for security.
+ * CaDoodle MCP server using the open Model Context Protocol over Streamable HTTP.
+ * Binds to localhost only. Compatible with Cursor and other MCP clients.
  */
 public class MCPServer {
 	public static final int DEFAULT_PORT = 8080;
-	private static final String ALLOWED_HOST = "127.0.0.1";
+	public static final String MCP_PATH = "/mcp";
 
 	private final int port;
-	private ServerSocket serverSocket = null;
+	private final Gson gson = new Gson();
+	private final McpProtocol protocol = new McpProtocol();
+
+	private HttpServer httpServer;
 	private ExecutorService executor;
-	private CaDoodleAPI cadoodleAPI;
+	private volatile CaDoodleAPI cadoodleAPI;
 
 	public MCPServer(int port) {
 		this.port = port;
-		// cadoodleAPI will be set via setDependencies
 	}
 
 	public MCPServer() {
 		this(DEFAULT_PORT);
 	}
 
-	/**
-	 * Set dependencies after UI initialization. This should be called from the
-	 * JavaFX application thread.
-	 */
 	public void setDependencies(com.commonwealthrobotics.ActiveProject activeProject,
 			com.commonwealthrobotics.controls.SelectionSession selectionSession) {
 		Log.debug("Setting Up API with new project");
-
 		this.cadoodleAPI = new CaDoodleAPI(activeProject, selectionSession);
+		protocol.setApi(cadoodleAPI);
 	}
 
 	public void start() {
 		Log.debug("MCPServer.start() called");
-
-		executor = Executors.newFixedThreadPool(10);
+		executor = Executors.newCachedThreadPool(r -> {
+			Thread t = new Thread(r, "CaDoodle-MCP");
+			t.setDaemon(true);
+			return t;
+		});
 
 		try {
-			serverSocket = new ServerSocket(port);
-			Log.debug("Server socket bound to port " + port);
-			Log.info("MCP Server started on port " + port);
-			Log.debug("Ready to accept connections");
-
-			while (serverSocket != null) {
-				try {
-					Socket clientSocket = serverSocket.accept();
-					Log.debug("Accepted client connection");
-
-					// Only allow localhost connections
-					String host = clientSocket.getInetAddress().getHostAddress();
-					if (!ALLOWED_HOST.equals(host)) {
-						Log.warning("Rejected connection from non-localhost: " + host);
-						clientSocket.close();
-						continue;
-					}
-
-					Log.info("Client connected from: " + host);
-
-					Log.debug("Submitting handler to executor");
-					executor.submit(new MCPHandler(clientSocket, cadoodleAPI));
-				} catch (Throwable e) {
-					serverSocket = null;
-					Log.error("Error accepting connection: " + e.getMessage());
-					e.printStackTrace();
-					Log.debug("Error: " + e.getMessage());
-
-				}
-			}
+			httpServer = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 0);
+			httpServer.createContext(MCP_PATH, this::handleExchange);
+			httpServer.createContext("/", this::handleRoot);
+			httpServer.setExecutor(executor);
+			httpServer.start();
+			Log.info("MCP Server (Streamable HTTP) started at http://127.0.0.1:" + port + MCP_PATH);
 		} catch (IOException e) {
 			Log.error("Failed to start MCP server: " + e.getMessage());
 			e.printStackTrace();
-			Log.debug("Failed: " + e.getMessage());
-		} finally {
-			serverSocket = null;
-			if (executor != null) {
-				executor.shutdown();
-			}
-			Log.debug("MCPServer.start() finished");
+			stop();
 		}
 	}
 
 	public void stop() {
+		if (httpServer != null) {
+			httpServer.stop(0);
+			httpServer = null;
+		}
+		if (executor != null) {
+			executor.shutdownNow();
+			executor = null;
+		}
+		Log.info("MCP Server stopped");
+	}
 
-		if (serverSocket != null) {
+	private void handleRoot(HttpExchange exchange) throws IOException {
+		if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+			byte[] body = ("CaDoodle MCP endpoint: " + MCP_PATH).getBytes(StandardCharsets.UTF_8);
+			Headers headers = exchange.getResponseHeaders();
+			headers.set("Content-Type", "text/plain; charset=utf-8");
+			exchange.sendResponseHeaders(200, body.length);
+			try (OutputStream os = exchange.getResponseBody()) {
+				os.write(body);
+			}
+			return;
+		}
+		exchange.sendResponseHeaders(404, -1);
+		exchange.close();
+	}
+
+	private void handleExchange(HttpExchange exchange) throws IOException {
+		try {
+			String method = exchange.getRequestMethod();
+			String remote = exchange.getRemoteAddress().getAddress().getHostAddress();
+			if (!"127.0.0.1".equals(remote) && !"0:0:0:0:0:0:0:1".equals(remote)) {
+				Log.warning("Rejected MCP connection from non-localhost: " + remote);
+				exchange.sendResponseHeaders(403, -1);
+				exchange.close();
+				return;
+			}
+
+			addCorsHeaders(exchange);
+			if ("OPTIONS".equalsIgnoreCase(method)) {
+				exchange.sendResponseHeaders(204, -1);
+				exchange.close();
+				return;
+			}
+
+			if ("GET".equalsIgnoreCase(method)) {
+				// Streamable HTTP optional SSE listen; we are request/response only.
+				Headers headers = exchange.getResponseHeaders();
+				headers.set("Content-Type", "text/event-stream");
+				headers.set("Cache-Control", "no-cache");
+				exchange.sendResponseHeaders(405, -1);
+				exchange.close();
+				return;
+			}
+
+			if (!"POST".equalsIgnoreCase(method)) {
+				exchange.sendResponseHeaders(405, -1);
+				exchange.close();
+				return;
+			}
+
+			String body = readBody(exchange);
+			Log.debug("MCP HTTP POST: " + body);
+			JsonElement parsed = JsonParser.parseString(body.isEmpty() ? "null" : body);
+
+			if (parsed.isJsonArray()) {
+				JsonArray responses = new JsonArray();
+				boolean anyResponse = false;
+				for (JsonElement el : parsed.getAsJsonArray()) {
+					JsonObject response = protocol.handleMessage(el.getAsJsonObject());
+					if (response != null) {
+						responses.add(response);
+						anyResponse = true;
+					}
+				}
+				if (!anyResponse) {
+					exchange.sendResponseHeaders(202, -1);
+					exchange.close();
+					return;
+				}
+				writeJson(exchange, 200, gson.toJson(responses));
+				return;
+			}
+
+			if (!parsed.isJsonObject()) {
+				writeJson(exchange, 400, errorJson(null, -32700, "Parse error"));
+				return;
+			}
+
+			JsonObject request = parsed.getAsJsonObject();
+			boolean isInitialize = request.has("method") && "initialize".equals(request.get("method").getAsString());
+			JsonObject response = protocol.handleMessage(request);
+			if (response == null) {
+				exchange.sendResponseHeaders(202, -1);
+				exchange.close();
+				return;
+			}
+
+			Headers headers = exchange.getResponseHeaders();
+			if (isInitialize) {
+				headers.set("Mcp-Session-Id", UUID.randomUUID().toString());
+			}
+			writeJson(exchange, 200, gson.toJson(response));
+		} catch (Exception e) {
+			Log.error("MCP HTTP error: " + e.getMessage());
+			e.printStackTrace();
 			try {
-				serverSocket.close();
-			} catch (IOException e) {
-				Log.error("Error closing server socket");
+				writeJson(exchange, 500, errorJson(null, -32603, e.getMessage()));
+			} catch (Exception ignored) {
+				exchange.close();
 			}
 		}
-		serverSocket = null;
-		if (executor != null) {
-			executor.shutdown();
+	}
+
+	private static void addCorsHeaders(HttpExchange exchange) {
+		Headers headers = exchange.getResponseHeaders();
+		headers.set("Access-Control-Allow-Origin", "*");
+		headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+		headers.set("Access-Control-Allow-Headers", "Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version");
+		headers.set("Access-Control-Expose-Headers", "Mcp-Session-Id");
+	}
+
+	private static String readBody(HttpExchange exchange) throws IOException {
+		try (InputStream in = exchange.getRequestBody()) {
+			return new String(in.readAllBytes(), StandardCharsets.UTF_8);
 		}
-		// cadoodleAPI.close(); // CaDoodleAPI doesn't have a close() method
-		Log.info("MCP Server stopped");
+	}
+
+	private static void writeJson(HttpExchange exchange, int status, String json) throws IOException {
+		byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+		Headers headers = exchange.getResponseHeaders();
+		headers.set("Content-Type", "application/json; charset=utf-8");
+		exchange.sendResponseHeaders(status, bytes.length);
+		try (OutputStream os = exchange.getResponseBody()) {
+			os.write(bytes);
+		}
+	}
+
+	private static String errorJson(Object id, int code, String message) {
+		JsonObject response = new JsonObject();
+		response.addProperty("jsonrpc", "2.0");
+		if (id instanceof Number) {
+			response.addProperty("id", (Number) id);
+		} else if (id != null) {
+			response.addProperty("id", id.toString());
+		} else {
+			response.add("id", null);
+		}
+		JsonObject error = new JsonObject();
+		error.addProperty("code", code);
+		error.addProperty("message", message == null ? "Error" : message);
+		response.add("error", error);
+		return response.toString();
 	}
 
 	public static void main(String[] args) {
@@ -118,11 +238,7 @@ public class MCPServer {
 		}
 
 		MCPServer server = new MCPServer(port);
-
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			server.stop();
-		}));
-
+		Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
 		server.start();
 	}
 }
