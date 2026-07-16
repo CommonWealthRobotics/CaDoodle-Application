@@ -13,6 +13,7 @@
 \usepackage{tikz}
 \usepackage{qrcode}
 \usepackage{eso-pic}
+\usepackage{calc}
 
 % Fold-line overlay at 1/3 and 2/3 of page width (landscape: 11" wide).
 % Defined as a command so we can choose exactly which page(s) it's drawn on,
@@ -52,6 +53,14 @@
 \newcommand{\panelstart}{\begin{minipage}[t]{\linewidth}\centering\begin{minipage}[t]{0.9\linewidth}}
 		\newcommand{\panelend}{\end{minipage}\end{minipage}}
 
+% Icon helper: places a centered icon, sized to fit compactly next to text
+% (kept small so the plugin list doesn't blow out the panel's height)
+\newcommand{\pluginicon}[1]{%
+	\raisebox{-0.15\baselineskip}{%
+		\includegraphics[height=1.1\baselineskip]{#1}%
+	}%
+}
+
 \begin{document}
 	
 	% \AddToShipoutPictureFG* only affects the very next page shipped out,
@@ -88,16 +97,26 @@
 						\item Radial patterns
 					\end{itemize}
 					\item Plugin support
-					\begin{itemize}
-						\item Blender
-						\item OpenSCAD
-						\item FreeCAD
-						\item Build123d
-						\item Inkscape
-						\item BowlerKernel
-					\end{itemize}
+					\\[0.05cm]
 				\end{itemize}
-				\vspace{0.2cm}
+				\vspace{-0.1cm}
+				\noindent
+				\begin{minipage}[t]{0.48\linewidth}
+					\begin{itemize}[topsep=0pt, itemsep=0pt, leftmargin=1.6em]
+						\item \pluginicon{Script-Tab-Blender.png} Blender
+						\item \pluginicon{Script-Tab-OpenSCAD.png} OpenSCAD
+						\item \pluginicon{Script-Tab-FreeCAD.png} FreeCAD
+					\end{itemize}
+				\end{minipage}%
+				\hfill
+				\begin{minipage}[t]{0.48\linewidth}
+					\begin{itemize}[topsep=0pt, itemsep=0pt, leftmargin=1.6em]
+						\item \pluginicon{build123d.png} Build123d
+						\item \pluginicon{Script-Tab-SVG.png} Inkscape
+						\item \pluginicon{eclipse.png} BowlerKernel
+					\end{itemize}
+				\end{minipage}
+				\\[0.4cm]
 				{\color{posterrred}\large\textbf{Community:}}\\[0.2cm]
 				\begin{center}
 					\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}cc}
@@ -140,7 +159,7 @@
 				\rule{0.8\linewidth}{2pt}\\[0.1cm]
 				{\large\textbf{\color{posterblue}FAQ Sheet}}\\[0.2cm]
 				\includegraphics[width=0.7\linewidth]{OpenSaucePoster.pdf}\\[3.2cm]
-
+				
 				{\small\textbf{Made in Worcester, MA}}\\
 				{\small\textbf{at Technocopia Makerspace}}\\[0.5cm]
 				\panelend
