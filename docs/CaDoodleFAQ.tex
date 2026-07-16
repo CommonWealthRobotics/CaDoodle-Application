@@ -63,15 +63,38 @@
 }
 
 % Bird overlay: places bird-logo.png as an overlay at a tunable position
-% Usage: \birdoverlay[width fraction][x offset][y offset][mirrored]
+% Usage: \birdoverlay[width fraction][x offset][y offset][panel number][mirrored]
 % width fraction: relative to \linewidth (default 0.15)
-% x, y offsets: in cm, relative to page center (default 0cm)
+% x, y offsets: in cm, relative to panel center (default 0cm)
+% panel number: 1, 2, or 3 (for left, middle, right panel)
 % mirrored: 0 for normal, 1 for mirror left-right (default 0)
-\newcommand{\birdoverlay}[4][0.15]{%
-	\begin{tikzpicture}[remember picture, overlay]
-		\pgfmathparse{#4 > 0 ? -1 : 1}%
-		\edef\mirrorfactor{\pgfmathresult}%
-		\node[inner sep=0pt] at ($(current page.center) + (#2, #3)$) {\scalebox{\mirrorfactor}{\includegraphics[width=#1\linewidth]{bird-logo.png}}};
+% Bird overlay: places bird-logo.png as an overlay at a tunable position
+% Usage: \birdoverlay[width fraction]{x offset}{y offset}{panel}{mirror}
+\newcommand{\birdoverlay}[5][0.15]{%
+	\begin{tikzpicture}[remember picture,overlay]
+		\ifnum#5=0
+		\def\mirrorfactor{1}
+		\else
+		\def\mirrorfactor{-1}
+		\fi
+		
+		\ifnum#4=1
+		\def\paneloffset{-3.666in}
+		\else
+		\ifnum#4=2
+		\def\paneloffset{0in}
+		\else
+		\def\paneloffset{3.666in}
+		\fi
+		\fi
+		
+		\node[
+		inner sep=0pt,
+		xscale=\mirrorfactor
+		] at ($(current page.center)+(\paneloffset,0)+(#2,#3)$)
+		{
+			\includegraphics[width=#1\linewidth]{bird-logo.png}
+		};
 	\end{tikzpicture}%
 }
 
@@ -87,8 +110,8 @@
 			\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
 				% PANEL 1: QUICK START & FEATURES
 				\panelstart
-				\birdoverlay[0.2]{2.5cm}{2.5cm}{0}
-				{\color{posterblue}\large\textbf{Key Features}}\\[0.2cm]
+				\birdoverlay[0.2]{0cm}{-5.8cm}{1}{1}
+				{\color{posterblue}\huge\textbf{Key Features}}\\[0.2cm]
 				\begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
 					\item Open Source with CC-1.0
 					\item Easy Drag-And-Drop Workflow
@@ -143,8 +166,8 @@
 				&
 				% PANEL 2: DOWNLOADS & FAQs
 				\panelstart
-				\birdoverlay[0.2]{-2.5cm}{2.5cm}{0}
-				{\color{posterblue}\large\textbf{FAQs}}\\[0.2cm]
+				\birdoverlay[0.2]{-2.5cm}{-4.5cm}{2}{0}
+				{\color{posterblue}\huge\textbf{FAQs}}\\[0.2cm]
 				\footnotesize
 				\textbf{Q: Is it free?} A: For Linux CaDoodle is free. Apple App Store or Microsoft Store versions require payment. Unsigned installers for all platforms are free.\\[0.1cm]
 				\textbf{Q: Do I need to be online?} A: No, CaDoodle only needs internet access for updates.\\[0.1cm]
@@ -193,7 +216,7 @@
 			\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{3.5in}p{3.5in}p{3.5in}}
 				% PANEL 1: SCREENSHOTS
 				\panelstart
-				\birdoverlay[0.2]{0cm}{0cm}{1}
+				\birdoverlay[0.2]{3.5cm}{8.5cm}{1}{1}
 				{\color{posterblue}\huge\textbf{Interface Preview}}\\[0.2cm]
 				\small{\textbf{Main Interface}}\\[0.2cm]
 				\includegraphics[width=0.9\linewidth]{CaDoodleScreenshot.png}\\[0.2cm]
@@ -206,9 +229,9 @@
 				&
 				% PANEL 2: BACK COVER
 				\panelstart
-				\birdoverlay[0.2]{-2.5cm}{-2.5cm}{0}
+				\birdoverlay[0.2]{-3.5cm}{-9.5cm}{2}{0}
 				\raggedright
-				\color{posterblue}\large\textbf{History}\\[0.2cm]
+				\color{posterblue}\huge\textbf{History}\\[0.2cm]
 				\footnotesize
 				\setlength{\parindent}{1em}
 				In July 2024, the founder of CaDoodle, an elementary school technology teacher, began developing this project after years of using TinkerCAD with students as young as 1st grade.
@@ -219,8 +242,12 @@
 				\\[0.2cm]
 				The founder also became increasingly concerned about the pedagogical implications of teaching students skills mediated by a single corporation, fearing that this approach trained students to depend on proprietary ecosystems rather than fostering true computational thinking and creative autonomy.
 				\\[0.2cm]
-				These concerns led to the creation of CaDoodle: a locally installed, open-source CAD application that stores models on the user's own computer, uses open file formats, and runs offline without any internet connection. By July 2024, the project was under serious development, and by April 2025, it reached feature completeness for beta testing. Today, CaDoodle stands as a commitment to educational equity, digital sovereignty, and open-source collaboration.\\[0.2cm]
-				
+				These concerns led to the creation of CaDoodle: a locally installed, open-source CAD application that stores models on the user's own computer, uses open file formats, and runs offline without any internet connection. By July 2024, the project was under serious development, and by April 2025, it reached feature completeness for beta testing. 
+				\\[0.2cm]
+				\textbf{
+				Today, CaDoodle stands as a commitment to educational equity, digital sovereignty, and open-source collaboration.
+				}
+				\\[0.2cm]
 				\normalsize\textbf{Supporting CaDoodle Development}\\[0.2cm]
 				
 				\centering
@@ -231,8 +258,8 @@
 				&
 				% PANEL 3: EDUCATIONAL USE
 				\panelstart
-				\birdoverlay[0.2]{0cm}{2.5cm}{0}
-				{\color{posterblue}\large\textbf{Educational Use}}\\[0.2cm]
+				\birdoverlay[0.2]{-2.5cm}{-2.5cm}{3}{0}
+				{\color{posterblue}\huge\textbf{Educational Use}}\\[0.2cm]
 				\textbf{Schools:} No internet required, safe local storage\\[0.2cm]
 				\textbf{Classroom Features:}\\
 				\begin{itemize}[topsep=1pt, itemsep=1pt, leftmargin=*]
