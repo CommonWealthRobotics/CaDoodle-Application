@@ -1047,9 +1047,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
-			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"), String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"),
+					String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
-				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"), String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"),
+						String.format(Locale.US, "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1257,7 +1259,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				button.setText(ap.getTranslation("mainwindow.asorted"));
 			String format = String.format(Locale.US, "%.4f g", mass);
 			massDisplay.setText(format);
-			materialPanel2.setText(ap.getTranslation("mainwindow.material")+"    ----   ( " + format + " )");
+			materialPanel2.setText(ap.getTranslation("mainwindow.material") + "    ----   ( " + format + " )");
 		};
 		if (linkedHashSet.size() == 1) {
 			CSG singleCSG = linkedHashSet.iterator().next();

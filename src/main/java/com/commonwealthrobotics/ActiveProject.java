@@ -482,8 +482,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public static File getWorkingDir() {
 		String relative = ScriptingEngine.getWorkspace().getAbsolutePath();
 		if (OSUtil.isWindows()) {
-			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();
-			;
+			relative = Paths.get(System.getProperty("user.home"), "Documents").toString();;
 		}
 		File defaultFile = new File(relative + delim() + "MyCaDoodleProjects" + delim());
 		defaultFile.mkdirs();
@@ -837,8 +836,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		if (starting != null)
 			for (Locale l : locales)
 				if (l.getLanguage().contentEquals(starting.getLanguage()))
-					comboBox.getSelectionModel().select(l);
-		;
+					comboBox.getSelectionModel().select(l);;
 
 		Button ok = new Button("OK");
 		ok.setDefaultButton(true);

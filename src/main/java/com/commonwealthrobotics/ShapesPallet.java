@@ -83,7 +83,7 @@ public class ShapesPallet {
 	private ShapePalletMyDoodles mine;
 
 	private boolean advanced;
-	private HashMap<String,String> translationMatrix = new HashMap<String, String>();
+	private HashMap<String, String> translationMatrix = new HashMap<String, String>();
 
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
@@ -118,19 +118,19 @@ public class ShapesPallet {
 						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
 						String name = fileFromGit.getName();
 						String[] split = name.split(".json");
-						
+
 						String key = split[0];
 						String filename = ap.getTranslation(key);
-						translationMatrix.put( filename,key);
+						translationMatrix.put(filename, key);
 						HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
-						
+
 						nameToFile.put(filename, tmp);
 						shapeCategory.getItems().add(filename);
 						Log.debug(f + " added");
 					}
 				}
 				String string = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
-				String starting =  ap.getTranslation(string);
+				String starting = ap.getTranslation(string);
 				BowlerStudio.runLater(() -> shapeCategory.getSelectionModel().select(starting));
 				onSetCategory();
 			} catch (Exception e) {
