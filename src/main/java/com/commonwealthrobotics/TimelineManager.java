@@ -396,22 +396,24 @@ public class TimelineManager {
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 
 			CountDownLatch latch = new CountDownLatch(1);
+			String typeName = op.getClass().getSimpleName();
+
 			BowlerStudio.runLater(() -> {
-				String text = (myIndex + 1) + "\n" + op.getType();
+				String text = (myIndex + 1) + "\n" + ap.getTranslation(typeName);
 				if (MoveCenter.class.isInstance(op)) {
 					if (((MoveCenter) op).isDropMode()) {
-						text = (myIndex + 1) + "\n" + "Drop To Workplane";
+						text = (myIndex + 1) + "\n" + ap.getTranslation("MoveCenter.Drop");
 					}
 				}
 				if (AddFromScript.class.isInstance(op)) {
 
-					text = (myIndex + 1) + "\n" + "Add Shape";
+					text = (myIndex + 1) + "\n" + ap.getTranslation("AddFromScript");
 
 				}
 				if (AddFromFile.class.isInstance(op)) {
 					AddFromFile af = (AddFromFile) op;
 					try {
-						text = (myIndex + 1) + "\n" + "Add File ";
+						text = (myIndex + 1) + "\n" + ap.getTranslation("AddFromFile") + " ";
 						String name = af.getFile().getName();
 						// text+=name+" ";
 						String[] split = name.split("\\.");

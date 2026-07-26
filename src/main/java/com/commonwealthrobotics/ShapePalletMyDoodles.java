@@ -41,7 +41,7 @@ public class ShapePalletMyDoodles {
 	}
 
 	public String getName() {
-		return "My Doodles";
+		return ap.getTranslation("MyDoodles");
 	}
 
 	public void activate() throws IOException {

@@ -83,6 +83,7 @@ public class ShapesPallet {
 	private ShapePalletMyDoodles mine;
 
 	private boolean advanced;
+	private HashMap<String,String> translationMatrix = new HashMap<String, String>();
 
 	public ShapesPallet(ComboBox<String> sc, GridPane objectPallet, SelectionSession session, ActiveProject active,
 			WorkplaneManager workplane2) {
@@ -117,14 +118,19 @@ public class ShapesPallet {
 						File fileFromGit = ScriptingEngine.fileFromGit(gitULR, f);
 						String name = fileFromGit.getName();
 						String[] split = name.split(".json");
-						String filename = split[0];
+						
+						String key = split[0];
+						String filename = ap.getTranslation(key);
+						translationMatrix.put( filename,key);
 						HashMap<String, HashMap<String, String>> tmp = gson.fromJson(contents, TT);
+						
 						nameToFile.put(filename, tmp);
 						shapeCategory.getItems().add(filename);
 						Log.debug(f + " added");
 					}
 				}
-				String starting = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+				String string = ConfigurationDatabase.get("ShapesPallet", "selected", "BasicShapes").toString();
+				String starting =  ap.getTranslation(string);
 				BowlerStudio.runLater(() -> shapeCategory.getSelectionModel().select(starting));
 				onSetCategory();
 			} catch (Exception e) {
@@ -155,7 +161,8 @@ public class ShapesPallet {
 			try {
 				String current = shapeCategory.getSelectionModel().getSelectedItem();
 				com.neuronrobotics.sdk.common.Log.debug("Selecting shapes from " + current);
-				ConfigurationDatabase.put("ShapesPallet", "selected", current).toString();
+
+				ConfigurationDatabase.put("ShapesPallet", "selected", translationMatrix.get(current)).toString();
 				if (current.contentEquals(mine.getName())) {
 					mine.activate();
 				} else {
@@ -372,6 +379,7 @@ public class ShapesPallet {
 		}
 
 		BowlerStudio.runLater(() -> shapeCategory.setDisable(searchMode));
+
 		onSetCategory();
 	}
 
