@@ -402,7 +402,7 @@
                                                             </AnchorPane>
                                                       </content>
                                                     </TitledPane>
-                                                      <TitledPane fx:id="materialPanel" animated="false" text="Material">
+                                                      <TitledPane fx:id="materialPanel" animated="false" text="%mainwindow.material">
                                                         <content>
                                                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                                                <children>
