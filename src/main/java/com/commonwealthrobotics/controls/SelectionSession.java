@@ -1034,7 +1034,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
 			materialGrid.getChildren().clear();
-			materialGrid.add(new Label("Material"), 0, line);
+			materialGrid.add(new Label(ap.getTranslation("mainwindow.material")), 0, line);
 			Label massDisp = new Label("0.0");
 
 			Button child = createPrintSettingsButton(getSelected(), massDisp, materialPanel);
@@ -1042,14 +1042,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.add(child, 1, line);
 			line++;
 
-			materialGrid.add(new Label("Mass"), 0, line);
+			materialGrid.add(new Label(ap.getTranslation("mainwindow.mass")), 0, line);
 			GridPane.setHalignment(massDisp, HPos.RIGHT);
 			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
-			setUpTextBox(materialGrid, line++, "Volume", String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"), String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
-				setUpTextBox(materialGrid, line++, "Area", String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"), String.format(Locale.US, "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1254,10 +1254,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (linkedHashSet.size() == 1)
 				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
 			else
-				button.setText("Asorted");
+				button.setText(ap.getTranslation("mainwindow.asorted"));
 			String format = String.format(Locale.US, "%.4f g", mass);
 			massDisplay.setText(format);
-			materialPanel2.setText("Material    ----   ( " + format + " )");
+			materialPanel2.setText(ap.getTranslation("mainwindow.material")+"    ----   ( " + format + " )");
 		};
 		if (linkedHashSet.size() == 1) {
 			CSG singleCSG = linkedHashSet.iterator().next();
