@@ -1,6 +1,7 @@
 package com.commonwealthrobotics;
 
 import java.io.File;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -391,8 +392,7 @@ public class TimelineManager {
 				return;
 			int myIndex = i;
 			addrem = true;
-			List<CSG> previous = (myIndex == 0)
-					? new ArrayList<CSG>()
+			List<CSG> previous = (myIndex == 0) ? new ArrayList<CSG>()
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
 
 			CountDownLatch latch = new CountDownLatch(1);
@@ -402,6 +402,25 @@ public class TimelineManager {
 					if (((MoveCenter) op).isDropMode()) {
 						text = (myIndex + 1) + "\n" + "Drop To Workplane";
 					}
+				}
+				if (AddFromScript.class.isInstance(op)) {
+
+					text = (myIndex + 1) + "\n" + "Add Shape";
+
+				}
+				if (AddFromFile.class.isInstance(op)) {
+					AddFromFile af = (AddFromFile) op;
+					try {
+						text = (myIndex + 1) + "\n" + "Add File ";
+						String name = af.getFile().getName();
+						// text+=name+" ";
+						String[] split = name.split("\\.");
+						text += split[1].toUpperCase();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				}
 				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0);
 				if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
