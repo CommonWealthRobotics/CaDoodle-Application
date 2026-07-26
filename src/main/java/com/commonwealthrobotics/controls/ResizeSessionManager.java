@@ -180,7 +180,8 @@ public class ResizeSessionManager {
 			double sx = 0, sy = 0, sz = 0;
 
 			// Uniform scaling with shift key
-			if ((ev != null) && ev.isShiftDown()) {
+			boolean uniformScalineMode = (ev != null) && ev.isShiftDown();
+			if (uniformScalineMode) {
 
 				rightFront.manipulator.setSnapGridStatus(false); // disable snap grid for uniform scaling
 				double original_tx = originalBounds.getTotalX();
@@ -213,6 +214,15 @@ public class ResizeSessionManager {
 				sy = gs;
 				sz = gs;
 
+				// Update mid handles using bounds to get center positions
+
+				frontMid.manipulator.setInReferenceFrame(original_tx * gs - original_tx,
+						(-original_ty * gs + original_ty) / 2.0, 0);
+				rearMid.manipulator.setInReferenceFrame(0, (-original_ty * gs + original_ty) / 2.0, 0);
+				leftMid.manipulator.setInReferenceFrame((original_tx * gs - original_tx) / 2.0, 0, 0);
+				rightMid.manipulator.setInReferenceFrame((original_tx * gs - original_tx) / 2.0,
+						-original_ty * gs + original_ty, 0);
+
 			} else { // Unconstraint resizing path RIGHT FRONT
 
 				double x = rightRear.manipulator.getCurrentPose().getX();
@@ -230,7 +240,8 @@ public class ResizeSessionManager {
 						/ originalBounds.getTotalY();
 				sz = 1.0; // Height is unchanged
 			}
-			updateHandleCenters(rightFront);
+			if (!uniformScalineMode)
+				updateHandleCenters(rightFront);
 
 			Transform scaleXYZ = null;
 			try {
@@ -265,7 +276,8 @@ public class ResizeSessionManager {
 			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
 
-			if ((ev != null) && ev.isShiftDown()) {
+			boolean uniformScalineMode = (ev != null) && ev.isShiftDown();
+			if (uniformScalineMode) {
 
 				rightRear.manipulator.setSnapGridStatus(false); // disable snap grid for uniform scaling
 				double original_x = originalBounds.getTotalX();
@@ -295,6 +307,15 @@ public class ResizeSessionManager {
 				sy = gs;
 				sz = gs;
 
+				// Update mid handles using bounds to get center positions
+
+				frontMid.manipulator.setInReferenceFrame(0, (-original_y * gs + original_y) / 2.0, 0);
+				rearMid.manipulator.setInReferenceFrame(-original_x * gs + original_x,
+						(-original_y * gs + original_y) / 2.0, 0);
+				leftMid.manipulator.setInReferenceFrame((-original_x * gs + original_x) / 2.0, 0, 0);
+				rightMid.manipulator.setInReferenceFrame((-original_x * gs + original_x) / 2.0,
+						-original_y * gs + original_y, 0);
+
 			} else { // Unconstraint resizing path RIGHT REAR
 
 				double x = rightFront.manipulator.getCurrentPose().getX();
@@ -317,11 +338,13 @@ public class ResizeSessionManager {
 			TransformNR rf = rightFront.getCurrentInReferenceFrame();
 			TransformNR lr = leftRear.getCurrentInReferenceFrame();
 			double cornerZ = rr.getZ();
-			rightMid.manipulator.setInReferenceFrame((rr.getX() + rf.getX()) / 2.0, (rr.getY() + rf.getY()) / 2.0,
-					cornerZ);
-			rearMid.manipulator.setInReferenceFrame((rr.getX() + lr.getX()) / 2.0, (rr.getY() + lr.getY()) / 2.0,
-					cornerZ);
-			updateHandleCenters(rightRear);
+			if (!uniformScalineMode) {
+				rightMid.manipulator.setInReferenceFrame((rr.getX() + rf.getX()) / 2.0, (rr.getY() + rf.getY()) / 2.0,
+						cornerZ);
+				rearMid.manipulator.setInReferenceFrame((rr.getX() + lr.getX()) / 2.0, (rr.getY() + lr.getY()) / 2.0,
+						cornerZ);
+				updateHandleCenters(rightRear);
+			}
 			Transform scaleXYZ = null;
 			try {
 				scaleXYZ = new Transform()
@@ -356,7 +379,8 @@ public class ResizeSessionManager {
 			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
 
-			if ((ev != null) && ev.isShiftDown()) {
+			boolean uniformScalineMode = (ev != null) && ev.isShiftDown();
+			if (uniformScalineMode) {
 
 				leftFront.manipulator.setSnapGridStatus(false); // disable snap grid for uniform scaling
 				double original_x = originalBounds.getTotalX();
@@ -386,6 +410,15 @@ public class ResizeSessionManager {
 				sy = gs;
 				sz = gs;
 
+				// Update mid handles using bounds to get center positions
+
+				frontMid.manipulator.setInReferenceFrame(original_x * gs - original_x,
+						(original_y * gs - original_y) / 2.0, 0);
+				rearMid.manipulator.setInReferenceFrame(0, (original_y * gs - original_y) / 2.0, 0);
+				leftMid.manipulator.setInReferenceFrame((original_x * gs - original_x) / 2.0,
+						original_y * gs - original_y, 0);
+				rightMid.manipulator.setInReferenceFrame((original_x * gs - original_x) / 2.0, 0, 0);
+
 			} else { // Unconstraint resizing path LEFT FRONT
 
 				double x = leftRear.manipulator.getCurrentPose().getX();
@@ -409,11 +442,13 @@ public class ResizeSessionManager {
 			TransformNR rf = rightFront.getCurrentInReferenceFrame();
 			TransformNR lr = leftRear.getCurrentInReferenceFrame();
 			double cornerZ = lf.getZ();
-			frontMid.manipulator.setInReferenceFrame((lf.getX() + rf.getX()) / 2.0, (lf.getY() + rf.getY()) / 2.0,
-					cornerZ);
-			leftMid.manipulator.setInReferenceFrame((lf.getX() + lr.getX()) / 2.0, (lf.getY() + lr.getY()) / 2.0,
-					cornerZ);
-			updateHandleCenters(leftFront);
+			if (!uniformScalineMode) {
+				frontMid.manipulator.setInReferenceFrame((lf.getX() + rf.getX()) / 2.0, (lf.getY() + rf.getY()) / 2.0,
+						cornerZ);
+				leftMid.manipulator.setInReferenceFrame((lf.getX() + lr.getX()) / 2.0, (lf.getY() + lr.getY()) / 2.0,
+						cornerZ);
+				updateHandleCenters(leftFront);
+			}
 			Transform scaleXYZ = null;
 			try {
 				scaleXYZ = new Transform()
@@ -448,7 +483,8 @@ public class ResizeSessionManager {
 			controlSprites.hideRotationHandles();
 			double sx = 0, sy = 0, sz = 0;
 
-			if ((ev != null) && ev.isShiftDown()) {
+			boolean uniformScalineMode = (ev != null) && ev.isShiftDown();
+			if (uniformScalineMode) {
 
 				leftRear.manipulator.setSnapGridStatus(false); // disable snap grid for uniform scaling
 				double original_x = originalBounds.getTotalX();
@@ -477,6 +513,14 @@ public class ResizeSessionManager {
 				sx = gs;
 				sy = gs;
 				sz = gs;
+				// Update mid handles using bounds to get center positions
+
+				frontMid.manipulator.setInReferenceFrame(0, (original_y * gs - original_y) / 2, 0);
+				rearMid.manipulator.setInReferenceFrame(-original_x * gs + original_x,
+						(original_y * gs - original_y) / 2, 0);
+				leftMid.manipulator.setInReferenceFrame(-original_x * gs / 2 + original_x / 2,
+						original_y * gs - original_y, 0);
+				rightMid.manipulator.setInReferenceFrame(-original_x * gs / 2 + original_x / 2, 0, 0);
 
 			} else { // Unconstraint resizing path LEFT REAR
 				double x = leftFront.manipulator.getCurrentPose().getX();
@@ -501,11 +545,9 @@ public class ResizeSessionManager {
 			TransformNR rr = rightRear.getCurrentInReferenceFrame();
 			TransformNR lf = leftFront.getCurrentInReferenceFrame();
 			double cornerZ = lr.getZ();
-			rearMid.manipulator.setInReferenceFrame((lr.getX() + rr.getX()) / 2.0, (lr.getY() + rr.getY()) / 2.0,
-					cornerZ);
-			leftMid.manipulator.setInReferenceFrame((lr.getX() + lf.getX()) / 2.0, (lr.getY() + lf.getY()) / 2.0,
-					cornerZ);
-			updateHandleCenters(leftRear);
+
+			if (!uniformScalineMode)
+				updateHandleCenters(leftRear);
 			Transform scaleXYZ = new Transform()
 					.translate(originalBounds.getMaxX(), originalBounds.getMinY(), originalBounds.getMinZ())
 					.scale(notZero(sx), notZero(sy), notZero(sz))
