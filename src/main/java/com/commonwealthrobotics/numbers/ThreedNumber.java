@@ -96,8 +96,8 @@ public class ThreedNumber {
 		this.vector3d = orent;
 
 		mesh.getTransforms().add(move);
-		mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(workplaneOffset);
+		mesh.getTransforms().add(alignLoc);
 		mesh.getTransforms().add(location);
 		mesh.getTransforms().add(lineOffset);
 		mesh.getTransforms().add(scaleMesh);
@@ -321,7 +321,7 @@ public class ThreedNumber {
 		if (c == null)
 			return;
 		TransformNR wpnr = TransformFactory.affineToNr(workplaneOffset);
-		TransformNR abs = pp.times(wpnr);
+		TransformNR abs = wpnr.times(pp);
 		TransformNR camAbs = cf;//cf.times(wpnr);
 		// Vector from camera to label
 		double dx = abs.getX() - camAbs.getX();
