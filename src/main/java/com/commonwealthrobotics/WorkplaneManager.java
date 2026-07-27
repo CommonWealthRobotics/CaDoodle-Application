@@ -673,9 +673,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void pickPlane(Runnable r, Runnable always, RulerManager ruler) {
 
 		// Create work plane placement indicator
-		double pointerLen = 10;
+		double pointerLen = 5;
 		double pointerWidth = 2;
-		double pointerHeight = 20;
+		double pointerHeight = 10;
 
 		CSG indicator = HullUtil
 				.hull(Arrays.asList(new Vector3d(0, 0, 0), new Vector3d(pointerLen, 0, 0),
