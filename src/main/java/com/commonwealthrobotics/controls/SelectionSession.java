@@ -521,7 +521,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 						@Override
 						public void onFileChange(File fileThatChanged, @SuppressWarnings("rawtypes") WatchEvent event) {
-							com.neuronrobotics.sdk.common.Log.error("File Change updating " + source.getType());
+							com.neuronrobotics.sdk.common.Log.debug("File Change updating " + source.getType());
 							Thread tr = myRegenerate(source, this, myFile);
 							if (tr != null) {
 								try {
@@ -2130,7 +2130,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Platform.runLater(() -> {
 
 				if (!moveLock()) {
-					com.neuronrobotics.sdk.common.Log.error("On Cruise");
+					com.neuronrobotics.sdk.common.Log.debug("On Cruise");
 					CSG indicator = selectedCSG.get(0);
 					// if (selectedCSG.size() > 1)
 					// indicator = CSG.unionAll(selectedCSG);
@@ -2629,7 +2629,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void onDrop() {
-		com.neuronrobotics.sdk.common.Log.error("Drop to Workplane");
+		com.neuronrobotics.sdk.common.Log.debug("Drop to Workplane");
 		getExecutor().submit(() -> {
 			List<CSG> sel = ap.get().getSelect(selectedSnapshot());
 
