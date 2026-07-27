@@ -1203,7 +1203,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = { 1.0 };
+		double[] density = {1.0};
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1217,7 +1217,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = { null };
+		Runnable[] updateLabel = {null};
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
