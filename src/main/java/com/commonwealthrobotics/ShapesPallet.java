@@ -162,7 +162,12 @@ public class ShapesPallet {
 				String current = shapeCategory.getSelectionModel().getSelectedItem();
 				com.neuronrobotics.sdk.common.Log.debug("Selecting shapes from " + current);
 
-				ConfigurationDatabase.put("ShapesPallet", "selected", translationMatrix.get(current)).toString();
+				String value = translationMatrix.get(current);
+				if (value != null)
+					ConfigurationDatabase.put("ShapesPallet", "selected", value).toString();
+				else {
+					Log.error(new Exception("Translation Matrix missing: " + current + "\n" + translationMatrix));
+				}
 				if (current.contentEquals(mine.getName())) {
 					mine.activate();
 				} else {
@@ -198,7 +203,7 @@ public class ShapesPallet {
 						// com.neuronrobotics.sdk.common.Log
 						// .error("Placing " + names.get(key) + " at " + row + " , " + col);
 						try {
-							setupButton(names.get(key), key, col, row, current);
+							setupButton(names.get(key), key, col, row, value);
 						} catch (Throwable tx) {
 							com.neuronrobotics.sdk.common.Log.error(tx);
 						}
