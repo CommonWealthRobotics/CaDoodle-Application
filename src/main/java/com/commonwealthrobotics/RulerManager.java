@@ -54,6 +54,7 @@ public class RulerManager {
 	public void initialize(Group rulerGroup, Affine wpUpstream, Affine ro, SelectionSession session) {
 		rulerOffset = ro;
 		wp = wpUpstream;
+		this.session = session;
 
 		rulerGroup.getChildren().add(cancel);
 		cancel.getTransforms().addAll(wp, ro);
