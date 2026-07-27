@@ -1203,7 +1203,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1217,7 +1217,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -2397,9 +2397,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			if (isAGroupSelected()) {
 				clearInternalSelection();
-				//				for (CSG c : toSelect)
-				//					addToSelected(c);
-				//				fireSelectionChanged();
+				// for (CSG c : toSelect)
+				// addToSelected(c);
+				// fireSelectionChanged();
 				try {
 					UnGroup setNames = new UnGroup().setNames(selectedSnapshot);
 					ap.addOp(setNames).join();
@@ -2652,7 +2652,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				}
 
-
 			}
 		});
 
@@ -2852,37 +2851,38 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, double cameraFovDegrees) {
+		submit(() -> {
+			this.screenW = screenW;
+			this.screenH = screenH;
+			this.zoom = zoom;
+			this.az = az;
+			this.el = el;
+			this.x = x;
+			this.y = y;
+			this.z = z;
 
-		this.screenW = screenW;
-		this.screenH = screenH;
-		this.zoom = zoom;
-		this.az = az;
-		this.el = el;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+			if ((ap.get() == null) || (getControls() == null))
+				return;
 
-		if ((ap.get() == null) || (getControls() == null))
-			return;
+			List<String> selectedSnapshot = selectedSnapshot();
 
-		List<String> selectedSnapshot = selectedSnapshot();
+			// getExecutor().submit(() -> {
+			List<CSG> selectedCSG = new ArrayList<CSG>(getSelected());
 
-		// getExecutor().submit(() -> {
-		List<CSG> selectedCSG = new ArrayList<CSG>(getSelected());
-
-		if (selectedCSG.size() == 0)
-			return;
-		Bounds sellectedBounds;
-		if (selectedCSG.size() > 0)
-			try {
-				sellectedBounds = getSellectedBounds(selectedCSG);
-				BowlerStudio.runLater(() -> {
-					getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
-							sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
-				});
-			} catch (BoundsComputFailure e) {
-				Log.error(e);
-			}
+			if (selectedCSG.size() == 0)
+				return;
+			Bounds sellectedBounds;
+			if (selectedCSG.size() > 0)
+				try {
+					sellectedBounds = getSellectedBounds();
+					BowlerStudio.runLater(() -> {
+						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
+								sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
+					});
+				} catch (BoundsComputFailure e) {
+					Log.error(e);
+				}
+		});
 	}
 
 	// public void setCadoodle(ActiveProject ap) {
