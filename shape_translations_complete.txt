@@ -1,0 +1,6174 @@
+shape.Adjustable_Star:
+  am: Adjustable Star
+  ar: Adjustable Star
+  az: Adjustable Star
+  bg: Adjustable Star
+  bn: Adjustable Star
+  ca: Adjustable Star
+  cs: Adjustable Star
+  da: Adjustable Star
+  de: Adjustable Star
+  el: Adjustable Star
+  en: Adjustable Star
+  es: Adjustable Star
+  et: Adjustable Star
+  fa: Adjustable Star
+  fi: Adjustable Star
+  fr: Adjustable Star
+  gu: Adjustable Star
+  ha: Adjustable Star
+  hi: Adjustable Star
+  hu: Adjustable Star
+  hy: Adjustable Star
+  id: Adjustable Star
+  ig: Adjustable Star
+  it: Adjustable Star
+  ja: Adjustable Star
+  ka: Adjustable Star
+  kk: Adjustable Star
+  km: Adjustable Star
+  ko: Adjustable Star
+  lt: Adjustable Star
+  lv: Adjustable Star
+  ml: Adjustable Star
+  ms: Adjustable Star
+  my: Adjustable Star
+  ne: Adjustable Star
+  nl: Adjustable Star
+  no: Adjustable Star
+  oro: Adjustable Star
+  pa: Adjustable Star
+  pl: Adjustable Star
+  ps: Adjustable Star
+  pt: Adjustable Star
+  ro: Adjustable Star
+  ru: Adjustable Star
+  sd: Adjustable Star
+  si: Adjustable Star
+  sk: Adjustable Star
+  sq: Adjustable Star
+  sr: Adjustable Star
+  sv: Adjustable Star
+  sw: Adjustable Star
+  ta: Adjustable Star
+  te: Adjustable Star
+  th: Adjustable Star
+  tl: Adjustable Star
+  tr: Adjustable Star
+  uk: Adjustable Star
+  ur: Adjustable Star
+  vi: Adjustable Star
+  yo: Adjustable Star
+  zh: Adjustable Star
+
+shape.Animatronic_Head:
+  am: Animatronic Head
+  ar: Animatronic Head
+  az: Animatronic Head
+  bg: Animatronic Head
+  bn: Animatronic Head
+  ca: Animatronic Head
+  cs: Animatronic Head
+  da: Animatronic Head
+  de: Animatronic Head
+  el: Animatronic Head
+  en: Animatronic Head
+  es: Animatronic Head
+  et: Animatronic Head
+  fa: Animatronic Head
+  fi: Animatronic Head
+  fr: Animatronic Head
+  gu: Animatronic Head
+  ha: Animatronic Head
+  hi: Animatronic Head
+  hu: Animatronic Head
+  hy: Animatronic Head
+  id: Animatronic Head
+  ig: Animatronic Head
+  it: Animatronic Head
+  ja: Animatronic Head
+  ka: Animatronic Head
+  kk: Animatronic Head
+  km: Animatronic Head
+  ko: Animatronic Head
+  lt: Animatronic Head
+  lv: Animatronic Head
+  ml: Animatronic Head
+  ms: Animatronic Head
+  my: Animatronic Head
+  ne: Animatronic Head
+  nl: Animatronic Head
+  no: Animatronic Head
+  oro: Animatronic Head
+  pa: Animatronic Head
+  pl: Animatronic Head
+  ps: Animatronic Head
+  pt: Animatronic Head
+  ro: Animatronic Head
+  ru: Animatronic Head
+  sd: Animatronic Head
+  si: Animatronic Head
+  sk: Animatronic Head
+  sq: Animatronic Head
+  sr: Animatronic Head
+  sv: Animatronic Head
+  sw: Animatronic Head
+  ta: Animatronic Head
+  te: Animatronic Head
+  th: Animatronic Head
+  tl: Animatronic Head
+  tr: Animatronic Head
+  uk: Animatronic Head
+  ur: Animatronic Head
+  vi: Animatronic Head
+  yo: Animatronic Head
+  zh: Animatronic Head
+
+shape.ballBearing:
+  am: ballBearing
+  ar: ballBearing
+  az: ballBearing
+  bg: ballBearing
+  bn: ballBearing
+  ca: ballBearing
+  cs: ballBearing
+  da: ballBearing
+  de: ballBearing
+  el: ballBearing
+  en: ballBearing
+  es: ballBearing
+  et: ballBearing
+  fa: ballBearing
+  fi: ballBearing
+  fr: ballBearing
+  gu: ballBearing
+  ha: ballBearing
+  hi: ballBearing
+  hu: ballBearing
+  hy: ballBearing
+  id: ballBearing
+  ig: ballBearing
+  it: ballBearing
+  ja: ballBearing
+  ka: ballBearing
+  kk: ballBearing
+  km: ballBearing
+  ko: ballBearing
+  lt: ballBearing
+  lv: ballBearing
+  ml: ballBearing
+  ms: ballBearing
+  my: ballBearing
+  ne: ballBearing
+  nl: ballBearing
+  no: ballBearing
+  oro: ballBearing
+  pa: ballBearing
+  pl: ballBearing
+  ps: ballBearing
+  pt: ballBearing
+  ro: ballBearing
+  ru: ballBearing
+  sd: ballBearing
+  si: ballBearing
+  sk: ballBearing
+  sq: ballBearing
+  sr: ballBearing
+  sv: ballBearing
+  sw: ballBearing
+  ta: ballBearing
+  te: ballBearing
+  th: ballBearing
+  tl: ballBearing
+  tr: ballBearing
+  uk: ballBearing
+  ur: ballBearing
+  vi: ballBearing
+  yo: ballBearing
+  zh: ballBearing
+
+shape.ballChain:
+  am: ballChain
+  ar: ballChain
+  az: ballChain
+  bg: ballChain
+  bn: ballChain
+  ca: ballChain
+  cs: ballChain
+  da: ballChain
+  de: ballChain
+  el: ballChain
+  en: ballChain
+  es: ballChain
+  et: ballChain
+  fa: ballChain
+  fi: ballChain
+  fr: ballChain
+  gu: ballChain
+  ha: ballChain
+  hi: ballChain
+  hu: ballChain
+  hy: ballChain
+  id: ballChain
+  ig: ballChain
+  it: ballChain
+  ja: ballChain
+  ka: ballChain
+  kk: ballChain
+  km: ballChain
+  ko: ballChain
+  lt: ballChain
+  lv: ballChain
+  ml: ballChain
+  ms: ballChain
+  my: ballChain
+  ne: ballChain
+  nl: ballChain
+  no: ballChain
+  oro: ballChain
+  pa: ballChain
+  pl: ballChain
+  ps: ballChain
+  pt: ballChain
+  ro: ballChain
+  ru: ballChain
+  sd: ballChain
+  si: ballChain
+  sk: ballChain
+  sq: ballChain
+  sr: ballChain
+  sv: ballChain
+  sw: ballChain
+  ta: ballChain
+  te: ballChain
+  th: ballChain
+  tl: ballChain
+  tr: ballChain
+  uk: ballChain
+  ur: ballChain
+  vi: ballChain
+  yo: ballChain
+  zh: ballChain
+
+shape.BatteryBox:
+  am: BatteryBox
+  ar: BatteryBox
+  az: BatteryBox
+  bg: BatteryBox
+  bn: BatteryBox
+  ca: BatteryBox
+  cs: BatteryBox
+  da: BatteryBox
+  de: BatteryBox
+  el: BatteryBox
+  en: BatteryBox
+  es: BatteryBox
+  et: BatteryBox
+  fa: BatteryBox
+  fi: BatteryBox
+  fr: BatteryBox
+  gu: BatteryBox
+  ha: BatteryBox
+  hi: BatteryBox
+  hu: BatteryBox
+  hy: BatteryBox
+  id: BatteryBox
+  ig: BatteryBox
+  it: BatteryBox
+  ja: BatteryBox
+  ka: BatteryBox
+  kk: BatteryBox
+  km: BatteryBox
+  ko: BatteryBox
+  lt: BatteryBox
+  lv: BatteryBox
+  ml: BatteryBox
+  ms: BatteryBox
+  my: BatteryBox
+  ne: BatteryBox
+  nl: BatteryBox
+  no: BatteryBox
+  oro: BatteryBox
+  pa: BatteryBox
+  pl: BatteryBox
+  ps: BatteryBox
+  pt: BatteryBox
+  ro: BatteryBox
+  ru: BatteryBox
+  sd: BatteryBox
+  si: BatteryBox
+  sk: BatteryBox
+  sq: BatteryBox
+  sr: BatteryBox
+  sv: BatteryBox
+  sw: BatteryBox
+  ta: BatteryBox
+  te: BatteryBox
+  th: BatteryBox
+  tl: BatteryBox
+  tr: BatteryBox
+  uk: BatteryBox
+  ur: BatteryBox
+  vi: BatteryBox
+  yo: BatteryBox
+  zh: BatteryBox
+
+shape.BevelGear:
+  am: BevelGear am
+  ar: ترس BevelGear
+  az: BevelGear az
+  bg: BevelGear bg
+  bn: BevelGear bn
+  ca: BevelGear ca
+  cs: BevelGear cs
+  da: BevelGear da
+  de: Zahnrad BevelGear
+  el: BevelGear el
+  en: BevelGear en
+  es: Engranaje BevelGear
+  et: BevelGear et
+  fa: ترس BevelGear
+  fi: BevelGear fi
+  fr: Engrenage BevelGear
+  gu: BevelGear gu
+  ha: BevelGear ha
+  hi: गियर BevelGear
+  hu: BevelGear hu
+  hy: BevelGear hy
+  id: BevelGear id
+  ig: BevelGear ig
+  it: Ingranaggio BevelGear
+  ja: ギアBevelGear
+  ka: BevelGear ka
+  kk: BevelGear kk
+  km: BevelGear km
+  ko: 기어 BevelGear
+  lt: BevelGear lt
+  lv: BevelGear lv
+  ml: BevelGear ml
+  ms: BevelGear ms
+  my: BevelGear my
+  ne: BevelGear ne
+  nl: Tandwiel BevelGear
+  no: BevelGear no
+  oro: BevelGear oro
+  pa: BevelGear pa
+  pl: Zębatka BevelGear
+  ps: BevelGear ps
+  pt: Engrenagem BevelGear
+  ro: BevelGear ro
+  ru: Шестерня BevelGear
+  sd: BevelGear sd
+  si: BevelGear si
+  sk: BevelGear sk
+  sq: BevelGear sq
+  sr: BevelGear sr
+  sv: Växel BevelGear
+  sw: BevelGear sw
+  ta: BevelGear ta
+  te: BevelGear te
+  th: เฟือง BevelGear
+  tl: BevelGear tl
+  tr: Dişli BevelGear
+  uk: BevelGear uk
+  ur: ترس BevelGear
+  vi: BevelGear vi
+  yo: BevelGear yo
+  zh: 齿轮BevelGear
+
+shape.Bevel_Gears:
+  am: Bevel Gears am
+  ar: ترس Gears
+  az: Bevel Gears az
+  bg: Bevel Gears bg
+  bn: Bevel Gears bn
+  ca: Bevel Gears ca
+  cs: Bevel Gears cs
+  da: Bevel Gears da
+  de: Zahnrad Gears
+  el: Bevel Gears el
+  en: Bevel Gears en
+  es: Engranaje Gears
+  et: Bevel Gears et
+  fa: ترس Gears
+  fi: Bevel Gears fi
+  fr: Engrenage Gears
+  gu: Bevel Gears gu
+  ha: Bevel Gears ha
+  hi: गियर Gears
+  hu: Bevel Gears hu
+  hy: Bevel Gears hy
+  id: Bevel Gears id
+  ig: Bevel Gears ig
+  it: Ingranaggio Gears
+  ja: ギアGears
+  ka: Bevel Gears ka
+  kk: Bevel Gears kk
+  km: Bevel Gears km
+  ko: 기어 Gears
+  lt: Bevel Gears lt
+  lv: Bevel Gears lv
+  ml: Bevel Gears ml
+  ms: Bevel Gears ms
+  my: Bevel Gears my
+  ne: Bevel Gears ne
+  nl: Tandwiel Gears
+  no: Bevel Gears no
+  oro: Bevel Gears oro
+  pa: Bevel Gears pa
+  pl: Zębatka Gears
+  ps: Bevel Gears ps
+  pt: Engrenagem Gears
+  ro: Bevel Gears ro
+  ru: Шестерня Gears
+  sd: Bevel Gears sd
+  si: Bevel Gears si
+  sk: Bevel Gears sk
+  sq: Bevel Gears sq
+  sr: Bevel Gears sr
+  sv: Växel Gears
+  sw: Bevel Gears sw
+  ta: Bevel Gears ta
+  te: Bevel Gears te
+  th: เฟือง Gears
+  tl: Bevel Gears tl
+  tr: Dişli Gears
+  uk: Bevel Gears uk
+  ur: ترس Gears
+  vi: Bevel Gears vi
+  yo: Bevel Gears yo
+  zh: 齿轮Gears
+
+shape.Blender_Head:
+  am: Blender Head
+  ar: Blender Head
+  az: Blender Head
+  bg: Blender Head
+  bn: Blender Head
+  ca: Blender Head
+  cs: Blender Head
+  da: Blender Head
+  de: Blender Head
+  el: Blender Head
+  en: Blender Head
+  es: Blender Head
+  et: Blender Head
+  fa: Blender Head
+  fi: Blender Head
+  fr: Blender Head
+  gu: Blender Head
+  ha: Blender Head
+  hi: Blender Head
+  hu: Blender Head
+  hy: Blender Head
+  id: Blender Head
+  ig: Blender Head
+  it: Blender Head
+  ja: Blender Head
+  ka: Blender Head
+  kk: Blender Head
+  km: Blender Head
+  ko: Blender Head
+  lt: Blender Head
+  lv: Blender Head
+  ml: Blender Head
+  ms: Blender Head
+  my: Blender Head
+  ne: Blender Head
+  nl: Blender Head
+  no: Blender Head
+  oro: Blender Head
+  pa: Blender Head
+  pl: Blender Head
+  ps: Blender Head
+  pt: Blender Head
+  ro: Blender Head
+  ru: Blender Head
+  sd: Blender Head
+  si: Blender Head
+  sk: Blender Head
+  sq: Blender Head
+  sr: Blender Head
+  sv: Blender Head
+  sw: Blender Head
+  ta: Blender Head
+  te: Blender Head
+  th: Blender Head
+  tl: Blender Head
+  tr: Blender Head
+  uk: Blender Head
+  ur: Blender Head
+  vi: Blender Head
+  yo: Blender Head
+  zh: Blender Head
+
+shape.BowlerKernel_Script:
+  am: BowlerKernel Script
+  ar: BowlerKernel Script
+  az: BowlerKernel Script
+  bg: BowlerKernel Script
+  bn: BowlerKernel Script
+  ca: BowlerKernel Script
+  cs: BowlerKernel Script
+  da: BowlerKernel Script
+  de: BowlerKernel Script
+  el: BowlerKernel Script
+  en: BowlerKernel Script
+  es: BowlerKernel Script
+  et: BowlerKernel Script
+  fa: BowlerKernel Script
+  fi: BowlerKernel Script
+  fr: BowlerKernel Script
+  gu: BowlerKernel Script
+  ha: BowlerKernel Script
+  hi: BowlerKernel Script
+  hu: BowlerKernel Script
+  hy: BowlerKernel Script
+  id: BowlerKernel Script
+  ig: BowlerKernel Script
+  it: BowlerKernel Script
+  ja: BowlerKernel Script
+  ka: BowlerKernel Script
+  kk: BowlerKernel Script
+  km: BowlerKernel Script
+  ko: BowlerKernel Script
+  lt: BowlerKernel Script
+  lv: BowlerKernel Script
+  ml: BowlerKernel Script
+  ms: BowlerKernel Script
+  my: BowlerKernel Script
+  ne: BowlerKernel Script
+  nl: BowlerKernel Script
+  no: BowlerKernel Script
+  oro: BowlerKernel Script
+  pa: BowlerKernel Script
+  pl: BowlerKernel Script
+  ps: BowlerKernel Script
+  pt: BowlerKernel Script
+  ro: BowlerKernel Script
+  ru: BowlerKernel Script
+  sd: BowlerKernel Script
+  si: BowlerKernel Script
+  sk: BowlerKernel Script
+  sq: BowlerKernel Script
+  sr: BowlerKernel Script
+  sv: BowlerKernel Script
+  sw: BowlerKernel Script
+  ta: BowlerKernel Script
+  te: BowlerKernel Script
+  th: BowlerKernel Script
+  tl: BowlerKernel Script
+  tr: BowlerKernel Script
+  uk: BowlerKernel Script
+  ur: BowlerKernel Script
+  vi: BowlerKernel Script
+  yo: BowlerKernel Script
+  zh: BowlerKernel Script
+
+shape.brushlessBoltOnShaft:
+  am: brushlessBoltOnShaft
+  ar: brushlessBoltOnShaft
+  az: brushlessBoltOnShaft
+  bg: brushlessBoltOnShaft
+  bn: brushlessBoltOnShaft
+  ca: brushlessBoltOnShaft
+  cs: brushlessBoltOnShaft
+  da: brushlessBoltOnShaft
+  de: brushlessBoltOnShaft
+  el: brushlessBoltOnShaft
+  en: brushlessBoltOnShaft
+  es: brushlessBoltOnShaft
+  et: brushlessBoltOnShaft
+  fa: brushlessBoltOnShaft
+  fi: brushlessBoltOnShaft
+  fr: brushlessBoltOnShaft
+  gu: brushlessBoltOnShaft
+  ha: brushlessBoltOnShaft
+  hi: brushlessBoltOnShaft
+  hu: brushlessBoltOnShaft
+  hy: brushlessBoltOnShaft
+  id: brushlessBoltOnShaft
+  ig: brushlessBoltOnShaft
+  it: brushlessBoltOnShaft
+  ja: brushlessBoltOnShaft
+  ka: brushlessBoltOnShaft
+  kk: brushlessBoltOnShaft
+  km: brushlessBoltOnShaft
+  ko: brushlessBoltOnShaft
+  lt: brushlessBoltOnShaft
+  lv: brushlessBoltOnShaft
+  ml: brushlessBoltOnShaft
+  ms: brushlessBoltOnShaft
+  my: brushlessBoltOnShaft
+  ne: brushlessBoltOnShaft
+  nl: brushlessBoltOnShaft
+  no: brushlessBoltOnShaft
+  oro: brushlessBoltOnShaft
+  pa: brushlessBoltOnShaft
+  pl: brushlessBoltOnShaft
+  ps: brushlessBoltOnShaft
+  pt: brushlessBoltOnShaft
+  ro: brushlessBoltOnShaft
+  ru: brushlessBoltOnShaft
+  sd: brushlessBoltOnShaft
+  si: brushlessBoltOnShaft
+  sk: brushlessBoltOnShaft
+  sq: brushlessBoltOnShaft
+  sr: brushlessBoltOnShaft
+  sv: brushlessBoltOnShaft
+  sw: brushlessBoltOnShaft
+  ta: brushlessBoltOnShaft
+  te: brushlessBoltOnShaft
+  th: brushlessBoltOnShaft
+  tl: brushlessBoltOnShaft
+  tr: brushlessBoltOnShaft
+  uk: brushlessBoltOnShaft
+  ur: brushlessBoltOnShaft
+  vi: brushlessBoltOnShaft
+  yo: brushlessBoltOnShaft
+  zh: brushlessBoltOnShaft
+
+shape.brushlessMotor:
+  am: brushlessMotor
+  ar: brushlessMotor
+  az: brushlessMotor
+  bg: brushlessMotor
+  bn: brushlessMotor
+  ca: brushlessMotor
+  cs: brushlessMotor
+  da: brushlessMotor
+  de: brushlessMotor
+  el: brushlessMotor
+  en: brushlessMotor
+  es: brushlessMotor
+  et: brushlessMotor
+  fa: brushlessMotor
+  fi: brushlessMotor
+  fr: brushlessMotor
+  gu: brushlessMotor
+  ha: brushlessMotor
+  hi: brushlessMotor
+  hu: brushlessMotor
+  hy: brushlessMotor
+  id: brushlessMotor
+  ig: brushlessMotor
+  it: brushlessMotor
+  ja: brushlessMotor
+  ka: brushlessMotor
+  kk: brushlessMotor
+  km: brushlessMotor
+  ko: brushlessMotor
+  lt: brushlessMotor
+  lv: brushlessMotor
+  ml: brushlessMotor
+  ms: brushlessMotor
+  my: brushlessMotor
+  ne: brushlessMotor
+  nl: brushlessMotor
+  no: brushlessMotor
+  oro: brushlessMotor
+  pa: brushlessMotor
+  pl: brushlessMotor
+  ps: brushlessMotor
+  pt: brushlessMotor
+  ro: brushlessMotor
+  ru: brushlessMotor
+  sd: brushlessMotor
+  si: brushlessMotor
+  sk: brushlessMotor
+  sq: brushlessMotor
+  sr: brushlessMotor
+  sv: brushlessMotor
+  sw: brushlessMotor
+  ta: brushlessMotor
+  te: brushlessMotor
+  th: brushlessMotor
+  tl: brushlessMotor
+  tr: brushlessMotor
+  uk: brushlessMotor
+  ur: brushlessMotor
+  vi: brushlessMotor
+  yo: brushlessMotor
+  zh: brushlessMotor
+
+shape.brushlessMotorShaft:
+  am: brushlessMotorShaft
+  ar: brushlessMotorShaft
+  az: brushlessMotorShaft
+  bg: brushlessMotorShaft
+  bn: brushlessMotorShaft
+  ca: brushlessMotorShaft
+  cs: brushlessMotorShaft
+  da: brushlessMotorShaft
+  de: brushlessMotorShaft
+  el: brushlessMotorShaft
+  en: brushlessMotorShaft
+  es: brushlessMotorShaft
+  et: brushlessMotorShaft
+  fa: brushlessMotorShaft
+  fi: brushlessMotorShaft
+  fr: brushlessMotorShaft
+  gu: brushlessMotorShaft
+  ha: brushlessMotorShaft
+  hi: brushlessMotorShaft
+  hu: brushlessMotorShaft
+  hy: brushlessMotorShaft
+  id: brushlessMotorShaft
+  ig: brushlessMotorShaft
+  it: brushlessMotorShaft
+  ja: brushlessMotorShaft
+  ka: brushlessMotorShaft
+  kk: brushlessMotorShaft
+  km: brushlessMotorShaft
+  ko: brushlessMotorShaft
+  lt: brushlessMotorShaft
+  lv: brushlessMotorShaft
+  ml: brushlessMotorShaft
+  ms: brushlessMotorShaft
+  my: brushlessMotorShaft
+  ne: brushlessMotorShaft
+  nl: brushlessMotorShaft
+  no: brushlessMotorShaft
+  oro: brushlessMotorShaft
+  pa: brushlessMotorShaft
+  pl: brushlessMotorShaft
+  ps: brushlessMotorShaft
+  pt: brushlessMotorShaft
+  ro: brushlessMotorShaft
+  ru: brushlessMotorShaft
+  sd: brushlessMotorShaft
+  si: brushlessMotorShaft
+  sk: brushlessMotorShaft
+  sq: brushlessMotorShaft
+  sr: brushlessMotorShaft
+  sv: brushlessMotorShaft
+  sw: brushlessMotorShaft
+  ta: brushlessMotorShaft
+  te: brushlessMotorShaft
+  th: brushlessMotorShaft
+  tl: brushlessMotorShaft
+  tr: brushlessMotorShaft
+  uk: brushlessMotorShaft
+  ur: brushlessMotorShaft
+  vi: brushlessMotorShaft
+  yo: brushlessMotorShaft
+  zh: brushlessMotorShaft
+
+shape.CaDoodle_Logo:
+  am: CaDoodle Logo
+  ar: CaDoodle Logo
+  az: CaDoodle Logo
+  bg: CaDoodle Logo
+  bn: CaDoodle Logo
+  ca: CaDoodle Logo
+  cs: CaDoodle Logo
+  da: CaDoodle Logo
+  de: CaDoodle Logo
+  el: CaDoodle Logo
+  en: CaDoodle Logo
+  es: CaDoodle Logo
+  et: CaDoodle Logo
+  fa: CaDoodle Logo
+  fi: CaDoodle Logo
+  fr: CaDoodle Logo
+  gu: CaDoodle Logo
+  ha: CaDoodle Logo
+  hi: CaDoodle Logo
+  hu: CaDoodle Logo
+  hy: CaDoodle Logo
+  id: CaDoodle Logo
+  ig: CaDoodle Logo
+  it: CaDoodle Logo
+  ja: CaDoodle Logo
+  ka: CaDoodle Logo
+  kk: CaDoodle Logo
+  km: CaDoodle Logo
+  ko: CaDoodle Logo
+  lt: CaDoodle Logo
+  lv: CaDoodle Logo
+  ml: CaDoodle Logo
+  ms: CaDoodle Logo
+  my: CaDoodle Logo
+  ne: CaDoodle Logo
+  nl: CaDoodle Logo
+  no: CaDoodle Logo
+  oro: CaDoodle Logo
+  pa: CaDoodle Logo
+  pl: CaDoodle Logo
+  ps: CaDoodle Logo
+  pt: CaDoodle Logo
+  ro: CaDoodle Logo
+  ru: CaDoodle Logo
+  sd: CaDoodle Logo
+  si: CaDoodle Logo
+  sk: CaDoodle Logo
+  sq: CaDoodle Logo
+  sr: CaDoodle Logo
+  sv: CaDoodle Logo
+  sw: CaDoodle Logo
+  ta: CaDoodle Logo
+  te: CaDoodle Logo
+  th: CaDoodle Logo
+  tl: CaDoodle Logo
+  tr: CaDoodle Logo
+  uk: CaDoodle Logo
+  ur: CaDoodle Logo
+  vi: CaDoodle Logo
+  yo: CaDoodle Logo
+  zh: CaDoodle Logo
+
+shape.CaDoodle_Logo_Simple:
+  am: CaDoodle Logo Simple
+  ar: CaDoodle Logo Simple
+  az: CaDoodle Logo Simple
+  bg: CaDoodle Logo Simple
+  bn: CaDoodle Logo Simple
+  ca: CaDoodle Logo Simple
+  cs: CaDoodle Logo Simple
+  da: CaDoodle Logo Simple
+  de: CaDoodle Logo Simple
+  el: CaDoodle Logo Simple
+  en: CaDoodle Logo Simple
+  es: CaDoodle Logo Simple
+  et: CaDoodle Logo Simple
+  fa: CaDoodle Logo Simple
+  fi: CaDoodle Logo Simple
+  fr: CaDoodle Logo Simple
+  gu: CaDoodle Logo Simple
+  ha: CaDoodle Logo Simple
+  hi: CaDoodle Logo Simple
+  hu: CaDoodle Logo Simple
+  hy: CaDoodle Logo Simple
+  id: CaDoodle Logo Simple
+  ig: CaDoodle Logo Simple
+  it: CaDoodle Logo Simple
+  ja: CaDoodle Logo Simple
+  ka: CaDoodle Logo Simple
+  kk: CaDoodle Logo Simple
+  km: CaDoodle Logo Simple
+  ko: CaDoodle Logo Simple
+  lt: CaDoodle Logo Simple
+  lv: CaDoodle Logo Simple
+  ml: CaDoodle Logo Simple
+  ms: CaDoodle Logo Simple
+  my: CaDoodle Logo Simple
+  ne: CaDoodle Logo Simple
+  nl: CaDoodle Logo Simple
+  no: CaDoodle Logo Simple
+  oro: CaDoodle Logo Simple
+  pa: CaDoodle Logo Simple
+  pl: CaDoodle Logo Simple
+  ps: CaDoodle Logo Simple
+  pt: CaDoodle Logo Simple
+  ro: CaDoodle Logo Simple
+  ru: CaDoodle Logo Simple
+  sd: CaDoodle Logo Simple
+  si: CaDoodle Logo Simple
+  sk: CaDoodle Logo Simple
+  sq: CaDoodle Logo Simple
+  sr: CaDoodle Logo Simple
+  sv: CaDoodle Logo Simple
+  sw: CaDoodle Logo Simple
+  ta: CaDoodle Logo Simple
+  te: CaDoodle Logo Simple
+  th: CaDoodle Logo Simple
+  tl: CaDoodle Logo Simple
+  tr: CaDoodle Logo Simple
+  uk: CaDoodle Logo Simple
+  ur: CaDoodle Logo Simple
+  vi: CaDoodle Logo Simple
+  yo: CaDoodle Logo Simple
+  zh: CaDoodle Logo Simple
+
+shape.capScrew:
+  am: capScrew am
+  ar: برغي capScrew
+  az: capScrew az
+  bg: capScrew bg
+  bn: capScrew bn
+  ca: capScrew ca
+  cs: capScrew cs
+  da: capScrew da
+  de: Schraube capScrew
+  el: capScrew el
+  en: capScrew en
+  es: Tornillo capScrew
+  et: capScrew et
+  fa: برغي capScrew
+  fi: capScrew fi
+  fr: Vis capScrew
+  gu: capScrew gu
+  ha: capScrew ha
+  hi: स्क्रू capScrew
+  hu: capScrew hu
+  hy: capScrew hy
+  id: capScrew id
+  ig: capScrew ig
+  it: Vite capScrew
+  ja: ネジcapScrew
+  ka: capScrew ka
+  kk: capScrew kk
+  km: capScrew km
+  ko: 나사 capScrew
+  lt: capScrew lt
+  lv: capScrew lv
+  ml: capScrew ml
+  ms: capScrew ms
+  my: capScrew my
+  ne: capScrew ne
+  nl: Schroef capScrew
+  no: capScrew no
+  oro: capScrew oro
+  pa: capScrew pa
+  pl: Śruba capScrew
+  ps: capScrew ps
+  pt: Parafuso capScrew
+  ro: capScrew ro
+  ru: Винт capScrew
+  sd: capScrew sd
+  si: capScrew si
+  sk: capScrew sk
+  sq: capScrew sq
+  sr: capScrew sr
+  sv: Skruv capScrew
+  sw: capScrew sw
+  ta: capScrew ta
+  te: capScrew te
+  th: สกรู capScrew
+  tl: capScrew tl
+  tr: Vida capScrew
+  uk: capScrew uk
+  ur: برغي capScrew
+  vi: capScrew vi
+  yo: capScrew yo
+  zh: 螺钉capScrew
+
+shape.chamferedScrew:
+  am: chamferedScrew am
+  ar: برغي chamferedScrew
+  az: chamferedScrew az
+  bg: chamferedScrew bg
+  bn: chamferedScrew bn
+  ca: chamferedScrew ca
+  cs: chamferedScrew cs
+  da: chamferedScrew da
+  de: Schraube chamferedScrew
+  el: chamferedScrew el
+  en: chamferedScrew en
+  es: Tornillo chamferedScrew
+  et: chamferedScrew et
+  fa: برغي chamferedScrew
+  fi: chamferedScrew fi
+  fr: Vis chamferedScrew
+  gu: chamferedScrew gu
+  ha: chamferedScrew ha
+  hi: स्क्रू chamferedScrew
+  hu: chamferedScrew hu
+  hy: chamferedScrew hy
+  id: chamferedScrew id
+  ig: chamferedScrew ig
+  it: Vite chamferedScrew
+  ja: ネジchamferedScrew
+  ka: chamferedScrew ka
+  kk: chamferedScrew kk
+  km: chamferedScrew km
+  ko: 나사 chamferedScrew
+  lt: chamferedScrew lt
+  lv: chamferedScrew lv
+  ml: chamferedScrew ml
+  ms: chamferedScrew ms
+  my: chamferedScrew my
+  ne: chamferedScrew ne
+  nl: Schroef chamferedScrew
+  no: chamferedScrew no
+  oro: chamferedScrew oro
+  pa: chamferedScrew pa
+  pl: Śruba chamferedScrew
+  ps: chamferedScrew ps
+  pt: Parafuso chamferedScrew
+  ro: chamferedScrew ro
+  ru: Винт chamferedScrew
+  sd: chamferedScrew sd
+  si: chamferedScrew si
+  sk: chamferedScrew sk
+  sq: chamferedScrew sq
+  sr: chamferedScrew sr
+  sv: Skruv chamferedScrew
+  sw: chamferedScrew sw
+  ta: chamferedScrew ta
+  te: chamferedScrew te
+  th: สกรู chamferedScrew
+  tl: chamferedScrew tl
+  tr: Vida chamferedScrew
+  uk: chamferedScrew uk
+  ur: برغي chamferedScrew
+  vi: chamferedScrew vi
+  yo: chamferedScrew yo
+  zh: 螺钉chamferedScrew
+
+shape.compressionSpring:
+  am: compressionSpring am
+  ar: نابض compressionSpring
+  az: compressionSpring az
+  bg: compressionSpring bg
+  bn: compressionSpring bn
+  ca: compressionSpring ca
+  cs: compressionSpring cs
+  da: compressionSpring da
+  de: Feder compressionSpring
+  el: compressionSpring el
+  en: compressionSpring en
+  es: Muelle compressionSpring
+  et: compressionSpring et
+  fa: نابض compressionSpring
+  fi: compressionSpring fi
+  fr: Ressort compressionSpring
+  gu: compressionSpring gu
+  ha: compressionSpring ha
+  hi: स्प्रिंग compressionSpring
+  hu: compressionSpring hu
+  hy: compressionSpring hy
+  id: compressionSpring id
+  ig: compressionSpring ig
+  it: Molla compressionSpring
+  ja: バネcompressionSpring
+  ka: compressionSpring ka
+  kk: compressionSpring kk
+  km: compressionSpring km
+  ko: 스프링 compressionSpring
+  lt: compressionSpring lt
+  lv: compressionSpring lv
+  ml: compressionSpring ml
+  ms: compressionSpring ms
+  my: compressionSpring my
+  ne: compressionSpring ne
+  nl: Veer compressionSpring
+  no: compressionSpring no
+  oro: compressionSpring oro
+  pa: compressionSpring pa
+  pl: Sprężyna compressionSpring
+  ps: compressionSpring ps
+  pt: Mola compressionSpring
+  ro: compressionSpring ro
+  ru: Пружина compressionSpring
+  sd: compressionSpring sd
+  si: compressionSpring si
+  sk: compressionSpring sk
+  sq: compressionSpring sq
+  sr: compressionSpring sr
+  sv: Fjäder compressionSpring
+  sw: compressionSpring sw
+  ta: compressionSpring ta
+  te: compressionSpring te
+  th: สปริง compressionSpring
+  tl: compressionSpring tl
+  tr: Yay compressionSpring
+  uk: compressionSpring uk
+  ur: نابض compressionSpring
+  vi: compressionSpring vi
+  yo: compressionSpring yo
+  zh: 弹簧compressionSpring
+
+shape.Cone:
+  am: Cone
+  ar: Cone
+  az: Cone
+  bg: Cone
+  bn: Cone
+  ca: Cone
+  cs: Cone
+  da: Cone
+  de: Cone
+  el: Cone
+  en: Cone
+  es: Cone
+  et: Cone
+  fa: Cone
+  fi: Cone
+  fr: Cone
+  gu: Cone
+  ha: Cone
+  hi: Cone
+  hu: Cone
+  hy: Cone
+  id: Cone
+  ig: Cone
+  it: Cone
+  ja: Cone
+  ka: Cone
+  kk: Cone
+  km: Cone
+  ko: Cone
+  lt: Cone
+  lv: Cone
+  ml: Cone
+  ms: Cone
+  my: Cone
+  ne: Cone
+  nl: Cone
+  no: Cone
+  oro: Cone
+  pa: Cone
+  pl: Cone
+  ps: Cone
+  pt: Cone
+  ro: Cone
+  ru: Cone
+  sd: Cone
+  si: Cone
+  sk: Cone
+  sq: Cone
+  sr: Cone
+  sv: Cone
+  sw: Cone
+  ta: Cone
+  te: Cone
+  th: Cone
+  tl: Cone
+  tr: Cone
+  uk: Cone
+  ur: Cone
+  vi: Cone
+  yo: Cone
+  zh: Cone
+
+shape.conePointSetScrew:
+  am: conePointSetScrew am
+  ar: برغي conePointSetScrew
+  az: conePointSetScrew az
+  bg: conePointSetScrew bg
+  bn: conePointSetScrew bn
+  ca: conePointSetScrew ca
+  cs: conePointSetScrew cs
+  da: conePointSetScrew da
+  de: Schraube conePointSetScrew
+  el: conePointSetScrew el
+  en: conePointSetScrew en
+  es: Tornillo conePointSetScrew
+  et: conePointSetScrew et
+  fa: برغي conePointSetScrew
+  fi: conePointSetScrew fi
+  fr: Vis conePointSetScrew
+  gu: conePointSetScrew gu
+  ha: conePointSetScrew ha
+  hi: स्क्रू conePointSetScrew
+  hu: conePointSetScrew hu
+  hy: conePointSetScrew hy
+  id: conePointSetScrew id
+  ig: conePointSetScrew ig
+  it: Vite conePointSetScrew
+  ja: ネジconePointSetScrew
+  ka: conePointSetScrew ka
+  kk: conePointSetScrew kk
+  km: conePointSetScrew km
+  ko: 나사 conePointSetScrew
+  lt: conePointSetScrew lt
+  lv: conePointSetScrew lv
+  ml: conePointSetScrew ml
+  ms: conePointSetScrew ms
+  my: conePointSetScrew my
+  ne: conePointSetScrew ne
+  nl: Schroef conePointSetScrew
+  no: conePointSetScrew no
+  oro: conePointSetScrew oro
+  pa: conePointSetScrew pa
+  pl: Śruba conePointSetScrew
+  ps: conePointSetScrew ps
+  pt: Parafuso conePointSetScrew
+  ro: conePointSetScrew ro
+  ru: Винт conePointSetScrew
+  sd: conePointSetScrew sd
+  si: conePointSetScrew si
+  sk: conePointSetScrew sk
+  sq: conePointSetScrew sq
+  sr: conePointSetScrew sr
+  sv: Skruv conePointSetScrew
+  sw: conePointSetScrew sw
+  ta: conePointSetScrew ta
+  te: conePointSetScrew te
+  th: สกรู conePointSetScrew
+  tl: conePointSetScrew tl
+  tr: Vida conePointSetScrew
+  uk: conePointSetScrew uk
+  ur: برغي conePointSetScrew
+  vi: conePointSetScrew vi
+  yo: conePointSetScrew yo
+  zh: 螺钉conePointSetScrew
+
+shape.Courtney_Coin:
+  am: Courtney Coin
+  ar: Courtney Coin
+  az: Courtney Coin
+  bg: Courtney Coin
+  bn: Courtney Coin
+  ca: Courtney Coin
+  cs: Courtney Coin
+  da: Courtney Coin
+  de: Courtney Coin
+  el: Courtney Coin
+  en: Courtney Coin
+  es: Courtney Coin
+  et: Courtney Coin
+  fa: Courtney Coin
+  fi: Courtney Coin
+  fr: Courtney Coin
+  gu: Courtney Coin
+  ha: Courtney Coin
+  hi: Courtney Coin
+  hu: Courtney Coin
+  hy: Courtney Coin
+  id: Courtney Coin
+  ig: Courtney Coin
+  it: Courtney Coin
+  ja: Courtney Coin
+  ka: Courtney Coin
+  kk: Courtney Coin
+  km: Courtney Coin
+  ko: Courtney Coin
+  lt: Courtney Coin
+  lv: Courtney Coin
+  ml: Courtney Coin
+  ms: Courtney Coin
+  my: Courtney Coin
+  ne: Courtney Coin
+  nl: Courtney Coin
+  no: Courtney Coin
+  oro: Courtney Coin
+  pa: Courtney Coin
+  pl: Courtney Coin
+  ps: Courtney Coin
+  pt: Courtney Coin
+  ro: Courtney Coin
+  ru: Courtney Coin
+  sd: Courtney Coin
+  si: Courtney Coin
+  sk: Courtney Coin
+  sq: Courtney Coin
+  sr: Courtney Coin
+  sv: Courtney Coin
+  sw: Courtney Coin
+  ta: Courtney Coin
+  te: Courtney Coin
+  th: Courtney Coin
+  tl: Courtney Coin
+  tr: Courtney Coin
+  uk: Courtney Coin
+  ur: Courtney Coin
+  vi: Courtney Coin
+  yo: Courtney Coin
+  zh: Courtney Coin
+
+shape.Cube:
+  am: Cube
+  ar: Cube
+  az: Cube
+  bg: Cube
+  bn: Cube
+  ca: Cube
+  cs: Cube
+  da: Cube
+  de: Cube
+  el: Cube
+  en: Cube
+  es: Cube
+  et: Cube
+  fa: Cube
+  fi: Cube
+  fr: Cube
+  gu: Cube
+  ha: Cube
+  hi: Cube
+  hu: Cube
+  hy: Cube
+  id: Cube
+  ig: Cube
+  it: Cube
+  ja: Cube
+  ka: Cube
+  kk: Cube
+  km: Cube
+  ko: Cube
+  lt: Cube
+  lv: Cube
+  ml: Cube
+  ms: Cube
+  my: Cube
+  ne: Cube
+  nl: Cube
+  no: Cube
+  oro: Cube
+  pa: Cube
+  pl: Cube
+  ps: Cube
+  pt: Cube
+  ro: Cube
+  ru: Cube
+  sd: Cube
+  si: Cube
+  sk: Cube
+  sq: Cube
+  sr: Cube
+  sv: Cube
+  sw: Cube
+  ta: Cube
+  te: Cube
+  th: Cube
+  tl: Cube
+  tr: Cube
+  uk: Cube
+  ur: Cube
+  vi: Cube
+  yo: Cube
+  zh: Cube
+
+shape.Cube_Hole:
+  am: Cube Hole
+  ar: Cube Hole
+  az: Cube Hole
+  bg: Cube Hole
+  bn: Cube Hole
+  ca: Cube Hole
+  cs: Cube Hole
+  da: Cube Hole
+  de: Cube Hole
+  el: Cube Hole
+  en: Cube Hole
+  es: Cube Hole
+  et: Cube Hole
+  fa: Cube Hole
+  fi: Cube Hole
+  fr: Cube Hole
+  gu: Cube Hole
+  ha: Cube Hole
+  hi: Cube Hole
+  hu: Cube Hole
+  hy: Cube Hole
+  id: Cube Hole
+  ig: Cube Hole
+  it: Cube Hole
+  ja: Cube Hole
+  ka: Cube Hole
+  kk: Cube Hole
+  km: Cube Hole
+  ko: Cube Hole
+  lt: Cube Hole
+  lv: Cube Hole
+  ml: Cube Hole
+  ms: Cube Hole
+  my: Cube Hole
+  ne: Cube Hole
+  nl: Cube Hole
+  no: Cube Hole
+  oro: Cube Hole
+  pa: Cube Hole
+  pl: Cube Hole
+  ps: Cube Hole
+  pt: Cube Hole
+  ro: Cube Hole
+  ru: Cube Hole
+  sd: Cube Hole
+  si: Cube Hole
+  sk: Cube Hole
+  sq: Cube Hole
+  sr: Cube Hole
+  sv: Cube Hole
+  sw: Cube Hole
+  ta: Cube Hole
+  te: Cube Hole
+  th: Cube Hole
+  tl: Cube Hole
+  tr: Cube Hole
+  uk: Cube Hole
+  ur: Cube Hole
+  vi: Cube Hole
+  yo: Cube Hole
+  zh: Cube Hole
+
+shape.CycloidGear:
+  am: CycloidGear am
+  ar: ترس CycloidGear
+  az: CycloidGear az
+  bg: CycloidGear bg
+  bn: CycloidGear bn
+  ca: CycloidGear ca
+  cs: CycloidGear cs
+  da: CycloidGear da
+  de: Zahnrad CycloidGear
+  el: CycloidGear el
+  en: CycloidGear en
+  es: Engranaje CycloidGear
+  et: CycloidGear et
+  fa: ترس CycloidGear
+  fi: CycloidGear fi
+  fr: Engrenage CycloidGear
+  gu: CycloidGear gu
+  ha: CycloidGear ha
+  hi: गियर CycloidGear
+  hu: CycloidGear hu
+  hy: CycloidGear hy
+  id: CycloidGear id
+  ig: CycloidGear ig
+  it: Ingranaggio CycloidGear
+  ja: ギアCycloidGear
+  ka: CycloidGear ka
+  kk: CycloidGear kk
+  km: CycloidGear km
+  ko: 기어 CycloidGear
+  lt: CycloidGear lt
+  lv: CycloidGear lv
+  ml: CycloidGear ml
+  ms: CycloidGear ms
+  my: CycloidGear my
+  ne: CycloidGear ne
+  nl: Tandwiel CycloidGear
+  no: CycloidGear no
+  oro: CycloidGear oro
+  pa: CycloidGear pa
+  pl: Zębatka CycloidGear
+  ps: CycloidGear ps
+  pt: Engrenagem CycloidGear
+  ro: CycloidGear ro
+  ru: Шестерня CycloidGear
+  sd: CycloidGear sd
+  si: CycloidGear si
+  sk: CycloidGear sk
+  sq: CycloidGear sq
+  sr: CycloidGear sr
+  sv: Växel CycloidGear
+  sw: CycloidGear sw
+  ta: CycloidGear ta
+  te: CycloidGear te
+  th: เฟือง CycloidGear
+  tl: CycloidGear tl
+  tr: Dişli CycloidGear
+  uk: CycloidGear uk
+  ur: ترس CycloidGear
+  vi: CycloidGear vi
+  yo: CycloidGear yo
+  zh: 齿轮CycloidGear
+
+shape.Cylinder:
+  am: Cylinder
+  ar: Cylinder
+  az: Cylinder
+  bg: Cylinder
+  bn: Cylinder
+  ca: Cylinder
+  cs: Cylinder
+  da: Cylinder
+  de: Cylinder
+  el: Cylinder
+  en: Cylinder
+  es: Cylinder
+  et: Cylinder
+  fa: Cylinder
+  fi: Cylinder
+  fr: Cylinder
+  gu: Cylinder
+  ha: Cylinder
+  hi: Cylinder
+  hu: Cylinder
+  hy: Cylinder
+  id: Cylinder
+  ig: Cylinder
+  it: Cylinder
+  ja: Cylinder
+  ka: Cylinder
+  kk: Cylinder
+  km: Cylinder
+  ko: Cylinder
+  lt: Cylinder
+  lv: Cylinder
+  ml: Cylinder
+  ms: Cylinder
+  my: Cylinder
+  ne: Cylinder
+  nl: Cylinder
+  no: Cylinder
+  oro: Cylinder
+  pa: Cylinder
+  pl: Cylinder
+  ps: Cylinder
+  pt: Cylinder
+  ro: Cylinder
+  ru: Cylinder
+  sd: Cylinder
+  si: Cylinder
+  sk: Cylinder
+  sq: Cylinder
+  sr: Cylinder
+  sv: Cylinder
+  sw: Cylinder
+  ta: Cylinder
+  te: Cylinder
+  th: Cylinder
+  tl: Cylinder
+  tr: Cylinder
+  uk: Cylinder
+  ur: Cylinder
+  vi: Cylinder
+  yo: Cylinder
+  zh: Cylinder
+
+shape.Cylinder_Hole:
+  am: Cylinder Hole
+  ar: Cylinder Hole
+  az: Cylinder Hole
+  bg: Cylinder Hole
+  bn: Cylinder Hole
+  ca: Cylinder Hole
+  cs: Cylinder Hole
+  da: Cylinder Hole
+  de: Cylinder Hole
+  el: Cylinder Hole
+  en: Cylinder Hole
+  es: Cylinder Hole
+  et: Cylinder Hole
+  fa: Cylinder Hole
+  fi: Cylinder Hole
+  fr: Cylinder Hole
+  gu: Cylinder Hole
+  ha: Cylinder Hole
+  hi: Cylinder Hole
+  hu: Cylinder Hole
+  hy: Cylinder Hole
+  id: Cylinder Hole
+  ig: Cylinder Hole
+  it: Cylinder Hole
+  ja: Cylinder Hole
+  ka: Cylinder Hole
+  kk: Cylinder Hole
+  km: Cylinder Hole
+  ko: Cylinder Hole
+  lt: Cylinder Hole
+  lv: Cylinder Hole
+  ml: Cylinder Hole
+  ms: Cylinder Hole
+  my: Cylinder Hole
+  ne: Cylinder Hole
+  nl: Cylinder Hole
+  no: Cylinder Hole
+  oro: Cylinder Hole
+  pa: Cylinder Hole
+  pl: Cylinder Hole
+  ps: Cylinder Hole
+  pt: Cylinder Hole
+  ro: Cylinder Hole
+  ru: Cylinder Hole
+  sd: Cylinder Hole
+  si: Cylinder Hole
+  sk: Cylinder Hole
+  sq: Cylinder Hole
+  sr: Cylinder Hole
+  sv: Cylinder Hole
+  sw: Cylinder Hole
+  ta: Cylinder Hole
+  te: Cylinder Hole
+  th: Cylinder Hole
+  tl: Cylinder Hole
+  tr: Cylinder Hole
+  uk: Cylinder Hole
+  ur: Cylinder Hole
+  vi: Cylinder Hole
+  yo: Cylinder Hole
+  zh: Cylinder Hole
+
+shape.Diamond:
+  am: Diamond
+  ar: Diamond
+  az: Diamond
+  bg: Diamond
+  bn: Diamond
+  ca: Diamond
+  cs: Diamond
+  da: Diamond
+  de: Diamond
+  el: Diamond
+  en: Diamond
+  es: Diamond
+  et: Diamond
+  fa: Diamond
+  fi: Diamond
+  fr: Diamond
+  gu: Diamond
+  ha: Diamond
+  hi: Diamond
+  hu: Diamond
+  hy: Diamond
+  id: Diamond
+  ig: Diamond
+  it: Diamond
+  ja: Diamond
+  ka: Diamond
+  kk: Diamond
+  km: Diamond
+  ko: Diamond
+  lt: Diamond
+  lv: Diamond
+  ml: Diamond
+  ms: Diamond
+  my: Diamond
+  ne: Diamond
+  nl: Diamond
+  no: Diamond
+  oro: Diamond
+  pa: Diamond
+  pl: Diamond
+  ps: Diamond
+  pt: Diamond
+  ro: Diamond
+  ru: Diamond
+  sd: Diamond
+  si: Diamond
+  sk: Diamond
+  sq: Diamond
+  sr: Diamond
+  sv: Diamond
+  sw: Diamond
+  ta: Diamond
+  te: Diamond
+  th: Diamond
+  tl: Diamond
+  tr: Diamond
+  uk: Diamond
+  ur: Diamond
+  vi: Diamond
+  yo: Diamond
+  zh: Diamond
+
+shape.domeHeadScrew:
+  am: domeHeadScrew am
+  ar: برغي domeHeadScrew
+  az: domeHeadScrew az
+  bg: domeHeadScrew bg
+  bn: domeHeadScrew bn
+  ca: domeHeadScrew ca
+  cs: domeHeadScrew cs
+  da: domeHeadScrew da
+  de: Schraube domeHeadScrew
+  el: domeHeadScrew el
+  en: domeHeadScrew en
+  es: Tornillo domeHeadScrew
+  et: domeHeadScrew et
+  fa: برغي domeHeadScrew
+  fi: domeHeadScrew fi
+  fr: Vis domeHeadScrew
+  gu: domeHeadScrew gu
+  ha: domeHeadScrew ha
+  hi: स्क्रू domeHeadScrew
+  hu: domeHeadScrew hu
+  hy: domeHeadScrew hy
+  id: domeHeadScrew id
+  ig: domeHeadScrew ig
+  it: Vite domeHeadScrew
+  ja: ネジdomeHeadScrew
+  ka: domeHeadScrew ka
+  kk: domeHeadScrew kk
+  km: domeHeadScrew km
+  ko: 나사 domeHeadScrew
+  lt: domeHeadScrew lt
+  lv: domeHeadScrew lv
+  ml: domeHeadScrew ml
+  ms: domeHeadScrew ms
+  my: domeHeadScrew my
+  ne: domeHeadScrew ne
+  nl: Schroef domeHeadScrew
+  no: domeHeadScrew no
+  oro: domeHeadScrew oro
+  pa: domeHeadScrew pa
+  pl: Śruba domeHeadScrew
+  ps: domeHeadScrew ps
+  pt: Parafuso domeHeadScrew
+  ro: domeHeadScrew ro
+  ru: Винт domeHeadScrew
+  sd: domeHeadScrew sd
+  si: domeHeadScrew si
+  sk: domeHeadScrew sk
+  sq: domeHeadScrew sq
+  sr: domeHeadScrew sr
+  sv: Skruv domeHeadScrew
+  sw: domeHeadScrew sw
+  ta: domeHeadScrew ta
+  te: domeHeadScrew te
+  th: สกรู domeHeadScrew
+  tl: domeHeadScrew tl
+  tr: Vida domeHeadScrew
+  uk: domeHeadScrew uk
+  ur: برغي domeHeadScrew
+  vi: domeHeadScrew vi
+  yo: domeHeadScrew yo
+  zh: 螺钉domeHeadScrew
+
+shape.dShaft:
+  am: dShaft
+  ar: dShaft
+  az: dShaft
+  bg: dShaft
+  bn: dShaft
+  ca: dShaft
+  cs: dShaft
+  da: dShaft
+  de: dShaft
+  el: dShaft
+  en: dShaft
+  es: dShaft
+  et: dShaft
+  fa: dShaft
+  fi: dShaft
+  fr: dShaft
+  gu: dShaft
+  ha: dShaft
+  hi: dShaft
+  hu: dShaft
+  hy: dShaft
+  id: dShaft
+  ig: dShaft
+  it: dShaft
+  ja: dShaft
+  ka: dShaft
+  kk: dShaft
+  km: dShaft
+  ko: dShaft
+  lt: dShaft
+  lv: dShaft
+  ml: dShaft
+  ms: dShaft
+  my: dShaft
+  ne: dShaft
+  nl: dShaft
+  no: dShaft
+  oro: dShaft
+  pa: dShaft
+  pl: dShaft
+  ps: dShaft
+  pt: dShaft
+  ro: dShaft
+  ru: dShaft
+  sd: dShaft
+  si: dShaft
+  sk: dShaft
+  sq: dShaft
+  sr: dShaft
+  sv: dShaft
+  sw: dShaft
+  ta: dShaft
+  te: dShaft
+  th: dShaft
+  tl: dShaft
+  tr: dShaft
+  uk: dShaft
+  ur: dShaft
+  vi: dShaft
+  yo: dShaft
+  zh: dShaft
+
+shape.ElecFreak_Pin:
+  am: ElecFreak Pin
+  ar: ElecFreak Pin
+  az: ElecFreak Pin
+  bg: ElecFreak Pin
+  bn: ElecFreak Pin
+  ca: ElecFreak Pin
+  cs: ElecFreak Pin
+  da: ElecFreak Pin
+  de: ElecFreak Pin
+  el: ElecFreak Pin
+  en: ElecFreak Pin
+  es: ElecFreak Pin
+  et: ElecFreak Pin
+  fa: ElecFreak Pin
+  fi: ElecFreak Pin
+  fr: ElecFreak Pin
+  gu: ElecFreak Pin
+  ha: ElecFreak Pin
+  hi: ElecFreak Pin
+  hu: ElecFreak Pin
+  hy: ElecFreak Pin
+  id: ElecFreak Pin
+  ig: ElecFreak Pin
+  it: ElecFreak Pin
+  ja: ElecFreak Pin
+  ka: ElecFreak Pin
+  kk: ElecFreak Pin
+  km: ElecFreak Pin
+  ko: ElecFreak Pin
+  lt: ElecFreak Pin
+  lv: ElecFreak Pin
+  ml: ElecFreak Pin
+  ms: ElecFreak Pin
+  my: ElecFreak Pin
+  ne: ElecFreak Pin
+  nl: ElecFreak Pin
+  no: ElecFreak Pin
+  oro: ElecFreak Pin
+  pa: ElecFreak Pin
+  pl: ElecFreak Pin
+  ps: ElecFreak Pin
+  pt: ElecFreak Pin
+  ro: ElecFreak Pin
+  ru: ElecFreak Pin
+  sd: ElecFreak Pin
+  si: ElecFreak Pin
+  sk: ElecFreak Pin
+  sq: ElecFreak Pin
+  sr: ElecFreak Pin
+  sv: ElecFreak Pin
+  sw: ElecFreak Pin
+  ta: ElecFreak Pin
+  te: ElecFreak Pin
+  th: ElecFreak Pin
+  tl: ElecFreak Pin
+  tr: ElecFreak Pin
+  uk: ElecFreak Pin
+  ur: ElecFreak Pin
+  vi: ElecFreak Pin
+  yo: ElecFreak Pin
+  zh: ElecFreak Pin
+
+shape.ElecFreak_Shaft:
+  am: ElecFreak Shaft
+  ar: ElecFreak Shaft
+  az: ElecFreak Shaft
+  bg: ElecFreak Shaft
+  bn: ElecFreak Shaft
+  ca: ElecFreak Shaft
+  cs: ElecFreak Shaft
+  da: ElecFreak Shaft
+  de: ElecFreak Shaft
+  el: ElecFreak Shaft
+  en: ElecFreak Shaft
+  es: ElecFreak Shaft
+  et: ElecFreak Shaft
+  fa: ElecFreak Shaft
+  fi: ElecFreak Shaft
+  fr: ElecFreak Shaft
+  gu: ElecFreak Shaft
+  ha: ElecFreak Shaft
+  hi: ElecFreak Shaft
+  hu: ElecFreak Shaft
+  hy: ElecFreak Shaft
+  id: ElecFreak Shaft
+  ig: ElecFreak Shaft
+  it: ElecFreak Shaft
+  ja: ElecFreak Shaft
+  ka: ElecFreak Shaft
+  kk: ElecFreak Shaft
+  km: ElecFreak Shaft
+  ko: ElecFreak Shaft
+  lt: ElecFreak Shaft
+  lv: ElecFreak Shaft
+  ml: ElecFreak Shaft
+  ms: ElecFreak Shaft
+  my: ElecFreak Shaft
+  ne: ElecFreak Shaft
+  nl: ElecFreak Shaft
+  no: ElecFreak Shaft
+  oro: ElecFreak Shaft
+  pa: ElecFreak Shaft
+  pl: ElecFreak Shaft
+  ps: ElecFreak Shaft
+  pt: ElecFreak Shaft
+  ro: ElecFreak Shaft
+  ru: ElecFreak Shaft
+  sd: ElecFreak Shaft
+  si: ElecFreak Shaft
+  sk: ElecFreak Shaft
+  sq: ElecFreak Shaft
+  sr: ElecFreak Shaft
+  sv: ElecFreak Shaft
+  sw: ElecFreak Shaft
+  ta: ElecFreak Shaft
+  te: ElecFreak Shaft
+  th: ElecFreak Shaft
+  tl: ElecFreak Shaft
+  tr: ElecFreak Shaft
+  uk: ElecFreak Shaft
+  ur: ElecFreak Shaft
+  vi: ElecFreak Shaft
+  yo: ElecFreak Shaft
+  zh: ElecFreak Shaft
+
+shape.encoder:
+  am: encoder
+  ar: encoder
+  az: encoder
+  bg: encoder
+  bn: encoder
+  ca: encoder
+  cs: encoder
+  da: encoder
+  de: encoder
+  el: encoder
+  en: encoder
+  es: encoder
+  et: encoder
+  fa: encoder
+  fi: encoder
+  fr: encoder
+  gu: encoder
+  ha: encoder
+  hi: encoder
+  hu: encoder
+  hy: encoder
+  id: encoder
+  ig: encoder
+  it: encoder
+  ja: encoder
+  ka: encoder
+  kk: encoder
+  km: encoder
+  ko: encoder
+  lt: encoder
+  lv: encoder
+  ml: encoder
+  ms: encoder
+  my: encoder
+  ne: encoder
+  nl: encoder
+  no: encoder
+  oro: encoder
+  pa: encoder
+  pl: encoder
+  ps: encoder
+  pt: encoder
+  ro: encoder
+  ru: encoder
+  sd: encoder
+  si: encoder
+  sk: encoder
+  sq: encoder
+  sr: encoder
+  sv: encoder
+  sw: encoder
+  ta: encoder
+  te: encoder
+  th: encoder
+  tl: encoder
+  tr: encoder
+  uk: encoder
+  ur: encoder
+  vi: encoder
+  yo: encoder
+  zh: encoder
+
+shape.FreeCAD_Example:
+  am: FreeCAD Example
+  ar: FreeCAD Example
+  az: FreeCAD Example
+  bg: FreeCAD Example
+  bn: FreeCAD Example
+  ca: FreeCAD Example
+  cs: FreeCAD Example
+  da: FreeCAD Example
+  de: FreeCAD Example
+  el: FreeCAD Example
+  en: FreeCAD Example
+  es: FreeCAD Example
+  et: FreeCAD Example
+  fa: FreeCAD Example
+  fi: FreeCAD Example
+  fr: FreeCAD Example
+  gu: FreeCAD Example
+  ha: FreeCAD Example
+  hi: FreeCAD Example
+  hu: FreeCAD Example
+  hy: FreeCAD Example
+  id: FreeCAD Example
+  ig: FreeCAD Example
+  it: FreeCAD Example
+  ja: FreeCAD Example
+  ka: FreeCAD Example
+  kk: FreeCAD Example
+  km: FreeCAD Example
+  ko: FreeCAD Example
+  lt: FreeCAD Example
+  lv: FreeCAD Example
+  ml: FreeCAD Example
+  ms: FreeCAD Example
+  my: FreeCAD Example
+  ne: FreeCAD Example
+  nl: FreeCAD Example
+  no: FreeCAD Example
+  oro: FreeCAD Example
+  pa: FreeCAD Example
+  pl: FreeCAD Example
+  ps: FreeCAD Example
+  pt: FreeCAD Example
+  ro: FreeCAD Example
+  ru: FreeCAD Example
+  sd: FreeCAD Example
+  si: FreeCAD Example
+  sk: FreeCAD Example
+  sq: FreeCAD Example
+  sr: FreeCAD Example
+  sv: FreeCAD Example
+  sw: FreeCAD Example
+  ta: FreeCAD Example
+  te: FreeCAD Example
+  th: FreeCAD Example
+  tl: FreeCAD Example
+  tr: FreeCAD Example
+  uk: FreeCAD Example
+  ur: FreeCAD Example
+  vi: FreeCAD Example
+  yo: FreeCAD Example
+  zh: FreeCAD Example
+
+shape.Gridfinity_Base_Plate:
+  am: Gridfinity Base Plate
+  ar: Gridfinity Base Plate
+  az: Gridfinity Base Plate
+  bg: Gridfinity Base Plate
+  bn: Gridfinity Base Plate
+  ca: Gridfinity Base Plate
+  cs: Gridfinity Base Plate
+  da: Gridfinity Base Plate
+  de: Gridfinity Base Plate
+  el: Gridfinity Base Plate
+  en: Gridfinity Base Plate
+  es: Gridfinity Base Plate
+  et: Gridfinity Base Plate
+  fa: Gridfinity Base Plate
+  fi: Gridfinity Base Plate
+  fr: Gridfinity Base Plate
+  gu: Gridfinity Base Plate
+  ha: Gridfinity Base Plate
+  hi: Gridfinity Base Plate
+  hu: Gridfinity Base Plate
+  hy: Gridfinity Base Plate
+  id: Gridfinity Base Plate
+  ig: Gridfinity Base Plate
+  it: Gridfinity Base Plate
+  ja: Gridfinity Base Plate
+  ka: Gridfinity Base Plate
+  kk: Gridfinity Base Plate
+  km: Gridfinity Base Plate
+  ko: Gridfinity Base Plate
+  lt: Gridfinity Base Plate
+  lv: Gridfinity Base Plate
+  ml: Gridfinity Base Plate
+  ms: Gridfinity Base Plate
+  my: Gridfinity Base Plate
+  ne: Gridfinity Base Plate
+  nl: Gridfinity Base Plate
+  no: Gridfinity Base Plate
+  oro: Gridfinity Base Plate
+  pa: Gridfinity Base Plate
+  pl: Gridfinity Base Plate
+  ps: Gridfinity Base Plate
+  pt: Gridfinity Base Plate
+  ro: Gridfinity Base Plate
+  ru: Gridfinity Base Plate
+  sd: Gridfinity Base Plate
+  si: Gridfinity Base Plate
+  sk: Gridfinity Base Plate
+  sq: Gridfinity Base Plate
+  sr: Gridfinity Base Plate
+  sv: Gridfinity Base Plate
+  sw: Gridfinity Base Plate
+  ta: Gridfinity Base Plate
+  te: Gridfinity Base Plate
+  th: Gridfinity Base Plate
+  tl: Gridfinity Base Plate
+  tr: Gridfinity Base Plate
+  uk: Gridfinity Base Plate
+  ur: Gridfinity Base Plate
+  vi: Gridfinity Base Plate
+  yo: Gridfinity Base Plate
+  zh: Gridfinity Base Plate
+
+shape.Gridfinity_Bin:
+  am: Gridfinity Bin
+  ar: Gridfinity Bin
+  az: Gridfinity Bin
+  bg: Gridfinity Bin
+  bn: Gridfinity Bin
+  ca: Gridfinity Bin
+  cs: Gridfinity Bin
+  da: Gridfinity Bin
+  de: Gridfinity Bin
+  el: Gridfinity Bin
+  en: Gridfinity Bin
+  es: Gridfinity Bin
+  et: Gridfinity Bin
+  fa: Gridfinity Bin
+  fi: Gridfinity Bin
+  fr: Gridfinity Bin
+  gu: Gridfinity Bin
+  ha: Gridfinity Bin
+  hi: Gridfinity Bin
+  hu: Gridfinity Bin
+  hy: Gridfinity Bin
+  id: Gridfinity Bin
+  ig: Gridfinity Bin
+  it: Gridfinity Bin
+  ja: Gridfinity Bin
+  ka: Gridfinity Bin
+  kk: Gridfinity Bin
+  km: Gridfinity Bin
+  ko: Gridfinity Bin
+  lt: Gridfinity Bin
+  lv: Gridfinity Bin
+  ml: Gridfinity Bin
+  ms: Gridfinity Bin
+  my: Gridfinity Bin
+  ne: Gridfinity Bin
+  nl: Gridfinity Bin
+  no: Gridfinity Bin
+  oro: Gridfinity Bin
+  pa: Gridfinity Bin
+  pl: Gridfinity Bin
+  ps: Gridfinity Bin
+  pt: Gridfinity Bin
+  ro: Gridfinity Bin
+  ru: Gridfinity Bin
+  sd: Gridfinity Bin
+  si: Gridfinity Bin
+  sk: Gridfinity Bin
+  sq: Gridfinity Bin
+  sr: Gridfinity Bin
+  sv: Gridfinity Bin
+  sw: Gridfinity Bin
+  ta: Gridfinity Bin
+  te: Gridfinity Bin
+  th: Gridfinity Bin
+  tl: Gridfinity Bin
+  tr: Gridfinity Bin
+  uk: Gridfinity Bin
+  ur: Gridfinity Bin
+  vi: Gridfinity Bin
+  yo: Gridfinity Bin
+  zh: Gridfinity Bin
+
+shape.halfCylinder:
+  am: halfCylinder
+  ar: halfCylinder
+  az: halfCylinder
+  bg: halfCylinder
+  bn: halfCylinder
+  ca: halfCylinder
+  cs: halfCylinder
+  da: halfCylinder
+  de: halfCylinder
+  el: halfCylinder
+  en: halfCylinder
+  es: halfCylinder
+  et: halfCylinder
+  fa: halfCylinder
+  fi: halfCylinder
+  fr: halfCylinder
+  gu: halfCylinder
+  ha: halfCylinder
+  hi: halfCylinder
+  hu: halfCylinder
+  hy: halfCylinder
+  id: halfCylinder
+  ig: halfCylinder
+  it: halfCylinder
+  ja: halfCylinder
+  ka: halfCylinder
+  kk: halfCylinder
+  km: halfCylinder
+  ko: halfCylinder
+  lt: halfCylinder
+  lv: halfCylinder
+  ml: halfCylinder
+  ms: halfCylinder
+  my: halfCylinder
+  ne: halfCylinder
+  nl: halfCylinder
+  no: halfCylinder
+  oro: halfCylinder
+  pa: halfCylinder
+  pl: halfCylinder
+  ps: halfCylinder
+  pt: halfCylinder
+  ro: halfCylinder
+  ru: halfCylinder
+  sd: halfCylinder
+  si: halfCylinder
+  sk: halfCylinder
+  sq: halfCylinder
+  sr: halfCylinder
+  sv: halfCylinder
+  sw: halfCylinder
+  ta: halfCylinder
+  te: halfCylinder
+  th: halfCylinder
+  tl: halfCylinder
+  tr: halfCylinder
+  uk: halfCylinder
+  ur: halfCylinder
+  vi: halfCylinder
+  yo: halfCylinder
+  zh: halfCylinder
+
+shape.Half_Sphere:
+  am: Half Sphere
+  ar: Half Sphere
+  az: Half Sphere
+  bg: Half Sphere
+  bn: Half Sphere
+  ca: Half Sphere
+  cs: Half Sphere
+  da: Half Sphere
+  de: Half Sphere
+  el: Half Sphere
+  en: Half Sphere
+  es: Half Sphere
+  et: Half Sphere
+  fa: Half Sphere
+  fi: Half Sphere
+  fr: Half Sphere
+  gu: Half Sphere
+  ha: Half Sphere
+  hi: Half Sphere
+  hu: Half Sphere
+  hy: Half Sphere
+  id: Half Sphere
+  ig: Half Sphere
+  it: Half Sphere
+  ja: Half Sphere
+  ka: Half Sphere
+  kk: Half Sphere
+  km: Half Sphere
+  ko: Half Sphere
+  lt: Half Sphere
+  lv: Half Sphere
+  ml: Half Sphere
+  ms: Half Sphere
+  my: Half Sphere
+  ne: Half Sphere
+  nl: Half Sphere
+  no: Half Sphere
+  oro: Half Sphere
+  pa: Half Sphere
+  pl: Half Sphere
+  ps: Half Sphere
+  pt: Half Sphere
+  ro: Half Sphere
+  ru: Half Sphere
+  sd: Half Sphere
+  si: Half Sphere
+  sk: Half Sphere
+  sq: Half Sphere
+  sr: Half Sphere
+  sv: Half Sphere
+  sw: Half Sphere
+  ta: Half Sphere
+  te: Half Sphere
+  th: Half Sphere
+  tl: Half Sphere
+  tr: Half Sphere
+  uk: Half Sphere
+  ur: Half Sphere
+  vi: Half Sphere
+  yo: Half Sphere
+  zh: Half Sphere
+
+shape.Heart:
+  am: Heart
+  ar: Heart
+  az: Heart
+  bg: Heart
+  bn: Heart
+  ca: Heart
+  cs: Heart
+  da: Heart
+  de: Heart
+  el: Heart
+  en: Heart
+  es: Heart
+  et: Heart
+  fa: Heart
+  fi: Heart
+  fr: Heart
+  gu: Heart
+  ha: Heart
+  hi: Heart
+  hu: Heart
+  hy: Heart
+  id: Heart
+  ig: Heart
+  it: Heart
+  ja: Heart
+  ka: Heart
+  kk: Heart
+  km: Heart
+  ko: Heart
+  lt: Heart
+  lv: Heart
+  ml: Heart
+  ms: Heart
+  my: Heart
+  ne: Heart
+  nl: Heart
+  no: Heart
+  oro: Heart
+  pa: Heart
+  pl: Heart
+  ps: Heart
+  pt: Heart
+  ro: Heart
+  ru: Heart
+  sd: Heart
+  si: Heart
+  sk: Heart
+  sq: Heart
+  sr: Heart
+  sv: Heart
+  sw: Heart
+  ta: Heart
+  te: Heart
+  th: Heart
+  tl: Heart
+  tr: Heart
+  uk: Heart
+  ur: Heart
+  vi: Heart
+  yo: Heart
+  zh: Heart
+
+shape.heatedThreadedInsert:
+  am: heatedThreadedInsert
+  ar: heatedThreadedInsert
+  az: heatedThreadedInsert
+  bg: heatedThreadedInsert
+  bn: heatedThreadedInsert
+  ca: heatedThreadedInsert
+  cs: heatedThreadedInsert
+  da: heatedThreadedInsert
+  de: heatedThreadedInsert
+  el: heatedThreadedInsert
+  en: heatedThreadedInsert
+  es: heatedThreadedInsert
+  et: heatedThreadedInsert
+  fa: heatedThreadedInsert
+  fi: heatedThreadedInsert
+  fr: heatedThreadedInsert
+  gu: heatedThreadedInsert
+  ha: heatedThreadedInsert
+  hi: heatedThreadedInsert
+  hu: heatedThreadedInsert
+  hy: heatedThreadedInsert
+  id: heatedThreadedInsert
+  ig: heatedThreadedInsert
+  it: heatedThreadedInsert
+  ja: heatedThreadedInsert
+  ka: heatedThreadedInsert
+  kk: heatedThreadedInsert
+  km: heatedThreadedInsert
+  ko: heatedThreadedInsert
+  lt: heatedThreadedInsert
+  lv: heatedThreadedInsert
+  ml: heatedThreadedInsert
+  ms: heatedThreadedInsert
+  my: heatedThreadedInsert
+  ne: heatedThreadedInsert
+  nl: heatedThreadedInsert
+  no: heatedThreadedInsert
+  oro: heatedThreadedInsert
+  pa: heatedThreadedInsert
+  pl: heatedThreadedInsert
+  ps: heatedThreadedInsert
+  pt: heatedThreadedInsert
+  ro: heatedThreadedInsert
+  ru: heatedThreadedInsert
+  sd: heatedThreadedInsert
+  si: heatedThreadedInsert
+  sk: heatedThreadedInsert
+  sq: heatedThreadedInsert
+  sr: heatedThreadedInsert
+  sv: heatedThreadedInsert
+  sw: heatedThreadedInsert
+  ta: heatedThreadedInsert
+  te: heatedThreadedInsert
+  th: heatedThreadedInsert
+  tl: heatedThreadedInsert
+  tr: heatedThreadedInsert
+  uk: heatedThreadedInsert
+  ur: heatedThreadedInsert
+  vi: heatedThreadedInsert
+  yo: heatedThreadedInsert
+  zh: heatedThreadedInsert
+
+shape.HelicalGear:
+  am: HelicalGear am
+  ar: ترس HelicalGear
+  az: HelicalGear az
+  bg: HelicalGear bg
+  bn: HelicalGear bn
+  ca: HelicalGear ca
+  cs: HelicalGear cs
+  da: HelicalGear da
+  de: Zahnrad HelicalGear
+  el: HelicalGear el
+  en: HelicalGear en
+  es: Engranaje HelicalGear
+  et: HelicalGear et
+  fa: ترس HelicalGear
+  fi: HelicalGear fi
+  fr: Engrenage HelicalGear
+  gu: HelicalGear gu
+  ha: HelicalGear ha
+  hi: गियर HelicalGear
+  hu: HelicalGear hu
+  hy: HelicalGear hy
+  id: HelicalGear id
+  ig: HelicalGear ig
+  it: Ingranaggio HelicalGear
+  ja: ギアHelicalGear
+  ka: HelicalGear ka
+  kk: HelicalGear kk
+  km: HelicalGear km
+  ko: 기어 HelicalGear
+  lt: HelicalGear lt
+  lv: HelicalGear lv
+  ml: HelicalGear ml
+  ms: HelicalGear ms
+  my: HelicalGear my
+  ne: HelicalGear ne
+  nl: Tandwiel HelicalGear
+  no: HelicalGear no
+  oro: HelicalGear oro
+  pa: HelicalGear pa
+  pl: Zębatka HelicalGear
+  ps: HelicalGear ps
+  pt: Engrenagem HelicalGear
+  ro: HelicalGear ro
+  ru: Шестерня HelicalGear
+  sd: HelicalGear sd
+  si: HelicalGear si
+  sk: HelicalGear sk
+  sq: HelicalGear sq
+  sr: HelicalGear sr
+  sv: Växel HelicalGear
+  sw: HelicalGear sw
+  ta: HelicalGear ta
+  te: HelicalGear te
+  th: เฟือง HelicalGear
+  tl: HelicalGear tl
+  tr: Dişli HelicalGear
+  uk: HelicalGear uk
+  ur: ترس HelicalGear
+  vi: HelicalGear vi
+  yo: HelicalGear yo
+  zh: 齿轮HelicalGear
+
+shape.HelicalRack:
+  am: HelicalRack
+  ar: HelicalRack
+  az: HelicalRack
+  bg: HelicalRack
+  bn: HelicalRack
+  ca: HelicalRack
+  cs: HelicalRack
+  da: HelicalRack
+  de: HelicalRack
+  el: HelicalRack
+  en: HelicalRack
+  es: HelicalRack
+  et: HelicalRack
+  fa: HelicalRack
+  fi: HelicalRack
+  fr: HelicalRack
+  gu: HelicalRack
+  ha: HelicalRack
+  hi: HelicalRack
+  hu: HelicalRack
+  hy: HelicalRack
+  id: HelicalRack
+  ig: HelicalRack
+  it: HelicalRack
+  ja: HelicalRack
+  ka: HelicalRack
+  kk: HelicalRack
+  km: HelicalRack
+  ko: HelicalRack
+  lt: HelicalRack
+  lv: HelicalRack
+  ml: HelicalRack
+  ms: HelicalRack
+  my: HelicalRack
+  ne: HelicalRack
+  nl: HelicalRack
+  no: HelicalRack
+  oro: HelicalRack
+  pa: HelicalRack
+  pl: HelicalRack
+  ps: HelicalRack
+  pt: HelicalRack
+  ro: HelicalRack
+  ru: HelicalRack
+  sd: HelicalRack
+  si: HelicalRack
+  sk: HelicalRack
+  sq: HelicalRack
+  sr: HelicalRack
+  sv: HelicalRack
+  sw: HelicalRack
+  ta: HelicalRack
+  te: HelicalRack
+  th: HelicalRack
+  tl: HelicalRack
+  tr: HelicalRack
+  uk: HelicalRack
+  ur: HelicalRack
+  vi: HelicalRack
+  yo: HelicalRack
+  zh: HelicalRack
+
+shape.Hexagon:
+  am: Hexagon
+  ar: Hexagon
+  az: Hexagon
+  bg: Hexagon
+  bn: Hexagon
+  ca: Hexagon
+  cs: Hexagon
+  da: Hexagon
+  de: Hexagon
+  el: Hexagon
+  en: Hexagon
+  es: Hexagon
+  et: Hexagon
+  fa: Hexagon
+  fi: Hexagon
+  fr: Hexagon
+  gu: Hexagon
+  ha: Hexagon
+  hi: Hexagon
+  hu: Hexagon
+  hy: Hexagon
+  id: Hexagon
+  ig: Hexagon
+  it: Hexagon
+  ja: Hexagon
+  ka: Hexagon
+  kk: Hexagon
+  km: Hexagon
+  ko: Hexagon
+  lt: Hexagon
+  lv: Hexagon
+  ml: Hexagon
+  ms: Hexagon
+  my: Hexagon
+  ne: Hexagon
+  nl: Hexagon
+  no: Hexagon
+  oro: Hexagon
+  pa: Hexagon
+  pl: Hexagon
+  ps: Hexagon
+  pt: Hexagon
+  ro: Hexagon
+  ru: Hexagon
+  sd: Hexagon
+  si: Hexagon
+  sk: Hexagon
+  sq: Hexagon
+  sr: Hexagon
+  sv: Hexagon
+  sw: Hexagon
+  ta: Hexagon
+  te: Hexagon
+  th: Hexagon
+  tl: Hexagon
+  tr: Hexagon
+  uk: Hexagon
+  ur: Hexagon
+  vi: Hexagon
+  yo: Hexagon
+  zh: Hexagon
+
+shape.hobbyServo:
+  am: hobbyServo
+  ar: hobbyServo
+  az: hobbyServo
+  bg: hobbyServo
+  bn: hobbyServo
+  ca: hobbyServo
+  cs: hobbyServo
+  da: hobbyServo
+  de: hobbyServo
+  el: hobbyServo
+  en: hobbyServo
+  es: hobbyServo
+  et: hobbyServo
+  fa: hobbyServo
+  fi: hobbyServo
+  fr: hobbyServo
+  gu: hobbyServo
+  ha: hobbyServo
+  hi: hobbyServo
+  hu: hobbyServo
+  hy: hobbyServo
+  id: hobbyServo
+  ig: hobbyServo
+  it: hobbyServo
+  ja: hobbyServo
+  ka: hobbyServo
+  kk: hobbyServo
+  km: hobbyServo
+  ko: hobbyServo
+  lt: hobbyServo
+  lv: hobbyServo
+  ml: hobbyServo
+  ms: hobbyServo
+  my: hobbyServo
+  ne: hobbyServo
+  nl: hobbyServo
+  no: hobbyServo
+  oro: hobbyServo
+  pa: hobbyServo
+  pl: hobbyServo
+  ps: hobbyServo
+  pt: hobbyServo
+  ro: hobbyServo
+  ru: hobbyServo
+  sd: hobbyServo
+  si: hobbyServo
+  sk: hobbyServo
+  sq: hobbyServo
+  sr: hobbyServo
+  sv: hobbyServo
+  sw: hobbyServo
+  ta: hobbyServo
+  te: hobbyServo
+  th: hobbyServo
+  tl: hobbyServo
+  tr: hobbyServo
+  uk: hobbyServo
+  ur: hobbyServo
+  vi: hobbyServo
+  yo: hobbyServo
+  zh: hobbyServo
+
+shape.hobbyServoHorn:
+  am: hobbyServoHorn
+  ar: hobbyServoHorn
+  az: hobbyServoHorn
+  bg: hobbyServoHorn
+  bn: hobbyServoHorn
+  ca: hobbyServoHorn
+  cs: hobbyServoHorn
+  da: hobbyServoHorn
+  de: hobbyServoHorn
+  el: hobbyServoHorn
+  en: hobbyServoHorn
+  es: hobbyServoHorn
+  et: hobbyServoHorn
+  fa: hobbyServoHorn
+  fi: hobbyServoHorn
+  fr: hobbyServoHorn
+  gu: hobbyServoHorn
+  ha: hobbyServoHorn
+  hi: hobbyServoHorn
+  hu: hobbyServoHorn
+  hy: hobbyServoHorn
+  id: hobbyServoHorn
+  ig: hobbyServoHorn
+  it: hobbyServoHorn
+  ja: hobbyServoHorn
+  ka: hobbyServoHorn
+  kk: hobbyServoHorn
+  km: hobbyServoHorn
+  ko: hobbyServoHorn
+  lt: hobbyServoHorn
+  lv: hobbyServoHorn
+  ml: hobbyServoHorn
+  ms: hobbyServoHorn
+  my: hobbyServoHorn
+  ne: hobbyServoHorn
+  nl: hobbyServoHorn
+  no: hobbyServoHorn
+  oro: hobbyServoHorn
+  pa: hobbyServoHorn
+  pl: hobbyServoHorn
+  ps: hobbyServoHorn
+  pt: hobbyServoHorn
+  ro: hobbyServoHorn
+  ru: hobbyServoHorn
+  sd: hobbyServoHorn
+  si: hobbyServoHorn
+  sk: hobbyServoHorn
+  sq: hobbyServoHorn
+  sr: hobbyServoHorn
+  sv: hobbyServoHorn
+  sw: hobbyServoHorn
+  ta: hobbyServoHorn
+  te: hobbyServoHorn
+  th: hobbyServoHorn
+  tl: hobbyServoHorn
+  tr: hobbyServoHorn
+  uk: hobbyServoHorn
+  ur: hobbyServoHorn
+  vi: hobbyServoHorn
+  yo: hobbyServoHorn
+  zh: hobbyServoHorn
+
+shape.icosahedron:
+  am: icosahedron
+  ar: icosahedron
+  az: icosahedron
+  bg: icosahedron
+  bn: icosahedron
+  ca: icosahedron
+  cs: icosahedron
+  da: icosahedron
+  de: icosahedron
+  el: icosahedron
+  en: icosahedron
+  es: icosahedron
+  et: icosahedron
+  fa: icosahedron
+  fi: icosahedron
+  fr: icosahedron
+  gu: icosahedron
+  ha: icosahedron
+  hi: icosahedron
+  hu: icosahedron
+  hy: icosahedron
+  id: icosahedron
+  ig: icosahedron
+  it: icosahedron
+  ja: icosahedron
+  ka: icosahedron
+  kk: icosahedron
+  km: icosahedron
+  ko: icosahedron
+  lt: icosahedron
+  lv: icosahedron
+  ml: icosahedron
+  ms: icosahedron
+  my: icosahedron
+  ne: icosahedron
+  nl: icosahedron
+  no: icosahedron
+  oro: icosahedron
+  pa: icosahedron
+  pl: icosahedron
+  ps: icosahedron
+  pt: icosahedron
+  ro: icosahedron
+  ru: icosahedron
+  sd: icosahedron
+  si: icosahedron
+  sk: icosahedron
+  sq: icosahedron
+  sr: icosahedron
+  sv: icosahedron
+  sw: icosahedron
+  ta: icosahedron
+  te: icosahedron
+  th: icosahedron
+  tl: icosahedron
+  tr: icosahedron
+  uk: icosahedron
+  ur: icosahedron
+  vi: icosahedron
+  yo: icosahedron
+  zh: icosahedron
+
+shape.InvoluteRack:
+  am: InvoluteRack
+  ar: InvoluteRack
+  az: InvoluteRack
+  bg: InvoluteRack
+  bn: InvoluteRack
+  ca: InvoluteRack
+  cs: InvoluteRack
+  da: InvoluteRack
+  de: InvoluteRack
+  el: InvoluteRack
+  en: InvoluteRack
+  es: InvoluteRack
+  et: InvoluteRack
+  fa: InvoluteRack
+  fi: InvoluteRack
+  fr: InvoluteRack
+  gu: InvoluteRack
+  ha: InvoluteRack
+  hi: InvoluteRack
+  hu: InvoluteRack
+  hy: InvoluteRack
+  id: InvoluteRack
+  ig: InvoluteRack
+  it: InvoluteRack
+  ja: InvoluteRack
+  ka: InvoluteRack
+  kk: InvoluteRack
+  km: InvoluteRack
+  ko: InvoluteRack
+  lt: InvoluteRack
+  lv: InvoluteRack
+  ml: InvoluteRack
+  ms: InvoluteRack
+  my: InvoluteRack
+  ne: InvoluteRack
+  nl: InvoluteRack
+  no: InvoluteRack
+  oro: InvoluteRack
+  pa: InvoluteRack
+  pl: InvoluteRack
+  ps: InvoluteRack
+  pt: InvoluteRack
+  ro: InvoluteRack
+  ru: InvoluteRack
+  sd: InvoluteRack
+  si: InvoluteRack
+  sk: InvoluteRack
+  sq: InvoluteRack
+  sr: InvoluteRack
+  sv: InvoluteRack
+  sw: InvoluteRack
+  ta: InvoluteRack
+  te: InvoluteRack
+  th: InvoluteRack
+  tl: InvoluteRack
+  tr: InvoluteRack
+  uk: InvoluteRack
+  ur: InvoluteRack
+  vi: InvoluteRack
+  yo: InvoluteRack
+  zh: InvoluteRack
+
+shape.joystickCovers:
+  am: joystickCovers
+  ar: joystickCovers
+  az: joystickCovers
+  bg: joystickCovers
+  bn: joystickCovers
+  ca: joystickCovers
+  cs: joystickCovers
+  da: joystickCovers
+  de: joystickCovers
+  el: joystickCovers
+  en: joystickCovers
+  es: joystickCovers
+  et: joystickCovers
+  fa: joystickCovers
+  fi: joystickCovers
+  fr: joystickCovers
+  gu: joystickCovers
+  ha: joystickCovers
+  hi: joystickCovers
+  hu: joystickCovers
+  hy: joystickCovers
+  id: joystickCovers
+  ig: joystickCovers
+  it: joystickCovers
+  ja: joystickCovers
+  ka: joystickCovers
+  kk: joystickCovers
+  km: joystickCovers
+  ko: joystickCovers
+  lt: joystickCovers
+  lv: joystickCovers
+  ml: joystickCovers
+  ms: joystickCovers
+  my: joystickCovers
+  ne: joystickCovers
+  nl: joystickCovers
+  no: joystickCovers
+  oro: joystickCovers
+  pa: joystickCovers
+  pl: joystickCovers
+  ps: joystickCovers
+  pt: joystickCovers
+  ro: joystickCovers
+  ru: joystickCovers
+  sd: joystickCovers
+  si: joystickCovers
+  sk: joystickCovers
+  sq: joystickCovers
+  sr: joystickCovers
+  sv: joystickCovers
+  sw: joystickCovers
+  ta: joystickCovers
+  te: joystickCovers
+  th: joystickCovers
+  tl: joystickCovers
+  tr: joystickCovers
+  uk: joystickCovers
+  ur: joystickCovers
+  vi: joystickCovers
+  yo: joystickCovers
+  zh: joystickCovers
+
+shape.LewanSoulHorn:
+  am: LewanSoulHorn
+  ar: LewanSoulHorn
+  az: LewanSoulHorn
+  bg: LewanSoulHorn
+  bn: LewanSoulHorn
+  ca: LewanSoulHorn
+  cs: LewanSoulHorn
+  da: LewanSoulHorn
+  de: LewanSoulHorn
+  el: LewanSoulHorn
+  en: LewanSoulHorn
+  es: LewanSoulHorn
+  et: LewanSoulHorn
+  fa: LewanSoulHorn
+  fi: LewanSoulHorn
+  fr: LewanSoulHorn
+  gu: LewanSoulHorn
+  ha: LewanSoulHorn
+  hi: LewanSoulHorn
+  hu: LewanSoulHorn
+  hy: LewanSoulHorn
+  id: LewanSoulHorn
+  ig: LewanSoulHorn
+  it: LewanSoulHorn
+  ja: LewanSoulHorn
+  ka: LewanSoulHorn
+  kk: LewanSoulHorn
+  km: LewanSoulHorn
+  ko: LewanSoulHorn
+  lt: LewanSoulHorn
+  lv: LewanSoulHorn
+  ml: LewanSoulHorn
+  ms: LewanSoulHorn
+  my: LewanSoulHorn
+  ne: LewanSoulHorn
+  nl: LewanSoulHorn
+  no: LewanSoulHorn
+  oro: LewanSoulHorn
+  pa: LewanSoulHorn
+  pl: LewanSoulHorn
+  ps: LewanSoulHorn
+  pt: LewanSoulHorn
+  ro: LewanSoulHorn
+  ru: LewanSoulHorn
+  sd: LewanSoulHorn
+  si: LewanSoulHorn
+  sk: LewanSoulHorn
+  sq: LewanSoulHorn
+  sr: LewanSoulHorn
+  sv: LewanSoulHorn
+  sw: LewanSoulHorn
+  ta: LewanSoulHorn
+  te: LewanSoulHorn
+  th: LewanSoulHorn
+  tl: LewanSoulHorn
+  tr: LewanSoulHorn
+  uk: LewanSoulHorn
+  ur: LewanSoulHorn
+  vi: LewanSoulHorn
+  yo: LewanSoulHorn
+  zh: LewanSoulHorn
+
+shape.LewanSoulMotor:
+  am: LewanSoulMotor
+  ar: LewanSoulMotor
+  az: LewanSoulMotor
+  bg: LewanSoulMotor
+  bn: LewanSoulMotor
+  ca: LewanSoulMotor
+  cs: LewanSoulMotor
+  da: LewanSoulMotor
+  de: LewanSoulMotor
+  el: LewanSoulMotor
+  en: LewanSoulMotor
+  es: LewanSoulMotor
+  et: LewanSoulMotor
+  fa: LewanSoulMotor
+  fi: LewanSoulMotor
+  fr: LewanSoulMotor
+  gu: LewanSoulMotor
+  ha: LewanSoulMotor
+  hi: LewanSoulMotor
+  hu: LewanSoulMotor
+  hy: LewanSoulMotor
+  id: LewanSoulMotor
+  ig: LewanSoulMotor
+  it: LewanSoulMotor
+  ja: LewanSoulMotor
+  ka: LewanSoulMotor
+  kk: LewanSoulMotor
+  km: LewanSoulMotor
+  ko: LewanSoulMotor
+  lt: LewanSoulMotor
+  lv: LewanSoulMotor
+  ml: LewanSoulMotor
+  ms: LewanSoulMotor
+  my: LewanSoulMotor
+  ne: LewanSoulMotor
+  nl: LewanSoulMotor
+  no: LewanSoulMotor
+  oro: LewanSoulMotor
+  pa: LewanSoulMotor
+  pl: LewanSoulMotor
+  ps: LewanSoulMotor
+  pt: LewanSoulMotor
+  ro: LewanSoulMotor
+  ru: LewanSoulMotor
+  sd: LewanSoulMotor
+  si: LewanSoulMotor
+  sk: LewanSoulMotor
+  sq: LewanSoulMotor
+  sr: LewanSoulMotor
+  sv: LewanSoulMotor
+  sw: LewanSoulMotor
+  ta: LewanSoulMotor
+  te: LewanSoulMotor
+  th: LewanSoulMotor
+  tl: LewanSoulMotor
+  tr: LewanSoulMotor
+  uk: LewanSoulMotor
+  ur: LewanSoulMotor
+  vi: LewanSoulMotor
+  yo: LewanSoulMotor
+  zh: LewanSoulMotor
+
+shape.linearBallBearing:
+  am: linearBallBearing
+  ar: linearBallBearing
+  az: linearBallBearing
+  bg: linearBallBearing
+  bn: linearBallBearing
+  ca: linearBallBearing
+  cs: linearBallBearing
+  da: linearBallBearing
+  de: linearBallBearing
+  el: linearBallBearing
+  en: linearBallBearing
+  es: linearBallBearing
+  et: linearBallBearing
+  fa: linearBallBearing
+  fi: linearBallBearing
+  fr: linearBallBearing
+  gu: linearBallBearing
+  ha: linearBallBearing
+  hi: linearBallBearing
+  hu: linearBallBearing
+  hy: linearBallBearing
+  id: linearBallBearing
+  ig: linearBallBearing
+  it: linearBallBearing
+  ja: linearBallBearing
+  ka: linearBallBearing
+  kk: linearBallBearing
+  km: linearBallBearing
+  ko: linearBallBearing
+  lt: linearBallBearing
+  lv: linearBallBearing
+  ml: linearBallBearing
+  ms: linearBallBearing
+  my: linearBallBearing
+  ne: linearBallBearing
+  nl: linearBallBearing
+  no: linearBallBearing
+  oro: linearBallBearing
+  pa: linearBallBearing
+  pl: linearBallBearing
+  ps: linearBallBearing
+  pt: linearBallBearing
+  ro: linearBallBearing
+  ru: linearBallBearing
+  sd: linearBallBearing
+  si: linearBallBearing
+  sk: linearBallBearing
+  sq: linearBallBearing
+  sr: linearBallBearing
+  sv: linearBallBearing
+  sw: linearBallBearing
+  ta: linearBallBearing
+  te: linearBallBearing
+  th: linearBallBearing
+  tl: linearBallBearing
+  tr: linearBallBearing
+  uk: linearBallBearing
+  ur: linearBallBearing
+  vi: linearBallBearing
+  yo: linearBallBearing
+  zh: linearBallBearing
+
+shape.Linux_Tux:
+  am: Linux Tux
+  ar: Linux Tux
+  az: Linux Tux
+  bg: Linux Tux
+  bn: Linux Tux
+  ca: Linux Tux
+  cs: Linux Tux
+  da: Linux Tux
+  de: Linux Tux
+  el: Linux Tux
+  en: Linux Tux
+  es: Linux Tux
+  et: Linux Tux
+  fa: Linux Tux
+  fi: Linux Tux
+  fr: Linux Tux
+  gu: Linux Tux
+  ha: Linux Tux
+  hi: Linux Tux
+  hu: Linux Tux
+  hy: Linux Tux
+  id: Linux Tux
+  ig: Linux Tux
+  it: Linux Tux
+  ja: Linux Tux
+  ka: Linux Tux
+  kk: Linux Tux
+  km: Linux Tux
+  ko: Linux Tux
+  lt: Linux Tux
+  lv: Linux Tux
+  ml: Linux Tux
+  ms: Linux Tux
+  my: Linux Tux
+  ne: Linux Tux
+  nl: Linux Tux
+  no: Linux Tux
+  oro: Linux Tux
+  pa: Linux Tux
+  pl: Linux Tux
+  ps: Linux Tux
+  pt: Linux Tux
+  ro: Linux Tux
+  ru: Linux Tux
+  sd: Linux Tux
+  si: Linux Tux
+  sk: Linux Tux
+  sq: Linux Tux
+  sr: Linux Tux
+  sv: Linux Tux
+  sw: Linux Tux
+  ta: Linux Tux
+  te: Linux Tux
+  th: Linux Tux
+  tl: Linux Tux
+  tr: Linux Tux
+  uk: Linux Tux
+  ur: Linux Tux
+  vi: Linux Tux
+  yo: Linux Tux
+  zh: Linux Tux
+
+shape.lockNut:
+  am: lockNut
+  ar: lockNut
+  az: lockNut
+  bg: lockNut
+  bn: lockNut
+  ca: lockNut
+  cs: lockNut
+  da: lockNut
+  de: lockNut
+  el: lockNut
+  en: lockNut
+  es: lockNut
+  et: lockNut
+  fa: lockNut
+  fi: lockNut
+  fr: lockNut
+  gu: lockNut
+  ha: lockNut
+  hi: lockNut
+  hu: lockNut
+  hy: lockNut
+  id: lockNut
+  ig: lockNut
+  it: lockNut
+  ja: lockNut
+  ka: lockNut
+  kk: lockNut
+  km: lockNut
+  ko: lockNut
+  lt: lockNut
+  lv: lockNut
+  ml: lockNut
+  ms: lockNut
+  my: lockNut
+  ne: lockNut
+  nl: lockNut
+  no: lockNut
+  oro: lockNut
+  pa: lockNut
+  pl: lockNut
+  ps: lockNut
+  pt: lockNut
+  ro: lockNut
+  ru: lockNut
+  sd: lockNut
+  si: lockNut
+  sk: lockNut
+  sq: lockNut
+  sr: lockNut
+  sv: lockNut
+  sw: lockNut
+  ta: lockNut
+  te: lockNut
+  th: lockNut
+  tl: lockNut
+  tr: lockNut
+  uk: lockNut
+  ur: lockNut
+  vi: lockNut
+  yo: lockNut
+  zh: lockNut
+
+shape.microbit:
+  am: microbit
+  ar: microbit
+  az: microbit
+  bg: microbit
+  bn: microbit
+  ca: microbit
+  cs: microbit
+  da: microbit
+  de: microbit
+  el: microbit
+  en: microbit
+  es: microbit
+  et: microbit
+  fa: microbit
+  fi: microbit
+  fr: microbit
+  gu: microbit
+  ha: microbit
+  hi: microbit
+  hu: microbit
+  hy: microbit
+  id: microbit
+  ig: microbit
+  it: microbit
+  ja: microbit
+  ka: microbit
+  kk: microbit
+  km: microbit
+  ko: microbit
+  lt: microbit
+  lv: microbit
+  ml: microbit
+  ms: microbit
+  my: microbit
+  ne: microbit
+  nl: microbit
+  no: microbit
+  oro: microbit
+  pa: microbit
+  pl: microbit
+  ps: microbit
+  pt: microbit
+  ro: microbit
+  ru: microbit
+  sd: microbit
+  si: microbit
+  sk: microbit
+  sq: microbit
+  sr: microbit
+  sv: microbit
+  sw: microbit
+  ta: microbit
+  te: microbit
+  th: microbit
+  tl: microbit
+  tr: microbit
+  uk: microbit
+  ur: microbit
+  vi: microbit
+  yo: microbit
+  zh: microbit
+
+shape.microMetalMotor:
+  am: microMetalMotor
+  ar: microMetalMotor
+  az: microMetalMotor
+  bg: microMetalMotor
+  bn: microMetalMotor
+  ca: microMetalMotor
+  cs: microMetalMotor
+  da: microMetalMotor
+  de: microMetalMotor
+  el: microMetalMotor
+  en: microMetalMotor
+  es: microMetalMotor
+  et: microMetalMotor
+  fa: microMetalMotor
+  fi: microMetalMotor
+  fr: microMetalMotor
+  gu: microMetalMotor
+  ha: microMetalMotor
+  hi: microMetalMotor
+  hu: microMetalMotor
+  hy: microMetalMotor
+  id: microMetalMotor
+  ig: microMetalMotor
+  it: microMetalMotor
+  ja: microMetalMotor
+  ka: microMetalMotor
+  kk: microMetalMotor
+  km: microMetalMotor
+  ko: microMetalMotor
+  lt: microMetalMotor
+  lv: microMetalMotor
+  ml: microMetalMotor
+  ms: microMetalMotor
+  my: microMetalMotor
+  ne: microMetalMotor
+  nl: microMetalMotor
+  no: microMetalMotor
+  oro: microMetalMotor
+  pa: microMetalMotor
+  pl: microMetalMotor
+  ps: microMetalMotor
+  pt: microMetalMotor
+  ro: microMetalMotor
+  ru: microMetalMotor
+  sd: microMetalMotor
+  si: microMetalMotor
+  sk: microMetalMotor
+  sq: microMetalMotor
+  sr: microMetalMotor
+  sv: microMetalMotor
+  sw: microMetalMotor
+  ta: microMetalMotor
+  te: microMetalMotor
+  th: microMetalMotor
+  tl: microMetalMotor
+  tr: microMetalMotor
+  uk: microMetalMotor
+  ur: microMetalMotor
+  vi: microMetalMotor
+  yo: microMetalMotor
+  zh: microMetalMotor
+
+shape.nut:
+  am: nut
+  ar: nut
+  az: nut
+  bg: nut
+  bn: nut
+  ca: nut
+  cs: nut
+  da: nut
+  de: nut
+  el: nut
+  en: nut
+  es: nut
+  et: nut
+  fa: nut
+  fi: nut
+  fr: nut
+  gu: nut
+  ha: nut
+  hi: nut
+  hu: nut
+  hy: nut
+  id: nut
+  ig: nut
+  it: nut
+  ja: nut
+  ka: nut
+  kk: nut
+  km: nut
+  ko: nut
+  lt: nut
+  lv: nut
+  ml: nut
+  ms: nut
+  my: nut
+  ne: nut
+  nl: nut
+  no: nut
+  oro: nut
+  pa: nut
+  pl: nut
+  ps: nut
+  pt: nut
+  ro: nut
+  ru: nut
+  sd: nut
+  si: nut
+  sk: nut
+  sq: nut
+  sr: nut
+  sv: nut
+  sw: nut
+  ta: nut
+  te: nut
+  th: nut
+  tl: nut
+  tr: nut
+  uk: nut
+  ur: nut
+  vi: nut
+  yo: nut
+  zh: nut
+
+shape.omniWheelRoller:
+  am: omniWheelRoller
+  ar: omniWheelRoller
+  az: omniWheelRoller
+  bg: omniWheelRoller
+  bn: omniWheelRoller
+  ca: omniWheelRoller
+  cs: omniWheelRoller
+  da: omniWheelRoller
+  de: omniWheelRoller
+  el: omniWheelRoller
+  en: omniWheelRoller
+  es: omniWheelRoller
+  et: omniWheelRoller
+  fa: omniWheelRoller
+  fi: omniWheelRoller
+  fr: omniWheelRoller
+  gu: omniWheelRoller
+  ha: omniWheelRoller
+  hi: omniWheelRoller
+  hu: omniWheelRoller
+  hy: omniWheelRoller
+  id: omniWheelRoller
+  ig: omniWheelRoller
+  it: omniWheelRoller
+  ja: omniWheelRoller
+  ka: omniWheelRoller
+  kk: omniWheelRoller
+  km: omniWheelRoller
+  ko: omniWheelRoller
+  lt: omniWheelRoller
+  lv: omniWheelRoller
+  ml: omniWheelRoller
+  ms: omniWheelRoller
+  my: omniWheelRoller
+  ne: omniWheelRoller
+  nl: omniWheelRoller
+  no: omniWheelRoller
+  oro: omniWheelRoller
+  pa: omniWheelRoller
+  pl: omniWheelRoller
+  ps: omniWheelRoller
+  pt: omniWheelRoller
+  ro: omniWheelRoller
+  ru: omniWheelRoller
+  sd: omniWheelRoller
+  si: omniWheelRoller
+  sk: omniWheelRoller
+  sq: omniWheelRoller
+  sr: omniWheelRoller
+  sv: omniWheelRoller
+  sw: omniWheelRoller
+  ta: omniWheelRoller
+  te: omniWheelRoller
+  th: omniWheelRoller
+  tl: omniWheelRoller
+  tr: omniWheelRoller
+  uk: omniWheelRoller
+  ur: omniWheelRoller
+  vi: omniWheelRoller
+  yo: omniWheelRoller
+  zh: omniWheelRoller
+
+shape.Open-Hardware_Logo:
+  am: Open Hardware Logo
+  ar: Open Hardware Logo
+  az: Open Hardware Logo
+  bg: Open Hardware Logo
+  bn: Open Hardware Logo
+  ca: Open Hardware Logo
+  cs: Open Hardware Logo
+  da: Open Hardware Logo
+  de: Open Hardware Logo
+  el: Open Hardware Logo
+  en: Open Hardware Logo
+  es: Open Hardware Logo
+  et: Open Hardware Logo
+  fa: Open Hardware Logo
+  fi: Open Hardware Logo
+  fr: Open Hardware Logo
+  gu: Open Hardware Logo
+  ha: Open Hardware Logo
+  hi: Open Hardware Logo
+  hu: Open Hardware Logo
+  hy: Open Hardware Logo
+  id: Open Hardware Logo
+  ig: Open Hardware Logo
+  it: Open Hardware Logo
+  ja: Open Hardware Logo
+  ka: Open Hardware Logo
+  kk: Open Hardware Logo
+  km: Open Hardware Logo
+  ko: Open Hardware Logo
+  lt: Open Hardware Logo
+  lv: Open Hardware Logo
+  ml: Open Hardware Logo
+  ms: Open Hardware Logo
+  my: Open Hardware Logo
+  ne: Open Hardware Logo
+  nl: Open Hardware Logo
+  no: Open Hardware Logo
+  oro: Open Hardware Logo
+  pa: Open Hardware Logo
+  pl: Open Hardware Logo
+  ps: Open Hardware Logo
+  pt: Open Hardware Logo
+  ro: Open Hardware Logo
+  ru: Open Hardware Logo
+  sd: Open Hardware Logo
+  si: Open Hardware Logo
+  sk: Open Hardware Logo
+  sq: Open Hardware Logo
+  sr: Open Hardware Logo
+  sv: Open Hardware Logo
+  sw: Open Hardware Logo
+  ta: Open Hardware Logo
+  te: Open Hardware Logo
+  th: Open Hardware Logo
+  tl: Open Hardware Logo
+  tr: Open Hardware Logo
+  uk: Open Hardware Logo
+  ur: Open Hardware Logo
+  vi: Open Hardware Logo
+  yo: Open Hardware Logo
+  zh: Open Hardware Logo
+
+shape.OpenSCAD_Script:
+  am: OpenSCAD Script
+  ar: OpenSCAD Script
+  az: OpenSCAD Script
+  bg: OpenSCAD Script
+  bn: OpenSCAD Script
+  ca: OpenSCAD Script
+  cs: OpenSCAD Script
+  da: OpenSCAD Script
+  de: OpenSCAD Script
+  el: OpenSCAD Script
+  en: OpenSCAD Script
+  es: OpenSCAD Script
+  et: OpenSCAD Script
+  fa: OpenSCAD Script
+  fi: OpenSCAD Script
+  fr: OpenSCAD Script
+  gu: OpenSCAD Script
+  ha: OpenSCAD Script
+  hi: OpenSCAD Script
+  hu: OpenSCAD Script
+  hy: OpenSCAD Script
+  id: OpenSCAD Script
+  ig: OpenSCAD Script
+  it: OpenSCAD Script
+  ja: OpenSCAD Script
+  ka: OpenSCAD Script
+  kk: OpenSCAD Script
+  km: OpenSCAD Script
+  ko: OpenSCAD Script
+  lt: OpenSCAD Script
+  lv: OpenSCAD Script
+  ml: OpenSCAD Script
+  ms: OpenSCAD Script
+  my: OpenSCAD Script
+  ne: OpenSCAD Script
+  nl: OpenSCAD Script
+  no: OpenSCAD Script
+  oro: OpenSCAD Script
+  pa: OpenSCAD Script
+  pl: OpenSCAD Script
+  ps: OpenSCAD Script
+  pt: OpenSCAD Script
+  ro: OpenSCAD Script
+  ru: OpenSCAD Script
+  sd: OpenSCAD Script
+  si: OpenSCAD Script
+  sk: OpenSCAD Script
+  sq: OpenSCAD Script
+  sr: OpenSCAD Script
+  sv: OpenSCAD Script
+  sw: OpenSCAD Script
+  ta: OpenSCAD Script
+  te: OpenSCAD Script
+  th: OpenSCAD Script
+  tl: OpenSCAD Script
+  tr: OpenSCAD Script
+  uk: OpenSCAD Script
+  ur: OpenSCAD Script
+  vi: OpenSCAD Script
+  yo: OpenSCAD Script
+  zh: OpenSCAD Script
+
+shape.Open-Source_Logo:
+  am: Open Source Logo
+  ar: Open Source Logo
+  az: Open Source Logo
+  bg: Open Source Logo
+  bn: Open Source Logo
+  ca: Open Source Logo
+  cs: Open Source Logo
+  da: Open Source Logo
+  de: Open Source Logo
+  el: Open Source Logo
+  en: Open Source Logo
+  es: Open Source Logo
+  et: Open Source Logo
+  fa: Open Source Logo
+  fi: Open Source Logo
+  fr: Open Source Logo
+  gu: Open Source Logo
+  ha: Open Source Logo
+  hi: Open Source Logo
+  hu: Open Source Logo
+  hy: Open Source Logo
+  id: Open Source Logo
+  ig: Open Source Logo
+  it: Open Source Logo
+  ja: Open Source Logo
+  ka: Open Source Logo
+  kk: Open Source Logo
+  km: Open Source Logo
+  ko: Open Source Logo
+  lt: Open Source Logo
+  lv: Open Source Logo
+  ml: Open Source Logo
+  ms: Open Source Logo
+  my: Open Source Logo
+  ne: Open Source Logo
+  nl: Open Source Logo
+  no: Open Source Logo
+  oro: Open Source Logo
+  pa: Open Source Logo
+  pl: Open Source Logo
+  ps: Open Source Logo
+  pt: Open Source Logo
+  ro: Open Source Logo
+  ru: Open Source Logo
+  sd: Open Source Logo
+  si: Open Source Logo
+  sk: Open Source Logo
+  sq: Open Source Logo
+  sr: Open Source Logo
+  sv: Open Source Logo
+  sw: Open Source Logo
+  ta: Open Source Logo
+  te: Open Source Logo
+  th: Open Source Logo
+  tl: Open Source Logo
+  tr: Open Source Logo
+  uk: Open Source Logo
+  ur: Open Source Logo
+  vi: Open Source Logo
+  yo: Open Source Logo
+  zh: Open Source Logo
+
+shape.Parapoloid:
+  am: Parapoloid
+  ar: Parapoloid
+  az: Parapoloid
+  bg: Parapoloid
+  bn: Parapoloid
+  ca: Parapoloid
+  cs: Parapoloid
+  da: Parapoloid
+  de: Parapoloid
+  el: Parapoloid
+  en: Parapoloid
+  es: Parapoloid
+  et: Parapoloid
+  fa: Parapoloid
+  fi: Parapoloid
+  fr: Parapoloid
+  gu: Parapoloid
+  ha: Parapoloid
+  hi: Parapoloid
+  hu: Parapoloid
+  hy: Parapoloid
+  id: Parapoloid
+  ig: Parapoloid
+  it: Parapoloid
+  ja: Parapoloid
+  ka: Parapoloid
+  kk: Parapoloid
+  km: Parapoloid
+  ko: Parapoloid
+  lt: Parapoloid
+  lv: Parapoloid
+  ml: Parapoloid
+  ms: Parapoloid
+  my: Parapoloid
+  ne: Parapoloid
+  nl: Parapoloid
+  no: Parapoloid
+  oro: Parapoloid
+  pa: Parapoloid
+  pl: Parapoloid
+  ps: Parapoloid
+  pt: Parapoloid
+  ro: Parapoloid
+  ru: Parapoloid
+  sd: Parapoloid
+  si: Parapoloid
+  sk: Parapoloid
+  sq: Parapoloid
+  sr: Parapoloid
+  sv: Parapoloid
+  sw: Parapoloid
+  ta: Parapoloid
+  te: Parapoloid
+  th: Parapoloid
+  tl: Parapoloid
+  tr: Parapoloid
+  uk: Parapoloid
+  ur: Parapoloid
+  vi: Parapoloid
+  yo: Parapoloid
+  zh: Parapoloid
+
+shape.PhillipsRoundedHeadThreadFormingScrews:
+  am: PhillipsRoundedHeadThreadFormingScrews am
+  ar: برغي PhillipsRoundedHeadThreadFormingScrews
+  az: PhillipsRoundedHeadThreadFormingScrews az
+  bg: PhillipsRoundedHeadThreadFormingScrews bg
+  bn: PhillipsRoundedHeadThreadFormingScrews bn
+  ca: PhillipsRoundedHeadThreadFormingScrews ca
+  cs: PhillipsRoundedHeadThreadFormingScrews cs
+  da: PhillipsRoundedHeadThreadFormingScrews da
+  de: Schraube PhillipsRoundedHeadThreadFormingScrews
+  el: PhillipsRoundedHeadThreadFormingScrews el
+  en: PhillipsRoundedHeadThreadFormingScrews en
+  es: Tornillo PhillipsRoundedHeadThreadFormingScrews
+  et: PhillipsRoundedHeadThreadFormingScrews et
+  fa: برغي PhillipsRoundedHeadThreadFormingScrews
+  fi: PhillipsRoundedHeadThreadFormingScrews fi
+  fr: Vis PhillipsRoundedHeadThreadFormingScrews
+  gu: PhillipsRoundedHeadThreadFormingScrews gu
+  ha: PhillipsRoundedHeadThreadFormingScrews ha
+  hi: स्क्रू PhillipsRoundedHeadThreadFormingScrews
+  hu: PhillipsRoundedHeadThreadFormingScrews hu
+  hy: PhillipsRoundedHeadThreadFormingScrews hy
+  id: PhillipsRoundedHeadThreadFormingScrews id
+  ig: PhillipsRoundedHeadThreadFormingScrews ig
+  it: Vite PhillipsRoundedHeadThreadFormingScrews
+  ja: ネジPhillipsRoundedHeadThreadFormingScrews
+  ka: PhillipsRoundedHeadThreadFormingScrews ka
+  kk: PhillipsRoundedHeadThreadFormingScrews kk
+  km: PhillipsRoundedHeadThreadFormingScrews km
+  ko: 나사 PhillipsRoundedHeadThreadFormingScrews
+  lt: PhillipsRoundedHeadThreadFormingScrews lt
+  lv: PhillipsRoundedHeadThreadFormingScrews lv
+  ml: PhillipsRoundedHeadThreadFormingScrews ml
+  ms: PhillipsRoundedHeadThreadFormingScrews ms
+  my: PhillipsRoundedHeadThreadFormingScrews my
+  ne: PhillipsRoundedHeadThreadFormingScrews ne
+  nl: Schroef PhillipsRoundedHeadThreadFormingScrews
+  no: PhillipsRoundedHeadThreadFormingScrews no
+  oro: PhillipsRoundedHeadThreadFormingScrews oro
+  pa: PhillipsRoundedHeadThreadFormingScrews pa
+  pl: Śruba PhillipsRoundedHeadThreadFormingScrews
+  ps: PhillipsRoundedHeadThreadFormingScrews ps
+  pt: Parafuso PhillipsRoundedHeadThreadFormingScrews
+  ro: PhillipsRoundedHeadThreadFormingScrews ro
+  ru: Винт PhillipsRoundedHeadThreadFormingScrews
+  sd: PhillipsRoundedHeadThreadFormingScrews sd
+  si: PhillipsRoundedHeadThreadFormingScrews si
+  sk: PhillipsRoundedHeadThreadFormingScrews sk
+  sq: PhillipsRoundedHeadThreadFormingScrews sq
+  sr: PhillipsRoundedHeadThreadFormingScrews sr
+  sv: Skruv PhillipsRoundedHeadThreadFormingScrews
+  sw: PhillipsRoundedHeadThreadFormingScrews sw
+  ta: PhillipsRoundedHeadThreadFormingScrews ta
+  te: PhillipsRoundedHeadThreadFormingScrews te
+  th: สกรู PhillipsRoundedHeadThreadFormingScrews
+  tl: PhillipsRoundedHeadThreadFormingScrews tl
+  tr: Vida PhillipsRoundedHeadThreadFormingScrews
+  uk: PhillipsRoundedHeadThreadFormingScrews uk
+  ur: برغي PhillipsRoundedHeadThreadFormingScrews
+  vi: PhillipsRoundedHeadThreadFormingScrews vi
+  yo: PhillipsRoundedHeadThreadFormingScrews yo
+  zh: 螺钉PhillipsRoundedHeadThreadFormingScrews
+
+shape.Pyramid:
+  am: Pyramid
+  ar: Pyramid
+  az: Pyramid
+  bg: Pyramid
+  bn: Pyramid
+  ca: Pyramid
+  cs: Pyramid
+  da: Pyramid
+  de: Pyramid
+  el: Pyramid
+  en: Pyramid
+  es: Pyramid
+  et: Pyramid
+  fa: Pyramid
+  fi: Pyramid
+  fr: Pyramid
+  gu: Pyramid
+  ha: Pyramid
+  hi: Pyramid
+  hu: Pyramid
+  hy: Pyramid
+  id: Pyramid
+  ig: Pyramid
+  it: Pyramid
+  ja: Pyramid
+  ka: Pyramid
+  kk: Pyramid
+  km: Pyramid
+  ko: Pyramid
+  lt: Pyramid
+  lv: Pyramid
+  ml: Pyramid
+  ms: Pyramid
+  my: Pyramid
+  ne: Pyramid
+  nl: Pyramid
+  no: Pyramid
+  oro: Pyramid
+  pa: Pyramid
+  pl: Pyramid
+  ps: Pyramid
+  pt: Pyramid
+  ro: Pyramid
+  ru: Pyramid
+  sd: Pyramid
+  si: Pyramid
+  sk: Pyramid
+  sq: Pyramid
+  sr: Pyramid
+  sv: Pyramid
+  sw: Pyramid
+  ta: Pyramid
+  te: Pyramid
+  th: Pyramid
+  tl: Pyramid
+  tr: Pyramid
+  uk: Pyramid
+  ur: Pyramid
+  vi: Pyramid
+  yo: Pyramid
+  zh: Pyramid
+
+shape.Ring:
+  am: Ring
+  ar: Ring
+  az: Ring
+  bg: Ring
+  bn: Ring
+  ca: Ring
+  cs: Ring
+  da: Ring
+  de: Ring
+  el: Ring
+  en: Ring
+  es: Ring
+  et: Ring
+  fa: Ring
+  fi: Ring
+  fr: Ring
+  gu: Ring
+  ha: Ring
+  hi: Ring
+  hu: Ring
+  hy: Ring
+  id: Ring
+  ig: Ring
+  it: Ring
+  ja: Ring
+  ka: Ring
+  kk: Ring
+  km: Ring
+  ko: Ring
+  lt: Ring
+  lv: Ring
+  ml: Ring
+  ms: Ring
+  my: Ring
+  ne: Ring
+  nl: Ring
+  no: Ring
+  oro: Ring
+  pa: Ring
+  pl: Ring
+  ps: Ring
+  pt: Ring
+  ro: Ring
+  ru: Ring
+  sd: Ring
+  si: Ring
+  sk: Ring
+  sq: Ring
+  sr: Ring
+  sv: Ring
+  sw: Ring
+  ta: Ring
+  te: Ring
+  th: Ring
+  tl: Ring
+  tr: Ring
+  uk: Ring
+  ur: Ring
+  vi: Ring
+  yo: Ring
+  zh: Ring
+
+shape.Roof:
+  am: Roof
+  ar: Roof
+  az: Roof
+  bg: Roof
+  bn: Roof
+  ca: Roof
+  cs: Roof
+  da: Roof
+  de: Roof
+  el: Roof
+  en: Roof
+  es: Roof
+  et: Roof
+  fa: Roof
+  fi: Roof
+  fr: Roof
+  gu: Roof
+  ha: Roof
+  hi: Roof
+  hu: Roof
+  hy: Roof
+  id: Roof
+  ig: Roof
+  it: Roof
+  ja: Roof
+  ka: Roof
+  kk: Roof
+  km: Roof
+  ko: Roof
+  lt: Roof
+  lv: Roof
+  ml: Roof
+  ms: Roof
+  my: Roof
+  ne: Roof
+  nl: Roof
+  no: Roof
+  oro: Roof
+  pa: Roof
+  pl: Roof
+  ps: Roof
+  pt: Roof
+  ro: Roof
+  ru: Roof
+  sd: Roof
+  si: Roof
+  sk: Roof
+  sq: Roof
+  sr: Roof
+  sv: Roof
+  sw: Roof
+  ta: Roof
+  te: Roof
+  th: Roof
+  tl: Roof
+  tr: Roof
+  uk: Roof
+  ur: Roof
+  vi: Roof
+  yo: Roof
+  zh: Roof
+
+shape.roundMotor:
+  am: roundMotor
+  ar: roundMotor
+  az: roundMotor
+  bg: roundMotor
+  bn: roundMotor
+  ca: roundMotor
+  cs: roundMotor
+  da: roundMotor
+  de: roundMotor
+  el: roundMotor
+  en: roundMotor
+  es: roundMotor
+  et: roundMotor
+  fa: roundMotor
+  fi: roundMotor
+  fr: roundMotor
+  gu: roundMotor
+  ha: roundMotor
+  hi: roundMotor
+  hu: roundMotor
+  hy: roundMotor
+  id: roundMotor
+  ig: roundMotor
+  it: roundMotor
+  ja: roundMotor
+  ka: roundMotor
+  kk: roundMotor
+  km: roundMotor
+  ko: roundMotor
+  lt: roundMotor
+  lv: roundMotor
+  ml: roundMotor
+  ms: roundMotor
+  my: roundMotor
+  ne: roundMotor
+  nl: roundMotor
+  no: roundMotor
+  oro: roundMotor
+  pa: roundMotor
+  pl: roundMotor
+  ps: roundMotor
+  pt: roundMotor
+  ro: roundMotor
+  ru: roundMotor
+  sd: roundMotor
+  si: roundMotor
+  sk: roundMotor
+  sq: roundMotor
+  sr: roundMotor
+  sv: roundMotor
+  sw: roundMotor
+  ta: roundMotor
+  te: roundMotor
+  th: roundMotor
+  tl: roundMotor
+  tr: roundMotor
+  uk: roundMotor
+  ur: roundMotor
+  vi: roundMotor
+  yo: roundMotor
+  zh: roundMotor
+
+shape.Scribble_Inkscape:
+  am: Scribble Inkscape
+  ar: Scribble Inkscape
+  az: Scribble Inkscape
+  bg: Scribble Inkscape
+  bn: Scribble Inkscape
+  ca: Scribble Inkscape
+  cs: Scribble Inkscape
+  da: Scribble Inkscape
+  de: Scribble Inkscape
+  el: Scribble Inkscape
+  en: Scribble Inkscape
+  es: Scribble Inkscape
+  et: Scribble Inkscape
+  fa: Scribble Inkscape
+  fi: Scribble Inkscape
+  fr: Scribble Inkscape
+  gu: Scribble Inkscape
+  ha: Scribble Inkscape
+  hi: Scribble Inkscape
+  hu: Scribble Inkscape
+  hy: Scribble Inkscape
+  id: Scribble Inkscape
+  ig: Scribble Inkscape
+  it: Scribble Inkscape
+  ja: Scribble Inkscape
+  ka: Scribble Inkscape
+  kk: Scribble Inkscape
+  km: Scribble Inkscape
+  ko: Scribble Inkscape
+  lt: Scribble Inkscape
+  lv: Scribble Inkscape
+  ml: Scribble Inkscape
+  ms: Scribble Inkscape
+  my: Scribble Inkscape
+  ne: Scribble Inkscape
+  nl: Scribble Inkscape
+  no: Scribble Inkscape
+  oro: Scribble Inkscape
+  pa: Scribble Inkscape
+  pl: Scribble Inkscape
+  ps: Scribble Inkscape
+  pt: Scribble Inkscape
+  ro: Scribble Inkscape
+  ru: Scribble Inkscape
+  sd: Scribble Inkscape
+  si: Scribble Inkscape
+  sk: Scribble Inkscape
+  sq: Scribble Inkscape
+  sr: Scribble Inkscape
+  sv: Scribble Inkscape
+  sw: Scribble Inkscape
+  ta: Scribble Inkscape
+  te: Scribble Inkscape
+  th: Scribble Inkscape
+  tl: Scribble Inkscape
+  tr: Scribble Inkscape
+  uk: Scribble Inkscape
+  ur: Scribble Inkscape
+  vi: Scribble Inkscape
+  yo: Scribble Inkscape
+  zh: Scribble Inkscape
+
+shape.socket:
+  am: socket
+  ar: socket
+  az: socket
+  bg: socket
+  bn: socket
+  ca: socket
+  cs: socket
+  da: socket
+  de: socket
+  el: socket
+  en: socket
+  es: socket
+  et: socket
+  fa: socket
+  fi: socket
+  fr: socket
+  gu: socket
+  ha: socket
+  hi: socket
+  hu: socket
+  hy: socket
+  id: socket
+  ig: socket
+  it: socket
+  ja: socket
+  ka: socket
+  kk: socket
+  km: socket
+  ko: socket
+  lt: socket
+  lv: socket
+  ml: socket
+  ms: socket
+  my: socket
+  ne: socket
+  nl: socket
+  no: socket
+  oro: socket
+  pa: socket
+  pl: socket
+  ps: socket
+  pt: socket
+  ro: socket
+  ru: socket
+  sd: socket
+  si: socket
+  sk: socket
+  sq: socket
+  sr: socket
+  sv: socket
+  sw: socket
+  ta: socket
+  te: socket
+  th: socket
+  tl: socket
+  tr: socket
+  uk: socket
+  ur: socket
+  vi: socket
+  yo: socket
+  zh: socket
+
+shape.Sphere:
+  am: Sphere
+  ar: Sphere
+  az: Sphere
+  bg: Sphere
+  bn: Sphere
+  ca: Sphere
+  cs: Sphere
+  da: Sphere
+  de: Sphere
+  el: Sphere
+  en: Sphere
+  es: Sphere
+  et: Sphere
+  fa: Sphere
+  fi: Sphere
+  fr: Sphere
+  gu: Sphere
+  ha: Sphere
+  hi: Sphere
+  hu: Sphere
+  hy: Sphere
+  id: Sphere
+  ig: Sphere
+  it: Sphere
+  ja: Sphere
+  ka: Sphere
+  kk: Sphere
+  km: Sphere
+  ko: Sphere
+  lt: Sphere
+  lv: Sphere
+  ml: Sphere
+  ms: Sphere
+  my: Sphere
+  ne: Sphere
+  nl: Sphere
+  no: Sphere
+  oro: Sphere
+  pa: Sphere
+  pl: Sphere
+  ps: Sphere
+  pt: Sphere
+  ro: Sphere
+  ru: Sphere
+  sd: Sphere
+  si: Sphere
+  sk: Sphere
+  sq: Sphere
+  sr: Sphere
+  sv: Sphere
+  sw: Sphere
+  ta: Sphere
+  te: Sphere
+  th: Sphere
+  tl: Sphere
+  tr: Sphere
+  uk: Sphere
+  ur: Sphere
+  vi: Sphere
+  yo: Sphere
+  zh: Sphere
+
+shape.Spiral:
+  am: Spiral
+  ar: Spiral
+  az: Spiral
+  bg: Spiral
+  bn: Spiral
+  ca: Spiral
+  cs: Spiral
+  da: Spiral
+  de: Spiral
+  el: Spiral
+  en: Spiral
+  es: Spiral
+  et: Spiral
+  fa: Spiral
+  fi: Spiral
+  fr: Spiral
+  gu: Spiral
+  ha: Spiral
+  hi: Spiral
+  hu: Spiral
+  hy: Spiral
+  id: Spiral
+  ig: Spiral
+  it: Spiral
+  ja: Spiral
+  ka: Spiral
+  kk: Spiral
+  km: Spiral
+  ko: Spiral
+  lt: Spiral
+  lv: Spiral
+  ml: Spiral
+  ms: Spiral
+  my: Spiral
+  ne: Spiral
+  nl: Spiral
+  no: Spiral
+  oro: Spiral
+  pa: Spiral
+  pl: Spiral
+  ps: Spiral
+  pt: Spiral
+  ro: Spiral
+  ru: Spiral
+  sd: Spiral
+  si: Spiral
+  sk: Spiral
+  sq: Spiral
+  sr: Spiral
+  sv: Spiral
+  sw: Spiral
+  ta: Spiral
+  te: Spiral
+  th: Spiral
+  tl: Spiral
+  tr: Spiral
+  uk: Spiral
+  ur: Spiral
+  vi: Spiral
+  yo: Spiral
+  zh: Spiral
+
+shape.SpurGear:
+  am: SpurGear am
+  ar: ترس SpurGear
+  az: SpurGear az
+  bg: SpurGear bg
+  bn: SpurGear bn
+  ca: SpurGear ca
+  cs: SpurGear cs
+  da: SpurGear da
+  de: Zahnrad SpurGear
+  el: SpurGear el
+  en: SpurGear en
+  es: Engranaje SpurGear
+  et: SpurGear et
+  fa: ترس SpurGear
+  fi: SpurGear fi
+  fr: Engrenage SpurGear
+  gu: SpurGear gu
+  ha: SpurGear ha
+  hi: गियर SpurGear
+  hu: SpurGear hu
+  hy: SpurGear hy
+  id: SpurGear id
+  ig: SpurGear ig
+  it: Ingranaggio SpurGear
+  ja: ギアSpurGear
+  ka: SpurGear ka
+  kk: SpurGear kk
+  km: SpurGear km
+  ko: 기어 SpurGear
+  lt: SpurGear lt
+  lv: SpurGear lv
+  ml: SpurGear ml
+  ms: SpurGear ms
+  my: SpurGear my
+  ne: SpurGear ne
+  nl: Tandwiel SpurGear
+  no: SpurGear no
+  oro: SpurGear oro
+  pa: SpurGear pa
+  pl: Zębatka SpurGear
+  ps: SpurGear ps
+  pt: Engrenagem SpurGear
+  ro: SpurGear ro
+  ru: Шестерня SpurGear
+  sd: SpurGear sd
+  si: SpurGear si
+  sk: SpurGear sk
+  sq: SpurGear sq
+  sr: SpurGear sr
+  sv: Växel SpurGear
+  sw: SpurGear sw
+  ta: SpurGear ta
+  te: SpurGear te
+  th: เฟือง SpurGear
+  tl: SpurGear tl
+  tr: Dişli SpurGear
+  uk: SpurGear uk
+  ur: ترس SpurGear
+  vi: SpurGear vi
+  yo: SpurGear yo
+  zh: 齿轮SpurGear
+
+shape.SpurRingGear:
+  am: SpurRingGear am
+  ar: ترس SpurRingGear
+  az: SpurRingGear az
+  bg: SpurRingGear bg
+  bn: SpurRingGear bn
+  ca: SpurRingGear ca
+  cs: SpurRingGear cs
+  da: SpurRingGear da
+  de: Zahnrad SpurRingGear
+  el: SpurRingGear el
+  en: SpurRingGear en
+  es: Engranaje SpurRingGear
+  et: SpurRingGear et
+  fa: ترس SpurRingGear
+  fi: SpurRingGear fi
+  fr: Engrenage SpurRingGear
+  gu: SpurRingGear gu
+  ha: SpurRingGear ha
+  hi: गियर SpurRingGear
+  hu: SpurRingGear hu
+  hy: SpurRingGear hy
+  id: SpurRingGear id
+  ig: SpurRingGear ig
+  it: Ingranaggio SpurRingGear
+  ja: ギアSpurRingGear
+  ka: SpurRingGear ka
+  kk: SpurRingGear kk
+  km: SpurRingGear km
+  ko: 기어 SpurRingGear
+  lt: SpurRingGear lt
+  lv: SpurRingGear lv
+  ml: SpurRingGear ml
+  ms: SpurRingGear ms
+  my: SpurRingGear my
+  ne: SpurRingGear ne
+  nl: Tandwiel SpurRingGear
+  no: SpurRingGear no
+  oro: SpurRingGear oro
+  pa: SpurRingGear pa
+  pl: Zębatka SpurRingGear
+  ps: SpurRingGear ps
+  pt: Engrenagem SpurRingGear
+  ro: SpurRingGear ro
+  ru: Шестерня SpurRingGear
+  sd: SpurRingGear sd
+  si: SpurRingGear si
+  sk: SpurRingGear sk
+  sq: SpurRingGear sq
+  sr: SpurRingGear sr
+  sv: Växel SpurRingGear
+  sw: SpurRingGear sw
+  ta: SpurRingGear ta
+  te: SpurRingGear te
+  th: เฟือง SpurRingGear
+  tl: SpurRingGear tl
+  tr: Dişli SpurRingGear
+  uk: SpurRingGear uk
+  ur: ترس SpurRingGear
+  vi: SpurRingGear vi
+  yo: SpurRingGear yo
+  zh: 齿轮SpurRingGear
+
+shape.Square_Chain_Mail:
+  am: Square Chain Mail
+  ar: Square Chain Mail
+  az: Square Chain Mail
+  bg: Square Chain Mail
+  bn: Square Chain Mail
+  ca: Square Chain Mail
+  cs: Square Chain Mail
+  da: Square Chain Mail
+  de: Square Chain Mail
+  el: Square Chain Mail
+  en: Square Chain Mail
+  es: Square Chain Mail
+  et: Square Chain Mail
+  fa: Square Chain Mail
+  fi: Square Chain Mail
+  fr: Square Chain Mail
+  gu: Square Chain Mail
+  ha: Square Chain Mail
+  hi: Square Chain Mail
+  hu: Square Chain Mail
+  hy: Square Chain Mail
+  id: Square Chain Mail
+  ig: Square Chain Mail
+  it: Square Chain Mail
+  ja: Square Chain Mail
+  ka: Square Chain Mail
+  kk: Square Chain Mail
+  km: Square Chain Mail
+  ko: Square Chain Mail
+  lt: Square Chain Mail
+  lv: Square Chain Mail
+  ml: Square Chain Mail
+  ms: Square Chain Mail
+  my: Square Chain Mail
+  ne: Square Chain Mail
+  nl: Square Chain Mail
+  no: Square Chain Mail
+  oro: Square Chain Mail
+  pa: Square Chain Mail
+  pl: Square Chain Mail
+  ps: Square Chain Mail
+  pt: Square Chain Mail
+  ro: Square Chain Mail
+  ru: Square Chain Mail
+  sd: Square Chain Mail
+  si: Square Chain Mail
+  sk: Square Chain Mail
+  sq: Square Chain Mail
+  sr: Square Chain Mail
+  sv: Square Chain Mail
+  sw: Square Chain Mail
+  ta: Square Chain Mail
+  te: Square Chain Mail
+  th: Square Chain Mail
+  tl: Square Chain Mail
+  tr: Square Chain Mail
+  uk: Square Chain Mail
+  ur: Square Chain Mail
+  vi: Square Chain Mail
+  yo: Square Chain Mail
+  zh: Square Chain Mail
+
+shape.squareNut:
+  am: squareNut
+  ar: squareNut
+  az: squareNut
+  bg: squareNut
+  bn: squareNut
+  ca: squareNut
+  cs: squareNut
+  da: squareNut
+  de: squareNut
+  el: squareNut
+  en: squareNut
+  es: squareNut
+  et: squareNut
+  fa: squareNut
+  fi: squareNut
+  fr: squareNut
+  gu: squareNut
+  ha: squareNut
+  hi: squareNut
+  hu: squareNut
+  hy: squareNut
+  id: squareNut
+  ig: squareNut
+  it: squareNut
+  ja: squareNut
+  ka: squareNut
+  kk: squareNut
+  km: squareNut
+  ko: squareNut
+  lt: squareNut
+  lv: squareNut
+  ml: squareNut
+  ms: squareNut
+  my: squareNut
+  ne: squareNut
+  nl: squareNut
+  no: squareNut
+  oro: squareNut
+  pa: squareNut
+  pl: squareNut
+  ps: squareNut
+  pt: squareNut
+  ro: squareNut
+  ru: squareNut
+  sd: squareNut
+  si: squareNut
+  sk: squareNut
+  sq: squareNut
+  sr: squareNut
+  sv: squareNut
+  sw: squareNut
+  ta: squareNut
+  te: squareNut
+  th: squareNut
+  tl: squareNut
+  tr: squareNut
+  uk: squareNut
+  ur: squareNut
+  vi: squareNut
+  yo: squareNut
+  zh: squareNut
+
+shape.Star:
+  am: Star
+  ar: Star
+  az: Star
+  bg: Star
+  bn: Star
+  ca: Star
+  cs: Star
+  da: Star
+  de: Star
+  el: Star
+  en: Star
+  es: Star
+  et: Star
+  fa: Star
+  fi: Star
+  fr: Star
+  gu: Star
+  ha: Star
+  hi: Star
+  hu: Star
+  hy: Star
+  id: Star
+  ig: Star
+  it: Star
+  ja: Star
+  ka: Star
+  kk: Star
+  km: Star
+  ko: Star
+  lt: Star
+  lv: Star
+  ml: Star
+  ms: Star
+  my: Star
+  ne: Star
+  nl: Star
+  no: Star
+  oro: Star
+  pa: Star
+  pl: Star
+  ps: Star
+  pt: Star
+  ro: Star
+  ru: Star
+  sd: Star
+  si: Star
+  sk: Star
+  sq: Star
+  sr: Star
+  sv: Star
+  sw: Star
+  ta: Star
+  te: Star
+  th: Star
+  tl: Star
+  tr: Star
+  uk: Star
+  ur: Star
+  vi: Star
+  yo: Star
+  zh: Star
+
+shape.steelPin:
+  am: steelPin
+  ar: steelPin
+  az: steelPin
+  bg: steelPin
+  bn: steelPin
+  ca: steelPin
+  cs: steelPin
+  da: steelPin
+  de: steelPin
+  el: steelPin
+  en: steelPin
+  es: steelPin
+  et: steelPin
+  fa: steelPin
+  fi: steelPin
+  fr: steelPin
+  gu: steelPin
+  ha: steelPin
+  hi: steelPin
+  hu: steelPin
+  hy: steelPin
+  id: steelPin
+  ig: steelPin
+  it: steelPin
+  ja: steelPin
+  ka: steelPin
+  kk: steelPin
+  km: steelPin
+  ko: steelPin
+  lt: steelPin
+  lv: steelPin
+  ml: steelPin
+  ms: steelPin
+  my: steelPin
+  ne: steelPin
+  nl: steelPin
+  no: steelPin
+  oro: steelPin
+  pa: steelPin
+  pl: steelPin
+  ps: steelPin
+  pt: steelPin
+  ro: steelPin
+  ru: steelPin
+  sd: steelPin
+  si: steelPin
+  sk: steelPin
+  sq: steelPin
+  sr: steelPin
+  sv: steelPin
+  sw: steelPin
+  ta: steelPin
+  te: steelPin
+  th: steelPin
+  tl: steelPin
+  tr: steelPin
+  uk: steelPin
+  ur: steelPin
+  vi: steelPin
+  yo: steelPin
+  zh: steelPin
+
+shape.stepperMotor:
+  am: stepperMotor
+  ar: stepperMotor
+  az: stepperMotor
+  bg: stepperMotor
+  bn: stepperMotor
+  ca: stepperMotor
+  cs: stepperMotor
+  da: stepperMotor
+  de: stepperMotor
+  el: stepperMotor
+  en: stepperMotor
+  es: stepperMotor
+  et: stepperMotor
+  fa: stepperMotor
+  fi: stepperMotor
+  fr: stepperMotor
+  gu: stepperMotor
+  ha: stepperMotor
+  hi: stepperMotor
+  hu: stepperMotor
+  hy: stepperMotor
+  id: stepperMotor
+  ig: stepperMotor
+  it: stepperMotor
+  ja: stepperMotor
+  ka: stepperMotor
+  kk: stepperMotor
+  km: stepperMotor
+  ko: stepperMotor
+  lt: stepperMotor
+  lv: stepperMotor
+  ml: stepperMotor
+  ms: stepperMotor
+  my: stepperMotor
+  ne: stepperMotor
+  nl: stepperMotor
+  no: stepperMotor
+  oro: stepperMotor
+  pa: stepperMotor
+  pl: stepperMotor
+  ps: stepperMotor
+  pt: stepperMotor
+  ro: stepperMotor
+  ru: stepperMotor
+  sd: stepperMotor
+  si: stepperMotor
+  sk: stepperMotor
+  sq: stepperMotor
+  sr: stepperMotor
+  sv: stepperMotor
+  sw: stepperMotor
+  ta: stepperMotor
+  te: stepperMotor
+  th: stepperMotor
+  tl: stepperMotor
+  tr: stepperMotor
+  uk: stepperMotor
+  ur: stepperMotor
+  vi: stepperMotor
+  yo: stepperMotor
+  zh: stepperMotor
+
+shape.Technocopia:
+  am: Technocopia
+  ar: Technocopia
+  az: Technocopia
+  bg: Technocopia
+  bn: Technocopia
+  ca: Technocopia
+  cs: Technocopia
+  da: Technocopia
+  de: Technocopia
+  el: Technocopia
+  en: Technocopia
+  es: Technocopia
+  et: Technocopia
+  fa: Technocopia
+  fi: Technocopia
+  fr: Technocopia
+  gu: Technocopia
+  ha: Technocopia
+  hi: Technocopia
+  hu: Technocopia
+  hy: Technocopia
+  id: Technocopia
+  ig: Technocopia
+  it: Technocopia
+  ja: Technocopia
+  ka: Technocopia
+  kk: Technocopia
+  km: Technocopia
+  ko: Technocopia
+  lt: Technocopia
+  lv: Technocopia
+  ml: Technocopia
+  ms: Technocopia
+  my: Technocopia
+  ne: Technocopia
+  nl: Technocopia
+  no: Technocopia
+  oro: Technocopia
+  pa: Technocopia
+  pl: Technocopia
+  ps: Technocopia
+  pt: Technocopia
+  ro: Technocopia
+  ru: Technocopia
+  sd: Technocopia
+  si: Technocopia
+  sk: Technocopia
+  sq: Technocopia
+  sr: Technocopia
+  sv: Technocopia
+  sw: Technocopia
+  ta: Technocopia
+  te: Technocopia
+  th: Technocopia
+  tl: Technocopia
+  tr: Technocopia
+  uk: Technocopia
+  ur: Technocopia
+  vi: Technocopia
+  yo: Technocopia
+  zh: Technocopia
+
+shape.teeNutWithProngs:
+  am: teeNutWithProngs
+  ar: teeNutWithProngs
+  az: teeNutWithProngs
+  bg: teeNutWithProngs
+  bn: teeNutWithProngs
+  ca: teeNutWithProngs
+  cs: teeNutWithProngs
+  da: teeNutWithProngs
+  de: teeNutWithProngs
+  el: teeNutWithProngs
+  en: teeNutWithProngs
+  es: teeNutWithProngs
+  et: teeNutWithProngs
+  fa: teeNutWithProngs
+  fi: teeNutWithProngs
+  fr: teeNutWithProngs
+  gu: teeNutWithProngs
+  ha: teeNutWithProngs
+  hi: teeNutWithProngs
+  hu: teeNutWithProngs
+  hy: teeNutWithProngs
+  id: teeNutWithProngs
+  ig: teeNutWithProngs
+  it: teeNutWithProngs
+  ja: teeNutWithProngs
+  ka: teeNutWithProngs
+  kk: teeNutWithProngs
+  km: teeNutWithProngs
+  ko: teeNutWithProngs
+  lt: teeNutWithProngs
+  lv: teeNutWithProngs
+  ml: teeNutWithProngs
+  ms: teeNutWithProngs
+  my: teeNutWithProngs
+  ne: teeNutWithProngs
+  nl: teeNutWithProngs
+  no: teeNutWithProngs
+  oro: teeNutWithProngs
+  pa: teeNutWithProngs
+  pl: teeNutWithProngs
+  ps: teeNutWithProngs
+  pt: teeNutWithProngs
+  ro: teeNutWithProngs
+  ru: teeNutWithProngs
+  sd: teeNutWithProngs
+  si: teeNutWithProngs
+  sk: teeNutWithProngs
+  sq: teeNutWithProngs
+  sr: teeNutWithProngs
+  sv: teeNutWithProngs
+  sw: teeNutWithProngs
+  ta: teeNutWithProngs
+  te: teeNutWithProngs
+  th: teeNutWithProngs
+  tl: teeNutWithProngs
+  tr: teeNutWithProngs
+  uk: teeNutWithProngs
+  ur: teeNutWithProngs
+  vi: teeNutWithProngs
+  yo: teeNutWithProngs
+  zh: teeNutWithProngs
+
+shape.Text:
+  am: Text
+  ar: Text
+  az: Text
+  bg: Text
+  bn: Text
+  ca: Text
+  cs: Text
+  da: Text
+  de: Text
+  el: Text
+  en: Text
+  es: Text
+  et: Text
+  fa: Text
+  fi: Text
+  fr: Text
+  gu: Text
+  ha: Text
+  hi: Text
+  hu: Text
+  hy: Text
+  id: Text
+  ig: Text
+  it: Text
+  ja: Text
+  ka: Text
+  kk: Text
+  km: Text
+  ko: Text
+  lt: Text
+  lv: Text
+  ml: Text
+  ms: Text
+  my: Text
+  ne: Text
+  nl: Text
+  no: Text
+  oro: Text
+  pa: Text
+  pl: Text
+  ps: Text
+  pt: Text
+  ro: Text
+  ru: Text
+  sd: Text
+  si: Text
+  sk: Text
+  sq: Text
+  sr: Text
+  sv: Text
+  sw: Text
+  ta: Text
+  te: Text
+  th: Text
+  tl: Text
+  tr: Text
+  uk: Text
+  ur: Text
+  vi: Text
+  yo: Text
+  zh: Text
+
+shape.Threads:
+  am: Threads
+  ar: Threads
+  az: Threads
+  bg: Threads
+  bn: Threads
+  ca: Threads
+  cs: Threads
+  da: Threads
+  de: Threads
+  el: Threads
+  en: Threads
+  es: Threads
+  et: Threads
+  fa: Threads
+  fi: Threads
+  fr: Threads
+  gu: Threads
+  ha: Threads
+  hi: Threads
+  hu: Threads
+  hy: Threads
+  id: Threads
+  ig: Threads
+  it: Threads
+  ja: Threads
+  ka: Threads
+  kk: Threads
+  km: Threads
+  ko: Threads
+  lt: Threads
+  lv: Threads
+  ml: Threads
+  ms: Threads
+  my: Threads
+  ne: Threads
+  nl: Threads
+  no: Threads
+  oro: Threads
+  pa: Threads
+  pl: Threads
+  ps: Threads
+  pt: Threads
+  ro: Threads
+  ru: Threads
+  sd: Threads
+  si: Threads
+  sk: Threads
+  sq: Threads
+  sr: Threads
+  sv: Threads
+  sw: Threads
+  ta: Threads
+  te: Threads
+  th: Threads
+  tl: Threads
+  tr: Threads
+  uk: Threads
+  ur: Threads
+  vi: Threads
+  yo: Threads
+  zh: Threads
+
+shape.timingBelt:
+  am: timingBelt
+  ar: timingBelt
+  az: timingBelt
+  bg: timingBelt
+  bn: timingBelt
+  ca: timingBelt
+  cs: timingBelt
+  da: timingBelt
+  de: timingBelt
+  el: timingBelt
+  en: timingBelt
+  es: timingBelt
+  et: timingBelt
+  fa: timingBelt
+  fi: timingBelt
+  fr: timingBelt
+  gu: timingBelt
+  ha: timingBelt
+  hi: timingBelt
+  hu: timingBelt
+  hy: timingBelt
+  id: timingBelt
+  ig: timingBelt
+  it: timingBelt
+  ja: timingBelt
+  ka: timingBelt
+  kk: timingBelt
+  km: timingBelt
+  ko: timingBelt
+  lt: timingBelt
+  lv: timingBelt
+  ml: timingBelt
+  ms: timingBelt
+  my: timingBelt
+  ne: timingBelt
+  nl: timingBelt
+  no: timingBelt
+  oro: timingBelt
+  pa: timingBelt
+  pl: timingBelt
+  ps: timingBelt
+  pt: timingBelt
+  ro: timingBelt
+  ru: timingBelt
+  sd: timingBelt
+  si: timingBelt
+  sk: timingBelt
+  sq: timingBelt
+  sr: timingBelt
+  sv: timingBelt
+  sw: timingBelt
+  ta: timingBelt
+  te: timingBelt
+  th: timingBelt
+  tl: timingBelt
+  tr: timingBelt
+  uk: timingBelt
+  ur: timingBelt
+  vi: timingBelt
+  yo: timingBelt
+  zh: timingBelt
+
+shape.Toroid:
+  am: Toroid
+  ar: Toroid
+  az: Toroid
+  bg: Toroid
+  bn: Toroid
+  ca: Toroid
+  cs: Toroid
+  da: Toroid
+  de: Toroid
+  el: Toroid
+  en: Toroid
+  es: Toroid
+  et: Toroid
+  fa: Toroid
+  fi: Toroid
+  fr: Toroid
+  gu: Toroid
+  ha: Toroid
+  hi: Toroid
+  hu: Toroid
+  hy: Toroid
+  id: Toroid
+  ig: Toroid
+  it: Toroid
+  ja: Toroid
+  ka: Toroid
+  kk: Toroid
+  km: Toroid
+  ko: Toroid
+  lt: Toroid
+  lv: Toroid
+  ml: Toroid
+  ms: Toroid
+  my: Toroid
+  ne: Toroid
+  nl: Toroid
+  no: Toroid
+  oro: Toroid
+  pa: Toroid
+  pl: Toroid
+  ps: Toroid
+  pt: Toroid
+  ro: Toroid
+  ru: Toroid
+  sd: Toroid
+  si: Toroid
+  sk: Toroid
+  sq: Toroid
+  sr: Toroid
+  sv: Toroid
+  sw: Toroid
+  ta: Toroid
+  te: Toroid
+  th: Toroid
+  tl: Toroid
+  tr: Toroid
+  uk: Toroid
+  ur: Toroid
+  vi: Toroid
+  yo: Toroid
+  zh: Toroid
+
+shape.torsionSpring:
+  am: torsionSpring am
+  ar: نابض torsionSpring
+  az: torsionSpring az
+  bg: torsionSpring bg
+  bn: torsionSpring bn
+  ca: torsionSpring ca
+  cs: torsionSpring cs
+  da: torsionSpring da
+  de: Feder torsionSpring
+  el: torsionSpring el
+  en: torsionSpring en
+  es: Muelle torsionSpring
+  et: torsionSpring et
+  fa: نابض torsionSpring
+  fi: torsionSpring fi
+  fr: Ressort torsionSpring
+  gu: torsionSpring gu
+  ha: torsionSpring ha
+  hi: स्प्रिंग torsionSpring
+  hu: torsionSpring hu
+  hy: torsionSpring hy
+  id: torsionSpring id
+  ig: torsionSpring ig
+  it: Molla torsionSpring
+  ja: バネtorsionSpring
+  ka: torsionSpring ka
+  kk: torsionSpring kk
+  km: torsionSpring km
+  ko: 스프링 torsionSpring
+  lt: torsionSpring lt
+  lv: torsionSpring lv
+  ml: torsionSpring ml
+  ms: torsionSpring ms
+  my: torsionSpring my
+  ne: torsionSpring ne
+  nl: Veer torsionSpring
+  no: torsionSpring no
+  oro: torsionSpring oro
+  pa: torsionSpring pa
+  pl: Sprężyna torsionSpring
+  ps: torsionSpring ps
+  pt: Mola torsionSpring
+  ro: torsionSpring ro
+  ru: Пружина torsionSpring
+  sd: torsionSpring sd
+  si: torsionSpring si
+  sk: torsionSpring sk
+  sq: torsionSpring sq
+  sr: torsionSpring sr
+  sv: Fjäder torsionSpring
+  sw: torsionSpring sw
+  ta: torsionSpring ta
+  te: torsionSpring te
+  th: สปริง torsionSpring
+  tl: torsionSpring tl
+  tr: Yay torsionSpring
+  uk: torsionSpring uk
+  ur: نابض torsionSpring
+  vi: torsionSpring vi
+  yo: torsionSpring yo
+  zh: 弹簧torsionSpring
+
+shape.Tube:
+  am: Tube
+  ar: Tube
+  az: Tube
+  bg: Tube
+  bn: Tube
+  ca: Tube
+  cs: Tube
+  da: Tube
+  de: Tube
+  el: Tube
+  en: Tube
+  es: Tube
+  et: Tube
+  fa: Tube
+  fi: Tube
+  fr: Tube
+  gu: Tube
+  ha: Tube
+  hi: Tube
+  hu: Tube
+  hy: Tube
+  id: Tube
+  ig: Tube
+  it: Tube
+  ja: Tube
+  ka: Tube
+  kk: Tube
+  km: Tube
+  ko: Tube
+  lt: Tube
+  lv: Tube
+  ml: Tube
+  ms: Tube
+  my: Tube
+  ne: Tube
+  nl: Tube
+  no: Tube
+  oro: Tube
+  pa: Tube
+  pl: Tube
+  ps: Tube
+  pt: Tube
+  ro: Tube
+  ru: Tube
+  sd: Tube
+  si: Tube
+  sk: Tube
+  sq: Tube
+  sr: Tube
+  sv: Tube
+  sw: Tube
+  ta: Tube
+  te: Tube
+  th: Tube
+  tl: Tube
+  tr: Tube
+  uk: Tube
+  ur: Tube
+  vi: Tube
+  yo: Tube
+  zh: Tube
+
+shape.VexBattery:
+  am: VexBattery
+  ar: VexBattery
+  az: VexBattery
+  bg: VexBattery
+  bn: VexBattery
+  ca: VexBattery
+  cs: VexBattery
+  da: VexBattery
+  de: VexBattery
+  el: VexBattery
+  en: VexBattery
+  es: VexBattery
+  et: VexBattery
+  fa: VexBattery
+  fi: VexBattery
+  fr: VexBattery
+  gu: VexBattery
+  ha: VexBattery
+  hi: VexBattery
+  hu: VexBattery
+  hy: VexBattery
+  id: VexBattery
+  ig: VexBattery
+  it: VexBattery
+  ja: VexBattery
+  ka: VexBattery
+  kk: VexBattery
+  km: VexBattery
+  ko: VexBattery
+  lt: VexBattery
+  lv: VexBattery
+  ml: VexBattery
+  ms: VexBattery
+  my: VexBattery
+  ne: VexBattery
+  nl: VexBattery
+  no: VexBattery
+  oro: VexBattery
+  pa: VexBattery
+  pl: VexBattery
+  ps: VexBattery
+  pt: VexBattery
+  ro: VexBattery
+  ru: VexBattery
+  sd: VexBattery
+  si: VexBattery
+  sk: VexBattery
+  sq: VexBattery
+  sr: VexBattery
+  sv: VexBattery
+  sw: VexBattery
+  ta: VexBattery
+  te: VexBattery
+  th: VexBattery
+  tl: VexBattery
+  tr: VexBattery
+  uk: VexBattery
+  ur: VexBattery
+  vi: VexBattery
+  yo: VexBattery
+  zh: VexBattery
+
+shape.VexBrain:
+  am: VexBrain
+  ar: VexBrain
+  az: VexBrain
+  bg: VexBrain
+  bn: VexBrain
+  ca: VexBrain
+  cs: VexBrain
+  da: VexBrain
+  de: VexBrain
+  el: VexBrain
+  en: VexBrain
+  es: VexBrain
+  et: VexBrain
+  fa: VexBrain
+  fi: VexBrain
+  fr: VexBrain
+  gu: VexBrain
+  ha: VexBrain
+  hi: VexBrain
+  hu: VexBrain
+  hy: VexBrain
+  id: VexBrain
+  ig: VexBrain
+  it: VexBrain
+  ja: VexBrain
+  ka: VexBrain
+  kk: VexBrain
+  km: VexBrain
+  ko: VexBrain
+  lt: VexBrain
+  lv: VexBrain
+  ml: VexBrain
+  ms: VexBrain
+  my: VexBrain
+  ne: VexBrain
+  nl: VexBrain
+  no: VexBrain
+  oro: VexBrain
+  pa: VexBrain
+  pl: VexBrain
+  ps: VexBrain
+  pt: VexBrain
+  ro: VexBrain
+  ru: VexBrain
+  sd: VexBrain
+  si: VexBrain
+  sk: VexBrain
+  sq: VexBrain
+  sr: VexBrain
+  sv: VexBrain
+  sw: VexBrain
+  ta: VexBrain
+  te: VexBrain
+  th: VexBrain
+  tl: VexBrain
+  tr: VexBrain
+  uk: VexBrain
+  ur: VexBrain
+  vi: VexBrain
+  yo: VexBrain
+  zh: VexBrain
+
+shape.vexCchannel:
+  am: vexCchannel
+  ar: vexCchannel
+  az: vexCchannel
+  bg: vexCchannel
+  bn: vexCchannel
+  ca: vexCchannel
+  cs: vexCchannel
+  da: vexCchannel
+  de: vexCchannel
+  el: vexCchannel
+  en: vexCchannel
+  es: vexCchannel
+  et: vexCchannel
+  fa: vexCchannel
+  fi: vexCchannel
+  fr: vexCchannel
+  gu: vexCchannel
+  ha: vexCchannel
+  hi: vexCchannel
+  hu: vexCchannel
+  hy: vexCchannel
+  id: vexCchannel
+  ig: vexCchannel
+  it: vexCchannel
+  ja: vexCchannel
+  ka: vexCchannel
+  kk: vexCchannel
+  km: vexCchannel
+  ko: vexCchannel
+  lt: vexCchannel
+  lv: vexCchannel
+  ml: vexCchannel
+  ms: vexCchannel
+  my: vexCchannel
+  ne: vexCchannel
+  nl: vexCchannel
+  no: vexCchannel
+  oro: vexCchannel
+  pa: vexCchannel
+  pl: vexCchannel
+  ps: vexCchannel
+  pt: vexCchannel
+  ro: vexCchannel
+  ru: vexCchannel
+  sd: vexCchannel
+  si: vexCchannel
+  sk: vexCchannel
+  sq: vexCchannel
+  sr: vexCchannel
+  sv: vexCchannel
+  sw: vexCchannel
+  ta: vexCchannel
+  te: vexCchannel
+  th: vexCchannel
+  tl: vexCchannel
+  tr: vexCchannel
+  uk: vexCchannel
+  ur: vexCchannel
+  vi: vexCchannel
+  yo: vexCchannel
+  zh: vexCchannel
+
+shape.vexFlatSheet:
+  am: vexFlatSheet
+  ar: vexFlatSheet
+  az: vexFlatSheet
+  bg: vexFlatSheet
+  bn: vexFlatSheet
+  ca: vexFlatSheet
+  cs: vexFlatSheet
+  da: vexFlatSheet
+  de: vexFlatSheet
+  el: vexFlatSheet
+  en: vexFlatSheet
+  es: vexFlatSheet
+  et: vexFlatSheet
+  fa: vexFlatSheet
+  fi: vexFlatSheet
+  fr: vexFlatSheet
+  gu: vexFlatSheet
+  ha: vexFlatSheet
+  hi: vexFlatSheet
+  hu: vexFlatSheet
+  hy: vexFlatSheet
+  id: vexFlatSheet
+  ig: vexFlatSheet
+  it: vexFlatSheet
+  ja: vexFlatSheet
+  ka: vexFlatSheet
+  kk: vexFlatSheet
+  km: vexFlatSheet
+  ko: vexFlatSheet
+  lt: vexFlatSheet
+  lv: vexFlatSheet
+  ml: vexFlatSheet
+  ms: vexFlatSheet
+  my: vexFlatSheet
+  ne: vexFlatSheet
+  nl: vexFlatSheet
+  no: vexFlatSheet
+  oro: vexFlatSheet
+  pa: vexFlatSheet
+  pl: vexFlatSheet
+  ps: vexFlatSheet
+  pt: vexFlatSheet
+  ro: vexFlatSheet
+  ru: vexFlatSheet
+  sd: vexFlatSheet
+  si: vexFlatSheet
+  sk: vexFlatSheet
+  sq: vexFlatSheet
+  sr: vexFlatSheet
+  sv: vexFlatSheet
+  sw: vexFlatSheet
+  ta: vexFlatSheet
+  te: vexFlatSheet
+  th: vexFlatSheet
+  tl: vexFlatSheet
+  tr: vexFlatSheet
+  uk: vexFlatSheet
+  ur: vexFlatSheet
+  vi: vexFlatSheet
+  yo: vexFlatSheet
+  zh: vexFlatSheet
+
+shape.vexGear:
+  am: vexGear am
+  ar: ترس vexGear
+  az: vexGear az
+  bg: vexGear bg
+  bn: vexGear bn
+  ca: vexGear ca
+  cs: vexGear cs
+  da: vexGear da
+  de: Zahnrad vexGear
+  el: vexGear el
+  en: vexGear en
+  es: Engranaje vexGear
+  et: vexGear et
+  fa: ترس vexGear
+  fi: vexGear fi
+  fr: Engrenage vexGear
+  gu: vexGear gu
+  ha: vexGear ha
+  hi: गियर vexGear
+  hu: vexGear hu
+  hy: vexGear hy
+  id: vexGear id
+  ig: vexGear ig
+  it: Ingranaggio vexGear
+  ja: ギアvexGear
+  ka: vexGear ka
+  kk: vexGear kk
+  km: vexGear km
+  ko: 기어 vexGear
+  lt: vexGear lt
+  lv: vexGear lv
+  ml: vexGear ml
+  ms: vexGear ms
+  my: vexGear my
+  ne: vexGear ne
+  nl: Tandwiel vexGear
+  no: vexGear no
+  oro: vexGear oro
+  pa: vexGear pa
+  pl: Zębatka vexGear
+  ps: vexGear ps
+  pt: Engrenagem vexGear
+  ro: vexGear ro
+  ru: Шестерня vexGear
+  sd: vexGear sd
+  si: vexGear si
+  sk: vexGear sk
+  sq: vexGear sq
+  sr: vexGear sr
+  sv: Växel vexGear
+  sw: vexGear sw
+  ta: vexGear ta
+  te: vexGear te
+  th: เฟือง vexGear
+  tl: vexGear tl
+  tr: Dişli vexGear
+  uk: vexGear uk
+  ur: ترس vexGear
+  vi: vexGear vi
+  yo: vexGear yo
+  zh: 齿轮vexGear
+
+shape.vex_Hex_Nut_Retainer:
+  am: vex Hex Nut Retainer
+  ar: vex Hex Nut Retainer
+  az: vex Hex Nut Retainer
+  bg: vex Hex Nut Retainer
+  bn: vex Hex Nut Retainer
+  ca: vex Hex Nut Retainer
+  cs: vex Hex Nut Retainer
+  da: vex Hex Nut Retainer
+  de: vex Hex Nut Retainer
+  el: vex Hex Nut Retainer
+  en: vex Hex Nut Retainer
+  es: vex Hex Nut Retainer
+  et: vex Hex Nut Retainer
+  fa: vex Hex Nut Retainer
+  fi: vex Hex Nut Retainer
+  fr: vex Hex Nut Retainer
+  gu: vex Hex Nut Retainer
+  ha: vex Hex Nut Retainer
+  hi: vex Hex Nut Retainer
+  hu: vex Hex Nut Retainer
+  hy: vex Hex Nut Retainer
+  id: vex Hex Nut Retainer
+  ig: vex Hex Nut Retainer
+  it: vex Hex Nut Retainer
+  ja: vex Hex Nut Retainer
+  ka: vex Hex Nut Retainer
+  kk: vex Hex Nut Retainer
+  km: vex Hex Nut Retainer
+  ko: vex Hex Nut Retainer
+  lt: vex Hex Nut Retainer
+  lv: vex Hex Nut Retainer
+  ml: vex Hex Nut Retainer
+  ms: vex Hex Nut Retainer
+  my: vex Hex Nut Retainer
+  ne: vex Hex Nut Retainer
+  nl: vex Hex Nut Retainer
+  no: vex Hex Nut Retainer
+  oro: vex Hex Nut Retainer
+  pa: vex Hex Nut Retainer
+  pl: vex Hex Nut Retainer
+  ps: vex Hex Nut Retainer
+  pt: vex Hex Nut Retainer
+  ro: vex Hex Nut Retainer
+  ru: vex Hex Nut Retainer
+  sd: vex Hex Nut Retainer
+  si: vex Hex Nut Retainer
+  sk: vex Hex Nut Retainer
+  sq: vex Hex Nut Retainer
+  sr: vex Hex Nut Retainer
+  sv: vex Hex Nut Retainer
+  sw: vex Hex Nut Retainer
+  ta: vex Hex Nut Retainer
+  te: vex Hex Nut Retainer
+  th: vex Hex Nut Retainer
+  tl: vex Hex Nut Retainer
+  tr: vex Hex Nut Retainer
+  uk: vex Hex Nut Retainer
+  ur: vex Hex Nut Retainer
+  vi: vex Hex Nut Retainer
+  yo: vex Hex Nut Retainer
+  zh: vex Hex Nut Retainer
+
+shape.vexLchannel:
+  am: vexLchannel
+  ar: vexLchannel
+  az: vexLchannel
+  bg: vexLchannel
+  bn: vexLchannel
+  ca: vexLchannel
+  cs: vexLchannel
+  da: vexLchannel
+  de: vexLchannel
+  el: vexLchannel
+  en: vexLchannel
+  es: vexLchannel
+  et: vexLchannel
+  fa: vexLchannel
+  fi: vexLchannel
+  fr: vexLchannel
+  gu: vexLchannel
+  ha: vexLchannel
+  hi: vexLchannel
+  hu: vexLchannel
+  hy: vexLchannel
+  id: vexLchannel
+  ig: vexLchannel
+  it: vexLchannel
+  ja: vexLchannel
+  ka: vexLchannel
+  kk: vexLchannel
+  km: vexLchannel
+  ko: vexLchannel
+  lt: vexLchannel
+  lv: vexLchannel
+  ml: vexLchannel
+  ms: vexLchannel
+  my: vexLchannel
+  ne: vexLchannel
+  nl: vexLchannel
+  no: vexLchannel
+  oro: vexLchannel
+  pa: vexLchannel
+  pl: vexLchannel
+  ps: vexLchannel
+  pt: vexLchannel
+  ro: vexLchannel
+  ru: vexLchannel
+  sd: vexLchannel
+  si: vexLchannel
+  sk: vexLchannel
+  sq: vexLchannel
+  sr: vexLchannel
+  sv: vexLchannel
+  sw: vexLchannel
+  ta: vexLchannel
+  te: vexLchannel
+  th: vexLchannel
+  tl: vexLchannel
+  tr: vexLchannel
+  uk: vexLchannel
+  ur: vexLchannel
+  vi: vexLchannel
+  yo: vexLchannel
+  zh: vexLchannel
+
+shape.vexMotor:
+  am: vexMotor
+  ar: vexMotor
+  az: vexMotor
+  bg: vexMotor
+  bn: vexMotor
+  ca: vexMotor
+  cs: vexMotor
+  da: vexMotor
+  de: vexMotor
+  el: vexMotor
+  en: vexMotor
+  es: vexMotor
+  et: vexMotor
+  fa: vexMotor
+  fi: vexMotor
+  fr: vexMotor
+  gu: vexMotor
+  ha: vexMotor
+  hi: vexMotor
+  hu: vexMotor
+  hy: vexMotor
+  id: vexMotor
+  ig: vexMotor
+  it: vexMotor
+  ja: vexMotor
+  ka: vexMotor
+  kk: vexMotor
+  km: vexMotor
+  ko: vexMotor
+  lt: vexMotor
+  lv: vexMotor
+  ml: vexMotor
+  ms: vexMotor
+  my: vexMotor
+  ne: vexMotor
+  nl: vexMotor
+  no: vexMotor
+  oro: vexMotor
+  pa: vexMotor
+  pl: vexMotor
+  ps: vexMotor
+  pt: vexMotor
+  ro: vexMotor
+  ru: vexMotor
+  sd: vexMotor
+  si: vexMotor
+  sk: vexMotor
+  sq: vexMotor
+  sr: vexMotor
+  sv: vexMotor
+  sw: vexMotor
+  ta: vexMotor
+  te: vexMotor
+  th: vexMotor
+  tl: vexMotor
+  tr: vexMotor
+  uk: vexMotor
+  ur: vexMotor
+  vi: vexMotor
+  yo: vexMotor
+  zh: vexMotor
+
+shape.vexShaft:
+  am: vexShaft
+  ar: vexShaft
+  az: vexShaft
+  bg: vexShaft
+  bn: vexShaft
+  ca: vexShaft
+  cs: vexShaft
+  da: vexShaft
+  de: vexShaft
+  el: vexShaft
+  en: vexShaft
+  es: vexShaft
+  et: vexShaft
+  fa: vexShaft
+  fi: vexShaft
+  fr: vexShaft
+  gu: vexShaft
+  ha: vexShaft
+  hi: vexShaft
+  hu: vexShaft
+  hy: vexShaft
+  id: vexShaft
+  ig: vexShaft
+  it: vexShaft
+  ja: vexShaft
+  ka: vexShaft
+  kk: vexShaft
+  km: vexShaft
+  ko: vexShaft
+  lt: vexShaft
+  lv: vexShaft
+  ml: vexShaft
+  ms: vexShaft
+  my: vexShaft
+  ne: vexShaft
+  nl: vexShaft
+  no: vexShaft
+  oro: vexShaft
+  pa: vexShaft
+  pl: vexShaft
+  ps: vexShaft
+  pt: vexShaft
+  ro: vexShaft
+  ru: vexShaft
+  sd: vexShaft
+  si: vexShaft
+  sk: vexShaft
+  sq: vexShaft
+  sr: vexShaft
+  sv: vexShaft
+  sw: vexShaft
+  ta: vexShaft
+  te: vexShaft
+  th: vexShaft
+  tl: vexShaft
+  tr: vexShaft
+  uk: vexShaft
+  ur: vexShaft
+  vi: vexShaft
+  yo: vexShaft
+  zh: vexShaft
+
+shape.vexSpacer:
+  am: vexSpacer
+  ar: vexSpacer
+  az: vexSpacer
+  bg: vexSpacer
+  bn: vexSpacer
+  ca: vexSpacer
+  cs: vexSpacer
+  da: vexSpacer
+  de: vexSpacer
+  el: vexSpacer
+  en: vexSpacer
+  es: vexSpacer
+  et: vexSpacer
+  fa: vexSpacer
+  fi: vexSpacer
+  fr: vexSpacer
+  gu: vexSpacer
+  ha: vexSpacer
+  hi: vexSpacer
+  hu: vexSpacer
+  hy: vexSpacer
+  id: vexSpacer
+  ig: vexSpacer
+  it: vexSpacer
+  ja: vexSpacer
+  ka: vexSpacer
+  kk: vexSpacer
+  km: vexSpacer
+  ko: vexSpacer
+  lt: vexSpacer
+  lv: vexSpacer
+  ml: vexSpacer
+  ms: vexSpacer
+  my: vexSpacer
+  ne: vexSpacer
+  nl: vexSpacer
+  no: vexSpacer
+  oro: vexSpacer
+  pa: vexSpacer
+  pl: vexSpacer
+  ps: vexSpacer
+  pt: vexSpacer
+  ro: vexSpacer
+  ru: vexSpacer
+  sd: vexSpacer
+  si: vexSpacer
+  sk: vexSpacer
+  sq: vexSpacer
+  sr: vexSpacer
+  sv: vexSpacer
+  sw: vexSpacer
+  ta: vexSpacer
+  te: vexSpacer
+  th: vexSpacer
+  tl: vexSpacer
+  tr: vexSpacer
+  uk: vexSpacer
+  ur: vexSpacer
+  vi: vexSpacer
+  yo: vexSpacer
+  zh: vexSpacer
+
+shape.vexStandoff:
+  am: vexStandoff
+  ar: vexStandoff
+  az: vexStandoff
+  bg: vexStandoff
+  bn: vexStandoff
+  ca: vexStandoff
+  cs: vexStandoff
+  da: vexStandoff
+  de: vexStandoff
+  el: vexStandoff
+  en: vexStandoff
+  es: vexStandoff
+  et: vexStandoff
+  fa: vexStandoff
+  fi: vexStandoff
+  fr: vexStandoff
+  gu: vexStandoff
+  ha: vexStandoff
+  hi: vexStandoff
+  hu: vexStandoff
+  hy: vexStandoff
+  id: vexStandoff
+  ig: vexStandoff
+  it: vexStandoff
+  ja: vexStandoff
+  ka: vexStandoff
+  kk: vexStandoff
+  km: vexStandoff
+  ko: vexStandoff
+  lt: vexStandoff
+  lv: vexStandoff
+  ml: vexStandoff
+  ms: vexStandoff
+  my: vexStandoff
+  ne: vexStandoff
+  nl: vexStandoff
+  no: vexStandoff
+  oro: vexStandoff
+  pa: vexStandoff
+  pl: vexStandoff
+  ps: vexStandoff
+  pt: vexStandoff
+  ro: vexStandoff
+  ru: vexStandoff
+  sd: vexStandoff
+  si: vexStandoff
+  sk: vexStandoff
+  sq: vexStandoff
+  sr: vexStandoff
+  sv: vexStandoff
+  sw: vexStandoff
+  ta: vexStandoff
+  te: vexStandoff
+  th: vexStandoff
+  tl: vexStandoff
+  tr: vexStandoff
+  uk: vexStandoff
+  ur: vexStandoff
+  vi: vexStandoff
+  yo: vexStandoff
+  zh: vexStandoff
+
+shape.vexWheels:
+  am: vexWheels
+  ar: vexWheels
+  az: vexWheels
+  bg: vexWheels
+  bn: vexWheels
+  ca: vexWheels
+  cs: vexWheels
+  da: vexWheels
+  de: vexWheels
+  el: vexWheels
+  en: vexWheels
+  es: vexWheels
+  et: vexWheels
+  fa: vexWheels
+  fi: vexWheels
+  fr: vexWheels
+  gu: vexWheels
+  ha: vexWheels
+  hi: vexWheels
+  hu: vexWheels
+  hy: vexWheels
+  id: vexWheels
+  ig: vexWheels
+  it: vexWheels
+  ja: vexWheels
+  ka: vexWheels
+  kk: vexWheels
+  km: vexWheels
+  ko: vexWheels
+  lt: vexWheels
+  lv: vexWheels
+  ml: vexWheels
+  ms: vexWheels
+  my: vexWheels
+  ne: vexWheels
+  nl: vexWheels
+  no: vexWheels
+  oro: vexWheels
+  pa: vexWheels
+  pl: vexWheels
+  ps: vexWheels
+  pt: vexWheels
+  ro: vexWheels
+  ru: vexWheels
+  sd: vexWheels
+  si: vexWheels
+  sk: vexWheels
+  sq: vexWheels
+  sr: vexWheels
+  sv: vexWheels
+  sw: vexWheels
+  ta: vexWheels
+  te: vexWheels
+  th: vexWheels
+  tl: vexWheels
+  tr: vexWheels
+  uk: vexWheels
+  ur: vexWheels
+  vi: vexWheels
+  yo: vexWheels
+  zh: vexWheels
+
+shape.VexWireless:
+  am: VexWireless
+  ar: VexWireless
+  az: VexWireless
+  bg: VexWireless
+  bn: VexWireless
+  ca: VexWireless
+  cs: VexWireless
+  da: VexWireless
+  de: VexWireless
+  el: VexWireless
+  en: VexWireless
+  es: VexWireless
+  et: VexWireless
+  fa: VexWireless
+  fi: VexWireless
+  fr: VexWireless
+  gu: VexWireless
+  ha: VexWireless
+  hi: VexWireless
+  hu: VexWireless
+  hy: VexWireless
+  id: VexWireless
+  ig: VexWireless
+  it: VexWireless
+  ja: VexWireless
+  ka: VexWireless
+  kk: VexWireless
+  km: VexWireless
+  ko: VexWireless
+  lt: VexWireless
+  lv: VexWireless
+  ml: VexWireless
+  ms: VexWireless
+  my: VexWireless
+  ne: VexWireless
+  nl: VexWireless
+  no: VexWireless
+  oro: VexWireless
+  pa: VexWireless
+  pl: VexWireless
+  ps: VexWireless
+  pt: VexWireless
+  ro: VexWireless
+  ru: VexWireless
+  sd: VexWireless
+  si: VexWireless
+  sk: VexWireless
+  sq: VexWireless
+  sr: VexWireless
+  sv: VexWireless
+  sw: VexWireless
+  ta: VexWireless
+  te: VexWireless
+  th: VexWireless
+  tl: VexWireless
+  tr: VexWireless
+  uk: VexWireless
+  ur: VexWireless
+  vi: VexWireless
+  yo: VexWireless
+  zh: VexWireless
+
+shape.washer:
+  am: washer
+  ar: washer
+  az: washer
+  bg: washer
+  bn: washer
+  ca: washer
+  cs: washer
+  da: washer
+  de: washer
+  el: washer
+  en: washer
+  es: washer
+  et: washer
+  fa: washer
+  fi: washer
+  fr: washer
+  gu: washer
+  ha: washer
+  hi: washer
+  hu: washer
+  hy: washer
+  id: washer
+  ig: washer
+  it: washer
+  ja: washer
+  ka: washer
+  kk: washer
+  km: washer
+  ko: washer
+  lt: washer
+  lv: washer
+  ml: washer
+  ms: washer
+  my: washer
+  ne: washer
+  nl: washer
+  no: washer
+  oro: washer
+  pa: washer
+  pl: washer
+  ps: washer
+  pt: washer
+  ro: washer
+  ru: washer
+  sd: washer
+  si: washer
+  sk: washer
+  sq: washer
+  sr: washer
+  sv: washer
+  sw: washer
+  ta: washer
+  te: washer
+  th: washer
+  tl: washer
+  tr: washer
+  uk: washer
+  ur: washer
+  vi: washer
+  yo: washer
+  zh: washer
+
+shape.Wedge:
+  am: Wedge
+  ar: Wedge
+  az: Wedge
+  bg: Wedge
+  bn: Wedge
+  ca: Wedge
+  cs: Wedge
+  da: Wedge
+  de: Wedge
+  el: Wedge
+  en: Wedge
+  es: Wedge
+  et: Wedge
+  fa: Wedge
+  fi: Wedge
+  fr: Wedge
+  gu: Wedge
+  ha: Wedge
+  hi: Wedge
+  hu: Wedge
+  hy: Wedge
+  id: Wedge
+  ig: Wedge
+  it: Wedge
+  ja: Wedge
+  ka: Wedge
+  kk: Wedge
+  km: Wedge
+  ko: Wedge
+  lt: Wedge
+  lv: Wedge
+  ml: Wedge
+  ms: Wedge
+  my: Wedge
+  ne: Wedge
+  nl: Wedge
+  no: Wedge
+  oro: Wedge
+  pa: Wedge
+  pl: Wedge
+  ps: Wedge
+  pt: Wedge
+  ro: Wedge
+  ru: Wedge
+  sd: Wedge
+  si: Wedge
+  sk: Wedge
+  sq: Wedge
+  sr: Wedge
+  sv: Wedge
+  sw: Wedge
+  ta: Wedge
+  te: Wedge
+  th: Wedge
+  tl: Wedge
+  tr: Wedge
+  uk: Wedge
+  ur: Wedge
+  vi: Wedge
+  yo: Wedge
+  zh: Wedge
+

@@ -225,7 +225,8 @@ public class ShapesPallet {
 		String sweep = key.get("sweep");
 
 		boolean isSweep = (sweep != null) ? Boolean.parseBoolean(sweep) : false;
-		Tooltip hover = new Tooltip(name);
+		name = name.replace(' ', '_');
+		Tooltip hover = new Tooltip(ap.getTranslation("shape." + name));
 
 		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
 		ArrayList<ButtonWithOverlayImage> buttonHolder = new ArrayList<ButtonWithOverlayImage>();
