@@ -1,5 +1,6 @@
 package com.commonwealthrobotics;
 
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.numbers.TextFieldDimension;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -26,9 +27,11 @@ public class RulerManager {
 	private CSG csg = new Cylinder(0, 5, 10, 20).toCSG();
 	private CSG csg2 = new Cylinder(2, 2, 10, 20).toCSG().movez(10);
 	private CSG union = csg.union(csg2);
+	private SelectionSession session;
 
 	public RulerManager(ActiveProject ap) {
 		this.ap = ap;
+
 	}
 
 	// public Group getRulerGroup() {
@@ -48,15 +51,16 @@ public class RulerManager {
 		}
 	}
 
-	public void initialize(Group rulerGroup, Affine wpUpstream, Affine ro, Runnable OnCancel) {
+	public void initialize(Group rulerGroup, Affine wpUpstream, Affine ro, SelectionSession session) {
 		rulerOffset = ro;
 		wp = wpUpstream;
+
 		rulerGroup.getChildren().add(cancel);
 		cancel.getTransforms().addAll(wp, ro);
 		BowlerStudio.runLater(() -> cancel.setVisible(false));
 		cancel.setOnAction(ev -> {
 			disableRulerMode();
-			OnCancel.run();
+			session.updateControls();
 		});
 		cancel.getTransforms().addAll(buttonLoc);
 		BowlerStudio.runLater(() -> TransformFactory
@@ -117,14 +121,15 @@ public class RulerManager {
 		});
 
 		workplane.setOnSelectEvent(() -> {
-			if (workplane.isClicked()) {
-				TransformNR affineToNr = TransformFactory.affineToNr(rulerOffset);
-				com.neuronrobotics.sdk.common.Log.debug("Placing ruler " + affineToNr);
-				ap.get().setRulerLocation(affineToNr);
-			} else
-				disableRulerMode();
-
-			onFinish.run();
+			session.submit(() -> {
+				if (workplane.isClicked()) {
+					TransformNR affineToNr = TransformFactory.affineToNr(rulerOffset);
+					com.neuronrobotics.sdk.common.Log.debug("Placing ruler " + affineToNr);
+					ap.get().setRulerLocation(affineToNr);
+				} else
+					disableRulerMode();
+				onFinish.run();
+			});
 		});
 
 		boolean workplaneInOrigin = workplane.isWorkplaneNotOrigin();

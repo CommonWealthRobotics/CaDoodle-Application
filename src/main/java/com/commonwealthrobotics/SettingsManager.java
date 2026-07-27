@@ -36,7 +36,7 @@ import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.assets.FontSizeManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.sdk.common.Log;
-import com.sun.prism.GraphicsPipeline;
+//import com.sun.prism.GraphicsPipeline;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.CSG.OptType;
@@ -570,15 +570,15 @@ public class SettingsManager implements ICSGClientEvent {
 		ActiveProject.setStyleSheet(topPane);
 		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
 		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
-		try {
-			// Optionally dig deeper with internal API (may break across JFX versions)
-			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
-			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
-			renderPipelineDisplay.setText(name);
-		} catch (Throwable ex) {
-			Log.error(ex);
-			renderPipelineDisplay.setText(ex.getMessage());
-		}
+		//		try {
+		//			// Optionally dig deeper with internal API (may break across JFX versions)
+		//			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
+		//			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
+		//			renderPipelineDisplay.setText(name);
+		//		} catch (Throwable ex) {
+		//			Log.error(ex);
+		//			renderPipelineDisplay.setText(ex.getMessage());
+		//		}
 
 	}
 

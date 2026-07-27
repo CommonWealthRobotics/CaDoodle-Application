@@ -36,7 +36,6 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.application.Application;
-import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -46,7 +45,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
-import com.sun.prism.GraphicsPipeline;
+//import com.sun.prism.GraphicsPipeline;
 
 public class Main extends Application {
 	private static Thread loadDeps;
@@ -174,8 +173,8 @@ public class Main extends Application {
 			logfile.delete();
 		try {
 			logfile.createNewFile();
-			Log.enableDebugPrint(true);
-			//Log.enableErrorPrint();
+			//Log.enableDebugPrint(true);
+			Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
 
@@ -344,16 +343,16 @@ public class Main extends Application {
 	}
 
 	public static void checkRendering() {
-		boolean hw3d = Platform.isSupported(ConditionalFeature.SCENE3D);
-		try {
-			// Optionally dig deeper with internal API (may break across JFX versions)
-			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
-			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
-
-			Log.debug("3D supported: " + hw3d + " | Pipeline: " + name);
-		} catch (Throwable ex) {
-			Log.error(ex);
-		}
+		//		boolean hw3d = Platform.isSupported(ConditionalFeature.SCENE3D);
+		//		try {
+		//			// Optionally dig deeper with internal API (may break across JFX versions)
+		//			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
+		//			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
+		//
+		//			Log.debug("3D supported: " + hw3d + " | Pipeline: " + name);
+		//		} catch (Throwable ex) {
+		//			Log.error(ex);
+		//		}
 	}
 
 	private static void setupMeshFailPopup(Stage stage) {

@@ -1108,6 +1108,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			createGroundPlane();
 			session = new SelectionSession(engine, ap, ruler, ground);
+			ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(),
+					session);
 
 			selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
 
@@ -1488,9 +1490,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroup.getChildren().add(ground);
 		engine.addUserNode(linesGroup);
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-		ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(), () -> {
-			session.updateControls();
-		});
 	}
 
 	public static double groundScale() {

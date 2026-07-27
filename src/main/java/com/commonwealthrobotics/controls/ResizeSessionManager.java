@@ -1559,7 +1559,7 @@ public class ResizeSessionManager {
 	}
 
 	public void hide() {
-		Log.error(new Exception("Hode called here"));
+		//Log.error(new Exception("Hide called here"));
 		topCenter.hide();
 		leftFront.hide();
 		leftRear.hide();

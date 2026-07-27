@@ -1803,7 +1803,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			BowlerStudio.runLater(() -> engine.requestFocus());
 			return true;
 		} else {
-			com.neuronrobotics.sdk.common.Log.error("Rejecting focus KeyBindingFocus"
+			com.neuronrobotics.sdk.common.Log.debug("Rejecting focus KeyBindingFocus"
 					+ (SplashManager.isVisibleSplash() ? " Splash open" : "") + (engine == null ? " Engine null" : ""));
 		}
 		return false;
