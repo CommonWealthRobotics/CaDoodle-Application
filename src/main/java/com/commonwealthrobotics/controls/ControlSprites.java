@@ -209,7 +209,7 @@ public class ControlSprites {
 
 		zMoveManipulator.addSaveListener(() -> {
 			TransformNR globalPose = zMoveManipulator.getGlobalPoseInReferenceFrame();
-			com.neuronrobotics.sdk.common.Log.error("Z Moved! " + globalPose.toSimpleString());
+			com.neuronrobotics.sdk.common.Log.debug("Z Moved! " + globalPose.toSimpleString());
 			Thread t;
 			try {
 				t = ap.addOp(
@@ -335,9 +335,9 @@ public class ControlSprites {
 				new Vector3d(0, 1, 0));
 		zdimen = new ThreedNumber(selection, workplaneOffset, dimChange, TextFieldDimension.None, ruler, 4,
 				new Vector3d(0, 0, 1));
-		xOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.X, ruler, 4,
+		xOffset = new ThreedNumber(new Affine(), workplaneOffset, offsetxyChange, TextFieldDimension.X, ruler, 4,
 				new Vector3d(1, 0, 0));
-		yOffset = new ThreedNumber(selection, workplaneOffset, offsetxyChange, TextFieldDimension.Y, ruler, 4,
+		yOffset = new ThreedNumber(new Affine(), workplaneOffset, offsetxyChange, TextFieldDimension.Y, ruler, 4,
 				new Vector3d(0, 1, 0));
 		zOffset = new ThreedNumber(selection, workplaneOffset, offsetZChange, TextFieldDimension.Z, ruler, 4,
 				new Vector3d(0, 0, 1));
@@ -635,24 +635,26 @@ public class ControlSprites {
 
 			zdimen.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf, cameraFovDegrees);
-
-			xOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR((min.x / 2.0) + xOffset.getMyOffset() / 2, min.y, linesZ), cf, cameraFovDegrees);
-
-			yOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(min.x, (min.y / 2) + yOffset.getMyOffset() / 2, linesZ), cf, cameraFovDegrees);
-
 			zOffset.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, cameraFovDegrees);
+			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
+
 			xdimen.setValue(bounds.getTotalX());
 			ydimen.setValue(bounds.getTotalY());
 			zdimen.setValue(bounds.getTotalZ());
 
-			TransformNR pose = manipulation.getCurrentPoseInReferenceFrame();
+			TransformNR pose = manipulation.getCurrentPose();
+
+			TransformNR xOffsetPose = new TransformNR(((min.x + xOffset.getMyOffset() + pose.getX()) / 2.0),
+					min.y + pose.getY(), linesZ);
+			TransformNR yOffsetPose = new TransformNR(min.x + pose.getX(),
+					(min.y + yOffset.getMyOffset() + pose.getY()) / 2, linesZ);
+			xOffset.threeDTarget(screenW, screenH, zoom, xOffsetPose, cf, cameraFovDegrees);
+
+			yOffset.threeDTarget(screenW, screenH, zoom, yOffsetPose, cf, cameraFovDegrees);
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
-			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
 			if (mode == SpriteDisplayMode.Resize) {
 				if (scaleSession.zScaleSelected())
 					zdimen.show();
