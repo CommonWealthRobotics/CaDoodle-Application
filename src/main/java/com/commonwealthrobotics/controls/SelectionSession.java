@@ -327,7 +327,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
-		screenPositionOfLatestMeshClick = null;
 		this.source = source;
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
@@ -787,7 +786,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					else
 						addToSelected(name);
 				} else if (!isSelected(name)) {
-					getSelected().clear();
+					clearInternalSelection();
 					addToSelected(name);
 				}
 
@@ -1071,7 +1070,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					got.add(c);
 			}
 		}
-		getSelected().clear();
+		clearInternalSelection();
 		for (CSG c : got)
 			addToSelected(c);
 		if (!selectedBefore.equals(new HashSet<>(selectedSnapshot())))
@@ -1723,7 +1722,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void clearSelection() {
 		cancelOperationModes();
-		getSelected().clear();
+		clearInternalSelection();
 
 		fireSelectionChanged();
 		updateControlsDisplayOfSelected();
@@ -1740,7 +1739,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void selectAllFromCurrentState(Iterable<String> names) {
-		getSelected().clear();
+		clearInternalSelection();
 		for (CSG c : getCurrentState()) {
 
 			if ((c.isInGroup() && !c.isAlwaysShow()))
@@ -1776,7 +1775,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void selectAll() {
 		getExecutor().submit(() -> {
-			getSelected().clear();
+			clearInternalSelection();
 
 			for (CSG c : getCurrentState()) {
 
@@ -2310,7 +2309,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 					}
 
-					getSelected().clear();
+					clearInternalSelection();
 					for (CSG c : results)
 						addToSelected(c);
 					fireSelectionChanged();
@@ -2353,7 +2352,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 								got.add(c);
 						}
 					}
-					getSelected().clear();
+					clearInternalSelection();
 					for (CSG c : got)
 						addToSelected(c);
 					fireSelectionChanged();
@@ -2397,7 +2396,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			List<String> selectedSnapshot = selectedSnapshot();
 
 			if (isAGroupSelected()) {
-				getSelected().clear();
+				clearInternalSelection();
 				//				for (CSG c : toSelect)
 				//					addToSelected(c);
 				//				fireSelectionChanged();
@@ -2432,6 +2431,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		});
 
+	}
+
+	private void clearInternalSelection() {
+		screenPositionOfLatestMeshClick = null;
+		getSelected().clear();
 	}
 
 	public void onHideShowOperation() {
