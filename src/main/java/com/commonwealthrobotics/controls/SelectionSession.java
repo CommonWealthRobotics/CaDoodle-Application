@@ -327,7 +327,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile f) {
-
+		screenPositionOfLatestMeshClick = null;
 		this.source = source;
 		// TickToc.setEnabled(true);
 		TickToc.tic("Start On Update In Selected Session");
@@ -776,6 +776,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			throw new RuntimeException("Name can not be null");
 
 		meshView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			screenPositionOfLatestMeshClick = null;
 			if (workplane.isActive())
 				return;
 			if (event.getButton() == MouseButton.PRIMARY) {
