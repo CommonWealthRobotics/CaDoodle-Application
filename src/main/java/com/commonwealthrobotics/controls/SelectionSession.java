@@ -880,7 +880,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		int line = 0;
 		parametrics.getChildren().clear();
 		parametrics.getChildren().add(gp);
-		int width = 100;
+		int width = 170;
 		int c1Width = 100;
 		gp.setPrefWidth(width+c1Width);
 		//gp.setMaxWidth(width+c1Width);

@@ -1228,7 +1228,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		GridPane graphic = new GridPane();
 		graphic.setPrefWidth(100);
-		graphic.setGridLinesVisible(true);
+		//graphic.setGridLinesVisible(true);
 		graphic.setHgap(5);
 
 		ColumnConstraints titleCol = new ColumnConstraints();
