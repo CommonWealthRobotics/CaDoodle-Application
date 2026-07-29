@@ -48,3 +48,4 @@ bin
 /find_garbled.py
 /fix_garbled.py
 /fix_translations.py
+/check_json.py
