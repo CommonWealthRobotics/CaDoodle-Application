@@ -1228,7 +1228,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		GridPane graphic = new GridPane();
 		graphic.setPrefWidth(100);
-		//graphic.setGridLinesVisible(true);
+		// graphic.setGridLinesVisible(true);
 		graphic.setHgap(5);
 
 		ColumnConstraints titleCol = new ColumnConstraints();
@@ -1670,6 +1670,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						break;
 					case RIGHT :
 						session.moveInCameraFrame(new TransformNR(0, -dist, 0));
+						break;
+					default :
 						break;
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());
