@@ -853,7 +853,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		AnchorPane.setRightAnchor(myroot, 0.0);
 		BowlerStudio.runLater(() -> {
 			Stage stage = new Stage();
-			stage.initModality(Modality.APPLICATION_MODAL);
+			// stage.initModality(Modality.APPLICATION_MODAL);
 			stage.initStyle(StageStyle.UTILITY);
 			stage.setTitle("Language Selection");
 			stage.setScene(new Scene(root));
