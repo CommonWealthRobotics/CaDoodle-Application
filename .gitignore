@@ -40,3 +40,5 @@ bowler
 # Added by cargo
 
 /target
+
+bin

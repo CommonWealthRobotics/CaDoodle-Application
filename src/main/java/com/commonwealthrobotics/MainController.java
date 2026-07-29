@@ -58,7 +58,9 @@ import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -80,7 +82,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -1121,7 +1125,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					timelineMirrorShow, timelineFilletShow, timelineExtrudeShow, timelineRadialShow, timelineLinearShow,
 					timelineDeleteShow, timelineMoveObjectShow, timelineOtherShow);
 			label = new Label(shapeConfiguration.getText());
-			renameBtn = new Button("Rename");
+			renameBtn = new Button(ap.getTranslation("rename"));
 
 			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
 					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
@@ -1207,6 +1211,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public void makeEditableTitle(TitledPane pane) {
 		renameBtn.getStyleClass().add("normal-button");
 		TextField textField = new TextField();
+		textField.setPrefWidth(50);
 		textField.setVisible(false);
 		textField.setTextFormatter(new TextFormatter<>(change -> {
 			String newText = change.getControlNewText();
@@ -1220,8 +1225,31 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		StackPane titleStack = new StackPane(label, textField);
 		StackPane.setAlignment(label, Pos.CENTER_LEFT);
 		StackPane.setAlignment(textField, Pos.CENTER_LEFT);
-		HBox graphic = new HBox(5, titleStack, renameBtn);
-		graphic.setAlignment(Pos.CENTER_LEFT);
+
+		GridPane graphic = new GridPane();
+		graphic.setPrefWidth(100);
+		graphic.setGridLinesVisible(true);
+		graphic.setHgap(5);
+
+		ColumnConstraints titleCol = new ColumnConstraints();
+		titleCol.setHgrow(Priority.ALWAYS);
+		titleCol.setFillWidth(true);
+
+		ColumnConstraints btnCol = new ColumnConstraints();
+		btnCol.setHgrow(Priority.NEVER);
+
+		graphic.getColumnConstraints().addAll(titleCol, btnCol);
+
+		GridPane.setHgrow(titleStack, Priority.ALWAYS);
+		GridPane.setFillWidth(titleStack, true);
+		GridPane.setValignment(titleStack, VPos.CENTER);
+
+		GridPane.setHalignment(renameBtn, HPos.RIGHT);
+		GridPane.setValignment(renameBtn, VPos.CENTER);
+
+		graphic.add(titleStack, 0, 0);
+		graphic.add(renameBtn, 1, 0);
+
 		pane.setText("");
 		pane.setGraphic(graphic);
 
@@ -1625,24 +1653,24 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				if (event.isShiftDown())
 					dist = 3;
 				switch (event.getCode()) {
-					case UP :
-						if (Manipulation.isControlOrCommandPressed(event)) {
-							session.moveInCameraFrame(new TransformNR(0, 0, dist));
-						} else
-							session.moveInCameraFrame(new TransformNR(dist, 0, 0));
-						break;
-					case DOWN :
-						if (Manipulation.isControlOrCommandPressed(event)) {
-							session.moveInCameraFrame(new TransformNR(0, 0, -dist));
-						} else
-							session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
-						break;
-					case LEFT :
-						session.moveInCameraFrame(new TransformNR(0, dist, 0));
-						break;
-					case RIGHT :
-						session.moveInCameraFrame(new TransformNR(0, -dist, 0));
-						break;
+				case UP:
+					if (Manipulation.isControlOrCommandPressed(event)) {
+						session.moveInCameraFrame(new TransformNR(0, 0, dist));
+					} else
+						session.moveInCameraFrame(new TransformNR(dist, 0, 0));
+					break;
+				case DOWN:
+					if (Manipulation.isControlOrCommandPressed(event)) {
+						session.moveInCameraFrame(new TransformNR(0, 0, -dist));
+					} else
+						session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
+					break;
+				case LEFT:
+					session.moveInCameraFrame(new TransformNR(0, dist, 0));
+					break;
+				case RIGHT:
+					session.moveInCameraFrame(new TransformNR(0, -dist, 0));
+					break;
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());
 				// Consume the event to prevent default focus traversal
@@ -1671,158 +1699,158 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					.debug("Got " + key + " " + (ctrl ? "ctrl" : "") + " " + (shift ? "shift" : ""));
 			if (ctrl) {
 				switch (key) {
-					case 'Z' : // Ctrl+Z / Ctrl+Shift+Z - Undo
-						com.neuronrobotics.sdk.common.Log.debug("Undo");
-						session.workplane.cancel();
-						session.submit(() -> ap.get().back());
+				case 'Z': // Ctrl+Z / Ctrl+Shift+Z - Undo
+					com.neuronrobotics.sdk.common.Log.debug("Undo");
+					session.workplane.cancel();
+					session.submit(() -> ap.get().back());
 
-						break;
-					case 'Y' : // Ctrl+Y - Redo
-						com.neuronrobotics.sdk.common.Log.debug("Redo");
-						session.submit(() -> ap.get().forward());
-						break;
-					case 'G' :
-						if (shift) { // Ctrl+Shift+G - Ungroup
-							com.neuronrobotics.sdk.common.Log.debug("Un-Group");
-							session.onUngroup();
-						} else { // Ctrl+G - Group
-							onGroup(null);
-						}
-						break;
-					case 'A' : // Ctrl+A - Select All
-						com.neuronrobotics.sdk.common.Log.debug("Select All");
-						session.selectAll();
-						break;
-					case 'C' : // Ctrl+C - Copy
-						session.setCopyListToCurrentSelected();
-						break;
-					case 'V' : // Ctrl+V - Paste
-						session.onPaste();
-						break;
-					case 'D' : // Ctrl+D - Duplicate
-						session.Duplicate();
-						break;
-					case 'H' :
-						if (shift) { // Ctrl+Shift+H - Show All
-							session.showAll();
-						} else { // Ctrl+H - Hide/Show Toggle
-							session.onHideShowOperation();
-						}
-						break;
-					case 'L' : // Ctrl+L - Lock Toggle
-						session.lockToggle();
-						break;
-					case 'W' : // Ctrl+L - Lock Toggle
-						session.wireMeshModeToggle();
-						break;
-					default :
-						com.neuronrobotics.sdk.common.Log.error("CTRL+" + key + " unhandled (raw: " + raw + ")");
-						break;
+					break;
+				case 'Y': // Ctrl+Y - Redo
+					com.neuronrobotics.sdk.common.Log.debug("Redo");
+					session.submit(() -> ap.get().forward());
+					break;
+				case 'G':
+					if (shift) { // Ctrl+Shift+G - Ungroup
+						com.neuronrobotics.sdk.common.Log.debug("Un-Group");
+						session.onUngroup();
+					} else { // Ctrl+G - Group
+						onGroup(null);
+					}
+					break;
+				case 'A': // Ctrl+A - Select All
+					com.neuronrobotics.sdk.common.Log.debug("Select All");
+					session.selectAll();
+					break;
+				case 'C': // Ctrl+C - Copy
+					session.setCopyListToCurrentSelected();
+					break;
+				case 'V': // Ctrl+V - Paste
+					session.onPaste();
+					break;
+				case 'D': // Ctrl+D - Duplicate
+					session.Duplicate();
+					break;
+				case 'H':
+					if (shift) { // Ctrl+Shift+H - Show All
+						session.showAll();
+					} else { // Ctrl+H - Hide/Show Toggle
+						session.onHideShowOperation();
+					}
+					break;
+				case 'L': // Ctrl+L - Lock Toggle
+					session.lockToggle();
+					break;
+				case 'W': // Ctrl+L - Lock Toggle
+					session.wireMeshModeToggle();
+					break;
+				default:
+					com.neuronrobotics.sdk.common.Log.error("CTRL+" + key + " unhandled (raw: " + raw + ")");
+					break;
 				}
 			} else {
 				TransformNR scale = session.getFocusCenter();
 				switch (key) {
-					case 'P' :
+				case 'P':
 
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Ortho");
-						new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
-						break;
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Ortho");
+					new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
+					break;
 
-					case '1' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Front");
-						break;
-					case '2' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 90, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Left");
-						break;
-					case '3' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 180, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Back");
-						break;
-					case '4' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, -90, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Right");
-						break;
-					case '5' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 90)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
-						break;
-					case '6' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, -90)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
-						break;
+				case '1':
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 0)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Front");
+					break;
+				case '2':
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 90, 0)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Left");
+					break;
+				case '3':
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 180, 0)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Back");
+					break;
+				case '4':
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, -90, 0)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Right");
+					break;
+				case '5':
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 90)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
+					break;
+				case '6':
+					engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, -90)),
+							new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+							engine.getFlyingCamera().getZoomDepth());
+					com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
+					break;
 
-					case 'W' : // W - Workplane
-						com.neuronrobotics.sdk.common.Log.debug("Workplane");
-						onWorkplane(null);
-						break;
-					case '-' : // - - Zoom Out
-						com.neuronrobotics.sdk.common.Log.debug("Zoom out");
-						onZoomOut(null);
-						break;
-					case '+' : // + - Zoom In
-						com.neuronrobotics.sdk.common.Log.debug("Zoom in");
-						onZoomIn(null);
-						break;
-					case 'F' : // F - Fit View
-						com.neuronrobotics.sdk.common.Log.debug("Fit view");
-						onFitView(null);
-						break;
-					case 'H' : // H - Set Hole
-						com.neuronrobotics.sdk.common.Log.debug("Set to Hole");
-						session.setToHole();
-						break;
-					case 'S' : // S - Set Solid
-						com.neuronrobotics.sdk.common.Log.debug("Set to solid");
-						session.setToSolid();
-						break;
-					case 'D' : // D - Drop
-						com.neuronrobotics.sdk.common.Log.debug("Drop");
-						session.onDrop();
-						break;
-					case 'E' : // E - Object Workplane Toggle
-						com.neuronrobotics.sdk.common.Log.debug("Call Object WP toggle");
-						session.objectWorkplane();
-						break;
-					case 'L' : // L - Align
-						com.neuronrobotics.sdk.common.Log.debug("Allign");
-						session.onAlign();
-						break;
-					case 'C' : // C - Cruise
-						com.neuronrobotics.sdk.common.Log.debug("Cruse");
-						session.onCruise();
-						break;
-					case 'T' : // T - Toggle Transparent
-						com.neuronrobotics.sdk.common.Log.debug("Transparent toggle");
-						session.toggleTransparent();
-						break;
-					case 'M' : // M - Mirror
-						com.neuronrobotics.sdk.common.Log.debug("Mirror");
-						session.onMirror();
-						break;
-					case 'R' :
-						com.neuronrobotics.sdk.common.Log.debug("Ruler");
-						onRuler(null);
-						break;
-					default :
-						com.neuronrobotics.sdk.common.Log.error("Unhandled key: " + key + " (raw: " + raw + ")");
-						break;
+				case 'W': // W - Workplane
+					com.neuronrobotics.sdk.common.Log.debug("Workplane");
+					onWorkplane(null);
+					break;
+				case '-': // - - Zoom Out
+					com.neuronrobotics.sdk.common.Log.debug("Zoom out");
+					onZoomOut(null);
+					break;
+				case '+': // + - Zoom In
+					com.neuronrobotics.sdk.common.Log.debug("Zoom in");
+					onZoomIn(null);
+					break;
+				case 'F': // F - Fit View
+					com.neuronrobotics.sdk.common.Log.debug("Fit view");
+					onFitView(null);
+					break;
+				case 'H': // H - Set Hole
+					com.neuronrobotics.sdk.common.Log.debug("Set to Hole");
+					session.setToHole();
+					break;
+				case 'S': // S - Set Solid
+					com.neuronrobotics.sdk.common.Log.debug("Set to solid");
+					session.setToSolid();
+					break;
+				case 'D': // D - Drop
+					com.neuronrobotics.sdk.common.Log.debug("Drop");
+					session.onDrop();
+					break;
+				case 'E': // E - Object Workplane Toggle
+					com.neuronrobotics.sdk.common.Log.debug("Call Object WP toggle");
+					session.objectWorkplane();
+					break;
+				case 'L': // L - Align
+					com.neuronrobotics.sdk.common.Log.debug("Allign");
+					session.onAlign();
+					break;
+				case 'C': // C - Cruise
+					com.neuronrobotics.sdk.common.Log.debug("Cruse");
+					session.onCruise();
+					break;
+				case 'T': // T - Toggle Transparent
+					com.neuronrobotics.sdk.common.Log.debug("Transparent toggle");
+					session.toggleTransparent();
+					break;
+				case 'M': // M - Mirror
+					com.neuronrobotics.sdk.common.Log.debug("Mirror");
+					session.onMirror();
+					break;
+				case 'R':
+					com.neuronrobotics.sdk.common.Log.debug("Ruler");
+					onRuler(null);
+					break;
+				default:
+					com.neuronrobotics.sdk.common.Log.error("Unhandled key: " + key + " (raw: " + raw + ")");
+					break;
 				}
 			}
 		});

@@ -439,6 +439,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
+		synchronizedUpdate(currentState, source, file);
+	}
+
+	private synchronized void synchronizedUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 		if (lastUpdate != null)
 			lastUpdate.interrupt();
 		timeOfLastUpdate = System.currentTimeMillis();
@@ -449,12 +453,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
-		// try {
-		// Thread.sleep(16);
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 	}
 
 	@Override

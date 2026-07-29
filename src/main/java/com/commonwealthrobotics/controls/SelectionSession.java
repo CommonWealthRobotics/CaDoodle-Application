@@ -872,14 +872,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void UpdateUIControls(List<CSG> cs) {
 		hideHalos();
 		resetSelectedCSGsFromCurrentState(cs);
-		parametrics.getChildren().clear();
+		
 		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
 		GridPane gp = new GridPane(5, 5);
+		
 		int line = 0;
+		parametrics.getChildren().clear();
 		parametrics.getChildren().add(gp);
-		int width = 200;
+		int width = 100;
 		int c1Width = 100;
+		gp.setPrefWidth(width+c1Width);
+		//gp.setMaxWidth(width+c1Width);
+		
 		ColumnConstraints col0 = new ColumnConstraints();
 		col0.setHgrow(Priority.NEVER);
 		col0.setMinWidth(c1Width);
@@ -887,7 +892,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		col0.setMaxWidth(c1Width);
 		ColumnConstraints col1 = new ColumnConstraints();
 		col1.setMinWidth(width);
-		col1.setHgrow(Priority.ALWAYS);
+		col1.setHgrow(Priority.SOMETIMES);
 
 		gp.getColumnConstraints().setAll(col0, col1);
 		if (getSelected().size() > 0) {
@@ -939,7 +944,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			manipulation.setUnlocked(!lockMove);
-			String name = "Shapes" + " (" + getSelected().size() + ")";
+			String name = ap.getTranslation("shapes") + " (" + getSelected().size() + ")";
 			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
 
 			if (csgs.size() == 1) {
