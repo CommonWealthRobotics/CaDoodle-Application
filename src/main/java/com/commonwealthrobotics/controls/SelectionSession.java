@@ -2690,10 +2690,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				timeSinceLastMove = System.currentTimeMillis();
 				// TickToc.setEnabled(true);
 				TickToc.tic("Start");
+				TransformNR wp = ap.get().getWorkplane();
 
 				// Get camera orientation for screen-aligned movement
 				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians());
+				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians()
+						- wp.getRotation().getRotationAzimuthRadians());
 				Quadrant quad = Quadrant.getQuad(camAz);
 				double currentRotZ = Quadrant.QuadrantToAngle(quad);
 
@@ -2701,13 +2703,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double yawRad = Math.toRadians(currentRotZ - 90);
 				double cos = Math.cos(yawRad);
 				double sin = Math.sin(yawRad);
+				//com.neuronrobotics.sdk.common.Log.error("\n\n\nKey   "+stateUnitVectorTmp.toSimpleString());
+
 
 				double inX = stateUnitVectorTmp.getX();
 				double inY = stateUnitVectorTmp.getY();
 
 				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
 						stateUnitVectorTmp.getZ());
-
+				//com.neuronrobotics.sdk.common.Log.error("\nState "+stateUnitVector.toSimpleString());
 				double incement = getSnapGridValue();
 
 				boolean updateTrig = false;
@@ -2726,16 +2730,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
 						roundToNearest(stateUnitVector.getY() * incement, incement),
 						roundToNearest(stateUnitVector.getZ() * incement, incement));
+				//com.neuronrobotics.sdk.common.Log.error("\nRounded "+stateUnitVector.toSimpleString());
 
 				TransformNR current = manipulation.getGlobalPose().copy();
-				TransformNR wp = ap.get().getWorkplane();
 
 				// Convert to workplane-local coordinates
 				TransformNR localCurrent = wp.inverse().times(current);
+				//com.neuronrobotics.sdk.common.Log.error("\nLocal "+localCurrent.toSimpleString());
+
 
 				// Convert world delta to workplane-local delta
-				double wpAz = Math.toDegrees(wp.getRotation().getRotationAzimuthRadians());
-				double rad = Math.toRadians(-wpAz);
+
+				Quadrant wpQu = Quadrant.getQuad(wp.getRotation().getRotationAzimuthRadians());
+				double wpz = Quadrant.QuadrantToAngle(wpQu);
+				double rad = Math.toRadians(-wpz);
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
 
