@@ -24,7 +24,7 @@ import com.sun.net.httpserver.HttpServer;
  * Binds to localhost only. Compatible with Cursor and other MCP clients.
  */
 public class MCPServer {
-	public static final int DEFAULT_PORT = 8080;
+	public static int DEFAULT_PORT = 8080;
 	public static final String MCP_PATH = "/mcp";
 
 	private final int port;
@@ -81,7 +81,7 @@ public class MCPServer {
 			executor.shutdownNow();
 			executor = null;
 		}
-		Log.info("MCP Server stopped");
+		System.out.println("MCP Server stopped");
 	}
 
 	private void handleRoot(HttpExchange exchange) throws IOException {

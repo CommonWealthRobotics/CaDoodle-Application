@@ -1618,7 +1618,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	}
 
-
 	private void handleMovement(KeyEvent event) {
 		double dist = 1;
 		if (event.isShiftDown())
@@ -1971,43 +1970,55 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationDone() {
+		MCPServerToggle();
+	}
 
-		session.submit(() -> {
-			if (mcpServer == null) {
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				mcpServer = new MCPServer();
-				System.out.println("Starting MCP server...");
-				try {
-					session.submit(() -> mcpServer.start());
-					Thread.sleep(200);
-					System.out.println("MCP server.start() completed");
-				} catch (Exception e) {
-					System.out.println("Exception in MCP server thread: " + e.getMessage());
-					e.printStackTrace();
-				}
-
-				Log.info("MCP Server (Streamable HTTP) started on http://127.0.0.1:" + MCPServer.DEFAULT_PORT
-						+ MCPServer.MCP_PATH);
-
-				// Register shutdown hook to stop MCP server
-				Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-					if (mcpServer != null) {
-						mcpServer.stop();
+	public void MCPServerToggle() {
+		Object object = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server", "" + false);
+		Object port = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server_port",
+				((int) (Math.random() * 35000) + 1024));
+		boolean MCP = Boolean.parseBoolean(object.toString());
+		int portNum = (int) Double.parseDouble(port.toString());
+		MCPServer.DEFAULT_PORT = portNum;
+		if (MCP)
+			session.submit(() -> {
+				if (mcpServer == null) {
+					try {
+						Thread.sleep(1500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				}));
-				mcpServer.setDependencies(ap, session);
-			} else
-				session.submit(() -> mcpServer.setDependencies(ap, session));
-		});
+					mcpServer = new MCPServer();
+					System.out.println("Starting MCP server...");
+					try {
+						session.submit(() -> mcpServer.start());
+						Thread.sleep(200);
+						System.out.println("MCP server.start() completed");
+					} catch (Exception e) {
+						System.out.println("Exception in MCP server thread: " + e.getMessage());
+						e.printStackTrace();
+					}
 
-		BowlerStudio.runLater(() -> {
-			fileNameBox.setText(ap.get().getMyProjectName());
-		});
+					Log.info("MCP Server (Streamable HTTP) started on http://127.0.0.1:" + MCPServer.DEFAULT_PORT
+							+ MCPServer.MCP_PATH);
+
+					// Register shutdown hook to stop MCP server
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+						if (mcpServer != null) {
+							mcpServer.stop();
+						}
+					}));
+					mcpServer.setDependencies(ap, session);
+				} else
+					session.submit(() -> mcpServer.setDependencies(ap, session));
+			});
+		else {
+			if (mcpServer != null) {
+				mcpServer.stop();
+				mcpServer = null;
+			}
+		}
 	}
 
 	@Override
@@ -2017,8 +2028,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationStart() {
-		// Auto-generated method stub
-
+		BowlerStudio.runLater(() -> {
+			fileNameBox.setText(ap.get().getMyProjectName());
+		});
 	}
 
 	@Override
