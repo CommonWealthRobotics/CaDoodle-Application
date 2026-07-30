@@ -58,7 +58,9 @@ import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -80,7 +82,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -1121,7 +1125,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					timelineMirrorShow, timelineFilletShow, timelineExtrudeShow, timelineRadialShow, timelineLinearShow,
 					timelineDeleteShow, timelineMoveObjectShow, timelineOtherShow);
 			label = new Label(shapeConfiguration.getText());
-			renameBtn = new Button("Rename");
+			renameBtn = new Button(ap.getTranslation("rename"));
 
 			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
 					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
@@ -1207,6 +1211,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public void makeEditableTitle(TitledPane pane) {
 		renameBtn.getStyleClass().add("normal-button");
 		TextField textField = new TextField();
+		textField.setPrefWidth(50);
 		textField.setVisible(false);
 		textField.setTextFormatter(new TextFormatter<>(change -> {
 			String newText = change.getControlNewText();
@@ -1220,8 +1225,31 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		StackPane titleStack = new StackPane(label, textField);
 		StackPane.setAlignment(label, Pos.CENTER_LEFT);
 		StackPane.setAlignment(textField, Pos.CENTER_LEFT);
-		HBox graphic = new HBox(5, titleStack, renameBtn);
-		graphic.setAlignment(Pos.CENTER_LEFT);
+
+		GridPane graphic = new GridPane();
+		graphic.setPrefWidth(100);
+		// graphic.setGridLinesVisible(true);
+		graphic.setHgap(5);
+
+		ColumnConstraints titleCol = new ColumnConstraints();
+		titleCol.setHgrow(Priority.ALWAYS);
+		titleCol.setFillWidth(true);
+
+		ColumnConstraints btnCol = new ColumnConstraints();
+		btnCol.setHgrow(Priority.NEVER);
+
+		graphic.getColumnConstraints().addAll(titleCol, btnCol);
+
+		GridPane.setHgrow(titleStack, Priority.ALWAYS);
+		GridPane.setFillWidth(titleStack, true);
+		GridPane.setValignment(titleStack, VPos.CENTER);
+
+		GridPane.setHalignment(renameBtn, HPos.RIGHT);
+		GridPane.setValignment(renameBtn, VPos.CENTER);
+
+		graphic.add(titleStack, 0, 0);
+		graphic.add(renameBtn, 1, 0);
+
 		pane.setText("");
 		pane.setGraphic(graphic);
 
@@ -1642,6 +1670,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						break;
 					case RIGHT :
 						session.moveInCameraFrame(new TransformNR(0, -dist, 0));
+						break;
+					default :
 						break;
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());

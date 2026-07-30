@@ -217,7 +217,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private CaDoodleOperation source;
 	private TransformNR screenPositionOfLatestMeshClick = null;
 	private GridPane materialGrid;
-	private TitledPane materialPanel;;
+	private TitledPane materialPanel;
+	private double sessionDeltaX = 0;
+	private double sessionDeltaY = 0;
+	private double sessionDeltaZ = 0;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler, MeshView ground) {
@@ -872,14 +875,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void UpdateUIControls(List<CSG> cs) {
 		hideHalos();
 		resetSelectedCSGsFromCurrentState(cs);
-		parametrics.getChildren().clear();
+
 		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
 		GridPane gp = new GridPane(5, 5);
+
 		int line = 0;
+		parametrics.getChildren().clear();
 		parametrics.getChildren().add(gp);
-		int width = 200;
+		int width = 170;
 		int c1Width = 100;
+		gp.setPrefWidth(width + c1Width);
+		//gp.setMaxWidth(width+c1Width);
+
 		ColumnConstraints col0 = new ColumnConstraints();
 		col0.setHgrow(Priority.NEVER);
 		col0.setMinWidth(c1Width);
@@ -887,7 +895,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		col0.setMaxWidth(c1Width);
 		ColumnConstraints col1 = new ColumnConstraints();
 		col1.setMinWidth(width);
-		col1.setHgrow(Priority.ALWAYS);
+		col1.setHgrow(Priority.SOMETIMES);
 
 		gp.getColumnConstraints().setAll(col0, col1);
 		if (getSelected().size() > 0) {
@@ -939,7 +947,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			manipulation.setUnlocked(!lockMove);
-			String name = "Shapes" + " (" + getSelected().size() + ")";
+			String name = ap.getTranslation("shapes") + " (" + getSelected().size() + ")";
 			List<CSG> csgs = getSelectedCSG(selectedSnapshot);
 
 			if (csgs.size() == 1) {
@@ -2685,10 +2693,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				timeSinceLastMove = System.currentTimeMillis();
 				// TickToc.setEnabled(true);
 				TickToc.tic("Start");
+				TransformNR wp = ap.get().getWorkplane();
 
 				// Get camera orientation for screen-aligned movement
 				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians());
+				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians()
+						- wp.getRotation().getRotationAzimuthRadians());
 				Quadrant quad = Quadrant.getQuad(camAz);
 				double currentRotZ = Quadrant.QuadrantToAngle(quad);
 
@@ -2696,13 +2706,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double yawRad = Math.toRadians(currentRotZ - 90);
 				double cos = Math.cos(yawRad);
 				double sin = Math.sin(yawRad);
+				//com.neuronrobotics.sdk.common.Log.error("\n\n\nKey   "+stateUnitVectorTmp.toSimpleString());
+
 
 				double inX = stateUnitVectorTmp.getX();
 				double inY = stateUnitVectorTmp.getY();
 
 				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
 						stateUnitVectorTmp.getZ());
-
+				//com.neuronrobotics.sdk.common.Log.error("\nState "+stateUnitVector.toSimpleString());
 				double incement = getSnapGridValue();
 
 				boolean updateTrig = false;
@@ -2722,15 +2734,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						roundToNearest(stateUnitVector.getY() * incement, incement),
 						roundToNearest(stateUnitVector.getZ() * incement, incement));
 
-				TransformNR current = manipulation.getGlobalPose().copy();
-				TransformNR wp = ap.get().getWorkplane();
-
-				// Convert to workplane-local coordinates
-				TransformNR localCurrent = wp.inverse().times(current);
-
 				// Convert world delta to workplane-local delta
-				double wpAz = Math.toDegrees(wp.getRotation().getRotationAzimuthRadians());
-				double rad = Math.toRadians(-wpAz);
+
+				Quadrant wpQu = Quadrant.getQuad(wp.getRotation().getRotationAzimuthRadians());
+				double wpz = Quadrant.QuadrantToAngle(wpQu);
+				double rad = Math.toRadians(-wpz);
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
 
@@ -2739,14 +2747,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				double localDeltaX = deltaX * cos - deltaY * sin;
 				double localDeltaY = deltaX * sin + deltaY * cos;
-
-				// Apply delta in workplane-local space
-				TransformNR localNew = new TransformNR(localCurrent.getX() + localDeltaX,
-						localCurrent.getY() + localDeltaY, localCurrent.getZ() + stateUnitVector.getZ());
-
-				// Convert back to world coordinates
-				TransformNR tf = wp.times(localNew);
-				tf.setRotation(current.getRotation());
+				sessionDeltaX += localDeltaX;
+				sessionDeltaY += localDeltaY;
+				sessionDeltaZ += stateUnitVector.getZ();
+				TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
 
 				List<String> selectedSnapshot = selectedSnapshot();
 
@@ -2766,7 +2770,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							}
 							applyingMoveOperation = true;
 							try {
-								ap.addOp(new MoveCenter().setLocation(manipulation.getGlobalPose().copy())
+								sessionDeltaX = 0;
+								sessionDeltaY = 0;
+								sessionDeltaZ = 0;
+								ap.addOp(new MoveCenter().setLocation(manipulation.getInLocal().copy())
 										.setNames(selectedSnapshot(), ap.get())).join();
 							} catch (InterruptedException e) {
 								com.neuronrobotics.sdk.common.Log.error(e);
@@ -2785,10 +2792,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					});
 					timeoutMoveThread.start();
 				}
-				// Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" +
-				// current.toSimpleString());
-				// manipulation.setInReferenceFrame(tf);
-				manipulation.set(tf);
+				manipulation.setInReferenceFrame(sessionDelta);
 				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
 
 				TickToc.setEnabled(false);

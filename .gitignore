@@ -40,3 +40,12 @@ bowler
 # Added by cargo
 
 /target
+
+bin
+/check_translations.py
+/comprehensive_translations.py
+/final_check.py
+/find_garbled.py
+/fix_garbled.py
+/fix_translations.py
+/check_json.py
