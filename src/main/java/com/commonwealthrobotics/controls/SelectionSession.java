@@ -2733,14 +2733,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
 						roundToNearest(stateUnitVector.getY() * incement, incement),
 						roundToNearest(stateUnitVector.getZ() * incement, incement));
-				//com.neuronrobotics.sdk.common.Log.error("\nRounded "+stateUnitVector.toSimpleString());
-
-				TransformNR current = manipulation.getGlobalPose().copy();
-
-				// Convert to workplane-local coordinates
-				TransformNR localCurrent = wp.inverse().times(current);
-				//com.neuronrobotics.sdk.common.Log.error("\nLocal "+localCurrent.toSimpleString());
-
 
 				// Convert world delta to workplane-local delta
 
@@ -2759,9 +2751,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				sessionDeltaY += localDeltaY;
 				sessionDeltaZ += stateUnitVector.getZ();
 				TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
-				// Apply delta in workplane-local space
-				TransformNR localNew = new TransformNR(localCurrent.getX() + localDeltaX,
-						localCurrent.getY() + localDeltaY, localCurrent.getZ() + stateUnitVector.getZ());
 
 				List<String> selectedSnapshot = selectedSnapshot();
 
