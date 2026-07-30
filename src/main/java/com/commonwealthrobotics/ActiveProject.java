@@ -50,7 +50,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -439,6 +438,10 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
+		synchronizedUpdate(currentState, source, file);
+	}
+
+	private synchronized void synchronizedUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile file) {
 		if (lastUpdate != null)
 			lastUpdate.interrupt();
 		timeOfLastUpdate = System.currentTimeMillis();
@@ -449,12 +452,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				com.neuronrobotics.sdk.common.Log.error(e);
 			}
 		}
-		// try {
-		// Thread.sleep(16);
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 	}
 
 	@Override
@@ -855,7 +852,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		AnchorPane.setRightAnchor(myroot, 0.0);
 		BowlerStudio.runLater(() -> {
 			Stage stage = new Stage();
-			stage.initModality(Modality.APPLICATION_MODAL);
+			// stage.initModality(Modality.APPLICATION_MODAL);
 			stage.initStyle(StageStyle.UTILITY);
 			stage.setTitle("Language Selection");
 			stage.setScene(new Scene(root));

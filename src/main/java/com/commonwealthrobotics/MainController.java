@@ -13,9 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
@@ -58,7 +60,9 @@ import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -80,7 +84,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -117,6 +123,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private long nameTyped = System.currentTimeMillis();
 	private Thread nameTypeDelay = null;
 	private Pane paneOverlay2D;
+	private final Set<KeyCode> heldKeys = EnumSet.noneOf(KeyCode.class);
 
 	/**
 	 * CaDoodle Model Classes
@@ -1121,7 +1128,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					timelineMirrorShow, timelineFilletShow, timelineExtrudeShow, timelineRadialShow, timelineLinearShow,
 					timelineDeleteShow, timelineMoveObjectShow, timelineOtherShow);
 			label = new Label(shapeConfiguration.getText());
-			renameBtn = new Button("Rename");
+			renameBtn = new Button(ap.getTranslation("rename"));
 
 			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
 					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
@@ -1207,6 +1214,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public void makeEditableTitle(TitledPane pane) {
 		renameBtn.getStyleClass().add("normal-button");
 		TextField textField = new TextField();
+		textField.setPrefWidth(50);
 		textField.setVisible(false);
 		textField.setTextFormatter(new TextFormatter<>(change -> {
 			String newText = change.getControlNewText();
@@ -1220,8 +1228,31 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		StackPane titleStack = new StackPane(label, textField);
 		StackPane.setAlignment(label, Pos.CENTER_LEFT);
 		StackPane.setAlignment(textField, Pos.CENTER_LEFT);
-		HBox graphic = new HBox(5, titleStack, renameBtn);
-		graphic.setAlignment(Pos.CENTER_LEFT);
+
+		GridPane graphic = new GridPane();
+		graphic.setPrefWidth(100);
+		// graphic.setGridLinesVisible(true);
+		graphic.setHgap(5);
+
+		ColumnConstraints titleCol = new ColumnConstraints();
+		titleCol.setHgrow(Priority.ALWAYS);
+		titleCol.setFillWidth(true);
+
+		ColumnConstraints btnCol = new ColumnConstraints();
+		btnCol.setHgrow(Priority.NEVER);
+
+		graphic.getColumnConstraints().addAll(titleCol, btnCol);
+
+		GridPane.setHgrow(titleStack, Priority.ALWAYS);
+		GridPane.setFillWidth(titleStack, true);
+		GridPane.setValignment(titleStack, VPos.CENTER);
+
+		GridPane.setHalignment(renameBtn, HPos.RIGHT);
+		GridPane.setValignment(renameBtn, VPos.CENTER);
+
+		graphic.add(titleStack, 0, 0);
+		graphic.add(renameBtn, 1, 0);
+
 		pane.setText("");
 		pane.setGraphic(graphic);
 
@@ -1583,6 +1614,61 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	}
 
+
+	private void handleMovement(KeyEvent event) {
+		double dist = 1;
+		if (event.isShiftDown())
+			dist = 3;
+		switch (event.getCode()) {
+			case UP :
+			case DOWN :
+			case LEFT :
+			case RIGHT :
+				break;
+			default :
+				return; // not a movement key, ignore
+		}
+
+		boolean ctrl = Manipulation.isControlOrCommandPressed(event);
+
+		boolean up = heldKeys.contains(KeyCode.UP);
+		boolean down = heldKeys.contains(KeyCode.DOWN);
+		boolean left = heldKeys.contains(KeyCode.LEFT);
+		boolean right = heldKeys.contains(KeyCode.RIGHT);
+
+		// cancel out opposite pairs so UP+DOWN or LEFT+RIGHT doesn't drift
+		if (up && down) {
+			up = false;
+			down = false;
+		}
+		if (left && right) {
+			left = false;
+			right = false;
+		}
+
+		double x = 0, y = 0, z = 0;
+
+		if (up) {
+			if (ctrl)
+				z += dist;
+			else
+				x += dist;
+		}
+		if (down) {
+			if (ctrl)
+				z -= dist;
+			else
+				x -= dist;
+		}
+		if (left)
+			y += dist;
+		if (right)
+			y -= dist;
+
+		if (x != 0 || y != 0 || z != 0)
+			session.moveInCameraFrame(new TransformNR(x, y, z));
+	}
+
 	private void setupEngineControls() {
 
 		selectionBox.setPressEvent(event -> {
@@ -1601,8 +1687,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		session.setKeyBindingFocus();
 		// SubScene subScene = engine.getSubScene();
-
+		engine.addKeyFilter(KeyEvent.KEY_RELEASED, event -> {
+			heldKeys.remove(event.getCode());
+		});
 		engine.addKeyFilter(KeyEvent.KEY_PRESSED, event -> {
+			heldKeys.add(event.getCode());
 			if (session.isFocused()) {
 				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
 				return;
@@ -1621,27 +1710,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN)
 					|| (event.getCode() == KeyCode.LEFT) || (event.getCode() == KeyCode.RIGHT)
 					|| (event.getCode() == KeyCode.TAB)) {
-				double dist = 1;
-				if (event.isShiftDown())
-					dist = 3;
 				switch (event.getCode()) {
 					case UP :
-						if (Manipulation.isControlOrCommandPressed(event)) {
-							session.moveInCameraFrame(new TransformNR(0, 0, dist));
-						} else
-							session.moveInCameraFrame(new TransformNR(dist, 0, 0));
-						break;
 					case DOWN :
-						if (Manipulation.isControlOrCommandPressed(event)) {
-							session.moveInCameraFrame(new TransformNR(0, 0, -dist));
-						} else
-							session.moveInCameraFrame(new TransformNR(-dist, 0, 0));
-						break;
 					case LEFT :
-						session.moveInCameraFrame(new TransformNR(0, dist, 0));
-						break;
 					case RIGHT :
-						session.moveInCameraFrame(new TransformNR(0, -dist, 0));
+						handleMovement(event);
+					default :
 						break;
 				}
 				// com.neuronrobotics.sdk.common.Log.error("Arrows " + event.getCode());
