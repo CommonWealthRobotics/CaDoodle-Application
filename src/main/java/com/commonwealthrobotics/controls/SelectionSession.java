@@ -217,7 +217,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private CaDoodleOperation source;
 	private TransformNR screenPositionOfLatestMeshClick = null;
 	private GridPane materialGrid;
-	private TitledPane materialPanel;;
+	private TitledPane materialPanel;
+	private double sessionDeltaX = 0;
+	private double sessionDeltaY = 0;
+	private double sessionDeltaZ = 0;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler, MeshView ground) {
@@ -2752,14 +2755,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 				double localDeltaX = deltaX * cos - deltaY * sin;
 				double localDeltaY = deltaX * sin + deltaY * cos;
-
+				sessionDeltaX += localDeltaX;
+				sessionDeltaY += localDeltaY;
+				sessionDeltaZ += stateUnitVector.getZ();
+				TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
 				// Apply delta in workplane-local space
 				TransformNR localNew = new TransformNR(localCurrent.getX() + localDeltaX,
 						localCurrent.getY() + localDeltaY, localCurrent.getZ() + stateUnitVector.getZ());
-
-				// Convert back to world coordinates
-				TransformNR tf = wp.times(localNew);
-				tf.setRotation(current.getRotation());
 
 				List<String> selectedSnapshot = selectedSnapshot();
 
@@ -2779,7 +2781,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 							}
 							applyingMoveOperation = true;
 							try {
-								ap.addOp(new MoveCenter().setLocation(manipulation.getGlobalPose().copy())
+								sessionDeltaX = 0;
+								sessionDeltaY = 0;
+								sessionDeltaZ = 0;
+								ap.addOp(new MoveCenter().setLocation(manipulation.getInLocal().copy())
 										.setNames(selectedSnapshot(), ap.get())).join();
 							} catch (InterruptedException e) {
 								com.neuronrobotics.sdk.common.Log.error(e);
@@ -2798,10 +2803,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					});
 					timeoutMoveThread.start();
 				}
-				// Log.debug("Manipulator pose update \n" + tf.toSimpleString() + "\n" +
-				// current.toSimpleString());
-				// manipulation.setInReferenceFrame(tf);
-				manipulation.set(tf);
+				manipulation.setInReferenceFrame(sessionDelta);
 				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
 
 				TickToc.setEnabled(false);
