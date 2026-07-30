@@ -2028,7 +2028,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			advancedButtons.setVisible(advanced);
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
-			RobotLabDrawer.setVisible(false); // Disabled Robot lab while it is not feaature complete
+			RobotLabDrawer.setVisible(advanced); 
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
 			renameBtn.setVisible(advanced);
