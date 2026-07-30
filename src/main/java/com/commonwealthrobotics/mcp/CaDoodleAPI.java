@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.commonwealthrobotics.ActiveProject;
@@ -1038,7 +1039,10 @@ public class CaDoodleAPI {
 
 			long timeoutMs = params.containsKey("timeoutMs") ? ((Number) params.get("timeoutMs")).longValue() : 30000L;
 
-			selectionSession.engine.focusOrientationAndWait(orient, position, zoomValue, timeoutMs);
+			Optional<Thread> t = selectionSession.engine.focusOrientation(orient, position, zoomValue);
+			if (t.isPresent()) {
+				t.get().join(timeoutMs);
+			}
 
 			result.put("success", true);
 			if (preset != null) {
