@@ -1013,7 +1013,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return sheets;
 	}
 
-	public String getTranslation(String key) {
+	public static String getTranslation(String key) {
 		try {
 			return getLangaugePack().getString(key);
 		} catch (Exception ex) {

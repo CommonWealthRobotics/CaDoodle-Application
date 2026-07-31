@@ -590,7 +590,7 @@ public class TimelineManager {
 				setupCheckboxEvent(moveButtons, tmp);
 			});
 		}
-		String hideLabel = ActiveProject.getLangaugePack().getString("timeline.hideobj");
+		String hideLabel = ActiveProject.getTranslation("timeline.hideobj");
 		Tooltip tt = tmp.getTooltip();
 		if (tt == null)
 			tt = new Tooltip(op.getType() + " : " + hideLabel);
