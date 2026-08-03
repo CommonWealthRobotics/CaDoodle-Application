@@ -62,6 +62,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -810,6 +811,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TransformNR wp = ap.get().getWorkplane();
 					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
 							localPoint.getZ());
+					if (name.hasManipulator()) {
+						try {
+							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
+							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
+						} catch (MissingManipulatorException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
