@@ -594,11 +594,14 @@ public class TimelineManager {
 		if (hideLabel == null)
 			hideLabel = ActiveProject.getTranslation("timeline.hideobj");
 		Tooltip tt = tmp.getTooltip();
+		String translation = ActiveProject.getTranslation(op.getClass().getSimpleName());
+
 		if (tt == null)
-			tt = new Tooltip(ActiveProject.getTranslation(op.getClass().getSimpleName()) + " : " + hideLabel);
+			tt = new Tooltip(translation + " : " + hideLabel);
 		else {
-			if (!tt.getText().contains(op.getType()))
-				tt = new Tooltip(ActiveProject.getTranslation(op.getClass().getSimpleName()) + " , " + tt.getText());
+			if (!tt.getText().contains(translation)) {
+				tt = new Tooltip(translation + " , " + tt.getText());
+			}
 		}
 		tmp.setTooltip(tt);
 		moveButtons.add(toAdd);
