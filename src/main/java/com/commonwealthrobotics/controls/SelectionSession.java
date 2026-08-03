@@ -49,6 +49,7 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -626,12 +627,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
+			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
+			if (ModifyLimb.class.isInstance(source)) {
+				source.getCaDoodleFile().getBoundsCache().clear();
+			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
 			BowlerStudio.runLater(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
@@ -726,8 +730,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		haloScale.setPivotX(cx);
 		haloScale.setPivotY(cy);
 		haloScale.setPivotZ(cz);
-
-		halo.getTransforms().setAll(haloScale);
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		halo.getTransforms().setAll(haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
