@@ -46,7 +46,7 @@ public class ExtrudeUIManager {
 					Set<String> selectedSet = new HashSet<String>();
 					for (CSG c : selected)
 						selectedSet.add(c.getName());
-					ExtrudeSurface op = new ExtrudeSurface().setWorkplane(workplane.getCurrentAbsolutePose())
+					ExtrudeSurface op = new ExtrudeSurface().setSlicePlane(workplane.getCurrentAbsolutePose())
 							.setToExtrude(selectedSet).setSweep(sweep);
 					Thread thread = ap.addOp(op);
 					session.clearSelection();
@@ -60,6 +60,7 @@ public class ExtrudeUIManager {
 					session.selectAll(added);
 
 					workplane.placeWorkplaneVisualization();
+					workplane.setTemporaryPlane();
 					ruler.disableRulerMode();
 					session.save();
 					session.setMode(SpriteDisplayMode.Default);
