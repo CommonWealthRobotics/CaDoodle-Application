@@ -1905,6 +1905,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void cancel() {
 		com.neuronrobotics.sdk.common.Log.debug("MainController:Cancel event");
+		if (session.timeoutMoveThread != null)
+			return;
 		session.getExecutor().submit(() -> {
 			try {
 				session.setMode(SpriteDisplayMode.Default);

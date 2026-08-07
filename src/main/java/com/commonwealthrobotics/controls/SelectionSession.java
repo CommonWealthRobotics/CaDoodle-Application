@@ -207,7 +207,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
-	private Thread timeoutMoveThread = null;
+	public Thread timeoutMoveThread = null;
 	private boolean applyingMoveOperation;
 	private Button renameBtn;
 	private Button filletButton;
