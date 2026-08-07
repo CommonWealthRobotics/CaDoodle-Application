@@ -1017,6 +1017,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		try {
 			return getLangaugePack().getString(key);
 		} catch (Exception ex) {
+			Log.error("Translation to " + getCurrentLocale() + " of " + key + " failed!");
 			Log.error(ex);
 			return key;
 		}
