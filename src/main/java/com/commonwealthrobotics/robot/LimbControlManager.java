@@ -97,7 +97,7 @@ public class LimbControlManager {
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Clear);
 			});
-			TransformNR base2 = mod.getTip().copy();
+			TransformNR base2 = mod.getTipTF().copy();
 			// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 			RotationNR nr = base2.getRotation();
 			TransformNR tf = new TransformNR(base2.getX(), base2.getY(), base2.getZ())

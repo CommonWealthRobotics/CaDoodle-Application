@@ -82,6 +82,7 @@ public class TimelineManager {
 
 	private CheckBox timelineOtherShow;
 	private int buttonSize = 100;
+	private String hideLabel = null;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -590,13 +591,17 @@ public class TimelineManager {
 				setupCheckboxEvent(moveButtons, tmp);
 			});
 		}
-		String hideLabel = ActiveProject.getLangaugePack().getString("timeline.hideobj");
+		if (hideLabel == null)
+			hideLabel = ActiveProject.getTranslation("timeline.hideobj");
 		Tooltip tt = tmp.getTooltip();
+		String translation = ActiveProject.getTranslation(op.getClass().getSimpleName());
+
 		if (tt == null)
-			tt = new Tooltip(op.getType() + " : " + hideLabel);
+			tt = new Tooltip(translation + " : " + hideLabel);
 		else {
-			if (!tt.getText().contains(op.getType()))
-				tt = new Tooltip(op.getType() + " , " + tt.getText());
+			if (!tt.getText().contains(translation)) {
+				tt = new Tooltip(translation + " , " + tt.getText());
+			}
 		}
 		tmp.setTooltip(tt);
 		moveButtons.add(toAdd);
