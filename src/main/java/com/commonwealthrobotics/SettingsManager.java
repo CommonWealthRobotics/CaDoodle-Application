@@ -81,6 +81,10 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private TextField apiKey;
+
+	@FXML
+	private TextField MCPPort;
+
 	@FXML
 	private TextField numPoints;
 
@@ -126,6 +130,9 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	private CheckBox startServerCheckbox;
+
+	@FXML
+	private CheckBox startMCPServer;
 
 	@FXML
 	private TextField workingDirPath;
@@ -236,6 +243,18 @@ public class SettingsManager implements ICSGClientEvent {
 			// com.neuronrobotics.sdk.common.Log.error(e);;
 			connectServer.setDisable(true);
 			return;
+		}
+	}
+
+	@FXML
+	void onMcpServerChange(ActionEvent event) {
+		ConfigurationDatabase.put("CaDoodle", "StartMCP_Server", "" + startMCPServer.isSelected());
+		try {
+			ConfigurationDatabase.put("CaDoodle", "StartMCP_Server_port",
+					Math.max(1024, Math.min(Integer.parseInt(MCPPort.getText()), 65000)));
+			mc.MCPServerToggle();
+		} catch (Exception ex) {
+			Log.error(ex);
 		}
 	}
 
@@ -570,15 +589,22 @@ public class SettingsManager implements ICSGClientEvent {
 		ActiveProject.setStyleSheet(topPane);
 		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
 		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
-		//		try {
-		//			// Optionally dig deeper with internal API (may break across JFX versions)
-		//			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
-		//			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
-		//			renderPipelineDisplay.setText(name);
-		//		} catch (Throwable ex) {
-		//			Log.error(ex);
-		//			renderPipelineDisplay.setText(ex.getMessage());
-		//		}
+		Object object = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server", "" + false);
+		Object portmcp = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server_port",
+				((int) (Math.random() * 35000) + 1024));
+		boolean MCP = Boolean.parseBoolean(object.toString());
+		int portNum = (int) Double.parseDouble(portmcp.toString());
+		startMCPServer.setSelected(MCP);
+		MCPPort.setText(portNum + "");
+		// try {
+		// // Optionally dig deeper with internal API (may break across JFX versions)
+		// GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
+		// String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
+		// renderPipelineDisplay.setText(name);
+		// } catch (Throwable ex) {
+		// Log.error(ex);
+		// renderPipelineDisplay.setText(ex.getMessage());
+		// }
 
 	}
 

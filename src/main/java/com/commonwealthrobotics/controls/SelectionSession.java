@@ -49,6 +49,7 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -62,6 +63,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -207,7 +209,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
-	private Thread timeoutMoveThread = null;
+	public Thread timeoutMoveThread = null;
 	private boolean applyingMoveOperation;
 	private Button renameBtn;
 	private Button filletButton;
@@ -625,12 +627,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
+			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
+			if (ModifyLimb.class.isInstance(source)) {
+				source.getCaDoodleFile().getBoundsCache().clear();
+			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
 			BowlerStudio.runLater(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
@@ -725,8 +730,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		haloScale.setPivotX(cx);
 		haloScale.setPivotY(cy);
 		haloScale.setPivotZ(cz);
-
-		halo.getTransforms().setAll(haloScale);
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		halo.getTransforms().setAll(haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
@@ -810,6 +823,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TransformNR wp = ap.get().getWorkplane();
 					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
 							localPoint.getZ());
+					if (name.hasManipulator()) {
+						try {
+							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
+							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
+						} catch (MissingManipulatorException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
@@ -2803,6 +2825,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetManipulator() {
+		Log.error(new Exception("Manipulation reset here"));
 		manipulation.reset();
 	}
 
