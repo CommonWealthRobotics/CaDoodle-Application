@@ -1112,6 +1112,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				ap.loadActive();
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
+				Thread.sleep(3000);
 				Log.flush();
 				System.exit(2);
 			}
@@ -1162,14 +1163,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				if (SettingsManager.clientStateSet()) {
 					com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
 				}
+			} catch (Exception e) {
+				com.neuronrobotics.sdk.common.Log.error(e);
+			}
+			try {
 				setCadoodleFile();
 				// Threaded load happens after UI opens
 				setupFile();
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
+				Thread.sleep(3000);
 				System.exit(1);
 			}
-
 			fileNameBox.setOnKeyTyped(ev -> {
 				onNameTyped();
 			});
