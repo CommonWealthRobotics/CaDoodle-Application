@@ -193,7 +193,7 @@ public class TimelineManager {
 		clear();
 	}
 
-	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
+	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight, int insetDistance) {
 
 		// // Read pixels from the original image
 		// PixelReader pixelReader = originalImage.getPixelReader();
@@ -231,7 +231,7 @@ public class TimelineManager {
 		// Clear the canvas with a transparent background
 		gc.clearRect(0, 0, targetWidth, targetHeight);
 		// Draw the original image scaled to the target size
-		gc.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
+		gc.drawImage(originalImage, 0, -insetDistance, targetWidth, targetHeight + insetDistance + insetDistance);
 		// Create snapshot parameters to preserve transparency
 		SnapshotParameters params = new SnapshotParameters();
 		params.setFill(Color.TRANSPARENT);
@@ -425,7 +425,7 @@ public class TimelineManager {
 					}
 
 				}
-				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0);
+				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0, 5);
 				if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 						|| Sweep.class.isInstance(op)) {
 					setupCheckBox(timelineAddOpShow, toAdd, op);
