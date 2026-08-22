@@ -1082,7 +1082,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert optionsConsume != null : "optionsConsume button failed";
 
 		try {
-			// BowlerStudio3dEngine.setThemeColors(ActiveProject.getLabelTextColor());
+
 			engine = new BowlerStudio3dEngine("CAD window");
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
 
@@ -1205,6 +1205,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// timelineScroll.setFocusTraversable(false);
 		makeEditableTitle(shapeConfiguration);
 		ap.setStyleSheet(totalApplicationBackground);
+		ap.resetAllStyleSheets();
 	}
 
 	/**
@@ -1520,6 +1521,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		linesGroup.setViewOrder(1); // Lower viewOrder renders on top
 		linesGroup.getChildren().add(ground);
 		engine.addUserNode(linesGroup);
+
 		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
 	}
 
