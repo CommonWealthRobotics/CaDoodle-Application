@@ -75,6 +75,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICadoodleSaveStatusUpd
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.SaveOverwriteException;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
@@ -769,6 +770,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Region p = iterator.next();
 			setStyleSheet(p);
 		}
+		BowlerStudio3dEngine.setGridKey(getLabelTextColor("grid-key-color"));
+		BowlerStudio3dEngine.setGridColor(getLabelTextColor("grid-dark-color"));
+		BowlerStudio3dEngine.setLightGrid(getLabelTextColor("grid-light-color"));
+		BowlerStudio3dEngine.updateGrids();
+		BowlerStudio3dEngine.updateRulerColor(getLabelTextColor("label"));
 	}
 
 	public static ResourceBundle getLangaugePack() {
@@ -957,12 +963,14 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		node.getStylesheets().setAll(url);
 	}
 
-	public static Color getLabelTextColor() {
+	public static Color getLabelTextColor(String key) {
 		if (!Platform.isFxApplicationThread()) {
 			throw new IllegalStateException("Must be called on the JavaFX Application Thread");
 		}
 
 		Label label = new Label("test");
+		label.getStyleClass().clear();
+		label.getStyleClass().add(key);
 
 		Pane root = new Pane(label);
 		Scene scene = new Scene(root);
@@ -991,6 +999,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
+		Log.debug("Stylesheet from: " + url);
 		return url;
 	}
 

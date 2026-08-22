@@ -111,7 +111,7 @@ public class ShapePalletMyDoodles {
 		BowlerStudio.runLater(() -> {
 			objectPallet.add(button, col, row);
 			Image thumb = caDoodleFile.loadImageFromFile();
-			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50));
+			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50, 0));
 			ImageView toolimage = new ImageView(thumb);
 
 			toolimage.setFitHeight(300);

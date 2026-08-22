@@ -420,7 +420,7 @@ public class RobotLab {
 		BowlerStudio.runLater(() -> {
 			armsOptionGrid2.add(button, col, row);
 			Image thumb = o.getImage();
-			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60));
+			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60, 0));
 			ImageView toolimage = new ImageView(thumb);
 
 			toolimage.setFitHeight(300);
@@ -500,7 +500,7 @@ public class RobotLab {
 		BowlerStudio.runLater(() -> {
 			controllerGrid.add(button, col, row);
 			Image thumb = o.getImage();
-			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60));
+			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60, 0));
 			ImageView toolimage = new ImageView(thumb);
 
 			toolimage.setFitHeight(300);

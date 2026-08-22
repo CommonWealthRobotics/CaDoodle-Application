@@ -256,9 +256,10 @@ public class ShapesPallet {
 					hover.setText(hover.getText() + " ( " + text + " ) ");
 				}
 			}
-			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", thumb, 60, 25);
+			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", thumb, 60, 20, 0);
 			button.setTooltip(hover);
-			button.getStyleClass().add("image-button");
+			button.getStyleClass().clear();
+			button.getStyleClass().add("image-button-shape-pallet");
 			objectPallet.add(button, col, row);
 			buttonHolder.add(button);
 			if (styleClass != null && ap.isAdvancedMode())

@@ -175,7 +175,6 @@ public class Main extends Application {
 			logfile.createNewFile();
 			Log.enableDebugPrint(true);
 			// Log.enableErrorPrint();
-			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
 
 			hand = new UncaughtExceptionHandler() {

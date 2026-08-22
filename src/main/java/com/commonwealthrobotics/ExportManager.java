@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.SplashManager;
+import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
@@ -139,6 +140,8 @@ public class ExportManager {
 		Thread t = new Thread(() -> {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
+			exportDir = new File(
+					ConfigurationDatabase.get("CaDoodle", "ExportDir", exportDir.getAbsolutePath()).toString());
 			ArrayList<CSG> back = session.getAllVisible();
 			CaDoodleFile caDoodleFile = ap.get();
 			String name = toSlug(caDoodleFile.getMyProjectName());
@@ -177,6 +180,7 @@ public class ExportManager {
 			exportDir = FileSelectionFactory.GetDirectory(exportDir);
 			if (exportDir == null)
 				return;
+			ConfigurationDatabase.put("CaDoodle", "ExportDir", exportDir.getAbsolutePath());
 			SplashManager.renderSplashFrame(1, " Exporting...");
 			//			try {
 			//				Thread.sleep(100);
