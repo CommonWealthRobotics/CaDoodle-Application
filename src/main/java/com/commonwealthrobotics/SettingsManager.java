@@ -214,7 +214,7 @@ public class SettingsManager implements ICSGClientEvent {
 	void checkServerConfigs(KeyEvent event) {
 		try {
 			// Create a trust manager that ignores certificate errors
-			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
@@ -224,7 +224,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 				public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				}
-			} };
+			}};
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init(null, trustAllCerts, null);
@@ -330,7 +330,7 @@ public class SettingsManager implements ICSGClientEvent {
 				try {
 					tempFile = Files.createTempFile("mytemp", ".txt");
 					Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
-					server = new CSGServer((int)Double.parseDouble(port), tempFile.toFile());
+					server = new CSGServer((int) Double.parseDouble(port), tempFile.toFile());
 					new Thread(() -> {
 						try {
 							com.neuronrobotics.sdk.common.Log.debug("\n\nStarting CSG server\n\n");
@@ -438,21 +438,21 @@ public class SettingsManager implements ICSGClientEvent {
 
 	private void setExplanationText(OperationResult result) {
 		switch (result) {
-		case INSERT:
-			insertionExplanation.setVisible(true);
-			askExplanation.setVisible(false);
-			prineExplanation.setVisible(false);
-			break;
-		case PRUNE:
-			insertionExplanation.setVisible(false);
-			askExplanation.setVisible(false);
-			prineExplanation.setVisible(true);
-			break;
-		case ASK:
-			insertionExplanation.setVisible(false);
-			askExplanation.setVisible(true);
-			prineExplanation.setVisible(false);
-			break;
+			case INSERT :
+				insertionExplanation.setVisible(true);
+				askExplanation.setVisible(false);
+				prineExplanation.setVisible(false);
+				break;
+			case PRUNE :
+				insertionExplanation.setVisible(false);
+				askExplanation.setVisible(false);
+				prineExplanation.setVisible(true);
+				break;
+			case ASK :
+				insertionExplanation.setVisible(false);
+				askExplanation.setVisible(true);
+				prineExplanation.setVisible(false);
+				break;
 		}
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
