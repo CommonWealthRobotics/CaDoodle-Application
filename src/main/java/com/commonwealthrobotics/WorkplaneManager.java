@@ -90,7 +90,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		});
 
 		engine.getWorkplaneGroup().addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
-			new Exception().printStackTrace();
+			//new Exception().printStackTrace();
 			setClickOnGround(true);
 		});
 

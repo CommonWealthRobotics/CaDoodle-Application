@@ -2825,7 +2825,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetManipulator() {
-		Log.error(new Exception("Manipulation reset here"));
+		// Log.error(new Exception("Manipulation reset here"));
 		manipulation.reset();
 	}
 
