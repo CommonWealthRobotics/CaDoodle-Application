@@ -36,7 +36,7 @@ public class ExtrudeUIManager {
 
 			if (workplane.isClicked()) {
 
-				session.getExecutor().execute(() -> {
+				session.submit(() -> {
 					if (workplane.isClickOnGround()) {
 						// com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
 						ap.get().setWorkplane(new TransformNR());

@@ -30,7 +30,7 @@ public class FilletUIManager {
 		workplane.placeWorkplaneVisualization();
 
 		workplane.setOnSelectEvent(() -> {
-			session.getExecutor().submit(() -> {
+			session.submit(() -> {
 				if (workplane.isClicked()) {
 					// if (workplane.isClickOnGround()) {
 					// // com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
@@ -45,7 +45,7 @@ public class FilletUIManager {
 							.setToFillet(selectedSet);
 					Thread thread = ap.addOp(op);
 					session.clearSelection();
-					session.getExecutor().execute(() -> {
+					session.submit(() -> {
 						try {
 							thread.join();
 						} catch (InterruptedException e) {

@@ -889,9 +889,8 @@
     -fx-text-fill: #0000aa; /* logo-blue */
 }
 .grid-dark-color {
-    -fx-text-fill: #0838A800; /* logo-blue */
+    -fx-text-fill: #0838A884; /* logo-blue */
 }
 .grid-light-color {
-    -fx-text-fill: #20206000; /* logo-blue */
+    -fx-text-fill: #20206084; /* logo-blue */
 }
-
