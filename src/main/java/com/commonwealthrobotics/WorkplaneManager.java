@@ -315,7 +315,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					TransformNR t = new TransformNR(x, y, z);
 					screenLocation = manipulatorNR.times(t.times(pureRot));
 
-					if ((intersectedNode == wpPick.backgroundView)) {
+					if ((intersectedNode == wpPick.intersectionNode)) {
 						if (updater != null)
 							updater.setWorkplaneLocation(screenLocation);
 
