@@ -273,7 +273,7 @@ public class ShapesPallet {
 					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
 					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
 					workplane.setOnSelectEvent(() -> {
-						session.getExecutor().submit(() -> {
+						session.submit(() -> {
 							session.setMode(SpriteDisplayMode.Default);
 							if (workplane.isClicked())
 								try {
