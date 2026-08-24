@@ -96,6 +96,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		engine.addCustomWorkplaneNode(wpPick);
 		engine.getWorkplaneGroup().setMouseTransparent(true);
+		engine.groundToNormal();
 	}
 
 	public void setIndicator(CSG indicator, Affine centerOffset) {
@@ -161,6 +162,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 			engine.getWorkplaneGroup().setVisible(true);
 			engine.getWorkplaneGroup().setMouseTransparent(true);
+			engine.groundToNormal();
 			session.setMode(SpriteDisplayMode.Default);
 
 			if (onCancel != null) {
@@ -188,7 +190,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		engine.getWorkplaneGroup().addEventFilter(MouseEvent.ANY, this);
 		engine.getWorkplaneGroup().setMouseTransparent(false);
-
+		engine.groundToPicking();
 		// Make user meshes pickable
 
 		for (CSG key : session.getMeshes().keySet()) {
@@ -342,7 +344,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			ev.consume();
 			BowlerKernel.runLater(() -> {
 				engine.getWorkplaneGroup().setMouseTransparent(true);
-
+				engine.groundToNormal();
 				session.getControls().hideRotationHandles();
 
 				wpPick.setMouseTransparent(true);
