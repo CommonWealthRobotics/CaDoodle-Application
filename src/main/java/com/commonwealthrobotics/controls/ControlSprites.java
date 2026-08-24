@@ -397,7 +397,7 @@ public class ControlSprites {
 		controlsGroup.setViewOrder(-2); // Lower viewOrder renders on top
 
 		BowlerStudio.runLater(() -> {
-			engine.addUserNode(footprint);
+			engine.addTransparentorkplaneNode(footprint);
 			for (Node r : allElems) {
 				if (MeshView.class.isInstance(r))
 					((MeshView) r).setCullFace(CullFace.BACK);
