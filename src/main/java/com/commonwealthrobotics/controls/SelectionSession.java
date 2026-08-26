@@ -1728,6 +1728,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Double num = map.get(key);
 			if (Math.abs(getSnapGridValue() - num.doubleValue()) < 0.001) {
 				snapGrid.getSelectionModel().select(key);
+				setSnapGrid(num);
 				break;
 			}
 		}
@@ -2921,7 +2922,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void setSnapGrid(double snapGridValue) {
 		this.setSnapGridValue(snapGridValue);
 		manipulation.setIncrement(snapGridValue);
-
+		engine.setIncrement(snapGridValue);
 		if (getControls() != null)
 			getControls().setSnapGrid(snapGridValue);
 
