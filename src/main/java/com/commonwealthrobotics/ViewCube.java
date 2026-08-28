@@ -125,11 +125,9 @@ public class ViewCube {
 		double el = 0;
 		if (Math.abs(transformNR.getZ()) > 0.1) {
 			TransformNR alligned = transformNR.times(new TransformNR(new RotationNR(0, -az, 0)));
-			double x = alligned.getX();
-			if (Math.abs(x) < 0.1) {
-				x = alligned.getY();
-			}
-			el = Math.toDegrees(Math.atan2(alligned.getZ(), x));
+			double horizontal = Math.hypot(transformNR.getX(), transformNR.getY());
+
+			el = Math.toDegrees(Math.atan2(alligned.getZ(), horizontal));
 			if (el > 90) {
 				el = 180 - el;
 				// az+=180;
