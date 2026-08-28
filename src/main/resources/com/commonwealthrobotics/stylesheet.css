@@ -899,8 +899,12 @@
     -fx-text-fill:  #f2c83d; /* logo-yellow */
 }
 .nav-cube-edge-color {
-    -fx-text-fill: #f4ede0; /* logo-beige */
+    -fx-text-fill: #e7a436; /* logo-orange */
 }
 .nav-cube-corner-color {
-    -fx-text-fill: #000000; /*white*/
+    -fx-text-fill: #263d8c;        /* logo-blue */
+}
+
+.nav-cube-corner-hover {
+    -fx-text-fill: #f4ede0; /* logo-beige */
 }
