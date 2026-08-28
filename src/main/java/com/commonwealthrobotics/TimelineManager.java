@@ -400,21 +400,21 @@ public class TimelineManager {
 			String typeName = op.getClass().getSimpleName();
 
 			BowlerStudio.runLater(() -> {
-				String text = (myIndex + 1) + "\n" + ap.getTranslation(typeName);
+				String text = (myIndex + 1) + ": " + ActiveProject.getTranslation(typeName);
 				if (MoveCenter.class.isInstance(op)) {
 					if (((MoveCenter) op).isDropMode()) {
-						text = (myIndex + 1) + "\n" + ap.getTranslation("MoveCenter.Drop");
+						text = (myIndex + 1) + ": " + ActiveProject.getTranslation("MoveCenter.Drop");
 					}
 				}
 				if (AddFromScript.class.isInstance(op)) {
 
-					text = (myIndex + 1) + "\n" + ap.getTranslation("AddFromScript");
+					text = (myIndex + 1) + ": " + ActiveProject.getTranslation("AddFromScript");
 
 				}
 				if (AddFromFile.class.isInstance(op)) {
 					AddFromFile af = (AddFromFile) op;
 					try {
-						text = (myIndex + 1) + "\n" + ap.getTranslation("AddFromFile") + " ";
+						text = (myIndex + 1) + "\n" + ActiveProject.getTranslation("AddFromFile") + " ";
 						String name = af.getFile().getName();
 						// text+=name+" ";
 						String[] split = name.split("\\.");
@@ -597,10 +597,10 @@ public class TimelineManager {
 		String translation = ActiveProject.getTranslation(op.getClass().getSimpleName());
 
 		if (tt == null)
-			tt = new Tooltip(translation + " : " + hideLabel);
+			tt = new Tooltip(hideLabel + " : " + translation);
 		else {
 			if (!tt.getText().contains(translation)) {
-				tt = new Tooltip(translation + " , " + tt.getText());
+				tt = new Tooltip(tt.getText() + " , " + translation);
 			}
 		}
 		tmp.setTooltip(tt);
