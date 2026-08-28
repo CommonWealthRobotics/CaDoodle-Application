@@ -50,6 +50,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -960,6 +961,27 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 		String url = getStyleSheetURL();
 		node.getStylesheets().setAll(url);
+	}
+
+	public static Font getLabelFont(String key) {
+		if (!Platform.isFxApplicationThread()) {
+			throw new IllegalStateException("Must be called on the JavaFX Application Thread");
+		}
+
+		Label label = new Label("test");
+		label.getStyleClass().clear();
+		label.getStyleClass().add(key);
+
+		Pane root = new Pane(label);
+		Scene scene = new Scene(root);
+
+		scene.getStylesheets().add(getStyleSheetURL());
+
+		// Force CSS to be applied
+		root.applyCss();
+		label.applyCss();
+
+		return label.getFont();
 	}
 
 	public static Color getLabelTextColor(String key) {

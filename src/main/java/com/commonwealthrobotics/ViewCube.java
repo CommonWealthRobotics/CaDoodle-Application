@@ -143,8 +143,9 @@ public class ViewCube {
 		if (string != null) {
 			String translation = ActiveProject.getTranslation(string);
 
-			label = CSG.textToSize(translation, cubeSize - 20, cubeSize / 2, 4).moveToCenter().toZMin().rotx(-90)
-					.rotz(-90 - az).roty(el).transformed(TransformFactory.nrToCSG(transformNR))
+			label = CSG.textToSize(translation, cubeSize - 20, cubeSize / 2, 4, ActiveProject.getLabelFont("label"))
+					.moveToCenter().toZMin().rotx(-90).rotz(-90 - az).roty(el)
+					.transformed(TransformFactory.nrToCSG(transformNR))
 
 					.newMesh();
 			label.setMouseTransparent(true);
