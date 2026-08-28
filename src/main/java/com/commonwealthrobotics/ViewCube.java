@@ -2,7 +2,6 @@ package com.commonwealthrobotics;
 
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.input.ScrollEvent;
@@ -127,8 +126,8 @@ public class ViewCube {
 		if (Math.abs(transformNR.getZ()) > 0.1) {
 			TransformNR alligned = transformNR.times(new TransformNR(new RotationNR(0, -az, 0)));
 			double x = alligned.getX();
-			if(Math.abs(x)<0.1) {
-				x=alligned.getY();
+			if (Math.abs(x) < 0.1) {
+				x = alligned.getY();
 			}
 			el = Math.toDegrees(Math.atan2(alligned.getZ(), x));
 			if (el > 90) {
@@ -139,7 +138,7 @@ public class ViewCube {
 				el = -180 - el;
 				// az+=180;
 			}
-			
+
 		}
 		TransformNR target = new TransformNR(0, 0, 0, new RotationNR(0, az, -el));
 		MeshView label = null;
@@ -154,13 +153,13 @@ public class ViewCube {
 			label.setMaterial(phongMaterialText);
 		}
 
-//		Label label = new Label(translation); 
-//		label.setScaleX(100);
-//		label.setScaleY(100);
-////		label.getTransforms().addAll(
-////				TransformFactory.nrToAffine(target),
-////				TransformFactory.nrToAffine(transformNR)
-////				);
+		//		Label label = new Label(translation);
+		//		label.setScaleX(100);
+		//		label.setScaleY(100);
+		////		label.getTransforms().addAll(
+		////				TransformFactory.nrToAffine(target),
+		////				TransformFactory.nrToAffine(transformNR)
+		////				);
 		CSG placed = csg.roty(el).rotz(az).transformed(TransformFactory.nrToCSG(transformNR));
 		MeshView meshView = placed.newMesh();
 		meshView.setMaterial(phongMaterialCube2);

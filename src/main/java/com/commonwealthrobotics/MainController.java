@@ -89,7 +89,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.MeshView;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -1536,7 +1535,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		});
 
-		ViewCube.createTexturedCube(navigationCube);		
+		ViewCube.createTexturedCube(navigationCube);
 	}
 
 	@Override
