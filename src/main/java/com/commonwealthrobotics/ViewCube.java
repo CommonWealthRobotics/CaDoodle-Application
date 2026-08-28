@@ -2,6 +2,7 @@ package com.commonwealthrobotics;
 
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.input.ScrollEvent;
@@ -74,7 +75,25 @@ public class ViewCube {
 	}
 
 	private static void addSurface(CSG csg, TransformNR transformNR, PhongMaterial phongMaterialCube2, String string) {
+		double az = 0;
+		if (Math.abs(transformNR.getX()) > 0.1 || Math.abs(transformNR.getY()) > 0.1)
+			az=Math.toDegrees(Math.atan2(transformNR.getY(), transformNR.getX()));
+		double el =0;
+		if (Math.abs(transformNR.getZ()) > 0.1 ) {
+			TransformNR alligned = transformNR.times(new TransformNR(new RotationNR(0, -az, 0)));
+			el=Math.toDegrees(Math.atan2(alligned.getX(), alligned.getZ()));
+		}
+		TransformNR target= new TransformNR(0, 0, 0, new RotationNR(0, az, el));
+		Log.debug("Targeting "+target.toSimpleString());
+		
 		String translation = ActiveProject.getTranslation(string);
+		Label label = new Label(translation); 
+		label.setScaleX(100);
+		label.setScaleY(100);
+//		label.getTransforms().addAll(
+//				TransformFactory.nrToAffine(target),
+//				TransformFactory.nrToAffine(transformNR)
+//				);
 		CSG placed = csg.transformed(TransformFactory.nrToCSG(transformNR));
 		MeshView meshView = placed.newMesh();
 		meshView.setMaterial(phongMaterialCube2);
@@ -91,22 +110,14 @@ public class ViewCube {
 		meshView.setOnMouseReleased(event -> {
 			if (focusTrig) {
 				if (event.getPickResult().getIntersectedNode() == meshView) {
-					double az = 0;
-					if (Math.abs(transformNR.getX()) > 0.1 || Math.abs(transformNR.getY()) > 0.1)
-						az=Math.toDegrees(Math.atan2(transformNR.getY(), transformNR.getX()));
-					double el =0;
-					if (Math.abs(transformNR.getZ()) > 0.1 ) {
-						TransformNR alligned = transformNR.times(new TransformNR(new RotationNR(0, -az, 0)));
-						el=Math.toDegrees(Math.atan2(alligned.getX(), alligned.getZ()));
-					}
-					TransformNR target= new TransformNR(0, 0, 0, new RotationNR(0, az, el));
-					Log.debug("Targeting "+target.toSimpleString());
+
 					engine.focusOrientation(target);
 				}
 			}
 		});
 
 		engine.addUserNode(meshView);
+		engine.addUserNode(label);
 	}
 
 	private static void addTexturedCube() {
