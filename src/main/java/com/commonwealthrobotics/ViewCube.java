@@ -16,14 +16,14 @@ import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 public class ViewCube {
-	private TexturedMesh meshView;
-	private BowlerStudio3dEngine engine;
-	private boolean focusTrig = false;
-	private float cubeSize = 100f;
+	private static TexturedMesh meshView;
+	private static  BowlerStudio3dEngine engine;
+	private static  boolean focusTrig = false;
+	private  static float cubeSize = 100f;
 
-	public MeshView createTexturedCube(BowlerStudio3dEngine engine) {
+	public static void createTexturedCube(BowlerStudio3dEngine e) {
 
-		this.engine = engine;
+		engine = e;
 		Affine rot = TransformFactory.nrToAffine(new TransformNR(new RotationNR(-90, 0, 0)));
 		meshView = new CuboidMesh(cubeSize, cubeSize, cubeSize);
 		meshView.setTextureModeImage(MainController.class.getResource("navCube.png").toExternalForm());
@@ -76,10 +76,11 @@ public class ViewCube {
 
 		// meshView.setOnMouseClicked(this::handleMouseClick);
 		// meshView.setOnMouseClicked(event -> handleMouseClick(event, meshView));
-		return meshView;
+		engine.addUserNode(meshView);
+		return ;
 	}
 
-	private void handleMouseClick(MouseEvent event) {
+	private static void handleMouseClick(MouseEvent event) {
 		PickResult pickResult = event.getPickResult();
 
 		if (pickResult.getIntersectedNode() == meshView) {
@@ -92,7 +93,7 @@ public class ViewCube {
 			com.neuronrobotics.sdk.common.Log.debug("Got NavigationCube event");
 	}
 
-	private TransformNR determineFaceOrientation(Point3D point) {
+	private static TransformNR determineFaceOrientation(Point3D point) {
 		// Get the bounds of the MeshView
 		double min = -cubeSize / 2;
 		double max = cubeSize / 2;

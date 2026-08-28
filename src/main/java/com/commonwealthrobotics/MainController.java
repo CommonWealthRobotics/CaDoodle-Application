@@ -1536,9 +1536,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		});
 
-		ViewCube viewcube = new ViewCube();
-		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
-		navigationCube.addUserNode(viewCubeMesh);
+		ViewCube.createTexturedCube(navigationCube);		
 	}
 
 	@Override
