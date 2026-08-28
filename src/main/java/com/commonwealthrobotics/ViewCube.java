@@ -27,6 +27,8 @@ public class ViewCube {
 	private static boolean focusTrig = false;
 	private static float cubeSize = 100f;
 	private static PhongMaterial phongMaterialCube = new PhongMaterial(Color.YELLOW);
+	private static PhongMaterial phongMaterialText = new PhongMaterial(Color.BLACK);
+
 	private static PhongMaterial phongMaterialEdge = new PhongMaterial(Color.ORANGE);
 	private static PhongMaterial phongMaterialCorner = new PhongMaterial(Color.WHITE);
 
@@ -35,7 +37,11 @@ public class ViewCube {
 		engine = e;
 		addTexturedCube();
 
-		addSurface(new Cube(2, cubeSize, cubeSize).toCSG(), new TransformNR(cubeSize/2, 0, 0), phongMaterialCube,"Front");
+		CSG face = new Cube(2, cubeSize, cubeSize).toCSG();
+		addSurface(face, new TransformNR(cubeSize / 2, 0, 0), phongMaterialCube, "Front");
+		addSurface(face, new TransformNR(-cubeSize / 2, 0, 0), phongMaterialCube, "Back");
+		addSurface(face, new TransformNR(0, cubeSize / 2, 0), phongMaterialCube, "Left");
+		addSurface(face, new TransformNR(0, -cubeSize / 2, 0), phongMaterialCube, "Right");
 
 		engine.setControlsMap(new IControlsMap() {
 
@@ -77,24 +83,34 @@ public class ViewCube {
 	private static void addSurface(CSG csg, TransformNR transformNR, PhongMaterial phongMaterialCube2, String string) {
 		double az = 0;
 		if (Math.abs(transformNR.getX()) > 0.1 || Math.abs(transformNR.getY()) > 0.1)
-			az=Math.toDegrees(Math.atan2(transformNR.getY(), transformNR.getX()));
-		double el =0;
-		if (Math.abs(transformNR.getZ()) > 0.1 ) {
+			az = Math.toDegrees(Math.atan2(transformNR.getY(), transformNR.getX()));
+		double el = 0;
+		if (Math.abs(transformNR.getZ()) > 0.1) {
 			TransformNR alligned = transformNR.times(new TransformNR(new RotationNR(0, -az, 0)));
-			el=Math.toDegrees(Math.atan2(alligned.getX(), alligned.getZ()));
+			el = Math.toDegrees(Math.atan2(alligned.getX(), alligned.getZ()));
 		}
-		TransformNR target= new TransformNR(0, 0, 0, new RotationNR(0, az, el));
-		Log.debug("Targeting "+target.toSimpleString());
-		
-		String translation = ActiveProject.getTranslation(string);
-		Label label = new Label(translation); 
-		label.setScaleX(100);
-		label.setScaleY(100);
-//		label.getTransforms().addAll(
-//				TransformFactory.nrToAffine(target),
-//				TransformFactory.nrToAffine(transformNR)
-//				);
-		CSG placed = csg.transformed(TransformFactory.nrToCSG(transformNR));
+		TransformNR target = new TransformNR(0, 0, 0, new RotationNR(0, az, el));
+		Log.debug("Targeting " + target.toSimpleString());
+		MeshView label = null;
+		if (string != null) {
+			String translation = ActiveProject.getTranslation(string);
+
+			label = CSG.textToSize(translation, cubeSize - 20, cubeSize / 2, 4).moveToCenter().toZMin().rotx(-90)
+					.rotz(-90 - az).transformed(TransformFactory.nrToCSG(transformNR))
+
+					.newMesh();
+			label.setMouseTransparent(true);
+			label.setMaterial(phongMaterialText);
+		}
+
+//		Label label = new Label(translation); 
+//		label.setScaleX(100);
+//		label.setScaleY(100);
+////		label.getTransforms().addAll(
+////				TransformFactory.nrToAffine(target),
+////				TransformFactory.nrToAffine(transformNR)
+////				);
+		CSG placed = csg.rotz(az).transformed(TransformFactory.nrToCSG(transformNR));
 		MeshView meshView = placed.newMesh();
 		meshView.setMaterial(phongMaterialCube2);
 
@@ -117,7 +133,8 @@ public class ViewCube {
 		});
 
 		engine.addUserNode(meshView);
-		engine.addUserNode(label);
+		if (label != null)
+			engine.addUserNode(label);
 	}
 
 	private static void addTexturedCube() {
