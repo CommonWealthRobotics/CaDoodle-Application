@@ -775,7 +775,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				getLabelTextColor("nav-cube-surface-color"),
 				getLabelTextColor("nav-cube-edge-color"),
 				getLabelTextColor("nav-cube-corner-color"), 
-				getLabelTextColor("label"));
+				getLabelTextColor("label"),getLabelTextColor("nav-cube-corner-hover"));
 	}
 
 	public static ResourceBundle getLangaugePack() {
