@@ -770,6 +770,12 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		BowlerStudio3dEngine.setLightGrid(getLabelTextColor("grid-light-color"));
 		BowlerStudio3dEngine.updateGrids();
 		BowlerStudio3dEngine.updateRulerColor(getLabelTextColor("label"));
+		
+		ViewCube.setColors(
+				getLabelTextColor("nav-cube-surface-color"),
+				getLabelTextColor("nav-cube-edge-color"),
+				getLabelTextColor("nav-cube-corner-color"), 
+				getLabelTextColor("label"));
 	}
 
 	public static ResourceBundle getLangaugePack() {
