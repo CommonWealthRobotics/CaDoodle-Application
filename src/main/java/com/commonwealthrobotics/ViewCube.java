@@ -21,6 +21,7 @@ import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
+import eu.mihosoft.vrl.v3d.Sphere;
 
 public class ViewCube {
 	private static BowlerStudio3dEngine engine;
@@ -31,12 +32,14 @@ public class ViewCube {
 
 	private static PhongMaterial phongMaterialEdge = new PhongMaterial(Color.ORANGE);
 	private static PhongMaterial phongMaterialCorner = new PhongMaterial(Color.WHITE);
-	
-	public static void setColors(Color surface, Color edge, Color corner, Color text) {
+	private static PhongMaterial phongMaterialHover = new PhongMaterial(Color.RED);
+
+	public static void setColors(Color surface, Color edge, Color corner, Color text, Color hover) {
 		phongMaterialCube.setDiffuseColor(surface);
 		phongMaterialEdge.setDiffuseColor(edge);
 		phongMaterialCorner.setDiffuseColor(corner);
 		phongMaterialText.setDiffuseColor(text);
+		phongMaterialHover.setDiffuseColor(hover);
 	}
 
 	public static void createTexturedCube(BowlerStudio3dEngine e) {
@@ -45,12 +48,39 @@ public class ViewCube {
 		addTexturedCube();
 
 		CSG face = new Cube(2, cubeSize, cubeSize).toCSG();
+		CSG corner = new Sphere(10).toCSG();
+		CSG edge = new Cube(10, cubeSize, 10).toCSG();
+		CSG edgeUp = new Cube(10, 10, cubeSize).toCSG();
+
 		addSurface(face, new TransformNR(cubeSize / 2, 0, 0), phongMaterialCube, "Front");
 		addSurface(face, new TransformNR(-cubeSize / 2, 0, 0), phongMaterialCube, "Back");
 		addSurface(face, new TransformNR(0, cubeSize / 2, 0), phongMaterialCube, "Left");
 		addSurface(face, new TransformNR(0, -cubeSize / 2, 0), phongMaterialCube, "Right");
-		addSurface(face, new TransformNR(0, 0,cubeSize / 2), phongMaterialCube, "Top");
-		addSurface(face, new TransformNR(0, 0,-cubeSize / 2), phongMaterialCube, "Bottom");
+		addSurface(face, new TransformNR(0, 0, cubeSize / 2), phongMaterialCube, "Top");
+		addSurface(face, new TransformNR(0, 0, -cubeSize / 2), phongMaterialCube, "Bottom");
+
+		for (double k = -cubeSize / 2; k <= cubeSize; k += cubeSize) {
+			for (double j = -cubeSize / 2; j <= cubeSize; j += cubeSize)
+				addSurface(edge, new TransformNR(0, k, j), phongMaterialEdge, null);
+		}
+		for (double k = -cubeSize / 2; k <= cubeSize; k += cubeSize) {
+			for (double j = -cubeSize / 2; j <= cubeSize; j += cubeSize)
+				addSurface(edge, new TransformNR(k, 0, j), phongMaterialEdge, null);
+		}
+		for (double k = -cubeSize / 2; k <= cubeSize; k += cubeSize) {
+			for (double j = -cubeSize / 2; j <= cubeSize; j += cubeSize)
+				addSurface(edgeUp, new TransformNR(k, j, 0), phongMaterialEdge, null);
+		}
+		for (double k = -cubeSize / 2; k <= cubeSize; k += cubeSize)
+
+			for (double j = -cubeSize / 2; j <= cubeSize; j += cubeSize)
+
+				for (double i = -cubeSize / 2; i <= cubeSize; i += cubeSize)
+					try {
+						addSurface(corner, new TransformNR(k, j, i), phongMaterialCorner, null);
+					} catch (Exception ex) {
+						Log.error(ex);
+					}
 
 		engine.setControlsMap(new IControlsMap() {
 
@@ -96,18 +126,28 @@ public class ViewCube {
 		double el = 0;
 		if (Math.abs(transformNR.getZ()) > 0.1) {
 			TransformNR alligned = transformNR.times(new TransformNR(new RotationNR(0, -az, 0)));
-			el = Math.toDegrees(Math.atan2(alligned.getZ(), alligned.getX()));
+			double x = alligned.getX();
+			if(Math.abs(x)<0.1) {
+				x=alligned.getY();
+			}
+			el = Math.toDegrees(Math.atan2(alligned.getZ(), x));
+			if (el > 90) {
+				el = 180 - el;
+				// az+=180;
+			}
+			if (el < -90) {
+				el = -180 - el;
+				// az+=180;
+			}
+			
 		}
 		TransformNR target = new TransformNR(0, 0, 0, new RotationNR(0, az, -el));
-		Log.debug("Targeting " + target.toSimpleString());
 		MeshView label = null;
 		if (string != null) {
 			String translation = ActiveProject.getTranslation(string);
 
 			label = CSG.textToSize(translation, cubeSize - 20, cubeSize / 2, 4).moveToCenter().toZMin().rotx(-90)
-					.rotz(-90 - az)
-					.roty(el)
-					.transformed(TransformFactory.nrToCSG(transformNR))
+					.rotz(-90 - az).roty(el).transformed(TransformFactory.nrToCSG(transformNR))
 
 					.newMesh();
 			label.setMouseTransparent(true);
@@ -121,10 +161,15 @@ public class ViewCube {
 ////				TransformFactory.nrToAffine(target),
 ////				TransformFactory.nrToAffine(transformNR)
 ////				);
-		CSG placed = csg.rotz(az).roty(el).transformed(TransformFactory.nrToCSG(transformNR));
+		CSG placed = csg.roty(el).rotz(az).transformed(TransformFactory.nrToCSG(transformNR));
 		MeshView meshView = placed.newMesh();
 		meshView.setMaterial(phongMaterialCube2);
-
+		meshView.setOnMouseEntered(ev -> {
+			meshView.setMaterial(phongMaterialHover);
+		});
+		meshView.setOnMouseExited(ev -> {
+			meshView.setMaterial(phongMaterialCube2);
+		});
 		meshView.setOnMousePressed(event -> {
 			focusTrig = true;
 		});
@@ -137,6 +182,8 @@ public class ViewCube {
 		meshView.setOnMouseReleased(event -> {
 			if (focusTrig) {
 				if (event.getPickResult().getIntersectedNode() == meshView) {
+
+					Log.debug("Targeting " + target.toSimpleString());
 
 					engine.focusOrientation(target);
 				}
