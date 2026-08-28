@@ -886,11 +886,21 @@
 }
 
 .grid-key-color {
-    -fx-text-fill: #0000aa; /* logo-blue */
+    -fx-text-fill: #6200ea; /* lav-vivid */
 }
 .grid-dark-color {
-    -fx-text-fill: #0838A884; /* logo-blue */
+    -fx-text-fill: #3d1a6e84; /* lav-deep */
 }
 .grid-light-color {
-    -fx-text-fill: #20206084; /* logo-blue */
+    -fx-text-fill: #9b72cf84; /* lav-medium */
+}
+
+.nav-cube-surface-color {
+    -fx-text-fill:  #f2c83d; /* logo-yellow */
+}
+.nav-cube-edge-color {
+    -fx-text-fill: #f4ede0; /* logo-beige */
+}
+.nav-cube-corner-color {
+    -fx-text-fill: #000000; /*white*/
 }
