@@ -179,9 +179,6 @@ public class ViewCube {
 		meshView.setOnMouseReleased(event -> {
 			if (focusTrig) {
 				if (event.getPickResult().getIntersectedNode() == meshView) {
-
-					Log.debug("Targeting " + target.toSimpleString());
-
 					engine.focusOrientation(target);
 				}
 			}
