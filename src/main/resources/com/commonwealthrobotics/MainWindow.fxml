@@ -1022,7 +1022,7 @@
                 <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="100.0" prefHeight="50.0" vgrow="NEVER" />
+                <RowConstraints maxHeight="100.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <HBox alignment="CENTER" GridPane.columnIndex="2">
@@ -1030,12 +1030,8 @@
                          <Insets bottom="0" left="0" right="0" top="4" />
                       </padding>
                       <children>
-                        <Label text="%mainwindow.memory_usage">
-                           <font>
-                              <Font size="11.0" />
-                           </font>
-                        </Label>
-                     <ProgressIndicator fx:id="memUsage" maxWidth="45.0" prefHeight="40.0" prefWidth="45.0" progress="0.0" HBox.hgrow="NEVER" />
+                        <Label text="%mainwindow.memory_usage" />
+                     <ProgressIndicator fx:id="memUsage" prefHeight="50.0" prefWidth="45.0" progress="0.0" HBox.hgrow="NEVER" />
 
                       <StackPane />
                      </children>
