@@ -382,16 +382,13 @@ public class TimelineManager {
 	}
 
 	private void makeButton(int i, Image image, CaDoodleOperation op) {
-		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
-		if (getNodeAt(timeline, i, 0) != null)
+		if (op == null)
 			return;
+		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
 		try {
 
 			List<CSG> state = ap.get().getStateAtOperation(op);
-			if (op == null)
-				return;
 			int myIndex = i;
-			addrem = true;
 			List<CSG> previous = (myIndex == 0)
 					? new ArrayList<CSG>()
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
@@ -400,6 +397,13 @@ public class TimelineManager {
 			String typeName = op.getClass().getSimpleName();
 
 			BowlerStudio.runLater(() -> {
+				// The timeline GridPane is part of the scene graph, so reading its children
+				// and adding buttons must happen on the UI thread.
+				if (getNodeAt(timeline, myIndex, 0) != null) {
+					latch.countDown();
+					return;
+				}
+				addrem = true;
 				String text = (myIndex + 1) + ": " + ActiveProject.getTranslation(typeName);
 				if (MoveCenter.class.isInstance(op)) {
 					if (((MoveCenter) op).isDropMode()) {
@@ -605,7 +609,8 @@ public class TimelineManager {
 		}
 		tmp.setTooltip(tt);
 		moveButtons.add(toAdd);
-		toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
+		if (tmp.getGraphic() != null)
+			toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
 	}
 
 	private void setupCheckboxEvent(ArrayList<ButtonWithOverlayImage> moveButtons, CheckBox cb) {
