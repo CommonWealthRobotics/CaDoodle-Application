@@ -185,6 +185,7 @@ public class Main extends Application {
 				public void uncaughtException(Thread t, Throwable e) {
 					com.neuronrobotics.sdk.common.Log.error("Uncaught exception in " + t);
 					com.neuronrobotics.sdk.common.Log.error(e);
+					throw new RuntimeException(e);
 				}
 			};
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
