@@ -840,8 +840,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		selected.add(name);
 		MeshHolder meshHolder = meshes.get(name);
-		if (meshHolder != null)
-			meshHolder.halo.setVisible(true);
+		if (meshHolder != null && meshHolder.halo != null)
+			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(true));
 	}
 
 	private boolean isSelected(CSG target) {
@@ -862,7 +862,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (iterator.next().getName().contentEquals(target.getName()))
 				iterator.remove();
 		}
-		meshes.get(target).halo.setVisible(false);
+		MeshHolder meshHolder = meshes.get(target);
+		if (meshHolder != null && meshHolder.halo != null)
+			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(false));
 	}
 
 	public void updateControlsDisplayOfSelected() {
@@ -2527,12 +2529,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// getControls().initializeAlign(selectedCSG, b, getMeshes());
 			List<String> selectedSnapshot = selectedSnapshot();
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
+			HashMap<String, Bounds> cache = ap.get().getBoundsCache();
 			BowlerStudio.runLater(() -> {
 				updateControlsDisplayOfSelected();
-				submit(() -> {
-					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(),
-							ap.get().getBoundsCache());
-				});
+				// initializeAlign mutates the scene graph (handle visibility and event
+				// filters) so it must run on the UI thread.
+				getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), cache);
 			});
 		});
 
@@ -2548,10 +2550,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Bounds b;
 			try {
 				b = getSellectedBounds(selectedCSG);
-				getControls().initializeMirror(selectedCSG, b, getMeshes());
 			} catch (BoundsComputFailure e) {
 				Log.error(e);
+				return;
 			}
+			// initializeMirror mutates the scene graph so it runs on the UI thread.
+			BowlerStudio.runLater(() -> getControls().initializeMirror(selectedCSG, b, getMeshes()));
 		});
 	}
 
