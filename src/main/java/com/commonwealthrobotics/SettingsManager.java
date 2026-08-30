@@ -139,8 +139,11 @@ public class SettingsManager implements ICSGClientEvent {
 	@FXML
 	private RadioButton pinToVersion;
 	@FXML
+	private RadioButton bugfixOption;
+	@FXML
 	private ComboBox<String> versionOptions;
 	private File pinFile;
+	private File bugfixFile;
 	private String myVersionFileString;
 	private String bindir;
 	@FXML
@@ -180,6 +183,20 @@ public class SettingsManager implements ICSGClientEvent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		bugfixFile.delete();
+	}
+
+	@FXML
+	void onBugfix(ActionEvent event) {
+		Log.debug("onPinVersion");
+		versionOptions.setDisable(false);
+		try {
+			bugfixFile.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pinFile.delete();
 	}
 
 	@FXML
@@ -201,13 +218,14 @@ public class SettingsManager implements ICSGClientEvent {
 		Log.debug("onSetCheck");
 		versionOptions.setDisable(true);
 		pinFile.delete();
+		bugfixFile.delete();
 	}
 
 	@FXML
 	void checkServerConfigs(KeyEvent event) {
 		try {
 			// Create a trust manager that ignores certificate errors
-			TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
@@ -217,7 +235,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 				public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				}
-			}};
+			} };
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init(null, trustAllCerts, null);
@@ -419,21 +437,21 @@ public class SettingsManager implements ICSGClientEvent {
 
 	private void setExplanationText(OperationResult result) {
 		switch (result) {
-			case INSERT :
-				insertionExplanation.setVisible(true);
-				askExplanation.setVisible(false);
-				prineExplanation.setVisible(false);
-				break;
-			case PRUNE :
-				insertionExplanation.setVisible(false);
-				askExplanation.setVisible(false);
-				prineExplanation.setVisible(true);
-				break;
-			case ASK :
-				insertionExplanation.setVisible(false);
-				askExplanation.setVisible(true);
-				prineExplanation.setVisible(false);
-				break;
+		case INSERT:
+			insertionExplanation.setVisible(true);
+			askExplanation.setVisible(false);
+			prineExplanation.setVisible(false);
+			break;
+		case PRUNE:
+			insertionExplanation.setVisible(false);
+			askExplanation.setVisible(false);
+			prineExplanation.setVisible(true);
+			break;
+		case ASK:
+			insertionExplanation.setVisible(false);
+			askExplanation.setVisible(true);
+			prineExplanation.setVisible(false);
+			break;
 		}
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
@@ -553,10 +571,13 @@ public class SettingsManager implements ICSGClientEvent {
 		myVersionFileString = bindir + "currentversion.txt";
 		String pinFileName = bindir + "pinVersion";
 		pinFile = new File(pinFileName);
+		bugfixFile= new File(bindir + "pinBugfixVersion");
 		boolean toPin = pinFile.exists();
 		versionOptions.setDisable(!toPin);
-		if (!toPin)
+		if (!toPin && !bugfixFile.exists())
 			checkOnLaunch.setSelected(true);
+		else if(bugfixFile.exists())
+			bugfixOption.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
 		mc.getActiveProject();
