@@ -105,32 +105,34 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setIndicator(List<CSG> indicators, Affine centerOffset) {
 
-		if (indicatorMeshs != null) {
-			for (MeshView indicatorMesh : indicatorMeshs) {
-				engine.removeUserNode(indicatorMesh);
+		BowlerKernel.runLater(() -> {
+			if (indicatorMeshs != null) {
+				for (MeshView indicatorMesh : indicatorMeshs) {
+					engine.removeUserNode(indicatorMesh);
+				}
+				indicatorMeshs.clear();
 			}
-			indicatorMeshs.clear();
-		}
-		indicatorMeshs = new ArrayList<MeshView>();
-		for (CSG indicator : indicators) {
-			MeshView indicatorMesh = indicator.newMesh();
-			indicatorMesh.getTransforms().addAll(getWorkplaneLocation(), centerOffset);
-			indicatorMesh.setMouseTransparent(true);
+			indicatorMeshs = new ArrayList<MeshView>();
+			for (CSG indicator : indicators) {
+				MeshView indicatorMesh = indicator.newMesh();
+				indicatorMesh.getTransforms().addAll(getWorkplaneLocation(), centerOffset);
+				indicatorMesh.setMouseTransparent(true);
 
-			PhongMaterial material = new PhongMaterial();
+				PhongMaterial material = new PhongMaterial();
 
-			if (indicator.isHole()) {
-				material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-			} else {
-				Color c = indicator.getColor();
-				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
-				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				if (indicator.isHole()) {
+					material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				} else {
+					Color c = indicator.getColor();
+					material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				}
+				indicatorMesh.setMaterial(material);
+				indicatorMeshs.add(indicatorMesh);
+				engine.addUserNode(indicatorMesh);
 			}
-			indicatorMesh.setMaterial(material);
-			indicatorMeshs.add(indicatorMesh);
-			engine.addUserNode(indicatorMesh);
-		}
+		});
 	}
 
 	public void cancel() {
@@ -183,26 +185,28 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		setClickOnGround(false);
 		clicked = false;
 
-		// com.neuronrobotics.sdk.common.Log.debug("Starting workplane listeners");
-		wpPick.addEventFilter(MouseEvent.ANY, this);
-		wpPick.setMouseTransparent(false);
-		wpPick.setVisible(isWorkplaneNotOrigin());
+		BowlerKernel.runLater(() -> {
+			// com.neuronrobotics.sdk.common.Log.debug("Starting workplane listeners");
+			wpPick.addEventFilter(MouseEvent.ANY, this);
+			wpPick.setMouseTransparent(false);
+			wpPick.setVisible(isWorkplaneNotOrigin());
 
-		engine.getWorkplaneGroup().addEventFilter(MouseEvent.ANY, this);
-		engine.getWorkplaneGroup().setMouseTransparent(false);
-		engine.groundToPicking();
-		// Make user meshes pickable
+			engine.getWorkplaneGroup().addEventFilter(MouseEvent.ANY, this);
+			engine.getWorkplaneGroup().setMouseTransparent(false);
+			engine.groundToPicking();
+			// Make user meshes pickable
 
-		for (CSG key : session.getMeshes().keySet()) {
-			MeshView mv = session.getMeshes().get(key).display;
-			mv.addEventFilter(MouseEvent.ANY, this);
-		}
-
-		if (indicatorMeshs != null)
-			for (MeshView indicatorMesh : indicatorMeshs) {
-				indicatorMesh.setVisible(true);
-				indicatorMesh.setMouseTransparent(true);
+			for (CSG key : session.getMeshes().keySet()) {
+				MeshView mv = session.getMeshes().get(key).display;
+				mv.addEventFilter(MouseEvent.ANY, this);
 			}
+
+			if (indicatorMeshs != null)
+				for (MeshView indicatorMesh : indicatorMeshs) {
+					indicatorMesh.setVisible(true);
+					indicatorMesh.setMouseTransparent(true);
+				}
+		});
 	}
 
 	@Override
