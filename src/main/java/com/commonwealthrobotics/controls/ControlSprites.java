@@ -399,6 +399,8 @@ public class ControlSprites {
 		BowlerStudio.runLater(() -> {
 			engine.addTransparentorkplaneNode(footprint);
 			for (Node r : allElems) {
+				if (r == null)
+					continue;
 				if (MeshView.class.isInstance(r))
 					((MeshView) r).setCullFace(CullFace.BACK);
 
