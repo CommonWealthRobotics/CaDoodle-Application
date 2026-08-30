@@ -5,7 +5,6 @@ package com.commonwealthrobotics;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Files;
@@ -249,8 +248,8 @@ public class Main extends Application {
 		// File bindirFile = new File(bindir);
 		try {
 			String myVersionString = "source";
-			
-			try{
+
+			try {
 				myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
 				String currentVersionDir = bindir + myVersionString + delim();
 				String zipGitCache = currentVersionDir + "gitcache.zip";
@@ -278,13 +277,14 @@ public class Main extends Application {
 						// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
 						try {
 							ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
-									"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", "loadGit.groovy");
+									"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git",
+									"loadGit.groovy");
 						} catch (Exception e) {
 							Log.error(e);
 						}
 					}
 				}
-			}catch(Exception ex) {
+			} catch (Exception ex) {
 				Log.error(ex);
 			}
 

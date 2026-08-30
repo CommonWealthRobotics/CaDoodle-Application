@@ -225,7 +225,7 @@ public class SettingsManager implements ICSGClientEvent {
 	void checkServerConfigs(KeyEvent event) {
 		try {
 			// Create a trust manager that ignores certificate errors
-			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
@@ -235,7 +235,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 				public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				}
-			} };
+			}};
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init(null, trustAllCerts, null);
@@ -437,21 +437,21 @@ public class SettingsManager implements ICSGClientEvent {
 
 	private void setExplanationText(OperationResult result) {
 		switch (result) {
-		case INSERT:
-			insertionExplanation.setVisible(true);
-			askExplanation.setVisible(false);
-			prineExplanation.setVisible(false);
-			break;
-		case PRUNE:
-			insertionExplanation.setVisible(false);
-			askExplanation.setVisible(false);
-			prineExplanation.setVisible(true);
-			break;
-		case ASK:
-			insertionExplanation.setVisible(false);
-			askExplanation.setVisible(true);
-			prineExplanation.setVisible(false);
-			break;
+			case INSERT :
+				insertionExplanation.setVisible(true);
+				askExplanation.setVisible(false);
+				prineExplanation.setVisible(false);
+				break;
+			case PRUNE :
+				insertionExplanation.setVisible(false);
+				askExplanation.setVisible(false);
+				prineExplanation.setVisible(true);
+				break;
+			case ASK :
+				insertionExplanation.setVisible(false);
+				askExplanation.setVisible(true);
+				prineExplanation.setVisible(false);
+				break;
 		}
 		ConfigurationDatabase.put("CaDoodle", "Insertion Stratagy", result.name());
 		ConfigurationDatabase.save();
@@ -571,12 +571,12 @@ public class SettingsManager implements ICSGClientEvent {
 		myVersionFileString = bindir + "currentversion.txt";
 		String pinFileName = bindir + "pinVersion";
 		pinFile = new File(pinFileName);
-		bugfixFile= new File(bindir + "pinBugfixVersion");
+		bugfixFile = new File(bindir + "pinBugfixVersion");
 		boolean toPin = pinFile.exists();
 		versionOptions.setDisable(!toPin);
 		if (!toPin && !bugfixFile.exists())
 			checkOnLaunch.setSelected(true);
-		else if(bugfixFile.exists())
+		else if (bugfixFile.exists())
 			bugfixOption.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
