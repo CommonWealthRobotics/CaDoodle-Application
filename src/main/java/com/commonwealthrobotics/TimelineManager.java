@@ -344,12 +344,14 @@ public class TimelineManager {
 						try {
 							if (session.getSelected().size() > 0) {
 								session.getSellectedBounds();
-								session.updateControlsDisplayOfSelected();
 							}
 						} catch (BoundsComputFailure e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						// The current-index separator is independent of the selection, so always
+						// refresh the timeline after building it, even when nothing is selected.
+						session.updateControlsDisplayOfSelected();
 					});
 				} else {
 					updating = false;
