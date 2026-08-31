@@ -137,6 +137,14 @@ public class ExportManager {
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
+		// Read JavaFX checkbox state on the UI thread before starting the export worker.
+		final boolean manifold = manifoldSTL.isSelected();
+		final boolean stlSelected = stl.isSelected();
+		final boolean svgSelected = svg.isSelected();
+		final boolean blenderSelected = blender.isSelected();
+		final boolean freecadSelected = freecad.isSelected();
+		final boolean objSelected = obj.isSelected();
+		final boolean type3mfSelected = type3mf.isSelected();
 		Thread t = new Thread(() -> {
 			if (exportDir == null)
 				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
@@ -147,25 +155,24 @@ public class ExportManager {
 			String name = toSlug(caDoodleFile.getMyProjectName());
 			int index = 1;
 			boolean prev = CSG.isPreventNonManifoldTriangles();
-			boolean manifold = manifoldSTL.isSelected();
 			HashSet<String> namesUnique = new HashSet<>();
 			for (CSG c : back) {
-				if (stl.isSelected() || manifold) {
+				if (stlSelected || manifold) {
 					c.addExportFormat("stl");
 				}
-				if (svg.isSelected()) {
+				if (svgSelected) {
 					c.addExportFormat("svg");
 				}
-				if (blender.isSelected()) {
+				if (blenderSelected) {
 					c.addExportFormat("blend");
 				}
-				if (freecad.isSelected()) {
+				if (freecadSelected) {
 					c.addExportFormat("freecad");
 				}
-				if (obj.isSelected()) {
+				if (objSelected) {
 					c.addExportFormat("obj");
 				}
-				if (type3mf.isSelected()) {
+				if (type3mfSelected) {
 					c.addExportFormat("3mf");
 				}
 				String nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName());
