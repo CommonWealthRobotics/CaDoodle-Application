@@ -1903,11 +1903,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					else
 						opacity = 0.35;
 
-					diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(),
-							opacity);
-					phongMaterial.setDiffuseColor(diffuseColor);
-					mesh.setMaterial(phongMaterial);
-					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(diffuseColor);
+					final Color newColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(),
+							diffuseColor.getBlue(), opacity);
+					BowlerStudio.runLater(() -> {
+						phongMaterial.setDiffuseColor(newColor);
+						mesh.setMaterial(phongMaterial);
+					});
+					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(newColor);
 					toChange.add(solid);
 				}
 			}
