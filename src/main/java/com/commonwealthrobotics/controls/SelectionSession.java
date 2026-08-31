@@ -348,7 +348,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void updateMemoryDisplay() {
 		double value = ((double) CaDoodleFile.getFreeMemory()) / 100.0;
 		Log.info("Mem=" + value);
-		memUsage.setProgress(value);
+		BowlerStudio.runLater(() -> memUsage.setProgress(value));
 
 		// if (value > 0.5 && value < 0.75) { }
 	}
@@ -2993,8 +2993,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		if (!workplane.isWorkplaneNotOrigin()) {
 			if (objectWorkplane != null) {
-				objectWorkplane.getStyleClass().clear();
-				objectWorkplane.getStyleClass().add("image-button");
+				BowlerStudio.runLater(() -> {
+					objectWorkplane.getStyleClass().clear();
+					objectWorkplane.getStyleClass().add("image-button");
+				});
 			}
 			isObjectWorkplane = false;
 		}
