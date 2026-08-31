@@ -2626,10 +2626,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			final String workplaneButtonClass = isObjectWorkplane ? "image-button-focus" : "image-button";
 			if (objectWorkplane != null) {
 				com.neuronrobotics.sdk.common.Log.debug("Setting Object Workplane " + isObjectWorkplane);
-				BowlerStudio.runLater(() -> {
-					objectWorkplane.getStyleClass().clear();
-					objectWorkplane.getStyleClass().add(workplaneButtonClass);
-				});
+
 			}
 			if (isObjectWorkplane) {
 				CSG c = getSelectedCSG(selectedSnapshot().get(0));
@@ -2642,6 +2639,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				// workplane.placeWorkplaneVisualization();
 			}
 			updateControls();
+			BowlerStudio.runLater(() -> {
+				objectWorkplane.getStyleClass().clear();
+				objectWorkplane.getStyleClass().add(workplaneButtonClass);
+			});
 		});
 	}
 
