@@ -809,78 +809,79 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public static Locale showLanguageSelectionPopup(Locale starting) {
-
-		List<Locale> locales = getAvailableLocales();
-
-		ComboBox<Locale> comboBox = new ComboBox<Locale>();
-		comboBox.getItems().addAll(locales);
-
-		comboBox.setCellFactory(list -> new ListCell<Locale>() {
-			@Override
-			protected void updateItem(Locale item, boolean empty) {
-				super.updateItem(item, empty);
-
-				if (empty || item == null) {
-					setText(null);
-				} else {
-					setText(item.getDisplayLanguage(item));
-				}
-			}
-		});
-
-		comboBox.setButtonCell(new ListCell<Locale>() {
-			@Override
-			protected void updateItem(Locale item, boolean empty) {
-				super.updateItem(item, empty);
-
-				if (empty || item == null) {
-					setText(null);
-				} else {
-					setText(item.getDisplayLanguage(item));
-				}
-			}
-		});
-		comboBox.getSelectionModel().selectFirst();
-		if (starting != null)
-			for (Locale l : locales)
-				if (l.getLanguage().contentEquals(starting.getLanguage()))
-					comboBox.getSelectionModel().select(l);;
-
-		Button ok = new Button("OK");
-		ok.setDefaultButton(true);
-
-		VBox myroot = new VBox(15, new Label("Select Language"), comboBox, ok);
-
-		myroot.setPadding(new Insets(20));
-		myroot.setAlignment(Pos.CENTER);
-		AnchorPane root = new AnchorPane();
-		root.getChildren().add(myroot);
 		final Locale[] result = new Locale[1];
-		myroot.getStyleClass().add("vbox");
-		AnchorPane.setTopAnchor(myroot, 0.0);
-		AnchorPane.setBottomAnchor(myroot, 0.0);
-		AnchorPane.setLeftAnchor(myroot, 0.0);
-		AnchorPane.setRightAnchor(myroot, 0.0);
 		BowlerStudio.runLater(() -> {
-			Stage stage = new Stage();
-			// stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initStyle(StageStyle.UTILITY);
-			stage.setTitle("Language Selection");
-			stage.setScene(new Scene(root));
-			stage.setResizable(false);
-			setStyleSheet(root);
-			ok.setOnAction(e -> {
-				result[0] = comboBox.getValue();
-				stage.close();
+			List<Locale> locales = getAvailableLocales();
+
+			ComboBox<Locale> comboBox = new ComboBox<Locale>();
+			comboBox.getItems().addAll(locales);
+
+			comboBox.setCellFactory(list -> new ListCell<Locale>() {
+				@Override
+				protected void updateItem(Locale item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (empty || item == null) {
+						setText(null);
+					} else {
+						setText(item.getDisplayLanguage(item));
+					}
+				}
 			});
 
-			stage.setOnCloseRequest(e -> {
-				result[0] = Locale.of("en");
+			comboBox.setButtonCell(new ListCell<Locale>() {
+				@Override
+				protected void updateItem(Locale item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (empty || item == null) {
+						setText(null);
+					} else {
+						setText(item.getDisplayLanguage(item));
+					}
+				}
 			});
+			comboBox.getSelectionModel().selectFirst();
+			if (starting != null)
+				for (Locale l : locales)
+					if (l.getLanguage().contentEquals(starting.getLanguage()))
+						comboBox.getSelectionModel().select(l);;
 
-			stage.showAndWait();
-			panes.remove(root);
+			Button ok = new Button("OK");
+			ok.setDefaultButton(true);
 
+			VBox myroot = new VBox(15, new Label("Select Language"), comboBox, ok);
+
+			myroot.setPadding(new Insets(20));
+			myroot.setAlignment(Pos.CENTER);
+			AnchorPane root = new AnchorPane();
+			root.getChildren().add(myroot);
+			myroot.getStyleClass().add("vbox");
+			AnchorPane.setTopAnchor(myroot, 0.0);
+			AnchorPane.setBottomAnchor(myroot, 0.0);
+			AnchorPane.setLeftAnchor(myroot, 0.0);
+			AnchorPane.setRightAnchor(myroot, 0.0);
+			BowlerStudio.runLater(() -> {
+				Stage stage = new Stage();
+				// stage.initModality(Modality.APPLICATION_MODAL);
+				stage.initStyle(StageStyle.UTILITY);
+				stage.setTitle("Language Selection");
+				stage.setScene(new Scene(root));
+				stage.setResizable(false);
+				setStyleSheet(root);
+				ok.setOnAction(e -> {
+					result[0] = comboBox.getValue();
+					stage.close();
+				});
+
+				stage.setOnCloseRequest(e -> {
+					result[0] = Locale.of("en");
+				});
+
+				stage.showAndWait();
+				panes.remove(root);
+
+			});
 		});
 		while (result[0] == null) {
 			try {
