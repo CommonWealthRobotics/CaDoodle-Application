@@ -226,12 +226,13 @@ public class ShapesPallet {
 
 		boolean isSweep = (sweep != null) ? Boolean.parseBoolean(sweep) : false;
 		name = name.replace(' ', '_');
-		Tooltip hover = new Tooltip(ap.getTranslation("shape." + name));
+		final String tooltipText = ActiveProject.getTranslation("shape." + name);
 
 		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
 		ArrayList<ButtonWithOverlayImage> buttonHolder = new ArrayList<ButtonWithOverlayImage>();
 		CountDownLatch cl = new CountDownLatch(1);
 		BowlerStudio.runLater(() -> {
+			Tooltip hover = new Tooltip(tooltipText);
 			Image thumb = resources.getImage();
 			ImageView toolimage = new ImageView(thumb);
 

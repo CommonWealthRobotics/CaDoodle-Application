@@ -350,7 +350,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void updateMemoryDisplay() {
 		double value = ((double) CaDoodleFile.getFreeMemory()) / 100.0;
 		Log.info("Mem=" + value);
-		memUsage.setProgress(value);
+		BowlerStudio.runLater(() -> memUsage.setProgress(value));
 
 		// if (value > 0.5 && value < 0.75) { }
 	}
@@ -862,8 +862,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		selected.add(name);
 		MeshHolder meshHolder = meshes.get(name);
-		if (meshHolder != null)
-			meshHolder.halo.setVisible(true);
+		if (meshHolder != null && meshHolder.halo != null)
+			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(true));
 	}
 
 	private boolean isSelected(CSG target) {
@@ -884,7 +884,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (iterator.next().getName().contentEquals(target.getName()))
 				iterator.remove();
 		}
-		meshes.get(target).halo.setVisible(false);
+		MeshHolder meshHolder = meshes.get(target);
+		if (meshHolder != null && meshHolder.halo != null)
+			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(false));
 	}
 
 	public void updateControlsDisplayOfSelected() {
@@ -1923,11 +1925,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					else
 						opacity = 0.35;
 
-					diffuseColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(), diffuseColor.getBlue(),
-							opacity);
-					phongMaterial.setDiffuseColor(diffuseColor);
-					mesh.setMaterial(phongMaterial);
-					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(diffuseColor);
+					final Color newColor = Color.color(diffuseColor.getRed(), diffuseColor.getGreen(),
+							diffuseColor.getBlue(), opacity);
+					BowlerStudio.runLater(() -> {
+						phongMaterial.setDiffuseColor(newColor);
+						mesh.setMaterial(phongMaterial);
+					});
+					ToSolid solid = new ToSolid().setNames(Arrays.asList(c.getName())).setColor(newColor);
 					toChange.add(solid);
 				}
 			}
@@ -2549,12 +2553,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			// getControls().initializeAlign(selectedCSG, b, getMeshes());
 			List<String> selectedSnapshot = selectedSnapshot();
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
+			HashMap<String, Bounds> cache = ap.get().getBoundsCache();
 			BowlerStudio.runLater(() -> {
 				updateControlsDisplayOfSelected();
-				submit(() -> {
-					getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(),
-							ap.get().getBoundsCache());
-				});
+				// initializeAlign mutates the scene graph (handle visibility and event
+				// filters) so it must run on the UI thread.
+				getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), cache);
 			});
 		});
 
@@ -2570,10 +2574,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			Bounds b;
 			try {
 				b = getSellectedBounds(selectedCSG);
-				getControls().initializeMirror(selectedCSG, b, getMeshes());
 			} catch (BoundsComputFailure e) {
 				Log.error(e);
+				return;
 			}
+			// initializeMirror mutates the scene graph so it runs on the UI thread.
+			BowlerStudio.runLater(() -> getControls().initializeMirror(selectedCSG, b, getMeshes()));
 		});
 	}
 
@@ -2639,9 +2645,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 
 			isObjectWorkplane = !isObjectWorkplane;
+			final String workplaneButtonClass = isObjectWorkplane ? "image-button-focus" : "image-button";
 			if (objectWorkplane != null) {
 				com.neuronrobotics.sdk.common.Log.debug("Setting Object Workplane " + isObjectWorkplane);
-				objectWorkplane.getStyleClass().clear();
+
 			}
 			if (isObjectWorkplane) {
 				CSG c = getSelectedCSG(selectedSnapshot().get(0));
@@ -2649,15 +2656,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				previousWP = ap.get().getWorkplane();
 				ap.get().setWorkplane(nrToCSG);
 				// workplane.placeWorkplaneVisualization();
-				if (objectWorkplane != null)
-					objectWorkplane.getStyleClass().add("image-button-focus");
 			} else {
 				ap.get().setWorkplane(previousWP);
 				// workplane.placeWorkplaneVisualization();
-				if (objectWorkplane != null)
-					objectWorkplane.getStyleClass().add("image-button");
 			}
 			updateControls();
+			BowlerStudio.runLater(() -> {
+				objectWorkplane.getStyleClass().clear();
+				objectWorkplane.getStyleClass().add(workplaneButtonClass);
+			});
 		});
 	}
 
@@ -3009,8 +3016,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		if (!workplane.isWorkplaneNotOrigin()) {
 			if (objectWorkplane != null) {
-				objectWorkplane.getStyleClass().clear();
-				objectWorkplane.getStyleClass().add("image-button");
+				BowlerStudio.runLater(() -> {
+					objectWorkplane.getStyleClass().clear();
+					objectWorkplane.getStyleClass().add("image-button");
+				});
 			}
 			isObjectWorkplane = false;
 		}

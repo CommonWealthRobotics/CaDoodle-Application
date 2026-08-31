@@ -402,22 +402,22 @@ public class RobotLab {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		Tooltip hover = new Tooltip(o.getName() + " " + o.getType());
-		Button button = new Button(o.getName());
-		button.setTooltip(hover);
-		button.getStyleClass().add("image-button");
-		button.setOnMouseEntered(event -> {
-			optionProvide.getChildren().clear();
-			optionsConsume.getChildren().clear();
-			setFunctionalityToList(o.getProvides(), o.getConsumes(), optionProvide, optionsConsume);
-		});
-
-		// Action when mouse exits the button
-		button.setOnMouseExited(event -> {
-			optionProvide.getChildren().clear();
-			optionsConsume.getChildren().clear();
-		});
 		BowlerStudio.runLater(() -> {
+			Tooltip hover = new Tooltip(o.getName() + " " + o.getType());
+			Button button = new Button(o.getName());
+			button.setTooltip(hover);
+			button.getStyleClass().add("image-button");
+			button.setOnMouseEntered(event -> {
+				optionProvide.getChildren().clear();
+				optionsConsume.getChildren().clear();
+				setFunctionalityToList(o.getProvides(), o.getConsumes(), optionProvide, optionsConsume);
+			});
+
+			// Action when mouse exits the button
+			button.setOnMouseExited(event -> {
+				optionProvide.getChildren().clear();
+				optionsConsume.getChildren().clear();
+			});
 			armsOptionGrid2.add(button, col, row);
 			Image thumb = o.getImage();
 			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60, 0));
@@ -482,22 +482,22 @@ public class RobotLab {
 
 	private void setupAddControllerButton(ControllerOption o, int col, int row) {
 		o.build(ap.get());
-		Tooltip hover = new Tooltip(o.getType());
-		Button button = new Button();
-		button.setTooltip(hover);
-		button.getStyleClass().add("image-button");
-		button.setOnMouseEntered(event -> {
-			optionProvide.getChildren().clear();
-			optionsConsume.getChildren().clear();
-			setFunctionalityToList(o.getProvides(), o.getConsumes(), optionProvide, optionsConsume);
-		});
-
-		// Action when mouse exits the button
-		button.setOnMouseExited(event -> {
-			optionProvide.getChildren().clear();
-			optionsConsume.getChildren().clear();
-		});
 		BowlerStudio.runLater(() -> {
+			Tooltip hover = new Tooltip(o.getType());
+			Button button = new Button();
+			button.setTooltip(hover);
+			button.getStyleClass().add("image-button");
+			button.setOnMouseEntered(event -> {
+				optionProvide.getChildren().clear();
+				optionsConsume.getChildren().clear();
+				setFunctionalityToList(o.getProvides(), o.getConsumes(), optionProvide, optionsConsume);
+			});
+
+			// Action when mouse exits the button
+			button.setOnMouseExited(event -> {
+				optionProvide.getChildren().clear();
+				optionsConsume.getChildren().clear();
+			});
 			controllerGrid.add(button, col, row);
 			Image thumb = o.getImage();
 			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 60, 60, 0));

@@ -190,13 +190,16 @@ public class LimbControlManager {
 			throw new RuntimeException("Limb has no parts");
 		selectedCSG = session.selectedSnapshot();
 		mod = new ModifyLimb().setLimb(limb).setNames(session.selectedSnapshot());
-		baseManipulator.show();
-		tipManipulator.show();
-
-		mod.setUndo(true);
-		onReset();
-		rotationManager.setLock(false);
-		rotationManager.show(false);
+		// The handle visibility/transform changes below touch the scene graph, so run
+		// them on the UI thread (mirrors hide()). Model setup above stays on this thread.
+		BowlerStudio.runLater(() -> {
+			baseManipulator.show();
+			tipManipulator.show();
+			mod.setUndo(true);
+			onReset();
+			rotationManager.setLock(false);
+			rotationManager.show(false);
+		});
 		com.neuronrobotics.sdk.common.Log.debug("\n\nShowing Limb " + limb.getScriptingName());
 	}
 

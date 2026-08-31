@@ -1,5 +1,6 @@
 package com.commonwealthrobotics.align;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,16 +83,18 @@ public class AlignHandle {
 			mesh.setMaterial(material);
 			exited = event -> {
 				material.setDiffuseColor(Color.BLACK);
-				for (CSG key : visualizers.keySet()) {
-					visualizers.get(key).setVisible(false);
+				for (MeshView v : visualizers.values()) {
+					if (v != null)
+						v.setVisible(false);
 				}
 			};
 			entered = event -> {
 				material.setDiffuseColor(new Color(1, 0, 0, 1));
 				// com.neuronrobotics.sdk.common.Log.error("ENtered " + self + " " +
 				// orientation);
-				for (CSG key : visualizers.keySet()) {
-					visualizers.get(key).setVisible(true);
+				for (MeshView v : visualizers.values()) {
+					if (v != null)
+						v.setVisible(true);
 				}
 			};
 			onClickEvent = event -> {
@@ -282,8 +285,9 @@ public class AlignHandle {
 	public void hide() {
 		BowlerStudio.runLater(() -> {
 			getHandle().setVisible(false);
-			for (CSG key : visualizers.keySet()) {
-				visualizers.get(key).setVisible(false);
+			for (MeshView v : visualizers.values()) {
+				if (v != null)
+					v.setVisible(false);
 			}
 		});
 	}
@@ -294,58 +298,77 @@ public class AlignHandle {
 	}
 
 	public void reset() {
-		getHandle().setVisible(true);
-		getHandle().addEventFilter(MouseEvent.MOUSE_EXITED, exited);
-		getHandle().addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
-		getHandle().addEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
-		material.setDiffuseColor(Color.BLACK);
+		BowlerStudio.runLater(() -> {
+			getHandle().setVisible(true);
+			getHandle().addEventFilter(MouseEvent.MOUSE_EXITED, exited);
+			getHandle().addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
+			getHandle().addEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
+			material.setDiffuseColor(Color.BLACK);
+		});
 	}
 
 	public void recomputeOps(HashMap<String, Bounds> cache) {
-		clear();
-		if (operation == null)
+		final Align op = operation;
+		if (op == null || toAlign.size() <= 1) {
+			BowlerStudio.runLater(this::removeAllNodes);
 			return;
-		if (toAlign.size() > 1) {
-			Align tmp = operation.copy();
-			Align prev = operation;
-			operation = tmp;
-			try {
-				setMyOperation();
-				tmp.setCaDoodleFile(ap.get());
-				tmp.setCache(cache);
-				visualizationObjects = tmp.process(toAlign);
-				for (int i = 0; i < visualizationObjects.size(); i++) {
-					CSG indicator = visualizationObjects.get(i);
-					MeshView indicatorMesh = indicator.newMesh();
-					indicatorMesh.setMouseTransparent(true);
-					// indicatorMesh.getTransforms().addAll(workplaneOffset);
-					PhongMaterial material = new PhongMaterial();
-
-					if (indicator.isHole()) {
-						// material.setDiffuseMap(texture);
-						material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-						material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-					} else {
-						Color c = indicator.getColor();
-						material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
-						material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-					}
-					indicatorMesh.setMaterial(material);
-					engine.addUserNode(indicatorMesh);
-					indicatorMesh.setVisible(false);
-					visualizers.put(indicator, indicatorMesh);
-				}
-			} catch (Exception ex) {
-				Log.error(ex);
-			}
-			operation = prev;
 		}
+		// Geometry processing happens off the UI thread on a local copy so the shared
+		// operation field is never mutated here.
+		final List<CSG> computed;
+		try {
+			Align tmp = op.copy();
+			if (isXvector())
+				tmp.x = self;
+			if (isYvector())
+				tmp.y = self;
+			if (isZvector())
+				tmp.z = self;
+			tmp.setCaDoodleFile(ap.get());
+			tmp.setCache(cache);
+			computed = tmp.process(toAlign);
+		} catch (Exception ex) {
+			Log.error(ex);
+			BowlerStudio.runLater(this::removeAllNodes);
+			return;
+		}
+		// All node creation and shared map mutation is confined to the UI thread.
+		BowlerStudio.runLater(() -> {
+			removeAllNodes();
+			if (computed == null)
+				return;
+			visualizationObjects = new ArrayList<>();
+			for (CSG indicator : computed) {
+				MeshView indicatorMesh = indicator.newMesh();
+				indicatorMesh.setMouseTransparent(true);
+				// indicatorMesh.getTransforms().addAll(workplaneOffset);
+				PhongMaterial material = new PhongMaterial();
+
+				if (indicator.isHole()) {
+					// material.setDiffuseMap(texture);
+					material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				} else {
+					Color c = indicator.getColor();
+					material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.65));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				}
+				indicatorMesh.setMaterial(material);
+				engine.addUserNode(indicatorMesh);
+				indicatorMesh.setVisible(false);
+				visualizers.put(indicator, indicatorMesh);
+				visualizationObjects.add(indicator);
+			}
+		});
 	}
 
-	private void clear() {
+	private void removeAllNodes() {
 		if (visualizationObjects != null) {
-			for (CSG c : visualizationObjects)
-				engine.removeUserNode(visualizers.get(c));
+			for (CSG c : visualizationObjects) {
+				MeshView v = visualizers.remove(c);
+				if (v != null)
+					engine.removeUserNode(v);
+			}
 			visualizationObjects.clear();
 		}
 		visualizationObjects = null;

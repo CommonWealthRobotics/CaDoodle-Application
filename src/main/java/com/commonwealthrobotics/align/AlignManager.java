@@ -141,7 +141,10 @@ public class AlignManager {
 		}
 		recompute(null, inWorkplaneBounds);
 		for (CSG c : toAlign) {
-			MeshView mv = meshes.get(c).display;
+			MeshHolder holder = meshes.get(c);
+			if (holder == null || holder.display == null)
+				continue;
+			MeshView mv = holder.display;
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if (operation == null)
 					return;
@@ -149,19 +152,25 @@ public class AlignManager {
 				recompute(null, inWorkplaneBounds);
 				updateHandles(inWorkplaneBounds);
 			};
-			mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
+			BowlerStudio.runLater(() -> mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter));
 			events.put(c, eventFilter);
 		}
 	}
 
 	private void recompute(Runnable r, HashMap<String, Bounds> cache) {
-		new Thread(() -> {
-			for (AlignRadioSet rs : AS_LIST) {
-				rs.recomputeOps(cache);
+		// Heavy geometry processing runs on the shared SelectionSession worker; all
+		// JavaFX node work inside recomputeOps is posted back to the UI thread.
+		session.submit(() -> {
+			try {
+				for (AlignRadioSet rs : AS_LIST) {
+					rs.recomputeOps(cache);
+				}
+				if (r != null)
+					r.run();
+			} catch (Throwable t) {
+				Log.error(t);
 			}
-			if (r != null)
-				r.run();
-		}).start();
+		});
 	}
 
 	public boolean isActive() {
@@ -171,6 +180,15 @@ public class AlignManager {
 	public void cancel() {
 
 		com.neuronrobotics.sdk.common.Log.debug("Align canceled here");
+		// Remove the click filters first, while toAlign still holds the targets.
+		for (CSG c : new ArrayList<>(events.keySet())) {
+			EventHandler<? super MouseEvent> eventFilter = events.remove(c);
+			MeshHolder holder = meshes == null ? null : meshes.get(c);
+			if (holder == null || holder.display == null || eventFilter == null)
+				continue;
+			MeshView mv = holder.display;
+			BowlerStudio.runLater(() -> mv.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter));
+		}
 		if (isActive()) {
 			this.toAlign.clear();
 			if (isAlignemntSelected()) {
@@ -179,11 +197,6 @@ public class AlignManager {
 			operation = null;
 		}
 		hide();
-		for (CSG c : toAlign) {
-			MeshView mv = meshes.get(c).display;
-			EventHandler<? super MouseEvent> eventFilter = events.remove(c);
-			mv.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter);
-		}
 	}
 
 	public void hide() {

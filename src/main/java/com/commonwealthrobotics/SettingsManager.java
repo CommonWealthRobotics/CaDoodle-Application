@@ -146,8 +146,11 @@ public class SettingsManager implements ICSGClientEvent {
 	@FXML
 	private RadioButton pinToVersion;
 	@FXML
+	private RadioButton bugfixOption;
+	@FXML
 	private ComboBox<String> versionOptions;
 	private File pinFile;
+	private File bugfixFile;
 	private String myVersionFileString;
 	private String bindir;
 	@FXML
@@ -187,6 +190,20 @@ public class SettingsManager implements ICSGClientEvent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		bugfixFile.delete();
+	}
+
+	@FXML
+	void onBugfix(ActionEvent event) {
+		Log.debug("onPinVersion");
+		versionOptions.setDisable(false);
+		try {
+			bugfixFile.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pinFile.delete();
 	}
 
 	@FXML
@@ -208,6 +225,7 @@ public class SettingsManager implements ICSGClientEvent {
 		Log.debug("onSetCheck");
 		versionOptions.setDisable(true);
 		pinFile.delete();
+		bugfixFile.delete();
 	}
 
 	@FXML
@@ -260,20 +278,21 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onConnectServer(ActionEvent event) {
+		// Read all JavaFX control state on the UI thread before starting the worker.
+		connectServer.setDisable(false);
+		final boolean selected = connectServer.isSelected();
+		final String key = apiKey.getText();
+		final String host = ipaddressField.getText();
+		final String port = portField.getText();
+
 		new Thread(() -> {
-			connectServer.setDisable(false);
-			if (connectServer.isSelected()) {
-
-				String key = apiKey.getText();
-				Path tempFile;
+			if (selected) {
 				try {
-
 					com.neuronrobotics.sdk.common.Log.debug("Opening Server Connection");
-					String text = ipaddressField.getText();
 					ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + true);
 					ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
-					ConfigurationDatabase.put("CaDoodle", "CSGClientHost", text);
-					ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
+					ConfigurationDatabase.put("CaDoodle", "CSGClientHost", host);
+					ConfigurationDatabase.put("CaDoodle", "CSGClientPort", port);
 				} catch (Exception e) {
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
@@ -281,13 +300,16 @@ public class SettingsManager implements ICSGClientEvent {
 				com.neuronrobotics.sdk.common.Log.debug("Closing Server Connection");
 				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
 			}
-			if (clientStateSet()) {
-				clientDisplay.setText("Client is Connected!");
-				CSGClient.getClient().addListener(this);
-			} else {
-				connectServer.setSelected(false);
-				clientDisplay.setText("Server is missing");
-			}
+			final boolean connected = clientStateSet();
+			BowlerStudio.runLater(() -> {
+				if (connected) {
+					clientDisplay.setText("Client is Connected!");
+					CSGClient.getClient().addListener(this);
+				} else {
+					connectServer.setSelected(false);
+					clientDisplay.setText("Server is missing");
+				}
+			});
 		}).start();
 
 	}
@@ -572,10 +594,13 @@ public class SettingsManager implements ICSGClientEvent {
 		myVersionFileString = bindir + "currentversion.txt";
 		String pinFileName = bindir + "pinVersion";
 		pinFile = new File(pinFileName);
+		bugfixFile = new File(bindir + "pinBugfixVersion");
 		boolean toPin = pinFile.exists();
 		versionOptions.setDisable(!toPin);
-		if (!toPin)
+		if (!toPin && !bugfixFile.exists())
 			checkOnLaunch.setSelected(true);
+		else if (bugfixFile.exists())
+			bugfixOption.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
 		mc.getActiveProject();

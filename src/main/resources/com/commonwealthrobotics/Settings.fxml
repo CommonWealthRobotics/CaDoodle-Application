@@ -129,20 +129,28 @@
                                     <Insets left="10.0" />
                                  </padding>
                               </Label>
-                              <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <RadioButton fx:id="checkOnLaunch" mnemonicParsing="false" onAction="#onSetCheck" selected="true" text="%settings.check_on_launch">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="checkUpdate" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="pinToVersion" mnemonicParsing="false" onAction="#onPinVersion" text="%settings.pin_to_version" toggleGroup="$checkUpdate" />
-                                    <ComboBox fx:id="versionOptions" disable="true" onAction="#onPinVersionSelect" prefWidth="150.0" />
+                                    <RadioButton fx:id="bugfixOption" mnemonicParsing="false" onAction="#onBugfix" text="%settings.bugfix" toggleGroup="$checkUpdate" />
+                                    <HBox spacing="10.0">
+                                       <children>
+                                          <RadioButton fx:id="pinToVersion" mnemonicParsing="false" onAction="#onPinVersion" text="%settings.pin_to_version" toggleGroup="$checkUpdate" />
+                                          <ComboBox fx:id="versionOptions" disable="true" onAction="#onPinVersionSelect" prefWidth="150.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
                                  </children>
                                  <padding>
-                                    <Insets bottom="10.0" left="10.0" top="10.0" />
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>
-                              </HBox>
+                              </VBox>
                               <Label text="%settings.advanced_mode" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="18.0" />
