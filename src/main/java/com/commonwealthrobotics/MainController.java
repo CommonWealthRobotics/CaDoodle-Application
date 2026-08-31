@@ -1553,21 +1553,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			redoButton.setDisable(!ap.get().isForwardAvailable());
 			undoButton.setDisable(!ap.get().isBackAvailable());
 		});
-		ObservableList<String> c = showAllImage.getStyleClass();
-		c.clear();
-		if (session.isAnyHidden()) {
-			c.add("lit-bulb-icon");
+		BowlerStudio.runLater(() -> {
+			ObservableList<String> c = showAllImage.getStyleClass();
+			c.clear();
+			if (session.isAnyHidden()) {
+				c.add("lit-bulb-icon");
 
-			BowlerStudio.runLater(() -> {
 				showAllButton.setDisable(false);
-			});
-		} else {
-			c.add("dark-bulb-icon");
+			} else {
+				c.add("dark-bulb-icon");
 
-			BowlerStudio.runLater(() -> {
 				showAllButton.setDisable(true);
-			});
-		}
+			}
+		});
 		// if (this.source != source) {
 		// session.save();
 		// }

@@ -259,20 +259,21 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onConnectServer(ActionEvent event) {
+		// Read all JavaFX control state on the UI thread before starting the worker.
+		connectServer.setDisable(false);
+		final boolean selected = connectServer.isSelected();
+		final String key = apiKey.getText();
+		final String host = ipaddressField.getText();
+		final String port = portField.getText();
+
 		new Thread(() -> {
-			connectServer.setDisable(false);
-			if (connectServer.isSelected()) {
-
-				String key = apiKey.getText();
-				Path tempFile;
+			if (selected) {
 				try {
-
 					com.neuronrobotics.sdk.common.Log.debug("Opening Server Connection");
-					String text = ipaddressField.getText();
 					ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + true);
 					ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
-					ConfigurationDatabase.put("CaDoodle", "CSGClientHost", text);
-					ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
+					ConfigurationDatabase.put("CaDoodle", "CSGClientHost", host);
+					ConfigurationDatabase.put("CaDoodle", "CSGClientPort", port);
 				} catch (Exception e) {
 					com.neuronrobotics.sdk.common.Log.error(e);
 				}
@@ -280,13 +281,16 @@ public class SettingsManager implements ICSGClientEvent {
 				com.neuronrobotics.sdk.common.Log.debug("Closing Server Connection");
 				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
 			}
-			if (clientStateSet()) {
-				clientDisplay.setText("Client is Connected!");
-				CSGClient.getClient().addListener(this);
-			} else {
-				connectServer.setSelected(false);
-				clientDisplay.setText("Server is missing");
-			}
+			final boolean connected = clientStateSet();
+			BowlerStudio.runLater(() -> {
+				if (connected) {
+					clientDisplay.setText("Client is Connected!");
+					CSGClient.getClient().addListener(this);
+				} else {
+					connectServer.setSelected(false);
+					clientDisplay.setText("Server is missing");
+				}
+			});
 		}).start();
 
 	}

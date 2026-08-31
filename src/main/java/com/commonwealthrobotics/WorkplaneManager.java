@@ -567,6 +567,13 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setIncrement(double snapGridValue) {
 		this.snapGridValue = snapGridValue;
+		if (wpPick != null) {
+			BowlerKernel.runLater(() -> {
+				wpPick.SNAP.setX(snapGridValue);
+				wpPick.SNAP.setY(snapGridValue);
+				wpPick.SNAP.setZ(snapGridValue);
+			});
+		}
 	}
 
 	public GridHolder getPlacementPlane() {
