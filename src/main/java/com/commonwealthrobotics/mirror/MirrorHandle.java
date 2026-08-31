@@ -247,11 +247,13 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		this.ta = t;
 		this.selected = sel;
 		this.meshes = meshes;
-		material.setDiffuseColor(myColor);
-		BowlerStudio.runLater(() -> mesh.setVisible(true));
-		mesh.addEventFilter(MouseEvent.MOUSE_EXITED, exited);
-		mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
-		mesh.addEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
+		BowlerStudio.runLater(() -> {
+			material.setDiffuseColor(myColor);
+			mesh.setVisible(true);
+			mesh.addEventFilter(MouseEvent.MOUSE_EXITED, exited);
+			mesh.addEventFilter(MouseEvent.MOUSE_ENTERED, entered);
+			mesh.addEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
+		});
 		updateState();
 		ap.addListener(this);
 	}
@@ -259,28 +261,33 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	public void updateState() {
 		// com.neuronrobotics.sdk.common.Log.debug("Initialize Mirror "+ax);
 		op = new Mirror().setNames(selected).setWorkplane(ap.get().getWorkplane()).setLocation(ax);
-		clearVisualizers();
 		op.setCaDoodleFile(ap.get());
-		for (CSG indicator : op.process(ta)) {
-			MeshView indicatorMesh = indicator.newMesh();
-			indicatorMesh.setMouseTransparent(true);
-			// indicatorMesh.getTransforms().addAll(workplaneOffset);
-			PhongMaterial material = new PhongMaterial();
+		// Heavy geometry processing stays off the UI thread; node creation and the
+		// shared visualizers map mutation are confined to the UI thread below.
+		final List<CSG> computed = op.process(ta);
+		BowlerStudio.runLater(() -> {
+			clearVisualizers();
+			for (CSG indicator : computed) {
+				MeshView indicatorMesh = indicator.newMesh();
+				indicatorMesh.setMouseTransparent(true);
+				// indicatorMesh.getTransforms().addAll(workplaneOffset);
+				PhongMaterial material = new PhongMaterial();
 
-			if (indicator.isHole()) {
-				// material.setDiffuseMap(texture);
-				material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
-				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
-			} else {
-				Color c = indicator.getColor();
-				material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
-				material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				if (indicator.isHole()) {
+					// material.setDiffuseMap(texture);
+					material.setDiffuseColor(new Color(0.25, 0.25, 0.25, 0.75));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				} else {
+					Color c = indicator.getColor();
+					material.setDiffuseColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.75));
+					material.setSpecularColor(javafx.scene.paint.Color.WHITE);
+				}
+				indicatorMesh.setMaterial(material);
+				engine.addUserNode(indicatorMesh);
+				indicatorMesh.setVisible(false);
+				visualizers.put(indicator, indicatorMesh);
 			}
-			indicatorMesh.setMaterial(material);
-			engine.addUserNode(indicatorMesh);
-			indicatorMesh.setVisible(false);
-			visualizers.put(indicator, indicatorMesh);
-		}
+		});
 	}
 
 	private void clearVisualizers() {
@@ -293,14 +300,16 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	}
 
 	public void hide() {
-		BowlerStudio.runLater(() -> mesh.setVisible(false));
-		mesh.removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
-		mesh.removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
-		mesh.removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
-		for (CSG key : visualizers.keySet()) {
-			visualizers.get(key).setVisible(false);
-		}
-		clearVisualizers();
+		BowlerStudio.runLater(() -> {
+			mesh.setVisible(false);
+			mesh.removeEventFilter(MouseEvent.MOUSE_EXITED, exited);
+			mesh.removeEventFilter(MouseEvent.MOUSE_ENTERED, entered);
+			mesh.removeEventFilter(MouseEvent.MOUSE_CLICKED, onClickEvent);
+			for (CSG key : visualizers.keySet()) {
+				visualizers.get(key).setVisible(false);
+			}
+			clearVisualizers();
+		});
 		ap.removeListener(this);
 	}
 
