@@ -5,7 +5,6 @@ package com.commonwealthrobotics;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Files;
@@ -173,16 +172,19 @@ public class Main extends Application {
 			logfile.delete();
 		try {
 			logfile.createNewFile();
-			//Log.enableDebugPrint(true);
-			Log.enableErrorPrint();
+			Log.enableDebugPrint(true);
+			//Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
 
+			Log.setFile(logfile);
+			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
 			hand = new UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
 					com.neuronrobotics.sdk.common.Log.error("Uncaught exception in " + t);
 					com.neuronrobotics.sdk.common.Log.error(e);
+					throw new RuntimeException(e);
 				}
 			};
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
@@ -245,40 +247,48 @@ public class Main extends Application {
 		// File myVersionFile = new File(myVersionFileString);
 		// File bindirFile = new File(bindir);
 		try {
-			String myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
-			String currentVersionDir = bindir + myVersionString + delim();
-			String zipGitCache = currentVersionDir + "gitcache.zip";
-			File file2 = new File(zipGitCache);
-			if (file2.exists()) {
-				Log.debug("Git Cache zip exists " + zipGitCache);
-				File workingDir = ScriptingEngine.getWorkspace();
-				String workingGitCache = workingDir.getAbsolutePath() + delim() + "gitcache";
-				// if(!new File(workingGitCache).exists()) {
-				// Log.debug("Local GitCahe is missing: "+workingGitCache);
-				try {
-					unzip(file2, workingGitCache);
-				} catch (Exception e) {
-					Log.error(e);
-				}
-				// }
-			} else {
-				String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
-				String nowVer = "" + StudioBuildInfo.getSDKVersion();
-				boolean b = !lastVer.contentEquals(nowVer);
-				boolean contentEquals = nowVer.contentEquals("0");
-				boolean c = b || contentEquals;
+			String myVersionString = "source";
 
-				if (c) {
-					// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
+			try {
+				myVersionString = new String(Files.readAllBytes(Paths.get(myVersionFileString))).trim();
+				String currentVersionDir = bindir + myVersionString + delim();
+				String zipGitCache = currentVersionDir + "gitcache.zip";
+				File file2 = new File(zipGitCache);
+				if (file2.exists()) {
+					Log.debug("Git Cache zip exists " + zipGitCache);
+					File workingDir = ScriptingEngine.getWorkspace();
+					String workingGitCache = workingDir.getAbsolutePath() + delim() + "gitcache";
+					// if(!new File(workingGitCache).exists()) {
+					// Log.debug("Local GitCahe is missing: "+workingGitCache);
 					try {
-						ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
-								"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git", "loadGit.groovy");
+						unzip(file2, workingGitCache);
 					} catch (Exception e) {
 						Log.error(e);
 					}
+					// }
+				} else {
+					String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
+					String nowVer = "" + StudioBuildInfo.getSDKVersion();
+					boolean b = !lastVer.contentEquals(nowVer);
+					boolean contentEquals = nowVer.contentEquals("0");
+					boolean c = b || contentEquals;
+
+					if (c) {
+						// https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git
+						try {
+							ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
+									"https://github.com/CommonWealthRobotics/CaDoodle-Git-Resources.git",
+									"loadGit.groovy");
+						} catch (Exception e) {
+							Log.error(e);
+						}
+					}
 				}
+			} catch (Exception ex) {
+				Log.error(ex);
 			}
-		} catch (IOException e) {
+
+		} catch (Exception e) {
 			Log.error(e);
 		}
 
@@ -287,7 +297,7 @@ public class Main extends Application {
 			File jarFile = new File(GroovyEclipseExternalEditor.getApplicationJarPath());
 			com.neuronrobotics.sdk.common.Log
 					.debug("Application at " + jarFile + " is " + (jarFile.exists() ? "Found" : "Missing!"));
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}

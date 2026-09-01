@@ -82,6 +82,7 @@ public class TimelineManager {
 
 	private CheckBox timelineOtherShow;
 	private int buttonSize = 100;
+	private String hideLabel = null;
 
 	public TimelineManager(ActiveProject activeProject) {
 		this.ap = activeProject;
@@ -192,7 +193,7 @@ public class TimelineManager {
 		clear();
 	}
 
-	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
+	public static Image resizeImage(Image originalImage, int targetWidth, int targetHeight, int insetDistance) {
 
 		// // Read pixels from the original image
 		// PixelReader pixelReader = originalImage.getPixelReader();
@@ -230,7 +231,7 @@ public class TimelineManager {
 		// Clear the canvas with a transparent background
 		gc.clearRect(0, 0, targetWidth, targetHeight);
 		// Draw the original image scaled to the target size
-		gc.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
+		gc.drawImage(originalImage, 0, -insetDistance, targetWidth, targetHeight + insetDistance + insetDistance);
 		// Create snapshot parameters to preserve transparency
 		SnapshotParameters params = new SnapshotParameters();
 		params.setFill(Color.TRANSPARENT);
@@ -343,12 +344,14 @@ public class TimelineManager {
 						try {
 							if (session.getSelected().size() > 0) {
 								session.getSellectedBounds();
-								session.updateControlsDisplayOfSelected();
 							}
 						} catch (BoundsComputFailure e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						// The current-index separator is independent of the selection, so always
+						// refresh the timeline after building it, even when nothing is selected.
+						session.updateControlsDisplayOfSelected();
 					});
 				} else {
 					updating = false;
@@ -381,16 +384,13 @@ public class TimelineManager {
 	}
 
 	private void makeButton(int i, Image image, CaDoodleOperation op) {
-		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
-		if (getNodeAt(timeline, i, 0) != null)
+		if (op == null)
 			return;
+		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
 		try {
 
 			List<CSG> state = ap.get().getStateAtOperation(op);
-			if (op == null)
-				return;
 			int myIndex = i;
-			addrem = true;
 			List<CSG> previous = (myIndex == 0)
 					? new ArrayList<CSG>()
 					: ap.get().getStateAtOperation(operations.get(myIndex - 1));
@@ -399,21 +399,28 @@ public class TimelineManager {
 			String typeName = op.getClass().getSimpleName();
 
 			BowlerStudio.runLater(() -> {
-				String text = (myIndex + 1) + "\n" + ap.getTranslation(typeName);
+				// The timeline GridPane is part of the scene graph, so reading its children
+				// and adding buttons must happen on the UI thread.
+				if (getNodeAt(timeline, myIndex, 0) != null) {
+					latch.countDown();
+					return;
+				}
+				addrem = true;
+				String text = (myIndex + 1) + ": " + ActiveProject.getTranslation(typeName);
 				if (MoveCenter.class.isInstance(op)) {
 					if (((MoveCenter) op).isDropMode()) {
-						text = (myIndex + 1) + "\n" + ap.getTranslation("MoveCenter.Drop");
+						text = (myIndex + 1) + ": " + ActiveProject.getTranslation("MoveCenter.Drop");
 					}
 				}
 				if (AddFromScript.class.isInstance(op)) {
 
-					text = (myIndex + 1) + "\n" + ap.getTranslation("AddFromScript");
+					text = (myIndex + 1) + ": " + ActiveProject.getTranslation("AddFromScript");
 
 				}
 				if (AddFromFile.class.isInstance(op)) {
 					AddFromFile af = (AddFromFile) op;
 					try {
-						text = (myIndex + 1) + "\n" + ap.getTranslation("AddFromFile") + " ";
+						text = (myIndex + 1) + "\n" + ActiveProject.getTranslation("AddFromFile") + " ";
 						String name = af.getFile().getName();
 						// text+=name+" ";
 						String[] split = name.split("\\.");
@@ -424,7 +431,7 @@ public class TimelineManager {
 					}
 
 				}
-				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0);
+				ButtonWithOverlayImage toAdd = new ButtonWithOverlayImage(text, image, buttonSize, buttonSize / 3.0, 5);
 				if (AddFromScript.class.isInstance(op) || AddFromFile.class.isInstance(op)
 						|| Sweep.class.isInstance(op)) {
 					setupCheckBox(timelineAddOpShow, toAdd, op);
@@ -590,17 +597,22 @@ public class TimelineManager {
 				setupCheckboxEvent(moveButtons, tmp);
 			});
 		}
-		String hideLabel = ActiveProject.getLangaugePack().getString("timeline.hideobj");
+		if (hideLabel == null)
+			hideLabel = ActiveProject.getTranslation("timeline.hideobj");
 		Tooltip tt = tmp.getTooltip();
+		String translation = ActiveProject.getTranslation(op.getClass().getSimpleName());
+
 		if (tt == null)
-			tt = new Tooltip(op.getType() + " : " + hideLabel);
+			tt = new Tooltip(hideLabel + " : " + translation);
 		else {
-			if (!tt.getText().contains(op.getType()))
-				tt = new Tooltip(op.getType() + " , " + tt.getText());
+			if (!tt.getText().contains(translation)) {
+				tt = new Tooltip(tt.getText() + " , " + translation);
+			}
 		}
 		tmp.setTooltip(tt);
 		moveButtons.add(toAdd);
-		toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
+		if (tmp.getGraphic() != null)
+			toAdd.setButtonImageType(tmp.getGraphic().getStyleClass());
 	}
 
 	private void setupCheckboxEvent(ArrayList<ButtonWithOverlayImage> moveButtons, CheckBox cb) {

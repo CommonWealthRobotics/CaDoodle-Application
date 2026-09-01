@@ -133,6 +133,16 @@
     -fx-background-insets: 3;
 }
 
+.image-button-shape-pallet {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 3px;
+    -fx-background-insets: 1;
+}
+.image-button-shape-pallet:focused       { -fx-border-color: #f38ba8; }
+.image-button-shape-pallet:pressed       { -fx-background-color: #45475a; }
+.image-button-shape-pallet:hover         { -fx-background-color: #313244; }
+
 #drawerButton, #timelineButton {
     -fx-border-width: 0px;      /* No red outline for drawer icons*/
     -fx-background-insets: 0 6; /* reduce outline of timeline/shapes drawer icon */
@@ -873,4 +883,28 @@
 
 .menu-button:pressed .arrow {
     -fx-background-color: #f4ede0; /* logo-beige */
+}
+
+.grid-key-color {
+    -fx-text-fill: #6200ea; /* lav-vivid */
+}
+.grid-dark-color {
+    -fx-text-fill: #3d1a6e84; /* lav-deep */
+}
+.grid-light-color {
+    -fx-text-fill: #9b72cf84; /* lav-medium */
+}
+
+.nav-cube-surface-color {
+    -fx-text-fill:  #f4ede0; /* logo-beige */
+}
+.nav-cube-edge-color {
+    -fx-text-fill: #e7a436; /* logo-orange */
+}
+.nav-cube-corner-color {
+    -fx-text-fill: #263d8c;        /* logo-blue */
+}
+
+.nav-cube-corner-hover {
+    -fx-text-fill: #cc0000; 
 }

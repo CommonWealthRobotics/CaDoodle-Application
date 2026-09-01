@@ -139,8 +139,11 @@ public class SettingsManager implements ICSGClientEvent {
 	@FXML
 	private RadioButton pinToVersion;
 	@FXML
+	private RadioButton bugfixOption;
+	@FXML
 	private ComboBox<String> versionOptions;
 	private File pinFile;
+	private File bugfixFile;
 	private String myVersionFileString;
 	private String bindir;
 	@FXML
@@ -180,6 +183,20 @@ public class SettingsManager implements ICSGClientEvent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		bugfixFile.delete();
+	}
+
+	@FXML
+	void onBugfix(ActionEvent event) {
+		Log.debug("onPinVersion");
+		versionOptions.setDisable(false);
+		try {
+			bugfixFile.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pinFile.delete();
 	}
 
 	@FXML
@@ -201,6 +218,7 @@ public class SettingsManager implements ICSGClientEvent {
 		Log.debug("onSetCheck");
 		versionOptions.setDisable(true);
 		pinFile.delete();
+		bugfixFile.delete();
 	}
 
 	@FXML
@@ -241,55 +259,65 @@ public class SettingsManager implements ICSGClientEvent {
 
 	@FXML
 	void onConnectServer(ActionEvent event) {
+		// Read all JavaFX control state on the UI thread before starting the worker.
 		connectServer.setDisable(false);
-		if (connectServer.isSelected()) {
+		final boolean selected = connectServer.isSelected();
+		final String key = apiKey.getText();
+		final String host = ipaddressField.getText();
+		final String port = portField.getText();
 
-			String key = apiKey.getText();
-			Path tempFile;
-			try {
-
-				com.neuronrobotics.sdk.common.Log.debug("Opening Server Connection");
-				String text = ipaddressField.getText();
-				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + true);
-				ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
-				ConfigurationDatabase.put("CaDoodle", "CSGClientHost", text);
-				ConfigurationDatabase.put("CaDoodle", "CSGClientPort", portField.getText());
-			} catch (Exception e) {
-				com.neuronrobotics.sdk.common.Log.error(e);
+		new Thread(() -> {
+			if (selected) {
+				try {
+					com.neuronrobotics.sdk.common.Log.debug("Opening Server Connection");
+					ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + true);
+					ConfigurationDatabase.put("CaDoodle", "CSGClientKey", key);
+					ConfigurationDatabase.put("CaDoodle", "CSGClientHost", host);
+					ConfigurationDatabase.put("CaDoodle", "CSGClientPort", port);
+				} catch (Exception e) {
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			} else {
+				com.neuronrobotics.sdk.common.Log.debug("Closing Server Connection");
+				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
 			}
-		} else {
-			com.neuronrobotics.sdk.common.Log.debug("Closing Server Connection");
-			ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
-		}
-		if (clientStateSet()) {
-			clientDisplay.setText("Client is Connected!");
-			CSGClient.getClient().addListener(this);
-		} else {
-			connectServer.setSelected(false);
-			clientDisplay.setText("Server is missing");
-		}
+			final boolean connected = clientStateSet();
+			BowlerStudio.runLater(() -> {
+				if (connected) {
+					clientDisplay.setText("Client is Connected!");
+					CSGClient.getClient().addListener(this);
+				} else {
+					connectServer.setSelected(false);
+					clientDisplay.setText("Server is missing");
+				}
+			});
+		}).start();
 
 	}
 
 	public static boolean clientStateSet() {
-		boolean connect = Boolean
-				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGClientConnect", "" + false).toString());
-		String key = ConfigurationDatabase.get("CaDoodle", "CSGClientKey", "").toString();
-		String host = ConfigurationDatabase.get("CaDoodle", "CSGClientHost", "").toString();
-		String port = ConfigurationDatabase.get("CaDoodle", "CSGClientPort", 3742).toString();
-		if (connect) {
-			try {
-				Path tempFile = Files.createTempFile("mytemp", ".txt");
-				Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
-				if (!CSGClient.isRunning())
-					CSGClient.start(host, Integer.parseInt(port), tempFile.toFile());
-				return true;
-			} catch (Exception ex) {
-				ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
+		try {
+			boolean connect = Boolean
+					.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CSGClientConnect", "" + false).toString());
+			String key = ConfigurationDatabase.get("CaDoodle", "CSGClientKey", "").toString();
+			String host = ConfigurationDatabase.get("CaDoodle", "CSGClientHost", "").toString();
+			String port = ConfigurationDatabase.get("CaDoodle", "CSGClientPort", 3742).toString();
+			if (connect) {
+				try {
+					Path tempFile = Files.createTempFile("mytemp", ".txt");
+					Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
+					if (!CSGClient.isRunning())
+						CSGClient.start(host, Integer.parseInt(port), tempFile.toFile());
+					return true;
+				} catch (Exception ex) {
+					ConfigurationDatabase.put("CaDoodle", "CSGClientConnect", "" + false);
+				}
+			} else {
+				CSGClient.close();
+				com.neuronrobotics.sdk.common.Log.debug("Closing server connection");
 			}
-		} else {
-			CSGClient.close();
-			com.neuronrobotics.sdk.common.Log.debug("Closing server connection");
+		} catch (Exception e) {
+			Log.error(e);
 		}
 		return false;
 	}
@@ -305,7 +333,7 @@ public class SettingsManager implements ICSGClientEvent {
 				try {
 					tempFile = Files.createTempFile("mytemp", ".txt");
 					Files.write(tempFile, key.getBytes(StandardCharsets.UTF_8));
-					server = new CSGServer(Integer.parseInt(port), tempFile.toFile());
+					server = new CSGServer((int) Double.parseDouble(port), tempFile.toFile());
 					new Thread(() -> {
 						try {
 							com.neuronrobotics.sdk.common.Log.debug("\n\nStarting CSG server\n\n");
@@ -547,10 +575,13 @@ public class SettingsManager implements ICSGClientEvent {
 		myVersionFileString = bindir + "currentversion.txt";
 		String pinFileName = bindir + "pinVersion";
 		pinFile = new File(pinFileName);
+		bugfixFile = new File(bindir + "pinBugfixVersion");
 		boolean toPin = pinFile.exists();
 		versionOptions.setDisable(!toPin);
-		if (!toPin)
+		if (!toPin && !bugfixFile.exists())
 			checkOnLaunch.setSelected(true);
+		else if (bugfixFile.exists())
+			bugfixOption.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
 		mc.getActiveProject();
@@ -570,15 +601,15 @@ public class SettingsManager implements ICSGClientEvent {
 		ActiveProject.setStyleSheet(topPane);
 		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
 		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
-		//		try {
-		//			// Optionally dig deeper with internal API (may break across JFX versions)
-		//			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
-		//			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
-		//			renderPipelineDisplay.setText(name);
-		//		} catch (Throwable ex) {
-		//			Log.error(ex);
-		//			renderPipelineDisplay.setText(ex.getMessage());
-		//		}
+		// try {
+		// // Optionally dig deeper with internal API (may break across JFX versions)
+		// GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
+		// String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
+		// renderPipelineDisplay.setText(name);
+		// } catch (Throwable ex) {
+		// Log.error(ex);
+		// renderPipelineDisplay.setText(ex.getMessage());
+		// }
 
 	}
 

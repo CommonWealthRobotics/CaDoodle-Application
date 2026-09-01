@@ -50,6 +50,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -75,6 +76,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ICadoodleSaveStatusUpd
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.OperationResult;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.RandomStringFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.SaveOverwriteException;
+import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
@@ -764,6 +766,15 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Region p = iterator.next();
 			setStyleSheet(p);
 		}
+		BowlerStudio3dEngine.setGridKey(getLabelTextColor("grid-key-color"));
+		BowlerStudio3dEngine.setGridColor(getLabelTextColor("grid-dark-color"));
+		BowlerStudio3dEngine.setLightGrid(getLabelTextColor("grid-light-color"));
+		BowlerStudio3dEngine.updateGrids();
+		BowlerStudio3dEngine.updateRulerColor(getLabelTextColor("label"));
+
+		ViewCube.setColors(getLabelTextColor("nav-cube-surface-color"), getLabelTextColor("nav-cube-edge-color"),
+				getLabelTextColor("nav-cube-corner-color"), getLabelTextColor("label"),
+				getLabelTextColor("nav-cube-corner-hover"));
 	}
 
 	public static ResourceBundle getLangaugePack() {
@@ -798,78 +809,79 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public static Locale showLanguageSelectionPopup(Locale starting) {
-
-		List<Locale> locales = getAvailableLocales();
-
-		ComboBox<Locale> comboBox = new ComboBox<Locale>();
-		comboBox.getItems().addAll(locales);
-
-		comboBox.setCellFactory(list -> new ListCell<Locale>() {
-			@Override
-			protected void updateItem(Locale item, boolean empty) {
-				super.updateItem(item, empty);
-
-				if (empty || item == null) {
-					setText(null);
-				} else {
-					setText(item.getDisplayLanguage(item));
-				}
-			}
-		});
-
-		comboBox.setButtonCell(new ListCell<Locale>() {
-			@Override
-			protected void updateItem(Locale item, boolean empty) {
-				super.updateItem(item, empty);
-
-				if (empty || item == null) {
-					setText(null);
-				} else {
-					setText(item.getDisplayLanguage(item));
-				}
-			}
-		});
-		comboBox.getSelectionModel().selectFirst();
-		if (starting != null)
-			for (Locale l : locales)
-				if (l.getLanguage().contentEquals(starting.getLanguage()))
-					comboBox.getSelectionModel().select(l);;
-
-		Button ok = new Button("OK");
-		ok.setDefaultButton(true);
-
-		VBox myroot = new VBox(15, new Label("Select Language"), comboBox, ok);
-
-		myroot.setPadding(new Insets(20));
-		myroot.setAlignment(Pos.CENTER);
-		AnchorPane root = new AnchorPane();
-		root.getChildren().add(myroot);
 		final Locale[] result = new Locale[1];
-		myroot.getStyleClass().add("vbox");
-		AnchorPane.setTopAnchor(myroot, 0.0);
-		AnchorPane.setBottomAnchor(myroot, 0.0);
-		AnchorPane.setLeftAnchor(myroot, 0.0);
-		AnchorPane.setRightAnchor(myroot, 0.0);
 		BowlerStudio.runLater(() -> {
-			Stage stage = new Stage();
-			// stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initStyle(StageStyle.UTILITY);
-			stage.setTitle("Language Selection");
-			stage.setScene(new Scene(root));
-			stage.setResizable(false);
-			setStyleSheet(root);
-			ok.setOnAction(e -> {
-				result[0] = comboBox.getValue();
-				stage.close();
+			List<Locale> locales = getAvailableLocales();
+
+			ComboBox<Locale> comboBox = new ComboBox<Locale>();
+			comboBox.getItems().addAll(locales);
+
+			comboBox.setCellFactory(list -> new ListCell<Locale>() {
+				@Override
+				protected void updateItem(Locale item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (empty || item == null) {
+						setText(null);
+					} else {
+						setText(item.getDisplayLanguage(item));
+					}
+				}
 			});
 
-			stage.setOnCloseRequest(e -> {
-				result[0] = Locale.of("en");
+			comboBox.setButtonCell(new ListCell<Locale>() {
+				@Override
+				protected void updateItem(Locale item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (empty || item == null) {
+						setText(null);
+					} else {
+						setText(item.getDisplayLanguage(item));
+					}
+				}
 			});
+			comboBox.getSelectionModel().selectFirst();
+			if (starting != null)
+				for (Locale l : locales)
+					if (l.getLanguage().contentEquals(starting.getLanguage()))
+						comboBox.getSelectionModel().select(l);;
 
-			stage.showAndWait();
-			panes.remove(root);
+			Button ok = new Button("OK");
+			ok.setDefaultButton(true);
 
+			VBox myroot = new VBox(15, new Label("Select Language"), comboBox, ok);
+
+			myroot.setPadding(new Insets(20));
+			myroot.setAlignment(Pos.CENTER);
+			AnchorPane root = new AnchorPane();
+			root.getChildren().add(myroot);
+			myroot.getStyleClass().add("vbox");
+			AnchorPane.setTopAnchor(myroot, 0.0);
+			AnchorPane.setBottomAnchor(myroot, 0.0);
+			AnchorPane.setLeftAnchor(myroot, 0.0);
+			AnchorPane.setRightAnchor(myroot, 0.0);
+			BowlerStudio.runLater(() -> {
+				Stage stage = new Stage();
+				// stage.initModality(Modality.APPLICATION_MODAL);
+				stage.initStyle(StageStyle.UTILITY);
+				stage.setTitle("Language Selection");
+				stage.setScene(new Scene(root));
+				stage.setResizable(false);
+				setStyleSheet(root);
+				ok.setOnAction(e -> {
+					result[0] = comboBox.getValue();
+					stage.close();
+				});
+
+				stage.setOnCloseRequest(e -> {
+					result[0] = Locale.of("en");
+				});
+
+				stage.showAndWait();
+				panes.remove(root);
+
+			});
 		});
 		while (result[0] == null) {
 			try {
@@ -952,12 +964,35 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		node.getStylesheets().setAll(url);
 	}
 
-	public static Color getLabelTextColor() {
+	public static Font getLabelFont(String key) {
 		if (!Platform.isFxApplicationThread()) {
 			throw new IllegalStateException("Must be called on the JavaFX Application Thread");
 		}
 
 		Label label = new Label("test");
+		label.getStyleClass().clear();
+		label.getStyleClass().add(key);
+
+		Pane root = new Pane(label);
+		Scene scene = new Scene(root);
+
+		scene.getStylesheets().add(getStyleSheetURL());
+
+		// Force CSS to be applied
+		root.applyCss();
+		label.applyCss();
+
+		return label.getFont();
+	}
+
+	public static Color getLabelTextColor(String key) {
+		if (!Platform.isFxApplicationThread()) {
+			throw new IllegalStateException("Must be called on the JavaFX Application Thread");
+		}
+
+		Label label = new Label("test");
+		label.getStyleClass().clear();
+		label.getStyleClass().add(key);
 
 		Pane root = new Pane(label);
 		Scene scene = new Scene(root);
@@ -986,6 +1021,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
+		Log.debug("Stylesheet from: " + url);
 		return url;
 	}
 
@@ -1008,10 +1044,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return sheets;
 	}
 
-	public String getTranslation(String key) {
+	public static String getTranslation(String key) {
 		try {
 			return getLangaugePack().getString(key);
 		} catch (Exception ex) {
+			Log.error("Translation to " + getCurrentLocale() + " of " + key + " failed!");
 			Log.error(ex);
 			return key;
 		}

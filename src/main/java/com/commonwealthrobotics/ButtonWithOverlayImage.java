@@ -10,9 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-
 
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 
@@ -25,40 +22,35 @@ public class ButtonWithOverlayImage extends Button {
 	private ImageView value;
 	public HBox hbox;
 
-
-	public ButtonWithOverlayImage(String text, Image image, int buttonSize, double overlaySize) {
+	public ButtonWithOverlayImage(String text, Image image, int buttonSize, double overlaySize, int insetDistance) {
 		super(text);
 		this.image = image;
 		getStyleClass().add("image-button");
-		setContentDisplay(ContentDisplay.TOP);
+		if (text.length() > 0)
+			setContentDisplay(ContentDisplay.TOP);
+		else
+			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		separator.getStyleClass().clear();
 		separator.getStyleClass().add("timeline-block");
-		value = new ImageView(TimelineManager.resizeImage(image, buttonSize, buttonSize));
+		value = new ImageView(TimelineManager.resizeImage(image, buttonSize, buttonSize, insetDistance));
 		value.setFitWidth(buttonSize);
 		value.setFitHeight(buttonSize);
 
 		toolimage = new ImageView();
 
-
 		toolimage.setFitWidth(overlaySize);
 		toolimage.setFitHeight(overlaySize);
-
-		double radius = overlaySize * Math.sqrt(2) / 2.0;
-		Circle bg = new Circle(radius, Color.web("#263d8c"));
-
-		StackPane badge = new StackPane(toolimage);
-		badge.setAlignment(Pos.CENTER);
-		badge.setMaxSize(radius * 2, radius * 2);
+		toolimage.setTranslateX(buttonSize / 2 - overlaySize / 2);
+		toolimage.setTranslateY(buttonSize / 2 - overlaySize / 2);
 
 		stack = new StackPane();
-		stack.setPrefSize(buttonSize, buttonSize);
+		// stack.setPrefSize(buttonSize, buttonSize);
 		stack.getChildren().add(value);
-		stack.getChildren().add(badge);
-		StackPane.setAlignment(badge, Pos.BOTTOM_RIGHT);
+		stack.getChildren().add(toolimage);
 
 		hbox = new HBox(this, separator);
 		hbox.setAlignment(Pos.CENTER);
-
+		setMaxSize(buttonSize, buttonSize);
 		setGraphic(stack);
 	}
 

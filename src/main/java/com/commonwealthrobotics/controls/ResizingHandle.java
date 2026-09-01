@@ -342,7 +342,14 @@ public class ResizingHandle {
 
 	public void updateOrientation(TransformNR cf) {
 		TransformNR cam = new TransformNR(cf.getRotation());
-		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
+
+		TransformNR wp = new TransformNR();
+		try {
+			wp = TransformFactory.affineToNr(workplaneOffset);
+		} catch (Exception ex) {
+			Log.error("Failed workplane " + workplaneOffset);
+			Log.error(ex);
+		}
 		RotationNR rot = wp.inverse().times(cam).getRotation();
 
 		TransformNR orient = new TransformNR();
@@ -433,8 +440,7 @@ public class ResizingHandle {
 	}
 
 	/**
-	 * @param myColor
-	 *            the myColor to set
+	 * @param myColor the myColor to set
 	 */
 	public void setMyColor(Color myColor, Color highlightColor) {
 		this.myColor = myColor;

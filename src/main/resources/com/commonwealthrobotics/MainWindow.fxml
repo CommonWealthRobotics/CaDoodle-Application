@@ -29,7 +29,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="totalApplicationBackground" prefHeight="868.0" prefWidth="1139.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -562,20 +561,20 @@
                                                    <children>
                                                       <GridPane fx:id="objectPallet" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <columnConstraints>
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" prefWidth="70.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                       </GridPane>
                                                    </children>
@@ -1023,7 +1022,7 @@
                 <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="100.0" prefHeight="50.0" vgrow="NEVER" />
+                <RowConstraints maxHeight="100.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <HBox alignment="CENTER" GridPane.columnIndex="2">
@@ -1031,12 +1030,8 @@
                          <Insets bottom="0" left="0" right="0" top="4" />
                       </padding>
                       <children>
-                        <Text fx:id="memoryUsageText" strokeType="OUTSIDE" strokeWidth="0.0" text="%mainwindow.memory_usage" wrappingWidth="59.0" HBox.hgrow="ALWAYS">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                        </Text>
-                     <ProgressIndicator fx:id="memUsage" progress="0.0" />
+                        <Label text="%mainwindow.memory_usage" />
+                     <ProgressIndicator fx:id="memUsage" prefHeight="50.0" prefWidth="45.0" progress="0.0" HBox.hgrow="NEVER" />
 
                       <StackPane />
                      </children>

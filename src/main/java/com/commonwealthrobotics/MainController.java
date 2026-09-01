@@ -52,7 +52,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Debug3dProvider;
 import eu.mihosoft.vrl.v3d.IDebug3dProvider;
 import eu.mihosoft.vrl.v3d.CSG.OptType;
@@ -63,8 +62,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.DepthTest;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -92,9 +89,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
-import javafx.scene.shape.MeshView;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -116,7 +110,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private boolean componentTreeOpen = true;
 	private boolean resetArmed;
 	private long timeOfClick;
-	private MeshView ground;
 	private int lastFrame = 0;
 	private File currentFile = null;
 	private boolean timelineOpen = true;
@@ -520,7 +513,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onRedo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("On Redo");
-		session.getExecutor().submit(() -> {
+		session.submit(() -> {
 			ap.get().forward();
 		});
 		session.setKeyBindingFocus();
@@ -529,7 +522,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onUndo(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("On Undo");
-		session.getExecutor().submit(() -> {
+		session.submit(() -> {
 			ap.get().back();
 			session.setKeyBindingFocus();
 		});
@@ -689,7 +682,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onFitView(ActionEvent event) {
-		session.getExecutor().submit(() -> {
+		session.submit(() -> {
 			TransformNR scale = session.getFocusCenter();
 
 			engine.focusOrientation(null, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
@@ -800,7 +793,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onImport(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("On Import");
-		session.getExecutor().submit(() -> {
+		session.submit(() -> {
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			ArrayList<String> extensions = getExtension();
 			ExtensionFilter stl = new ExtensionFilter("CaDoodle Compatible", extensions);
@@ -955,7 +948,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onWorkplane(ActionEvent event) {
-		session.getExecutor().submit(() -> {
+		session.submit(() -> {
 			session.setMode(SpriteDisplayMode.PLACING);
 			session.workplane.pickPlane(() -> {
 				ruler.disableRulerMode();
@@ -1082,7 +1075,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert optionsConsume != null : "optionsConsume button failed";
 
 		try {
-			// BowlerStudio3dEngine.setThemeColors(ActiveProject.getLabelTextColor());
+
 			engine = new BowlerStudio3dEngine("CAD window");
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
 
@@ -1110,11 +1103,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				ap.loadActive();
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
+				Thread.sleep(3000);
 				Log.flush();
 				System.exit(2);
 			}
-			createGroundPlane();
-			session = new SelectionSession(engine, ap, ruler, ground);
+			session = new SelectionSession(engine, ap, ruler);
 			ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(),
 					session);
 
@@ -1160,14 +1153,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				if (SettingsManager.clientStateSet()) {
 					com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
 				}
+			} catch (Exception e) {
+				com.neuronrobotics.sdk.common.Log.error(e);
+			}
+			try {
 				setCadoodleFile();
 				// Threaded load happens after UI opens
 				setupFile();
 			} catch (Exception e) {
 				com.neuronrobotics.sdk.common.Log.error(e);
+				Thread.sleep(3000);
 				System.exit(1);
 			}
-
 			fileNameBox.setOnKeyTyped(ev -> {
 				onNameTyped();
 			});
@@ -1205,6 +1202,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		// timelineScroll.setFocusTraversable(false);
 		makeEditableTitle(shapeConfiguration);
 		ap.setStyleSheet(totalApplicationBackground);
+		ap.resetAllStyleSheets();
 	}
 
 	/**
@@ -1345,7 +1343,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setupFile() {
-		session.getExecutor().submit(() -> {
+		session.submit(() -> {
 			Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 			try {
 				// cadoodle varable set on the first instance of the listener fireing
@@ -1477,7 +1475,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			Dragboard db = event.getDragboard();
 			if (db.hasFiles()) {
 				List<File> files = db.getFiles();
-				session.getExecutor().submit(() -> {
+				session.submit(() -> {
 					Thread.setDefaultUncaughtExceptionHandler(Main.hand);
 					for (File file : files) {
 						com.neuronrobotics.sdk.common.Log.debug("File dropped: " + file.getAbsolutePath());
@@ -1508,20 +1506,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 	}
 
-	private void createGroundPlane() {
-		ground = new Cube(1000, 1000, 0.001).toCSG().toZMax().newMesh();
-		PhongMaterial material = new PhongMaterial();
-		material.setDiffuseColor(new Color(0, 0, 0.25, 0.0025));
-		ground.setCullFace(CullFace.BACK);
-		ground.setMaterial(material);
-		ground.setOpacity(0.25);
-		Group linesGroup = new Group();
-		linesGroup.setDepthTest(DepthTest.ENABLE);
-		linesGroup.setViewOrder(1); // Lower viewOrder renders on top
-		linesGroup.getChildren().add(ground);
-		engine.addUserNode(linesGroup);
-		// rulerGroup.getTransforms().add(workplane.getWorkplaneLocation());
-	}
 
 	public static double groundScale() {
 		return 1;
@@ -1551,9 +1535,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 		});
 
-		ViewCube viewcube = new ViewCube();
-		MeshView viewCubeMesh = viewcube.createTexturedCube(navigationCube);
-		navigationCube.addUserNode(viewCubeMesh);
+		ViewCube.createTexturedCube(navigationCube);
 	}
 
 	@Override
@@ -1571,21 +1553,19 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			redoButton.setDisable(!ap.get().isForwardAvailable());
 			undoButton.setDisable(!ap.get().isBackAvailable());
 		});
-		ObservableList<String> c = showAllImage.getStyleClass();
-		c.clear();
-		if (session.isAnyHidden()) {
-			c.add("lit-bulb-icon");
+		BowlerStudio.runLater(() -> {
+			ObservableList<String> c = showAllImage.getStyleClass();
+			c.clear();
+			if (session.isAnyHidden()) {
+				c.add("lit-bulb-icon");
 
-			BowlerStudio.runLater(() -> {
 				showAllButton.setDisable(false);
-			});
-		} else {
-			c.add("dark-bulb-icon");
+			} else {
+				c.add("dark-bulb-icon");
 
-			BowlerStudio.runLater(() -> {
 				showAllButton.setDisable(true);
-			});
-		}
+			}
+		});
 		// if (this.source != source) {
 		// session.save();
 		// }
@@ -1905,7 +1885,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	private void cancel() {
 		com.neuronrobotics.sdk.common.Log.debug("MainController:Cancel event");
-		session.getExecutor().submit(() -> {
+		if (session.timeoutMoveThread != null)
+			return;
+		session.submit(() -> {
 			try {
 				session.setMode(SpriteDisplayMode.Default);
 				if (session.workplane.isTemporaryPlane()) {
@@ -1927,7 +1909,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != ground && !engine.isSubScene(in) && in != session.workplane.getPlacementPlane()
+		if (in != engine.getWorkplaneGroup().intersectionNode && !engine.isSubScene(in)
+				&& in != session.workplane.getPlacementPlane().intersectionNode
 				&& in != selectionBox.getSelectionPlane())
 			return false;
 		if (event.isControlDown())

@@ -284,7 +284,7 @@ public class ThreedNumber {
 		double offset = getMyOffset();
 		com.neuronrobotics.sdk.common.Log.info(tfDimension + " to " + v + " offset by " + offset);
 		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - offset);
-		textField.setText(formatted3);
+		BowlerStudio.runLater(() -> textField.setText(formatted3));
 		setMostRecentValue(v);
 		lockout = false;
 		// validate();

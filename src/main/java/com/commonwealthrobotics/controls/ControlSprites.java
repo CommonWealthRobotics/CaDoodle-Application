@@ -234,8 +234,9 @@ public class ControlSprites {
 		zMoveManipulator.addEventListener(ev -> {
 			zmoving = true;
 			xymoving = false;
-			if (getMode() != SpriteDisplayMode.Align)
-				setMode(SpriteDisplayMode.MoveZ);
+			if (ev != null)
+				if (getMode() != SpriteDisplayMode.Align)
+					setMode(SpriteDisplayMode.MoveZ);
 			TransformNR globalPose = zMoveManipulator.getCurrentPose();
 			TransformNR wp = new TransformNR(ap.get().getWorkplane().getRotation());
 			globalPose = wp.times(globalPose);
@@ -396,8 +397,10 @@ public class ControlSprites {
 		controlsGroup.setViewOrder(-2); // Lower viewOrder renders on top
 
 		BowlerStudio.runLater(() -> {
-			engine.addUserNode(footprint);
+			engine.addTransparentorkplaneNode(footprint);
 			for (Node r : allElems) {
+				if (r == null)
+					continue;
 				if (MeshView.class.isInstance(r))
 					((MeshView) r).setCullFace(CullFace.BACK);
 
@@ -762,19 +765,14 @@ public class ControlSprites {
 	}
 
 	public void setMode(SpriteDisplayMode mode) {
-		// new Exception("Mode Set to " + mode).printStackTrace();
 
 		if (mode == this.mode)
 			return;
+		//new Exception("Mode Set to " + mode).printStackTrace();
+
 		Log.debug("ControlSprites setMode: " + mode);
 
 		this.mode = mode;
-
-		// if (mode == SpriteDisplayMode.MoveZ)
-		// {
-		// Point3D startingPos = new Point3D(0, 0, zOffset.getMostRecentValue());
-		// zMove.setStartingWorkplanePosition(startingPos);
-		// }
 		BowlerStudio.runLater(() -> {
 
 			for (Node r : allElems)
@@ -853,8 +851,8 @@ public class ControlSprites {
 					break;
 			}
 
-			//			if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
-			//				updateLines();
+			// if ((mode != SpriteDisplayMode.Clear) && (mode != SpriteDisplayMode.PLACING))
+			// updateLines();
 		});
 	}
 
