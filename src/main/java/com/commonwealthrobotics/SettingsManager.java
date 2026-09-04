@@ -755,6 +755,8 @@ public class SettingsManager implements ICSGClientEvent {
 				}
 			});
 			// Show the new window
+			stage.setHeight(950);
+			stage.setWidth(1500);
 			stage.show();
 		} catch (IOException e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
