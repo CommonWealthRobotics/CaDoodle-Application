@@ -1059,11 +1059,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
+
 			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"),
-					String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+					String.format(Locale.getDefault(), "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
 				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"),
-						String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+						String.format(Locale.getDefault(), "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1104,13 +1105,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		TextField options = new TextField();
 		options.setEditable(true);
-		options.setText(para.getMM() + "");
+		options.setText(String.format(Locale.getDefault(), "%.3f", para.getMM()));
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		options.setOnAction(event -> {
 			ArrayList<String> options2 = para.getOptions();
-			String string = options.getText().toString();
+			String string = options.getText().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (parseDouble > MAX_NUMBER_FILED) {
@@ -1145,19 +1146,29 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			limited = true;
 
 		ComboBox<String> options = new ComboBox<String>();
+		String toSelect = null;
 		for (String s : options2) {
-			options.getItems().add(s);
+			String t = s.replace(',', '.');
+			double val = Double.parseDouble(t);
+			String formatted3 = String.format(Locale.getDefault(), "%.3f", val);
+			if (Math.abs(para.getMM() - val) < 0.001) {
+				toSelect = formatted3;
+			}
+			options.getItems().add(formatted3);
+		}
+		if (toSelect == null) {
+			toSelect = String.format(Locale.getDefault(), "%.3f", para.getMM());
+			options.getItems().add(toSelect);
 		}
 
-		options.getItems().add(para.getMM() + "");
 		options.setEditable(true);
-		options.getSelectionModel().select(para.getMM() + "");
+		options.getSelectionModel().select(toSelect);
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
-			String string = options.getSelectionModel().getSelectedItem().toString();
+			String string = options.getSelectionModel().getSelectedItem().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (isLimit) {
@@ -1266,10 +1277,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				mass += (c.getVolume() * localDensity / 1000.0);
 			}
 			if (linkedHashSet.size() == 1)
-				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
+				button.setText(label + " \n " + String.format(Locale.getDefault(), "%.4f g/cm^3", localDensity));
 			else
 				button.setText(ap.getTranslation("mainwindow.asorted"));
-			String format = String.format(Locale.US, "%.4f g", mass);
+			String format = String.format(Locale.getDefault(), "%.4f g", mass);
 			massDisplay.setText(format);
 			materialPanel2.setText(ap.getTranslation("mainwindow.material") + "    ----   ( " + format + " )");
 		};
