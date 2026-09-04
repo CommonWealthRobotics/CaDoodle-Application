@@ -3181,11 +3181,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			mh.halo.setVisible(false);
 		}
 	}
+
 	public void showHalos() {
 		for (MeshHolder mh : meshes.values()) {
 			mh.halo.setVisible(true);
 		}
 	}
+
 	public double getSnapGridValue() {
 		return Double.parseDouble(ConfigurationDatabase.get("CaDoodle", "SnapGridSize", "1.0").toString());
 	}
