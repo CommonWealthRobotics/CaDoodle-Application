@@ -20,8 +20,8 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.Vector3d;
-
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -64,9 +64,11 @@ public class RotationHandle {
 	private Affine viewRotation;
 	private SelectionSession session;
 	private ActiveProject ap;
-	private boolean moveLock = false;
+	boolean moveLock = false;
 	private IOnRotateDone done;
 	private IOnRotateMoving moving = null;
+
+	private Group imageSet = new Group();
 
 	public RotationHandle(EulerAxis ax, Affine translate, Affine vr, RotationSessionManager rotationSessionManager,
 			ActiveProject ap, SelectionSession cs, Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
@@ -76,6 +78,8 @@ public class RotationHandle {
 
 		this.session = cs;
 		this.done = done;
+
+		imageSet.getChildren().addAll(controlCircle, handle);
 
 		Runnable onChange = () -> {
 			if (TDnumber.canceled)
@@ -98,7 +102,7 @@ public class RotationHandle {
 		controlCircle.setImage(fullcircleImage);
 		controlCircle.setVisible(false);
 
-		handle.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
+		imageSet.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
 			if (!moveLock)
 				controlCircle.setVisible(true);
 
@@ -106,37 +110,52 @@ public class RotationHandle {
 			com.neuronrobotics.sdk.common.Log.info("Entered " + axis);
 		});
 
-		handle.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
+		imageSet.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
 			handle.setImage(rotateImage);
 			if (!rotationStarted)
 				controlCircle.setVisible(false);
 		});
 
-		EventHandler<? super MouseEvent> eventFilter = ev -> {
+		EventHandler<? super MouseEvent> pressedEvent = ev -> {
 			selected = true;
 			rotationStarted = true;
 			startAngleFound = false;
 			com.neuronrobotics.sdk.common.Log.info("Handle clicked");
-			rotationSessionManager.initialize(cs.moveLock());
+			rotationSessionManager.hideOthers(this);
+			if (cs.moveLock()) {
+				selected = false;
+				rotationStarted = false;
+				return;
+			}
 			flagSaveChange = false;
-			session.setMode(SpriteDisplayMode.Rotating);
-			if (!moveLock)
+			BowlerStudio.runLater(() -> {
+				session.setMode(SpriteDisplayMode.Rotating);
+				imageSet.setVisible(true);
 				controlCircle.setVisible(true);
-			arc.setVisible(true);
-			handle.setVisible(true);
-			TDnumber.setValue(0);
-			TDnumber.mouseTransparent(false);
-			TDnumber.show();
+				arc.setVisible(false);
+				handle.setVisible(true);
+				TDnumber.setValue(0);
+				TDnumber.mouseTransparent(false);
+				TDnumber.show();
+			});
 			ev.consume();
 		};
 
-		handle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
-		controlCircle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
-		controlCircle.setPickOnBounds(true);
+		imageSet.addEventFilter(MouseEvent.MOUSE_PRESSED, pressedEvent);
+		// controlCircle.addEventFilter(MouseEvent.MOUSE_PRESSED, eventFilter);
+		imageSet.setPickOnBounds(true);
 
 		EventHandler<? super MouseEvent> released = event -> {
-			if (!flagSaveChange)
+			if (!flagSaveChange) {
+				// No drag happened — still tear down state so the next press works
+				session.setMode(SpriteDisplayMode.Default);
+				controlCircle.setVisible(false);
+				arc.setVisible(false);
+				selected = false;
+				rotationStarted = false;
+				TDnumber.mouseTransparent(false);
 				return;
+			}
 
 			runSaveAndReset();
 		};
@@ -149,7 +168,6 @@ public class RotationHandle {
 					StartAngle = 22.5 * Math.round(getAngle(event) / 22.5);
 					TDnumber.mouseTransparent(true);
 				}
-
 				currentAngle = StartAngle - getAngle(event);
 				while (currentAngle < -180)
 					currentAngle += 360;
@@ -180,20 +198,20 @@ public class RotationHandle {
 				arc.setStartAngle(0);
 				arc.setLength(sweepAngle);
 				TDnumber.setValue(sweepAngle);
-
 				setSweepAngle(currentAngle);
+				arc.setVisible(true);
 			}
 		};
 
-		handle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
-		controlCircle.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
-		controlCircle.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
+		imageSet.addEventFilter(MouseEvent.MOUSE_RELEASED, released);
+		imageSet.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragged);
 		arc.setFill(new Color(0.0, 0, 1, 0.5));
 
 		arc.getTransforms().addAll(translate, workplaneOffset, controlPin, arcPlanerOffset);
 		handle.getTransforms().addAll(translate, workplaneOffset, controlPin, handlePlanarOffset);
 		controlCircle.getTransforms().addAll(translate, workplaneOffset, controlPin, circelPlanerOffset);
 		controlCircle.setOpacity(0.5);
+
 	}
 
 	private void runSaveAndReset() {
@@ -201,6 +219,7 @@ public class RotationHandle {
 		controlCircle.setVisible(false);
 		arc.setVisible(false);
 		selected = false;
+		rotationStarted = false;
 		TransformNR toUpdate = rotAtCenter.copy();
 
 		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), viewRotation));
@@ -371,5 +390,9 @@ public class RotationHandle {
 
 	public void setMoving(IOnRotateMoving moving) {
 		this.moving = moving;
+	}
+
+	public Group getImageSet() {
+		return imageSet;
 	}
 }

@@ -778,6 +778,7 @@ public class ControlSprites {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
+			session.hideHalos();
 			switch (this.mode) {
 
 				case Default :
@@ -792,6 +793,8 @@ public class ControlSprites {
 						yOffset.show();
 						zOffset.show();
 					}
+
+					session.showHalos();
 					return;
 
 				case MoveXY :
@@ -802,7 +805,6 @@ public class ControlSprites {
 						xOffset.show();
 						yOffset.show();
 					}
-					session.hideHalos();
 					break;
 
 				case MoveZ :
@@ -812,7 +814,6 @@ public class ControlSprites {
 					upArrow.show();
 					footprint.setVisible(true);
 					zOffset.show();
-					session.hideHalos();
 					break;
 
 				case Resize :
@@ -822,10 +823,8 @@ public class ControlSprites {
 					align.hide();
 					mirror.hide();
 					scaleSession.show();
-					session.hideHalos();
 					break;
 				case Rotating :
-					session.hideHalos();
 					break;
 				case Align :
 					for (DottedLine l : lines)
@@ -844,7 +843,6 @@ public class ControlSprites {
 							l.setVisible(true);
 						scaleSession.show();
 					}
-					session.hideHalos();
 					break;
 				case Clear :
 					runClear();
@@ -856,7 +854,7 @@ public class ControlSprites {
 		});
 	}
 
-	private void runClear() {
+	public void runClear() {
 		for (ThreedNumber t : numbers)
 			t.hide();
 

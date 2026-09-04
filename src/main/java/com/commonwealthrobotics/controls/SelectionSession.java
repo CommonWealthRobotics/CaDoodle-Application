@@ -49,6 +49,7 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -62,6 +63,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -625,12 +627,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
+			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
+			if (ModifyLimb.class.isInstance(source)) {
+				source.getCaDoodleFile().getBoundsCache().clear();
+			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
 			BowlerStudio.runLater(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
@@ -725,8 +730,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		haloScale.setPivotX(cx);
 		haloScale.setPivotY(cy);
 		haloScale.setPivotZ(cz);
-
-		halo.getTransforms().setAll(haloScale);
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		halo.getTransforms().setAll(haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
@@ -810,6 +823,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TransformNR wp = ap.get().getWorkplane();
 					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
 							localPoint.getZ());
+					if (name.hasManipulator()) {
+						try {
+							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
+							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
+						} catch (MissingManipulatorException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
@@ -1059,11 +1081,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
+
 			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"),
-					String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+					String.format(Locale.getDefault(), "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
 				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"),
-						String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+						String.format(Locale.getDefault(), "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1104,13 +1127,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		TextField options = new TextField();
 		options.setEditable(true);
-		options.setText(para.getMM() + "");
+		options.setText(String.format(Locale.getDefault(), "%.3f", para.getMM()));
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		options.setOnAction(event -> {
 			ArrayList<String> options2 = para.getOptions();
-			String string = options.getText().toString();
+			String string = options.getText().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (parseDouble > MAX_NUMBER_FILED) {
@@ -1145,19 +1168,29 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			limited = true;
 
 		ComboBox<String> options = new ComboBox<String>();
+		String toSelect = null;
 		for (String s : options2) {
-			options.getItems().add(s);
+			String t = s.replace(',', '.');
+			double val = Double.parseDouble(t);
+			String formatted3 = String.format(Locale.getDefault(), "%.3f", val);
+			if (Math.abs(para.getMM() - val) < 0.001) {
+				toSelect = formatted3;
+			}
+			options.getItems().add(formatted3);
+		}
+		if (toSelect == null) {
+			toSelect = String.format(Locale.getDefault(), "%.3f", para.getMM());
+			options.getItems().add(toSelect);
 		}
 
-		options.getItems().add(para.getMM() + "");
 		options.setEditable(true);
-		options.getSelectionModel().select(para.getMM() + "");
+		options.getSelectionModel().select(toSelect);
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
-			String string = options.getSelectionModel().getSelectedItem().toString();
+			String string = options.getSelectionModel().getSelectedItem().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (isLimit) {
@@ -1266,10 +1299,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				mass += (c.getVolume() * localDensity / 1000.0);
 			}
 			if (linkedHashSet.size() == 1)
-				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
+				button.setText(label + " \n " + String.format(Locale.getDefault(), "%.4f g/cm^3", localDensity));
 			else
 				button.setText(ap.getTranslation("mainwindow.asorted"));
-			String format = String.format(Locale.US, "%.4f g", mass);
+			String format = String.format(Locale.getDefault(), "%.4f g", mass);
 			massDisplay.setText(format);
 			materialPanel2.setText(ap.getTranslation("mainwindow.material") + "    ----   ( " + format + " )");
 		};
@@ -2811,6 +2844,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetManipulator() {
+		// Log.error(new Exception("Manipulation reset here"));
 		manipulation.reset();
 	}
 
@@ -3182,12 +3216,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
+	public void showHalos() {
+		for (CSG csg : meshes.keySet()) {
+			MeshHolder mh = meshes.get(csg);
+			mh.halo.setVisible(selected.contains(csg));
+		}
+	}
+
 	public double getSnapGridValue() {
 		return Double.parseDouble(ConfigurationDatabase.get("CaDoodle", "SnapGridSize", "1.0").toString());
 	}
 
 	public void setSnapGridValue(double snapGridValue) {
 		ConfigurationDatabase.put("CaDoodle", "SnapGridSize", "" + snapGridValue);
+	}
+
+	public void runClear() {
+		controls.runClear();
 	}
 
 }

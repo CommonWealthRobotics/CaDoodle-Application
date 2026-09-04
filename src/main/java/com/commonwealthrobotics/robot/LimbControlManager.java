@@ -197,6 +197,7 @@ public class LimbControlManager {
 			tipManipulator.show();
 			mod.setUndo(true);
 			onReset();
+			rotationManager.setLock(false);
 			rotationManager.show(false);
 		});
 		com.neuronrobotics.sdk.common.Log.debug("\n\nShowing Limb " + limb.getScriptingName());

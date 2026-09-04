@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
+import com.commonwealthrobotics.mcp.MCPServer;
 import com.commonwealthrobotics.robot.RobotLab;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -423,6 +424,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private static Label label;
 	private Button renameBtn;
 	private ThumbnailImage img;
+	private static MCPServer mcpServer;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
@@ -1352,6 +1354,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(100);
 				}
 				ap.get().initialize();
+				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
+
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				do {
@@ -1593,7 +1597,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setLimbs(robotLab.getManager());
 
 	}
-
 
 	private void handleMovement(KeyEvent event) {
 		double dist = 1;
@@ -1950,9 +1953,55 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationDone() {
-		BowlerStudio.runLater(() -> {
-			fileNameBox.setText(ap.get().getMyProjectName());
-		});
+		MCPServerToggle();
+	}
+
+	public void MCPServerToggle() {
+		Object object = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server", "" + false);
+		Object port = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server_port",
+				((int) (Math.random() * 35000) + 1024));
+		boolean MCP = Boolean.parseBoolean(object.toString());
+		int portNum = (int) Double.parseDouble(port.toString());
+		MCPServer.DEFAULT_PORT = portNum;
+		if (MCP)
+			session.submit(() -> {
+				if (mcpServer == null) {
+					try {
+						Thread.sleep(1500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					mcpServer = new MCPServer();
+					System.out.println("Starting MCP server...");
+					try {
+						session.submit(() -> mcpServer.start());
+						Thread.sleep(200);
+						System.out.println("MCP server.start() completed");
+					} catch (Exception e) {
+						System.out.println("Exception in MCP server thread: " + e.getMessage());
+						e.printStackTrace();
+					}
+
+					Log.info("MCP Server (Streamable HTTP) started on http://127.0.0.1:" + MCPServer.DEFAULT_PORT
+							+ MCPServer.MCP_PATH);
+
+					// Register shutdown hook to stop MCP server
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+						if (mcpServer != null) {
+							mcpServer.stop();
+						}
+					}));
+					mcpServer.setDependencies(ap, session);
+				} else
+					session.submit(() -> mcpServer.setDependencies(ap, session));
+			});
+		else {
+			if (mcpServer != null) {
+				mcpServer.stop();
+				mcpServer = null;
+			}
+		}
 	}
 
 	@Override
@@ -1962,8 +2011,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationStart() {
-		// Auto-generated method stub
-
+		BowlerStudio.runLater(() -> {
+			fileNameBox.setText(ap.get().getMyProjectName());
+		});
 	}
 
 	@Override
@@ -2011,7 +2061,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			advancedButtons.setVisible(advanced);
 			timelineButton.setVisible(advanced);
 			advancedGroupMenu.setVisible(advanced);
-			RobotLabDrawer.setVisible(false); // Disabled Robot lab while it is not feaature complete
+			RobotLabDrawer.setVisible(advanced);
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
 			renameBtn.setVisible(advanced);
