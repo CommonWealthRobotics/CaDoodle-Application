@@ -129,7 +129,8 @@ public class RotationHandle {
 			}
 			flagSaveChange = false;
 			BowlerStudio.runLater(() -> {
-				session.runClear();
+				session.setMode(SpriteDisplayMode.Rotating);
+				imageSet.setVisible(true);
 				controlCircle.setVisible(true);
 				arc.setVisible(false);
 				handle.setVisible(true);
