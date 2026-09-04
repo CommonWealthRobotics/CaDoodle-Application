@@ -3183,8 +3183,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void showHalos() {
-		for (MeshHolder mh : meshes.values()) {
-			mh.halo.setVisible(true);
+		for (CSG csg : meshes.keySet()) {
+			MeshHolder mh = meshes.get(csg);
+			mh.halo.setVisible(selected.contains(csg));
 		}
 	}
 
