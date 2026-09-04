@@ -129,7 +129,8 @@ public class RotationHandle {
 			}
 			flagSaveChange = false;
 			BowlerStudio.runLater(() -> {
-				session.runClear();
+				session.setMode(SpriteDisplayMode.Rotating);
+				imageSet.setVisible(true);
 				controlCircle.setVisible(true);
 				arc.setVisible(false);
 				handle.setVisible(true);
@@ -196,9 +197,9 @@ public class RotationHandle {
 				// Update the Arc properties
 				arc.setStartAngle(0);
 				arc.setLength(sweepAngle);
-				arc.setVisible(true);
 				TDnumber.setValue(sweepAngle);
 				setSweepAngle(currentAngle);
+				arc.setVisible(true);
 			}
 		};
 
