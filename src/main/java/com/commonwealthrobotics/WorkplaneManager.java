@@ -569,9 +569,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		this.snapGridValue = snapGridValue;
 		if (wpPick != null) {
 			BowlerKernel.runLater(() -> {
-				wpPick.SNAP.setX(snapGridValue);
-				wpPick.SNAP.setY(snapGridValue);
-				wpPick.SNAP.setZ(snapGridValue);
+				wpPick.setSnap(snapGridValue);
 			});
 		}
 	}
