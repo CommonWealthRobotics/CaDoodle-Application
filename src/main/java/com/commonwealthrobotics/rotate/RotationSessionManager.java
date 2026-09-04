@@ -20,7 +20,7 @@ public class RotationSessionManager {
 	private Affine selection;
 	private Affine viewRotation = new Affine();
 	private SelectionSession controlSprites;
-	private boolean moveLock = true;
+
 
 	public RotationSessionManager(Affine selection, ActiveProject ap, SelectionSession controlSprites,
 			Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
@@ -43,8 +43,7 @@ public class RotationSessionManager {
 	public List<Node> getElements() {
 		ArrayList<Node> result = new ArrayList<Node>();
 		for (RotationHandle r : handles) {
-			result.add(r.handle);
-			result.add(r.controlCircle);
+			result.add(r.getImageSet());
 			result.add(r.arc);
 			result.addAll(r.TDnumber.getTextField());
 		}
@@ -54,8 +53,8 @@ public class RotationSessionManager {
 	public void initialize(boolean lock) {
 
 		for (RotationHandle r : handles) {
-
-			if (!moveLock)
+			r.getImageSet().setVisible(true);
+			if (!lock)
 				r.handle.setVisible(!lock);
 
 			r.controlCircle.setVisible(false);
@@ -107,8 +106,6 @@ public class RotationSessionManager {
 
 	public void setLock(boolean moveLock) {
 
-		this.moveLock = moveLock;
-
 		for (RotationHandle r : handles)
 			r.setLock(moveLock);
 	}
@@ -116,5 +113,16 @@ public class RotationSessionManager {
 	public void setMoving(IOnRotateMoving moving) {
 		for (RotationHandle r : handles)
 			r.setMoving(moving);
+	}
+
+	public void hideOthers(RotationHandle rotationHandle) {
+		for (RotationHandle r : handles) {
+			if (r == rotationHandle)
+				continue;
+			r.handle.setVisible(false);
+			r.controlCircle.setVisible(false);
+			r.arc.setVisible(false);
+			r.TDnumber.hide();
+		}
 	}
 }
