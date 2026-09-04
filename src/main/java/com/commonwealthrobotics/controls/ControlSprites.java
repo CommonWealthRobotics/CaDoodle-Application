@@ -805,7 +805,6 @@ public class ControlSprites {
 						xOffset.show();
 						yOffset.show();
 					}
-					session.showHalos();
 					break;
 
 				case MoveZ :
@@ -815,7 +814,6 @@ public class ControlSprites {
 					upArrow.show();
 					footprint.setVisible(true);
 					zOffset.show();
-					session.showHalos();
 					break;
 
 				case Resize :
@@ -825,10 +823,8 @@ public class ControlSprites {
 					align.hide();
 					mirror.hide();
 					scaleSession.show();
-					session.hideHalos();
 					break;
 				case Rotating :
-					session.showHalos();
 					break;
 				case Align :
 					for (DottedLine l : lines)

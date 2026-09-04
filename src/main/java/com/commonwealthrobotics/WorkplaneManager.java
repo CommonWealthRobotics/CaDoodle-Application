@@ -486,17 +486,20 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			session.submit(() -> {
 				if (this.isClicked()) {
 
-					if (this.isClickOnGround()) {
-						com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
+					if (this.isClickOnGround() || !isWorkplaneNotOrigin(this.getCurrentAbsolutePose())) {
+						com.neuronrobotics.sdk.common.Log
+								.debug("Ground plane click detected " + this.getCurrentAbsolutePose() + " \nground= "
+										+ this.isClickOnGround() + "\nisNotOrigin=" + isWorkplaneNotOrigin());
 						ap.get().setWorkplane(new TransformNR());
 						ruler.disableRulerMode();
 					} else {
 						// Move the workplane down from the surface to ensure a solid overlap between
 						// the object and the surface
+						com.neuronrobotics.sdk.common.Log.debug("Workplane CLick " + this.getCurrentAbsolutePose()
+								+ " \nground= " + this.isClickOnGround() + "\nisNotOrigin=" + isWorkplaneNotOrigin());
 
 						TransformNR downset = new TransformNR(0, 0, -Plane.getEPSILON() * 100);
 						TransformNR currentAbsolutePose = this.getCurrentAbsolutePose().times(downset);
-						com.neuronrobotics.sdk.common.Log.debug("Workplane Placed " + currentAbsolutePose);
 
 						ap.get().setWorkplane(currentAbsolutePose);
 					}
@@ -533,11 +536,19 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public boolean isWorkplaneNotOrigin() {
 		TransformNR w = ap.get().getWorkplane();
+		return isWorkplaneNotOrigin(w);
+	}
+
+	public boolean isWorkplaneNotOrigin(TransformNR w) {
+
 		double epsilon = 0.01;
 		RotationNR r = w.getRotation();
-		double abs3t = Math.abs(w.getZ());
 
-		if ((abs3t > epsilon))
+		//		if ((Math.abs(w.getX()) > epsilon))
+		//			return true;
+		//		if ((Math.abs(w.getY()) > epsilon))
+		//			return true;
+		if ((Math.abs(w.getZ()) > epsilon))
 			return true;
 
 		double abs2 = Math.abs(r.getRotationElevationDegrees());
