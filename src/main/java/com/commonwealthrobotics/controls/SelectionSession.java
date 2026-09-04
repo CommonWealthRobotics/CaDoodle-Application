@@ -3213,4 +3213,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		ConfigurationDatabase.put("CaDoodle", "SnapGridSize", "" + snapGridValue);
 	}
 
+	public void runClear() {
+		controls.runClear();
+	}
+
 }

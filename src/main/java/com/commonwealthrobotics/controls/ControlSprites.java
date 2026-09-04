@@ -856,7 +856,7 @@ public class ControlSprites {
 		});
 	}
 
-	private void runClear() {
+	public void runClear() {
 		for (ThreedNumber t : numbers)
 			t.hide();
 
