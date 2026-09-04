@@ -486,7 +486,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			session.submit(() -> {
 				if (this.isClicked()) {
 
-					if (this.isClickOnGround()) {
+					if (this.isClickOnGround() || !isWorkplaneNotOrigin()) {
 						com.neuronrobotics.sdk.common.Log.debug("Ground plane click detected");
 						ap.get().setWorkplane(new TransformNR());
 						ruler.disableRulerMode();
