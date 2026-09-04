@@ -20,32 +20,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
+<AnchorPane prefHeight="819.0" prefWidth="1122.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.commonwealthrobotics.SettingsManager">
    <children>
       <TabPane fx:id="topPane" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
             <Tab closable="false" text="%settings.basic">
                <content>
-                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" styleClass="anchor-pane">
+                  <AnchorPane styleClass="anchor-pane">
                      <children>
-                        <GridPane gridLinesVisible="true" layoutX="-14.0" layoutY="-14.0" styleClass="grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane styleClass="grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
                             <ColumnConstraints />
                             <ColumnConstraints hgrow="ALWAYS" />
                           </columnConstraints>
                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                              <RowConstraints minHeight="8.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+                              <RowConstraints vgrow="NEVER" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
                           </rowConstraints>
                            <children>
                               <VBox styleClass="vbox" GridPane.rowIndex="1">
@@ -184,7 +184,8 @@
                               <VBox fx:id="styleButtons" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                  <children>
                                     <ComboBox fx:id="styleOptions" />
-                                 </children></VBox>
+                                 </children>
+                              </VBox>
                               <Label text="%settings.font_size" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="18.0" />
