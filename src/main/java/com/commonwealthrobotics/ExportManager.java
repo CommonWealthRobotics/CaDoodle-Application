@@ -184,7 +184,8 @@ public class ExportManager {
 				String nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName());
 				index = 0;
 				while (namesUnique.contains(nameToSet)) {
-					nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" +c.getUserDefinedName()) + "_" + index;
+					nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName()) + "_"
+							+ index;
 					index++;
 				}
 				namesUnique.add(nameToSet);
