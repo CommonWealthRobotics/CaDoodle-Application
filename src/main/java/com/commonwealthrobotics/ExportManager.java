@@ -184,7 +184,7 @@ public class ExportManager {
 				String nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName());
 				index = 0;
 				while (namesUnique.contains(nameToSet)) {
-					nameToSet = toValidFilename(c.getUserDefinedName()) + "_" + index;
+					nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" +c.getUserDefinedName()) + "_" + index;
 					index++;
 				}
 				namesUnique.add(nameToSet);
@@ -224,7 +224,12 @@ public class ExportManager {
 			CSG.setPreventNonManifoldTriangles(manifold);
 
 			BowlerKernel.processReturnedObjectsStart(back, caDoodleFile.getSelf().getParentFile(), exportDir);
-
+			try {
+				deleteDirectory(exportDir.toPath().resolve("manufacturing"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SplashManager.onLogUpdate("");
 			SplashManager.renderSplashFrame(50, "Zipping Project Source");
 			// ap.get().updateBoM() ;
