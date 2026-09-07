@@ -146,18 +146,18 @@ public class RotationHandle {
 		imageSet.setPickOnBounds(true);
 
 		EventHandler<? super MouseEvent> released = event -> {
-			if (!flagSaveChange) {
-				// No drag happened — still tear down state so the next press works
-				session.setMode(SpriteDisplayMode.Default);
-				controlCircle.setVisible(false);
-				arc.setVisible(false);
-				selected = false;
-				rotationStarted = false;
-				TDnumber.mouseTransparent(false);
-				return;
-			}
-
-			runSaveAndReset();
+			//			if (!flagSaveChange) {
+			//				// No drag happened — still tear down state so the next press works
+			//				session.setMode(SpriteDisplayMode.Default);
+			//				controlCircle.setVisible(false);
+			//				arc.setVisible(false);
+			//				selected = false;
+			//				rotationStarted = false;
+			//				TDnumber.mouseTransparent(false);
+			//				return;
+			//			}
+			if (startAngleFound)
+				runSaveAndReset();
 		};
 
 		EventHandler<? super MouseEvent> dragged = event -> {
