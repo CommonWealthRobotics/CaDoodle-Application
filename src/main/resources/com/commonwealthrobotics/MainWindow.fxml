@@ -835,7 +835,7 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
-                              <Button fx:id="filletButton1" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
+                              <Button fx:id="hullButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
                                  </graphic>

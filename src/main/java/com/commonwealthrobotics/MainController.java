@@ -28,7 +28,6 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.ImagePorviderInterface;
-import com.neuronrobotics.bowlerstudio.creature.NoImageException;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
@@ -131,6 +130,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button RobotLabDrawer;
 	@FXML
 	private Button extrudeButton;
+	@FXML
+	private Button hullButton;
+	@FXML
+	private Button bendButton;
 	@FXML
 	private Button boltHoleButton;
 	@FXML
@@ -1132,7 +1135,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			session.setUngroup(ungroupButton);
 			session.setShowHideImage(showHideImage);
 			session.setAlignButton(alignButton);
-			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton);
+			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton, hullButton,
+					bendButton);
 			// do this after setting up the session
 			setupEngineControls();
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
@@ -1499,7 +1503,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		CaDoodleFile.setImageEngine(new ImagePorviderInterface() {
 			@Override
 			public WritableImage get(CSGDatabaseInstance instance, List<CSG> incomingToDisplay, File destination)
-					throws NoImageException, IOException {
+					throws com.neuronrobotics.bowlerstudio.creature.NoImageException, IOException {
 				// TODO Auto-generated method stub
 				return img.get(instance, incomingToDisplay, destination);
 			}

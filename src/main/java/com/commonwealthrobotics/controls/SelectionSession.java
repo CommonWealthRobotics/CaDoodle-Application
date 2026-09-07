@@ -220,7 +220,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private TitledPane materialPanel;
 	private double sessionDeltaX = 0;
 	private double sessionDeltaY = 0;
-	private double sessionDeltaZ = 0;;
+	private double sessionDeltaZ = 0;
+	private Button hullButton;
+	private Button bendButton;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -2012,12 +2014,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				objectWorkplane.setDisable(true);
 			if (hexDistributeButton != null)
 				hexDistributeButton.setDisable(true);
-			// if (filletButton != null)
-			// filletButton.setDisable(true);
-			// if (extrudeButton != null)
-			// extrudeButton.setDisable(true);
+			if (filletButton != null)
+				filletButton.setDisable(true);
+			if (extrudeButton != null)
+				extrudeButton.setDisable(true);
 			if (boltHoleButton != null)
 				boltHoleButton.setDisable(true);
+			if (bendButton != null)
+				bendButton.setDisable(true);
+			if (hullButton != null)
+				hullButton.setDisable(true);
 		});
 	}
 
@@ -2037,15 +2043,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				alignButton.setDisable(false);
+				advancedGroupMenu.setDisable(false);
 			}
 
 			if ((getSelected().size() > 0) && advanced) {
-				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
 				hexDistributeButton.setDisable(false);
-				// filletButton.setDisable(false);
-				// extrudeButton.setDisable(false);
+				filletButton.setDisable(false);
+				extrudeButton.setDisable(false);
 				boltHoleButton.setDisable(false);
+				bendButton.setDisable(false);
+				hullButton.setDisable(false);
 			}
 
 			if (isAGroupSelected())
@@ -3180,11 +3188,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setAdvancedButtons(Button filletButton, Button extrudeButton, Button hexDistributeButton,
-			Button boltHoleButton) {
+			Button boltHoleButton, Button hullButton, Button bendButton) {
 		this.filletButton = filletButton;
 		this.extrudeButton = extrudeButton;
 		this.hexDistributeButton = hexDistributeButton;
 		this.boltHoleButton = boltHoleButton;
+		this.hullButton = hullButton;
+		this.bendButton = bendButton;
 	}
 
 	public void hideHalos() {
