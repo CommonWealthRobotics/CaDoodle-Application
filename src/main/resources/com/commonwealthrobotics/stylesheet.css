@@ -7,7 +7,7 @@
 #homeButton .image-view          { -fx-image: url("light/CADoodleHome.png"); }
 .biglogo-cadoodle        		 { -fx-image: url("light/biglogo.png"); }
 .biglogo-advanced {
-    -fx-image: url("Milk-chocolate/biglogoAdvanced.png");
+    -fx-image: url("light/biglogoAdvanced.png");
     -fx-fit-width: 145px;
     -fx-fit-height: 36px;
     -fx-preserve-ratio: true;
