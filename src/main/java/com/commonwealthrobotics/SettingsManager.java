@@ -60,6 +60,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -729,8 +730,13 @@ public class SettingsManager implements ICSGClientEvent {
 				}
 			});
 			// Show the new window
-			stage.setHeight(950);
-			stage.setWidth(1500);
+			javafx.geometry.Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+			double width = Math.min(1500, screenBounds.getWidth());
+			double height = Math.min(950, screenBounds.getHeight());
+
+			stage.setWidth(width);
+			stage.setHeight(height);
 			stage.show();
 		} catch (IOException e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
