@@ -319,7 +319,7 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </Button>
-                                                          <Label text="%settings.mcpserver" GridPane.rowIndex="3">
+                                                          <Label text="MCP" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
