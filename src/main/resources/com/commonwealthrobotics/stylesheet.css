@@ -6,8 +6,12 @@
 #makeRobotButton .image-view     { -fx-image: url("light/newRobot.png"); }
 #homeButton .image-view          { -fx-image: url("light/CADoodleHome.png"); }
 .biglogo-cadoodle        		 { -fx-image: url("light/biglogo.png"); }
-.biglogo-advanced        		 { -fx-image: url("light/fission180.png"); }
-#homeViewButton .image-view      { -fx-image: url("light/home.png"); }
+.biglogo-advanced {
+    -fx-image: url("Milk-chocolate/biglogoAdvanced.png");
+    -fx-fit-width: 145px;
+    -fx-fit-height: 36px;
+    -fx-preserve-ratio: true;
+}#homeViewButton .image-view      { -fx-image: url("light/home.png"); }
 #fitViewButton .image-view       { -fx-image: url("light/fit.png"); }
 #zoomInButton .image-view        { -fx-image: url("light/zoomIn.png"); }
 #zoomOutButton .image-view       { -fx-image: url("light/zoomOut.png"); }
@@ -61,7 +65,7 @@
 .load-limb-arms-icon      { -fx-image: url("light/Load-Limb-Arms.png"); }
 .advanced-config-icon     { -fx-image: url("light/Advanced-Configuration.png"); }
 .notes-icon               { -fx-image: url("light/notes.png"); }
-.extraGroupImage { -fx-image: url("light/hull.png"); }
+.extraGroupImage { -fx-image: url("light/xor.png"); }
 .hullImage  { -fx-image: url("light/hull.png"); }
 .intersectImage { -fx-image: url("light/intersect.png"); }
 .xorImage  { -fx-image: url("light/xor.png"); }
