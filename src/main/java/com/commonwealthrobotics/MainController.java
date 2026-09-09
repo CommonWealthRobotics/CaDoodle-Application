@@ -1094,7 +1094,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			});
 			engine.rebuild(true);
 			// engine.getFlyingCamera().setProjectionMode(ProjectionMode.ORTHOGRAPHIC);
-			// engine.setOrthographicMode(true);
+			engine.setOrthographicMode(true);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
