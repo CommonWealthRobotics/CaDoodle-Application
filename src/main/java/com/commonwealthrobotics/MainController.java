@@ -789,7 +789,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), ZOOM);
+		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), getZoom());
 		session.setKeyBindingFocus();
 	}
 
@@ -2029,5 +2029,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public ActiveProject getActiveProject() {
 		return ap;
+	}
+
+	public int getZoom() {
+		if(engine!=null) {
+			return (int) (ZOOM* engine.getFlyingCamera().getZoomScale());
+		}
+		return ZOOM;
 	}
 }
