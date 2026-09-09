@@ -142,7 +142,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double xI, double yI,
-			double zI, List<String> selectedCSG, Bounds b, TransformNR cf) {
+			double zI, List<String> selectedCSG, Bounds b, TransformNR cf, double zoomScale) {
 		// com.neuronrobotics.sdk.common.Log.debug("Mirror Handle "+ax+" Updated");
 		this.screenW = screenW;
 		this.screenH = screenH;
@@ -217,7 +217,7 @@ public class MirrorHandle implements ICaDoodleStateUpdate {
 		double scaleFactor = ((distance / baseDistance) * baseScale);
 
 		// Clamp the scale factor to a reasonable range
-		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
+		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor)) * zoomScale;
 
 		setScale(scaleFactor);
 

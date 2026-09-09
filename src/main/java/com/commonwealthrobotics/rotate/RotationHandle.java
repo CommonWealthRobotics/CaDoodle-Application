@@ -276,7 +276,7 @@ public class RotationHandle {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double cameraFieldOfView) {
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double cameraFieldOfView, double zoomScale) {
 
 		this.bounds = b;
 		Vector3d center = bounds.getCenter();

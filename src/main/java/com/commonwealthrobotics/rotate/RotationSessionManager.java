@@ -77,10 +77,10 @@ public class RotationSessionManager {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double cameraFieldOfView) {
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double cameraFieldOfView, double zoomScale) {
 
 		for (RotationHandle r : handles)
-			r.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView);
+			r.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView, zoomScale);
 	}
 
 	public Affine getViewRotation() {
