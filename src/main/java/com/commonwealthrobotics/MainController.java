@@ -429,6 +429,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private static Label label;
 	private Button renameBtn;
 	private ThumbnailImage img;
+	private boolean othographicMode = false;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
@@ -436,17 +437,24 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onCameraChange(ActionEvent ae) {
-		boolean ortho = !Boolean
-				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleOrthographicMode", "" + false).toString());
+		boolean ortho = !othographicMode;
 		setCameraPerspectiveMode(ortho);
 		session.setKeyBindingFocus();
 	}
 
 	private void setCameraPerspectiveMode(boolean ortho) {
+		if (ortho == othographicMode)
+			return;
+		// THESE VALUES ARE EXPEREMENTALLY DETERMINED 
+		// the camera needs to appear as though it stays still when changing mode
+		double scale = 4582.0 / 157.0;
+		Log.debug("Otho Scale " + scale);
+		double currentZoom = engine.getFlyingCamera().getZoomDepth();
+		double newZoom = currentZoom * (ortho ? scale : (1.0 / scale));
 		engine.setOrthographicMode(ortho);
-		ConfigurationDatabase.put("CaDoodle", "CaDoodleOrthographicMode", "" + ortho);
+		engine.setZoom((int) newZoom);
 		cameraType.getStyleClass().clear();
-		cameraType.getStyleClass().add("image-button");
+		cameraType.getStyleClass().addAll("button", "image-button");
 		if (ortho) {
 			cameraType.getStyleClass().add("orthographic-image");
 			cameraTypeTooltip.setText(ActiveProject.getTranslation("Perspective"));
@@ -454,6 +462,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			cameraType.getStyleClass().add("perspective-image");
 			cameraTypeTooltip.setText(ActiveProject.getTranslation("Orthographic"));
 		}
+		othographicMode = ortho;
 	}
 
 	@FXML
@@ -1119,9 +1128,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
-			boolean ortho = Boolean.parseBoolean(
-					ConfigurationDatabase.get("CaDoodle", "CaDoodleOrthographicMode", "" + false).toString());
-			setCameraPerspectiveMode(ortho);
+			setCameraPerspectiveMode(othographicMode);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
