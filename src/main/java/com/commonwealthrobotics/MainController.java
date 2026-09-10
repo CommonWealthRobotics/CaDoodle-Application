@@ -263,7 +263,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="lockUnlockTooltip"
 	private Tooltip lockUnlockTooltip; // Value injected by FXMLLoader
-
+	@FXML // fx:id="lockUnlockTooltip"
+	private Tooltip cameraTypeTooltip;
+	@FXML // fx:id="mirronButton"
+	private Button cameraType;
 	@FXML // fx:id="mirronButton"
 	private Button mirronButton; // Value injected by FXMLLoader
 
@@ -428,9 +431,39 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button renameBtn;
 	private ThumbnailImage img;
 	private static MCPServer mcpServer;
+	private boolean othographicMode = false;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
+	}
+
+	@FXML
+	void onCameraChange(ActionEvent ae) {
+		boolean ortho = !othographicMode;
+		setCameraPerspectiveMode(ortho);
+		session.setKeyBindingFocus();
+	}
+
+	private void setCameraPerspectiveMode(boolean ortho) {
+		cameraType.getStyleClass().clear();
+		cameraType.getStyleClass().addAll("button", "image-button");
+		if (ortho) {
+			cameraType.getStyleClass().add("orthographic-image");
+			cameraTypeTooltip.setText(ActiveProject.getTranslation("Perspective"));
+		} else {
+			cameraType.getStyleClass().add("perspective-image");
+			cameraTypeTooltip.setText(ActiveProject.getTranslation("Orthographic"));
+		}
+		if (ortho == othographicMode)
+			return;
+		// the camera needs to appear as though it stays still when changing mode
+		double scale = 4582.0 / 157.0;// THESE VALUES ARE EXPEREMENTALLY DETERMINED
+		// Log.debug("Otho Scale " + scale);
+		double currentZoom = engine.getFlyingCamera().getZoomDepth();
+		double newZoom = currentZoom * (ortho ? scale : (1.0 / scale));
+		engine.setOrthographicMode(ortho);
+		engine.setZoom((int) newZoom);
+		othographicMode = ortho;
 	}
 
 	@FXML
@@ -791,7 +824,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), ZOOM);
+		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0),
+				getZoom());
 		session.setKeyBindingFocus();
 	}
 
@@ -1095,8 +1129,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
-			// engine.getFlyingCamera().setProjectionMode(ProjectionMode.ORTHOGRAPHIC);
-			// engine.setOrthographicMode(true);
+			setCameraPerspectiveMode(othographicMode);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
@@ -2079,5 +2112,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public ActiveProject getActiveProject() {
 		return ap;
+	}
+
+	public int getZoom() {
+		if (engine != null) {
+			return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
+		}
+		return ZOOM;
 	}
 }

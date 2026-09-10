@@ -238,7 +238,8 @@ public class LimbControlManager {
 			tipManipulator.threeDTarget(screenW, screenH, zoom,
 					workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf, locked);
 
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView);
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView,
+				1.0 / camera.getZoomScale());
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(workplane, workplaneOffset);
 		});

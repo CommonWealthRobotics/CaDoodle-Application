@@ -2,6 +2,10 @@
 /* Images are set on the ImageView child so fitHeight/fitWidth in FXML are preserved. */
 /* Dynamic images (drawrImage, showHideImage, showAllImage, timelineImage,            */
 /* RobotLabDrawerImage, componentTreeDrawerArrow, lockImage) stay image-only in FXML. */
+/*light/orthographic.png perspective.png */
+.orthographic-image .image-view               { -fx-image: url("light/orthographic.png"); }
+.perspective-image .image-view               { -fx-image: url("light/perspective.png "); }
+
 
 #makeRobotButton .image-view     { -fx-image: url("light/newRobot.png"); }
 #homeButton .image-view          { -fx-image: url("light/CADoodleHome.png"); }
