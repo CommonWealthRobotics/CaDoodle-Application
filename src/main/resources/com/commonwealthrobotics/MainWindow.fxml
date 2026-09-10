@@ -513,6 +513,18 @@
                                                       <Tooltip text="%mainwindow.component_tree" />
                                                    </tooltip>
                                                 </Button>
+                                                <Button fx:id="cameraType" mnemonicParsing="false" onAction="#onCameraChange" GridPane.rowIndex="5">
+                                                   <graphic>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip fx:id="cameraTypeTooltip" text="%mainwindow.zoom_out_lt_gt" />
+                                                   </tooltip>
+                                                   <styleClass>
+                                                      <String fx:value="image-button" />
+                                                      <String fx:value="perspective-image" />
+                                                   </styleClass>
+                                                </Button>
                                              </children>
                                           </GridPane>
                                           <Button fx:id="timelineButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#timelineDrawerEvent" rotate="90.0" styleClass="image-button" translateY="6.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">

@@ -262,7 +262,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="lockUnlockTooltip"
 	private Tooltip lockUnlockTooltip; // Value injected by FXMLLoader
-
+	@FXML // fx:id="lockUnlockTooltip"
+	private Tooltip cameraTypeTooltip;
+	@FXML // fx:id="mirronButton"
+	private Button cameraType;
 	@FXML // fx:id="mirronButton"
 	private Button mirronButton; // Value injected by FXMLLoader
 
@@ -429,6 +432,26 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
+	}
+	@FXML
+	void onCameraChange(ActionEvent ae) {
+		boolean ortho = !Boolean.parseBoolean(
+				ConfigurationDatabase.get("CaDoodle", "CaDoodleOrthographicMode", "" + false).toString());
+		setCameraPerspectiveMode(ortho);
+		session.setKeyBindingFocus();
+	}
+	private void setCameraPerspectiveMode(boolean ortho) {
+		engine.setOrthographicMode(ortho);
+		ConfigurationDatabase.put("CaDoodle", "CaDoodleOrthographicMode", "" + ortho);
+		cameraType.getStyleClass().clear();
+		cameraType.getStyleClass().add("image-button");
+		if(ortho){
+			cameraType.getStyleClass().add("orthographic-image");
+			cameraTypeTooltip.setText(ActiveProject.getTranslation("Perspective"));
+		}else {
+			cameraType.getStyleClass().add("perspective-image");
+			cameraTypeTooltip.setText(ActiveProject.getTranslation("Orthographic"));
+		}
 	}
 
 	@FXML
@@ -1093,8 +1116,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
-			// engine.getFlyingCamera().setProjectionMode(ProjectionMode.ORTHOGRAPHIC);
-			engine.setOrthographicMode(true);
+			boolean ortho = Boolean.parseBoolean(
+					ConfigurationDatabase.get("CaDoodle", "CaDoodleOrthographicMode", "" + false).toString());
+			setCameraPerspectiveMode(ortho);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
