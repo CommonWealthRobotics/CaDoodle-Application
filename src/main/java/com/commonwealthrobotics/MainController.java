@@ -433,22 +433,24 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
 	}
+
 	@FXML
 	void onCameraChange(ActionEvent ae) {
-		boolean ortho = !Boolean.parseBoolean(
-				ConfigurationDatabase.get("CaDoodle", "CaDoodleOrthographicMode", "" + false).toString());
+		boolean ortho = !Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleOrthographicMode", "" + false).toString());
 		setCameraPerspectiveMode(ortho);
 		session.setKeyBindingFocus();
 	}
+
 	private void setCameraPerspectiveMode(boolean ortho) {
 		engine.setOrthographicMode(ortho);
 		ConfigurationDatabase.put("CaDoodle", "CaDoodleOrthographicMode", "" + ortho);
 		cameraType.getStyleClass().clear();
 		cameraType.getStyleClass().add("image-button");
-		if(ortho){
+		if (ortho) {
 			cameraType.getStyleClass().add("orthographic-image");
 			cameraTypeTooltip.setText(ActiveProject.getTranslation("Perspective"));
-		}else {
+		} else {
 			cameraType.getStyleClass().add("perspective-image");
 			cameraTypeTooltip.setText(ActiveProject.getTranslation("Orthographic"));
 		}
@@ -812,7 +814,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), getZoom());
+		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0),
+				getZoom());
 		session.setKeyBindingFocus();
 	}
 
@@ -2056,8 +2059,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	public int getZoom() {
-		if(engine!=null) {
-			return (int) (ZOOM* engine.getFlyingCamera().getZoomScale());
+		if (engine != null) {
+			return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
 		}
 		return ZOOM;
 	}
