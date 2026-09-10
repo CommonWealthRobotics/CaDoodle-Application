@@ -443,16 +443,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setCameraPerspectiveMode(boolean ortho) {
-		if (ortho == othographicMode)
-			return;
-		// THESE VALUES ARE EXPEREMENTALLY DETERMINED 
-		// the camera needs to appear as though it stays still when changing mode
-		double scale = 4582.0 / 157.0;
-		Log.debug("Otho Scale " + scale);
-		double currentZoom = engine.getFlyingCamera().getZoomDepth();
-		double newZoom = currentZoom * (ortho ? scale : (1.0 / scale));
-		engine.setOrthographicMode(ortho);
-		engine.setZoom((int) newZoom);
 		cameraType.getStyleClass().clear();
 		cameraType.getStyleClass().addAll("button", "image-button");
 		if (ortho) {
@@ -462,6 +452,15 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			cameraType.getStyleClass().add("perspective-image");
 			cameraTypeTooltip.setText(ActiveProject.getTranslation("Orthographic"));
 		}
+		if (ortho == othographicMode)
+			return;
+		// the camera needs to appear as though it stays still when changing mode
+		double scale = 4582.0 / 157.0;// THESE VALUES ARE EXPEREMENTALLY DETERMINED
+		// Log.debug("Otho Scale " + scale);
+		double currentZoom = engine.getFlyingCamera().getZoomDepth();
+		double newZoom = currentZoom * (ortho ? scale : (1.0 / scale));
+		engine.setOrthographicMode(ortho);
+		engine.setZoom((int) newZoom);
 		othographicMode = ortho;
 	}
 

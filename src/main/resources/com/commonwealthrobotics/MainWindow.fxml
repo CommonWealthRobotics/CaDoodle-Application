@@ -440,7 +440,7 @@
                                           </GridPane>
                                           <GridPane pickOnBounds="false" GridPane.rowSpan="2147483647">
                                             <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="71.0" prefHeight="150.0" vgrow="SOMETIMES" />
@@ -513,17 +513,13 @@
                                                       <Tooltip text="%mainwindow.component_tree" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="cameraType" mnemonicParsing="false" onAction="#onCameraChange" GridPane.rowIndex="5">
+                                                <Button fx:id="cameraType" mnemonicParsing="false" onAction="#onCameraChange" styleClass="image-button" GridPane.rowIndex="5">
                                                    <graphic>
                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip fx:id="cameraTypeTooltip" text="%mainwindow.zoom_out_lt_gt" />
+                                                      <Tooltip fx:id="cameraTypeTooltip" />
                                                    </tooltip>
-                                                   <styleClass>
-                                                      <String fx:value="image-button" />
-                                                      <String fx:value="perspective-image" />
-                                                   </styleClass>
                                                 </Button>
                                              </children>
                                           </GridPane>
