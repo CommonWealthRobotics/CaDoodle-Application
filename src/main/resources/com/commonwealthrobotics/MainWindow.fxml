@@ -882,14 +882,6 @@
                               <Separator orientation="VERTICAL" />
                            </children>
                         </HBox>
-                        <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
-                           <graphic>
-                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%mainwindow.group_lt_ctrl_g_gt" />
-                           </tooltip>
-                        </Button>
                         <Button fx:id="intersectButton" mnemonicParsing="false" onAction="#onIntersectOperation" styleClass="image-button">
                             <graphic>
                                 <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
@@ -906,6 +898,15 @@
                                 <Tooltip text="%mainwindow.xor" />
                             </tooltip>
                         </Button>
+                        <Separator orientation="VERTICAL" />
+                        <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
+                           <graphic>
+                              <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%mainwindow.group_lt_ctrl_g_gt" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="ungroupButton-image-view" />
@@ -914,7 +915,6 @@
                               <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
                            </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon">
