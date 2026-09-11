@@ -876,29 +876,25 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
-                              <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
-                                 <children>
-                                    <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="menu-button2">
-                                      <items>
-                                          <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="%mainwindow.intersect">
-                                             <graphic>
-                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
-                                             </graphic>
-                                          </MenuItem>
-                                          <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="%mainwindow.xor">
-                                             <graphic>
-                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" fx:id="xorImage" />
-                                             </graphic>
-                                          </MenuItem>
-                                      </items>
-                                       <tooltip>
-                                          <Tooltip text="%mainwindow.extra_group_options" />
-                                       </tooltip>
-                                    </MenuButton>
-                                 </children>
-                              </AnchorPane>
                            </children>
                         </HBox>
+                        <Button fx:id="intersectButton" mnemonicParsing="false" onAction="#onIntersectOperation" styleClass="image-button">
+                            <graphic>
+                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%mainwindow.intersect" />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="xorButton" mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button">
+                            <graphic>
+                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%mainwindow.xor" />
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
@@ -915,7 +911,6 @@
                               <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
                            </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" />
                         <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon">

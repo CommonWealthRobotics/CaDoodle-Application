@@ -349,7 +349,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private AnchorPane timelineHolder;
 	@FXML
-	private MenuButton advancedGroupMenu;
+	private Button intersectButton;
+	@FXML
+	private Button xorButton;
 	@FXML
 	private TextField searchField;
 	@FXML // fx:id="zoomInButton"
@@ -1160,8 +1162,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			renameBtn = new Button(ap.getTranslation("rename"));
 
 			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
-					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
-					objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid, materialPanel);
+					colorPicker, snapGrid, parametrics, lockButton, lockImage, intersectButton, xorButton,
+					timelineManager, objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid,
+					materialPanel);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
@@ -2047,7 +2050,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		BowlerStudio.runLater(() -> {
 			advancedButtons.setVisible(advanced);
 			timelineButton.setVisible(advanced);
-			advancedGroupMenu.setVisible(advanced);
+			intersectButton.setVisible(advanced);
+			xorButton.setVisible(advanced);
 			RobotLabDrawer.setVisible(false); // Disabled Robot lab while it is not feaature complete
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
