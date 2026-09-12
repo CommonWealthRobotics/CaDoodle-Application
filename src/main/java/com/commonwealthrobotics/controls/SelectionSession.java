@@ -84,7 +84,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -182,7 +181,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// private HashMap<String, EventHandler<ActionEvent>> regenEvents = new
 	// HashMap<>();
 	private boolean showConstituants = false;
-	private MenuButton advancedGroupMenu;
+	private Button intersectButton;
+	private Button xorButton;
 	private TimelineManager timeline;
 	private RulerManager ruler;
 	private Button objectWorkplane;
@@ -1665,8 +1665,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
-			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, Button intersectButton,
+			Button xorButton, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
 			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
@@ -1679,7 +1679,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.parametrics = parametrics;
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
-		this.advancedGroupMenu = advancedGroupMenu;
+		this.intersectButton = intersectButton;
+		this.xorButton = xorButton;
 		this.timeline = tm;
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
@@ -2004,8 +2005,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (alignButton != null)
 				alignButton.setDisable(true);
 
-			if (advancedGroupMenu != null)
-				advancedGroupMenu.setDisable(true);
+			if (intersectButton != null)
+				intersectButton.setDisable(true);
+
+			if (xorButton != null)
+				xorButton.setDisable(true);
 
 			if (dropToWorkplane != null)
 				dropToWorkplane.setDisable(true);
@@ -2043,7 +2047,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				alignButton.setDisable(false);
-				advancedGroupMenu.setDisable(false);
+				intersectButton.setDisable(false);
+				xorButton.setDisable(false);
 			}
 
 			if ((getSelected().size() > 0) && advanced) {
