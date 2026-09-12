@@ -135,7 +135,7 @@ Optionally: Make JAVA_HOME persistent for the MSYS2 shell
 echo 'export JAVA_HOME='$JAVA_HOME >> ~/.bash_profile
 ```
 
-8. Navigate to the CaDoodle project directoryl, e.a. ```cd /d/CaDoodle/```
+8. Navigate to the CaDoodle project directory, e.a. ```cd /d/CaDoodle/```
 
 9. Install the required updates, packages and build the application (UCRT64 bash shell):
 ```

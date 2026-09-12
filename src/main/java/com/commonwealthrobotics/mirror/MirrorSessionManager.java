@@ -61,10 +61,10 @@ public class MirrorSessionManager {
 	}
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
-			double z, List<String> selectedCSG, Bounds b, TransformNR cf) {
-		this.x.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
-		this.y.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
-		this.z.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double zoomScale) {
+		this.x.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
+		this.y.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
+		this.z.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
 	}
 
 	public void initialize(Bounds b, BowlerStudio3dEngine engine, List<CSG> ta, List<String> selected,

@@ -83,17 +83,17 @@ public class AlignManager {
 	}
 
 	public void threeDTarget(double w, double h, double z, Bounds bo, TransformNR c,
-			HashMap<String, Bounds> inWorkplaneBounds) {
+			HashMap<String, Bounds> inWorkplaneBounds, double zoomScale) {
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = z;
 		this.b = bo;
 		this.cf = c;
-		updateHandles(inWorkplaneBounds);
+		updateHandles(inWorkplaneBounds, zoomScale);
 
 	}
 
-	private void updateHandles(HashMap<String, Bounds> inWorkplaneBounds) {
+	private void updateHandles(HashMap<String, Bounds> inWorkplaneBounds, double zoomScale) {
 		if (operation != null)
 			try {
 				LinkedHashSet<CSG> selected = session.getSelected();
@@ -104,9 +104,9 @@ public class AlignManager {
 				// Log.error(e);;
 				return;
 			}
-		frontBack.threeDTarget(screenW, screenH, zoom, b, cf);
-		leftRight.threeDTarget(screenW, screenH, zoom, b, cf);
-		upDown.threeDTarget(screenW, screenH, zoom, b, cf);
+		frontBack.threeDTarget(screenW, screenH, zoom, b, cf, zoomScale);
+		leftRight.threeDTarget(screenW, screenH, zoom, b, cf, zoomScale);
+		upDown.threeDTarget(screenW, screenH, zoom, b, cf, zoomScale);
 
 	}
 
@@ -150,7 +150,7 @@ public class AlignManager {
 					return;
 				operation.setBounds(Arrays.asList(c.getName()));
 				recompute(null, inWorkplaneBounds);
-				updateHandles(inWorkplaneBounds);
+				updateHandles(inWorkplaneBounds, 1);
 			};
 			BowlerStudio.runLater(() -> mv.addEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter));
 			events.put(c, eventFilter);

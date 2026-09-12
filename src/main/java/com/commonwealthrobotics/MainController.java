@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SpriteDisplayMode;
+import com.commonwealthrobotics.mcp.MCPServer;
 import com.commonwealthrobotics.robot.RobotLab;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -28,7 +29,6 @@ import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
 import com.neuronrobotics.bowlerstudio.creature.ImagePorviderInterface;
-import com.neuronrobotics.bowlerstudio.creature.NoImageException;
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
 import com.neuronrobotics.bowlerstudio.scripting.BlenderLoader;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
@@ -131,6 +131,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button RobotLabDrawer;
 	@FXML
 	private Button extrudeButton;
+	@FXML
+	private Button hullButton;
+	@FXML
+	private Button bendButton;
 	@FXML
 	private Button boltHoleButton;
 	@FXML
@@ -259,7 +263,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML // fx:id="lockUnlockTooltip"
 	private Tooltip lockUnlockTooltip; // Value injected by FXMLLoader
-
+	@FXML // fx:id="lockUnlockTooltip"
+	private Tooltip cameraTypeTooltip;
+	@FXML // fx:id="mirronButton"
+	private Button cameraType;
 	@FXML // fx:id="mirronButton"
 	private Button mirronButton; // Value injected by FXMLLoader
 
@@ -343,7 +350,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	private AnchorPane timelineHolder;
 	@FXML
-	private MenuButton advancedGroupMenu;
+	private Button intersectButton;
+	@FXML
+	private Button xorButton;
 	@FXML
 	private TextField searchField;
 	@FXML // fx:id="zoomInButton"
@@ -423,9 +432,40 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private static Label label;
 	private Button renameBtn;
 	private ThumbnailImage img;
+	private static MCPServer mcpServer;
+	private boolean othographicMode = false;
 
 	public MainController(Stage newStage) {
 		this.newStage = newStage;
+	}
+
+	@FXML
+	void onCameraChange(ActionEvent ae) {
+		boolean ortho = !othographicMode;
+		setCameraPerspectiveMode(ortho);
+		session.setKeyBindingFocus();
+	}
+
+	private void setCameraPerspectiveMode(boolean ortho) {
+		cameraType.getStyleClass().clear();
+		cameraType.getStyleClass().addAll("button", "image-button");
+		if (ortho) {
+			cameraType.getStyleClass().add("orthographic-image");
+			cameraTypeTooltip.setText(ActiveProject.getTranslation("Perspective"));
+		} else {
+			cameraType.getStyleClass().add("perspective-image");
+			cameraTypeTooltip.setText(ActiveProject.getTranslation("Orthographic"));
+		}
+		if (ortho == othographicMode)
+			return;
+		// the camera needs to appear as though it stays still when changing mode
+		double scale = 4582.0 / 157.0;// THESE VALUES ARE EXPEREMENTALLY DETERMINED
+		// Log.debug("Otho Scale " + scale);
+		double currentZoom = engine.getFlyingCamera().getZoomDepth();
+		double newZoom = currentZoom * (ortho ? scale : (1.0 / scale));
+		engine.setOrthographicMode(ortho);
+		engine.setZoom((int) newZoom);
+		othographicMode = ortho;
 	}
 
 	@FXML
@@ -691,6 +731,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setKeyBindingFocus();
 	}
 
+	void onOrentAndFocusView(ActionEvent event) {
+		session.submit(() -> {
+			TransformNR scale = session.getFocusCenter();
+			TransformNR orient = scale.times(new TransformNR(new RotationNR(0, 0, -90)));
+			Log.debug("WOrkplane interacetion " + orient.toSimpleString());
+
+			engine.focusOrientation(orient, new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+					engine.getFlyingCamera().getZoomDepth());
+		});
+		session.setKeyBindingFocus();
+	}
+
 	// onXorOperation
 	@FXML
 	void onXorOperation(ActionEvent event) {
@@ -786,7 +838,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@FXML
 	void onHomeViewButton(ActionEvent event) {
-		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0), ZOOM);
+		engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)), new TransformNR(0, 0, 0),
+				getZoom());
 		session.setKeyBindingFocus();
 	}
 
@@ -1090,8 +1143,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
-			// engine.getFlyingCamera().setProjectionMode(ProjectionMode.ORTHOGRAPHIC);
-			// engine.setOrthographicMode(true);
+			setCameraPerspectiveMode(othographicMode);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
 			paneOverlay2D.setMouseTransparent(true);
@@ -1124,15 +1176,17 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			renameBtn = new Button(ap.getTranslation("rename"));
 
 			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
-					colorPicker, snapGrid, parametrics, lockButton, lockImage, advancedGroupMenu, timelineManager,
-					objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid, materialPanel);
+					colorPicker, snapGrid, parametrics, lockButton, lockImage, intersectButton, xorButton,
+					timelineManager, objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid,
+					materialPanel);
 			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 			session.setRobotLabButton(RobotLabDrawer);
 			session.setGroup(groupButton);
 			session.setUngroup(ungroupButton);
 			session.setShowHideImage(showHideImage);
 			session.setAlignButton(alignButton);
-			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton);
+			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton, hullButton,
+					bendButton);
 			// do this after setting up the session
 			setupEngineControls();
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
@@ -1352,6 +1406,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					Thread.sleep(100);
 				}
 				ap.get().initialize();
+				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
+
 				session.save();
 				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
 				do {
@@ -1499,13 +1555,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		CaDoodleFile.setImageEngine(new ImagePorviderInterface() {
 			@Override
 			public WritableImage get(CSGDatabaseInstance instance, List<CSG> incomingToDisplay, File destination)
-					throws NoImageException, IOException {
+					throws com.neuronrobotics.bowlerstudio.creature.NoImageException, IOException {
 				// TODO Auto-generated method stub
 				return img.get(instance, incomingToDisplay, destination);
 			}
 		});
 	}
-
 
 	public static double groundScale() {
 		return 1;
@@ -1593,7 +1648,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		session.setLimbs(robotLab.getManager());
 
 	}
-
 
 	private void handleMovement(KeyEvent event) {
 		double dist = 1;
@@ -1839,6 +1893,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						com.neuronrobotics.sdk.common.Log.debug("Fit view");
 						onFitView(null);
 						break;
+					case 'O' : // F - Fit View
+						com.neuronrobotics.sdk.common.Log.debug("Orent view");
+						onOrentAndFocusView(null);
+						break;
 					case 'H' : // H - Set Hole
 						com.neuronrobotics.sdk.common.Log.debug("Set to Hole");
 						session.setToHole();
@@ -1950,9 +2008,55 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationDone() {
-		BowlerStudio.runLater(() -> {
-			fileNameBox.setText(ap.get().getMyProjectName());
-		});
+		MCPServerToggle();
+	}
+
+	public void MCPServerToggle() {
+		Object object = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server", "" + false);
+		Object port = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server_port",
+				((int) (Math.random() * 35000) + 1024));
+		boolean MCP = Boolean.parseBoolean(object.toString());
+		int portNum = (int) Double.parseDouble(port.toString());
+		MCPServer.DEFAULT_PORT = portNum;
+		if (MCP)
+			session.submit(() -> {
+				if (mcpServer == null) {
+					try {
+						Thread.sleep(1500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					mcpServer = new MCPServer();
+					System.out.println("Starting MCP server...");
+					try {
+						session.submit(() -> mcpServer.start());
+						Thread.sleep(200);
+						System.out.println("MCP server.start() completed");
+					} catch (Exception e) {
+						System.out.println("Exception in MCP server thread: " + e.getMessage());
+						e.printStackTrace();
+					}
+
+					Log.info("MCP Server (Streamable HTTP) started on http://127.0.0.1:" + MCPServer.DEFAULT_PORT
+							+ MCPServer.MCP_PATH);
+
+					// Register shutdown hook to stop MCP server
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+						if (mcpServer != null) {
+							mcpServer.stop();
+						}
+					}));
+					mcpServer.setDependencies(ap, session);
+				} else
+					session.submit(() -> mcpServer.setDependencies(ap, session));
+			});
+		else {
+			if (mcpServer != null) {
+				mcpServer.stop();
+				mcpServer = null;
+			}
+		}
 	}
 
 	@Override
@@ -1962,8 +2066,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onInitializationStart() {
-		// Auto-generated method stub
-
+		BowlerStudio.runLater(() -> {
+			fileNameBox.setText(ap.get().getMyProjectName());
+		});
 	}
 
 	@Override
@@ -2010,7 +2115,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		BowlerStudio.runLater(() -> {
 			advancedButtons.setVisible(advanced);
 			timelineButton.setVisible(advanced);
-			advancedGroupMenu.setVisible(advanced);
+			intersectButton.setVisible(advanced);
+			xorButton.setVisible(advanced);
 			RobotLabDrawer.setVisible(false); // Disabled Robot lab while it is not feaature complete
 			componentTreeDrawer.setVisible(advanced);
 			filletButton.setVisible(advanced);
@@ -2025,5 +2131,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public ActiveProject getActiveProject() {
 		return ap;
+	}
+
+	public int getZoom() {
+		if (engine != null) {
+			return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
+		}
+		return ZOOM;
 	}
 }

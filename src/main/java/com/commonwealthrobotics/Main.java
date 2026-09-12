@@ -7,8 +7,13 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -173,10 +178,9 @@ public class Main extends Application {
 		try {
 			logfile.createNewFile();
 			Log.enableDebugPrint(true);
-			//Log.enableErrorPrint();
+			// Log.enableErrorPrint();
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
-
 			Log.setFile(logfile);
 			com.neuronrobotics.sdk.common.Log.debug("Log file set to " + logfile.getAbsolutePath());
 			hand = new UncaughtExceptionHandler() {
@@ -257,15 +261,23 @@ public class Main extends Application {
 				if (file2.exists()) {
 					Log.debug("Git Cache zip exists " + zipGitCache);
 					File workingDir = ScriptingEngine.getWorkspace();
-					String workingGitCache = workingDir.getAbsolutePath() + delim() + "gitcache";
-					// if(!new File(workingGitCache).exists()) {
-					// Log.debug("Local GitCahe is missing: "+workingGitCache);
-					try {
-						unzip(file2, workingGitCache);
-					} catch (Exception e) {
-						Log.error(e);
+					String cachedir = "gitcache";
+					String workingGitCache = workingDir.getAbsolutePath() + delim() + cachedir;
+					File gitcacheUser = new File(workingGitCache);
+					if (!gitcacheUser.exists()) {
+						Log.debug("Local GitCahe is missing: " + workingGitCache);
+						try {
+							unzip(file2, workingGitCache, null);
+						} catch (Exception e) {
+							Log.error(e);
+						}
+					} else {
+						File tmpCache = new File(currentVersionDir + cachedir);
+						if (!tmpCache.exists())
+							unzip(file2, tmpCache.getAbsolutePath(), null);
+						runGitUpdateFromFile(gitcacheUser, tmpCache);
+						//
 					}
-					// }
 				} else {
 					String lastVer = ConfigurationDatabase.get(paramsKey, objectKey, "0").toString();
 					String nowVer = "" + StudioBuildInfo.getSDKVersion();
@@ -301,7 +313,6 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-
 
 		ScriptingEngine.setAppName("CaDoodle");
 
@@ -352,17 +363,178 @@ public class Main extends Application {
 		}
 	}
 
+	private static void runGitUpdateFromFile(File gitcacheUser, File tmpCache) {
+		String version = StudioBuildInfo.getVersion();
+		String lastVersion = ConfigurationDatabase.get("CaDoodle", "CurrentVersion", version).toString();
+
+		boolean commitSet = (!version.contentEquals("source")) && (!version.contentEquals(lastVersion));
+		ConfigurationDatabase.put("CaDoodle", "CurrentVersion", version);
+
+		for (String domain : tmpCache.list()) {
+
+			File sourceDomain = tmpCache.toPath().resolve(domain).toFile();
+			File targetDomain = gitcacheUser.toPath().resolve(domain).toFile();
+
+			if (!sourceDomain.isDirectory()) {
+				continue;
+			}
+
+			/*
+			 * If the entire domain does not exist in the user cache, copy it rather than
+			 * walking it.
+			 */
+			if (!targetDomain.exists()) {
+				try {
+					Files.walkFileTree(sourceDomain.toPath(), new SimpleFileVisitor<Path>() {
+
+						@Override
+						public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+								throws IOException {
+
+							Path relative = sourceDomain.toPath().relativize(dir);
+
+							Path target = targetDomain.toPath().resolve(relative);
+
+							Files.createDirectories(target);
+
+							return FileVisitResult.CONTINUE;
+						}
+
+						@Override
+						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+							Path relative = sourceDomain.toPath().relativize(file);
+
+							Path target = targetDomain.toPath().resolve(relative);
+
+							Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING,
+									StandardCopyOption.COPY_ATTRIBUTES);
+
+							return FileVisitResult.CONTINUE;
+						}
+					});
+				} catch (Exception ex) {
+					Log.error("Copy cache failed on " + sourceDomain.getAbsolutePath());
+					Log.error(ex);
+				}
+
+				continue;
+			}
+
+			Path sourceRoot = sourceDomain.toPath();
+			Path targetRoot = targetDomain.toPath();
+
+			/*
+			 * Search for Git repositories at any depth.
+			 */
+			try {
+				Files.walkFileTree(sourceRoot, new SimpleFileVisitor<Path>() {
+
+					@Override
+					public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+
+						/*
+						 * Don't descend into .git directories.
+						 */
+						if (dir.getFileName() != null && dir.getFileName().toString().equals(".git")) {
+							return FileVisitResult.SKIP_SUBTREE;
+						}
+
+						/*
+						 * A directory containing .git is a repository.
+						 */
+						if (Files.isDirectory(dir.resolve(".git"))) {
+
+							Path relativeRepo = sourceRoot.relativize(dir);
+
+							File sourceRepo = dir.toFile();
+							File targetRepo = targetRoot.resolve(relativeRepo).toFile();
+
+							/*
+							 * Target repository already exists: pull changes from the source
+							 * repository.
+							 */
+							if (targetRepo.exists() && Files.isDirectory(targetRepo.toPath().resolve(".git"))) {
+
+								try {
+									ScriptingEngine.pullFromFile(targetRepo, sourceRepo, null, commitSet);
+
+								} catch (Exception ex) {
+									Log.error("Update cache failed on " + sourceRepo.getAbsolutePath());
+									Log.error(ex);
+								}
+
+							} else {
+
+								/*
+								 * Target repository does not exist. Copy the complete repository.
+								 */
+								try {
+									Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+
+										@Override
+										public FileVisitResult preVisitDirectory(Path copyDir,
+												BasicFileAttributes attrs) throws IOException {
+
+											Path relative = dir.relativize(copyDir);
+
+											Path target = targetRepo.toPath().resolve(relative);
+
+											Files.createDirectories(target);
+
+											return FileVisitResult.CONTINUE;
+										}
+
+										@Override
+										public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+												throws IOException {
+
+											Path relative = dir.relativize(file);
+
+											Path target = targetRepo.toPath().resolve(relative);
+
+											Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING,
+													StandardCopyOption.COPY_ATTRIBUTES);
+
+											return FileVisitResult.CONTINUE;
+										}
+									});
+
+								} catch (Exception ex) {
+									Log.error("Copy repository failed on " + sourceRepo.getAbsolutePath());
+									Log.error(ex);
+								}
+							}
+
+							/*
+							 * Don't descend into this repository. We have already handled the entire
+							 * repo.
+							 */
+							return FileVisitResult.SKIP_SUBTREE;
+						}
+
+						return FileVisitResult.CONTINUE;
+					}
+				});
+
+			} catch (Exception ex) {
+				Log.error("Search cache failed on " + sourceDomain.getAbsolutePath());
+				Log.error(ex);
+			}
+		}
+	}
+
 	public static void checkRendering() {
-		//		boolean hw3d = Platform.isSupported(ConditionalFeature.SCENE3D);
-		//		try {
-		//			// Optionally dig deeper with internal API (may break across JFX versions)
-		//			GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
-		//			String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
+		// boolean hw3d = Platform.isSupported(ConditionalFeature.SCENE3D);
+		// try {
+		// // Optionally dig deeper with internal API (may break across JFX versions)
+		// GraphicsPipeline pipe = GraphicsPipeline.getPipeline();
+		// String name = pipe != null ? pipe.getClass().getSimpleName() : "unknown";
 		//
-		//			Log.debug("3D supported: " + hw3d + " | Pipeline: " + name);
-		//		} catch (Throwable ex) {
-		//			Log.error(ex);
-		//		}
+		// Log.debug("3D supported: " + hw3d + " | Pipeline: " + name);
+		// } catch (Throwable ex) {
+		// Log.error(ex);
+		// }
 	}
 
 	private static void setupMeshFailPopup(Stage stage) {

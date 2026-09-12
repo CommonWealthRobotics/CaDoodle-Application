@@ -49,6 +49,7 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -62,6 +63,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -84,7 +86,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -182,7 +183,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// private HashMap<String, EventHandler<ActionEvent>> regenEvents = new
 	// HashMap<>();
 	private boolean showConstituants = false;
-	private MenuButton advancedGroupMenu;
+	private Button intersectButton;
+	private Button xorButton;
 	private TimelineManager timeline;
 	private RulerManager ruler;
 	private Button objectWorkplane;
@@ -220,7 +222,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private TitledPane materialPanel;
 	private double sessionDeltaX = 0;
 	private double sessionDeltaY = 0;
-	private double sessionDeltaZ = 0;;
+	private double sessionDeltaZ = 0;
+	private Button hullButton;
+	private Button bendButton;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -625,12 +629,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
+			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
+			if (ModifyLimb.class.isInstance(source)) {
+				source.getCaDoodleFile().getBoundsCache().clear();
+			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
 			BowlerStudio.runLater(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
@@ -725,8 +732,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		haloScale.setPivotX(cx);
 		haloScale.setPivotY(cy);
 		haloScale.setPivotZ(cz);
-
-		halo.getTransforms().setAll(haloScale);
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		halo.getTransforms().setAll(haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
@@ -762,7 +777,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.setDrawMode(DrawMode.LINE);
 		else
 			meshView.setDrawMode(DrawMode.FILL);
-		//meshView.setViewOrder(0);
+		// meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		engine.addUserNode(halo);
 		getMeshes().put(c, holder);
@@ -808,8 +823,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
-					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
-							localPoint.getZ());
+					TransformNR screenLocation = workplane.pickInteractionToPose(event);
+					screenPositionOfLatestMeshClick = screenLocation;// new TransformNR(localPoint.getX(),
+																		// localPoint.getY(),localPoint.getZ());
+					if (name.hasManipulator()) {
+						try {
+							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
+							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
+						} catch (MissingManipulatorException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
@@ -888,7 +913,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		int width = 170;
 		int c1Width = 100;
 		gp.setPrefWidth(width + c1Width);
-		//gp.setMaxWidth(width+c1Width);
+		// gp.setMaxWidth(width+c1Width);
 
 		ColumnConstraints col0 = new ColumnConstraints();
 		col0.setHgrow(Priority.NEVER);
@@ -1059,11 +1084,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
+
 			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"),
-					String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+					String.format(Locale.getDefault(), "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
 				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"),
-						String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+						String.format(Locale.getDefault(), "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1104,13 +1130,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		TextField options = new TextField();
 		options.setEditable(true);
-		options.setText(para.getMM() + "");
+		options.setText(String.format(Locale.getDefault(), "%.3f", para.getMM()));
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		options.setOnAction(event -> {
 			ArrayList<String> options2 = para.getOptions();
-			String string = options.getText().toString();
+			String string = options.getText().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (parseDouble > MAX_NUMBER_FILED) {
@@ -1145,19 +1171,29 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			limited = true;
 
 		ComboBox<String> options = new ComboBox<String>();
+		String toSelect = null;
 		for (String s : options2) {
-			options.getItems().add(s);
+			String t = s.replace(',', '.');
+			double val = Double.parseDouble(t);
+			String formatted3 = String.format(Locale.getDefault(), "%.3f", val);
+			if (Math.abs(para.getMM() - val) < 0.001) {
+				toSelect = formatted3;
+			}
+			options.getItems().add(formatted3);
+		}
+		if (toSelect == null) {
+			toSelect = String.format(Locale.getDefault(), "%.3f", para.getMM());
+			options.getItems().add(toSelect);
 		}
 
-		options.getItems().add(para.getMM() + "");
 		options.setEditable(true);
-		options.getSelectionModel().select(para.getMM() + "");
+		options.getSelectionModel().select(toSelect);
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
-			String string = options.getSelectionModel().getSelectedItem().toString();
+			String string = options.getSelectionModel().getSelectedItem().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (isLimit) {
@@ -1215,7 +1251,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1229,7 +1265,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -1266,10 +1302,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				mass += (c.getVolume() * localDensity / 1000.0);
 			}
 			if (linkedHashSet.size() == 1)
-				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
+				button.setText(label + " \n " + String.format(Locale.getDefault(), "%.4f g/cm^3", localDensity));
 			else
 				button.setText(ap.getTranslation("mainwindow.asorted"));
-			String format = String.format(Locale.US, "%.4f g", mass);
+			String format = String.format(Locale.getDefault(), "%.4f g", mass);
 			massDisplay.setText(format);
 			materialPanel2.setText(ap.getTranslation("mainwindow.material") + "    ----   ( " + format + " )");
 		};
@@ -1652,8 +1688,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
-			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, Button intersectButton,
+			Button xorButton, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
 			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
@@ -1666,7 +1702,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.parametrics = parametrics;
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
-		this.advancedGroupMenu = advancedGroupMenu;
+		this.intersectButton = intersectButton;
+		this.xorButton = xorButton;
 		this.timeline = tm;
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
@@ -1991,8 +2028,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (alignButton != null)
 				alignButton.setDisable(true);
 
-			if (advancedGroupMenu != null)
-				advancedGroupMenu.setDisable(true);
+			if (intersectButton != null)
+				intersectButton.setDisable(true);
+
+			if (xorButton != null)
+				xorButton.setDisable(true);
 
 			if (dropToWorkplane != null)
 				dropToWorkplane.setDisable(true);
@@ -2001,12 +2041,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				objectWorkplane.setDisable(true);
 			if (hexDistributeButton != null)
 				hexDistributeButton.setDisable(true);
-			// if (filletButton != null)
-			// filletButton.setDisable(true);
-			// if (extrudeButton != null)
-			// extrudeButton.setDisable(true);
+			if (filletButton != null)
+				filletButton.setDisable(true);
+			if (extrudeButton != null)
+				extrudeButton.setDisable(true);
 			if (boltHoleButton != null)
 				boltHoleButton.setDisable(true);
+			if (bendButton != null)
+				bendButton.setDisable(true);
+			if (hullButton != null)
+				hullButton.setDisable(true);
 		});
 	}
 
@@ -2026,15 +2070,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				alignButton.setDisable(false);
+				intersectButton.setDisable(false);
+				xorButton.setDisable(false);
 			}
 
 			if ((getSelected().size() > 0) && advanced) {
-				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
 				hexDistributeButton.setDisable(false);
-				// filletButton.setDisable(false);
-				// extrudeButton.setDisable(false);
+				filletButton.setDisable(false);
+				extrudeButton.setDisable(false);
 				boltHoleButton.setDisable(false);
+				bendButton.setDisable(false);
+				hullButton.setDisable(false);
 			}
 
 			if (isAGroupSelected())
@@ -2714,15 +2761,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double yawRad = Math.toRadians(currentRotZ - 90);
 				double cos = Math.cos(yawRad);
 				double sin = Math.sin(yawRad);
-				//com.neuronrobotics.sdk.common.Log.error("\n\n\nKey   "+stateUnitVectorTmp.toSimpleString());
-
+				// com.neuronrobotics.sdk.common.Log.error("\n\n\nKey
+				// "+stateUnitVectorTmp.toSimpleString());
 
 				double inX = stateUnitVectorTmp.getX();
 				double inY = stateUnitVectorTmp.getY();
 
 				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
 						stateUnitVectorTmp.getZ());
-				//com.neuronrobotics.sdk.common.Log.error("\nState "+stateUnitVector.toSimpleString());
+				// com.neuronrobotics.sdk.common.Log.error("\nState
+				// "+stateUnitVector.toSimpleString());
 				double incement = getSnapGridValue();
 
 				boolean updateTrig = false;
@@ -2811,6 +2859,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetManipulator() {
+		// Log.error(new Exception("Manipulation reset here"));
 		manipulation.reset();
 	}
 
@@ -3132,7 +3181,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-
 	public LinkedHashSet<CSG> getSelected() {
 		return selected;
 	}
@@ -3169,16 +3217,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setAdvancedButtons(Button filletButton, Button extrudeButton, Button hexDistributeButton,
-			Button boltHoleButton) {
+			Button boltHoleButton, Button hullButton, Button bendButton) {
 		this.filletButton = filletButton;
 		this.extrudeButton = extrudeButton;
 		this.hexDistributeButton = hexDistributeButton;
 		this.boltHoleButton = boltHoleButton;
+		this.hullButton = hullButton;
+		this.bendButton = bendButton;
 	}
 
 	public void hideHalos() {
 		for (MeshHolder mh : meshes.values()) {
 			mh.halo.setVisible(false);
+		}
+	}
+
+	public void showHalos() {
+		for (CSG csg : meshes.keySet()) {
+			MeshHolder mh = meshes.get(csg);
+			mh.halo.setVisible(selected.contains(csg));
 		}
 	}
 
@@ -3188,6 +3245,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setSnapGridValue(double snapGridValue) {
 		ConfigurationDatabase.put("CaDoodle", "SnapGridSize", "" + snapGridValue);
+	}
+
+	public void runClear() {
+		controls.runClear();
 	}
 
 }

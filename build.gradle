@@ -254,6 +254,8 @@ def javafxOptions = [
 	'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
 	'--add-exports',
 	'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+	'--add-exports',
+	'javafx.graphics/com.sun.prism.GraphicsPipeline=ALL-UNNAMED',
 	'--add-opens',
 	'javafx.graphics/javafx.scene=ALL-UNNAMED',
 	'--add-opens',
