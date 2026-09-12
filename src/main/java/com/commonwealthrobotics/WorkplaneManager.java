@@ -212,7 +212,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	@Override
 	public void handle(MouseEvent ev) {
 		try {
-			
+
 
 			if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				doClickEvent(ev);
@@ -273,8 +273,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				Polygon fromMesh = getFaceNormalAngles(mesh, faceIndex);
 				try {
 					pureRot = TransformFactory
-							.csgToNR(PolygonUtil.calculateNormalTransform(fromMesh.getPlane().getNormal()))
-							.inverse();
+							.csgToNR(PolygonUtil.calculateNormalTransform(fromMesh.getPlane().getNormal())).inverse();
 				} catch (ColinearPointsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
