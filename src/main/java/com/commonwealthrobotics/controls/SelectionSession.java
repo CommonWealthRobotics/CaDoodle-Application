@@ -86,7 +86,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -184,7 +183,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// private HashMap<String, EventHandler<ActionEvent>> regenEvents = new
 	// HashMap<>();
 	private boolean showConstituants = false;
-	private MenuButton advancedGroupMenu;
+	private Button intersectButton;
+	private Button xorButton;
 	private TimelineManager timeline;
 	private RulerManager ruler;
 	private Button objectWorkplane;
@@ -777,7 +777,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.setDrawMode(DrawMode.LINE);
 		else
 			meshView.setDrawMode(DrawMode.FILL);
-		//meshView.setViewOrder(0);
+		// meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		engine.addUserNode(halo);
 		getMeshes().put(c, holder);
@@ -823,8 +823,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
-					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
-							localPoint.getZ());
+					TransformNR screenLocation = workplane.pickInteractionToPose(event);
+					screenPositionOfLatestMeshClick = screenLocation;// new TransformNR(localPoint.getX(),
+																		// localPoint.getY(),localPoint.getZ());
 					if (name.hasManipulator()) {
 						try {
 							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
@@ -912,7 +913,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		int width = 170;
 		int c1Width = 100;
 		gp.setPrefWidth(width + c1Width);
-		//gp.setMaxWidth(width+c1Width);
+		// gp.setMaxWidth(width+c1Width);
 
 		ColumnConstraints col0 = new ColumnConstraints();
 		col0.setHgrow(Priority.NEVER);
@@ -1250,7 +1251,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1264,7 +1265,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -1687,8 +1688,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
 			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
-			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, Button intersectButton,
+			Button xorButton, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
 			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfigurationBox = shapeConfigurationBox;
@@ -1701,7 +1702,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.parametrics = parametrics;
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
-		this.advancedGroupMenu = advancedGroupMenu;
+		this.intersectButton = intersectButton;
+		this.xorButton = xorButton;
 		this.timeline = tm;
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
@@ -2026,8 +2028,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (alignButton != null)
 				alignButton.setDisable(true);
 
-			if (advancedGroupMenu != null)
-				advancedGroupMenu.setDisable(true);
+			if (intersectButton != null)
+				intersectButton.setDisable(true);
+
+			if (xorButton != null)
+				xorButton.setDisable(true);
 
 			if (dropToWorkplane != null)
 				dropToWorkplane.setDisable(true);
@@ -2065,7 +2070,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				alignButton.setDisable(false);
-				advancedGroupMenu.setDisable(false);
+				intersectButton.setDisable(false);
+				xorButton.setDisable(false);
 			}
 
 			if ((getSelected().size() > 0) && advanced) {
@@ -2755,15 +2761,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				double yawRad = Math.toRadians(currentRotZ - 90);
 				double cos = Math.cos(yawRad);
 				double sin = Math.sin(yawRad);
-				//com.neuronrobotics.sdk.common.Log.error("\n\n\nKey   "+stateUnitVectorTmp.toSimpleString());
-
+				// com.neuronrobotics.sdk.common.Log.error("\n\n\nKey
+				// "+stateUnitVectorTmp.toSimpleString());
 
 				double inX = stateUnitVectorTmp.getX();
 				double inY = stateUnitVectorTmp.getY();
 
 				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
 						stateUnitVectorTmp.getZ());
-				//com.neuronrobotics.sdk.common.Log.error("\nState "+stateUnitVector.toSimpleString());
+				// com.neuronrobotics.sdk.common.Log.error("\nState
+				// "+stateUnitVector.toSimpleString());
 				double incement = getSnapGridValue();
 
 				boolean updateTrig = false;
@@ -3173,7 +3180,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 		});
 	}
-
 
 	public LinkedHashSet<CSG> getSelected() {
 		return selected;
