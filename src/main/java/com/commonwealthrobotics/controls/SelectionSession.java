@@ -810,8 +810,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
-					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
-							localPoint.getZ());
+					TransformNR screenLocation = workplane.pickInteractionToPose(event);
+					screenPositionOfLatestMeshClick = screenLocation;//new TransformNR(localPoint.getX(), localPoint.getY(),localPoint.getZ());
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(

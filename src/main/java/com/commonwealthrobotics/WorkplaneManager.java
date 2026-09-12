@@ -212,8 +212,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	@Override
 	public void handle(MouseEvent ev) {
 		try {
-			PickResult pickResult = ev.getPickResult();
-			Node intersectedNode = pickResult.getIntersectedNode();
+			
 
 			if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				doClickEvent(ev);
@@ -221,113 +220,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			} else if ((ev.getEventType() == MouseEvent.MOUSE_MOVED)
 					|| (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
 				session.submit(() -> {
-					// com.neuronrobotics.sdk.common.Log.error(ev);
-					Point3D intersectedPoint = pickResult.getIntersectedPoint();
-					double x = intersectedPoint.getX();
-					double y = intersectedPoint.getY();
-					double z = intersectedPoint.getZ();
-
-					if (ev.getSource() == wpPick) {
-						x *= MainController.groundScale();
-						y *= MainController.groundScale();
-						z *= MainController.groundScale();
-					}
-
-					TransformNR screenLocation;
-					TransformNR pureRot = null;
-					Affine manipulator = new Affine();
-					CSG source = null;
-
-					if (intersectedNode instanceof MeshView) {
-						MeshView meshView = (MeshView) intersectedNode;
-
-						for (CSG csg : session.getMeshes().keySet()) {
-							if (meshView == session.getMeshes().get(csg).display) {
-								source = csg;
-								try {
-									manipulator = source.getManipulator();
-								} catch (MissingManipulatorException e) {
-
-								}
-								break;
-							}
-						}
-
-						TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
-
-						int faceIndex = pickResult.getIntersectedFace();
-
-						if (faceIndex >= 0) {
-							Polygon fromMesh = getFaceNormalAngles(mesh, faceIndex);
-							try {
-								pureRot = TransformFactory
-										.csgToNR(PolygonUtil.calculateNormalTransform(fromMesh.getPlane().getNormal()))
-										.inverse();
-							} catch (ColinearPointsException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if (source != null) {
-								Polygon p = fromMesh;
-								Polygon sourcePoly = getPolygonFromFaceIndex(faceIndex, source);
-								if (p.getBounds().isBoundsTouching(sourcePoly.getBounds())) {
-									// use the more accurate polygon
-									p = sourcePoly;
-								}
-
-								if (p != null) {
-									try {
-										Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
-										npTF.set(0, 0, 0);
-										pureRot = TransformFactory.csgToNR(npTF).inverse();
-										// an in-plane snapping here by transforming the points into the plane
-										// orientation, then snapping in plane, then transforming the points back.
-										TransformNR t = new TransformNR(x, y, z);
-										TransformNR screenLocationtmp = t; // manipulatorNR.times(t);
-										TransformNR npTFNR = TransformFactory.csgToNR(npTF);
-										Polygon flattened = p.transformed(npTF);
-										TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
-										// Log.debug("Polygon " + flattened);
-										// Log.debug("Point " + flattenedTouch.toSimpleString());
-										TransformNR adjusted = new TransformNR( // Snap in plane
-												SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),
-												SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
-												flattened.getPoints().get(0).z); // adhere to the plane of the polygon
-										// flip the point back to its original orientation in the plane post snap
-										TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
-										x = adjustedBack.getX();
-										y = adjustedBack.getY();
-										z = adjustedBack.getZ();
-										// Log.debug("Polygon snapped " + adjusted);
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-
-								}
-
-							} else {
-								x = SelectionSession.roundToNearest(x, snapGridValue);
-								y = SelectionSession.roundToNearest(y, snapGridValue);
-								z = SelectionSession.roundToNearest(z, snapGridValue);
-							}
-
-						} else
-							Log.error("Error face index came back: " + faceIndex);
-
-					}
-					if (pureRot == null)
-						pureRot = new TransformNR();
-					TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
-					TransformNR t = new TransformNR(x, y, z);
-					screenLocation = manipulatorNR.times(t.times(pureRot));
-
-					if ((intersectedNode == wpPick.intersectionNode)) {
-						if (updater != null)
-							updater.setWorkplaneLocation(screenLocation);
-
-						screenLocation = ap.get().getWorkplane().times(screenLocation);
-					} else if (updater != null)
-						updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
+					TransformNR screenLocation = pickInteractionToPose(ev);
 					TransformNR toSet = screenLocation;
 					BowlerKernel.runLater(() -> setCurrentAbsolutePose(toSet));
 				});
@@ -335,6 +228,119 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		} catch (Throwable t) {
 			Log.error(t);
 		}
+	}
+
+	public TransformNR pickInteractionToPose(MouseEvent ev) {
+		PickResult pickResult = ev.getPickResult();
+		Node intersectedNode = pickResult.getIntersectedNode();
+		// com.neuronrobotics.sdk.common.Log.error(ev);
+		Point3D intersectedPoint = pickResult.getIntersectedPoint();
+		double x = intersectedPoint.getX();
+		double y = intersectedPoint.getY();
+		double z = intersectedPoint.getZ();
+
+		if (ev.getSource() == wpPick) {
+			x *= MainController.groundScale();
+			y *= MainController.groundScale();
+			z *= MainController.groundScale();
+		}
+
+		TransformNR screenLocation;
+		TransformNR pureRot = null;
+		Affine manipulator = new Affine();
+		CSG source = null;
+
+		if (intersectedNode instanceof MeshView) {
+			MeshView meshView = (MeshView) intersectedNode;
+
+			for (CSG csg : session.getMeshes().keySet()) {
+				if (meshView == session.getMeshes().get(csg).display) {
+					source = csg;
+					try {
+						manipulator = source.getManipulator();
+					} catch (MissingManipulatorException e) {
+
+					}
+					break;
+				}
+			}
+
+			TriangleMesh mesh = (TriangleMesh) meshView.getMesh();
+
+			int faceIndex = pickResult.getIntersectedFace();
+
+			if (faceIndex >= 0) {
+				Polygon fromMesh = getFaceNormalAngles(mesh, faceIndex);
+				try {
+					pureRot = TransformFactory
+							.csgToNR(PolygonUtil.calculateNormalTransform(fromMesh.getPlane().getNormal()))
+							.inverse();
+				} catch (ColinearPointsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (source != null) {
+					Polygon p = fromMesh;
+					Polygon sourcePoly = getPolygonFromFaceIndex(faceIndex, source);
+					if (p.getBounds().isBoundsTouching(sourcePoly.getBounds())) {
+						// use the more accurate polygon
+						p = sourcePoly;
+					}
+
+					if (p != null) {
+						try {
+							Transform npTF = PolygonUtil.calculateNormalTransform(p.getPlane().getNormal());
+							npTF.set(0, 0, 0);
+							pureRot = TransformFactory.csgToNR(npTF).inverse();
+							// an in-plane snapping here by transforming the points into the plane
+							// orientation, then snapping in plane, then transforming the points back.
+							TransformNR t = new TransformNR(x, y, z);
+							TransformNR screenLocationtmp = t; // manipulatorNR.times(t);
+							TransformNR npTFNR = TransformFactory.csgToNR(npTF);
+							Polygon flattened = p.transformed(npTF);
+							TransformNR flattenedTouch = npTFNR.times(screenLocationtmp);
+							// Log.debug("Polygon " + flattened);
+							// Log.debug("Point " + flattenedTouch.toSimpleString());
+							TransformNR adjusted = new TransformNR( // Snap in plane
+									SelectionSession.roundToNearest(flattenedTouch.getX(), snapGridValue),
+									SelectionSession.roundToNearest(flattenedTouch.getY(), snapGridValue),
+									flattened.getPoints().get(0).z); // adhere to the plane of the polygon
+							// flip the point back to its original orientation in the plane post snap
+							TransformNR adjustedBack = npTFNR.inverse().times(adjusted);
+							x = adjustedBack.getX();
+							y = adjustedBack.getY();
+							z = adjustedBack.getZ();
+							// Log.debug("Polygon snapped " + adjusted);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+
+				} else {
+					x = SelectionSession.roundToNearest(x, snapGridValue);
+					y = SelectionSession.roundToNearest(y, snapGridValue);
+					z = SelectionSession.roundToNearest(z, snapGridValue);
+				}
+
+			} else
+				Log.error("Error face index came back: " + faceIndex);
+
+		}
+		if (pureRot == null)
+			pureRot = new TransformNR();
+		TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
+		TransformNR t = new TransformNR(x, y, z);
+		screenLocation = manipulatorNR.times(t.times(pureRot));
+
+		if ((intersectedNode == wpPick.intersectionNode)) {
+			if (updater != null)
+				updater.setWorkplaneLocation(screenLocation);
+
+			screenLocation = ap.get().getWorkplane().times(screenLocation);
+		} else if (updater != null)
+			updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
+		return screenLocation;
 	}
 
 	public void doClickEvent(MouseEvent ev) {
