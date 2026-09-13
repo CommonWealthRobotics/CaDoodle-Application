@@ -544,9 +544,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		return isWorkplaneNotOrigin(w);
 	}
 
-	public boolean isWorkplaneNotOrigin(TransformNR w) {
+	public static boolean isWorkplaneNotOrigin(TransformNR w) {
 
-		double epsilon = 0.01;
+		double epsilon = 0.1;
 		RotationNR r = w.getRotation();
 
 		//		if ((Math.abs(w.getX()) > epsilon))
