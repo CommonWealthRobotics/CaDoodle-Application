@@ -50,7 +50,7 @@ public class ButtonWithOverlayImage extends Button {
 
 		hbox = new HBox(this, separator);
 		hbox.setAlignment(Pos.CENTER);
-		setMaxSize(buttonSize, buttonSize);
+		setMinSize(buttonSize, buttonSize);
 		setGraphic(stack);
 	}
 

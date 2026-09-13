@@ -440,7 +440,7 @@
                                           </GridPane>
                                           <GridPane pickOnBounds="false" GridPane.rowSpan="2147483647">
                                             <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="71.0" prefHeight="150.0" vgrow="SOMETIMES" />
@@ -511,6 +511,14 @@
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%mainwindow.component_tree" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="cameraType" mnemonicParsing="false" onAction="#onCameraChange" styleClass="image-button" GridPane.rowIndex="5">
+                                                   <graphic>
+                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip fx:id="cameraTypeTooltip" />
                                                    </tooltip>
                                                 </Button>
                                              </children>
@@ -835,6 +843,14 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
+                              <Button fx:id="hullButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.hull" />
+                                 </tooltip>
+                              </Button>
                               <Button fx:id="bendButton" mnemonicParsing="false" onAction="#onBend" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="bendSurface" />
@@ -860,48 +876,25 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
-                              <AnchorPane fx:id="AdvancedBooleanOpsMenuHolder">
-                                 <children>
-                                    <MenuButton fx:id="advancedGroupMenu" mnemonicParsing="false" styleClass="menu-button2">
-                                      <graphic>
-                                          <ImageView fitHeight="32.0" pickOnBounds="true" preserveRatio="true" styleClass="extraGroupImage" />
-                                      </graphic>
-                                      <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#onHullOperation" text="%mainwindow.hull">
-                                             <graphic>
-                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
-                                             </graphic>
-                                          </MenuItem>
-                                          <MenuItem mnemonicParsing="false" onAction="#onIntersectOperation" text="%mainwindow.intersect">
-                                             <graphic>
-                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
-                                             </graphic>
-                                          </MenuItem>
-                                          <MenuItem mnemonicParsing="false" onAction="#onXorOperation" text="%mainwindow.xor">
-                                             <graphic>
-                                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" fx:id="xorImage" />
-                                             </graphic>
-                                          </MenuItem>
-                                      </items>
-                                       <tooltip>
-                                          <Tooltip text="%mainwindow.extra_group_options" />
-                                       </tooltip>
-                                    </MenuButton>
-                                 </children>
-                              </AnchorPane>
                            </children>
                         </HBox>
-                        <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
-                           <graphic>
-                              <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon">
-                                 <viewport>
-                                    <Rectangle2D />
-                                 </viewport></ImageView>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%mainwindow.show_all_lt_ctrl_shift_h_gt" />
-                           </tooltip>
+                        <Button fx:id="intersectButton" mnemonicParsing="false" onAction="#onIntersectOperation" styleClass="image-button">
+                            <graphic>
+                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%mainwindow.intersect" />
+                            </tooltip>
                         </Button>
+                        <Button fx:id="xorButton" mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button">
+                            <graphic>
+                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%mainwindow.xor" />
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
@@ -916,6 +909,17 @@
                            </graphic>
                            <tooltip>
                               <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
+                           <graphic>
+                              <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon">
+                                 <viewport>
+                                    <Rectangle2D />
+                                 </viewport></ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%mainwindow.show_all_lt_ctrl_shift_h_gt" />
                            </tooltip>
                         </Button>
                         <Button fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">

@@ -68,10 +68,10 @@ public class AlignRadioSet {
 		mesh.setMaterial(material);
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf) {
-		positive.threeDTarget(screenW, screenH, zoom, b, cf);
-		middle.threeDTarget(screenW, screenH, zoom, b, cf);
-		negetive.threeDTarget(screenW, screenH, zoom, b, cf);
+	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf, double zoomScale) {
+		positive.threeDTarget(screenW, screenH, zoom, b, cf, zoomScale);
+		middle.threeDTarget(screenW, screenH, zoom, b, cf, zoomScale);
+		negetive.threeDTarget(screenW, screenH, zoom, b, cf, zoomScale);
 
 		BowlerStudio.runLater(() -> {
 			boolean isX = isXvector();
@@ -96,7 +96,7 @@ public class AlignRadioSet {
 			double scaleFactor = ((distance / baseDistance) * baseScale);
 
 			// Clamp the scale factor to a reasonable range
-			scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
+			scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor)) * zoomScale;
 			double barsize = scaleFactor * 5;
 			scaleTF.setX(barsize);
 			scaleTF.setY(barsize);
