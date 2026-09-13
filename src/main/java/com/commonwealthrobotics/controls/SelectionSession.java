@@ -820,7 +820,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 									manipulation.snapToGrid(startingPosition3D.getZ())));
 				} else {
 					Log.debug("NOT Setup Move Starting point because " + pickedNode + " is not " + meshView);
-
 				}
 
 				// Inform the controls about the total selected object(s) height
