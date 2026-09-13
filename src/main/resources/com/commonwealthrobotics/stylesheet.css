@@ -2,12 +2,20 @@
 /* Images are set on the ImageView child so fitHeight/fitWidth in FXML are preserved. */
 /* Dynamic images (drawrImage, showHideImage, showAllImage, timelineImage,            */
 /* RobotLabDrawerImage, componentTreeDrawerArrow, lockImage) stay image-only in FXML. */
+/*light/orthographic.png perspective.png */
+.orthographic-image .image-view               { -fx-image: url("light/orthographic.png"); }
+.perspective-image .image-view               { -fx-image: url("light/perspective.png "); }
+
 
 #makeRobotButton .image-view     { -fx-image: url("light/newRobot.png"); }
 #homeButton .image-view          { -fx-image: url("light/CADoodleHome.png"); }
 .biglogo-cadoodle        		 { -fx-image: url("light/biglogo.png"); }
-.biglogo-advanced        		 { -fx-image: url("light/fission180.png"); }
-#homeViewButton .image-view      { -fx-image: url("light/home.png"); }
+.biglogo-advanced {
+    -fx-image: url("light/biglogoAdvanced.png");
+    -fx-fit-width: 145px;
+    -fx-fit-height: 36px;
+    -fx-preserve-ratio: true;
+}#homeViewButton .image-view      { -fx-image: url("light/home.png"); }
 #fitViewButton .image-view       { -fx-image: url("light/fit.png"); }
 #zoomInButton .image-view        { -fx-image: url("light/zoomIn.png"); }
 #zoomOutButton .image-view       { -fx-image: url("light/zoomOut.png"); }
@@ -61,7 +69,7 @@
 .load-limb-arms-icon      { -fx-image: url("light/Load-Limb-Arms.png"); }
 .advanced-config-icon     { -fx-image: url("light/Advanced-Configuration.png"); }
 .notes-icon               { -fx-image: url("light/notes.png"); }
-.extraGroupImage { -fx-image: url("light/hull.png"); }
+.extraGroupImage { -fx-image: url("light/xor.png"); }
 .hullImage  { -fx-image: url("light/hull.png"); }
 .intersectImage { -fx-image: url("light/intersect.png"); }
 .xorImage  { -fx-image: url("light/xor.png"); }
@@ -69,6 +77,8 @@
 .moveObject  { -fx-image: url("light/moveObject.png"); }
 .resizeObject  { -fx-image: url("light/resizeObject.png"); }
 .bendSurface  { -fx-image: url("light/bend.png"); }
+#source .image-view  { -fx-image: url("light/CADoodle-Icon.png"); }
+
 
 /* ── Regular buttons ────────────────────────────────── */
 .button                                  { -fx-background-color: #f2c83d; -fx-border-color: #263d8c; -fx-border-width: 1px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-text-fill: #263d8c; }
