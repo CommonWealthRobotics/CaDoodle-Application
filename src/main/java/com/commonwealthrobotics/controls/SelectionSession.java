@@ -2333,46 +2333,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (getSelected().size() > 1) {
 			submit(() -> {
 				try {
-					List<String> selectedSnapshot = selectedSnapshot();
-					Paste copy = new Paste().setNames(selectedSnapshot);
-					ap.addOp(copy).join();
-					ArrayList<String> n = new ArrayList<>(copy.getNamesAddedInThisOperation());
-					Group groups = new Group().setNames(selectedSnapshot);
-					groups.setHull(false);
-					groups.setIntersect(true);
-					ap.addOp(groups).join();
-					List<CSG> results = ap.get().getCurrentState();
-					String intersectName = groups.getGroupID();
-					ArrayList<String> names = new ArrayList<>();
-					names.add(intersectName);
-					ToHole th = new ToHole().setNames(names);
-					ap.addOp(th).join();
-
-					for (int i = 0; i < n.size(); i++) {
-						String e = n.get(i);
-						ap.get();
-						CSG g = null;
-
-						try {
-							g = CaDoodleFile.getByName(ap.get().getCurrentState(), e);
-						} catch (NameMissingException e1) {
-							continue;
-						}
-
-						if ((g == null) || g.isInGroup())
-							continue;
-
-						ArrayList<String> namesToDiff = new ArrayList<String>();
-						namesToDiff.add(intersectName);
-						namesToDiff.add(e);
-						Group cutIntersect = new Group().setNames(namesToDiff);
-						ap.addOp(cutIntersect).join();
-
-					}
-
+					Xor xor = new Xor().setNames(selectedSnapshot());
+					ap.addOp(xor).join();
 					clearInternalSelection();
-					for (CSG c : results)
-						addToSelected(c);
+					for (String c : xor.getNamesAddedInThisOperation())
+						try {
+							addToSelected(CaDoodleFile.getByName(ap.get().getCurrentState(), c));
+						} catch (NameMissingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					fireSelectionChanged();
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 					updateRobotLab.run();
