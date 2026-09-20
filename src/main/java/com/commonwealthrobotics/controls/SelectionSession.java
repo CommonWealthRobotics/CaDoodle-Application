@@ -909,6 +909,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		int line = 0;
 		parametrics.getChildren().clear();
 		parametrics.getChildren().add(gp);
+		parametrics.setDisable(false);
 		int width = 170;
 		int c1Width = 100;
 		gp.setPrefWidth(width + c1Width);
@@ -1025,23 +1026,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					line++;
 				}
 
-				// if (numCadParaams > 2) {
-				// useButton = true;
-				// // com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
-				// // sel.getName());
-				// if (!parametrics.getChildren().contains(regenerate))
-				// parametrics.getChildren().add(regenerate);
-				//
-				// EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
-				// if (value2 != null)
-				// regenerate.setOnAction(value2);
-				// else
-				// com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
-				//
-				// } else {
-				// useButton = false;
-				// parametrics.getChildren().remove(regenerate);
-				// }
+				boolean nameInFrozenCache = ap.get().isNameInFrozenCache(selectedSnapshot.get(0));
+				Log.debug("Object in frozen cache: " + nameInFrozenCache);
+				parametrics.setDisable(nameInFrozenCache);
 			}
 		} else {
 			for (CSG c : cs) {
