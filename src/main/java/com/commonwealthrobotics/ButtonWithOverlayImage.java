@@ -56,7 +56,6 @@ public class ButtonWithOverlayImage extends Button {
 
 		hbox=(new HBox(this, separator));
 		hbox.setAlignment(Pos.TOP_LEFT);
-		
 		setMinSize(buttonSize, buttonSize);
 		setGraphic(stack);
 		vertical.getChildren().addAll(hbox);
