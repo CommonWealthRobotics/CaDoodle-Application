@@ -433,8 +433,7 @@ public class TimelineManager {
 							text += split[1].toUpperCase();
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Log.error(e);
 					}
 
 				}
@@ -587,15 +586,18 @@ public class TimelineManager {
 					timeline.getChildren().clear();
 					new Thread(() -> {
 						ap.get().setFrozenIndex(-1);
+
+						while (ap.get().isSaveing());
 						try {
 							ap.get().save();
+
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							Log.error(e);
+
 						} catch (SaveOverwriteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							Log.error(e);
 						}
+
 						try {
 							ap.loadActive();
 							SplashManager.renderSplashFrame(1, "Re-initializing");
@@ -620,12 +622,16 @@ public class TimelineManager {
 					freeze.setOnAction(event -> {
 						new Thread(() -> {
 							ap.get().setFrozenIndex(myIndex);
+							if (myIndex > ap.get().getCurrentIndex()) {
+								ap.get().moveToOpIndex(my);
+							}
 							BowlerKernel.runLater(() -> {
 								for (int j = 0; j < myIndex; j++) {
 									timeline.getChildren().remove(buttons.get(j).getHbox());
 								}
 								contextMenu.getItems().remove(freeze);
 								contextMenu.getItems().add(unfreeze);
+
 							});
 						}).start();
 
