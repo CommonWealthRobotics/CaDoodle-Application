@@ -9,8 +9,6 @@
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -660,7 +658,7 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-padding: 0 10 0 0;">
                                        <children>
-                                          <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <HBox fx:id="timeline" minHeight="140.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
                                                 <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
                                                 <Separator orientation="VERTICAL" styleClass="timeline-none" />
@@ -669,9 +667,6 @@
                                                 <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
                                                 <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="timeline-block" />
                                              </children>
-                                             <padding>
-                                                <Insets left="10.0" />
-                                             </padding>
                                           </HBox>
                                        </children>
                                     </AnchorPane>
@@ -886,7 +881,7 @@
                                 <Tooltip text="%mainwindow.intersect" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="xorButton" mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button">
+                        <Button mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button" fx:id="xorButton">
                             <graphic>
                                 <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" />
                             </graphic>

@@ -293,7 +293,7 @@ public class TimelineManager {
 			}
 
 			int space = 20;
-			timeline.setHgap(space / 2); // Horizontal gap between columns
+			timeline.setHgap(0); // Horizontal gap between columns
 			timeline.setVgap(space); // Vertical gap between rows
 
 			// Center the entire GridPane content
