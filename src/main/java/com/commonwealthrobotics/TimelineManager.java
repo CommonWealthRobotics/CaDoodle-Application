@@ -584,6 +584,7 @@ public class TimelineManager {
 					SplashManager.renderSplashFrame(1, "Un-Freezing");
 
 					timeline.getChildren().clear();
+					engine.clearUserNode();
 					new Thread(() -> {
 						ap.get().clearFrozenIndex(myIndex);
 
