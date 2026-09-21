@@ -582,7 +582,7 @@ public class TimelineManager {
 
 					timeline.getChildren().clear();
 					new Thread(() -> {
-						ap.get().setFrozenIndex(-1);
+						ap.get().clearFrozenIndex(myIndex);
 
 						while (ap.get().isSaveing());
 						try {
