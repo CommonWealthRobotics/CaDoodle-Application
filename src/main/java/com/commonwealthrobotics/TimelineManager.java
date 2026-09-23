@@ -645,7 +645,7 @@ public class TimelineManager {
 	}
 
 	public void updateSelected(LinkedHashSet<CSG> selected) {
-		if(!ap.isOpen())
+		if (!ap.isOpen())
 			return;
 		CaDoodleFile caDoodleFile = ap.get();
 		ArrayList<CaDoodleOperation> operations = caDoodleFile.getOperations();
