@@ -429,7 +429,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public WritableImage getImage() {
 		return fromFile.getImage();
 	}
-	
+
 	public CaDoodleFile get() {
 		if (fromFile == null) {
 			throw new RuntimeException("Can not access file before it is loaded");

@@ -620,8 +620,8 @@ public class SettingsManager implements ICSGClientEvent {
 		updateVersionOptions();
 		mc.getActiveProject();
 		ActiveProject.setStyleSheet(topPane);
-		
-		if(ap.isOpen())
+
+		if (ap.isOpen())
 			numPoints.setText(ap.get().getTextResolutionPoints() + "");
 		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
 		Object object = ConfigurationDatabase.get("CaDoodle", "StartMCP_Server", "" + false);

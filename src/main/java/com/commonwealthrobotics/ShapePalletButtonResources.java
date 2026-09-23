@@ -55,7 +55,7 @@ public class ShapePalletButtonResources {
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
 		// https://github.com/CommonWealthRobotics/CaDoodle-Application/issues/69
 		// if(!OSUtil.isWindows())
-		CaDoodleFile caDoodleFile =ap.isOpen()? ap.get():new CaDoodleFile();
+		CaDoodleFile caDoodleFile = ap.isOpen() ? ap.get() : new CaDoodleFile();
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
 				indicator = Vitamins.get(caDoodleFile.getCsgDBinstance(), false, stlFile);
@@ -79,7 +79,7 @@ public class ShapePalletButtonResources {
 
 		// new Thread(() -> {
 		AbstractAddFrom set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
-		CaDoodleFile cf =ap.isOpen()?caDoodleFile: new CaDoodleFile();
+		CaDoodleFile cf = ap.isOpen() ? caDoodleFile : new CaDoodleFile();
 		if (isSweep) {
 			try {
 				File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
@@ -101,7 +101,7 @@ public class ShapePalletButtonResources {
 				com.neuronrobotics.sdk.common.Log.error(ex);;
 			}
 		}
-		
+
 		set.setCaDoodleFile(cf);
 		List<CSG> so = set.process(new ArrayList<>());
 		for (CSG c : so) {
