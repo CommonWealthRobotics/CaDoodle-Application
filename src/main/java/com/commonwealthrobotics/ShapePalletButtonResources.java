@@ -15,6 +15,7 @@ import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import com.neuronrobotics.sdk.common.Log;
@@ -54,9 +55,10 @@ public class ShapePalletButtonResources {
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
 		// https://github.com/CommonWealthRobotics/CaDoodle-Application/issues/69
 		// if(!OSUtil.isWindows())
+		CaDoodleFile caDoodleFile =ap.isOpen()? ap.get():new CaDoodleFile();
 		if (imageFile.exists() && stlFile.exists()) {
 			try {
-				indicator = Vitamins.get(ap.get().getCsgDBinstance(), false, stlFile);
+				indicator = Vitamins.get(caDoodleFile.getCsgDBinstance(), false, stlFile);
 				indicator.setColor(Color.WHITE);
 				image = new Image(imageFile.toURI().toString());
 				return;
@@ -77,6 +79,7 @@ public class ShapePalletButtonResources {
 
 		// new Thread(() -> {
 		AbstractAddFrom set = new AddFromScript().set(key.get("git"), key.get("file")).setPreventBoM(true);
+		CaDoodleFile cf =ap.isOpen()?caDoodleFile: new CaDoodleFile();
 		if (isSweep) {
 			try {
 				File f = ScriptingEngine.fileFromGit(key.get("git"), key.get("file"));
@@ -92,17 +95,18 @@ public class ShapePalletButtonResources {
 				if (sprial != null) {
 					s.setDefSpiral(Double.parseDouble(sprial));
 				}
-				s.set(f, ap.get()).setPreventBoM(true);
+				s.set(f, cf).setPreventBoM(true);
 				set = s;
 			} catch (Exception ex) {
 				com.neuronrobotics.sdk.common.Log.error(ex);;
 			}
 		}
-		set.setCaDoodleFile(ap.get());
+		
+		set.setCaDoodleFile(cf);
 		List<CSG> so = set.process(new ArrayList<>());
 		for (CSG c : so) {
-			for (String s : c.getParameters(ap.get().getCsgDBinstance())) {
-				ap.get().getCsgDBinstance().delete(s);
+			for (String s : c.getParameters(cf.getCsgDBinstance())) {
+				cf.getCsgDBinstance().delete(s);
 			}
 		}
 		if (isSweep)
@@ -119,7 +123,7 @@ public class ShapePalletButtonResources {
 				c.setIsHole(false);
 			}
 		try {
-			image = getImageengine().get(ap.get().getCsgDBinstance(), so, imageFile);
+			image = getImageengine().get(cf.getCsgDBinstance(), so, imageFile);
 			BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 			try {
 				ImageIO.write(bufferedImage, "png", imageFile);

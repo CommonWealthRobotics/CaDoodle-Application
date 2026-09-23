@@ -523,14 +523,17 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public void placeWorkplaneVisualization() {
-
-		engine.placeGrid(ap.get().getWorkplane());
+		if(ap.isOpen())
+			engine.placeGrid(ap.get().getWorkplane());
+		else
+			engine.placeGrid(new TransformNR());
 		boolean workplaneNotOrigin = isWorkplaneNotOrigin();
 		Log.debug("Placing workplane visualization " + workplaneNotOrigin);
 
 		BowlerKernel.runLater(() -> {
 			wpPick.setVisible(workplaneNotOrigin);
-			TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
+			TransformNR workplane =ap.isOpen()? ap.get().getWorkplane():new TransformNR();
+			TransformFactory.nrToAffine(workplane, wpPickPlacement);
 			//			wpPick.setVisible(workplaneNotOrigin);
 			//			if (!workplaneNotOrigin)
 			//				TransformFactory.nrToAffine(new TransformNR(), wpPickPlacement);
@@ -540,6 +543,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	}
 
 	public boolean isWorkplaneNotOrigin() {
+		if(!ap.isOpen())
+			return false;
 		TransformNR w = ap.get().getWorkplane();
 		return isWorkplaneNotOrigin(w);
 	}

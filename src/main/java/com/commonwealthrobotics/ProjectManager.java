@@ -192,6 +192,7 @@ public class ProjectManager {
 					projectGrid.add(box, col, row);
 					GridPane.setHalignment(b, HPos.CENTER); // Horizontal center alignment
 					GridPane.setValignment(b, VPos.CENTER); //
+					if(ap.isOpen())
 					if (c.getMyProjectName().contentEquals(ap.get().getMyProjectName())) {
 						b.requestFocus();
 						currentFileButton = b;
