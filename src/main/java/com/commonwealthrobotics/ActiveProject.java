@@ -92,7 +92,7 @@ import javafx.stage.Stage;
 public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private static final String DEFAULT = "Default";
-	private boolean isOpenValue = true;
+	//private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
 	private CaDoodleFile fromFile = null;
 	// private ICaDoodleStateUpdate listener;
@@ -423,14 +423,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public boolean isOpen() {
-		// Auto-generated method stub
-		return isOpenValue;
+		return fromFile != null;
 	}
 
 	public WritableImage getImage() {
 		return fromFile.getImage();
 	}
-
+	
 	public CaDoodleFile get() {
 		if (fromFile == null) {
 			throw new RuntimeException("Can not access file before it is loaded");

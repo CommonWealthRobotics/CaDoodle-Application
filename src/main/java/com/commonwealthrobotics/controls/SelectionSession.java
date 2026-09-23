@@ -1227,7 +1227,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1241,7 +1241,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -2573,10 +2573,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentState() {
-		CaDoodleFile caDoodleFile = ap.get();
-		if (caDoodleFile == null)
+		if (!ap.isOpen())
 			return new ArrayList<CSG>();
-
+		CaDoodleFile caDoodleFile = ap.get();
 		return caDoodleFile.getCurrentState();
 	}
 
@@ -2868,7 +2867,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			this.y = y;
 			this.z = z;
 
-			if ((ap.get() == null) || (getControls() == null))
+			if ((!ap.isOpen()) || (getControls() == null))
 				return;
 
 			List<String> selectedSnapshot = selectedSnapshot();

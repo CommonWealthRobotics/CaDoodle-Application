@@ -757,7 +757,8 @@ public class ControlSprites {
 		selectionLive = false;
 		resetSelected();
 		try {
-			currentOp = ap.get().getCurrentOperation();
+			if(ap.isOpen())
+				currentOp = ap.get().getCurrentOperation();
 		} catch (RuntimeException ex) {
 			// ignore during loading before the AP initialized
 		}
