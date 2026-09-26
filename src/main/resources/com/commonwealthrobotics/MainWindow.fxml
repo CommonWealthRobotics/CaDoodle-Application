@@ -9,8 +9,6 @@
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -886,7 +884,7 @@
                                 <Tooltip text="%mainwindow.intersect" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="xorButton" mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button">
+                        <Button mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button" fx:id="xorButton">
                             <graphic>
                                 <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" />
                             </graphic>
