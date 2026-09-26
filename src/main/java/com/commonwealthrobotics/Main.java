@@ -38,6 +38,7 @@ import com.neuronrobotics.nrconsole.util.FileSelectionFactory;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.CSG.OptType;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabase;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -354,7 +355,16 @@ public class Main extends Application {
 			Log.error(ex);
 			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "64");
 		}
-
+		boolean manifold = Boolean.parseBoolean(
+				ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
+		try {
+			CSG.setDefaultOptType(manifold ? OptType.Manifold3d : OptType.CSG_BOUND);
+		} catch (Throwable t) {
+			Log.error(t);
+			CSG.setDefaultOptType(OptType.CSG_BOUND);
+			ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + false).toString();
+			ConfigurationDatabase.save();
+		}
 		try {
 			launch();
 		} catch (Exception ex) {

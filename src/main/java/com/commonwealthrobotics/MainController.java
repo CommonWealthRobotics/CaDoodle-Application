@@ -1143,7 +1143,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					engine.addObject(o, ap.get().getSelf());
 				}
 			});
-			engine.rebuild(true);
+			new Thread(()->engine.rebuild(true)).start();
+			
 			setCameraPerspectiveMode(othographicMode);
 			paneOverlay2D = new Pane();
 			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
@@ -1193,16 +1194,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
 			ap.addListener(componentTreePanel);
 			setComponentTreeOpenState(false);
-			boolean manifold = Boolean.parseBoolean(
-					ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
-			try {
-				CSG.setDefaultOptType(manifold ? OptType.Manifold3d : OptType.CSG_BOUND);
-			} catch (Throwable t) {
-				Log.error(t);
-				CSG.setDefaultOptType(OptType.CSG_BOUND);
-				ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + false).toString();
-				ConfigurationDatabase.save();
-			}
+
 			try {
 				SettingsManager.setServerState();
 				if (SettingsManager.clientStateSet()) {
@@ -1247,7 +1239,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 			com.neuronrobotics.sdk.common.Log.error(e);
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
