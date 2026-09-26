@@ -1,6 +1,7 @@
 package com.commonwealthrobotics;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +11,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.commonwealthrobotics.controls.SelectionSession;
+import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
+import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -152,7 +155,7 @@ public class TimelineManager {
 						BowlerStudio.runLater(() -> {
 							b.updatemainImage(imageFile);
 						});
-						Log.debug("Updating " + imageFile);
+						Log.debug("Updating Image In Timeline " + imageFile);
 					} else
 						makeButton(num, imageFile, ap.get().getOperations().get(num));
 				});
@@ -290,7 +293,7 @@ public class TimelineManager {
 			}
 
 			int space = 20;
-			timeline.setHgap(space / 2); // Horizontal gap between columns
+			timeline.setHgap(0); // Horizontal gap between columns
 			timeline.setVgap(space); // Vertical gap between rows
 
 			// Center the entire GridPane content
@@ -426,8 +429,7 @@ public class TimelineManager {
 						String[] split = name.split("\\.");
 						text += split[1].toUpperCase();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Log.error(e);
 					}
 
 				}
@@ -462,7 +464,6 @@ public class TimelineManager {
 				}
 				buttons.add(toAdd);
 
-				timeline.add(toAdd.hbox, myIndex, 0);
 				int my = myIndex;
 				ContextMenu contextMenu = new ContextMenu();
 				toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -531,7 +532,7 @@ public class TimelineManager {
 				// timeline.getChildren().add(verticalSeparator);
 
 				// Create a delete menu item
-				MenuItem deleteItem = new MenuItem("Delete");
+				MenuItem deleteItem = new MenuItem(ActiveProject.getTranslation("timeline.delete"));
 				deleteItem.getStyleClass().add("image-button-focus");
 				deleteItem.setOnAction(event -> {
 					if (ap.get().isRegenerating() || !ap.get().isInitialized())
@@ -558,7 +559,7 @@ public class TimelineManager {
 				contextMenu.getItems().add(deleteItem);
 
 				// Add "Delete all after" to the timeline context menu
-				MenuItem deleteAfterItem = new MenuItem("Delete all after");
+				MenuItem deleteAfterItem = new MenuItem(ActiveProject.getTranslation("timeline.deleteAll"));
 				deleteAfterItem.setOnAction(event -> {
 					contextMenu.hide();
 					if (ap.get().isRegenerating() || !ap.get().isInitialized())
@@ -574,6 +575,71 @@ public class TimelineManager {
 
 				});
 				contextMenu.getItems().add(deleteAfterItem);
+				// unfreeze
+				MenuItem unfreeze = new MenuItem(ActiveProject.getTranslation("timeline.unfreeze"));
+				unfreeze.setOnAction(event -> {
+					SplashManager.renderSplashFrame(1, "Un-Freezing");
+
+					timeline.getChildren().clear();
+					engine.clearUserNode();
+					new Thread(() -> {
+						ap.get().clearFrozenIndex(myIndex);
+
+						while (ap.get().isSaveing());
+						try {
+							ap.get().save();
+
+						} catch (IOException e) {
+							Log.error(e);
+
+						} catch (SaveOverwriteException e) {
+							Log.error(e);
+						}
+
+						try {
+							ap.loadActive();
+							SplashManager.renderSplashFrame(1, "Re-initializing");
+							ap.get().initialize();
+							SplashManager.closeSplash();
+						} catch (FailedToApplyOperation e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}).start();
+
+				});
+				if (ap.get().getFrozenIndex() == myIndex) {
+
+					contextMenu.getItems().add(unfreeze);
+				} else {
+					// freeze
+					MenuItem freeze = new MenuItem(ActiveProject.getTranslation("timeline.freeze"));
+					freeze.setOnAction(event -> {
+						new Thread(() -> {
+							ap.get().setFrozenIndex(myIndex);
+							if (myIndex > ap.get().getCurrentIndex()) {
+								ap.get().moveToOpIndex(my);
+							}
+							BowlerKernel.runLater(() -> {
+								for (int j = 0; j < myIndex; j++) {
+									timeline.getChildren().remove(buttons.get(j).hbox);
+								}
+								contextMenu.getItems().remove(freeze);
+								contextMenu.getItems().add(unfreeze);
+
+							});
+						}).start();
+
+					});
+					contextMenu.getItems().add(freeze);
+				}
+
+				boolean value = ap.get().getFrozenIndex() > myIndex;
+				if (!value)
+					timeline.add(toAdd.hbox, myIndex, 0);
 				latch.countDown();
 			});
 			// synchronize the thred to the UI operation completion
@@ -645,10 +711,9 @@ public class TimelineManager {
 	}
 
 	public void updateSelected(LinkedHashSet<CSG> selected) {
-
-		CaDoodleFile caDoodleFile = ap.get();
-		if (caDoodleFile == null)
+		if (!ap.isOpen())
 			return;
+		CaDoodleFile caDoodleFile = ap.get();
 		ArrayList<CaDoodleOperation> operations = caDoodleFile.getOperations();
 		int index = caDoodleFile.getCurrentIndex() - 1;
 

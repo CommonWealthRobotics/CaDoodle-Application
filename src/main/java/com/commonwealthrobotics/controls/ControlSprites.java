@@ -459,7 +459,8 @@ public class ControlSprites {
 		// TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		// TickToc.tic("rot update");
-		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, inWorkplaneBounds);
+		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, inWorkplaneBounds,
+				1.0 / engine.getFlyingCamera().getZoomScale());
 		updateLinesAndCubes();
 
 		if (session.isLocked() || session.isInOperationMode()) {
@@ -485,11 +486,13 @@ public class ControlSprites {
 	}
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
-			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds) {
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov());
-		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
+			double zoomScale) {
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov(),
+				zoomScale);
+		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
 		// TickToc.tic("aligned update");
-		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds);
+		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds, zoomScale);
 	}
 
 	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshHolder> meshes,
@@ -754,7 +757,8 @@ public class ControlSprites {
 		selectionLive = false;
 		resetSelected();
 		try {
-			currentOp = ap.get().getCurrentOperation();
+			if (ap.isOpen())
+				currentOp = ap.get().getCurrentOperation();
 		} catch (RuntimeException ex) {
 			// ignore during loading before the AP initialized
 		}
@@ -778,6 +782,7 @@ public class ControlSprites {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
+			session.hideHalos();
 			switch (this.mode) {
 
 				case Default :
@@ -792,6 +797,8 @@ public class ControlSprites {
 						yOffset.show();
 						zOffset.show();
 					}
+
+					session.showHalos();
 					return;
 
 				case MoveXY :
@@ -802,7 +809,6 @@ public class ControlSprites {
 						xOffset.show();
 						yOffset.show();
 					}
-					session.hideHalos();
 					break;
 
 				case MoveZ :
@@ -812,7 +818,6 @@ public class ControlSprites {
 					upArrow.show();
 					footprint.setVisible(true);
 					zOffset.show();
-					session.hideHalos();
 					break;
 
 				case Resize :
@@ -822,10 +827,8 @@ public class ControlSprites {
 					align.hide();
 					mirror.hide();
 					scaleSession.show();
-					session.hideHalos();
 					break;
 				case Rotating :
-					session.hideHalos();
 					break;
 				case Align :
 					for (DottedLine l : lines)
@@ -844,7 +847,6 @@ public class ControlSprites {
 							l.setVisible(true);
 						scaleSession.show();
 					}
-					session.hideHalos();
 					break;
 				case Clear :
 					runClear();
@@ -856,7 +858,7 @@ public class ControlSprites {
 		});
 	}
 
-	private void runClear() {
+	public void runClear() {
 		for (ThreedNumber t : numbers)
 			t.hide();
 

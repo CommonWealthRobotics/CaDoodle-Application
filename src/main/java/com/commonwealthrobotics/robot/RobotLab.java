@@ -69,7 +69,7 @@ public class RobotLab {
 	private GridPane legsOptionGrid;
 	private GridPane armsOptionGrid;
 	private VBox controllerConsumedBox;
-	private boolean controllersLoaded = true; // disable laoding for performance checks
+	private boolean controllersLoaded = false;
 	private boolean limmbsLoaded;
 	private LimbControlManager manager;
 	private boolean updating;
@@ -127,7 +127,7 @@ public class RobotLab {
 		updating = true;
 		session.submit(() -> {
 			try {
-				while (ap.get() == null) {
+				while (!ap.isOpen()) {
 					Thread.sleep(100);
 				}
 				while (!ap.get().isInitialized()) {
