@@ -355,8 +355,8 @@ public class Main extends Application {
 			Log.error(ex);
 			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "64");
 		}
-		boolean manifold = Boolean.parseBoolean(
-				ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
+		boolean manifold = Boolean
+				.parseBoolean(ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
 		try {
 			CSG.setDefaultOptType(manifold ? OptType.Manifold3d : OptType.CSG_BOUND);
 		} catch (Throwable t) {
