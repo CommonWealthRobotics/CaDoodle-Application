@@ -694,7 +694,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// new Exception("Auto-save called here").printStackTrace();
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
-				while (fromFile==null) {
+				while (fromFile == null) {
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
