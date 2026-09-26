@@ -600,7 +600,7 @@ public class ControlSprites {
 			double viewScale = scaleSession.getViewScale();
 
 			// Distance between handle and label
-			double numberOffset = -zoom / 50 * zoomScale;
+			double numberOffset = -zoom / 50 * zoomScale / 1.5;
 			// Log.debug("View scale " + numberOffset + " " + viewScale);
 			// Get view scale of 3D shapes (arrow/cone/dotted line)
 
@@ -633,7 +633,7 @@ public class ControlSprites {
 
 			// Position value labels
 			TransformNR textOffset = new TransformNR(0, 0, 0);
-			double offset = numberOffset;
+			double offset = numberOffset * 3.5;
 			xdimen.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset,
 							linesZ),
