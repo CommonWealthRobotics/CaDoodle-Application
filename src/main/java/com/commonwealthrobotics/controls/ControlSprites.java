@@ -633,7 +633,7 @@ public class ControlSprites {
 
 			// Position value labels
 			TransformNR textOffset = new TransformNR(0, 0, 0);
-			double offset = 15;
+			double offset = numberOffset;
 			xdimen.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset,
 							linesZ),
