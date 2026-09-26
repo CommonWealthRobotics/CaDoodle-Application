@@ -92,7 +92,7 @@ import javafx.stage.Stage;
 public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private static final String DEFAULT = "Default";
-	private boolean isOpenValue = true;
+	//private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
 	private CaDoodleFile fromFile = null;
 	// private ICaDoodleStateUpdate listener;
@@ -423,8 +423,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public boolean isOpen() {
-		// Auto-generated method stub
-		return isOpenValue;
+		return fromFile != null;
 	}
 
 	public WritableImage getImage() {
@@ -695,7 +694,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// new Exception("Auto-save called here").printStackTrace();
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
-				while (!get().isInitialized()) {
+				while (fromFile == null) {
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {

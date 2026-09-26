@@ -645,10 +645,9 @@ public class TimelineManager {
 	}
 
 	public void updateSelected(LinkedHashSet<CSG> selected) {
-
-		CaDoodleFile caDoodleFile = ap.get();
-		if (caDoodleFile == null)
+		if (!ap.isOpen())
 			return;
+		CaDoodleFile caDoodleFile = ap.get();
 		ArrayList<CaDoodleOperation> operations = caDoodleFile.getOperations();
 		int index = caDoodleFile.getCurrentIndex() - 1;
 
