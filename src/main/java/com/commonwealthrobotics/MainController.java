@@ -1169,10 +1169,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				label = new Label(shapeConfiguration.getText());
 				renameBtn = new Button(ap.getTranslation("rename"));
 
-				session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
-						colorPicker, snapGrid, parametrics, lockButton, lockImage, intersectButton, xorButton,
-						timelineManager, objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid,
-						materialPanel);
+				session.set(label, shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder,
+						configurationGrid, null, engine, colorPicker, snapGrid, parametrics, lockButton, lockImage,
+						intersectButton, xorButton, timelineManager, objectWorkplane, dropToWorkplane, memUsage,
+						renameBtn, MaterialGrid, materialPanel);
 				session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 				session.setRobotLabButton(RobotLabDrawer);
 				session.setGroup(groupButton);

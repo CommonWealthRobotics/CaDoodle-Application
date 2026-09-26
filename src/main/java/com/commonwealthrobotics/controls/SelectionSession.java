@@ -222,7 +222,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double sessionDeltaY = 0;
 	private double sessionDeltaZ = 0;
 	private Button hullButton;
-	private Button bendButton;;
+	private Button bendButton;
+	private TitledPane shapeConfiguration2;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
@@ -905,7 +906,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			dropToWorkplane.setDisable(false);
 			if (objectWorkplane != null)
 				objectWorkplane.setDisable(getSelected().size() != 1);
-
+			shapeConfiguration2.setExpanded(true);
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = ((CSG) getSelected().toArray()[0]);
@@ -1662,12 +1663,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return null;
 	}
 
-	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
-			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, Button intersectButton,
-			Button xorButton, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
-			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
+	public void set(Label shapeConfiguration, TitledPane shapeConfiguration2, Accordion shapeConfigurationBox,
+			AnchorPane shapeConfigurationHolder, GridPane configurationGrid, AnchorPane control3d,
+			BowlerStudio3dEngine engine, ColorPicker colorPicker, ComboBox<String> snapGrid, VBox parametrics,
+			Button lockButton, ImageView lockImage, Button intersectButton, Button xorButton, TimelineManager tm,
+			Button objectWorkplane, Button dropToWorkplane, ProgressIndicator memUsage, Button renameBtn,
+			GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
+		this.shapeConfiguration2 = shapeConfiguration2;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
 		this.configurationGrid = configurationGrid;
