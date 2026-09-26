@@ -107,6 +107,7 @@ public class ControlSprites {
 	private double objectHeight = 0;
 	private double cameraFovDegrees;
 	private Affine zMoveOffsetFootprint;
+	private double zoomScale;
 
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
@@ -488,6 +489,7 @@ public class ControlSprites {
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
 			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
 			double zoomScale) {
+		this.zoomScale = zoomScale;
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov(),
 				zoomScale);
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
@@ -595,12 +597,13 @@ public class ControlSprites {
 			// Draw Z-handle dotted line
 			heightLine.setPoints(center.x, center.y, min.z, center.x, center.y, max.z);
 			heightLine.setVisible(true);
+			double viewScale = scaleSession.getViewScale();
 
 			// Distance between handle and label
-			double numberOffset = -zoom / 50;
-
+			double numberOffset = -zoom / 50 * zoomScale;
+			Log.debug("View scale " + numberOffset + " " + viewScale);
 			// Get view scale of 3D shapes (arrow/cone/dotted line)
-			double viewScale = scaleSession.getViewScale();
+
 
 			// Scale factor for Z-handle arrow
 			double arrowScale = viewScale;
