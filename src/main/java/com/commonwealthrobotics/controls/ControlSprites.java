@@ -107,6 +107,7 @@ public class ControlSprites {
 	private double objectHeight = 0;
 	private double cameraFovDegrees;
 	private Affine zMoveOffsetFootprint;
+	private double zoomScale;
 
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
@@ -488,6 +489,7 @@ public class ControlSprites {
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
 			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
 			double zoomScale) {
+		this.zoomScale = zoomScale;
 		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov(),
 				zoomScale);
 		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
@@ -595,12 +597,13 @@ public class ControlSprites {
 			// Draw Z-handle dotted line
 			heightLine.setPoints(center.x, center.y, min.z, center.x, center.y, max.z);
 			heightLine.setVisible(true);
+			double viewScale = scaleSession.getViewScale();
 
 			// Distance between handle and label
-			double numberOffset = -zoom / 50;
-
+			double numberOffset = -zoom / 50 * zoomScale;
+			// Log.debug("View scale " + numberOffset + " " + viewScale);
 			// Get view scale of 3D shapes (arrow/cone/dotted line)
-			double viewScale = scaleSession.getViewScale();
+
 
 			// Scale factor for Z-handle arrow
 			double arrowScale = viewScale;
@@ -629,20 +632,25 @@ public class ControlSprites {
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 
 			// Position value labels
-			xdimen.threeDTarget(
-					screenW, screenH, zoom, new TransformNR(center.x,
-							scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ),
-					cf, cameraFovDegrees);
+			TransformNR textOffset = new TransformNR(0, 0, 0);
+			double offset = 15;
+			xdimen.threeDTarget(screenW, screenH, zoom,
+					new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset,
+							linesZ),
+					cf, scaleSession.leftSelected() ? new TransformNR(0, offset, 0) : new TransformNR(0, -offset, 0),
+					cameraFovDegrees);
 
 			ydimen.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset,
 							center.y, linesZ),
-					cf, cameraFovDegrees);
+					cf, scaleSession.frontSelected() ? new TransformNR(offset, 0, 0) : new TransformNR(-offset, 0, 0),
+					cameraFovDegrees);
 
 			zdimen.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf, cameraFovDegrees);
+					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf, textOffset, cameraFovDegrees);
 			zOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, cameraFovDegrees);
+					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, textOffset,
+					cameraFovDegrees);
 			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
 
 			xdimen.setValue(bounds.getTotalX());
@@ -655,9 +663,11 @@ public class ControlSprites {
 					min.y + pose.getY(), linesZ);
 			TransformNR yOffsetPose = new TransformNR(min.x + pose.getX(),
 					(min.y + yOffset.getMyOffset() + pose.getY()) / 2, linesZ);
-			xOffset.threeDTarget(screenW, screenH, zoom, xOffsetPose, cf, cameraFovDegrees);
+			xOffset.threeDTarget(screenW, screenH, zoom, xOffsetPose, cf, new TransformNR(-offset, 0, 0),
+					cameraFovDegrees);
 
-			yOffset.threeDTarget(screenW, screenH, zoom, yOffsetPose, cf, cameraFovDegrees);
+			yOffset.threeDTarget(screenW, screenH, zoom, yOffsetPose, cf, new TransformNR(0, -offset, 0),
+					cameraFovDegrees);
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
