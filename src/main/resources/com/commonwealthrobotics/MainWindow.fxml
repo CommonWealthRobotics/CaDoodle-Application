@@ -329,7 +329,7 @@
                                                    <children>
                                                       <Accordion fx:id="shapeConfigurationBox" style="-fx-border-color:#263D8C; -fx-border-width:1;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <panes>
-                                                          <TitledPane fx:id="shapeConfiguration" animated="false" text="%mainwindow.shape">
+                                                          <TitledPane fx:id="shapeConfiguration" animated="false" expanded="true" text="%mainwindow.shape">
                                                             <content>
                                                               <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0">
                                                                      <children>
@@ -658,7 +658,7 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-padding: 0 10 0 0;">
                                        <children>
-                                          <HBox fx:id="timeline" minHeight="140.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <HBox fx:id="timeline" minHeight="140.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
                                                 <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
                                                 <Separator orientation="VERTICAL" styleClass="timeline-none" />
@@ -667,9 +667,6 @@
                                                 <Button mnemonicParsing="false" text="%mainwindow.placeholder" />
                                                 <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="timeline-block" />
                                              </children>
-                                             <padding>
-                                                <Insets left="10.0" />
-                                             </padding>
                                           </HBox>
                                        </children>
                                     </AnchorPane>
@@ -1038,12 +1035,7 @@
                       <StackPane />
                      </children>
                   </HBox>
-
-            <Button fx:id="logoButton" contentDisplay="GRAPHIC_ONLY" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
-                <graphic>
-                  <ImageView fx:id="bigLogoImage" fitHeight="40.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" styleClass="biglogo-cadoodle" />
-                </graphic>
-            </Button>
+            <ImageView fx:id="bigLogoImage" fitHeight="40.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" styleClass="biglogo-cadoodle" GridPane.columnIndex="1" />
                   <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">
                      <children>
                         <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">
