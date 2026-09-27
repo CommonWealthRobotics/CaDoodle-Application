@@ -2152,7 +2152,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public int getZoom() {
 		if (engine != null) {
-			return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
+			if (engine.getFlyingCamera().isOrthographic())
+				return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
+			return (int) (ZOOM);
 		}
 		return ZOOM;
 	}
