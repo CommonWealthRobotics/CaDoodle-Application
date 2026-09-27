@@ -221,8 +221,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					|| (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
 				session.submit(() -> {
 					TransformNR screenLocation = pickInteractionToPose(ev);
-					TransformNR toSet = screenLocation;
-					BowlerKernel.runLater(() -> setCurrentAbsolutePose(toSet));
+					BowlerKernel.runLater(() -> setCurrentAbsolutePose(screenLocation));
 				});
 			}
 		} catch (Throwable t) {
@@ -332,7 +331,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		TransformNR t = new TransformNR(x, y, z);
 		screenLocation = manipulatorNR.times(t.times(pureRot));
 
-		if ((intersectedNode == wpPick.intersectionNode)) {
+		if ((intersectedNode == wpPick.getIntersectionNode())) {
 			if (updater != null)
 				updater.setWorkplaneLocation(screenLocation);
 
