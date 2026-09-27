@@ -393,6 +393,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CheckBox timelineMoveObjectShow;
 	@FXML // fx:id="zoomInButton"@FXML
 	private CheckBox timelineOtherShow;
+	@FXML // fx:id="zoomInButton"@FXML
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;
@@ -1126,6 +1127,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert timelineButton != null : "optionProvide button failed";
 		assert optionProvide != null : "Timeline button failed";
 		assert optionsConsume != null : "optionsConsume button failed";
+		assert objectWorkplane != null : "objectWorkplane button failed";
 
 		try {
 
@@ -1976,8 +1978,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != engine.getWorkplaneGroup().intersectionNode && !engine.isSubScene(in)
-				&& in != session.workplane.getPlacementPlane().intersectionNode
+		if (in != engine.getWorkplaneGroup().getIntersectionNode() && !engine.isSubScene(in)
+				&& in != session.workplane.getPlacementPlane().getIntersectionNode()
 				&& in != selectionBox.getSelectionPlane())
 			return false;
 		if (event.isControlDown())
