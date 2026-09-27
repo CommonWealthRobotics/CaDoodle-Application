@@ -1684,6 +1684,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.intersectButton = intersectButton;
 		this.xorButton = xorButton;
 		this.timeline = tm;
+		if (objectWorkplane == null)
+			throw new RuntimeException("Can not be null workplane button");
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
 		this.memUsage = memUsage;
