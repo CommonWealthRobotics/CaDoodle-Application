@@ -348,11 +348,12 @@
                                                                               <RowConstraints minHeight="30.0" />
                                                                           </rowConstraints>
                                                                            <children>
-                                                                              <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
-                                                                                 <tooltip>
-                                                                                    <Tooltip text="%mainwindow.set_to_solid" />
-                                                                                 </tooltip>
-                                                                              </ColorPicker>
+                                                                              <AnchorPane fx:id="colorPickerHolder"
+                                                                                          prefHeight="50.0"
+                                                                                          prefWidth="60.0"
+                                                                                          GridPane.columnIndex="1"
+                                                                                          GridPane.rowIndex="1"
+                                                                                          GridPane.vgrow="ALWAYS" />
                                                                               <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                                                                  <graphic>
                                                                                     <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
