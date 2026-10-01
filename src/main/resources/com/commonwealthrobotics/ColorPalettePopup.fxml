@@ -23,125 +23,20 @@
 
             <children>
 
-        <GridPane hgap="5.0" vgap="5.0">
+                <GridPane fx:id="paletteGrid"
+                          hgap="5.0"
+                          vgap="5.0" />
 
-            <children>
+                <Separator />
 
-                <!-- Row 0: lightest -->
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F7F4EE"
-                        onAction="#onColorButton" style="-fx-background-color: #F7F4EE;"
-                        GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="FFF1A8"
-                        onAction="#onColorButton" style="-fx-background-color: #FFF1A8;"
-                        GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="FFD0A1"
-                        onAction="#onColorButton" style="-fx-background-color: #FFD0A1;"
-                        GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F1725B"
-                        onAction="#onColorButton" style="-fx-background-color: #F1725B;"
-                        GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F1D6AE"
-                        onAction="#onColorButton" style="-fx-background-color: #F1D6AE;"
-                        GridPane.columnIndex="4" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="9CDBB7"
-                        onAction="#onColorButton" style="-fx-background-color: #9CDBB7;"
-                        GridPane.columnIndex="5" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="9ED1F5"
-                        onAction="#onColorButton" style="-fx-background-color: #9ED1F5;"
-                        GridPane.columnIndex="6" GridPane.rowIndex="0" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="CDB8F0"
-                        onAction="#onColorButton" style="-fx-background-color: #CDB8F0;"
-                        GridPane.columnIndex="7" GridPane.rowIndex="0" />
-
-                <!-- Row 1 -->
-                <Button prefWidth="32.0" prefHeight="32.0" userData="D8DBDE"
-                        onAction="#onColorButton" style="-fx-background-color: #D8DBDE;"
-                        GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F6D85F"
-                        onAction="#onColorButton" style="-fx-background-color: #F6D85F;"
-                        GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F5B26B"
-                        onAction="#onColorButton" style="-fx-background-color: #F5B26B;"
-                        GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="E95D5D"
-                        onAction="#onColorButton" style="-fx-background-color: #E95D5D;"
-                        GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="DEA36A"
-                        onAction="#onColorButton" style="-fx-background-color: #DEA36A;"
-                        GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="63C28B"
-                        onAction="#onColorButton" style="-fx-background-color: #63C28B;"
-                        GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="72BCE4"
-                        onAction="#onColorButton" style="-fx-background-color: #72BCE4;"
-                        GridPane.columnIndex="6" GridPane.rowIndex="1" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="AC8EE0"
-                        onAction="#onColorButton" style="-fx-background-color: #AC8EE0;"
-                        GridPane.columnIndex="7" GridPane.rowIndex="1" />
-
-                <!-- Row 2 -->
-                <Button prefWidth="32.0" prefHeight="32.0" userData="AEB4BA"
-                        onAction="#onColorButton" style="-fx-background-color: #AEB4BA;"
-                        GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F3C84E"
-                        onAction="#onColorButton" style="-fx-background-color: #F3C84E;"
-                        GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="FF8A4C"
-                        onAction="#onColorButton" style="-fx-background-color: #FF8A4C;"
-                        GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="D93D4F"
-                        onAction="#onColorButton" style="-fx-background-color: #D93D4F;"
-                        GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="B97A55"
-                        onAction="#onColorButton" style="-fx-background-color: #B97A55;"
-                        GridPane.columnIndex="4" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="68BE78"
-                        onAction="#onColorButton" style="-fx-background-color: #68BE78;"
-                        GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="579FD7"
-                        onAction="#onColorButton" style="-fx-background-color: #579FD7;"
-                        GridPane.columnIndex="6" GridPane.rowIndex="2" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="8D72C3"
-                        onAction="#onColorButton" style="-fx-background-color: #8D72C3;"
-                        GridPane.columnIndex="7" GridPane.rowIndex="2" />
-
-                <!-- Row 3: darkest -->
-                <Button prefWidth="32.0" prefHeight="32.0" userData="2E3136"
-                        onAction="#onColorButton" style="-fx-background-color: #2E3136;"
-                        GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="F2B24A"
-                        onAction="#onColorButton" style="-fx-background-color: #F2B24A;"
-                        GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="ED9658"
-                        onAction="#onColorButton" style="-fx-background-color: #ED9658;"
-                        GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="C83D6E"
-                        onAction="#onColorButton" style="-fx-background-color: #C83D6E;"
-                        GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="8D5D49"
-                        onAction="#onColorButton" style="-fx-background-color: #8D5D49;"
-                        GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="4DBBAA"
-                        onAction="#onColorButton" style="-fx-background-color: #4DBBAA;"
-                        GridPane.columnIndex="5" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="4F7FBD"
-                        onAction="#onColorButton" style="-fx-background-color: #4F7FBD;"
-                        GridPane.columnIndex="6" GridPane.rowIndex="3" />
-                <Button prefWidth="32.0" prefHeight="32.0" userData="7451C2"
-                        onAction="#onColorButton" style="-fx-background-color: #7451C2;"
-                        GridPane.columnIndex="7" GridPane.rowIndex="3" />
+                <Button text="Custom color..."
+                        maxWidth="Infinity"
+                        onAction="#onCustomColor" />
 
             </children>
-        </GridPane>
 
-        <Separator />
-
-        <Button text="Custom color..."
-                maxWidth="Infinity"
-                onAction="#onCustomColor" />
-
-            </children>
         </VBox>
 
     </children>
+
 </StackPane>
