@@ -16,8 +16,11 @@ public class ColorPaletteController {
 	private Button colorButton;
 
 	private Consumer<Color> onColorSelected;
+	private Color currentColor = Color.WHITE;
 
 	public void setCurrentColor(Color color) {
+		currentColor = color;
+
 		String hexColor = String.format("#%02X%02X%02X", (int) (color.getRed() * 255), (int) (color.getGreen() * 255),
 				(int) (color.getBlue() * 255));
 
@@ -47,6 +50,7 @@ public class ColorPaletteController {
 			ColorPalettePopupController popupController = loader.getController();
 			popupController.setOnColorSelected(onColorSelected);
 			popupController.setPopup(popup);
+			popupController.setCurrentColor(currentColor);
 
 			popup.getContent().setAll(content);
 

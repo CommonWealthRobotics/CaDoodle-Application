@@ -22,6 +22,7 @@ public class ColorPalettePopupController {
 
 	private Consumer<Color> onColorSelected;
 	private Popup popup;
+	private Color currentColor;
 
 	@FXML
 	private void initialize() {
@@ -34,6 +35,11 @@ public class ColorPalettePopupController {
 
 	public void setPopup(Popup popup) {
 		this.popup = popup;
+	}
+
+	public void setCurrentColor(Color currentColor) {
+		this.currentColor = currentColor;
+		updateSelection();
 	}
 
 	private void buildPalette() {
@@ -53,13 +59,42 @@ public class ColorPalettePopupController {
 				button.setMinWidth(32.0);
 				button.setMinHeight(32.0);
 
-				button.setStyle("-fx-background-color: " + toHex(color) + ";");
+				button.setUserData(color);
+				applyButtonStyle(button, color);
 
 				button.setOnAction(event -> selectColor(color));
 
 				paletteGrid.add(button, column, row);
 			}
 		}
+	}
+
+	private void updateSelection() {
+		for (javafx.scene.Node node : paletteGrid.getChildren()) {
+			if (node instanceof Button button && button.getUserData() instanceof Color color) {
+				applyButtonStyle(button, color);
+			}
+		}
+	}
+
+	private void applyButtonStyle(Button button, Color color) {
+		String style = "-fx-background-color: " + toHex(color) + ";" + "-fx-border-width: 3;" + "-fx-border-radius: 3;";
+
+		if (sameRgb(currentColor, color)) {
+			style += "-fx-border-color: -fx-focus-color;";
+		} else {
+			style += "-fx-border-color: transparent;";
+		}
+
+		button.setStyle(style);
+	}
+
+	private boolean sameRgb(Color a, Color b) {
+		if (a == null || b == null) {
+			return false;
+		}
+
+		return toHex(a).equals(toHex(b));
 	}
 
 	@FXML
@@ -72,7 +107,7 @@ public class ColorPalettePopupController {
 			ActiveProject.setStyleSheet(content);
 
 			CustomColorController controller = loader.getController();
-			controller.setInitialColor(Color.WHITE);
+			controller.setInitialColor(currentColor);
 			controller.setOnColorSelected(this::selectColor);
 
 			Popup customPopup = new Popup();
