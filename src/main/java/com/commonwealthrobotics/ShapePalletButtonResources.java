@@ -11,6 +11,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import com.neuronrobotics.bowlerstudio.creature.ThumbnailImage;
+import com.neuronrobotics.bowlerstudio.scripting.CuratedColorPalette;
 import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
@@ -104,6 +105,10 @@ public class ShapePalletButtonResources {
 
 		set.setCaDoodleFile(cf);
 		List<CSG> so = set.process(new ArrayList<>());
+
+		for (CSG c : so) {
+			c.setColor(CuratedColorPalette.nearest(c.getColor()));
+		}
 		for (CSG c : so) {
 			for (String s : c.getParameters(cf.getCsgDBinstance())) {
 				cf.getCsgDBinstance().delete(s);
