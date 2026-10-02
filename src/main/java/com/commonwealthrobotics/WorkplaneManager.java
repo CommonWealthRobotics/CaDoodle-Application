@@ -79,7 +79,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		this.engine = engine;
 		this.session = session;
 
-
 		wpPick = createTexturedWorkplane(200, 200);
 		wpPick.transformsAdd(wpPickPlacement);
 		wpPick.setMouseTransparent(true);
@@ -90,7 +89,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		});
 
 		engine.getWorkplaneGroup().addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
-			//new Exception().printStackTrace();
 			setClickOnGround(true);
 		});
 
@@ -213,7 +211,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	public void handle(MouseEvent ev) {
 		try {
 
-
 			if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				doClickEvent(ev);
 
@@ -221,8 +218,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 					|| (ev.getEventType() == MouseEvent.MOUSE_DRAGGED)) {
 				session.submit(() -> {
 					TransformNR screenLocation = pickInteractionToPose(ev);
-					TransformNR toSet = screenLocation;
-					BowlerKernel.runLater(() -> setCurrentAbsolutePose(toSet));
+					BowlerKernel.runLater(() -> setCurrentAbsolutePose(screenLocation));
 				});
 			}
 		} catch (Throwable t) {
@@ -281,10 +277,11 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				if (source != null) {
 					Polygon p = fromMesh;
 					Polygon sourcePoly = getPolygonFromFaceIndex(faceIndex, source);
-					if (p.getBounds().isBoundsTouching(sourcePoly.getBounds())) {
-						// use the more accurate polygon
-						p = sourcePoly;
-					}
+					if (sourcePoly != null)
+						if (p.getBounds().isBoundsTouching(sourcePoly.getBounds())) {
+							// use the more accurate polygon
+							p = sourcePoly;
+						}
 
 					if (p != null) {
 						try {
@@ -332,7 +329,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		TransformNR t = new TransformNR(x, y, z);
 		screenLocation = manipulatorNR.times(t.times(pureRot));
 
-		if ((intersectedNode == wpPick.intersectionNode)) {
+		if ((intersectedNode == wpPick.getIntersectionNode())) {
 			if (updater != null)
 				updater.setWorkplaneLocation(screenLocation);
 
@@ -534,11 +531,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			wpPick.setVisible(workplaneNotOrigin);
 			TransformNR workplane = ap.isOpen() ? ap.get().getWorkplane() : new TransformNR();
 			TransformFactory.nrToAffine(workplane, wpPickPlacement);
-			//			wpPick.setVisible(workplaneNotOrigin);
-			//			if (!workplaneNotOrigin)
-			//				TransformFactory.nrToAffine(new TransformNR(), wpPickPlacement);
-			//			else
-			//				TransformFactory.nrToAffine(ap.get().getWorkplane(), wpPickPlacement);
 		});
 	}
 
@@ -553,11 +545,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		double epsilon = 0.1;
 		RotationNR r = w.getRotation();
-
-		//		if ((Math.abs(w.getX()) > epsilon))
-		//			return true;
-		//		if ((Math.abs(w.getY()) > epsilon))
-		//			return true;
 		if ((Math.abs(w.getZ()) > epsilon))
 			return true;
 

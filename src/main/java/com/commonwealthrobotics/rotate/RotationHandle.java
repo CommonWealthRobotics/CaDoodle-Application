@@ -358,7 +358,7 @@ public class RotationHandle {
 		arc.setRadiusY(radius / 2);
 
 		positionPin = input3.times(input.times(new TransformNR(0, 0, 0)));
-		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf, cameraFieldOfView);
+		TDnumber.threeDTarget(screenW, screenH, zoom, input.copy(), cf, new TransformNR(), cameraFieldOfView);
 
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(input4, arcPlanerOffset);

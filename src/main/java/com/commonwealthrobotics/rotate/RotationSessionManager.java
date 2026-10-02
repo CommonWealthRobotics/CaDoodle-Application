@@ -20,7 +20,8 @@ public class RotationSessionManager {
 	private Affine selection;
 	private Affine viewRotation = new Affine();
 	private SelectionSession controlSprites;
-
+	private boolean initializeRequest = false;
+	private boolean lock = false;
 
 	public RotationSessionManager(Affine selection, ActiveProject ap, SelectionSession controlSprites,
 			Affine workplaneOffset, RulerManager ruler, IOnRotateDone done) {
@@ -51,16 +52,8 @@ public class RotationSessionManager {
 	}
 
 	public void initialize(boolean lock) {
-
-		for (RotationHandle r : handles) {
-			r.getImageSet().setVisible(true);
-			if (!lock)
-				r.handle.setVisible(!lock);
-
-			r.controlCircle.setVisible(false);
-			r.arc.setVisible(false);
-			r.TDnumber.hide();
-		}
+		this.lock = lock;
+		initializeRequest = true;
 	}
 
 	public void hide() {
@@ -78,9 +71,21 @@ public class RotationSessionManager {
 
 	public void updateControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, List<String> selectedCSG, Bounds b, TransformNR cf, double cameraFieldOfView, double zoomScale) {
+		if (initializeRequest) {
+			initializeRequest = false;
+			for (RotationHandle r : handles) {
+				r.getImageSet().setVisible(true);
+				if (!lock)
+					r.handle.setVisible(!lock);
 
+				r.controlCircle.setVisible(false);
+				r.arc.setVisible(false);
+				r.TDnumber.hide();
+			}
+		}
 		for (RotationHandle r : handles)
 			r.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView, zoomScale);
+
 	}
 
 	public Affine getViewRotation() {

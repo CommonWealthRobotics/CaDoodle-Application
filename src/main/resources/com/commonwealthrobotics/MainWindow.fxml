@@ -270,8 +270,8 @@
                                     <GridPane fx:id="buttonGrid" pickOnBounds="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columnConstraints>
                                           <ColumnConstraints hgrow="NEVER" minWidth="50.0" />
-                                          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                                        <ColumnConstraints hgrow="NEVER" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -312,130 +312,122 @@
                                                       <Button fx:id="settingsButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSettings" style="-fx-border-color:#263D8C; -fx-border-width:1;" styleClass="normal-button" text="%mainwindow.settings" GridPane.columnIndex="1" />
                                                       </HBox>
                                                    </children>
+                                             <padding>
+                                                <Insets bottom="5.0" right="5.0" />
+                                             </padding>
                                           </VBox>
-                                          <GridPane GridPane.columnIndex="2">
-                                             <GridPane.margin>
-                                                <Insets top="3.0" />
-                                             </GridPane.margin>
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="ALWAYS" />
-                                                <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
+                                          <AnchorPane fx:id="shapeConfigurationHolder" maxWidth="250.0" pickOnBounds="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
                                              <children>
-                                                <AnchorPane fx:id="shapeConfigurationHolder" pickOnBounds="false" GridPane.columnIndex="1">
-                                                   <children>
-                                                      <Accordion fx:id="shapeConfigurationBox" style="-fx-border-color:#263D8C; -fx-border-width:1;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                        <panes>
-                                                          <TitledPane fx:id="shapeConfiguration" animated="false" expanded="false" text="%mainwindow.shape">
-                                                            <content>
-                                                              <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0">
+                                                <Accordion fx:id="shapeConfigurationBox" style="-fx-border-color:#263D8C; -fx-border-width:1;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <panes>
+                                                    <TitledPane fx:id="shapeConfiguration" animated="false" expanded="true" text="%mainwindow.shape">
+                                                      <content>
+                                                        <AnchorPane fx:id="anchorPanForConfiguration" minHeight="0.0" minWidth="0.0">
+                                                               <children>
+                                                                  <GridPane fx:id="configurationGrid" layoutX="-43.0" layoutY="34.0" pickOnBounds="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                    <columnConstraints>
+                                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                                    </columnConstraints>
+                                                                    <rowConstraints>
+                                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                                    </rowConstraints>
                                                                      <children>
-                                                                        <GridPane fx:id="configurationGrid" layoutX="-43.0" layoutY="34.0" pickOnBounds="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                        <GridPane pickOnBounds="false" GridPane.columnSpan="2147483647">
                                                                           <columnConstraints>
-                                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                                                                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                                                                              <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
+                                                                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                                                                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                                                           </columnConstraints>
                                                                           <rowConstraints>
-                                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                                              <RowConstraints minHeight="30.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                                            <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                                                              <RowConstraints minHeight="30.0" />
                                                                           </rowConstraints>
                                                                            <children>
-                                                                              <GridPane pickOnBounds="false" GridPane.columnSpan="2147483647">
-                                                                                <columnConstraints>
-                                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
-                                                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-                                                                                    <ColumnConstraints hgrow="NEVER" minWidth="30.0" />
-                                                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-                                                                                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                                                                                </columnConstraints>
-                                                                                <rowConstraints>
-                                                                                    <RowConstraints minHeight="30.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                                                                  <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                                                                    <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                                                                                    <RowConstraints minHeight="30.0" />
-                                                                                </rowConstraints>
-                                                                                 <children>
-                                                                                    <ColorPicker fx:id="colorPicker" onAction="#onColorPick" prefHeight="50.0" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
-                                                                                       <tooltip>
-                                                                                          <Tooltip text="%mainwindow.set_to_solid" />
-                                                                                       </tooltip>
-                                                                                    </ColorPicker>
-                                                                                    <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                                                                                       <graphic>
-                                                                                          <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
-                                                                                       </graphic>
-                                                                                       <tooltip>
-                                                                                          <Tooltip text="%mainwindow.set_to_hole" />
-                                                                                       </tooltip>
-                                                                                       <GridPane.margin>
-                                                                                          <Insets />
-                                                                                       </GridPane.margin>
-                                                                                    </Button>
-                                                                                    <Label centerShape="false" graphicTextGap="0.0" nodeOrientation="LEFT_TO_RIGHT" pickOnBounds="false" text="%mainwindow.solid" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                                                       <GridPane.margin>
-                                                                                          <Insets />
-                                                                                       </GridPane.margin>
-                                                                                    </Label>
-                                                                                    <Label text="%mainwindow.hole" GridPane.columnIndex="3" GridPane.rowIndex="3">
-                                                                                       <GridPane.margin>
-                                                                                          <Insets />
-                                                                                       </GridPane.margin>
-                                                                                    </Label>
-            
-                                                                                    <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="4">
-                                                                                       <graphic>
-                                                                                          <ImageView fx:id="lockImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="unlock-icon" />
-                                                                                       </graphic>
-                                                                                       <tooltip>
-                                                                                          <Tooltip fx:id="lockUnlockTooltip" text="%mainwindow.lock_changes" />
-                                                                                       </tooltip>
-                                                                                    </Button>
-            
-                                                                                    <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button">
-                                                                                       <graphic>
-                                                                                          <ImageView fx:id="showHideImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="dark-bulb-icon" />
-                                                                                       </graphic>
-                                                                                       <tooltip>
-                                                                                          <Tooltip text="%mainwindow.hide_object_lt_ctrl_h_gt" />
-                                                                                       </tooltip>
-                                                                                    </Button>
-                                                                                 </children>
-                                                                              </GridPane>
-                                                                              <VBox fx:id="parametrics" pickOnBounds="false" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                                                                              <AnchorPane fx:id="colorPickerHolder"
+                                                                                          prefHeight="50.0"
+                                                                                          prefWidth="60.0"
+                                                                                          GridPane.columnIndex="1"
+                                                                                          GridPane.rowIndex="1"
+                                                                                          GridPane.vgrow="ALWAYS" />
+                                                                              <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                                                 <graphic>
+                                                                                    <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+                                                                                 </graphic>
+                                                                                 <tooltip>
+                                                                                    <Tooltip text="%mainwindow.set_to_hole" />
+                                                                                 </tooltip>
+                                                                                 <GridPane.margin>
+                                                                                    <Insets />
+                                                                                 </GridPane.margin>
+                                                                              </Button>
+                                                                              <Label centerShape="false" graphicTextGap="0.0" nodeOrientation="LEFT_TO_RIGHT" pickOnBounds="false" text="%mainwindow.solid" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                                                 <GridPane.margin>
+                                                                                    <Insets />
+                                                                                 </GridPane.margin>
+                                                                              </Label>
+                                                                              <Label text="%mainwindow.hole" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                                                                 <GridPane.margin>
+                                                                                    <Insets />
+                                                                                 </GridPane.margin>
+                                                                              </Label>
+      
+                                                                                                <Button fx:id="lockButton" mnemonicParsing="false" onAction="#onLock" styleClass="image-button" GridPane.columnIndex="4">
+                                                                                 <graphic>
+                                                                                    <ImageView fx:id="lockImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="unlock-icon" />
+                                                                                 </graphic>
+                                                                                 <tooltip>
+                                                                                    <Tooltip fx:id="lockUnlockTooltip" text="%mainwindow.lock_changes" />
+                                                                                 </tooltip>
+                                                                              </Button>
+      
+                                                                                                <Button fx:id="hideSHow" mnemonicParsing="false" onAction="#onHideShow" styleClass="image-button">
+                                                                                 <graphic>
+                                                                                    <ImageView fx:id="showHideImage" fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="dark-bulb-icon" />
+                                                                                 </graphic>
+                                                                                 <tooltip>
+                                                                                    <Tooltip text="%mainwindow.hide_object_lt_ctrl_h_gt" />
+                                                                                 </tooltip>
+                                                                              </Button>
                                                                            </children>
                                                                         </GridPane>
+                                                                        <VBox fx:id="parametrics" pickOnBounds="false" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                                                                      </children>
-                                                                  </AnchorPane>
-                                                            </content>
-                                                          </TitledPane>
-                                                            <TitledPane fx:id="materialPanel" animated="false" text="%mainwindow.material">
-                                                              <content>
-                                                                <AnchorPane minHeight="0.0" minWidth="0.0">
-                                                                     <children>
-                                                                        <GridPane fx:id="MaterialGrid" gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                          <columnConstraints>
-                                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                                          </columnConstraints>
-                                                                          <rowConstraints>
-                                                                            <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
-                                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                                                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                                                          </rowConstraints>
-                                                                        </GridPane>
-                                                                     </children>
-                                                                  </AnchorPane>
-                                                              </content>
-                                                            </TitledPane>
-                                                        </panes>
-                                                      </Accordion>
-                                                   </children>
-                                                </AnchorPane>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                      </content>
+                                                    </TitledPane>
+                                                      <TitledPane fx:id="materialPanel" animated="false" expanded="false" text="%mainwindow.material">
+                                                        <content>
+                                                          <AnchorPane minHeight="0.0" minWidth="0.0">
+                                                               <children>
+                                                                  <GridPane fx:id="MaterialGrid" gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                    <columnConstraints>
+                                                                      <ColumnConstraints hgrow="NEVER" prefWidth="116.0" />
+                                                                        <ColumnConstraints hgrow="ALWAYS" />
+                                                                    </columnConstraints>
+                                                                    <rowConstraints>
+                                                                      <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                                    </rowConstraints>
+                                                                  </GridPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </content>
+                                                      </TitledPane>
+                                                  </panes>
+                                                </Accordion>
                                              </children>
-                                          </GridPane>
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </AnchorPane>
                                           <GridPane pickOnBounds="false" GridPane.rowSpan="2147483647">
                                             <columnConstraints>
                                               <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
@@ -533,6 +525,9 @@
                                              </GridPane.margin>
                                           </Button>
                                        </children>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
                                     </GridPane>
                                  </children>
                               </AnchorPane>
@@ -1035,12 +1030,7 @@
                       <StackPane />
                      </children>
                   </HBox>
-
-            <Button fx:id="logoButton" contentDisplay="GRAPHIC_ONLY" style="-fx-background-color: transparent; -fx-padding: 3 0 0 0; -fx-alignment: CENTER;" GridPane.columnIndex="1">
-                <graphic>
-                  <ImageView fx:id="bigLogoImage" fitHeight="40.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" styleClass="biglogo-cadoodle" />
-                </graphic>
-            </Button>
+            <ImageView fx:id="bigLogoImage" fitHeight="40.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" styleClass="biglogo-cadoodle" GridPane.columnIndex="1" />
                   <HBox alignment="CENTER" style="-fx-padding: 0 0 0 6;">
                      <children>
                         <Button fx:id="homeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHome" styleClass="image-button">

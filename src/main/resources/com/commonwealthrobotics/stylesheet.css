@@ -191,9 +191,13 @@
 
 
 .image-button-focus:hover {
+    -fx-border-width: 1px;
+    -fx-background-insets: 3;
     -fx-background-color: #f2c83d; /* logo-yellow */
 }
 .image-button-highlight {
+    -fx-border-width: 1px;
+    -fx-background-insets: 3;
     -fx-background-color: #f2c83d; /* logo-yellow */
     -fx-background-insets: 0;
 }

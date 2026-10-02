@@ -4,6 +4,9 @@
 
 package com.commonwealthrobotics;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -54,7 +57,6 @@ import com.neuronrobotics.sdk.common.Log;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Debug3dProvider;
 import eu.mihosoft.vrl.v3d.IDebug3dProvider;
-import eu.mihosoft.vrl.v3d.CSG.OptType;
 import eu.mihosoft.vrl.v3d.parametrics.CSGDatabaseInstance;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -66,7 +68,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -88,7 +89,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -193,8 +193,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="buttonGrid"
 	private GridPane MaterialGrid;
 
-	@FXML // fx:id="colorPicker"
-	private ColorPicker colorPicker; // Value injected by FXMLLoader
+	@FXML // fx:id="colorPickerHolder"
+	private AnchorPane colorPickerHolder;
+
+	private ColorPaletteController colorPaletteController;
 
 	@FXML // fx:id="configurationGrid"
 	private GridPane configurationGrid; // Value injected by FXMLLoader
@@ -395,6 +397,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private CheckBox timelineMoveObjectShow;
 	@FXML // fx:id="zoomInButton"@FXML
 	private CheckBox timelineOtherShow;
+	@FXML // fx:id="zoomInButton"@FXML
 	private Button objectWorkplane;
 	@FXML // fx:id="zoomInButton"
 	private Button dropToWorkplane;
@@ -586,15 +589,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onDelete(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("On Delete");
 		session.onDelete();
-		session.setKeyBindingFocus();
-	}
-
-	@FXML
-	void onColorPick(ActionEvent event) {
-
-		Color value = colorPicker.getValue();
-
-		session.setColor(value);
 		session.setKeyBindingFocus();
 	}
 
@@ -1054,7 +1048,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert anchorPanForConfiguration != null
 				: "fx:id=\"anchorPanForConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert buttonGrid != null : "fx:id=\"buttonGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert colorPicker != null : "fx:id=\"colorPicker\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert colorPickerHolder != null
+				: "fx:id=\"colorPickerHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert configurationGrid != null
 				: "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
@@ -1129,6 +1124,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert timelineButton != null : "optionProvide button failed";
 		assert optionProvide != null : "Timeline button failed";
 		assert optionsConsume != null : "optionsConsume button failed";
+		assert objectWorkplane != null : "objectWorkplane button failed";
 
 		try {
 
@@ -1146,110 +1142,120 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
-			setCameraPerspectiveMode(othographicMode);
-			paneOverlay2D = new Pane();
-			paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
-			paneOverlay2D.setMouseTransparent(true);
-
-			engine.setOverlayPane(paneOverlay2D);
-
-			ap.addListener(this);
-			//			try {
-			//				ap.loadActive();
-			//			} catch (Exception e) {
-			//				com.neuronrobotics.sdk.common.Log.error(e);
-			//				Thread.sleep(3000);
-			//				Log.flush();
-			//				System.exit(2);
-			//			}
-			session = new SelectionSession(engine, ap, ruler);
-			ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(),
-					session);
-
-			selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
-
-			setUpNavigationCube();
-			setUp3dEngine();
-			setUpColorPicker();
-			timelineManager.set(timelineScroll, timeline, session, engine, timelineShowButtons, timelineShowAll,
-					timelineAddOpShow, timelineResizeShow, timelineAllignShow, timelineGroupShow, timelineHideShow,
-					timelineMirrorShow, timelineFilletShow, timelineExtrudeShow, timelineRadialShow, timelineLinearShow,
-					timelineDeleteShow, timelineMoveObjectShow, timelineOtherShow);
-			label = new Label(shapeConfiguration.getText());
-			renameBtn = new Button(ap.getTranslation("rename"));
-
-			session.set(label, shapeConfigurationBox, shapeConfigurationHolder, configurationGrid, null, engine,
-					colorPicker, snapGrid, parametrics, lockButton, lockImage, intersectButton, xorButton,
-					timelineManager, objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid,
-					materialPanel);
-			session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
-			session.setRobotLabButton(RobotLabDrawer);
-			session.setGroup(groupButton);
-			session.setUngroup(ungroupButton);
-			session.setShowHideImage(showHideImage);
-			session.setAlignButton(alignButton);
-			session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton, hullButton,
-					bendButton);
-			// do this after setting up the session
-			setupEngineControls();
-			ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
-			ap.addListener(componentTreePanel);
-			setComponentTreeOpenState(false);
-			boolean manifold = Boolean.parseBoolean(
-					ConfigurationDatabase.get("CaDoodle", "CaDoodleAdvancedManifold", "" + true).toString());
 			try {
-				CSG.setDefaultOptType(manifold ? OptType.Manifold3d : OptType.CSG_BOUND);
-			} catch (Throwable t) {
-				Log.error(t);
-				CSG.setDefaultOptType(OptType.CSG_BOUND);
-				ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + false).toString();
-				ConfigurationDatabase.save();
-			}
-			try {
-				SettingsManager.setServerState();
-				if (SettingsManager.clientStateSet()) {
-					com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
+				setCameraPerspectiveMode(othographicMode);
+				paneOverlay2D = new Pane();
+				paneOverlay2D.setStyle("-fx-background-color: TRANSPARENT;");
+				paneOverlay2D.setMouseTransparent(true);
+
+				engine.setOverlayPane(paneOverlay2D);
+
+				ap.addListener(this);
+
+				session = new SelectionSession(engine, ap, ruler);
+				ruler.initialize(engine.getRulerGroup(), engine.getRulerInWorkplaneOffset(), engine.getRulerOffset(),
+						session);
+
+				selectionBox = new SelectionBox(session, view3d, engine, ap, paneOverlay2D);
+
+				setUpNavigationCube();
+				setUp3dEngine();
+				setUpColorPicker();
+				timelineManager.set(timelineScroll, timeline, session, engine, timelineShowButtons, timelineShowAll,
+						timelineAddOpShow, timelineResizeShow, timelineAllignShow, timelineGroupShow, timelineHideShow,
+						timelineMirrorShow, timelineFilletShow, timelineExtrudeShow, timelineRadialShow,
+						timelineLinearShow, timelineDeleteShow, timelineMoveObjectShow, timelineOtherShow);
+				label = new Label(shapeConfiguration.getText());
+				renameBtn = new Button(ap.getTranslation("rename"));
+
+				session.set(label, shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder,
+						configurationGrid, null, engine, colorPickerHolder, colorPaletteController, snapGrid,
+						parametrics, lockButton, lockImage, intersectButton, xorButton, timelineManager,
+						objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid, materialPanel);
+				session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
+				session.setRobotLabButton(RobotLabDrawer);
+				session.setGroup(groupButton);
+				session.setUngroup(ungroupButton);
+				session.setShowHideImage(showHideImage);
+				session.setAlignButton(alignButton);
+				session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton, hullButton,
+						bendButton);
+				// do this after setting up the session
+				setupEngineControls();
+				ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
+				ap.addListener(componentTreePanel);
+				setComponentTreeOpenState(false);
+
+				try {
+					SettingsManager.setServerState();
+					if (SettingsManager.clientStateSet()) {
+						com.neuronrobotics.sdk.common.Log.debug("Server connected, client running remote");
+					}
+				} catch (Exception e) {
+					com.neuronrobotics.sdk.common.Log.error(e);
 				}
+				try {
+					setCadoodleFile();
+					// Threaded load happens after UI opens
+					setupFile();
+				} catch (Exception e) {
+					com.neuronrobotics.sdk.common.Log.error(e);
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					System.exit(1);
+				}
+				fileNameBox.setOnKeyTyped(ev -> {
+					onNameTyped();
+				});
+				setupCSGEngine();
+				SplashManager.setClosePreventer(() -> {
+					if (!ap.isOpen())
+						return false;
+					return ap.get().getPercentInitialized() < 0.99;
+				});
+				setTimelineOpenState((boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false));
+				session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
+				timeline.getChildren().clear();
+				// RobotLabDrawerImage
+				if (!session.isRobotLabOpen()) {
+					RobotLabHolder.getChildren().remove(robotLabTabPane);
+				}
+				if (!timelineOpen) {
+					timelineHolder.getChildren().remove(timelineScroll);
+				}
+				timelineManager.setOpenState(timelineOpen);
+				BowlerStudio.runLater(200, () -> {
+					setAdvancedMode(ap.isAdvancedMode());
+				});
 			} catch (Exception e) {
+				com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 				com.neuronrobotics.sdk.common.Log.error(e);
-			}
-			try {
-				setCadoodleFile();
-				// Threaded load happens after UI opens
-				setupFile();
-			} catch (Exception e) {
-				com.neuronrobotics.sdk.common.Log.error(e);
-				Thread.sleep(3000);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				System.exit(1);
 			}
-			fileNameBox.setOnKeyTyped(ev -> {
-				onNameTyped();
-			});
-			setupCSGEngine();
-			SplashManager.setClosePreventer(() -> {
-				if (!ap.isOpen())
-					return false;
-				return ap.get().getPercentInitialized() < 0.99;
-			});
-			setTimelineOpenState((boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false));
-			session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
-			timeline.getChildren().clear();
-			// RobotLabDrawerImage
-			if (!session.isRobotLabOpen()) {
-				RobotLabHolder.getChildren().remove(robotLabTabPane);
-			}
-			if (!timelineOpen) {
-				timelineHolder.getChildren().remove(timelineScroll);
-			}
-			timelineManager.setOpenState(timelineOpen);
-			BowlerStudio.runLater(200, () -> {
-				setAdvancedMode(ap.isAdvancedMode());
-			});
+
+			// Prevent the timeline scroll pane to affect other areas
+			timelineHolder.setPrefWidth(32767);
+			// Prevent border color change when selecting the scroll pane
+			// timelineScroll.setFocusTraversable(false);
+			makeEditableTitle(shapeConfiguration);
+			ap.setStyleSheet(totalApplicationBackground);
+			ap.resetAllStyleSheets();
+
 		} catch (Exception e) {
 			com.neuronrobotics.sdk.common.Log.error("Failed to load main window!");
 			com.neuronrobotics.sdk.common.Log.error(e);
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -1257,13 +1263,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			System.exit(1);
 		}
 
-		// Prevent the timeline scroll pane to affect other areas
-		timelineHolder.setPrefWidth(32767);
-		// Prevent border color change when selecting the scroll pane
-		// timelineScroll.setFocusTraversable(false);
-		makeEditableTitle(shapeConfiguration);
-		ap.setStyleSheet(totalApplicationBackground);
-		ap.resetAllStyleSheets();
 	}
 
 	/**
@@ -1412,13 +1411,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				while (!SplashManager.isVisibleSplash()) {
 					Thread.sleep(100);
 				}
-				//				ap.get().initialize();
-				//				session.save();
-				//				BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
-				//				do {
-				//					Thread.sleep(100);
-				//					SplashManager.closeSplash();
-				//				} while (SplashManager.isVisibleSplash());
+				// ap.get().initialize();
+				// session.save();
+				// BowlerStudio.runLater(() -> shapeConfiguration.setExpanded(true));
+				// do {
+				// Thread.sleep(100);
+				// SplashManager.closeSplash();
+				// } while (SplashManager.isVisibleSplash());
 				//
 				BowlerStudio.runLater(() -> onHome(null));
 				BowlerStudio.runLater(() -> session.setKeyBindingFocus());
@@ -1439,11 +1438,26 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUpColorPicker() {
-		colorPicker.setOnMousePressed(event -> {
-			com.neuronrobotics.sdk.common.Log.debug("Set to Solid");
-			session.setToSolid();
-		});
+		try {
+			FXMLLoader loader = new FXMLLoader(MainController.class.getResource("ColorPalette.fxml"),
+					ActiveProject.getLangaugePack());
 
+			Parent colorPalette = loader.load();
+			colorPaletteController = loader.getController();
+			colorPaletteController.setOnColorSelected(color -> {
+				session.setColor(color);
+				session.setKeyBindingFocus();
+			});
+
+			colorPickerHolder.getChildren().setAll(colorPalette);
+
+			AnchorPane.setTopAnchor(colorPalette, 0.0);
+			AnchorPane.setBottomAnchor(colorPalette, 0.0);
+			AnchorPane.setLeftAnchor(colorPalette, 0.0);
+			AnchorPane.setRightAnchor(colorPalette, 0.0);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void setUp3dEngine() {
@@ -1976,8 +1990,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public boolean isEventACancel(MouseEvent event) {
 		Node in = event.getPickResult().getIntersectedNode();
-		if (in != engine.getWorkplaneGroup().intersectionNode && !engine.isSubScene(in)
-				&& in != session.workplane.getPlacementPlane().intersectionNode
+		if (in != engine.getWorkplaneGroup().getIntersectionNode() && !engine.isSubScene(in)
+				&& in != session.workplane.getPlacementPlane().getIntersectionNode()
 				&& in != selectionBox.getSelectionPlane())
 			return false;
 		if (event.isControlDown())
@@ -2148,7 +2162,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	public int getZoom() {
 		if (engine != null) {
-			return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
+			if (engine.getFlyingCamera().isOrthographic())
+				return (int) (ZOOM * engine.getFlyingCamera().getZoomScale());
+			return (int) (ZOOM);
 		}
 		return ZOOM;
 	}
