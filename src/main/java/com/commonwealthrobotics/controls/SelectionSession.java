@@ -32,6 +32,7 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.fillet.ExtrudeUIManager;
 import com.commonwealthrobotics.fillet.FilletUIManager;
 import com.commonwealthrobotics.robot.LimbControlManager;
+import com.commonwealthrobotics.ColorPaletteController;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -79,7 +80,6 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -144,7 +144,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private AnchorPane control3d;
 	public BowlerStudio3dEngine engine;
 	private LinkedHashSet<CSG> selected = new LinkedHashSet<>();
-	private ColorPicker colorPicker;
+	private AnchorPane colorPickerHolder;
+	private ColorPaletteController colorPaletteController;
 	private ComboBox<String> snapGrid;
 	private List<Button> buttons;
 	private Button ungroupButton;
@@ -915,12 +916,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 
 			Color value = set.getColor();
-			colorPicker.setValue(value);
-			String hexColor = String.format(Locale.US, "#%02X%02X%02X", (int) (value.getRed() * 255),
-					(int) (value.getGreen() * 255), (int) (value.getBlue() * 255));
-
-			String style = String.format(" -fx-background-color: %s;", hexColor);
-			colorPicker.setStyle(style);
+			if (colorPaletteController != null) {
+				colorPaletteController.setCurrentColor(value);
+			}
 			showButtons();
 			updateShowHideButton();
 			updateLockButton();
@@ -1665,10 +1663,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void set(Label shapeConfiguration, TitledPane shapeConfiguration2, Accordion shapeConfigurationBox,
 			AnchorPane shapeConfigurationHolder, GridPane configurationGrid, AnchorPane control3d,
-			BowlerStudio3dEngine engine, ColorPicker colorPicker, ComboBox<String> snapGrid, VBox parametrics,
-			Button lockButton, ImageView lockImage, Button intersectButton, Button xorButton, TimelineManager tm,
-			Button objectWorkplane, Button dropToWorkplane, ProgressIndicator memUsage, Button renameBtn,
-			GridPane MaterialGrid, TitledPane materialPanel) {
+			BowlerStudio3dEngine engine, AnchorPane colorPickerHolder, ColorPaletteController colorPaletteController,
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, Button intersectButton,
+			Button xorButton, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
+			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
 		this.shapeConfiguration2 = shapeConfiguration2;
 		this.shapeConfigurationBox = shapeConfigurationBox;
@@ -1676,7 +1674,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.configurationGrid = configurationGrid;
 		this.control3d = control3d;
 		this.engine = engine;
-		this.colorPicker = colorPicker;
+		this.colorPickerHolder = colorPickerHolder;
+		this.colorPaletteController = colorPaletteController;
 		this.snapGrid = snapGrid;
 		this.parametrics = parametrics;
 		this.lockButton = lockButton;

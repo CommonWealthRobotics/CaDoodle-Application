@@ -4,6 +4,9 @@
 
 package com.commonwealthrobotics;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -64,7 +67,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -86,7 +88,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -191,8 +192,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="buttonGrid"
 	private GridPane MaterialGrid;
 
-	@FXML // fx:id="colorPicker"
-	private ColorPicker colorPicker; // Value injected by FXMLLoader
+	@FXML // fx:id="colorPickerHolder"
+	private AnchorPane colorPickerHolder;
+
+	private ColorPaletteController colorPaletteController;
 
 	@FXML // fx:id="configurationGrid"
 	private GridPane configurationGrid; // Value injected by FXMLLoader
@@ -584,15 +587,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	void onDelete(ActionEvent event) {
 		com.neuronrobotics.sdk.common.Log.debug("On Delete");
 		session.onDelete();
-		session.setKeyBindingFocus();
-	}
-
-	@FXML
-	void onColorPick(ActionEvent event) {
-
-		Color value = colorPicker.getValue();
-
-		session.setColor(value);
 		session.setKeyBindingFocus();
 	}
 
@@ -1052,7 +1046,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		assert anchorPanForConfiguration != null
 				: "fx:id=\"anchorPanForConfiguration\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert buttonGrid != null : "fx:id=\"buttonGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
-		assert colorPicker != null : "fx:id=\"colorPicker\" was not injected: check your FXML file 'MainWindow.fxml'.";
+		assert colorPickerHolder != null
+				: "fx:id=\"colorPickerHolder\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert configurationGrid != null
 				: "fx:id=\"configurationGrid\" was not injected: check your FXML file 'MainWindow.fxml'.";
 		assert controlBar != null : "fx:id=\"controlBar\" was not injected: check your FXML file 'MainWindow.fxml'.";
@@ -1172,9 +1167,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				renameBtn = new Button(ap.getTranslation("rename"));
 
 				session.set(label, shapeConfiguration, shapeConfigurationBox, shapeConfigurationHolder,
-						configurationGrid, null, engine, colorPicker, snapGrid, parametrics, lockButton, lockImage,
-						intersectButton, xorButton, timelineManager, objectWorkplane, dropToWorkplane, memUsage,
-						renameBtn, MaterialGrid, materialPanel);
+						configurationGrid, null, engine, colorPickerHolder, colorPaletteController, snapGrid,
+						parametrics, lockButton, lockImage, intersectButton, xorButton, timelineManager,
+						objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid, materialPanel);
 				session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton);
 				session.setRobotLabButton(RobotLabDrawer);
 				session.setGroup(groupButton);
@@ -1441,11 +1436,26 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUpColorPicker() {
-		colorPicker.setOnMousePressed(event -> {
-			com.neuronrobotics.sdk.common.Log.debug("Set to Solid");
-			session.setToSolid();
-		});
+		try {
+			FXMLLoader loader = new FXMLLoader(MainController.class.getResource("ColorPalette.fxml"),
+					ActiveProject.getLangaugePack());
 
+			Parent colorPalette = loader.load();
+			colorPaletteController = loader.getController();
+			colorPaletteController.setOnColorSelected(color -> {
+				session.setColor(color);
+				session.setKeyBindingFocus();
+			});
+
+			colorPickerHolder.getChildren().setAll(colorPalette);
+
+			AnchorPane.setTopAnchor(colorPalette, 0.0);
+			AnchorPane.setBottomAnchor(colorPalette, 0.0);
+			AnchorPane.setLeftAnchor(colorPalette, 0.0);
+			AnchorPane.setRightAnchor(colorPalette, 0.0);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void setUp3dEngine() {

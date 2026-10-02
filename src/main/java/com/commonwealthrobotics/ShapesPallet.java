@@ -18,6 +18,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.scripting.CuratedColorPalette;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
@@ -25,6 +26,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ToSolid;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -38,6 +40,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -330,6 +333,14 @@ public class ShapesPallet {
 									}
 									ap.addOp(setAddFromScript).join();
 									List<String> names = setAddFromScript.getNamesAddedInThisOperation();
+
+									List<CSG> added = ap.get().getSelect(names);
+									if (!added.isEmpty()) {
+										Color generated = added.get(0).getColor();
+										Color snapped = CuratedColorPalette.nearest(generated);
+
+										ap.addOp(new ToSolid().setNames(names).setColor(snapped)).join();
+									}
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {
