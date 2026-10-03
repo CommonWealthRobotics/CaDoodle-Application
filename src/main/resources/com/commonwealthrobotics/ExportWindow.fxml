@@ -70,7 +70,17 @@
                   <Tooltip text="This is for low quality slicing engines such as PrusaSlicer and BambooSlicer. They use a Windows only mesh fixing that is not generally available. This step ensures your STL will work in those slicers. NOTE this will take a LONG time to complete. " />
                </tooltip>
             </CheckBox>
-            <CheckBox fx:id="type3mf" mnemonicParsing="false" selected="true" text="3mf" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+            <CheckBox fx:id="type3mf" contentDisplay="TOP" mnemonicParsing="false" selected="true" text="3mf" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="source" contentDisplay="TOP" mnemonicParsing="false" selected="true" text="source" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="notesButton" contentDisplay="TOP" mnemonicParsing="false" selected="true" text="B.o.M CSV" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
