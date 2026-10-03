@@ -59,7 +59,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	// Create textured work-plane based on tiles of custom size
 	public GridHolder createTexturedWorkplane(double xSizeMM, double ySizeMM) {
-		return BowlerStudio3dEngine.createTexturedWorkplane(xSizeMM, ySizeMM);
+		return engine.createTexturedWorkplane(xSizeMM, ySizeMM);
 	}
 
 	private static int webColorToArgb(Color color) {
