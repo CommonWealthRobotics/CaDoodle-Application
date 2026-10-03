@@ -26,7 +26,6 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromScript;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CadoodleConcurrencyException;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.Sweep;
-import com.neuronrobotics.bowlerstudio.scripting.cadoodle.ToSolid;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -336,10 +335,13 @@ public class ShapesPallet {
 
 									List<CSG> added = ap.get().getSelect(names);
 									if (!added.isEmpty()) {
-										Color generated = added.get(0).getColor();
-										Color snapped = CuratedColorPalette.nearest(generated);
 
-										ap.addOp(new ToSolid().setNames(names).setColor(snapped)).join();
+
+										for (CSG c : added) {
+											Color generated = c.getColor();
+											Color snapped = CuratedColorPalette.nearest(generated);
+											c.setColor(snapped);
+										}
 									}
 									if (!workplane.isClicked())
 										return;
