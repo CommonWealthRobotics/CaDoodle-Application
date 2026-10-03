@@ -1142,6 +1142,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 			engine.rebuild(true);
+			ap.setEngine(engine);
 			try {
 				setCameraPerspectiveMode(othographicMode);
 				paneOverlay2D = new Pane();
