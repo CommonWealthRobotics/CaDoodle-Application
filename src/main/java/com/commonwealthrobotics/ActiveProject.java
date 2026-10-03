@@ -1057,6 +1057,6 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	public void setEngine(BowlerStudio3dEngine engine) {
 		this.engine = engine;
 		// TODO Auto-generated method stub
-		
+
 	}
 }
