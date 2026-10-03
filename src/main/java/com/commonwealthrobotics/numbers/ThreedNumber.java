@@ -32,7 +32,7 @@ public class ThreedNumber {
 	private double screenW;
 	private double screenH;
 	private double zoom;
-	private TransformNR cf;
+	private TransformNR cameraFrame;
 	// private SelectionSession session;
 	private Affine move;
 	private Affine workplaneOffset;
@@ -41,6 +41,7 @@ public class ThreedNumber {
 	private double mostRecentValue = 20;
 
 	private Affine location = new Affine();
+	private Affine textOffset = new Affine();
 	private Affine lineOffset = new Affine();
 	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
@@ -228,6 +229,7 @@ public class ThreedNumber {
 		textField.getTransforms().add(move);
 		// textField.getTransforms().add(resizeHandleLocation);
 		textField.getTransforms().add(workplaneOffset);
+		textField.getTransforms().add(textOffset);
 		textField.getTransforms().add(location);
 		textField.getTransforms().add(lineOffset);
 		textField.getTransforms().add(cameraOrient);
@@ -312,17 +314,18 @@ public class ThreedNumber {
 		mesh.setVisible(true);
 	}
 
-	public void threeDTarget(double w, double h, double zo, TransformNR pp, TransformNR c, double cameraFovDegrees) {
+	public void threeDTarget(double w, double h, double zo, TransformNR pp, TransformNR c, TransformNR textOff,
+			double cameraFovDegrees) {
 		this.screenW = w;
 		this.screenH = h;
 		this.zoom = zo;
 		this.positionPin = pp;
-		this.cf = c;
+		this.cameraFrame = c;
 		if (c == null)
 			return;
 		TransformNR wpnr = TransformFactory.affineToNr(workplaneOffset);
 		TransformNR abs = wpnr.times(pp);
-		TransformNR camAbs = cf;//cf.times(wpnr);
+		TransformNR camAbs = cameraFrame;//cf.times(wpnr);
 		// Vector from camera to label
 		double dx = abs.getX() - camAbs.getX();
 		double dy = abs.getY() - camAbs.getY();
@@ -359,7 +362,7 @@ public class ThreedNumber {
 		//			com.neuronrobotics.sdk.common.Log.debug("depth=" + depth + " scale=" + scaleFactor+" My:"+abs.toSimpleString()+" Cam:"+camAbs.toSimpleString());
 
 		setScale(scaleFactor);
-		TransformNR pureRot = new TransformNR(cf.getRotation());
+		TransformNR pureRot = new TransformNR(cameraFrame.getRotation());
 		TransformNR wp = new TransformNR(wpnr.getRotation());
 		TransformNR pr = wp.inverse().times(pureRot);
 
@@ -374,6 +377,7 @@ public class ThreedNumber {
 			scaleTF.setZ(getScale());
 			TransformFactory.nrToAffine(pr, cameraOrient);
 			TransformFactory.nrToAffine(positionPin.setRotation(new RotationNR()), location);
+			TransformFactory.nrToAffine(textOff, textOffset);
 		});
 		if (vector3d != null)
 			BowlerStudio.runLater(() -> {

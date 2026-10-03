@@ -130,7 +130,7 @@ public class AlignHandle {
 			operation.z = self;
 	}
 
-	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf) {
+	public void threeDTarget(double screenW, double screenH, double zoom, Bounds b, TransformNR cf, double zoomScale) {
 
 		double X = 0;
 		double Y = 0;
@@ -233,7 +233,7 @@ public class AlignHandle {
 		double scaleFactor = ((distance / baseDistance) * baseScale);
 
 		// Clamp the scale factor to a reasonable range
-		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor));
+		scaleFactor = Math.max(0.001, Math.min(90.0, scaleFactor)) * zoomScale;
 
 		setScale(scaleFactor);
 

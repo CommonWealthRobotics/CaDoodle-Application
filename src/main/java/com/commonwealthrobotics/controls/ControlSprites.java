@@ -107,6 +107,7 @@ public class ControlSprites {
 	private double objectHeight = 0;
 	private double cameraFovDegrees;
 	private Affine zMoveOffsetFootprint;
+	private double zoomScale;
 
 	public void setSnapGrid(double snapGridValue) {
 		zMoveManipulator.setIncrement(snapGridValue);
@@ -459,7 +460,8 @@ public class ControlSprites {
 		// TickToc.tic("cam up");
 		cf = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
 		// TickToc.tic("rot update");
-		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, inWorkplaneBounds);
+		updateOperationsManagers(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, inWorkplaneBounds,
+				1.0 / engine.getFlyingCamera().getZoomScale());
 		updateLinesAndCubes();
 
 		if (session.isLocked() || session.isInOperationMode()) {
@@ -485,11 +487,14 @@ public class ControlSprites {
 	}
 
 	private void updateOperationsManagers(double screenW, double screenH, double zoom, double az, double el, double x,
-			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds) {
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov());
-		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf);
+			double y, double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
+			double zoomScale) {
+		this.zoomScale = zoomScale;
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, engine.getFov(),
+				zoomScale);
+		mirror.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, zoomScale);
 		// TickToc.tic("aligned update");
-		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds);
+		align.threeDTarget(screenW, screenH, zoom, b, cf, inWorkplaneBounds, zoomScale);
 	}
 
 	public void initializeAlign(List<CSG> toAlign, List<String> boundNames, HashMap<CSG, MeshHolder> meshes,
@@ -592,12 +597,13 @@ public class ControlSprites {
 			// Draw Z-handle dotted line
 			heightLine.setPoints(center.x, center.y, min.z, center.x, center.y, max.z);
 			heightLine.setVisible(true);
+			double viewScale = scaleSession.getViewScale();
 
 			// Distance between handle and label
-			double numberOffset = -zoom / 50;
-
+			double numberOffset = -zoom / 50 * zoomScale / 1.5;
+			// Log.debug("View scale " + numberOffset + " " + viewScale);
 			// Get view scale of 3D shapes (arrow/cone/dotted line)
-			double viewScale = scaleSession.getViewScale();
+
 
 			// Scale factor for Z-handle arrow
 			double arrowScale = viewScale;
@@ -626,20 +632,25 @@ public class ControlSprites {
 			TransformFactory.nrToAffine(zHandleLoc, moveUpLocation);
 
 			// Position value labels
-			xdimen.threeDTarget(
-					screenW, screenH, zoom, new TransformNR(center.x,
-							scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset, linesZ),
-					cf, cameraFovDegrees);
+			TransformNR textOffset = new TransformNR(0, 0, 0);
+			double offset = numberOffset * 3.5;
+			xdimen.threeDTarget(screenW, screenH, zoom,
+					new TransformNR(center.x, scaleSession.leftSelected() ? max.y + numberOffset : min.y - numberOffset,
+							linesZ),
+					cf, scaleSession.leftSelected() ? new TransformNR(0, offset, 0) : new TransformNR(0, -offset, 0),
+					cameraFovDegrees);
 
 			ydimen.threeDTarget(screenW, screenH, zoom,
 					new TransformNR(scaleSession.frontSelected() ? max.x + numberOffset : min.x - numberOffset,
 							center.y, linesZ),
-					cf, cameraFovDegrees);
+					cf, scaleSession.frontSelected() ? new TransformNR(offset, 0, 0) : new TransformNR(-offset, 0, 0),
+					cameraFovDegrees);
 
 			zdimen.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf, cameraFovDegrees);
+					new TransformNR(center.x, center.y, (max.z - min.z) / 2 + min.z), cf, textOffset, cameraFovDegrees);
 			zOffset.threeDTarget(screenW, screenH, zoom,
-					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, cameraFovDegrees);
+					new TransformNR(center.x, center.y, (min.z / 2) + zOffset.getMyOffset() / 2), cf, textOffset,
+					cameraFovDegrees);
 			zOffset.setValue(min.z + zMoveManipulator.getCurrentPose().getZ());
 
 			xdimen.setValue(bounds.getTotalX());
@@ -652,9 +663,11 @@ public class ControlSprites {
 					min.y + pose.getY(), linesZ);
 			TransformNR yOffsetPose = new TransformNR(min.x + pose.getX(),
 					(min.y + yOffset.getMyOffset() + pose.getY()) / 2, linesZ);
-			xOffset.threeDTarget(screenW, screenH, zoom, xOffsetPose, cf, cameraFovDegrees);
+			xOffset.threeDTarget(screenW, screenH, zoom, xOffsetPose, cf, new TransformNR(-offset, 0, 0),
+					cameraFovDegrees);
 
-			yOffset.threeDTarget(screenW, screenH, zoom, yOffsetPose, cf, cameraFovDegrees);
+			yOffset.threeDTarget(screenW, screenH, zoom, yOffsetPose, cf, new TransformNR(0, -offset, 0),
+					cameraFovDegrees);
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
@@ -754,7 +767,8 @@ public class ControlSprites {
 		selectionLive = false;
 		resetSelected();
 		try {
-			currentOp = ap.get().getCurrentOperation();
+			if (ap.isOpen())
+				currentOp = ap.get().getCurrentOperation();
 		} catch (RuntimeException ex) {
 			// ignore during loading before the AP initialized
 		}
@@ -778,6 +792,7 @@ public class ControlSprites {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
+			session.hideHalos();
 			switch (this.mode) {
 
 				case Default :
@@ -792,6 +807,8 @@ public class ControlSprites {
 						yOffset.show();
 						zOffset.show();
 					}
+
+					session.showHalos();
 					return;
 
 				case MoveXY :
@@ -802,7 +819,6 @@ public class ControlSprites {
 						xOffset.show();
 						yOffset.show();
 					}
-					session.hideHalos();
 					break;
 
 				case MoveZ :
@@ -812,7 +828,6 @@ public class ControlSprites {
 					upArrow.show();
 					footprint.setVisible(true);
 					zOffset.show();
-					session.hideHalos();
 					break;
 
 				case Resize :
@@ -822,10 +837,8 @@ public class ControlSprites {
 					align.hide();
 					mirror.hide();
 					scaleSession.show();
-					session.hideHalos();
 					break;
 				case Rotating :
-					session.hideHalos();
 					break;
 				case Align :
 					for (DottedLine l : lines)
@@ -844,7 +857,6 @@ public class ControlSprites {
 							l.setVisible(true);
 						scaleSession.show();
 					}
-					session.hideHalos();
 					break;
 				case Clear :
 					runClear();
@@ -856,7 +868,7 @@ public class ControlSprites {
 		});
 	}
 
-	private void runClear() {
+	public void runClear() {
 		for (ThreedNumber t : numbers)
 			t.hide();
 
