@@ -102,7 +102,7 @@ public class RotationHandle {
 		controlCircle.setImage(fullcircleImage);
 		controlCircle.setVisible(false);
 
-		imageSet.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
+		handle.addEventFilter(MouseEvent.MOUSE_ENTERED, ev -> {
 			if (!moveLock)
 				controlCircle.setVisible(true);
 
