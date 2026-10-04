@@ -41,7 +41,7 @@ public class MoveUpArrow {
 		meshview = cylinder.getMesh();
 		meshview.setVisible(false);
 		// Keep up arrow in front of other objects
-		//meshview.setViewOrder(-10);
+		meshview.setViewOrder(-5);
 		meshview.getTransforms().add(selection);
 		meshview.getTransforms().add(workplaneOffset);
 		meshview.getTransforms().add(moveUpLocation);

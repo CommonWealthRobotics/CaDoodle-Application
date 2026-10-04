@@ -110,11 +110,13 @@ public class RotationHandle {
 			com.neuronrobotics.sdk.common.Log.info("Entered " + axis);
 		});
 
-		imageSet.addEventFilter(MouseEvent.MOUSE_EXITED, ev -> {
+		EventHandler<? super MouseEvent> eventFilter = ev -> {
 			handle.setImage(rotateImage);
 			if (!rotationStarted)
 				controlCircle.setVisible(false);
-		});
+		};
+		handle.addEventFilter(MouseEvent.MOUSE_EXITED, eventFilter);
+		imageSet.addEventFilter(MouseEvent.MOUSE_EXITED, eventFilter);
 
 		EventHandler<? super MouseEvent> pressedEvent = ev -> {
 			selected = true;
