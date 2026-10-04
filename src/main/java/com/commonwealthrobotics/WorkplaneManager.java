@@ -8,6 +8,7 @@ import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine.GridHolder;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
@@ -488,7 +489,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			session.submit(() -> {
 				if (this.isClicked()) {
 
-					if (this.isClickOnGround() || !isWorkplaneNotOrigin(this.getCurrentAbsolutePose())) {
+					if (this.isClickOnGround() || !CaDoodleFile.isWorkplaneNotOrigin(this.getCurrentAbsolutePose())) {
 						com.neuronrobotics.sdk.common.Log
 								.debug("Ground plane click detected " + this.getCurrentAbsolutePose() + " \nground= "
 										+ this.isClickOnGround() + "\nisNotOrigin=" + isWorkplaneNotOrigin());
@@ -538,24 +539,10 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		if (!ap.isOpen())
 			return false;
 		TransformNR w = ap.get().getWorkplane();
-		return isWorkplaneNotOrigin(w);
+		return CaDoodleFile.isWorkplaneNotOrigin(w);
 	}
 
-	public static boolean isWorkplaneNotOrigin(TransformNR w) {
 
-		double epsilon = 0.1;
-		RotationNR r = w.getRotation();
-		if ((Math.abs(w.getZ()) > epsilon))
-			return true;
-
-		double abs2 = Math.abs(r.getRotationElevationDegrees());
-		double abs3 = Math.abs(r.getRotationTiltDegrees());
-
-		boolean b = (abs2 > epsilon) || (abs3 > epsilon);
-		if (b)
-			return true;
-		return false;
-	}
 
 	public void setTemporaryPlane() {
 		tempory = true;
