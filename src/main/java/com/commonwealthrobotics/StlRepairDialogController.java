@@ -223,7 +223,7 @@ public class StlRepairDialogController implements Initializable {
 		}
 		SplashManager.setClosePreventer(cp);
 		SplashManager.setOpenPreventer(op);
-		if(open) {
+		if (open) {
 			SplashManager.renderSplashFrame(100, "STL Repair Attempt completed");
 		}
 		return result.get();
