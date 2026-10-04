@@ -235,7 +235,7 @@ public class ThreedNumber {
 		textField.getTransforms().add(cameraOrient);
 		textField.getTransforms().add(scaleTF);
 		textField.getTransforms().add(reOrient);
-
+		textField.setViewOrder(-10);
 	} // Constructor
 
 	public void getSystemDecimalSeparator() {
