@@ -156,6 +156,8 @@ public class StlRepairDialogController implements Initializable {
 		AtomicBoolean result = new AtomicBoolean(false);
 		CountDownLatch latch = new CountDownLatch(1);
 		BooleanSupplier cp = SplashManager.getClosePreventer();
+		BooleanSupplier op = SplashManager.getOpenPreventer();
+		boolean open = SplashManager.isVisibleSplash();
 		SplashManager.setClosePreventer(new BooleanSupplier() {
 			@Override
 			public boolean getAsBoolean() {
@@ -163,13 +165,19 @@ public class StlRepairDialogController implements Initializable {
 				return false;
 			}
 		});
+		SplashManager.setOpenPreventer(new BooleanSupplier() {
+			@Override
+			public boolean getAsBoolean() {
+				return true;
+			}
+		});
+		SplashManager.closeSplash();
 		try {
 			Thread.sleep(300);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		SplashManager.closeSplash();
 		BowlerStudio.runLater(() -> {
 			try {
 				// Resolve the ResourceBundle the same way FXMLLoader does
@@ -214,6 +222,10 @@ public class StlRepairDialogController implements Initializable {
 			Thread.currentThread().interrupt();
 		}
 		SplashManager.setClosePreventer(cp);
+		SplashManager.setOpenPreventer(op);
+		if(open) {
+			SplashManager.renderSplashFrame(100, "STL Repair Attempt completed");
+		}
 		return result.get();
 	}
 
