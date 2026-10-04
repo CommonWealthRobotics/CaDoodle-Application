@@ -161,7 +161,6 @@ public class StlRepairDialogController implements Initializable {
 		SplashManager.setClosePreventer(new BooleanSupplier() {
 			@Override
 			public boolean getAsBoolean() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
