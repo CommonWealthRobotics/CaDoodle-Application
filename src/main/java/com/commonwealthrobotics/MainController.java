@@ -728,7 +728,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			TransformNR scale = session.getFocusCenter();
 			TransformNR orient = scale.times(new TransformNR(new RotationNR(0, 0, -90)));
 			Log.debug("WOrkplane interacetion " + orient.toSimpleString());
-			if (session.getSelected().size() == 0 && WorkplaneManager.isWorkplaneNotOrigin(ap.get().getWorkplane())) {
+			if (session.getSelected().size() == 0 && CaDoodleFile.isWorkplaneNotOrigin(ap.get().getWorkplane())) {
 				scale = ap.get().getWorkplane();
 				orient = ap.get().getWorkplane().times(new TransformNR(new RotationNR(0, 0, -90)));
 			}
@@ -2038,7 +2038,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@Override
 	public void onWorkplaneChange(TransformNR newWP) {
 		ruler.setWP(newWP);
-		if (WorkplaneManager.isWorkplaneNotOrigin(newWP)) {
+		if (CaDoodleFile.isWorkplaneNotOrigin(newWP)) {
 			engine.hideGridLines();
 		} else
 			engine.showGridLines();
