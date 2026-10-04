@@ -11,7 +11,6 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.CaDoodleFile;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine.GridHolder;
-import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
@@ -541,7 +540,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		TransformNR w = ap.get().getWorkplane();
 		return CaDoodleFile.isWorkplaneNotOrigin(w);
 	}
-
 
 
 	public void setTemporaryPlane() {
