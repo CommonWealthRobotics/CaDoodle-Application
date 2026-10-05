@@ -1557,7 +1557,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
-			para.setStrValue(tf.getText());
+			String text2 = tf.getText();
+			if(text2.length()>0)
+				para.setStrValue(text2);
+			else {
+				tf.setText(para.getStrValue());
+			}
 			BowlerStudio.runLater(() -> setKeyBindingFocus());
 		});
 
