@@ -16,6 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static com.neuronrobotics.bowlerstudio.scripting.DownloadManager.*;
 
@@ -163,6 +164,7 @@ public class Main extends Application {
 		return screenRefreshRate;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// Set WM_CLASS for GNOME to recognize the app
 		if (System.getProperty("os.name").toLowerCase().contains("linux")) {
@@ -365,6 +367,26 @@ public class Main extends Application {
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleAdvancedManifold", "" + false).toString();
 			ConfigurationDatabase.save();
 		}
+		List<CSG> hand;
+		try {
+			hand = (List<CSG>) ScriptingEngine.gitScriptRun(CSGDatabase.getInstance(),
+					"https://github.com/CommonWealthRobotics/CaDoodle-Example-Objects.git",
+					"doodles/PointerHand/PointerHand.doodle", null);
+			CSG toSHow = null;
+			for (CSG c : hand) {
+				if (c.isInGroup())
+					continue;
+				toSHow = c;
+				break;
+			}
+			if (toSHow != null) {
+				toSHow = toSHow.scale(0.125).toZMax().roty(-90).rotz(45);
+			}
+			MainController.hand = toSHow;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 			launch();
 		} catch (Exception ex) {
@@ -378,7 +400,13 @@ public class Main extends Application {
 		String version = StudioBuildInfo.getVersion();
 		String lastVersion = ConfigurationDatabase.get("CaDoodle", "CurrentVersion", version).toString();
 
-		boolean commitSet = (!version.contentEquals("source")) && (!version.contentEquals(lastVersion));
+		boolean cs = false;
+		if (!version.contentEquals("source")) {
+			if (!version.contentEquals(lastVersion)) {
+				cs = true;
+			}
+		}
+		boolean commitSet = cs;
 		ConfigurationDatabase.put("CaDoodle", "CurrentVersion", version);
 
 		for (String domain : tmpCache.list()) {
