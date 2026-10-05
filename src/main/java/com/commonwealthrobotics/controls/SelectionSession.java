@@ -63,6 +63,8 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.Polygon;
+import eu.mihosoft.vrl.v3d.Vertex;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -137,7 +139,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
+	private javafx.animation.PauseTransition edgeRebuildTimer;
 	private javafx.animation.PauseTransition edgeWidthUpdateTimer;
+	private final java.util.Map<CSG, java.util.List<BatchedFeatureEdgeInfo>> featureEdgeCache = new java.util.HashMap<>();
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -232,6 +236,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
 		this.engine = e;
 		engine.addListener(camera -> requestFeatureEdgeWidthUpdate());
+
 
 		this.ruler = ruler;
 		workplane = new WorkplaneManager(ap, engine, this);
@@ -733,60 +738,144 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return ka.compareTo(kb) <= 0 ? ka + "|" + kb : kb + "|" + ka;
 	}
 
-	private javafx.scene.Group createFeatureEdgeGroup(CSG c) {
-		javafx.scene.Group group = new javafx.scene.Group();
-		group.setMouseTransparent(true);
-		group.setDepthTest(DepthTest.ENABLE);
+	private static class BatchedFeatureEdgeInfo {
+		private final Vertex a;
+		private final Vertex b;
+		private final java.util.List<Vector3d> normals = new java.util.ArrayList<>();
 
-		if (!com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getBoolean("edges.enabled", true))
-			return group;
+		private BatchedFeatureEdgeInfo(Vertex a, Vertex b) {
+			this.a = a;
+			this.b = b;
+		}
+	}
 
-		HashMap<String, FeatureEdgeInfo> edgeMap = new HashMap<>();
+	private static String batchedFeatureEdgePointKey(Vertex v) {
+		final double scale = 100000.0;
 
-		for (eu.mihosoft.vrl.v3d.Polygon polygon : c.getPolygons()) {
-			List<eu.mihosoft.vrl.v3d.Vertex> vertices = polygon.getVertices();
-			if (vertices.size() < 2)
+		long x = Math.round(v.pos.x * scale);
+		long y = Math.round(v.pos.y * scale);
+		long z = Math.round(v.pos.z * scale);
+
+		return x + "," + y + "," + z;
+	}
+
+	private static String batchedFeatureEdgeKey(Vertex a, Vertex b) {
+		String ka = batchedFeatureEdgePointKey(a);
+		String kb = batchedFeatureEdgePointKey(b);
+
+		return ka.compareTo(kb) <= 0 ? ka + "|" + kb : kb + "|" + ka;
+	}
+
+	private static void addFeatureEdgeMeshPoint(java.util.List<Float> points, javafx.geometry.Point3D p) {
+		points.add((float) p.getX());
+		points.add((float) p.getY());
+		points.add((float) p.getZ());
+	}
+
+	private static void addFeatureEdgeMeshFace(java.util.List<Integer> faces, int a, int b, int c) {
+		faces.add(a);
+		faces.add(0);
+		faces.add(b);
+		faces.add(0);
+		faces.add(c);
+		faces.add(0);
+	}
+
+	private static void addFeatureEdgePrism(java.util.List<Float> points, java.util.List<Integer> faces, Vertex va,
+			Vertex vb, double radius) {
+
+		javafx.geometry.Point3D a = new javafx.geometry.Point3D(va.pos.x, va.pos.y, va.pos.z);
+		javafx.geometry.Point3D b = new javafx.geometry.Point3D(vb.pos.x, vb.pos.y, vb.pos.z);
+
+		javafx.geometry.Point3D direction = b.subtract(a);
+		if (direction.magnitude() < 1e-9)
+			return;
+
+		direction = direction.normalize();
+
+		// Pick an axis that is not parallel to the edge.
+		javafx.geometry.Point3D reference = Math.abs(direction.getY()) < 0.9
+				? new javafx.geometry.Point3D(0, 1, 0)
+				: new javafx.geometry.Point3D(1, 0, 0);
+
+		javafx.geometry.Point3D u = direction.crossProduct(reference).normalize().multiply(radius);
+		javafx.geometry.Point3D v = direction.crossProduct(u).normalize().multiply(radius);
+
+		javafx.geometry.Point3D[] ringA = new javafx.geometry.Point3D[]{a.add(u).add(v), a.add(u).subtract(v),
+				a.subtract(u).subtract(v), a.subtract(u).add(v)};
+
+		javafx.geometry.Point3D[] ringB = new javafx.geometry.Point3D[]{b.add(u).add(v), b.add(u).subtract(v),
+				b.subtract(u).subtract(v), b.subtract(u).add(v)};
+
+		int base = points.size() / 3;
+
+		for (javafx.geometry.Point3D p : ringA)
+			addFeatureEdgeMeshPoint(points, p);
+
+		for (javafx.geometry.Point3D p : ringB)
+			addFeatureEdgeMeshPoint(points, p);
+
+		// Four sides.
+		for (int i = 0; i < 4; i++) {
+			int j = (i + 1) % 4;
+
+			addFeatureEdgeMeshFace(faces, base + i, base + j, base + 4 + j);
+			addFeatureEdgeMeshFace(faces, base + i, base + 4 + j, base + 4 + i);
+		}
+
+		// End caps.
+		addFeatureEdgeMeshFace(faces, base, base + 2, base + 1);
+		addFeatureEdgeMeshFace(faces, base, base + 3, base + 2);
+
+		addFeatureEdgeMeshFace(faces, base + 4, base + 5, base + 6);
+		addFeatureEdgeMeshFace(faces, base + 4, base + 6, base + 7);
+	}
+
+	private java.util.List<BatchedFeatureEdgeInfo> collectFeatureEdges(CSG c) {
+		java.util.Map<String, BatchedFeatureEdgeInfo> edgeMap = new java.util.LinkedHashMap<>();
+
+		for (Polygon polygon : c.getPolygons()) {
+			java.util.List<Vertex> vertices = polygon.getVertices();
+
+			if (vertices == null || vertices.size() < 2)
 				continue;
 
 			Vector3d normal = polygon.getPlane().getNormal().normalized();
 
 			for (int i = 0; i < vertices.size(); i++) {
-				eu.mihosoft.vrl.v3d.Vertex a = vertices.get(i);
-				eu.mihosoft.vrl.v3d.Vertex b = vertices.get((i + 1) % vertices.size());
+				Vertex a = vertices.get(i);
+				Vertex b = vertices.get((i + 1) % vertices.size());
 
-				String key = featureEdgeKey(a, b);
-				FeatureEdgeInfo edge = edgeMap.get(key);
+				String key = batchedFeatureEdgeKey(a, b);
 
-				if (edge == null) {
-					edge = new FeatureEdgeInfo(a, b);
-					edgeMap.put(key, edge);
+				BatchedFeatureEdgeInfo info = edgeMap.get(key);
+
+				if (info == null) {
+					info = new BatchedFeatureEdgeInfo(a, b);
+					edgeMap.put(key, info);
 				}
 
-				edge.normals.add(normal);
+				info.normals.add(normal);
 			}
 		}
 
 		double angleDegrees = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.angleDegrees",
 				35.0);
+
 		angleDegrees = Math.max(0.0, Math.min(90.0, angleDegrees));
+
 		double cosThreshold = Math.cos(Math.toRadians(angleDegrees));
 
-		double radius = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.radius", 0.15);
-		radius = Math.max(0.001, radius);
+		java.util.List<BatchedFeatureEdgeInfo> visibleEdges = new java.util.ArrayList<>();
 
-		double brightness = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.brightness", 0.04);
-		brightness = Math.max(0.0, Math.min(1.0, brightness));
-
-		PhongMaterial edgeMaterial = new PhongMaterial(Color.color(brightness, brightness, brightness));
-		edgeMaterial.setSpecularColor(Color.BLACK);
-
-		for (FeatureEdgeInfo edge : edgeMap.values()) {
+		for (BatchedFeatureEdgeInfo edge : edgeMap.values()) {
 			boolean draw = edge.normals.size() == 1;
 
 			if (!draw) {
 				for (int i = 0; i < edge.normals.size() && !draw; i++) {
 					for (int j = i + 1; j < edge.normals.size(); j++) {
 						double dot = Math.abs(edge.normals.get(i).dot(edge.normals.get(j)));
+
 						if (dot < cosThreshold) {
 							draw = true;
 							break;
@@ -795,91 +884,209 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 			}
 
-			if (!draw)
-				continue;
-
-			javafx.geometry.Point3D a = new javafx.geometry.Point3D(edge.a.getX(), edge.a.getY(), edge.a.getZ());
-			javafx.geometry.Point3D b = new javafx.geometry.Point3D(edge.b.getX(), edge.b.getY(), edge.b.getZ());
-			javafx.geometry.Point3D delta = b.subtract(a);
-			double length = delta.magnitude();
-
-			if (length <= 1e-8)
-				continue;
-
-			javafx.geometry.Point3D direction = delta.normalize();
-			javafx.geometry.Point3D midpoint = a.midpoint(b);
-			javafx.geometry.Point3D yAxis = new javafx.geometry.Point3D(0, 1, 0);
-
-			double dot = Math.max(-1.0, Math.min(1.0, yAxis.dotProduct(direction)));
-			double angle = Math.toDegrees(Math.acos(dot));
-			javafx.geometry.Point3D rotationAxis = yAxis.crossProduct(direction);
-
-			javafx.scene.shape.Cylinder line = new javafx.scene.shape.Cylinder(radius, length, 6);
-			line.setMaterial(edgeMaterial);
-			line.setMouseTransparent(true);
-			line.setDepthTest(DepthTest.ENABLE);
-			line.setTranslateX(midpoint.getX());
-			line.setTranslateY(midpoint.getY());
-			line.setTranslateZ(midpoint.getZ());
-
-			if (rotationAxis.magnitude() > 1e-8) {
-				line.getTransforms().add(new javafx.scene.transform.Rotate(angle, rotationAxis));
-			} else if (dot < 0) {
-				line.getTransforms().add(new javafx.scene.transform.Rotate(180, javafx.scene.transform.Rotate.X_AXIS));
-			}
-
-			group.getChildren().add(line);
+			if (draw)
+				visibleEdges.add(edge);
 		}
+
+		return visibleEdges;
+	}
+
+	private javafx.scene.Group buildFeatureEdgeGroup(java.util.List<BatchedFeatureEdgeInfo> visibleEdges) {
+
+		javafx.scene.Group group = new javafx.scene.Group();
+		group.setMouseTransparent(true);
+		group.setDepthTest(javafx.scene.DepthTest.ENABLE);
+
+		if (!com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getBoolean("edges.enabled", true))
+			return group;
+
+		if (visibleEdges == null || visibleEdges.isEmpty())
+			return group;
+
+		double cx = 0;
+		double cy = 0;
+		double cz = 0;
+		int count = 0;
+
+		for (BatchedFeatureEdgeInfo edge : visibleEdges) {
+			cx += edge.a.pos.x + edge.b.pos.x;
+			cy += edge.a.pos.y + edge.b.pos.y;
+			cz += edge.a.pos.z + edge.b.pos.z;
+			count += 2;
+		}
+
+		javafx.geometry.Point3D center = new javafx.geometry.Point3D(cx / count, cy / count, cz / count);
+
+		String widthMode = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getString("edges.widthMode",
+				"screen");
+
+		double radius;
+
+		if ("screen".equalsIgnoreCase(widthMode)) {
+			double widthPx = Math.max(0.1,
+					com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.widthPx", 1.6));
+
+			double mmPerPixel = engine.screenToSceneMMscale(center);
+
+			radius = Math.max(0.0001, mmPerPixel * widthPx * 0.5);
+		} else {
+			radius = Math.max(0.001,
+					com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.radius", 0.15));
+		}
+
+		java.util.List<Float> points = new java.util.ArrayList<>();
+		java.util.List<Integer> faces = new java.util.ArrayList<>();
+
+		for (BatchedFeatureEdgeInfo edge : visibleEdges)
+			addFeatureEdgePrism(points, faces, edge.a, edge.b, radius);
+
+		if (points.isEmpty())
+			return group;
+
+		javafx.scene.shape.TriangleMesh mesh = new javafx.scene.shape.TriangleMesh();
+
+		float[] pointArray = new float[points.size()];
+		for (int i = 0; i < points.size(); i++)
+			pointArray[i] = points.get(i);
+
+		int[] faceArray = new int[faces.size()];
+		for (int i = 0; i < faces.size(); i++)
+			faceArray[i] = faces.get(i);
+
+		mesh.getPoints().setAll(pointArray);
+		mesh.getTexCoords().setAll(0f, 0f);
+		mesh.getFaces().setAll(faceArray);
+
+		double brightness = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig
+				.clamp01(com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.brightness", 0.0));
+
+		javafx.scene.paint.Color edgeColor = javafx.scene.paint.Color.color(brightness, brightness, brightness);
+
+		javafx.scene.paint.PhongMaterial material = new javafx.scene.paint.PhongMaterial(edgeColor);
+
+		material.setSpecularColor(javafx.scene.paint.Color.BLACK);
+
+		javafx.scene.shape.MeshView view = new javafx.scene.shape.MeshView(mesh);
+
+		view.setMaterial(material);
+		view.setCullFace(javafx.scene.shape.CullFace.NONE);
+		view.setMouseTransparent(true);
+		view.setDepthTest(javafx.scene.DepthTest.ENABLE);
+
+		group.getChildren().add(view);
 
 		return group;
 	}
 
+	private javafx.scene.Group createFeatureEdgeGroup(CSG c) {
+		java.util.List<BatchedFeatureEdgeInfo> visibleEdges = collectFeatureEdges(c);
 
-	private void requestFeatureEdgeWidthUpdate() {
+		featureEdgeCache.put(c, visibleEdges);
+
+		return buildFeatureEdgeGroup(visibleEdges);
+	}
+
+
+	private void requestFeatureEdgeRebuild(boolean sceneChanged) {
+		if (!sceneChanged)
+			return;
+
+		if (!com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
 		BowlerStudio.runLater(() -> {
-			if (edgeWidthUpdateTimer == null) {
-				double delayMs = Math.max(0.0, com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig
-						.getDouble("edges.updateDelayMs", 120.0));
+			double delayMs = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig
+					.getDouble("edges.sceneSettleDelayMs", 500.0);
 
-				edgeWidthUpdateTimer = new javafx.animation.PauseTransition(javafx.util.Duration.millis(delayMs));
-
-				edgeWidthUpdateTimer.setOnFinished(event -> {
-					for (MeshHolder holder : getMeshes().values())
-						updateFeatureEdgeWidths(holder.edges);
-				});
+			if (edgeRebuildTimer == null) {
+				edgeRebuildTimer = new javafx.animation.PauseTransition();
+				edgeRebuildTimer.setOnFinished(event -> rebuildFeatureEdges());
 			}
 
+			edgeRebuildTimer.setDuration(javafx.util.Duration.millis(Math.max(0.0, delayMs)));
+			edgeRebuildTimer.playFromStart();
+		});
+	}
+
+
+	private void requestFeatureEdgeWidthUpdate() {
+		if (!com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		if (featureEdgeCache.isEmpty())
+			return;
+
+		BowlerStudio.runLater(() -> {
+			double delayMs = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig
+					.getDouble("edges.cameraSettleDelayMs", 120.0);
+
+			if (edgeWidthUpdateTimer == null) {
+				edgeWidthUpdateTimer = new javafx.animation.PauseTransition();
+				edgeWidthUpdateTimer.setOnFinished(event -> refreshFeatureEdgeWidths());
+			}
+
+			edgeWidthUpdateTimer.setDuration(javafx.util.Duration.millis(Math.max(0.0, delayMs)));
 			edgeWidthUpdateTimer.playFromStart();
 		});
 	}
 
-	private void updateFeatureEdgeWidths(javafx.scene.Group group) {
-		String mode = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getString("edges.widthMode", "screen");
+	private void rebuildFeatureEdges() {
+		if (!com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getBoolean("edges.enabled", true)) {
+			featureEdgeCache.clear();
 
-		if (!"screen".equalsIgnoreCase(mode))
+			for (MeshHolder holder : getMeshes().values()) {
+				if (holder.edges != null)
+					holder.edges.getChildren().clear();
+			}
 			return;
+		}
 
-		double widthPx = Math.max(0.1,
-				com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.widthPx", 1.2));
+		java.util.List<java.util.Map.Entry<CSG, MeshHolder>> current = new java.util.ArrayList<>(
+				getMeshes().entrySet());
 
-		if (group.getChildren().isEmpty())
-			return;
+		featureEdgeCache.clear();
 
-		javafx.geometry.Bounds bounds = group.localToScene(group.getBoundsInLocal());
-		javafx.geometry.Point3D center = new javafx.geometry.Point3D((bounds.getMinX() + bounds.getMaxX()) * 0.5,
-				(bounds.getMinY() + bounds.getMaxY()) * 0.5, (bounds.getMinZ() + bounds.getMaxZ()) * 0.5);
+		for (java.util.Map.Entry<CSG, MeshHolder> entry : current) {
+			CSG csg = entry.getKey();
+			MeshHolder holder = entry.getValue();
 
-		double mmPerPixel = engine.screenToSceneMMscale(center);
+			if (holder.edges == null)
+				continue;
 
-		// One screen-space scale per object is visually sufficient and avoids
-		// repeating the camera projection calculation for every feature edge.
-		double radius = Math.max(0.0001, mmPerPixel * widthPx * 0.5);
+			java.util.List<BatchedFeatureEdgeInfo> visibleEdges = collectFeatureEdges(csg);
 
-		for (Node node : group.getChildren()) {
-			if (node instanceof javafx.scene.shape.Cylinder)
-				((javafx.scene.shape.Cylinder) node).setRadius(radius);
+			featureEdgeCache.put(csg, visibleEdges);
+
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+
+			holder.edges.getChildren().setAll(rebuilt.getChildren());
 		}
 	}
+
+	private void refreshFeatureEdgeWidths() {
+		if (!com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		java.util.List<java.util.Map.Entry<CSG, MeshHolder>> current = new java.util.ArrayList<>(
+				getMeshes().entrySet());
+
+		for (java.util.Map.Entry<CSG, MeshHolder> entry : current) {
+			MeshHolder holder = entry.getValue();
+
+			if (holder.edges == null)
+				continue;
+
+			java.util.List<BatchedFeatureEdgeInfo> visibleEdges = featureEdgeCache.get(entry.getKey());
+
+			if (visibleEdges == null)
+				continue;
+
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+
+			holder.edges.getChildren().setAll(rebuilt.getChildren());
+		}
+	}
+
 
 	private void displayCSG(CSG c, MeshHolder holder) {
 
@@ -887,7 +1094,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		MeshView halo = holder.halo;
 		Bounds b = holder.bouds;
 
-		javafx.scene.Group edges = createFeatureEdgeGroup(c);
+		javafx.scene.Group edges = new javafx.scene.Group();
+		edges.setMouseTransparent(true);
+		edges.setDepthTest(javafx.scene.DepthTest.ENABLE);
 		holder.edges = edges;
 		double haloDistance = 1;
 
@@ -951,7 +1160,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		engine.addUserNode(halo);
 		getMeshes().put(c, holder);
 
-		updateFeatureEdgeWidths(edges);
+		requestFeatureEdgeRebuild(true);
+
 
 		// Allow move on first click for unlocked meshes only
 		if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
