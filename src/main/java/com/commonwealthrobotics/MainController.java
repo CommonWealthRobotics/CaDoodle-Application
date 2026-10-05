@@ -1766,6 +1766,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				});
 				return;
 			}
+			if (session.workplane.isActive()) {
+				event.consume();
+				return;
+			}
+
 			if (ap.get().isOperationRunning())
 				return;
 			if ((event.getCode() == KeyCode.UP) || (event.getCode() == KeyCode.DOWN)
@@ -1794,6 +1799,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (session.isFocused()) {
 				return;
 			}
+			if (event.getCode() != KeyCode.ESCAPE) {
+				if (session.workplane.isActive()) {
+					event.consume();
+					return;
+				}
+			}
+
 			String character = event.getCharacter();
 			if (character.isEmpty())
 				return;

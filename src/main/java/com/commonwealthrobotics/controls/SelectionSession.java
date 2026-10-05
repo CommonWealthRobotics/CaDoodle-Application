@@ -2220,11 +2220,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					workplane.setOnSelectEvent(() -> {
 						controls.setMode(SpriteDisplayMode.Default);
 						for (CSG c : selectedCSG) {
-							MeshView meshView = getMeshes().get(c).display;
-
-							if (meshView != null)
-								BowlerKernel.runLater(() -> meshView.setVisible(true));
-
+							MeshHolder holder = getMeshes().get(c);
+							if (holder != null) {
+								MeshView meshView = holder.display;
+								if (meshView != null)
+									BowlerKernel.runLater(() -> meshView.setVisible(true));
+							}
 						}
 
 						if (workplane.isClicked()) {
