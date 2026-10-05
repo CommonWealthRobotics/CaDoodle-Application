@@ -96,6 +96,7 @@ import javafx.scene.control.TabPane;
 
 public class MainController implements ICaDoodleStateUpdate, ICameraChangeListener {
 	private static final int ZOOM = -700;
+	public static CSG hand;
 	// private CaDoodleFile cadoodle;
 	private boolean drawerOpen = true;
 	private SelectionSession session = null;
@@ -1141,7 +1142,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					engine.addObject(o, ap.get().getSelf());
 				}
 			});
-			engine.rebuild(true);
+
+
+			engine.rebuild(true, hand);
 			ap.setEngine(engine);
 			try {
 				setCameraPerspectiveMode(othographicMode);
@@ -1462,7 +1465,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	}
 
 	private void setUp3dEngine() {
-		engine.hideHand();
+
 		BowlerStudio.runLater(() -> {
 			engine.setFocusTraversable(false);
 			BowlerStudio.runLater(() -> {
