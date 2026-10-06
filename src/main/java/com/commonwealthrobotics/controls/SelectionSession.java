@@ -63,7 +63,6 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
-import eu.mihosoft.vrl.v3d.Polygon;
 import eu.mihosoft.vrl.v3d.Vertex;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
@@ -832,27 +831,85 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private java.util.List<BatchedFeatureEdgeInfo> collectFeatureEdges(CSG c) {
-		java.util.Map<String, BatchedFeatureEdgeInfo> edgeMap = new java.util.LinkedHashMap<>();
+		long[] triangles = c.getTriangles();
+		int triangleCount = (int) c.getTriCount();
 
-		for (Polygon polygon : c.getPolygons()) {
-			java.util.List<Vertex> vertices = polygon.getVertices();
+		java.util.List<BatchedFeatureEdgeInfo> visibleEdges = new java.util.ArrayList<>();
 
-			if (vertices == null || vertices.size() < 2)
+		if (triangles == null || triangleCount == 0)
+			return visibleEdges;
+
+		/*
+		 * Build adjacency directly from the CSG's indexed triangle mesh.
+		 *
+		 * This is deliberately NOT based on CSG polygon boundaries. Boolean/BSP
+		 * operations may split polygons in ways that do not represent actual
+		 * feature edges. The indexed triangle mesh already contains the
+		 * connectivity needed for standard dihedral-angle edge detection.
+		 */
+		java.util.Map<Long, BatchedFeatureEdgeInfo> edgeMap = new java.util.LinkedHashMap<>();
+
+		for (int triangle = 0; triangle < triangleCount; triangle++) {
+			int i0 = (int) triangles[triangle * 3];
+			int i1 = (int) triangles[triangle * 3 + 1];
+			int i2 = (int) triangles[triangle * 3 + 2];
+
+			double ax = c.getVertex_X(i0);
+			double ay = c.getVertex_Y(i0);
+			double az = c.getVertex_Z(i0);
+
+			double bx = c.getVertex_X(i1);
+			double by = c.getVertex_Y(i1);
+			double bz = c.getVertex_Z(i1);
+
+			double cx = c.getVertex_X(i2);
+			double cy = c.getVertex_Y(i2);
+			double cz = c.getVertex_Z(i2);
+
+			double ux = bx - ax;
+			double uy = by - ay;
+			double uz = bz - az;
+
+			double vx = cx - ax;
+			double vy = cy - ay;
+			double vz = cz - az;
+
+			double nx = uy * vz - uz * vy;
+			double ny = uz * vx - ux * vz;
+			double nz = ux * vy - uy * vx;
+
+			double length = Math.sqrt(nx * nx + ny * ny + nz * nz);
+
+			// Ignore degenerate triangles.
+			if (length < 1e-12)
 				continue;
 
-			Vector3d normal = polygon.getPlane().getNormal().normalized();
+			Vector3d normal = new Vector3d(nx / length, ny / length, nz / length);
 
-			for (int i = 0; i < vertices.size(); i++) {
-				Vertex a = vertices.get(i);
-				Vertex b = vertices.get((i + 1) % vertices.size());
+			int[] indices = {i0, i1, i2};
 
-				String key = batchedFeatureEdgeKey(a, b);
+			for (int edgeIndex = 0; edgeIndex < 3; edgeIndex++) {
+				int ia = indices[edgeIndex];
+				int ib = indices[(edgeIndex + 1) % 3];
 
-				BatchedFeatureEdgeInfo info = edgeMap.get(key);
+				int low = Math.min(ia, ib);
+				int high = Math.max(ia, ib);
+
+				/*
+				 * Pack two non-negative 32-bit vertex indices into one 64-bit key.
+				 * Reversing an edge therefore produces exactly the same key.
+				 */
+				long edgeKey = ((long) low << 32) | (high & 0xffffffffL);
+
+				BatchedFeatureEdgeInfo info = edgeMap.get(edgeKey);
 
 				if (info == null) {
+					Vertex a = new Vertex(new Vector3d(c.getVertex_X(low), c.getVertex_Y(low), c.getVertex_Z(low)));
+
+					Vertex b = new Vertex(new Vector3d(c.getVertex_X(high), c.getVertex_Y(high), c.getVertex_Z(high)));
+
 					info = new BatchedFeatureEdgeInfo(a, b);
-					edgeMap.put(key, info);
+					edgeMap.put(edgeKey, info);
 				}
 
 				info.normals.add(normal);
@@ -862,19 +919,28 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		double angleDegrees = com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig.getDouble("edges.angleDegrees",
 				35.0);
 
-		angleDegrees = Math.max(0.0, Math.min(90.0, angleDegrees));
+		angleDegrees = Math.max(0.0, Math.min(180.0, angleDegrees));
 
 		double cosThreshold = Math.cos(Math.toRadians(angleDegrees));
-
-		java.util.List<BatchedFeatureEdgeInfo> visibleEdges = new java.util.ArrayList<>();
 
 		for (BatchedFeatureEdgeInfo edge : edgeMap.values()) {
 			boolean draw = edge.normals.size() == 1;
 
+			/*
+			 * Standard feature-edge test.
+			 *
+			 * A triangulation diagonal on one planar surface has two equal face
+			 * normals, giving dot ~= 1, so it is rejected automatically.
+			 *
+			 * A real crease whose dihedral angle exceeds the configured threshold
+			 * is retained.
+			 */
 			if (!draw) {
 				for (int i = 0; i < edge.normals.size() && !draw; i++) {
 					for (int j = i + 1; j < edge.normals.size(); j++) {
-						double dot = Math.abs(edge.normals.get(i).dot(edge.normals.get(j)));
+						double dot = edge.normals.get(i).dot(edge.normals.get(j));
+
+						dot = Math.max(-1.0, Math.min(1.0, dot));
 
 						if (dot < cosThreshold) {
 							draw = true;
