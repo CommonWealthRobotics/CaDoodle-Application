@@ -31,7 +31,6 @@ import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
@@ -244,14 +243,14 @@ public class ShapesPallet {
 			hover.setContentDisplay(ContentDisplay.TOP);
 			// tIv.setFitHeight(50);
 			// tIv.setFitWidth(50);
-			ObservableList<String> styleClass = null;
+			boolean hasPlugin = false;
 			String pluginType = key.get("plugin");
 			String text = null;
 			if (pluginType != null) {
 				Optional<PluginType> fromString = PluginType.fromString(pluginType);
 				if (fromString.isPresent()) {
 					PluginType pluginType2 = fromString.get();
-					styleClass = pluginType2.getStyleClass();
+					hasPlugin = true;
 					text = pluginType2.toString();
 					if (pluginType2 == PluginType.SVG) {
 						text = "Inkscape";
@@ -265,8 +264,7 @@ public class ShapesPallet {
 			button.getStyleClass().add("image-button-shape-pallet");
 			objectPallet.add(button, col, row);
 			buttonHolder.add(button);
-			if (styleClass != null && ap.isAdvancedMode())
-				button.setButtonImageType(styleClass);
+			button.setEditableMarkerVisible(hasPlugin && ap.isAdvancedMode());
 
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {

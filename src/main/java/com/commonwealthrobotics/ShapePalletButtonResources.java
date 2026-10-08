@@ -40,6 +40,23 @@ public class ShapePalletButtonResources {
 	File stlFile = null;
 	private ThumbnailImage imageengine;
 
+	private static void cleanupOldThumbnails(File dir, String baseName, File current) {
+		File[] cached = dir.listFiles();
+		if (cached == null)
+			return;
+
+		for (File file : cached) {
+			if (file.equals(current))
+				continue;
+
+			String name = file.getName();
+			boolean oldThumbnail = name.equals(baseName + ".png")
+					|| (name.startsWith(baseName + "-v") && name.endsWith(".png"));
+			if (oldThumbnail && !file.delete())
+				Log.debug("Unable to remove stale thumbnail " + file.getAbsolutePath());
+		}
+	}
+
 	public ShapePalletButtonResources(HashMap<String, String> key, String typeOfShapes, String name, ActiveProject ap) {
 		String pluginType = key.get("plugin");
 
@@ -52,8 +69,10 @@ public class ShapePalletButtonResources {
 		File dir = new File(absolutePath);
 		if (!dir.exists())
 			dir.mkdirs();
-		imageFile = new File(absolutePath + delim() + typeOfShapes + name + ".png");
+		imageFile = new File(
+				absolutePath + delim() + typeOfShapes + name + "-v" + ThumbnailImage.CACHE_VERSION + ".png");
 		stlFile = new File(absolutePath + delim() + typeOfShapes + name + ".stl");
+		cleanupOldThumbnails(dir, typeOfShapes + name, imageFile);
 		// https://github.com/CommonWealthRobotics/CaDoodle-Application/issues/69
 		// if(!OSUtil.isWindows())
 		CaDoodleFile caDoodleFile = ap.isOpen() ? ap.get() : new CaDoodleFile();
@@ -146,9 +165,8 @@ public class ShapePalletButtonResources {
 
 		indicator = so.get(0);
 		if (so.size() > 1) {
-			for (int i = 1; i < so.size(); i++) {
+			for (int i = 1; i < so.size(); i++)
 				indicator = indicator.union(so.get(i));
-			}
 		}
 		indicator.setColor(Color.WHITE);
 		try {
