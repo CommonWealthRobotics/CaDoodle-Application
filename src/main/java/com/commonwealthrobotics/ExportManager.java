@@ -139,6 +139,23 @@ public class ExportManager {
 		return result.isEmpty() ? "_" : result;
 	}
 
+	public static boolean isUsableDirectory(Path dir) {
+		try {
+			// Exists, is a directory (follows symlinks), and basic permission flags
+			if (!Files.exists(dir) || !Files.isDirectory(dir))
+				return false;
+			if (!Files.isReadable(dir) || !Files.isWritable(dir) || !Files.isExecutable(dir))
+				return false;
+
+			// The only reliable test: actually create and delete a temp file.
+			Path probe = Files.createTempFile(dir, ".write-test-", ".tmp");
+			Files.deleteIfExists(probe);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
@@ -152,10 +169,15 @@ public class ExportManager {
 		final boolean objSelected = obj.isSelected();
 		final boolean type3mfSelected = type3mf.isSelected();
 		Thread t = new Thread(() -> {
-			if (exportDir == null)
-				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
+			File defaultLocation = new File(System.getProperty("user.home") + "/Desktop/");
+			if (exportDir == null) {
+				exportDir = defaultLocation;
+			}
 			exportDir = new File(
 					ConfigurationDatabase.get("CaDoodle", "ExportDir", exportDir.getAbsolutePath()).toString());
+			if (!isUsableDirectory(exportDir.toPath())) {
+				exportDir = defaultLocation;
+			}
 			ArrayList<CSG> back = session.getAllVisible();
 			CaDoodleFile caDoodleFile = ap.get();
 			String name = toSlug(caDoodleFile.getMyProjectName());
