@@ -260,7 +260,8 @@ public class ShapesPallet {
 					hover.setText(hover.getText() + " ( " + text + " ) ");
 				}
 			}
-			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", thumb, 60, 20, 0);
+			Image buttonThumb = TimelineManager.resizeImage(thumb, 300, 300, 0);
+			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", buttonThumb, 60, 20, 0);
 			button.setTooltip(hover);
 			button.getStyleClass().clear();
 			button.getStyleClass().add("image-button-shape-pallet");
