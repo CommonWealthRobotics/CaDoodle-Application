@@ -18,6 +18,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.scripting.CuratedColorPalette;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
@@ -38,6 +39,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -330,6 +332,17 @@ public class ShapesPallet {
 									}
 									ap.addOp(setAddFromScript).join();
 									List<String> names = setAddFromScript.getNamesAddedInThisOperation();
+
+									List<CSG> added = ap.get().getSelect(names);
+									if (!added.isEmpty()) {
+
+
+										for (CSG c : added) {
+											Color generated = c.getColor();
+											Color snapped = CuratedColorPalette.nearest(generated);
+											c.setColor(snapped);
+										}
+									}
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {

@@ -1347,7 +1347,7 @@ public class ResizeSessionManager {
 			throw new NowFXThreadException();
 		}
 		Bounds b = getBounds();
-		com.neuronrobotics.sdk.common.Log.error("Resizing to " + x + " " + y + " " + z);
+		com.neuronrobotics.sdk.common.Log.debug("Resizing to " + x + " " + y + " " + z);
 		// BowlerStudio.runLater(() -> {
 
 		if (topCenter.isSelected()) {
@@ -1489,6 +1489,7 @@ public class ResizeSessionManager {
 
 		// original method continues below...
 		if (leftFront.isSelected()) {
+			beingUpdated = leftFront;
 			com.neuronrobotics.sdk.common.Log.error("leftFront resize");
 			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
 			leftFront.manipulator.fireSave();
@@ -1496,6 +1497,7 @@ public class ResizeSessionManager {
 		}
 
 		if (leftRear.isSelected()) {
+			beingUpdated = leftRear;
 			double lr_x = -(x - b.getTotalX());
 			double lr_y = (y - b.getTotalY());
 			scalingFlag = false;
@@ -1507,6 +1509,7 @@ public class ResizeSessionManager {
 		}
 
 		if (rightFront.isSelected()) {
+			beingUpdated = rightFront;
 			double rf_x = x - b.getTotalX();
 			double rf_y = -(y - b.getTotalY());
 			scalingFlag = false;
@@ -1518,6 +1521,7 @@ public class ResizeSessionManager {
 		}
 
 		if (rightRear.isSelected()) {
+			beingUpdated = rightRear;
 			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
 			rightRear.manipulator.fireSave();
 			return;
@@ -1525,6 +1529,7 @@ public class ResizeSessionManager {
 
 		// Edge-midpoint programmatic resize
 		if (frontMid.isSelected()) {
+			beingUpdated = frontMid;
 			com.neuronrobotics.sdk.common.Log.error("frontMid resize (X only)");
 			frontMid.manipulator.setInReferenceFrame(x - b.getTotalX(), 0, 0);
 			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
@@ -1533,6 +1538,7 @@ public class ResizeSessionManager {
 		}
 
 		if (rearMid.isSelected()) {
+			beingUpdated = rearMid;
 			com.neuronrobotics.sdk.common.Log.error("rearMid resize (X only)");
 			rearMid.manipulator.setInReferenceFrame(-(x - b.getTotalX()), 0, 0);
 			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
@@ -1541,6 +1547,7 @@ public class ResizeSessionManager {
 		}
 
 		if (leftMid.isSelected()) {
+			beingUpdated = leftMid;
 			com.neuronrobotics.sdk.common.Log.error("leftMid resize (Y only)");
 			leftMid.manipulator.setInReferenceFrame(0, y - b.getTotalY(), 0);
 			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
@@ -1549,6 +1556,7 @@ public class ResizeSessionManager {
 		}
 
 		if (rightMid.isSelected()) {
+			beingUpdated = rightMid;
 			com.neuronrobotics.sdk.common.Log.error("rightMid resize (Y only)");
 			rightMid.manipulator.setInReferenceFrame(0, -(y - b.getTotalY()), 0);
 			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);

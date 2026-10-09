@@ -33,7 +33,7 @@ public class ArmPointManipulator {
 			WorkplaneManager workplane, ControlSprites controlSprites) {
 		this.saveListener = saveListener;
 		tip = new ResizingHandle("Limb Base", workplane, engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset,
-				onSelect, onReset, new Cylinder(5, 1).toCSG(), controlSprites);
+				onSelect, onReset, new Cylinder(15, 1).toCSG(), controlSprites);
 		tip.setMyColor(Color.PINK, Color.TEAL);
 		tip.setBaseScale(1.25);
 		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());

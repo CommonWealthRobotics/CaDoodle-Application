@@ -197,6 +197,7 @@ public class LimbControlManager {
 			tipManipulator.show();
 			mod.setUndo(true);
 			onReset();
+			rotationManager.setLock(false);
 			rotationManager.show(false);
 		});
 		com.neuronrobotics.sdk.common.Log.debug("\n\nShowing Limb " + limb.getScriptingName());
@@ -237,7 +238,8 @@ public class LimbControlManager {
 			tipManipulator.threeDTarget(screenW, screenH, zoom,
 					workplane.inverse().times(limb.getCurrentTaskSpaceTransform()), cf, locked);
 
-		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView);
+		rotationManager.updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedCSG, b, cf, cameraFieldOfView,
+				1.0 / camera.getZoomScale());
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(workplane, workplaneOffset);
 		});

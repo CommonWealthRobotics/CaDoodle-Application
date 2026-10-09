@@ -85,12 +85,7 @@ public class ShapePalletMyDoodles {
 			throw new RuntimeException("You can not reference yourself in a model");
 		String name = caDoodleFile.getMyProjectName();
 
-		Tooltip hover = new Tooltip(name);
-		Button button = new Button();
-		button.setTooltip(hover);
-		button.getStyleClass().add("image-button");
-
-		//CSGDatabaseInstance instance = caDoodleFile.getCsgDBinstance();
+		// CSGDatabaseInstance instance = caDoodleFile.getCsgDBinstance();
 		if (!caDoodleFile.get3mfThumbnailFile().exists()) {
 			// Path tempFile = Files.createTempFile("CSGDatabase", ".tmp");
 			// CSGDatabase.setInstance(new CSGDatabaseInstance(tempFile.toFile()));
@@ -108,72 +103,85 @@ public class ShapePalletMyDoodles {
 			caDoodleFile.get3mfThumbnailFile().delete();
 		}
 		List<CSG> in = indicator;
+		final Button[] holder = new Button[1];
+		final java.util.concurrent.CountDownLatch built = new java.util.concurrent.CountDownLatch(1);
 		BowlerStudio.runLater(() -> {
-			objectPallet.add(button, col, row);
-			Image thumb = caDoodleFile.loadImageFromFile();
-			ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50, 0));
-			ImageView toolimage = new ImageView(thumb);
+			try {
+				Tooltip hover = new Tooltip(name);
+				Button button = new Button();
+				button.setTooltip(hover);
+				button.getStyleClass().add("image-button");
+				objectPallet.add(button, col, row);
+				Image thumb = caDoodleFile.loadImageFromFile();
+				ImageView tIv = new ImageView(TimelineManager.resizeImage(thumb, 50, 50, 0));
+				ImageView toolimage = new ImageView(thumb);
 
-			toolimage.setFitHeight(300);
-			toolimage.setFitWidth(300);
-			hover.setGraphic(toolimage);
-			hover.setContentDisplay(ContentDisplay.TOP);
-			// tIv.setFitHeight(50);
-			// tIv.setFitWidth(50);
-			button.setGraphic(tIv);
-			button.setDisable(true);
-			button.setOnMousePressed(ev -> {
-				new Thread(() -> {
-					session.setMode(SpriteDisplayMode.PLACING);
-					workplane.setIndicator(in, new Affine());
-					boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
-					com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
-					workplane.setOnSelectEvent(() -> {
-						new Thread(() -> {
-							session.setMode(SpriteDisplayMode.Default);
-							if (workplane.isClicked())
-								try {
-									TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
-									AddFromFile addFromFile = new AddFromFile();
-									AbstractAddFrom setAddFromScript = addFromFile.set(caDoodleFile.getSelf(), ap.get())
-											.setLocation(currentAbsolutePose);
-									ap.addOp(setAddFromScript).join();
-									List<String> namesAdded = setAddFromScript.getNamesAddedInThisOperation();
-									ArrayList<String> namesBack = new ArrayList<String>();
-									namesBack.addAll(namesAdded);
-									session.selectAll(namesAdded);
-									if (!workplane.isClicked())
-										return;
-									if (workplane.isClickOnGround()) {
-										// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
-										// Don't reset work plane to origin
-										// ap.get().setWorkplane(new TransformNR());
-									} else {
-										ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+				toolimage.setFitHeight(300);
+				toolimage.setFitWidth(300);
+				hover.setGraphic(toolimage);
+				hover.setContentDisplay(ContentDisplay.TOP);
+				// tIv.setFitHeight(50);
+				// tIv.setFitWidth(50);
+				button.setGraphic(tIv);
+				button.setDisable(true);
+				button.setOnMousePressed(ev -> {
+					new Thread(() -> {
+						session.setMode(SpriteDisplayMode.PLACING);
+						workplane.setIndicator(in, new Affine());
+						boolean workplaneInOrigin = !workplane.isWorkplaneNotOrigin();
+						com.neuronrobotics.sdk.common.Log.debug("Is Workplane set " + workplaneInOrigin);
+						workplane.setOnSelectEvent(() -> {
+							new Thread(() -> {
+								session.setMode(SpriteDisplayMode.Default);
+								if (workplane.isClicked())
+									try {
+										TransformNR currentAbsolutePose = workplane.getCurrentAbsolutePose();
+										AddFromFile addFromFile = new AddFromFile();
+										AbstractAddFrom setAddFromScript = addFromFile
+												.set(caDoodleFile.getSelf(), ap.get()).setLocation(currentAbsolutePose);
+										ap.addOp(setAddFromScript).join();
+										List<String> namesAdded = setAddFromScript.getNamesAddedInThisOperation();
+										ArrayList<String> namesBack = new ArrayList<String>();
+										namesBack.addAll(namesAdded);
+										session.selectAll(namesAdded);
+										if (!workplane.isClicked())
+											return;
+										if (workplane.isClickOnGround()) {
+											// com.neuronrobotics.sdk.common.Log.error("Ground plane click detected");
+											// Don't reset work plane to origin
+											// ap.get().setWorkplane(new TransformNR());
+										} else {
+											ap.get().setWorkplane(workplane.getCurrentAbsolutePose());
+										}
+										workplane.placeWorkplaneVisualization();
+										if (workplaneInOrigin)
+											workplane.setTemporaryPlane();
+									} catch (CadoodleConcurrencyException e) {
+										com.neuronrobotics.sdk.common.Log.error(e);
+									} catch (InterruptedException e) {
+										com.neuronrobotics.sdk.common.Log.error(e);
 									}
-									workplane.placeWorkplaneVisualization();
-									if (workplaneInOrigin)
-										workplane.setTemporaryPlane();
-								} catch (CadoodleConcurrencyException e) {
-									com.neuronrobotics.sdk.common.Log.error(e);
-								} catch (InterruptedException e) {
-									com.neuronrobotics.sdk.common.Log.error(e);
-								}
 
-						}).start();
-					});
-					workplane.activate();
+							}).start();
+						});
+						workplane.activate();
 
-				}).start();
-				session.setKeyBindingFocus();
-			});
+					}).start();
+					session.setKeyBindingFocus();
+				});
+				holder[0] = button;
+			} finally {
+				built.countDown();
+			}
 		});
 		try {
+			built.await();
+			// give the FX thread a moment to lay out the freshly added button
 			Thread.sleep(30);
 		} catch (InterruptedException e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
-		return button;
+		return holder[0];
 	}
 
 }

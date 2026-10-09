@@ -13,10 +13,12 @@ import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.BowlerKernel;
@@ -45,7 +47,6 @@ import javafx.scene.layout.GridPane;
 import java.io.*;
 import java.nio.file.*;
 import java.util.zip.*;
-
 
 public class ExportManager {
 	@FXML
@@ -84,6 +85,10 @@ public class ExportManager {
 	private CheckBox svg; // Value injected by FXMLLoader
 	@FXML // fx:id="svg"
 	private CheckBox type3mf; // Value injected by FXMLLoader
+	@FXML // fx:id="svg"
+	private CheckBox source;
+	@FXML // fx:id="svg"
+	private CheckBox notesButton;
 
 	private static SelectionSession session;
 
@@ -134,10 +139,28 @@ public class ExportManager {
 		return result.isEmpty() ? "_" : result;
 	}
 
+	public static boolean isUsableDirectory(Path dir) {
+		try {
+			// Exists, is a directory (follows symlinks), and basic permission flags
+			if (!Files.exists(dir) || !Files.isDirectory(dir))
+				return false;
+			if (!Files.isReadable(dir) || !Files.isWritable(dir) || !Files.isExecutable(dir))
+				return false;
+
+			// The only reliable test: actually create and delete a temp file.
+			Path probe = Files.createTempFile(dir, ".write-test-", ".tmp");
+			Files.deleteIfExists(probe);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@FXML
 	void onExport(ActionEvent event) {
 		stage.close();
-		// Read JavaFX checkbox state on the UI thread before starting the export worker.
+		// Read JavaFX checkbox state on the UI thread before starting the export
+		// worker.
 		final boolean manifold = manifoldSTL.isSelected();
 		final boolean stlSelected = stl.isSelected();
 		final boolean svgSelected = svg.isSelected();
@@ -146,10 +169,15 @@ public class ExportManager {
 		final boolean objSelected = obj.isSelected();
 		final boolean type3mfSelected = type3mf.isSelected();
 		Thread t = new Thread(() -> {
-			if (exportDir == null)
-				exportDir = new File(System.getProperty("user.home") + "/Desktop/");
+			File defaultLocation = new File(System.getProperty("user.home") + "/Desktop/");
+			if (exportDir == null) {
+				exportDir = defaultLocation;
+			}
 			exportDir = new File(
 					ConfigurationDatabase.get("CaDoodle", "ExportDir", exportDir.getAbsolutePath()).toString());
+			if (!isUsableDirectory(exportDir.toPath())) {
+				exportDir = defaultLocation;
+			}
 			ArrayList<CSG> back = session.getAllVisible();
 			CaDoodleFile caDoodleFile = ap.get();
 			String name = toSlug(caDoodleFile.getMyProjectName());
@@ -178,7 +206,8 @@ public class ExportManager {
 				String nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName());
 				index = 0;
 				while (namesUnique.contains(nameToSet)) {
-					nameToSet = toValidFilename(c.getUserDefinedName()) + "_" + index;
+					nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName()) + "_"
+							+ index;
 					index++;
 				}
 				namesUnique.add(nameToSet);
@@ -189,12 +218,12 @@ public class ExportManager {
 				return;
 			ConfigurationDatabase.put("CaDoodle", "ExportDir", exportDir.getAbsolutePath());
 			SplashManager.renderSplashFrame(1, " Exporting...");
-			//			try {
-			//				Thread.sleep(100);
-			//			} catch (InterruptedException e) {
-			//				// TODO Auto-generated catch block
-			//				e.printStackTrace();
-			//			}
+			// try {
+			// Thread.sleep(100);
+			// } catch (InterruptedException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
 			// while(!SplashManager.isVisibleSplash()) {
 			// try {
 			// Thread.sleep(100);
@@ -205,30 +234,59 @@ public class ExportManager {
 			// }
 			if (!exportDir.getAbsolutePath().endsWith(name + "/")) {
 				exportDir = new File(exportDir + "/" + name + "/");
+				if (exportDir.exists()) {
+					try {
+						deleteDirectory(exportDir.toPath());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				exportDir.mkdirs();
 			}
 			CSG.setPreventNonManifoldTriangles(manifold);
 
 			BowlerKernel.processReturnedObjectsStart(back, caDoodleFile.getSelf().getParentFile(), exportDir);
-
+			try {
+				deleteDirectory(exportDir.toPath().resolve("manufacturing"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			SplashManager.onLogUpdate("");
 			SplashManager.renderSplashFrame(50, "Zipping Project Source");
 			// ap.get().updateBoM() ;
-			copyBom(caDoodleFile.getBomFile());
-			copyBom(caDoodleFile.getBomCsv());
-			try {
-				zipDirectory(caDoodleFile.getSelf().getParentFile(),
-						new File(exportDir.getAbsolutePath() + DownloadManager.delim() + name + "-source.zip"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				com.neuronrobotics.sdk.common.Log.error(e);
+			if (notesButton.isSelected()) {
+				copyBom(caDoodleFile.getBomFile());
+				copyBom(caDoodleFile.getBomCsv());
 			}
-
+			if (source.isSelected()) {
+				try {
+					zipDirectory(caDoodleFile.getSelf().getParentFile(),
+							new File(exportDir.getAbsolutePath() + DownloadManager.delim() + name + "-source.zip"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					com.neuronrobotics.sdk.common.Log.error(e);
+				}
+			}
 			SplashManager.closeSplash();
 			CSG.setPreventNonManifoldTriangles(prev);
 			onFinish.run();
 		});
 		t.setName("Export Thread");
 		t.start();
+	}
+
+	public static void deleteDirectory(Path dir) throws IOException {
+		try (Stream<Path> walk = Files.walk(dir)) {
+			walk.sorted(Comparator.reverseOrder()).forEach(p -> {
+				try {
+					Files.delete(p);
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				}
+			});
+		}
 	}
 
 	private static void zipDirectory(File sourceDir, File zipFile) throws IOException {
@@ -274,7 +332,8 @@ public class ExportManager {
 		assert stl != null : "fx:id=\"stl\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 		assert svg != null : "fx:id=\"svg\" was not injected: check your FXML file 'ExportWindow.fxml'.";
 
-		ap.setStyleSheet(topLevel);
+		ActiveProject.setStyleSheet(topLevel);
+		notesButton.setSelected(ap.get().getBom().getBomItemCount() > 0);
 	}
 
 	public static void launch(SelectionSession session, ActiveProject ap, Runnable onFinish, Runnable clearScreen) {
