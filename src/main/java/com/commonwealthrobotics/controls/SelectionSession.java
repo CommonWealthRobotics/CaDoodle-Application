@@ -52,6 +52,8 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.FeatureEdgeExtractor;
+import com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.bowlerstudio.util.IFileChangeListener;
@@ -71,6 +73,7 @@ import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
 import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -108,6 +111,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
+import javafx.scene.shape.TriangleMesh;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
@@ -115,6 +119,7 @@ import javafx.stage.Popup;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.util.Duration;
 
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
@@ -124,6 +129,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public class MeshHolder {
 		public MeshView display;
 		public MeshView halo;
+		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
@@ -136,6 +142,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
+	private PauseTransition edgeRebuildTimer;
+	private PauseTransition edgeWidthUpdateTimer;
+	private final Map<CSG, List<FeatureEdgeExtractor.Edge>> featureEdgeCache = new HashMap<>();
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -229,6 +238,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
 		this.engine = e;
+		engine.addListener(camera -> requestFeatureEdgeWidthUpdate());
+
+
 		this.ruler = ruler;
 		workplane = new WorkplaneManager(ap, engine, this);
 
@@ -650,6 +662,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				controls.resetManipulator(b);
 				for (CSG c : transport.keySet())
 					displayCSG(c, transport.get(c));
+
+				requestFeatureEdgeRebuild();
 				transport.clear();
 				ArrayList<CSG> toRemove = new ArrayList<>();
 				List<String> selectedSnapshot = selectedSnapshot();
@@ -695,6 +709,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : getMeshes().keySet()) {
 			MeshHolder meshHolder = getMeshes().get(c);
 			engine.removeUserNode(meshHolder.display);
+			engine.removeUserNode(meshHolder.edges);
 			try {
 				engine.removeUserNode(meshHolder.halo);
 			} catch (Exception ex) {
@@ -703,6 +718,254 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		getMeshes().clear();
+		featureEdgeCache.clear();
+	}
+
+
+	private static void addEdgePoint(List<Float> points, Point3D point) {
+		points.add((float) point.getX());
+		points.add((float) point.getY());
+		points.add((float) point.getZ());
+	}
+
+	private static void addEdgeFace(List<Integer> faces, int a, int b, int c) {
+		faces.add(a);
+		faces.add(0);
+		faces.add(b);
+		faces.add(0);
+		faces.add(c);
+		faces.add(0);
+	}
+
+	private static void addEdgePrism(List<Float> points, List<Integer> faces, FeatureEdgeExtractor.Edge edge,
+			Point3D cameraPosition, double radius) {
+
+		Point3D a = new Point3D(edge.a.x, edge.a.y, edge.a.z);
+		Point3D b = new Point3D(edge.b.x, edge.b.y, edge.b.z);
+		Point3D direction = b.subtract(a);
+
+		if (direction.magnitude() < 1e-9)
+			return;
+
+		direction = direction.normalize();
+
+		Point3D midpoint = a.midpoint(b);
+		Point3D toCamera = cameraPosition.subtract(midpoint);
+		Point3D u = direction.crossProduct(toCamera);
+
+		if (u.magnitude() < 1e-9) {
+			Point3D reference = Math.abs(direction.getY()) < 0.9 ? new Point3D(0, 1, 0) : new Point3D(1, 0, 0);
+			u = direction.crossProduct(reference);
+		}
+
+		u = u.normalize().multiply(radius);
+		Point3D v = direction.crossProduct(u).normalize().multiply(radius);
+
+		Point3D[] ringA = {a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v)};
+		Point3D[] ringB = {b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v)};
+
+		int base = points.size() / 3;
+
+		for (Point3D point : ringA)
+			addEdgePoint(points, point);
+
+		for (Point3D point : ringB)
+			addEdgePoint(points, point);
+
+		for (int i = 0; i < 4; i++) {
+			int j = (i + 1) % 4;
+			addEdgeFace(faces, base + i, base + j, base + 4 + j);
+			addEdgeFace(faces, base + i, base + 4 + j, base + 4 + i);
+		}
+
+		addEdgeFace(faces, base, base + 2, base + 1);
+		addEdgeFace(faces, base, base + 3, base + 2);
+		addEdgeFace(faces, base + 4, base + 5, base + 6);
+		addEdgeFace(faces, base + 4, base + 6, base + 7);
+	}
+
+	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges) {
+		javafx.scene.Group group = new javafx.scene.Group();
+		group.setMouseTransparent(true);
+		group.setDepthTest(DepthTest.ENABLE);
+
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return group;
+
+		if (visibleEdges == null || visibleEdges.isEmpty())
+			return group;
+
+		VirtualCameraMobileBase camera = engine.getVirtualcam();
+		TransformNR cameraPose = camera.getCamerFrame().times(new TransformNR(0, 0, camera.getZoomDepth()));
+		Point3D cameraPosition = new Point3D(cameraPose.getX(), cameraPose.getY(), cameraPose.getZ());
+
+		double[][] cameraRotation = cameraPose.getRotation().getRotationMatrix();
+		Point3D cameraForward = new Point3D(cameraRotation[0][2], cameraRotation[1][2], cameraRotation[2][2]);
+
+		String widthMode = SceneStyleConfig.getString("edges.widthMode", "screen");
+		boolean screenWidth = !"world".equalsIgnoreCase(widthMode);
+
+		double widthPx = Math.max(0.1, SceneStyleConfig.getDouble("edges.widthPx", 1.6));
+		double worldRadius = Math.max(0.001, SceneStyleConfig.getDouble("edges.radius", 0.15));
+		double screenRadiusPerDepth = 0.0;
+
+		if (screenWidth) {
+			double cx = 0;
+			double cy = 0;
+			double cz = 0;
+			int count = 0;
+
+			for (FeatureEdgeExtractor.Edge edge : visibleEdges) {
+				cx += edge.a.x + edge.b.x;
+				cy += edge.a.y + edge.b.y;
+				cz += edge.a.z + edge.b.z;
+				count += 2;
+			}
+
+			Point3D center = new Point3D(cx / count, cy / count, cz / count);
+			double centerDepth = Math.max(0.1, center.subtract(cameraPosition).dotProduct(cameraForward));
+			double centerRadius = Math.max(0.0001, engine.screenToSceneMMscale(center) * widthPx * 0.5);
+
+			screenRadiusPerDepth = centerRadius / centerDepth;
+		}
+
+		List<Float> points = new ArrayList<>();
+		List<Integer> faces = new ArrayList<>();
+
+		for (FeatureEdgeExtractor.Edge edge : visibleEdges) {
+			double radius = worldRadius;
+
+			if (screenWidth) {
+				Point3D midpoint = new Point3D((edge.a.x + edge.b.x) / 2.0, (edge.a.y + edge.b.y) / 2.0,
+						(edge.a.z + edge.b.z) / 2.0);
+				double depth = Math.max(0.1, midpoint.subtract(cameraPosition).dotProduct(cameraForward));
+				radius = Math.max(0.0001, screenRadiusPerDepth * depth);
+			}
+
+			addEdgePrism(points, faces, edge, cameraPosition, radius);
+		}
+
+		if (points.isEmpty())
+			return group;
+
+		TriangleMesh mesh = new TriangleMesh();
+
+		float[] pointArray = new float[points.size()];
+		for (int i = 0; i < points.size(); i++)
+			pointArray[i] = points.get(i);
+
+		int[] faceArray = new int[faces.size()];
+		for (int i = 0; i < faces.size(); i++)
+			faceArray[i] = faces.get(i);
+
+		mesh.getPoints().setAll(pointArray);
+		mesh.getTexCoords().setAll(0f, 0f);
+		mesh.getFaces().setAll(faceArray);
+
+		double brightness = SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0));
+		Color edgeColor = Color.color(brightness, brightness, brightness);
+		PhongMaterial material = new PhongMaterial(edgeColor);
+		material.setSpecularColor(Color.BLACK);
+
+		MeshView view = new MeshView(mesh);
+		view.setMaterial(material);
+		view.setCullFace(CullFace.NONE);
+		view.setMouseTransparent(true);
+		view.setDepthTest(DepthTest.ENABLE);
+
+		group.getChildren().add(view);
+		return group;
+	}
+
+	private void requestFeatureEdgeRebuild() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		BowlerStudio.runLater(() -> {
+			double delayMs = SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0);
+
+			if (edgeRebuildTimer == null) {
+				edgeRebuildTimer = new PauseTransition();
+				edgeRebuildTimer.setOnFinished(event -> rebuildFeatureEdges());
+			}
+
+			edgeRebuildTimer.setDuration(Duration.millis(Math.max(0.0, delayMs)));
+			edgeRebuildTimer.playFromStart();
+		});
+	}
+
+	private void requestFeatureEdgeWidthUpdate() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		if (featureEdgeCache.isEmpty())
+			return;
+
+		BowlerStudio.runLater(() -> {
+			double delayMs = SceneStyleConfig.getDouble("edges.cameraSettleDelayMs", 120.0);
+
+			if (edgeWidthUpdateTimer == null) {
+				edgeWidthUpdateTimer = new PauseTransition();
+				edgeWidthUpdateTimer.setOnFinished(event -> refreshFeatureEdgeWidths());
+			}
+
+			edgeWidthUpdateTimer.setDuration(Duration.millis(Math.max(0.0, delayMs)));
+			edgeWidthUpdateTimer.playFromStart();
+		});
+	}
+
+	private void rebuildFeatureEdges() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true)) {
+			featureEdgeCache.clear();
+
+			for (MeshHolder holder : getMeshes().values()) {
+				if (holder.edges != null)
+					holder.edges.getChildren().clear();
+			}
+			return;
+		}
+
+		List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+		featureEdgeCache.clear();
+
+		for (Map.Entry<CSG, MeshHolder> entry : current) {
+			CSG csg = entry.getKey();
+			MeshHolder holder = entry.getValue();
+
+			if (holder.edges == null)
+				continue;
+
+			List<FeatureEdgeExtractor.Edge> visibleEdges = FeatureEdgeExtractor.extract(csg,
+					SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
+					SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
+					SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
+			featureEdgeCache.put(csg, visibleEdges);
+
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+			holder.edges.getChildren().setAll(rebuilt.getChildren());
+		}
+	}
+
+	private void refreshFeatureEdgeWidths() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+
+		for (Map.Entry<CSG, MeshHolder> entry : current) {
+			MeshHolder holder = entry.getValue();
+
+			if (holder.edges == null)
+				continue;
+
+			List<FeatureEdgeExtractor.Edge> visibleEdges = featureEdgeCache.get(entry.getKey());
+
+			if (visibleEdges == null)
+				continue;
+
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+			holder.edges.getChildren().setAll(rebuilt.getChildren());
+		}
 	}
 
 	private void displayCSG(CSG c, MeshHolder holder) {
@@ -710,6 +973,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		MeshView meshView = holder.display;
 		MeshView halo = holder.halo;
 		Bounds b = holder.bouds;
+
+		javafx.scene.Group edges = new javafx.scene.Group();
+		edges.setMouseTransparent(true);
+		edges.setDepthTest(javafx.scene.DepthTest.ENABLE);
+		holder.edges = edges;
 		double haloDistance = 1;
 
 		double scaleX = 1.02;
@@ -768,6 +1036,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.setDrawMode(DrawMode.FILL);
 		//meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
+		engine.addUserNode(edges);
 		engine.addUserNode(halo);
 		getMeshes().put(c, holder);
 
@@ -930,6 +1199,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					MeshView meshView = meshHolder.display;
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
+
+					if (meshHolder.edges != null) {
+						meshHolder.edges.getTransforms().remove(selection);
+						meshHolder.edges.getTransforms().remove(getControls().getViewRotation());
+					}
+
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
@@ -943,6 +1218,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (meshHolder != null) {
 					MeshView meshView = meshHolder.display;
 					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
+
+					if (meshHolder.edges != null)
+						meshHolder.edges.getTransforms().addAll(getControls().getViewRotation(), selection);
+
 					if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
 						meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
@@ -1026,6 +1305,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					MeshView meshView = meshHolder.display;
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
+
+					if (meshHolder.edges != null) {
+						meshHolder.edges.getTransforms().remove(selection);
+						meshHolder.edges.getTransforms().remove(getControls().getViewRotation());
+					}
+
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
