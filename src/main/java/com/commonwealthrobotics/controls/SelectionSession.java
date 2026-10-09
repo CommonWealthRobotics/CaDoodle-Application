@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +52,7 @@ import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.FeatureEdgeExtractor;
 import com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
@@ -144,7 +144,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
 	private PauseTransition edgeRebuildTimer;
 	private PauseTransition edgeWidthUpdateTimer;
-	private final Map<CSG, List<FeatureEdge>> featureEdgeCache = new HashMap<>();
+	private final Map<CSG, List<FeatureEdgeExtractor.Edge>> featureEdgeCache = new HashMap<>();
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -722,85 +722,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 
-	private static class FeatureEdge {
-		final Point3D a;
-		final Point3D b;
-		final List<Vector3d> normals = new ArrayList<>();
-
-		FeatureEdge(Point3D a, Point3D b) {
-			this.a = a;
-			this.b = b;
-		}
-	}
-
-	private static class VertexKey {
-		final long x;
-		final long y;
-		final long z;
-
-		VertexKey(long x, long y, long z) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-
-		@Override
-		public boolean equals(Object object) {
-			if (this == object)
-				return true;
-			if (!(object instanceof VertexKey))
-				return false;
-
-			VertexKey other = (VertexKey) object;
-			return x == other.x && y == other.y && z == other.z;
-		}
-
-		@Override
-		public int hashCode() {
-			int result = Long.hashCode(x);
-			result = 31 * result + Long.hashCode(y);
-			result = 31 * result + Long.hashCode(z);
-			return result;
-		}
-	}
-
-	private static class BoundaryEdge {
-		final Point3D a;
-		final Point3D b;
-		final Vector3d normal;
-
-		BoundaryEdge(Point3D a, Point3D b, Vector3d normal) {
-			this.a = a;
-			this.b = b;
-			this.normal = normal;
-		}
-	}
-
-	private static class BoundarySplit {
-		final double t;
-		final Point3D point;
-
-		BoundarySplit(double t, Point3D point) {
-			this.t = t;
-			this.point = point;
-		}
-	}
-
-	private static class BoundarySegment {
-		final Point3D a;
-		final Point3D b;
-		final List<Vector3d> normals = new ArrayList<>();
-
-		BoundarySegment(Point3D a, Point3D b) {
-			this.a = a;
-			this.b = b;
-		}
-	}
-
-	private static void addEdgePoint(List<Float> points, Point3D p) {
-		points.add((float) p.getX());
-		points.add((float) p.getY());
-		points.add((float) p.getZ());
+	private static void addEdgePoint(List<Float> points, Point3D point) {
+		points.add((float) point.getX());
+		points.add((float) point.getY());
+		points.add((float) point.getZ());
 	}
 
 	private static void addEdgeFace(List<Integer> faces, int a, int b, int c) {
@@ -812,10 +737,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		faces.add(0);
 	}
 
-	private static void addEdgePrism(List<Float> points, List<Integer> faces, Point3D a, Point3D b,
+	private static void addEdgePrism(List<Float> points, List<Integer> faces, FeatureEdgeExtractor.Edge edge,
 			Point3D cameraPosition, double radius) {
 
+		Point3D a = new Point3D(edge.a.x, edge.a.y, edge.a.z);
+		Point3D b = new Point3D(edge.b.x, edge.b.y, edge.b.z);
 		Point3D direction = b.subtract(a);
+
 		if (direction.magnitude() < 1e-9)
 			return;
 
@@ -838,11 +766,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		int base = points.size() / 3;
 
-		for (Point3D p : ringA)
-			addEdgePoint(points, p);
+		for (Point3D point : ringA)
+			addEdgePoint(points, point);
 
-		for (Point3D p : ringB)
-			addEdgePoint(points, p);
+		for (Point3D point : ringB)
+			addEdgePoint(points, point);
 
 		for (int i = 0; i < 4; i++) {
 			int j = (i + 1) % 4;
@@ -856,401 +784,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		addEdgeFace(faces, base + 4, base + 6, base + 7);
 	}
 
-	private static long boundaryQuantize(double value, double tolerance) {
-		return Math.round(value / tolerance);
-	}
-
-	private static String boundaryPointKey(Point3D point, double tolerance) {
-		return boundaryQuantize(point.getX(), tolerance) + "," + boundaryQuantize(point.getY(), tolerance) + ","
-				+ boundaryQuantize(point.getZ(), tolerance);
-	}
-
-	private static String boundarySegmentKey(Point3D a, Point3D b, double tolerance) {
-		String ka = boundaryPointKey(a, tolerance);
-		String kb = boundaryPointKey(b, tolerance);
-		return ka.compareTo(kb) <= 0 ? ka + "|" + kb : kb + "|" + ka;
-	}
-
-	private static double boundarySegmentParameter(Point3D point, Point3D a, Point3D b) {
-		Point3D ab = b.subtract(a);
-		double lengthSquared = ab.dotProduct(ab);
-
-		if (lengthSquared < 1e-18)
-			return 0.0;
-
-		return point.subtract(a).dotProduct(ab) / lengthSquared;
-	}
-
-	private static double boundaryDistanceToSegment(Point3D point, Point3D a, Point3D b) {
-		double t = boundarySegmentParameter(point, a, b);
-		t = Math.max(0.0, Math.min(1.0, t));
-
-		Point3D nearest = a.add(b.subtract(a).multiply(t));
-		return nearest.distance(point);
-	}
-
-	private static double boundaryCoordinate(Point3D point, int axis) {
-		if (axis == 0)
-			return point.getX();
-		if (axis == 1)
-			return point.getY();
-		return point.getZ();
-	}
-
-	private static int boundaryLowerBound(List<Point3D> points, int axis, double value) {
-		int low = 0;
-		int high = points.size();
-
-		while (low < high) {
-			int mid = (low + high) >>> 1;
-			if (boundaryCoordinate(points.get(mid), axis) < value)
-				low = mid + 1;
-			else
-				high = mid;
-		}
-
-		return low;
-	}
-
-	private static int boundaryUpperBound(List<Point3D> points, int axis, double value) {
-		int low = 0;
-		int high = points.size();
-
-		while (low < high) {
-			int mid = (low + high) >>> 1;
-			if (boundaryCoordinate(points.get(mid), axis) <= value)
-				low = mid + 1;
-			else
-				high = mid;
-		}
-
-		return low;
-	}
-
-	private static FeatureEdge makeFeatureEdge(Point3D a, Point3D b) {
-		return new FeatureEdge(a, b);
-	}
-
-	private static List<FeatureEdge> stitchBoundaryEdges(List<BoundaryEdge> boundaries, double tolerance,
-			double cosThreshold) {
-
-		List<FeatureEdge> result = new ArrayList<>();
-
-		if (boundaries.isEmpty())
-			return result;
-
-		Map<String, Point3D> endpointMap = new LinkedHashMap<>();
-
-		for (BoundaryEdge edge : boundaries) {
-			endpointMap.putIfAbsent(boundaryPointKey(edge.a, tolerance), edge.a);
-			endpointMap.putIfAbsent(boundaryPointKey(edge.b, tolerance), edge.b);
-		}
-
-		List<Point3D> endpoints = new ArrayList<>(endpointMap.values());
-		List<Point3D> endpointsByX = new ArrayList<>(endpoints);
-		List<Point3D> endpointsByY = new ArrayList<>(endpoints);
-		List<Point3D> endpointsByZ = new ArrayList<>(endpoints);
-
-		endpointsByX.sort(Comparator.comparingDouble(Point3D::getX));
-		endpointsByY.sort(Comparator.comparingDouble(Point3D::getY));
-		endpointsByZ.sort(Comparator.comparingDouble(Point3D::getZ));
-
-		Map<String, BoundarySegment> segments = new LinkedHashMap<>();
-
-		for (BoundaryEdge edge : boundaries) {
-			List<BoundarySplit> splits = new ArrayList<>();
-			splits.add(new BoundarySplit(0.0, edge.a));
-			splits.add(new BoundarySplit(1.0, edge.b));
-
-			double minX = Math.min(edge.a.getX(), edge.b.getX()) - tolerance;
-			double maxX = Math.max(edge.a.getX(), edge.b.getX()) + tolerance;
-			double minY = Math.min(edge.a.getY(), edge.b.getY()) - tolerance;
-			double maxY = Math.max(edge.a.getY(), edge.b.getY()) + tolerance;
-			double minZ = Math.min(edge.a.getZ(), edge.b.getZ()) - tolerance;
-			double maxZ = Math.max(edge.a.getZ(), edge.b.getZ()) + tolerance;
-
-			int candidateStart = boundaryLowerBound(endpointsByX, 0, minX);
-			int candidateEnd = boundaryUpperBound(endpointsByX, 0, maxX);
-			List<Point3D> candidateEndpoints = endpointsByX;
-
-			int yStart = boundaryLowerBound(endpointsByY, 1, minY);
-			int yEnd = boundaryUpperBound(endpointsByY, 1, maxY);
-
-			if (yEnd - yStart < candidateEnd - candidateStart) {
-				candidateStart = yStart;
-				candidateEnd = yEnd;
-				candidateEndpoints = endpointsByY;
-			}
-
-			int zStart = boundaryLowerBound(endpointsByZ, 2, minZ);
-			int zEnd = boundaryUpperBound(endpointsByZ, 2, maxZ);
-
-			if (zEnd - zStart < candidateEnd - candidateStart) {
-				candidateStart = zStart;
-				candidateEnd = zEnd;
-				candidateEndpoints = endpointsByZ;
-			}
-
-			for (int candidateIndex = candidateStart; candidateIndex < candidateEnd; candidateIndex++) {
-				Point3D candidate = candidateEndpoints.get(candidateIndex);
-
-				if (candidate.getX() < minX || candidate.getX() > maxX || candidate.getY() < minY
-						|| candidate.getY() > maxY || candidate.getZ() < minZ || candidate.getZ() > maxZ)
-					continue;
-
-				double t = boundarySegmentParameter(candidate, edge.a, edge.b);
-
-				if (t <= 1e-9 || t >= 1.0 - 1e-9)
-					continue;
-
-				if (boundaryDistanceToSegment(candidate, edge.a, edge.b) <= tolerance)
-					splits.add(new BoundarySplit(t, candidate));
-			}
-
-			splits.sort(Comparator.comparingDouble(split -> split.t));
-
-			List<BoundarySplit> unique = new ArrayList<>();
-
-			for (BoundarySplit split : splits) {
-				if (unique.isEmpty() || split.point.distance(unique.get(unique.size() - 1).point) > tolerance)
-					unique.add(split);
-			}
-
-			for (int i = 0; i + 1 < unique.size(); i++) {
-				Point3D a = unique.get(i).point;
-				Point3D b = unique.get(i + 1).point;
-
-				if (a.distance(b) <= tolerance)
-					continue;
-
-				String key = boundarySegmentKey(a, b, tolerance);
-				BoundarySegment segment = segments.get(key);
-
-				if (segment == null) {
-					segment = new BoundarySegment(a, b);
-					segments.put(key, segment);
-				}
-
-				segment.normals.add(edge.normal);
-			}
-		}
-
-		for (BoundarySegment segment : segments.values()) {
-			boolean draw = false;
-
-			for (int i = 0; i < segment.normals.size() && !draw; i++) {
-				for (int j = i + 1; j < segment.normals.size(); j++) {
-					double dot = segment.normals.get(i).dot(segment.normals.get(j));
-					double planeDot = Math.max(-1.0, Math.min(1.0, dot));
-
-					if (planeDot < cosThreshold) {
-						draw = true;
-						break;
-					}
-				}
-			}
-
-			if (draw)
-				result.add(makeFeatureEdge(segment.a, segment.b));
-		}
-
-		return result;
-	}
-
-	private List<FeatureEdge> collectFeatureEdges(CSG c) {
-		long[] triangles = c.getTriangles();
-		int triangleCount = (int) c.getTriCount();
-		List<FeatureEdge> visibleEdges = new ArrayList<>();
-
-		if (triangles == null || triangleCount == 0)
-			return visibleEdges;
-
-		double topologyPrecision = Math.max(0.0, SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001));
-
-		int vertexCount = (int) c.getVertCount();
-		int[] vertexRemap = null;
-		double[] topologyX = null;
-		double[] topologyY = null;
-		double[] topologyZ = null;
-		double[] featureX = null;
-		double[] featureY = null;
-		double[] featureZ = null;
-
-		/*
-		 * Boolean operations can leave nearly coincident vertices. Merge them
-		 * in the edge topology only; normals still use the original coordinates.
-		 */
-		if (topologyPrecision > 0.0 && vertexCount > 0) {
-			vertexRemap = new int[vertexCount];
-			topologyX = new double[vertexCount];
-			topologyY = new double[vertexCount];
-			topologyZ = new double[vertexCount];
-			featureX = new double[vertexCount];
-			featureY = new double[vertexCount];
-			featureZ = new double[vertexCount];
-
-			Map<VertexKey, Integer> canonicalVertices = new HashMap<>();
-
-			for (int vertex = 0; vertex < vertexCount; vertex++) {
-				double x = c.getVertex_X(vertex);
-				double y = c.getVertex_Y(vertex);
-				double z = c.getVertex_Z(vertex);
-
-				long qx = Math.round(x / topologyPrecision);
-				long qy = Math.round(y / topologyPrecision);
-				long qz = Math.round(z / topologyPrecision);
-
-				VertexKey key = new VertexKey(qx, qy, qz);
-				Integer repairedIndex = canonicalVertices.get(key);
-
-				if (repairedIndex == null) {
-					repairedIndex = canonicalVertices.size();
-					canonicalVertices.put(key, repairedIndex);
-
-					topologyX[repairedIndex] = qx * topologyPrecision;
-					topologyY[repairedIndex] = qy * topologyPrecision;
-					topologyZ[repairedIndex] = qz * topologyPrecision;
-
-					featureX[repairedIndex] = x;
-					featureY[repairedIndex] = y;
-					featureZ[repairedIndex] = z;
-				}
-
-				vertexRemap[vertex] = repairedIndex;
-			}
-		}
-
-		Map<Long, FeatureEdge> edgeMap = new LinkedHashMap<>();
-		int[] indices = new int[3];
-
-		for (int triangle = 0; triangle < triangleCount; triangle++) {
-			int sourceI0 = (int) triangles[triangle * 3];
-			int sourceI1 = (int) triangles[triangle * 3 + 1];
-			int sourceI2 = (int) triangles[triangle * 3 + 2];
-
-			int i0 = vertexRemap == null ? sourceI0 : vertexRemap[sourceI0];
-			int i1 = vertexRemap == null ? sourceI1 : vertexRemap[sourceI1];
-			int i2 = vertexRemap == null ? sourceI2 : vertexRemap[sourceI2];
-
-			if (i0 == i1 || i1 == i2 || i2 == i0)
-				continue;
-
-			if (vertexRemap != null) {
-				double ux = topologyX[i1] - topologyX[i0];
-				double uy = topologyY[i1] - topologyY[i0];
-				double uz = topologyZ[i1] - topologyZ[i0];
-
-				double vx = topologyX[i2] - topologyX[i0];
-				double vy = topologyY[i2] - topologyY[i0];
-				double vz = topologyZ[i2] - topologyZ[i0];
-
-				double nx = uy * vz - uz * vy;
-				double ny = uz * vx - ux * vz;
-				double nz = ux * vy - uy * vx;
-
-				if (Math.sqrt(nx * nx + ny * ny + nz * nz) < 1e-12)
-					continue;
-			}
-
-			double ax = c.getVertex_X(sourceI0);
-			double ay = c.getVertex_Y(sourceI0);
-			double az = c.getVertex_Z(sourceI0);
-
-			double bx = c.getVertex_X(sourceI1);
-			double by = c.getVertex_Y(sourceI1);
-			double bz = c.getVertex_Z(sourceI1);
-
-			double cx = c.getVertex_X(sourceI2);
-			double cy = c.getVertex_Y(sourceI2);
-			double cz = c.getVertex_Z(sourceI2);
-
-			double ux = bx - ax;
-			double uy = by - ay;
-			double uz = bz - az;
-
-			double vx = cx - ax;
-			double vy = cy - ay;
-			double vz = cz - az;
-
-			double nx = uy * vz - uz * vy;
-			double ny = uz * vx - ux * vz;
-			double nz = ux * vy - uy * vx;
-
-			double length = Math.sqrt(nx * nx + ny * ny + nz * nz);
-
-			if (length < 1e-12)
-				continue;
-
-			Vector3d normal = new Vector3d(nx / length, ny / length, nz / length);
-
-			indices[0] = i0;
-			indices[1] = i1;
-			indices[2] = i2;
-
-			for (int edgeIndex = 0; edgeIndex < 3; edgeIndex++) {
-				int ia = indices[edgeIndex];
-				int ib = indices[(edgeIndex + 1) % 3];
-
-				int low = Math.min(ia, ib);
-				int high = Math.max(ia, ib);
-
-				long edgeKey = ((long) low << 32) | (high & 0xffffffffL);
-				FeatureEdge edge = edgeMap.get(edgeKey);
-
-				if (edge == null) {
-					double lowX = vertexRemap == null ? c.getVertex_X(low) : featureX[low];
-					double lowY = vertexRemap == null ? c.getVertex_Y(low) : featureY[low];
-					double lowZ = vertexRemap == null ? c.getVertex_Z(low) : featureZ[low];
-
-					double highX = vertexRemap == null ? c.getVertex_X(high) : featureX[high];
-					double highY = vertexRemap == null ? c.getVertex_Y(high) : featureY[high];
-					double highZ = vertexRemap == null ? c.getVertex_Z(high) : featureZ[high];
-
-					edge = new FeatureEdge(new Point3D(lowX, lowY, lowZ), new Point3D(highX, highY, highZ));
-					edgeMap.put(edgeKey, edge);
-				}
-
-				edge.normals.add(normal);
-			}
-		}
-
-		double angleDegrees = SceneStyleConfig.getDouble("edges.angleDegrees", 35.0);
-		angleDegrees = Math.max(0.0, Math.min(180.0, angleDegrees));
-
-		double cosThreshold = Math.cos(Math.toRadians(angleDegrees));
-		double stitchTolerance = Math.max(1e-9, SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
-
-		List<BoundaryEdge> boundaries = new ArrayList<>();
-
-		for (FeatureEdge edge : edgeMap.values()) {
-			if (edge.normals.size() == 1) {
-				boundaries.add(new BoundaryEdge(edge.a, edge.b, edge.normals.get(0)));
-				continue;
-			}
-
-			boolean draw = false;
-
-			for (int i = 0; i < edge.normals.size() && !draw; i++) {
-				for (int j = i + 1; j < edge.normals.size(); j++) {
-					double dot = edge.normals.get(i).dot(edge.normals.get(j));
-					double planeDot = Math.max(-1.0, Math.min(1.0, dot));
-
-					if (planeDot < cosThreshold) {
-						draw = true;
-						break;
-					}
-				}
-			}
-
-			if (draw)
-				visibleEdges.add(edge);
-		}
-
-		visibleEdges.addAll(stitchBoundaryEdges(boundaries, stitchTolerance, cosThreshold));
-		return visibleEdges;
-	}
-
-	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdge> visibleEdges) {
+	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges) {
 		javafx.scene.Group group = new javafx.scene.Group();
 		group.setMouseTransparent(true);
 		group.setDepthTest(DepthTest.ENABLE);
@@ -1269,7 +803,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		Point3D cameraForward = new Point3D(cameraRotation[0][2], cameraRotation[1][2], cameraRotation[2][2]);
 
 		String widthMode = SceneStyleConfig.getString("edges.widthMode", "screen");
-		boolean screenWidth = "screen".equalsIgnoreCase(widthMode);
+		boolean screenWidth = !"world".equalsIgnoreCase(widthMode);
 
 		double widthPx = Math.max(0.1, SceneStyleConfig.getDouble("edges.widthPx", 1.6));
 		double worldRadius = Math.max(0.001, SceneStyleConfig.getDouble("edges.radius", 0.15));
@@ -1281,10 +815,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			double cz = 0;
 			int count = 0;
 
-			for (FeatureEdge edge : visibleEdges) {
-				cx += edge.a.getX() + edge.b.getX();
-				cy += edge.a.getY() + edge.b.getY();
-				cz += edge.a.getZ() + edge.b.getZ();
+			for (FeatureEdgeExtractor.Edge edge : visibleEdges) {
+				cx += edge.a.x + edge.b.x;
+				cy += edge.a.y + edge.b.y;
+				cz += edge.a.z + edge.b.z;
 				count += 2;
 			}
 
@@ -1298,16 +832,17 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		List<Float> points = new ArrayList<>();
 		List<Integer> faces = new ArrayList<>();
 
-		for (FeatureEdge edge : visibleEdges) {
+		for (FeatureEdgeExtractor.Edge edge : visibleEdges) {
 			double radius = worldRadius;
 
 			if (screenWidth) {
-				Point3D midpoint = edge.a.midpoint(edge.b);
+				Point3D midpoint = new Point3D((edge.a.x + edge.b.x) / 2.0, (edge.a.y + edge.b.y) / 2.0,
+						(edge.a.z + edge.b.z) / 2.0);
 				double depth = Math.max(0.1, midpoint.subtract(cameraPosition).dotProduct(cameraForward));
 				radius = Math.max(0.0001, screenRadiusPerDepth * depth);
 			}
 
-			addEdgePrism(points, faces, edge.a, edge.b, cameraPosition, radius);
+			addEdgePrism(points, faces, edge, cameraPosition, radius);
 		}
 
 		if (points.isEmpty())
@@ -1400,7 +935,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (holder.edges == null)
 				continue;
 
-			List<FeatureEdge> visibleEdges = collectFeatureEdges(csg);
+			List<FeatureEdgeExtractor.Edge> visibleEdges = FeatureEdgeExtractor.extract(csg,
+					SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
+					SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
+					SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
 			featureEdgeCache.put(csg, visibleEdges);
 
 			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
@@ -1420,7 +958,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (holder.edges == null)
 				continue;
 
-			List<FeatureEdge> visibleEdges = featureEdgeCache.get(entry.getKey());
+			List<FeatureEdgeExtractor.Edge> visibleEdges = featureEdgeCache.get(entry.getKey());
 
 			if (visibleEdges == null)
 				continue;

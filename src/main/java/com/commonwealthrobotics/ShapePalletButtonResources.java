@@ -30,9 +30,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-import java.io.File;
-import java.nio.file.Paths;
-
 public class ShapePalletButtonResources {
 	javafx.scene.image.Image image = null;
 	CSG indicator = null;
