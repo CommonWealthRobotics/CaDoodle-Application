@@ -226,8 +226,10 @@ public class ShapesPallet {
 		String sweep = key.get("sweep");
 
 		boolean isSweep = (sweep != null) ? Boolean.parseBoolean(sweep) : false;
+		String displayName = name;
 		name = name.replace(' ', '_');
-		final String tooltipText = ActiveProject.getTranslation("shape." + name);
+		String translatedName = ActiveProject.getTranslation("shape." + name);
+		final String tooltipText = translatedName.startsWith("shape.") ? displayName : translatedName;
 
 		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
 		ArrayList<ButtonWithOverlayImage> buttonHolder = new ArrayList<ButtonWithOverlayImage>();
