@@ -60,6 +60,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -584,13 +585,14 @@ public class SettingsManager implements ICSGClientEvent {
 			bugfixOption.setSelected(true);
 		else
 			pinToVersion.setSelected(true);
-		mc.getActiveProject();
+		ActiveProject ap = mc.getActiveProject();
+
 		ArrayList<String> styleSheetOptions = ActiveProject.getStyleSheetOptions();
 		String modeSelected = ConfigurationDatabase.get("CaDoodle", "CaDoodleStyle", styleSheetOptions.get(0))
 				.toString();
 		styleOptions.setOnAction(event -> {
 			ConfigurationDatabase.put("CaDoodle", "CaDoodleStyle", styleOptions.getSelectionModel().getSelectedItem());
-			mc.getActiveProject().resetAllStyleSheets();
+			ap.resetAllStyleSheets();
 		});
 		for (String s : styleSheetOptions) {
 			styleOptions.getItems().add(s);
@@ -599,7 +601,9 @@ public class SettingsManager implements ICSGClientEvent {
 		updateVersionOptions();
 		mc.getActiveProject();
 		ActiveProject.setStyleSheet(topPane);
-		numPoints.setText(mc.getActiveProject().get().getTextResolutionPoints() + "");
+
+		if (ap.isOpen())
+			numPoints.setText(ap.get().getTextResolutionPoints() + "");
 		fontSizeField.setText(FontSizeManager.getDefaultSize() + "");
 		// try {
 		// // Optionally dig deeper with internal API (may break across JFX versions)
@@ -729,6 +733,13 @@ public class SettingsManager implements ICSGClientEvent {
 				}
 			});
 			// Show the new window
+			javafx.geometry.Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+			double width = Math.min(1500, screenBounds.getWidth());
+			double height = Math.min(950, screenBounds.getHeight());
+
+			stage.setWidth(width);
+			stage.setHeight(height);
 			stage.show();
 		} catch (IOException e) {
 			com.neuronrobotics.sdk.common.Log.error(e);

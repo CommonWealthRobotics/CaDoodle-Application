@@ -92,7 +92,7 @@ import javafx.stage.Stage;
 public class ActiveProject implements ICaDoodleStateUpdate {
 
 	private static final String DEFAULT = "Default";
-	private boolean isOpenValue = true;
+	//private boolean isOpenValue = true;
 	private boolean disableRegenerate = false;
 	private CaDoodleFile fromFile = null;
 	// private ICaDoodleStateUpdate listener;
@@ -105,6 +105,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	private Thread lastUpdate = null;
 	private boolean saving;
 	private static HashSet<Region> panes = new HashSet<Region>();
+	private BowlerStudio3dEngine engine;
 
 	public ActiveProject() {
 		// this.listener = listener;
@@ -423,8 +424,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public boolean isOpen() {
-		// Auto-generated method stub
-		return isOpenValue;
+		return fromFile != null;
 	}
 
 	public WritableImage getImage() {
@@ -695,7 +695,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		// new Exception("Auto-save called here").printStackTrace();
 		if (autosaveThread == null) {
 			autosaveThread = new Thread(() -> {
-				while (!get().isInitialized()) {
+				while (fromFile == null) {
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
@@ -769,7 +769,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		BowlerStudio3dEngine.setGridKey(getLabelTextColor("grid-key-color"));
 		BowlerStudio3dEngine.setGridColor(getLabelTextColor("grid-dark-color"));
 		BowlerStudio3dEngine.setLightGrid(getLabelTextColor("grid-light-color"));
-		BowlerStudio3dEngine.updateGrids();
+		engine.updateGrids();
 		BowlerStudio3dEngine.updateRulerColor(getLabelTextColor("label"));
 
 		ViewCube.setColors(getLabelTextColor("nav-cube-surface-color"), getLabelTextColor("nav-cube-edge-color"),
@@ -1052,5 +1052,11 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 			Log.error(ex);
 			return key;
 		}
+	}
+
+	public void setEngine(BowlerStudio3dEngine engine) {
+		this.engine = engine;
+		// TODO Auto-generated method stub
+
 	}
 }

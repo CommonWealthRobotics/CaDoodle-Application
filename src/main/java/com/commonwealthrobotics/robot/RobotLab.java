@@ -127,7 +127,7 @@ public class RobotLab {
 		updating = true;
 		session.submit(() -> {
 			try {
-				while (ap.get() == null) {
+				while (!ap.isOpen()) {
 					Thread.sleep(100);
 				}
 				while (!ap.get().isInitialized()) {
