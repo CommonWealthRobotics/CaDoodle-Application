@@ -76,15 +76,10 @@ public class MoveUpArrow {
 			double arrowX = moveUpLocationTransform.getTx();
 			double arrowY = moveUpLocationTransform.getTy();
 			double arrowZ = moveUpLocationTransform.getTz();
-
-			// Calculate the zoom-dependent offset that was added for the arrow
-			double arrowOffset = 0;//1 *(-moveUpLocationTransform.getTz()+referenceHeight);
-
 			// Subtract to get back to the base position (top of bounds)
 			double baseX = arrowX;
 			double baseY = arrowY;
-			double baseZ = arrowZ + arrowOffset;
-
+			double baseZ = arrowZ;
 
 			this.startingPosition3D = new Point3D(baseX, baseY, zMoveManipulator.snapToGrid(baseZ));
 			//			Log.debug("Start z Move with init " + moveUpLocationTransform.getTz()
