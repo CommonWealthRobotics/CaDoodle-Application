@@ -170,6 +170,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 				onCancel = null;
 			}
 			placeWorkplaneVisualization();
+			engine.setToMovingMode(false);
 		});
 	}
 
@@ -184,6 +185,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		clicked = false;
 
 		BowlerKernel.runLater(() -> {
+			engine.setToMovingMode(true);
 			// com.neuronrobotics.sdk.common.Log.debug("Starting workplane listeners");
 			wpPick.addEventFilter(MouseEvent.ANY, this);
 			wpPick.setMouseTransparent(false);
@@ -210,7 +212,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 	@Override
 	public void handle(MouseEvent ev) {
 		try {
-
+			engine.setToMovingMode(true);
 			if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				doClickEvent(ev);
 
