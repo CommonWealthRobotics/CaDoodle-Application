@@ -421,10 +421,13 @@ public class TimelineManager {
 					AddFromFile af = (AddFromFile) op;
 					try {
 						text = (myIndex + 1) + "\n" + ActiveProject.getTranslation("AddFromFile") + " ";
-						String name = af.getFile().getName();
-						// text+=name+" ";
-						String[] split = name.split("\\.");
-						text += split[1].toUpperCase();
+						File file = af.getFile();
+						if (file != null) {
+							String name = file.getName();
+							// text+=name+" ";
+							String[] split = name.split("\\.");
+							text += split[1].toUpperCase();
+						}
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
