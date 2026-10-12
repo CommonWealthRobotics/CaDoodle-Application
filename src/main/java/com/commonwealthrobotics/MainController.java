@@ -1617,15 +1617,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 
 	@Override
 	public void onUpdate(List<CSG> currentState, CaDoodleOperation source, CaDoodleFile fi) {
-		if (isInitializing()) {
-			int frame = (int) (100 * ap.get().getPercentInitialized());
-			if (frame - lastFrame > 5) {
-				lastFrame = frame;
-				SplashManager.renderSplashFrame(frame, "Initialize Model");
-			}
-		}
-		// com.neuronrobotics.sdk.common.Log.error("Displaying result of " +
-		// source.getType());
 		BowlerStudio.runLater(() -> {
 			redoButton.setDisable(!ap.get().isForwardAvailable());
 			undoButton.setDisable(!ap.get().isBackAvailable());
