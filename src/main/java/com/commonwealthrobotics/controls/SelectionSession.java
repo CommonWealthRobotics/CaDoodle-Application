@@ -2899,6 +2899,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return ap.get().getBounds(incoming);
 	}
 
+	public Bounds getSellectedBounds(CSG incoming) throws BoundsComputFailure {
+		return ap.get().getBounds(Arrays.asList(incoming));
+	}
+
 	public Bounds getBounds(DHParameterKinematics limb) throws BoundsComputFailure {
 		ArrayList<CSG> parts = getLimbParts(limb);
 
@@ -3189,13 +3193,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				try {
 					sellectedBounds = getSellectedBounds();
 					double zoomScale = 1.0 / engine.getFlyingCamera().getZoomScale();
-					double numberOffset = -zoom / 130 * zoomScale / 1.5;
-
+					double numberOffset = -zoom / 1600 * zoomScale / 1.5;
+					double value = (numberOffset);
+					value = 50 * Math.max(-0.1, Math.min(0.5, value));
+					// Log.debug("Halo scale " + value + " from " + numberOffset);
 					for (CSG key : meshes.keySet()) {
 						MeshHolder holder = meshes.get(key);
-						holder.haloScale.setX(1.0 + 0.03 * numberOffset);
-						holder.haloScale.setY(1.0 + 0.03 * numberOffset);
-						holder.haloScale.setZ(1.0 + 0.03 * numberOffset);
+						Bounds b = getSellectedBounds(key);
+						double lineWidth = 0.25 * (1.0 + value);
+
+						holder.haloScale.setX(1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth)));
+						holder.haloScale.setY(1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth)));
+						holder.haloScale.setZ(1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth)));
 					}
 					BowlerStudio.runLater(() -> {
 						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
