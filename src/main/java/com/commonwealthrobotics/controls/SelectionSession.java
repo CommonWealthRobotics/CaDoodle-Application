@@ -131,7 +131,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		public MeshView halo;
 		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
-
+		List<FeatureEdgeExtractor.Edge> visibleEdges = null;
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
 			if (display == null || halo == null || bouds == null)
 				throw new NullPointerException();
@@ -144,7 +144,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
 	private PauseTransition edgeRebuildTimer;
 	private PauseTransition edgeWidthUpdateTimer;
-	private final Map<CSG, List<FeatureEdgeExtractor.Edge>> featureEdgeCache = new HashMap<>();
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -718,7 +717,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 		getMeshes().clear();
-		featureEdgeCache.clear();
 	}
 
 
@@ -878,6 +876,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void requestFeatureEdgeRebuild() {
+		if (!ap.get().isInitialized())
+			return;
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
 
@@ -898,9 +898,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
 
-		if (featureEdgeCache.isEmpty())
-			return;
-
 		BowlerStudio.runLater(() -> {
 			double delayMs = SceneStyleConfig.getDouble("edges.cameraSettleDelayMs", 120.0);
 
@@ -916,34 +913,44 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void rebuildFeatureEdges() {
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true)) {
-			featureEdgeCache.clear();
-
 			for (MeshHolder holder : getMeshes().values()) {
 				if (holder.edges != null)
 					holder.edges.getChildren().clear();
 			}
 			return;
 		}
-
+		if (!ap.get().isInitialized())
+			return;
 		List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
-		featureEdgeCache.clear();
 
-		for (Map.Entry<CSG, MeshHolder> entry : current) {
-			CSG csg = entry.getKey();
-			MeshHolder holder = entry.getValue();
+		submit(() -> {
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				CSG csg = entry.getKey();
+				MeshHolder holder = entry.getValue();
 
-			if (holder.edges == null)
-				continue;
+				if (holder.edges == null)
+					continue;
 
-			List<FeatureEdgeExtractor.Edge> visibleEdges = FeatureEdgeExtractor.extract(csg,
-					SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
-					SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
-					SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
-			featureEdgeCache.put(csg, visibleEdges);
+				entry.getValue().visibleEdges = FeatureEdgeExtractor.extract(csg,
+						SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
+						SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
+						SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
+			}
+			BowlerStudio.runLater(() -> {
+				for (Map.Entry<CSG, MeshHolder> entry : current) {
+					CSG csg = entry.getKey();
+					MeshHolder holder = entry.getValue();
 
-			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
-			holder.edges.getChildren().setAll(rebuilt.getChildren());
-		}
+					if (holder.edges == null)
+						continue;
+					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges);
+					holder.edges.getChildren().setAll(rebuilt.getChildren());
+				}
+			});
+
+		});
+
+
 	}
 
 	private void refreshFeatureEdgeWidths() {
@@ -958,7 +965,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (holder.edges == null)
 				continue;
 
-			List<FeatureEdgeExtractor.Edge> visibleEdges = featureEdgeCache.get(entry.getKey());
+			List<FeatureEdgeExtractor.Edge> visibleEdges = entry.getValue().visibleEdges;
 
 			if (visibleEdges == null)
 				continue;
@@ -3233,6 +3240,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onInitializationDone() {
 		TransformNR workplane2 = ap.get().getWorkplane();
 		ap.get().setWorkplane(workplane2);
+		requestFeatureEdgeRebuild();
+	}
+
+	@Override
+	public void onInitializationStart() {
+		// Auto-generated method stub
+	}
+
+	@Override
+	public void onRegenerateDone() {
+		// com.neuronrobotics.sdk.common.Log.debug("Enable parametrics ");
+		BowlerStudio.runLater(() -> parametrics.setDisable(false));
+	}
+
+	@Override
+	public void onRegenerateStart(CaDoodleOperation source) {
+		// com.neuronrobotics.sdk.common.Log.debug("Disable parametrics ");
+		BowlerStudio.runLater(() -> parametrics.setDisable(true));
 	}
 
 	public SpriteDisplayMode getMode() {
@@ -3302,22 +3327,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	@Override
-	public void onInitializationStart() {
-		// Auto-generated method stub
-	}
-
-	@Override
-	public void onRegenerateDone() {
-		// com.neuronrobotics.sdk.common.Log.debug("Enable parametrics ");
-		BowlerStudio.runLater(() -> parametrics.setDisable(false));
-	}
-
-	@Override
-	public void onRegenerateStart(CaDoodleOperation source) {
-		// com.neuronrobotics.sdk.common.Log.debug("Disable parametrics ");
-		BowlerStudio.runLater(() -> parametrics.setDisable(true));
-	}
 
 	public boolean isShowConstituants() {
 		return showConstituants;
