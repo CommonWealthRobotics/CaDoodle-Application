@@ -127,13 +127,18 @@ import javafx.util.Duration;
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	private ControlSprites controls;
+	double scaleX = 1.02;
+	double scaleY = 1.02;
+	double scaleZ = 1.03;
 
 	public class MeshHolder {
 		public MeshView display;
 		public MeshView halo;
 		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
+		Scale haloScale = new Scale();
 		List<FeatureEdgeExtractor.Edge> visibleEdges = null;
+
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
 			if (display == null || halo == null || bouds == null)
 				throw new NullPointerException();
@@ -240,7 +245,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
 		this.engine = e;
 		engine.addListener(camera -> requestFeatureEdgeWidthUpdate());
-
 
 		this.ruler = ruler;
 		workplane = new WorkplaneManager(ap, engine, this);
@@ -724,7 +728,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getMeshes().clear();
 	}
 
-
 	private static void addEdgePoint(List<Float> points, Point3D point) {
 		points.add((float) point.getX());
 		points.add((float) point.getY());
@@ -955,7 +958,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		});
 
-
 	}
 
 	private void refreshFeatureEdgeWidths() {
@@ -992,23 +994,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		holder.edges = edges;
 		double haloDistance = 1;
 
-		double scaleX = 1.02;
-		double scaleY = 1.02;
-		double scaleZ = 1.03;
 		TransformNR wp = getWorkplane();
 		TransformNR center = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
 		TransformNR wpCentered = wp.times(center);
 		double cx = wpCentered.getX();
 		double cy = wpCentered.getY();
 		double cz = wpCentered.getZ();
-		Scale haloScale = new Scale();
-		haloScale.setX(scaleX);
-		haloScale.setY(scaleY);
-		haloScale.setZ(scaleZ);
-
-		haloScale.setPivotX(cx);
-		haloScale.setPivotY(cy);
-		haloScale.setPivotZ(cz);
 		Affine manip = new Affine();
 		if (c.hasManipulator()) {
 			try {
@@ -1018,11 +1009,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
-		halo.getTransforms().setAll(haloScale, manip);
+		holder.haloScale.setX(scaleX);
+		holder.haloScale.setY(scaleY);
+		holder.haloScale.setZ(scaleZ);
+
+		holder.haloScale.setPivotX(cx);
+		holder.haloScale.setPivotY(cy);
+		holder.haloScale.setPivotZ(cz);
+
+		halo.getTransforms().setAll(holder.haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
-		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
-		haloMat.setSpecularColor(new Color(0.1, 0.5, 1, 0.));
+
+		Color value = new Color(0, 0.95, 0.95, 0.45);
+		if (c.isLock())
+			value = new Color(0, 0, 0.95, 0.45);
+		haloMat.setDiffuseColor(value);
+		haloMat.setSpecularColor(value);
 		halo.setCullFace(CullFace.BACK);
 		halo.setDrawMode(DrawMode.FILL);
 		halo.setDepthTest(DepthTest.ENABLE);
@@ -3193,9 +3196,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (selectedCSG.size() == 0)
 				return;
 			Bounds sellectedBounds;
-			if (selectedCSG.size() > 0)
+			if (selectedCSG.size() > 0) {
 				try {
 					sellectedBounds = getSellectedBounds();
+					double zoomScale = 1.0 / engine.getFlyingCamera().getZoomScale();
+					double numberOffset = -zoom / 130 * zoomScale / 1.5;
+
+					for (CSG key : meshes.keySet()) {
+						MeshHolder holder = meshes.get(key);
+						holder.haloScale.setX(1.0 + 0.03 * numberOffset);
+						holder.haloScale.setY(1.0 + 0.03 * numberOffset);
+						holder.haloScale.setZ(1.0 + 0.03 * numberOffset);
+					}
 					BowlerStudio.runLater(() -> {
 						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
 								sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
@@ -3203,6 +3215,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				} catch (BoundsComputFailure e) {
 					Log.error(e);
 				}
+			}
 		});
 	}
 
@@ -3339,7 +3352,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 
 	}
-
 
 	public boolean isShowConstituants() {
 		return showConstituants;
