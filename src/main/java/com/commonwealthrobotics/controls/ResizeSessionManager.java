@@ -90,7 +90,7 @@ public class ResizeSessionManager {
 
 	private void regenerateMesh(CSG key, CSG scaledCSG) {
 		MeshHolder meshHolder = meshes.get(key);
-		MeshView old = meshHolder.display; // lookup with original key
+		MeshView old = meshHolder.getDisplay(); // lookup with original key
 		if (old == null)
 			return;
 
@@ -101,7 +101,7 @@ public class ResizeSessionManager {
 
 		engine.removeUserNode(old);
 		engine.addUserNode(fresh);
-		meshHolder.display = fresh;
+		meshHolder.setDisplay(fresh);
 	}
 
 	// Prevent 0-value for scaling
