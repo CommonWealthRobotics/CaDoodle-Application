@@ -1757,7 +1757,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			if (SplashManager.isVisibleSplash() || ap.get().isOperationRunning()) {
 				event.consume();
-				Log.debug("Rejecting keypress " + event + " spash: " + SplashManager.isVisibleSplash()
+				Log.error("Rejecting keypress " + event + " spash: " + SplashManager.isVisibleSplash()
 						+ " operation running status " + ap.get().isOperationRunning());
 				return;
 			}
@@ -1802,7 +1802,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 			if (SplashManager.isVisibleSplash() || ap.get().isOperationRunning()) {
 				event.consume();
-				Log.debug("Rejecting keypress " + event + " spash: " + SplashManager.isVisibleSplash()
+				Log.error("Rejecting keypress " + event + " spash: " + SplashManager.isVisibleSplash()
 						+ " operation running status " + ap.get().isOperationRunning());
 				return;
 			}
