@@ -1755,6 +1755,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				});
 				return;
 			}
+			if(SplashManager.isVisibleSplash() || ap.get().isOperationRunning()) {
+				event.consume();
+				return;
+			}
 			if (session.workplane.isActive()) {
 				event.consume();
 				return;
@@ -1794,6 +1798,11 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					return;
 				}
 			}
+			if(SplashManager.isVisibleSplash()|| ap.get().isOperationRunning()) {
+				event.consume();
+				return;
+			}
+				
 
 			String character = event.getCharacter();
 			if (character.isEmpty())
