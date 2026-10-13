@@ -783,8 +783,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		u = u.normalize().multiply(radius);
 		Point3D v = direction.crossProduct(u).normalize().multiply(radius);
 
-		Point3D[] ringA = { a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v) };
-		Point3D[] ringB = { b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v) };
+		Point3D[] ringA = {a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v)};
+		Point3D[] ringB = {b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v)};
 
 		int base = points.size() / 3;
 
@@ -1367,7 +1367,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			sa += c.getSurfaceArea();
 			MeshHolder meshHolder = meshes.get(c);
 			if (meshHolder != null)
-				BowlerStudio.runLater(()-> meshHolder.getHalo().setVisible(true));
+				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
 		}
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
@@ -1552,7 +1552,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = { 1.0 };
+		double[] density = {1.0};
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1566,7 +1566,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = { null };
+		Runnable[] updateLabel = {null};
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
