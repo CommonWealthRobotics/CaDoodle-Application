@@ -767,8 +767,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		u = u.normalize().multiply(radius);
 		Point3D v = direction.crossProduct(u).normalize().multiply(radius);
 
-		Point3D[] ringA = {a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v)};
-		Point3D[] ringB = {b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v)};
+		Point3D[] ringA = { a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v) };
+		Point3D[] ringB = { b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v) };
 
 		int base = points.size() / 3;
 
@@ -1009,9 +1009,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
-		holder.haloScale.setX(scaleX);
-		holder.haloScale.setY(scaleY);
-		holder.haloScale.setZ(scaleZ);
+		setStandardHaloScale(holder);
 
 		holder.haloScale.setPivotX(cx);
 		holder.haloScale.setPivotY(cy);
@@ -1068,6 +1066,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.addEventFilter(MouseEvent.ANY, lockableMouseMover);
 
 		setUpControls(meshView, c);
+	}
+
+	private void setStandardHaloScale(MeshHolder holder) {
+		holder.haloScale.setX(scaleX);
+		holder.haloScale.setY(scaleY);
+		holder.haloScale.setZ(scaleZ);
 	}
 
 	private void setUpControls(MeshView meshView, CSG name) {
@@ -1532,7 +1536,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1546,7 +1550,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -3212,10 +3216,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						MeshHolder holder = meshes.get(key);
 						Bounds b = getSellectedBounds(key);
 						double lineWidth = 0.25 * (1.0 + value);
-
-						holder.haloScale.setX(1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth)));
-						holder.haloScale.setY(1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth)));
-						holder.haloScale.setZ(1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth)));
+						if (CaDoodleFile.isWorkplaneNotOrigin(getWorkplane())) {
+							setStandardHaloScale(holder);
+						} else {
+							holder.haloScale.setX(1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth)));
+							holder.haloScale.setY(1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth)));
+							holder.haloScale.setZ(1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth)));
+						}
 					}
 					BowlerStudio.runLater(() -> {
 						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
