@@ -132,8 +132,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	double scaleZ = 1.03;
 
 	public class MeshHolder {
-		public MeshView display;
-		public MeshView halo;
+		private MeshView display;
+		private MeshView halo;
 		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
 		Scale haloScale = new Scale();
@@ -142,9 +142,25 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
 			if (display == null || halo == null || bouds == null)
 				throw new NullPointerException();
-			this.display = display;
-			this.halo = halo;
+			this.setDisplay(display);
+			this.setHalo(halo);
 			this.bouds = bouds;
+		}
+
+		public MeshView getHalo() {
+			return halo;
+		}
+
+		public void setHalo(MeshView halo) {
+			this.halo = halo;
+		}
+
+		public MeshView getDisplay() {
+			return display;
+		}
+
+		public void setDisplay(MeshView display) {
+			this.display = display;
 		}
 	}
 
@@ -713,19 +729,19 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		if (getMeshes() == null)
 			return;
-
-		for (CSG c : getMeshes().keySet()) {
-			MeshHolder meshHolder = getMeshes().get(c);
-			engine.removeUserNode(meshHolder.display);
-			engine.removeUserNode(meshHolder.edges);
-			try {
-				engine.removeUserNode(meshHolder.halo);
-			} catch (Exception ex) {
-				Log.error(ex);
+		BowlerStudio.runLater(() -> {
+			for (CSG c : getMeshes().keySet()) {
+				MeshHolder meshHolder = getMeshes().get(c);
+				engine.removeUserNode(meshHolder.getDisplay());
+				engine.removeUserNode(meshHolder.edges);
+				try {
+					engine.removeUserNode(meshHolder.getHalo());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
 			}
-		}
-
-		getMeshes().clear();
+			getMeshes().clear();
+		});
 	}
 
 	private static void addEdgePoint(List<Float> points, Point3D point) {
@@ -984,8 +1000,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void displayCSG(CSG c, MeshHolder holder) {
 
-		MeshView meshView = holder.display;
-		MeshView halo = holder.halo;
+		MeshView meshView = holder.getDisplay();
+		MeshView halo = holder.getHalo();
 		Bounds b = holder.bouds;
 
 		javafx.scene.Group edges = new javafx.scene.Group();
@@ -1149,8 +1165,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		selected.add(name);
 		MeshHolder meshHolder = meshes.get(name);
-		if (meshHolder != null && meshHolder.halo != null)
-			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(true));
+		if (meshHolder != null && meshHolder.getHalo() != null)
+			BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
 	}
 
 	private boolean isSelected(CSG target) {
@@ -1172,8 +1188,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				iterator.remove();
 		}
 		MeshHolder meshHolder = meshes.get(target);
-		if (meshHolder != null && meshHolder.halo != null)
-			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(false));
+		if (meshHolder != null && meshHolder.getHalo() != null)
+			BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(false));
 	}
 
 	public void updateControlsDisplayOfSelected() {
@@ -1235,7 +1251,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshHolder meshHolder = getMeshes().get(c);
 
 				if (meshHolder != null) {
-					MeshView meshView = meshHolder.display;
+					MeshView meshView = meshHolder.getDisplay();
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
 
@@ -1255,7 +1271,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (CSG c : getSelectedCSG(selectedSnapshot)) {
 				MeshHolder meshHolder = getMeshes().get(c);
 				if (meshHolder != null) {
-					MeshView meshView = meshHolder.display;
+					MeshView meshView = meshHolder.getDisplay();
 					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
 
 					if (meshHolder.edges != null)
@@ -1327,7 +1343,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (CSG c : cs) {
 				MeshHolder meshHolder = getMeshes().get(c);
 				if (meshHolder != null) {
-					MeshView meshView = meshHolder.display;
+					MeshView meshView = meshHolder.getDisplay();
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
 
@@ -1351,7 +1367,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			sa += c.getSurfaceArea();
 			MeshHolder meshHolder = meshes.get(c);
 			if (meshHolder != null)
-				meshHolder.halo.setVisible(true);
+				BowlerStudio.runLater(()-> meshHolder.getHalo().setVisible(true));
 		}
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
@@ -2224,7 +2240,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					MeshHolder meshHolder = getMeshes().get(c);
 					if (meshHolder == null)
 						continue;
-					MeshView mesh = meshHolder.display;
+					MeshView mesh = meshHolder.getDisplay();
 
 					PhongMaterial phongMaterial = (PhongMaterial) mesh.getMaterial();
 					Color diffuseColor = phongMaterial.getDiffuseColor();
@@ -2513,7 +2529,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 						if (meshHolder != null)
 							BowlerKernel.runLater(() -> {
-								MeshView meshView = meshHolder.display;
+								MeshView meshView = meshHolder.getDisplay();
 								if (!isResizeLiveMode())
 									meshView.setVisible(false);
 							});
@@ -2526,7 +2542,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						for (CSG c : selectedCSG) {
 							MeshHolder holder = getMeshes().get(c);
 							if (holder != null) {
-								MeshView meshView = holder.display;
+								MeshView meshView = holder.getDisplay();
 								if (meshView != null)
 									BowlerKernel.runLater(() -> meshView.setVisible(true));
 							}
@@ -3515,16 +3531,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void hideHalos() {
-		for (MeshHolder mh : meshes.values()) {
-			mh.halo.setVisible(false);
-		}
+		BowlerStudio.runLater(() -> {
+
+			for (MeshHolder mh : meshes.values()) {
+				mh.getHalo().setVisible(false);
+			}
+		});
 	}
 
 	public void showHalos() {
-		for (CSG csg : meshes.keySet()) {
-			MeshHolder mh = meshes.get(csg);
-			mh.halo.setVisible(selected.contains(csg));
-		}
+		BowlerStudio.runLater(() -> {
+			for (CSG csg : meshes.keySet()) {
+				MeshHolder mh = meshes.get(csg);
+				mh.getHalo().setVisible(selected.contains(csg));
+			}
+		});
 	}
 
 	public double getSnapGridValue() {

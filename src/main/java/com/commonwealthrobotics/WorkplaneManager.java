@@ -145,7 +145,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			wpPick.setVisible(isWorkplaneNotOrigin());
 
 			for (CSG key : session.getMeshes().keySet()) {
-				MeshView mv = session.getMeshes().get(key).display;
+				MeshView mv = session.getMeshes().get(key).getDisplay();
 				mv.removeEventFilter(MouseEvent.ANY, this);
 			}
 
@@ -197,7 +197,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			// Make user meshes pickable
 
 			for (CSG key : session.getMeshes().keySet()) {
-				MeshView mv = session.getMeshes().get(key).display;
+				MeshView mv = session.getMeshes().get(key).getDisplay();
 				mv.addEventFilter(MouseEvent.ANY, this);
 			}
 
@@ -252,7 +252,7 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			MeshView meshView = (MeshView) intersectedNode;
 
 			for (CSG csg : session.getMeshes().keySet()) {
-				if (meshView == session.getMeshes().get(csg).display) {
+				if (meshView == session.getMeshes().get(csg).getDisplay()) {
 					source = csg;
 					try {
 						manipulator = source.getManipulator();
