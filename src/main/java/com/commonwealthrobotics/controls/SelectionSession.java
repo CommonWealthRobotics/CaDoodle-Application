@@ -50,6 +50,7 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.FeatureEdgeExtractor;
@@ -65,6 +66,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -644,12 +646,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
+			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
+			if (ModifyLimb.class.isInstance(source)) {
+				source.getCaDoodleFile().getBoundsCache().clear();
+			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
 			BowlerStudio.runLater(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
@@ -995,7 +1000,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		double cx = wpCentered.getX();
 		double cy = wpCentered.getY();
 		double cz = wpCentered.getZ();
-
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		holder.haloScale.setX(scaleX);
 		holder.haloScale.setY(scaleY);
 		holder.haloScale.setZ(scaleZ);
@@ -1004,7 +1017,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		holder.haloScale.setPivotY(cy);
 		holder.haloScale.setPivotZ(cz);
 
-		halo.getTransforms().setAll(holder.haloScale);
+		halo.getTransforms().setAll(holder.haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 
@@ -1094,6 +1107,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					TransformNR screenLocation = workplane.pickInteractionToPose(event);
 					screenPositionOfLatestMeshClick = screenLocation;// new TransformNR(localPoint.getX(),
 																		// localPoint.getY(),localPoint.getZ());
+					if (name.hasManipulator()) {
+						try {
+							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
+							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
+						} catch (MissingManipulatorException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
@@ -1168,6 +1190,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		int line = 0;
 		parametrics.getChildren().clear();
 		parametrics.getChildren().add(gp);
+
+		parametrics.setDisable(false);
 		int width = 130;
 		int c1Width = 100;
 		gp.setPrefWidth(width + c1Width);
@@ -1291,23 +1315,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					line++;
 				}
 
-				// if (numCadParaams > 2) {
-				// useButton = true;
-				// // com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
-				// // sel.getName());
-				// if (!parametrics.getChildren().contains(regenerate))
-				// parametrics.getChildren().add(regenerate);
-				//
-				// EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
-				// if (value2 != null)
-				// regenerate.setOnAction(value2);
-				// else
-				// com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
-				//
-				// } else {
-				// useButton = false;
-				// parametrics.getChildren().remove(regenerate);
-				// }
+				boolean nameInFrozenCache = ap.get().isNameInFrozenCache(selectedSnapshot.get(0));
+				Log.debug("Object in frozen cache: " + nameInFrozenCache);
+				parametrics.setDisable(nameInFrozenCache);
 			}
 		} else {
 			for (CSG c : cs) {
@@ -3114,6 +3124,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetManipulator() {
+		// Log.error(new Exception("Manipulation reset here"));
 		manipulation.reset();
 	}
 
