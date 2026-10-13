@@ -410,6 +410,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private Thread myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
+		if (SplashManager.isVisibleSplash() || ap.get().isOperationRunning()) {
+			Log.error("Rejecting regeneration "+l + " spash: " + SplashManager.isVisibleSplash()
+					+ " operation running status " + ap.get().isOperationRunning());
+			return null;
+		}
 		if (regenerating)
 			return null;
 
