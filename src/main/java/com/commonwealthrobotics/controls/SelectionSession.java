@@ -3234,19 +3234,33 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					double value = (numberOffset);
 					value = 50 * Math.max(-0.1, Math.min(0.5, value));
 					// Log.debug("Halo scale " + value + " from " + numberOffset);
+					final double lineWidth = 0.25 * (1.0 + value);
+					final boolean wpNotOrigin = CaDoodleFile.isWorkplaneNotOrigin(getWorkplane());
+					// Compute the per-mesh halo scale off the UI thread (bounds
+					// recomputation is expensive), then apply it on the FX thread:
+					// haloScale is a live scene-graph transform and mutating it from a
+					// background thread corrupts JavaFX's parent bounds bookkeeping.
+					final List<Runnable> haloUpdates = new ArrayList<>();
 					for (CSG key : meshes.keySet()) {
 						MeshHolder holder = meshes.get(key);
 						Bounds b = getSellectedBounds(key);
-						double lineWidth = 0.25 * (1.0 + value);
-						if (CaDoodleFile.isWorkplaneNotOrigin(getWorkplane())) {
-							setStandardHaloScale(holder);
+						if (wpNotOrigin) {
+							haloUpdates.add(() -> setStandardHaloScale(holder));
 						} else {
-							holder.haloScale.setX(1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth)));
-							holder.haloScale.setY(1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth)));
-							holder.haloScale.setZ(1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth)));
+							final double sx = 1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth));
+							final double sy = 1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth));
+							final double sz = 1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth));
+							haloUpdates.add(() -> {
+								holder.haloScale.setX(sx);
+								holder.haloScale.setY(sy);
+								holder.haloScale.setZ(sz);
+							});
 						}
 					}
 					BowlerStudio.runLater(() -> {
+						for (Runnable r : haloUpdates)
+							r.run();
+						haloUpdates.clear();
 						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
 								sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
 					});
