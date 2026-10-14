@@ -2968,6 +2968,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (isObjectWorkplane) {
 				CSG c = getSelectedCSG(selectedSnapshot().get(0));
 				TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
+				nrToCSG.times(nrToCSG);// test teh transform validity
 				previousWP = ap.get().getWorkplane();
 				ap.get().setWorkplane(nrToCSG);
 				// workplane.placeWorkplaneVisualization();

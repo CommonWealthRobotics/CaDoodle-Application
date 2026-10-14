@@ -390,6 +390,7 @@ public class TimelineManager {
 		if (op == null)
 			return;
 		ArrayList<CaDoodleOperation> operations = ap.get().getOperations();
+		op.setCaDoodleFile(ap.get());
 		try {
 
 			List<CSG> state = ap.get().getStateAtOperation(op);
