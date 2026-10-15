@@ -1076,7 +1076,7 @@ public class ResizeSessionManager {
 		}
 		topCenter.setMyColor(new Color(0.5, 0.5, 0.5, 1), Color.RED);
 		for (ResizingHandle c : controls) {
-			meshControls.add(c.getMesh());
+			meshControls.addAll(c.getMeshs());
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 			c.manipulator.addSaveListener(() -> {
 				if (beingUpdated != c)
