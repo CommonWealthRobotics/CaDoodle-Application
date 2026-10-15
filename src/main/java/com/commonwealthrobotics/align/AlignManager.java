@@ -142,9 +142,9 @@ public class AlignManager {
 		recompute(null, inWorkplaneBounds);
 		for (CSG c : toAlign) {
 			MeshHolder holder = meshes.get(c);
-			if (holder == null || holder.display == null)
+			if (holder == null || holder.getDisplay() == null)
 				continue;
-			MeshView mv = holder.display;
+			MeshView mv = holder.getDisplay();
 			EventHandler<? super MouseEvent> eventFilter = event -> {
 				if (operation == null)
 					return;
@@ -184,9 +184,9 @@ public class AlignManager {
 		for (CSG c : new ArrayList<>(events.keySet())) {
 			EventHandler<? super MouseEvent> eventFilter = events.remove(c);
 			MeshHolder holder = meshes == null ? null : meshes.get(c);
-			if (holder == null || holder.display == null || eventFilter == null)
+			if (holder == null || holder.getDisplay() == null || eventFilter == null)
 				continue;
-			MeshView mv = holder.display;
+			MeshView mv = holder.getDisplay();
 			BowlerStudio.runLater(() -> mv.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventFilter));
 		}
 		if (isActive()) {

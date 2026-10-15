@@ -90,7 +90,7 @@ public class ResizeSessionManager {
 
 	private void regenerateMesh(CSG key, CSG scaledCSG) {
 		MeshHolder meshHolder = meshes.get(key);
-		MeshView old = meshHolder.display; // lookup with original key
+		MeshView old = meshHolder.getDisplay(); // lookup with original key
 		if (old == null)
 			return;
 
@@ -101,7 +101,7 @@ public class ResizeSessionManager {
 
 		engine.removeUserNode(old);
 		engine.addUserNode(fresh);
-		meshHolder.display = fresh;
+		meshHolder.setDisplay(fresh);
 	}
 
 	// Prevent 0-value for scaling
@@ -1076,7 +1076,7 @@ public class ResizeSessionManager {
 		}
 		topCenter.setMyColor(new Color(0.5, 0.5, 0.5, 1), Color.RED);
 		for (ResizingHandle c : controls) {
-			meshControls.add(c.getMesh());
+			meshControls.addAll(c.getMeshs());
 			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 			c.manipulator.addSaveListener(() -> {
 				if (beingUpdated != c)
