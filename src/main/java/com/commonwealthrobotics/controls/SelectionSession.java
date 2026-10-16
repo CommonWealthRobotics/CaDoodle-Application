@@ -184,7 +184,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ImageView showHideImage;
 	private List<String> copySetinternal;
 	private Button alignButton;
-	private long timeSinceLastMove = System.currentTimeMillis();
+	private volatile long timeSinceLastMove = System.currentTimeMillis();
 	private double screenW;
 	private double screenH;
 	private double zoom;
@@ -239,8 +239,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
-	public Thread timeoutMoveThread = null;
-	private boolean applyingMoveOperation;
+	public volatile Thread timeoutMoveThread = null;
+	private volatile boolean applyingMoveOperation;
+	// Guards the manipulator mutation, the pending-apply bookkeeping and the
+	// session deltas so a queued arrow-key move can not run concurrently with
+	// the move-commit thread or with onUpdate's manipulator reset.
+	private final Object moveGate = new Object();
 	private Button renameBtn;
 	private Button filletButton;
 	private Button extrudeButton;
@@ -3047,121 +3051,144 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		submit(() -> {
 			try {
-				if (moveLock())
-					return;
+				// The manipulator, the session deltas and the pending-apply
+				// bookkeeping are shared with the move-commit thread and with
+				// onUpdate's manipulator reset, so the whole request must be
+				// serialized against them.
+				synchronized (moveGate) {
+					if (applyingMoveOperation)
+						return;
+					if (moveLock())
+						return;
 
-				if (ap.get().isOperationRunning()) {
-					TickToc.tic("Process running, bailing on new update");
-					return;
-				}
+					if (ap.get().isOperationRunning()) {
+						TickToc.tic("Process running, bailing on new update");
+						return;
+					}
 
-				timeSinceLastMove = System.currentTimeMillis();
-				// TickToc.setEnabled(true);
-				TickToc.tic("Start");
-				TransformNR wp = ap.get().getWorkplane();
+					timeSinceLastMove = System.currentTimeMillis();
+					// TickToc.setEnabled(true);
+					TickToc.tic("Start");
+					TransformNR wp = ap.get().getWorkplane();
 
-				// Get camera orientation for screen-aligned movement
-				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians()
-						- wp.getRotation().getRotationAzimuthRadians());
-				Quadrant quad = Quadrant.getQuad(camAz);
-				double currentRotZ = Quadrant.QuadrantToAngle(quad);
+					// Get camera orientation for screen-aligned movement
+					TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
+					double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians()
+							- wp.getRotation().getRotationAzimuthRadians());
+					Quadrant quad = Quadrant.getQuad(camAz);
+					double currentRotZ = Quadrant.QuadrantToAngle(quad);
 
-				// Rotate input vector by camera yaw (screen-space to world-space)
-				double yawRad = Math.toRadians(currentRotZ - 90);
-				double cos = Math.cos(yawRad);
-				double sin = Math.sin(yawRad);
-				// com.neuronrobotics.sdk.common.Log.error("\n\n\nKey
-				// "+stateUnitVectorTmp.toSimpleString());
+					// Rotate input vector by camera yaw (screen-space to world-space)
+					double yawRad = Math.toRadians(currentRotZ - 90);
+					double cos = Math.cos(yawRad);
+					double sin = Math.sin(yawRad);
+					// com.neuronrobotics.sdk.common.Log.error("\n\n\nKey
+					// "+stateUnitVectorTmp.toSimpleString());
 
-				double inX = stateUnitVectorTmp.getX();
-				double inY = stateUnitVectorTmp.getY();
+					double inX = stateUnitVectorTmp.getX();
+					double inY = stateUnitVectorTmp.getY();
 
-				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
-						stateUnitVectorTmp.getZ());
-				// com.neuronrobotics.sdk.common.Log.error("\nState
-				// "+stateUnitVector.toSimpleString());
-				double incement = getSnapGridValue();
+					TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
+							stateUnitVectorTmp.getZ());
+					// com.neuronrobotics.sdk.common.Log.error("\nState
+					// "+stateUnitVector.toSimpleString());
+					double incement = getSnapGridValue();
 
-				boolean updateTrig = false;
-				double bound = 0.5;
-				if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound
-						|| Math.abs(stateUnitVector.getZ()) > bound)
-					updateTrig = true;
+					boolean updateTrig = false;
+					double bound = 0.5;
+					if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound
+							|| Math.abs(stateUnitVector.getZ()) > bound)
+						updateTrig = true;
 
-				if (!updateTrig) {
-					TickToc.tic("No Update");
-					TickToc.toc();
-					TickToc.setEnabled(false);
-					return;
-				}
+					if (!updateTrig) {
+						TickToc.tic("No Update");
+						TickToc.toc();
+						TickToc.setEnabled(false);
+						return;
+					}
 
-				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
-						roundToNearest(stateUnitVector.getY() * incement, incement),
-						roundToNearest(stateUnitVector.getZ() * incement, incement));
+					stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
+							roundToNearest(stateUnitVector.getY() * incement, incement),
+							roundToNearest(stateUnitVector.getZ() * incement, incement));
 
-				// Convert world delta to workplane-local delta
+					// Convert world delta to workplane-local delta
 
-				Quadrant wpQu = Quadrant.getQuad(wp.getRotation().getRotationAzimuthRadians());
-				double wpz = Quadrant.QuadrantToAngle(wpQu);
-				double rad = Math.toRadians(-wpz);
-				cos = Math.cos(rad);
-				sin = Math.sin(rad);
+					Quadrant wpQu = Quadrant.getQuad(wp.getRotation().getRotationAzimuthRadians());
+					double wpz = Quadrant.QuadrantToAngle(wpQu);
+					double rad = Math.toRadians(-wpz);
+					cos = Math.cos(rad);
+					sin = Math.sin(rad);
 
-				double deltaX = stateUnitVector.getX();
-				double deltaY = stateUnitVector.getY();
+					double deltaX = stateUnitVector.getX();
+					double deltaY = stateUnitVector.getY();
 
-				double localDeltaX = deltaX * cos - deltaY * sin;
-				double localDeltaY = deltaX * sin + deltaY * cos;
-				sessionDeltaX += localDeltaX;
-				sessionDeltaY += localDeltaY;
-				sessionDeltaZ += stateUnitVector.getZ();
-				TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
+					double localDeltaX = deltaX * cos - deltaY * sin;
+					double localDeltaY = deltaX * sin + deltaY * cos;
+					sessionDeltaX += localDeltaX;
+					sessionDeltaY += localDeltaY;
+					sessionDeltaZ += stateUnitVector.getZ();
+					TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
 
-				List<String> selectedSnapshot = selectedSnapshot();
+					List<String> selectedSnapshot = selectedSnapshot();
 
-				CaDoodleOperation op = ap.get().getCurrentOperation();
+					CaDoodleOperation op = ap.get().getCurrentOperation();
 
-				if (timeoutMoveThread == null) {
-					timeoutMoveThread = new Thread(() -> {
-						try {
-							while ((System.currentTimeMillis() - timeSinceLastMove) < 800) {
+					if (timeoutMoveThread == null) {
+						timeoutMoveThread = new Thread(() -> {
+							try {
+								// Debounce outside the gate: new requests must keep
+								// refreshing timeSinceLastMove and the manipulator
+								// until the user stops pressing keys.
+								while ((System.currentTimeMillis() - timeSinceLastMove) < 800) {
+									try {
+										Thread.sleep(100);
+										// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
+									} catch (InterruptedException e) {
+										// keep waiting for the debounce window
+									}
+								}
+								// Snapshot the accumulated pose and hand it to the
+								// process thread while holding the gate, so a queued
+								// arrow-key request can not overwrite the manipulator
+								// or the deltas between the snapshot and the commit.
+								TransformNR commitLocation;
+								List<String> commitNames;
+								synchronized (moveGate) {
+									applyingMoveOperation = true;
+									sessionDeltaX = 0;
+									sessionDeltaY = 0;
+									sessionDeltaZ = 0;
+									commitLocation = manipulation.getInLocal().copy();
+									commitNames = selectedSnapshot();
+								}
 								try {
-									Thread.sleep(100);
-									// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
+									ap.addOp(new MoveCenter().setLocation(commitLocation).setNames(commitNames,
+											ap.get())).join();
+									TickToc.tic("save");
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
+								} catch (InvalidLocationMove e) {
+									com.neuronrobotics.sdk.common.Log.error(e);
+								} catch (Throwable t) {
+									Log.error(t);
+								}
+								save();
+							} catch (Throwable t) {
+								Log.error(t);
+							} finally {
+								synchronized (moveGate) {
+									applyingMoveOperation = false;
+									timeoutMoveThread = null;
 								}
 							}
-							applyingMoveOperation = true;
-							try {
-								sessionDeltaX = 0;
-								sessionDeltaY = 0;
-								sessionDeltaZ = 0;
-								ap.addOp(new MoveCenter().setLocation(manipulation.getInLocal().copy())
-										.setNames(selectedSnapshot(), ap.get())).join();
-							} catch (InterruptedException e) {
-								com.neuronrobotics.sdk.common.Log.error(e);
-							} catch (InvalidLocationMove e) {
-								com.neuronrobotics.sdk.common.Log.error(e);
-							}
+						});
+						timeoutMoveThread.start();
+					}
+					manipulation.setInReferenceFrame(sessionDelta);
+					// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
 
-							// resetManipulator();
-							TickToc.tic("save");
-						} catch (Throwable t) {
-							Log.error(t);
-						}
-						save();
-						applyingMoveOperation = false;
-						timeoutMoveThread = null;
-					});
-					timeoutMoveThread.start();
+					TickToc.setEnabled(false);
 				}
-				manipulation.setInReferenceFrame(sessionDelta);
-				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
-
-				TickToc.setEnabled(false);
 			} catch (Throwable t) {
 				Log.error(t);
 			}
@@ -3170,7 +3197,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void resetManipulator() {
 		// Log.error(new Exception("Manipulation reset here"));
-		manipulation.reset();
+		synchronized (moveGate) {
+			manipulation.reset();
+		}
 	}
 
 	public void save() {
