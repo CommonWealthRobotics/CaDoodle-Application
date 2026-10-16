@@ -932,7 +932,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			if (edgeWidthUpdateTimer == null) {
 				edgeWidthUpdateTimer = new PauseTransition();
-				edgeWidthUpdateTimer.setOnFinished(event -> refreshFeatureEdgeWidths());
+				edgeWidthUpdateTimer.setOnFinished(event -> {
+					if (engine.isMoving((long) delayMs)) {
+						requestFeatureEdgeWidthUpdate();
+					} else
+						refreshFeatureEdgeWidths();
+				});
 			}
 
 			edgeWidthUpdateTimer.setDuration(Duration.millis(Math.max(0.0, delayMs)));
@@ -985,22 +990,36 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
 
-		List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+		submit(() -> {
+			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+			List<Runnable> onUI = new ArrayList<Runnable>();
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				MeshHolder holder = entry.getValue();
 
-		for (Map.Entry<CSG, MeshHolder> entry : current) {
-			MeshHolder holder = entry.getValue();
+				if (holder.edges == null)
+					continue;
 
-			if (holder.edges == null)
-				continue;
+				List<FeatureEdgeExtractor.Edge> visibleEdges = entry.getValue().visibleEdges;
 
-			List<FeatureEdgeExtractor.Edge> visibleEdges = entry.getValue().visibleEdges;
+				if (visibleEdges == null)
+					continue;
 
-			if (visibleEdges == null)
-				continue;
+				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+				onUI.add(() -> holder.edges.getChildren().setAll(rebuilt.getChildren()));
+			}
 
-			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
-			holder.edges.getChildren().setAll(rebuilt.getChildren());
-		}
+			for (Runnable r : onUI) {
+				Platform.runLater(() -> {
+					try {
+						r.run();
+					} catch (Throwable t) {
+						Log.error(t);
+					}
+				});
+			}
+			onUI.clear();
+
+		});
 	}
 
 	private void displayCSG(CSG c, MeshHolder holder) {
