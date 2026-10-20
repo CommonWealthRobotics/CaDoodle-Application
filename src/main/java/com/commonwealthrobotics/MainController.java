@@ -38,6 +38,7 @@ import com.neuronrobotics.bowlerstudio.scripting.FreecadLoader;
 import com.neuronrobotics.bowlerstudio.scripting.GroovyHelper;
 import com.neuronrobotics.bowlerstudio.scripting.OpenSCADLoader;
 import com.neuronrobotics.bowlerstudio.scripting.StlLoader;
+import com.neuronrobotics.bowlerstudio.scripting.StepLoader;
 import com.neuronrobotics.bowlerstudio.scripting.SvgLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ThreeMFLoader;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
@@ -879,6 +880,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		for (String s : new CaDoodleLoader().getFileExtension())
 			extensions.add("*." + s);
 		for (String s : new ThreeMFLoader().getFileExtension())
+			extensions.add("*." + s);
+		for (String s : new StepLoader().getFileExtension())
 			extensions.add("*." + s);
 		extensions.add("*.zip");
 		return extensions;
