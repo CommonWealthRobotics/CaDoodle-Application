@@ -1131,6 +1131,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		try {
 
 			engine = new BowlerStudio3dEngine("CAD window");
+			engine.setAdaptiveOrbitEnabled(true);
 			Debug3dProvider.setProvider(new IDebug3dProvider() {
 
 				@Override
