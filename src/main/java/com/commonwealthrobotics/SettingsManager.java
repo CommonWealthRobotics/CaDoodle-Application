@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+import com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -151,6 +153,103 @@ public class SettingsManager implements ICSGClientEvent {
 	private TabPane topPane;
 	@FXML
 	private ComboBox<String> styleOptions;
+
+	// ---------------- UI Elements tab ----------------
+	@FXML
+	private ComboBox<String> uiLightingMode;
+	@FXML
+	private TextField uiLightingAmbient;
+
+	@FXML
+	private CheckBox uiLightingKeyEnabled;
+	@FXML
+	private TextField uiLightingKeyIntensity;
+	@FXML
+	private TextField uiLightingKeyX;
+	@FXML
+	private TextField uiLightingKeyY;
+	@FXML
+	private TextField uiLightingKeyZ;
+
+	@FXML
+	private CheckBox uiLightingFillEnabled;
+	@FXML
+	private TextField uiLightingFillIntensity;
+	@FXML
+	private TextField uiLightingFillX;
+	@FXML
+	private TextField uiLightingFillY;
+	@FXML
+	private TextField uiLightingFillZ;
+
+	@FXML
+	private CheckBox uiLightingRimEnabled;
+	@FXML
+	private TextField uiLightingRimIntensity;
+	@FXML
+	private TextField uiLightingRimX;
+	@FXML
+	private TextField uiLightingRimY;
+	@FXML
+	private TextField uiLightingRimZ;
+
+	@FXML
+	private CheckBox uiEdgesEnabled;
+	@FXML
+	private TextField uiEdgesAngleDegrees;
+	@FXML
+	private ComboBox<String> uiEdgesWidthMode;
+	@FXML
+	private TextField uiEdgesWidthPx;
+	@FXML
+	private TextField uiEdgesRadius;
+	@FXML
+	private TextField uiEdgesBrightness;
+
+	@FXML
+	private TextField uiGridSmallVisibleZoomDepth;
+	@FXML
+	private TextField uiGridSmallBrightnessMultiplier;
+	@FXML
+	private TextField uiGridSmallOpacityMultiplier;
+	@FXML
+	private TextField uiGridSmallLineWidthPx;
+	@FXML
+	private TextField uiGridSmallZOffsetMm;
+
+	@FXML
+	private TextField uiGridMajorBrightnessMultiplier;
+	@FXML
+	private TextField uiGridMajorOpacityMultiplier;
+	@FXML
+	private TextField uiGridMajorLineWidthPx;
+
+	@FXML
+	private ComboBox<String> uiGridMotionMode;
+	@FXML
+	private TextField uiGridGroundRenderOpacity;
+
+	@FXML
+	private TextField uiCameraOrbitMin;
+	@FXML
+	private TextField uiCameraOrbitMax;
+	@FXML
+	private TextField uiCameraOrbitHalf;
+	@FXML
+	private TextField uiCameraOrbitRiseMs;
+	@FXML
+	private TextField uiCameraOrbitFallMs;
+
+	@FXML
+	private TextField uiEdgesSceneSettleDelayMs;
+	@FXML
+	private TextField uiEdgesCameraSettleDelayMs;
+	@FXML
+	private TextField uiEdgesTopologyPrecision;
+	@FXML
+	private TextField uiEdgesStitchTolerance;
+
+	private static final String PARAMS_KEY = "CaDoodle";
 
 	@FXML
 	void onFontSize(ActionEvent event) {
@@ -599,6 +698,7 @@ public class SettingsManager implements ICSGClientEvent {
 		}
 		styleOptions.getSelectionModel().select(modeSelected);
 		updateVersionOptions();
+		loadUiElements();
 		mc.getActiveProject();
 		ActiveProject.setStyleSheet(topPane);
 
@@ -615,6 +715,312 @@ public class SettingsManager implements ICSGClientEvent {
 		// renderPipelineDisplay.setText(ex.getMessage());
 		// }
 
+	}
+
+	@FXML
+	private void onUiElementChange(ActionEvent event) {
+		Object source = event.getSource();
+		if (source == null)
+			return;
+		try {
+			if (source == uiLightingMode) {
+				String value = uiLightingMode.getSelectionModel().getSelectedItem();
+				ConfigurationDatabase.put(PARAMS_KEY, "lighting.mode", value);
+				ConfigurationDatabase.save();
+				return;
+			}
+			if (source == uiEdgesWidthMode) {
+				String value = uiEdgesWidthMode.getSelectionModel().getSelectedItem();
+				ConfigurationDatabase.put(PARAMS_KEY, "edges.widthMode", value);
+				ConfigurationDatabase.save();
+				return;
+			}
+			if (source == uiGridMotionMode) {
+				String value = uiGridMotionMode.getSelectionModel().getSelectedItem();
+				ConfigurationDatabase.put(PARAMS_KEY, "grid.motionMode", value);
+				ConfigurationDatabase.save();
+				return;
+			}
+			if (source == uiLightingKeyEnabled) {
+				ConfigurationDatabase.put(PARAMS_KEY, "lighting.key.enabled", "" + uiLightingKeyEnabled.isSelected());
+				ConfigurationDatabase.save();
+				return;
+			}
+			if (source == uiLightingFillEnabled) {
+				ConfigurationDatabase.put(PARAMS_KEY, "lighting.fill.enabled", "" + uiLightingFillEnabled.isSelected());
+				ConfigurationDatabase.save();
+				return;
+			}
+			if (source == uiLightingRimEnabled) {
+				ConfigurationDatabase.put(PARAMS_KEY, "lighting.rim.enabled", "" + uiLightingRimEnabled.isSelected());
+				ConfigurationDatabase.save();
+				return;
+			}
+			if (source == uiEdgesEnabled) {
+				ConfigurationDatabase.put(PARAMS_KEY, "edges.enabled", "" + uiEdgesEnabled.isSelected());
+				ConfigurationDatabase.save();
+				return;
+			}
+			// The rest are text fields with bounds applied to them
+			TextField field = (TextField) source;
+			String key = fieldToKey(field);
+			if (key == null) {
+				Log.error("Unknown control " + field);
+				return;
+			}
+			double value = parseDouble(field.getText());
+			value = bound(key, value);
+			field.setText("" + value);
+			ConfigurationDatabase.put(PARAMS_KEY, key, "" + value);
+			ConfigurationDatabase.save();
+		} catch (Throwable t) {
+			Log.error(t);
+		}
+	}
+
+	/**
+	 * Map a text field to its scene-style.properties key.
+	 */
+	private String fieldToKey(TextField field) {
+		if (field == uiLightingAmbient)
+			return "lighting.ambient";
+		if (field == uiLightingKeyIntensity)
+			return "lighting.key.intensity";
+		if (field == uiLightingKeyX)
+			return "lighting.key.x";
+		if (field == uiLightingKeyY)
+			return "lighting.key.y";
+		if (field == uiLightingKeyZ)
+			return "lighting.key.z";
+		if (field == uiLightingFillIntensity)
+			return "lighting.fill.intensity";
+		if (field == uiLightingFillX)
+			return "lighting.fill.x";
+		if (field == uiLightingFillY)
+			return "lighting.fill.y";
+		if (field == uiLightingFillZ)
+			return "lighting.fill.z";
+		if (field == uiLightingRimIntensity)
+			return "lighting.rim.intensity";
+		if (field == uiLightingRimX)
+			return "lighting.rim.x";
+		if (field == uiLightingRimY)
+			return "lighting.rim.y";
+		if (field == uiLightingRimZ)
+			return "lighting.rim.z";
+		if (field == uiEdgesAngleDegrees)
+			return "edges.angleDegrees";
+		if (field == uiEdgesWidthPx)
+			return "edges.widthPx";
+		if (field == uiEdgesRadius)
+			return "edges.radius";
+		if (field == uiEdgesBrightness)
+			return "edges.brightness";
+		if (field == uiGridSmallVisibleZoomDepth)
+			return "grid.small.visibleZoomDepth";
+		if (field == uiGridSmallBrightnessMultiplier)
+			return "grid.small.brightnessMultiplier";
+		if (field == uiGridSmallOpacityMultiplier)
+			return "grid.small.opacityMultiplier";
+		if (field == uiGridSmallLineWidthPx)
+			return "grid.small.lineWidthPx";
+		if (field == uiGridSmallZOffsetMm)
+			return "grid.small.zOffsetMm";
+		if (field == uiGridMajorBrightnessMultiplier)
+			return "grid.major.brightnessMultiplier";
+		if (field == uiGridMajorOpacityMultiplier)
+			return "grid.major.opacityMultiplier";
+		if (field == uiGridMajorLineWidthPx)
+			return "grid.major.lineWidthPx";
+		if (field == uiGridGroundRenderOpacity)
+			return "grid.ground.renderOpacity";
+		if (field == uiCameraOrbitMin)
+			return "camera.orbit.min";
+		if (field == uiCameraOrbitMax)
+			return "camera.orbit.max";
+		if (field == uiCameraOrbitHalf)
+			return "camera.orbit.half";
+		if (field == uiCameraOrbitRiseMs)
+			return "camera.orbit.riseMs";
+		if (field == uiCameraOrbitFallMs)
+			return "camera.orbit.fallMs";
+		if (field == uiEdgesSceneSettleDelayMs)
+			return "edges.sceneSettleDelayMs";
+		if (field == uiEdgesCameraSettleDelayMs)
+			return "edges.cameraSettleDelayMs";
+		if (field == uiEdgesTopologyPrecision)
+			return "edges.topologyPrecision";
+		if (field == uiEdgesStitchTolerance)
+			return "edges.stitchTolerance";
+		return null;
+	}
+
+	/**
+	 * Bound a value to the ranges described in scene-style.properties.
+	 */
+	private double bound(String key, double value) {
+		switch (key) {
+			case "lighting.ambient" :
+			case "lighting.key.intensity" :
+			case "lighting.fill.intensity" :
+			case "lighting.rim.intensity" :
+			case "edges.brightness" :
+			case "grid.small.brightnessMultiplier" :
+			case "grid.major.brightnessMultiplier" :
+				return SceneStyleConfig.clamp01(value);
+			case "lighting.key.x" :
+			case "lighting.key.y" :
+			case "lighting.key.z" :
+			case "lighting.fill.x" :
+			case "lighting.fill.y" :
+			case "lighting.fill.z" :
+			case "lighting.rim.x" :
+			case "lighting.rim.y" :
+			case "lighting.rim.z" :
+				return Math.max(-1.0, Math.min(1.0, value));
+			case "edges.angleDegrees" :
+				return Math.max(0.0, Math.min(360.0, value));
+			case "edges.widthPx" :
+				return Math.max(0.1, Math.min(10.0, value));
+			case "edges.radius" :
+				return Math.max(0.001, Math.min(100.0, value));
+			case "grid.small.visibleZoomDepth" :
+				return Math.max(1.0, Math.min(10000.0, value));
+			case "grid.small.opacityMultiplier" :
+			case "grid.major.opacityMultiplier" :
+			case "grid.ground.renderOpacity" :
+				return SceneStyleConfig.clamp01(value);
+			case "grid.small.lineWidthPx" :
+			case "grid.major.lineWidthPx" :
+				return Math.max(1.0, Math.min(10.0, value));
+			case "grid.small.zOffsetMm" :
+				return Math.max(-1.0, Math.min(1.0, value));
+			case "camera.orbit.min" :
+			case "camera.orbit.max" :
+				return Math.max(0.0, Math.min(1.0, value));
+			case "camera.orbit.half" :
+			case "camera.orbit.riseMs" :
+			case "camera.orbit.fallMs" :
+			case "edges.sceneSettleDelayMs" :
+			case "edges.cameraSettleDelayMs" :
+				return Math.max(0.0, Math.min(10000.0, value));
+			case "edges.topologyPrecision" :
+				return Math.max(0.0, Math.min(1.0, value));
+			case "edges.stitchTolerance" :
+				return Math.max(0.0, Math.min(1.0, value));
+			default :
+				return value;
+		}
+	}
+
+	/**
+	 * Load the scene style values into the UI elements tab. Values are read with
+	 * the same access pattern used by SceneStyleConfig.
+	 */
+	private void loadUiElements() {
+		// --- lighting.mode ---
+		uiLightingMode.getItems().clear();
+		uiLightingMode.getItems().addAll("stable", "kevin");
+		uiLightingMode.getSelectionModel().select(SceneStyleConfig.getString("lighting.mode", "stable"));
+
+		// --- lighting.ambient ---
+		uiLightingAmbient.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.ambient", 0.47)));
+
+		// --- lighting.key ---
+		uiLightingKeyEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.key.enabled", true));
+		uiLightingKeyIntensity
+				.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.key.intensity", 0.52)));
+		uiLightingKeyX.setText("" + bound("lighting.key.x", SceneStyleConfig.getDouble("lighting.key.x", -0.80)));
+		uiLightingKeyY.setText("" + bound("lighting.key.y", SceneStyleConfig.getDouble("lighting.key.y", -1.00)));
+		uiLightingKeyZ.setText("" + bound("lighting.key.z", SceneStyleConfig.getDouble("lighting.key.z", -0.45)));
+
+		// --- lighting.fill ---
+		uiLightingFillEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.fill.enabled", true));
+		uiLightingFillIntensity
+				.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.fill.intensity", 0.16)));
+		uiLightingFillX.setText("" + bound("lighting.fill.x", SceneStyleConfig.getDouble("lighting.fill.x", 0.65)));
+		uiLightingFillY.setText("" + bound("lighting.fill.y", SceneStyleConfig.getDouble("lighting.fill.y", -0.10)));
+		uiLightingFillZ.setText("" + bound("lighting.fill.z", SceneStyleConfig.getDouble("lighting.fill.z", -0.25)));
+
+		// --- lighting.rim ---
+		uiLightingRimEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.rim.enabled", true));
+		uiLightingRimIntensity
+				.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.rim.intensity", 0.08)));
+		uiLightingRimX.setText("" + bound("lighting.rim.x", SceneStyleConfig.getDouble("lighting.rim.x", 0.20)));
+		uiLightingRimY.setText("" + bound("lighting.rim.y", SceneStyleConfig.getDouble("lighting.rim.y", 0.90)));
+		uiLightingRimZ.setText("" + bound("lighting.rim.z", SceneStyleConfig.getDouble("lighting.rim.z", -0.15)));
+
+		// --- feature edges ---
+		uiEdgesEnabled.setSelected(SceneStyleConfig.getBoolean("edges.enabled", true));
+		uiEdgesAngleDegrees
+				.setText("" + bound("edges.angleDegrees", SceneStyleConfig.getDouble("edges.angleDegrees", 35.0)));
+		uiEdgesWidthMode.getItems().clear();
+		uiEdgesWidthMode.getItems().addAll("screen", "world");
+		uiEdgesWidthMode.getSelectionModel().select(SceneStyleConfig.getString("edges.widthMode", "screen"));
+		uiEdgesWidthPx.setText("" + bound("edges.widthPx", SceneStyleConfig.getDouble("edges.widthPx", 1.6)));
+		uiEdgesRadius.setText("" + bound("edges.radius", SceneStyleConfig.getDouble("edges.radius", 0.15)));
+		uiEdgesBrightness.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0)));
+
+		// --- workplane grid small ---
+		uiGridSmallVisibleZoomDepth.setText("" + bound("grid.small.visibleZoomDepth",
+				SceneStyleConfig.getDouble("grid.small.visibleZoomDepth", 350.0)));
+		uiGridSmallBrightnessMultiplier.setText("" + bound("grid.small.brightnessMultiplier",
+				SceneStyleConfig.getDouble("grid.small.brightnessMultiplier", 0.85)));
+		uiGridSmallOpacityMultiplier.setText("" + bound("grid.small.opacityMultiplier",
+				SceneStyleConfig.getDouble("grid.small.opacityMultiplier", 1.0)));
+		uiGridSmallLineWidthPx
+				.setText("" + bound("grid.small.lineWidthPx", SceneStyleConfig.getDouble("grid.small.lineWidthPx", 2)));
+		uiGridSmallZOffsetMm.setText(
+				"" + bound("grid.small.zOffsetMm", SceneStyleConfig.getDouble("grid.small.zOffsetMm", -0.005)));
+
+		// --- workplane grid major ---
+		uiGridMajorBrightnessMultiplier.setText("" + bound("grid.major.brightnessMultiplier",
+				SceneStyleConfig.getDouble("grid.major.brightnessMultiplier", 1.0)));
+		uiGridMajorOpacityMultiplier.setText("" + bound("grid.major.opacityMultiplier",
+				SceneStyleConfig.getDouble("grid.major.opacityMultiplier", 1.0)));
+		uiGridMajorLineWidthPx
+				.setText("" + bound("grid.major.lineWidthPx", SceneStyleConfig.getDouble("grid.major.lineWidthPx", 4)));
+
+		// --- grid motion mode ---
+		uiGridMotionMode.getItems().clear();
+		uiGridMotionMode.getItems().addAll("major", "all", "texture", "hidden");
+		uiGridMotionMode.getSelectionModel().select(SceneStyleConfig.getString("grid.motionMode", "texture"));
+
+		// --- grid ground ---
+		uiGridGroundRenderOpacity.setText(
+				"" + bound("grid.ground.renderOpacity", SceneStyleConfig.getDouble("grid.ground.renderOpacity", 1.0)));
+
+		// --- camera orbit ---
+		uiCameraOrbitMin.setText("" + bound("camera.orbit.min", SceneStyleConfig.getDouble("camera.orbit.min", 0.012)));
+		uiCameraOrbitMax.setText("" + bound("camera.orbit.max", SceneStyleConfig.getDouble("camera.orbit.max", 0.080)));
+		uiCameraOrbitHalf
+				.setText("" + bound("camera.orbit.half", SceneStyleConfig.getDouble("camera.orbit.half", 500)));
+		uiCameraOrbitRiseMs
+				.setText("" + bound("camera.orbit.riseMs", SceneStyleConfig.getDouble("camera.orbit.riseMs", 250)));
+		uiCameraOrbitFallMs
+				.setText("" + bound("camera.orbit.fallMs", SceneStyleConfig.getDouble("camera.orbit.fallMs", 120)));
+
+		// --- feature edge timing ---
+		uiEdgesSceneSettleDelayMs.setText(
+				"" + bound("edges.sceneSettleDelayMs", SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0)));
+		uiEdgesCameraSettleDelayMs.setText(""
+				+ bound("edges.cameraSettleDelayMs", SceneStyleConfig.getDouble("edges.cameraSettleDelayMs", 120.0)));
+		uiEdgesTopologyPrecision.setText(
+				"" + bound("edges.topologyPrecision", SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001)));
+		uiEdgesStitchTolerance.setText(
+				"" + bound("edges.stitchTolerance", SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002)));
+	}
+
+	/**
+	 * Parse a text field, returning the fallback when the text is not a number.
+	 */
+	private double parseDouble(String text) {
+		try {
+			double value = Double.parseDouble(text);
+			return Double.isFinite(value) ? value : 0.0;
+		} catch (Throwable t) {
+			return 0.0;
+		}
 	}
 
 	@FXML
