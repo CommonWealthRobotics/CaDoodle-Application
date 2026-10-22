@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -403,103 +404,171 @@
              <Insets left="10.0" />
              </padding>
              </Label>
-             <ComboBox fx:id="uiLightingMode" onAction="#onUiElementChange" promptText="%settings.ui_lighting_mode.description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+             <ComboBox fx:id="uiLightingMode" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="1">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_mode.description" />
+             </tooltip>
+             </ComboBox>
              <Label text="%settings.ui_lighting_ambient" GridPane.rowIndex="2">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingAmbient" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_ambient.description" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+             <TextField fx:id="uiLightingAmbient" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="2">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_ambient.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_key_enabled" GridPane.rowIndex="3">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <CheckBox fx:id="uiLightingKeyEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+             <CheckBox fx:id="uiLightingKeyEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="3">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_key_enabled.description" />
+             </tooltip>
+             </CheckBox>
              <Label text="%settings.ui_lighting_key_intensity" GridPane.rowIndex="4">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingKeyIntensity" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_key_intensity.description" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+             <TextField fx:id="uiLightingKeyIntensity" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="4">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_key_intensity.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_key_x" GridPane.rowIndex="5">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingKeyX" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_key_x.description" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+             <TextField fx:id="uiLightingKeyX" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="5">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_key_x.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_key_y" GridPane.rowIndex="6">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingKeyY" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_key_y.description" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+             <TextField fx:id="uiLightingKeyY" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="6">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_key_y.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_key_z" GridPane.rowIndex="7">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingKeyZ" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_key_z.description" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+             <TextField fx:id="uiLightingKeyZ" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="7">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_key_z.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_fill_enabled" GridPane.rowIndex="8">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <CheckBox fx:id="uiLightingFillEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+             <CheckBox fx:id="uiLightingFillEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="8">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_fill_enabled.description" />
+             </tooltip>
+             </CheckBox>
              <Label text="%settings.ui_lighting_fill_intensity" GridPane.rowIndex="9">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingFillIntensity" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_fill_intensity.description" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+             <TextField fx:id="uiLightingFillIntensity" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="9">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_fill_intensity.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_fill_x" GridPane.rowIndex="10">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingFillX" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_fill_x.description" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+             <TextField fx:id="uiLightingFillX" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="10">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_fill_x.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_fill_y" GridPane.rowIndex="11">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingFillY" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_fill_y.description" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+             <TextField fx:id="uiLightingFillY" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="11">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_fill_y.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_fill_z" GridPane.rowIndex="12">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingFillZ" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_fill_z.description" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+             <TextField fx:id="uiLightingFillZ" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="12">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_fill_z.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_rim_enabled" GridPane.rowIndex="13">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <CheckBox fx:id="uiLightingRimEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+             <CheckBox fx:id="uiLightingRimEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="13">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_rim_enabled.description" />
+             </tooltip>
+             </CheckBox>
              <Label text="%settings.ui_lighting_rim_intensity" GridPane.rowIndex="14">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingRimIntensity" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_rim_intensity.description" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+             <TextField fx:id="uiLightingRimIntensity" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="14">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_rim_intensity.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_rim_x" GridPane.rowIndex="15">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingRimX" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_rim_x.description" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+             <TextField fx:id="uiLightingRimX" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="15">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_rim_x.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_rim_y" GridPane.rowIndex="16">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingRimY" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_rim_y.description" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+             <TextField fx:id="uiLightingRimY" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="16">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_rim_y.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_lighting_rim_z" GridPane.rowIndex="17">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiLightingRimZ" onKeyTyped="#onUiElementChange" promptText="%settings.ui_lighting_rim_z.description" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+             <TextField fx:id="uiLightingRimZ" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="17">
+             <tooltip>
+                <Tooltip text="%settings.ui_lighting_rim_z.description" />
+             </tooltip>
+             </TextField>
 
              <!-- ============ FEATURE EDGES ============ -->
              <Label text="%settings.ui_section_edges" GridPane.rowIndex="18">
@@ -515,37 +584,61 @@
              <Insets left="10.0" />
              </padding>
              </Label>
-             <CheckBox fx:id="uiEdgesEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="19" />
+             <CheckBox fx:id="uiEdgesEnabled" mnemonicParsing="false" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="19">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_enabled.description" />
+             </tooltip>
+             </CheckBox>
              <Label text="%settings.ui_edges_angle_degrees" GridPane.rowIndex="20">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesAngleDegrees" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_angle_degrees.description" GridPane.columnIndex="1" GridPane.rowIndex="20" />
+             <TextField fx:id="uiEdgesAngleDegrees" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="20">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_angle_degrees.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_edges_width_mode" GridPane.rowIndex="21">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <ComboBox fx:id="uiEdgesWidthMode" onAction="#onUiElementChange" promptText="%settings.ui_edges_width_mode.description" GridPane.columnIndex="1" GridPane.rowIndex="21" />
+             <ComboBox fx:id="uiEdgesWidthMode" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="21">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_width_mode.description" />
+             </tooltip>
+             </ComboBox>
              <Label text="%settings.ui_edges_width_px" GridPane.rowIndex="22">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesWidthPx" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_width_px.description" GridPane.columnIndex="1" GridPane.rowIndex="22" />
+             <TextField fx:id="uiEdgesWidthPx" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="22">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_width_px.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_edges_radius" GridPane.rowIndex="23">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesRadius" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_radius.description" GridPane.columnIndex="1" GridPane.rowIndex="23" />
+             <TextField fx:id="uiEdgesRadius" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="23">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_radius.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_edges_brightness" GridPane.rowIndex="24">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesBrightness" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_brightness.description" GridPane.columnIndex="1" GridPane.rowIndex="24" />
+             <TextField fx:id="uiEdgesBrightness" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="24">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_brightness.description" />
+             </tooltip>
+             </TextField>
 
              <!-- ============ WORKPLANE GRID ============ -->
              <Label text="%settings.ui_section_grid" GridPane.rowIndex="27">
@@ -561,61 +654,101 @@
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridSmallVisibleZoomDepth" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_small_visible_zoom_depth.description" GridPane.columnIndex="1" GridPane.rowIndex="28" />
+             <TextField fx:id="uiGridSmallVisibleZoomDepth" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="28">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_small_visible_zoom_depth.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_small_brightness_multiplier" GridPane.rowIndex="29">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridSmallBrightnessMultiplier" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_small_brightness_multiplier.description" GridPane.columnIndex="1" GridPane.rowIndex="29" />
+             <TextField fx:id="uiGridSmallBrightnessMultiplier" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="29">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_small_brightness_multiplier.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_small_opacity_multiplier" GridPane.rowIndex="30">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridSmallOpacityMultiplier" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_small_opacity_multiplier.description" GridPane.columnIndex="1" GridPane.rowIndex="30" />
+             <TextField fx:id="uiGridSmallOpacityMultiplier" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="30">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_small_opacity_multiplier.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_small_line_width_px" GridPane.rowIndex="31">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridSmallLineWidthPx" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_small_line_width_px.description" GridPane.columnIndex="1" GridPane.rowIndex="31" />
+             <TextField fx:id="uiGridSmallLineWidthPx" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="31">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_small_line_width_px.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_small_z_offset_mm" GridPane.rowIndex="32">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridSmallZOffsetMm" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_small_z_offset_mm.description" GridPane.columnIndex="1" GridPane.rowIndex="32" />
+             <TextField fx:id="uiGridSmallZOffsetMm" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="32">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_small_z_offset_mm.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_major_brightness_multiplier" GridPane.rowIndex="33">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridMajorBrightnessMultiplier" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_major_brightness_multiplier.description" GridPane.columnIndex="1" GridPane.rowIndex="33" />
+             <TextField fx:id="uiGridMajorBrightnessMultiplier" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="33">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_major_brightness_multiplier.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_major_opacity_multiplier" GridPane.rowIndex="34">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridMajorOpacityMultiplier" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_major_opacity_multiplier.description" GridPane.columnIndex="1" GridPane.rowIndex="34" />
+             <TextField fx:id="uiGridMajorOpacityMultiplier" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="34">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_major_opacity_multiplier.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_major_line_width_px" GridPane.rowIndex="35">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridMajorLineWidthPx" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_major_line_width_px.description" GridPane.columnIndex="1" GridPane.rowIndex="35" />
+             <TextField fx:id="uiGridMajorLineWidthPx" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="35">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_major_line_width_px.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_grid_motion_mode" GridPane.rowIndex="36">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <ComboBox fx:id="uiGridMotionMode" onAction="#onUiElementChange" promptText="%settings.ui_grid_motion_mode.description" GridPane.columnIndex="1" GridPane.rowIndex="36" />
+             <ComboBox fx:id="uiGridMotionMode" onAction="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="36">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_motion_mode.description" />
+             </tooltip>
+             </ComboBox>
              <Label text="%settings.ui_grid_ground_render_opacity" GridPane.rowIndex="37">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiGridGroundRenderOpacity" onKeyTyped="#onUiElementChange" promptText="%settings.ui_grid_ground_render_opacity.description" GridPane.columnIndex="1" GridPane.rowIndex="37" />
+             <TextField fx:id="uiGridGroundRenderOpacity" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="37">
+             <tooltip>
+                <Tooltip text="%settings.ui_grid_ground_render_opacity.description" />
+             </tooltip>
+             </TextField>
 
              <!-- ============ CAMERA ORBIT ============ -->
              <Label text="%settings.ui_section_camera" GridPane.rowIndex="38">
@@ -631,31 +764,51 @@
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiCameraOrbitMin" onKeyTyped="#onUiElementChange" promptText="%settings.ui_camera_orbit_min.description" GridPane.columnIndex="1" GridPane.rowIndex="39" />
+             <TextField fx:id="uiCameraOrbitMin" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="39">
+             <tooltip>
+                <Tooltip text="%settings.ui_camera_orbit_min.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_camera_orbit_max" GridPane.rowIndex="40">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiCameraOrbitMax" onKeyTyped="#onUiElementChange" promptText="%settings.ui_camera_orbit_max.description" GridPane.columnIndex="1" GridPane.rowIndex="40" />
+             <TextField fx:id="uiCameraOrbitMax" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="40">
+             <tooltip>
+                <Tooltip text="%settings.ui_camera_orbit_max.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_camera_orbit_half" GridPane.rowIndex="41">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiCameraOrbitHalf" onKeyTyped="#onUiElementChange" promptText="%settings.ui_camera_orbit_half.description" GridPane.columnIndex="1" GridPane.rowIndex="41" />
+             <TextField fx:id="uiCameraOrbitHalf" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="41">
+             <tooltip>
+                <Tooltip text="%settings.ui_camera_orbit_half.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_camera_orbit_rise_ms" GridPane.rowIndex="42">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiCameraOrbitRiseMs" onKeyTyped="#onUiElementChange" promptText="%settings.ui_camera_orbit_rise_ms.description" GridPane.columnIndex="1" GridPane.rowIndex="42" />
+             <TextField fx:id="uiCameraOrbitRiseMs" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="42">
+             <tooltip>
+                <Tooltip text="%settings.ui_camera_orbit_rise_ms.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_camera_orbit_fall_ms" GridPane.rowIndex="43">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiCameraOrbitFallMs" onKeyTyped="#onUiElementChange" promptText="%settings.ui_camera_orbit_fall_ms.description" GridPane.columnIndex="1" GridPane.rowIndex="43" />
+             <TextField fx:id="uiCameraOrbitFallMs" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="43">
+             <tooltip>
+                <Tooltip text="%settings.ui_camera_orbit_fall_ms.description" />
+             </tooltip>
+             </TextField>
 
              <!-- ============ EDGE TIMING ============ -->
              <Label text="%settings.ui_section_timing" GridPane.rowIndex="44">
@@ -671,25 +824,41 @@
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesSceneSettleDelayMs" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_scene_settle_delay_ms.description" GridPane.columnIndex="1" GridPane.rowIndex="45" />
+             <TextField fx:id="uiEdgesSceneSettleDelayMs" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="45">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_scene_settle_delay_ms.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_edges_camera_settle_delay_ms" GridPane.rowIndex="46">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesCameraSettleDelayMs" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_camera_settle_delay_ms.description" GridPane.columnIndex="1" GridPane.rowIndex="46" />
+             <TextField fx:id="uiEdgesCameraSettleDelayMs" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="46">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_camera_settle_delay_ms.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_edges_topology_precision" GridPane.rowIndex="47">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesTopologyPrecision" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_topology_precision.description" GridPane.columnIndex="1" GridPane.rowIndex="47" />
+             <TextField fx:id="uiEdgesTopologyPrecision" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="47">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_topology_precision.description" />
+             </tooltip>
+             </TextField>
              <Label text="%settings.ui_edges_stitch_tolerance" GridPane.rowIndex="48">
              <padding>
              <Insets left="10.0" />
              </padding>
              </Label>
-             <TextField fx:id="uiEdgesStitchTolerance" onKeyTyped="#onUiElementChange" promptText="%settings.ui_edges_stitch_tolerance.description" GridPane.columnIndex="1" GridPane.rowIndex="48" />
+             <TextField fx:id="uiEdgesStitchTolerance" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="48">
+             <tooltip>
+                <Tooltip text="%settings.ui_edges_stitch_tolerance.description" />
+             </tooltip>
+             </TextField>
              </children>
              </GridPane>
              </children>
