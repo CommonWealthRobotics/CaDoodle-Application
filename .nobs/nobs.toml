@@ -1,0 +1,23 @@
+[[sandbox.extra_binds]]
+source = "/usr/bin"
+dest = "/usr/bin"
+read_only = false
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/.local/bin/pasta"
+dest = "/home/hephaestus/.local/bin/pasta"
+read_only = true
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/.local/state/nobs"
+dest = "/home/hephaestus/.local/state/nobs"
+read_only = true
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/bin/java25"
+dest = "/home/hephaestus/bin/java25"
+read_only = true
+enabled = true

@@ -1,0 +1,17 @@
+{
+      "sandbox": {
+      "extra_binds": [
+            {"source":"/home/hephaestus/.gradle","dest":"/home/hephaestus/.gradle","read_only":true,"enabled":true},
+      {"source":"/home/hephaestus/bin/java25","dest":"/home/hephaestus/bin/java25","read_only":true,"enabled":true},
+      {"source":"/home/hephaestus/bin","dest":"/home/hephaestus/bin","read_only":true,"enabled":true},
+      {"source":"/home/hephaestus/.config","dest":"/home/hephaestus/.config","read_only":true,"enabled":true},
+      {"source":"/home/hephaestus/.local/state/nobs","dest":"/home/hephaestus/.local/state/nobs","read_only":true,"enabled":true},
+      {"source":"/home/hephaestus/.local/bin","dest":"/home/hephaestus/.local/bin","read_only":false,"enabled":true},
+      {"source":"/usr/local/bin","dest":"/usr/local/bin","read_only":false,"enabled":true},
+{"source":"/home/hephaestus/.local/bin/pasta","dest":"/usr/bin/pasta","read_only":true,"enabled":false}
+
+
+
+]
+}
+}
