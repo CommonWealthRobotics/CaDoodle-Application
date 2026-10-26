@@ -49,3 +49,4 @@ bin
 /fix_garbled.py
 /fix_translations.py
 /check_json.py
+/.pylibs/

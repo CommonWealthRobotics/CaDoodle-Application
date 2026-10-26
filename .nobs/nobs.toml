@@ -21,3 +21,21 @@ source = "/home/hephaestus/bin/java25"
 dest = "/home/hephaestus/bin/java25"
 read_only = true
 enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/.gradle"
+dest = "/home/hephaestus/.gradle"
+read_only = false
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/venvs/step-check"
+dest = "/home/hephaestus/venvs/step-check"
+read_only = false
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/usr/bin/freecadcmd"
+dest = "/usr/bin/freecadcmd"
+read_only = false
+enabled = true

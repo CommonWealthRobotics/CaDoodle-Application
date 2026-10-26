@@ -8,8 +8,10 @@
       {"source":"/home/hephaestus/.local/state/nobs","dest":"/home/hephaestus/.local/state/nobs","read_only":true,"enabled":true},
       {"source":"/home/hephaestus/.local/bin","dest":"/home/hephaestus/.local/bin","read_only":false,"enabled":true},
       {"source":"/usr/local/bin","dest":"/usr/local/bin","read_only":false,"enabled":true},
-{"source":"/home/hephaestus/.local/bin/pasta","dest":"/usr/bin/pasta","read_only":true,"enabled":false}
+{"source":"/home/hephaestus/.local/bin/pasta","dest":"/usr/bin/pasta","read_only":true,"enabled":false},
+{"source":"/home/hephaestus/venvs/step-check","dest":"/home/hephaestus/venvs/step-check","read_only":true,"enabled":false},
 
+{"source":"/usr/bin/freecadcmd","dest":"/usr/bin/freecadcmd","read_only":true,"enabled":false}
 
 
 ]
