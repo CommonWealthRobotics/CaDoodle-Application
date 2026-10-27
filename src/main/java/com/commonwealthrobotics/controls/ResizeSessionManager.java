@@ -1347,7 +1347,7 @@ public class ResizeSessionManager {
 			throw new NowFXThreadException();
 		}
 		Bounds b = getBounds();
-		com.neuronrobotics.sdk.common.Log.debug("Resizing to " + x + " " + y + " " + z);
+		com.neuronrobotics.sdk.common.Log.debug("\n\nResizing to " + x + " " + y + " " + z);
 		// BowlerStudio.runLater(() -> {
 
 		if (topCenter.isSelected()) {

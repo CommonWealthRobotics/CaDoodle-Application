@@ -284,6 +284,8 @@ public class ControlSprites {
 				xdimen.hide();
 				ydimen.hide();
 				zdimen.hide();
+				Log.debug("\n\nDimention Change Rejected x=" + xdimen.canceled + " y=" + ydimen.canceled + " z="
+						+ zdimen.canceled);
 				return;
 			}
 

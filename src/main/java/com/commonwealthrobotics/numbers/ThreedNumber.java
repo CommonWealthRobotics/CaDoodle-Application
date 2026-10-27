@@ -7,6 +7,7 @@ import com.neuronrobotics.bowlerstudio.assets.IFontSizeReciver;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
+import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -251,9 +252,10 @@ public class ThreedNumber {
 	private void runEnter() {
 
 		// If value didn't change, report operation canceled, prevents save
-		if (Math.abs(getMostRecentValue() - initialValue) < 1e-6)
+		if (Math.abs(getMostRecentValue() - initialValue) < 1e-6) {
 			canceled = true;
-
+			Log.debug("\n\nValue not changed, rejecting " + getMostRecentValue() + " for " + initialValue);
+		}
 		BowlerStudio.runLater(this::hide);
 		validate();
 		onChange.run();
