@@ -1147,7 +1147,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				}
 			});
 
-
 			engine.rebuild(true, hand);
 			ap.setEngine(engine);
 			try {
@@ -1813,7 +1812,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				return;
 			}
 
-
 			String character = event.getCharacter();
 			if (character.isEmpty())
 				return;
@@ -1876,114 +1874,119 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						break;
 				}
 			} else {
-				TransformNR scale = session.getFocusCenter();
-				switch (key) {
-					case 'P' :
+				session.submit(() -> {
+					// this can cause the bounds to be recomputed
+					TransformNR scale = session.getFocusCenter();
+					BowlerStudio.runLater(() -> {
+						switch (key) {
+							case 'P' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Ortho");
+								new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
+								break;
 
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 15, -45)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Ortho");
-						new TransformNR(0, 0, 0, new RotationNR(0, 0, -90));
-						break;
+							case '1' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 0)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Front");
+								break;
+							case '2' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 90, 0)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Left");
+								break;
+							case '3' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 180, 0)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Back");
+								break;
+							case '4' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, -90, 0)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Right");
+								break;
+							case '5' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 90)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
+								break;
+							case '6' :
+								engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, -90)),
+										new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
+										engine.getFlyingCamera().getZoomDepth());
+								com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
+								break;
 
-					case '1' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Front");
-						break;
-					case '2' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 90, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Left");
-						break;
-					case '3' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 180, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Back");
-						break;
-					case '4' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, -90, 0)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Right");
-						break;
-					case '5' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, 90)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Bottom");
-						break;
-					case '6' :
-						engine.focusOrientation(new TransformNR(0, 0, 0, new RotationNR(0, 0, -90)),
-								new TransformNR(scale.getX(), -scale.getY(), -scale.getZ()),
-								engine.getFlyingCamera().getZoomDepth());
-						com.neuronrobotics.sdk.common.Log.debug("Event NavigationCube: Top");
-						break;
-
-					case 'W' : // W - Workplane
-						com.neuronrobotics.sdk.common.Log.debug("Workplane");
-						onWorkplane(null);
-						break;
-					case '-' : // - - Zoom Out
-						com.neuronrobotics.sdk.common.Log.debug("Zoom out");
-						onZoomOut(null);
-						break;
-					case '+' : // + - Zoom In
-						com.neuronrobotics.sdk.common.Log.debug("Zoom in");
-						onZoomIn(null);
-						break;
-					case 'F' : // F - Fit View
-						com.neuronrobotics.sdk.common.Log.debug("Fit view");
-						onFitView(null);
-						break;
-					case 'O' : // F - Fit View
-						com.neuronrobotics.sdk.common.Log.debug("Orent view");
-						onOrentAndFocusView(null);
-						break;
-					case 'H' : // H - Set Hole
-						com.neuronrobotics.sdk.common.Log.debug("Set to Hole");
-						session.setToHole();
-						break;
-					case 'S' : // S - Set Solid
-						com.neuronrobotics.sdk.common.Log.debug("Set to solid");
-						session.setToSolid();
-						break;
-					case 'D' : // D - Drop
-						com.neuronrobotics.sdk.common.Log.debug("Drop");
-						session.onDrop();
-						break;
-					case 'E' : // E - Object Workplane Toggle
-						com.neuronrobotics.sdk.common.Log.debug("Call Object WP toggle");
-						session.objectWorkplane();
-						break;
-					case 'L' : // L - Align
-						com.neuronrobotics.sdk.common.Log.debug("Allign");
-						session.onAlign();
-						break;
-					case 'C' : // C - Cruise
-						com.neuronrobotics.sdk.common.Log.debug("Cruse");
-						session.onCruise();
-						break;
-					case 'T' : // T - Toggle Transparent
-						com.neuronrobotics.sdk.common.Log.debug("Transparent toggle");
-						session.toggleTransparent();
-						break;
-					case 'M' : // M - Mirror
-						com.neuronrobotics.sdk.common.Log.debug("Mirror");
-						session.onMirror();
-						break;
-					case 'R' :
-						com.neuronrobotics.sdk.common.Log.debug("Ruler");
-						onRuler(null);
-						break;
-					default :
-						com.neuronrobotics.sdk.common.Log.error("Unhandled key: " + key + " (raw: " + raw + ")");
-						break;
-				}
+							case 'W' : // W - Workplane
+								com.neuronrobotics.sdk.common.Log.debug("Workplane");
+								onWorkplane(null);
+								break;
+							case '-' : // - - Zoom Out
+								com.neuronrobotics.sdk.common.Log.debug("Zoom out");
+								onZoomOut(null);
+								break;
+							case '+' : // + - Zoom In
+								com.neuronrobotics.sdk.common.Log.debug("Zoom in");
+								onZoomIn(null);
+								break;
+							case 'F' : // F - Fit View
+								com.neuronrobotics.sdk.common.Log.debug("Fit view");
+								onFitView(null);
+								break;
+							case 'O' : // F - Fit View
+								com.neuronrobotics.sdk.common.Log.debug("Orent view");
+								onOrentAndFocusView(null);
+								break;
+							case 'H' : // H - Set Hole
+								com.neuronrobotics.sdk.common.Log.debug("Set to Hole");
+								session.setToHole();
+								break;
+							case 'S' : // S - Set Solid
+								com.neuronrobotics.sdk.common.Log.debug("Set to solid");
+								session.setToSolid();
+								break;
+							case 'D' : // D - Drop
+								com.neuronrobotics.sdk.common.Log.debug("Drop");
+								session.onDrop();
+								break;
+							case 'E' : // E - Object Workplane Toggle
+								com.neuronrobotics.sdk.common.Log.debug("Call Object WP toggle");
+								session.objectWorkplane();
+								break;
+							case 'L' : // L - Align
+								com.neuronrobotics.sdk.common.Log.debug("Allign");
+								session.onAlign();
+								break;
+							case 'C' : // C - Cruise
+								com.neuronrobotics.sdk.common.Log.debug("Cruse");
+								session.onCruise();
+								break;
+							case 'T' : // T - Toggle Transparent
+								com.neuronrobotics.sdk.common.Log.debug("Transparent toggle");
+								session.toggleTransparent();
+								break;
+							case 'M' : // M - Mirror
+								com.neuronrobotics.sdk.common.Log.debug("Mirror");
+								session.onMirror();
+								break;
+							case 'R' :
+								com.neuronrobotics.sdk.common.Log.debug("Ruler");
+								onRuler(null);
+								break;
+							default :
+								com.neuronrobotics.sdk.common.Log
+										.error("Unhandled key: " + key + " (raw: " + raw + ")");
+								break;
+						}
+					});
+				});
 			}
 		});
 	}
