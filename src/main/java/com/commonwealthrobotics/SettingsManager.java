@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
@@ -32,6 +33,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
@@ -50,6 +52,7 @@ import eu.mihosoft.vrl.v3d.ICSGClientEvent;
 import eu.mihosoft.vrl.v3d.JavaFXInitializer;
 import eu.mihosoft.vrl.v3d.Plane;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -65,6 +68,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
@@ -257,6 +261,9 @@ public class SettingsManager implements ICSGClientEvent {
 	private TextField uiEdgesStitchTolerance;
 
 	private static final String PARAMS_KEY = "CaDoodle";
+	// Text edits stay pending (highlighted) until Enter commits them
+	private static final String PENDING_EDIT_STYLE = "-fx-background-color: #ffe680;"
+			+ " -fx-control-inner-background: #ffe680;";
 
 	@FXML
 	void onFontSize(ActionEvent event) {
@@ -718,6 +725,7 @@ public class SettingsManager implements ICSGClientEvent {
 		styleOptions.getSelectionModel().select(modeSelected);
 		updateVersionOptions();
 		loadUiElements();
+		installPendingEditCommit();
 		mc.getActiveProject();
 		ActiveProject.setStyleSheet(topPane);
 
@@ -744,7 +752,7 @@ public class SettingsManager implements ICSGClientEvent {
 	}
 
 	@FXML
-	private void onUiElementChange(ActionEvent event) {
+	private void onUiElementChange(Event event) {
 		Object source = event.getSource();
 		if (source == null)
 			return;
@@ -787,21 +795,58 @@ public class SettingsManager implements ICSGClientEvent {
 				ConfigurationDatabase.save();
 				return;
 			}
-			// The rest are text fields with bounds applied to them
-			TextField field = (TextField) source;
+			// Text fields are handled by installPendingEditCommit()
+		} catch (Throwable t) {
+			Log.error(t);
+		}
+	}
+
+	/**
+	 * Numeric text fields highlight while being edited and only commit on Enter.
+	 */
+	private void installPendingEditCommit() {
+		for (TextField field : uiNumericFields()) {
+			// replaces the FXML onKeyTyped hook, which committed on every keystroke
+			field.setOnKeyTyped(null);
+			field.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+				if (event.getCode() == KeyCode.ENTER) {
+					commitUiElement(field);
+				} else {
+					field.setStyle(PENDING_EDIT_STYLE);
+				}
+			});
+		}
+	}
+
+	private void commitUiElement(TextField field) {
+		try {
 			String key = fieldToKey(field);
 			if (key == null) {
 				Log.error("Unknown control " + field);
 				return;
 			}
-			double value = parseDouble(field.getText());
-			value = bound(key, value);
+			double value = bound(key, parseDouble(field.getText()));
 			field.setText("" + value);
-			ConfigurationDatabase.put(PARAMS_KEY, key, "" + value);
-			ConfigurationDatabase.save();
+			field.setStyle(null);
+			new Thread(() -> {
+				ConfigurationDatabase.put(PARAMS_KEY, key, "" + value);
+				ConfigurationDatabase.save();
+			}).start();
 		} catch (Throwable t) {
 			Log.error(t);
 		}
+	}
+
+	private List<TextField> uiNumericFields() {
+		return Arrays.asList(uiLightingAmbient, uiLightingKeyIntensity, uiLightingKeyX, uiLightingKeyY, uiLightingKeyZ,
+				uiLightingFillIntensity, uiLightingFillX, uiLightingFillY, uiLightingFillZ, uiLightingRimIntensity,
+				uiLightingRimX, uiLightingRimY, uiLightingRimZ, uiEdgesAngleDegrees, uiEdgesWidthPx, uiEdgesRadius,
+				uiEdgesBrightness, uiGridSmallVisibleZoomDepth, uiGridSmallBrightnessMultiplier,
+				uiGridSmallOpacityMultiplier, uiGridSmallLineWidthPx, uiGridSmallZOffsetMm,
+				uiGridMajorBrightnessMultiplier, uiGridMajorOpacityMultiplier, uiGridMajorLineWidthPx,
+				uiGridGroundRenderOpacity, uiCameraOrbitMin, uiCameraOrbitMax, uiCameraOrbitHalf, uiCameraOrbitRiseMs,
+				uiCameraOrbitFallMs, uiEdgesSceneSettleDelayMs, uiEdgesCameraSettleDelayMs, uiEdgesTopologyPrecision,
+				uiEdgesStitchTolerance);
 	}
 
 	/**
