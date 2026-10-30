@@ -66,7 +66,7 @@ jobs:
           mkdir -p CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
           echo ${{ steps.get_version.outputs.VERSION  }} > CaDoodle-ApplicationInstall/currentversion.txt
           cp CaDoodle-Application.jar CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
-          cp BowlerStudio/jvm.json CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
+          cp BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm/jvm.json CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
           cp gitcache.zip CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
           zip -r CaDoodle-ApplicationInstall.zip CaDoodle-ApplicationInstall/
     - name: Generate download analytics
@@ -109,7 +109,7 @@ jobs:
       with:
         files: |
           CaDoodle-Application.jar
-          BowlerStudio/jvm.json
+          BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm/jvm.json
           gitcache.zip
           CaDoodle-ApplicationInstall.zip
           download-analytics.json
