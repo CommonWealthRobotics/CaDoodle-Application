@@ -421,7 +421,7 @@ public class TimelineManager {
 				if (AddFromFile.class.isInstance(op)) {
 					AddFromFile af = (AddFromFile) op;
 					try {
-						text = (myIndex + 1) + "\n" + ActiveProject.getTranslation("AddFromFile") + " ";
+						text = (myIndex + 1) + ": " + ActiveProject.getTranslation("AddFromFile") + " ";
 						File file = af.getFile();
 						if (file != null) {
 							String name = file.getName();
