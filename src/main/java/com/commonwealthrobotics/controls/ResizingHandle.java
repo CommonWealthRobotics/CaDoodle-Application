@@ -1,5 +1,8 @@
 package com.commonwealthrobotics.controls;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixException;
 
 import com.commonwealthrobotics.WorkplaneManager;
@@ -40,6 +43,7 @@ public class ResizingHandle {
 	private BowlerStudio3dEngine engine;
 	private PerspectiveCamera camera;
 	private MeshView meshview;
+	private MeshView outline;
 
 	private Affine location = new Affine();
 	private Affine cameraOrient = new Affine();
@@ -95,6 +99,8 @@ public class ResizingHandle {
 		camera = engine.getFlyingCamera().getCamera();
 
 		meshview = shape.getMesh();
+		outline = shape.movez(-0.1).scalex(1.4).scaley(1.4).scalez(0.9).setColor(Color.BLACK).getMesh();
+
 		material = new PhongMaterial();
 		resetColor();
 		meshview.setCullFace(CullFace.BACK);
@@ -134,6 +140,15 @@ public class ResizingHandle {
 			manipulator.setStartingWorkplanePosition(startingPosition3D);
 
 		});
+		outline.setMouseTransparent(true);
+
+		outline.setViewOrder(100);
+		outline.getTransforms().add(move);
+		outline.getTransforms().add(resizeHandleLocation);
+		outline.getTransforms().add(workplaneOffset);
+		outline.getTransforms().add(location);
+		outline.getTransforms().add(cameraOrient);
+		outline.getTransforms().add(scaleTF);
 
 		meshview.getTransforms().add(move);
 		meshview.getTransforms().add(resizeHandleLocation);
@@ -141,7 +156,6 @@ public class ResizingHandle {
 		meshview.getTransforms().add(location);
 		meshview.getTransforms().add(cameraOrient);
 		meshview.getTransforms().add(scaleTF);
-		// Tooltip.install(meshview, hover);
 		meshview.addEventFilter(MouseEvent.ANY, manipulator.getMouseEvents());
 
 	}
@@ -367,6 +381,7 @@ public class ResizingHandle {
 
 	public void setVisible(boolean b) {
 		meshview.setVisible(b);
+		outline.setVisible(b);
 	}
 
 	public static double getSize() {
@@ -381,12 +396,12 @@ public class ResizingHandle {
 		return getSize();
 	}
 
-	public MeshView getMesh() {
-		return meshview;
+	public List<MeshView> getMeshs() {
+		return Arrays.asList(meshview, outline);
 	}
 
-	public void setMesh(MeshView mesh) {
-		this.meshview = meshview;
+	public MeshView getMesh() {
+		return meshview;
 	}
 
 	public void setBaseScale(double baseScale) {

@@ -88,6 +88,7 @@ IMAGES=(
     "Script-Tab-FreeCAD.png"
     "ObjImg.png"
     "3mf.png"
+    "step.png"
     "export-button.png"
     # ProjectPanel
     "newFile.png"

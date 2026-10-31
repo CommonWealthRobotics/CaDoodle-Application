@@ -1,18 +1,24 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-export ARCH=x86_64
-JVM=zulu25.32.21-ca-fx-jdk25.0.2-macosx_x64
 set -e
-ZIP=$JVM.tar.gz
+JVM_SCRIPTS=$SCRIPT_DIR/BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm
+JVM=$(bash $JVM_SCRIPTS/getJdkArchiveName.sh)
+ZIP=$(bash $JVM_SCRIPTS/getJdkArchiveFile.sh)
 export JAVA_HOME=$HOME/bin/java25/
 if test -d $JAVA_HOME/$JVM/; then
   echo "$JAVA_HOME exists."
 else
 	rm -rf $JAVA_HOME
 	mkdir -p $JAVA_HOME
-	curl -L https://cdn.azul.com/zulu/bin/$ZIP -o $ZIP
-	tar -xvzf $ZIP -C $JAVA_HOME
+	curl -L $(bash $JVM_SCRIPTS/getJdkUrl.sh) -o $ZIP
+	case $ZIP in
+	*.zip) unzip -o -q $ZIP -d $JAVA_HOME ;;
+	*) tar -xvzf $ZIP -C $JAVA_HOME ;;
+	esac
 	mv $JAVA_HOME/$JVM/* $JAVA_HOME/
+fi
+if test -d $JAVA_HOME/Contents/Home; then
+	export JAVA_HOME=$JAVA_HOME/Contents/Home
 fi
 echo "Java home set to $JAVA_HOME"
 

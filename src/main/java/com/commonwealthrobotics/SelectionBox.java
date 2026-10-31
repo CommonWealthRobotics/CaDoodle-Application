@@ -170,7 +170,7 @@ public class SelectionBox {
 			// show.clear();
 			HashMap<CSG, MeshHolder> meshes = session.getMeshes();
 			for (CSG key : meshes.keySet())
-				meshes.get(key).display.setMouseTransparent(true);
+				meshes.get(key).getDisplay().setMouseTransparent(true);
 
 		}
 
@@ -211,7 +211,7 @@ public class SelectionBox {
 		// }
 		HashMap<CSG, MeshHolder> meshes = session.getMeshes();
 		for (CSG key : meshes.keySet())
-			meshes.get(key).display.setMouseTransparent(false);
+			meshes.get(key).getDisplay().setMouseTransparent(false);
 
 		new Thread(() -> {
 			double width = Math.abs(event.getX() - xStart2);

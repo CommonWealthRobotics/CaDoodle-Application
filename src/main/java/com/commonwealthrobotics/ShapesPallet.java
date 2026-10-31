@@ -18,6 +18,7 @@ import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.SplashManager;
 import com.neuronrobotics.bowlerstudio.assets.ConfigurationDatabase;
+import com.neuronrobotics.bowlerstudio.scripting.CuratedColorPalette;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AbstractAddFrom;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.AddFromFile;
@@ -30,7 +31,6 @@ import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Plane;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
@@ -38,6 +38,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import com.commonwealthrobotics.controls.SelectionSession;
@@ -225,8 +226,10 @@ public class ShapesPallet {
 		String sweep = key.get("sweep");
 
 		boolean isSweep = (sweep != null) ? Boolean.parseBoolean(sweep) : false;
+		String displayName = name;
 		name = name.replace(' ', '_');
-		final String tooltipText = ActiveProject.getTranslation("shape." + name);
+		String translatedName = ActiveProject.getTranslation("shape." + name);
+		final String tooltipText = translatedName.startsWith("shape.") ? displayName : translatedName;
 
 		ShapePalletButtonResources resources = new ShapePalletButtonResources(key, typeOfShapes, name, ap);
 		ArrayList<ButtonWithOverlayImage> buttonHolder = new ArrayList<ButtonWithOverlayImage>();
@@ -242,14 +245,14 @@ public class ShapesPallet {
 			hover.setContentDisplay(ContentDisplay.TOP);
 			// tIv.setFitHeight(50);
 			// tIv.setFitWidth(50);
-			ObservableList<String> styleClass = null;
+			boolean hasPlugin = false;
 			String pluginType = key.get("plugin");
 			String text = null;
 			if (pluginType != null) {
 				Optional<PluginType> fromString = PluginType.fromString(pluginType);
 				if (fromString.isPresent()) {
 					PluginType pluginType2 = fromString.get();
-					styleClass = pluginType2.getStyleClass();
+					hasPlugin = true;
 					text = pluginType2.toString();
 					if (pluginType2 == PluginType.SVG) {
 						text = "Inkscape";
@@ -257,14 +260,14 @@ public class ShapesPallet {
 					hover.setText(hover.getText() + " ( " + text + " ) ");
 				}
 			}
-			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", thumb, 60, 20, 0);
+			Image buttonThumb = TimelineManager.resizeImage(thumb, 300, 300, 0);
+			ButtonWithOverlayImage button = new ButtonWithOverlayImage("", buttonThumb, 60, 20, 0);
 			button.setTooltip(hover);
 			button.getStyleClass().clear();
 			button.getStyleClass().add("image-button-shape-pallet");
 			objectPallet.add(button, col, row);
 			buttonHolder.add(button);
-			if (styleClass != null && ap.isAdvancedMode())
-				button.setButtonImageType(styleClass);
+			button.setEditableMarkerVisible(hasPlugin && ap.isAdvancedMode());
 
 			button.setOnMousePressed(ev -> {
 				new Thread(() -> {
@@ -330,6 +333,17 @@ public class ShapesPallet {
 									}
 									ap.addOp(setAddFromScript).join();
 									List<String> names = setAddFromScript.getNamesAddedInThisOperation();
+
+									List<CSG> added = ap.get().getSelect(names);
+									if (!added.isEmpty()) {
+
+
+										for (CSG c : added) {
+											Color generated = c.getColor();
+											Color snapped = CuratedColorPalette.nearest(generated);
+											c.setColor(snapped);
+										}
+									}
 									if (!workplane.isClicked())
 										return;
 									if (workplane.isClickOnGround()) {

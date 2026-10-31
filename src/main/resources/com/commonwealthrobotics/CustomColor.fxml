@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.commonwealthrobotics.CustomColorController"
+           style="-fx-padding: 6;">
+
+    <children>
+
+        <VBox styleClass="anchor-pane"
+              spacing="10.0"
+              style="-fx-padding: 14;
+                     -fx-border-color: #666666;
+                     -fx-border-width: 1;
+                     -fx-border-radius: 4;
+                     -fx-background-radius: 4;">
+
+            <children>
+
+                <Label text="Custom color" />
+
+                <AnchorPane fx:id="colorArea"
+                            prefWidth="280.0"
+                            prefHeight="170.0"
+                            minWidth="280.0"
+                            minHeight="170.0"
+                            onMousePressed="#onColorArea"
+                            onMouseDragged="#onColorArea">
+
+                    <children>
+
+                        <Region fx:id="saturationLayer"
+                                mouseTransparent="true"
+                                AnchorPane.topAnchor="0.0"
+                                AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" />
+
+                        <Region fx:id="brightnessLayer"
+                                mouseTransparent="true"
+                                style="-fx-background-color:
+                                       linear-gradient(to bottom,
+                                           transparent 0%,
+                                           black 100%);"
+                                AnchorPane.topAnchor="0.0"
+                                AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" />
+
+                        <Region fx:id="colorMarker"
+                                mouseTransparent="true"
+                                prefWidth="12.0"
+                                prefHeight="12.0"
+                                style="-fx-background-color: transparent;
+                                       -fx-border-color: black;
+                                       -fx-border-width: 2;
+                                       -fx-border-radius: 20;" />
+
+                    </children>
+                </AnchorPane>
+
+                <AnchorPane fx:id="hueArea"
+                            prefWidth="280.0"
+                            prefHeight="22.0"
+                            minWidth="280.0"
+                            minHeight="22.0"
+                            onMousePressed="#onHueArea"
+                            onMouseDragged="#onHueArea"
+                            style="-fx-background-color:
+                                linear-gradient(to right,
+                                    #ff0000 0%,
+                                    #ffff00 16.67%,
+                                    #00ff00 33.33%,
+                                    #00ffff 50%,
+                                    #0000ff 66.67%,
+                                    #ff00ff 83.33%,
+                                    #ff0000 100%);">
+
+                    <children>
+                        <Region fx:id="hueMarker"
+                                mouseTransparent="true"
+                                prefWidth="4.0"
+                                prefHeight="22.0"
+                                style="-fx-background-color: white;
+                                       -fx-border-color: black;
+                                       -fx-border-width: 1;" />
+                    </children>
+                </AnchorPane>
+
+                <HBox spacing="8.0">
+                    <children>
+                        <Label text="Selected:" />
+
+                        <Region fx:id="preview"
+                                prefWidth="60.0"
+                                prefHeight="28.0"
+                                style="-fx-border-color: black; -fx-border-width: 1;" />
+                    </children>
+                </HBox>
+
+                <HBox spacing="8.0">
+                    <children>
+                        <Button text="Use color"
+                                onAction="#onUseColor" />
+
+                        <Button text="Cancel"
+                                onAction="#onCancel" />
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+
+    </children>
+</StackPane>

@@ -18,7 +18,7 @@ jobs:
       with:
          submodules: recursive 
     - name: Set OAuth Key
-      env: # Or as an environment variable
+      env:
          OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
       run: |
          sed -i "s/REPLACE_ME/$OAUTH_SECRET/g" BowlerStudio/src/main/java/com/neuronrobotics/bowlerstudio/NameGetter.java        
@@ -38,11 +38,13 @@ jobs:
       run: |
         mv build/libs/* .
         ls -al
+    - name: Resolve JDK archive from jvm.json
+      run: echo "JVM_ARCHIVE=$(bash BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm/getJdkArchiveFile.sh)" >> $GITHUB_ENV
     - name: Set Java
       uses: actions/setup-java@v1
       with:
         java-version: 25
-        jdkFile: zulu25.36.15-ca-fx-jdk25.0.4-linux_x64.tar.gz
+        jdkFile: ${{ env.JVM_ARCHIVE }}
 
     - name: Download Bowler kernel into CI
       run: wget https://github.com/CommonWealthRobotics/bowler-script-kernel/releases/latest/download/bowler-kernel.jar
@@ -66,18 +68,52 @@ jobs:
           mkdir -p CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
           echo ${{ steps.get_version.outputs.VERSION  }} > CaDoodle-ApplicationInstall/currentversion.txt
           cp CaDoodle-Application.jar CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
-          cp BowlerStudio/jvm.json CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
+          cp BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm/jvm.json CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
           cp gitcache.zip CaDoodle-ApplicationInstall/${{ steps.get_version.outputs.VERSION  }}/
           zip -r CaDoodle-ApplicationInstall.zip CaDoodle-ApplicationInstall/
+    - name: Generate download analytics
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+
+          # Pull every existing release (gh auto-merges paginated results into one array)
+          gh api "repos/${REPO}/releases" --paginate > all_releases.json
+
+          jq '
+            . as $releases
+            | {
+                generated_at: (now | todate),
+                releases: (
+                  ($releases
+                    | map({
+                        (.tag_name): (
+                          reduce .assets[] as $a ({}; . + {($a.name): $a.download_count})
+                        )
+                      })
+                    | add) // {}
+                ),
+                totals_per_artifact: (
+                  (reduce ($releases[] | .assets[]) as $a ({}; .[$a.name] += $a.download_count)) // {}
+                ),
+                grand_total: (
+                  ([$releases[] | .assets[].download_count] | add) // 0
+                )
+              }
+          ' all_releases.json > download-analytics.json
+
+          echo "---- download-analytics.json ----"
+          cat download-analytics.json
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           CaDoodle-Application.jar
-          BowlerStudio/jvm.json
+          BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm/jvm.json
           gitcache.zip
           CaDoodle-ApplicationInstall.zip
+          download-analytics.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

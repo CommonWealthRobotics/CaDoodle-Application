@@ -32,6 +32,7 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.fillet.ExtrudeUIManager;
 import com.commonwealthrobotics.fillet.FilletUIManager;
 import com.commonwealthrobotics.robot.LimbControlManager;
+import com.commonwealthrobotics.ColorPaletteController;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -49,8 +50,11 @@ import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
+import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.ModifyLimb;
 import com.neuronrobotics.bowlerstudio.scripting.external.ExternalEditorController;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
+import com.neuronrobotics.bowlerstudio.threed.FeatureEdgeExtractor;
+import com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
 import com.neuronrobotics.bowlerstudio.util.FileChangeWatcher;
 import com.neuronrobotics.bowlerstudio.util.IFileChangeListener;
@@ -62,6 +66,7 @@ import com.neuronrobotics.sdk.common.TickToc;
 
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
+import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Plane;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -70,6 +75,7 @@ import eu.mihosoft.vrl.v3d.parametrics.IParameterChanged;
 import eu.mihosoft.vrl.v3d.parametrics.LengthParameter;
 import eu.mihosoft.vrl.v3d.parametrics.Parameter;
 import eu.mihosoft.vrl.v3d.parametrics.StringParameter;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -79,12 +85,10 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -109,6 +113,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
+import javafx.scene.shape.TriangleMesh;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
@@ -116,27 +121,52 @@ import javafx.stage.Popup;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.util.Duration;
 
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	private ControlSprites controls;
+	double scaleX = 1.02;
+	double scaleY = 1.02;
+	double scaleZ = 1.03;
 
 	public class MeshHolder {
-		public MeshView display;
-		public MeshView halo;
+		private MeshView display;
+		private MeshView halo;
+		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
+		Scale haloScale = new Scale();
+		List<FeatureEdgeExtractor.Edge> visibleEdges = null;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
 			if (display == null || halo == null || bouds == null)
 				throw new NullPointerException();
-			this.display = display;
-			this.halo = halo;
+			this.setDisplay(display);
+			this.setHalo(halo);
 			this.bouds = bouds;
+		}
+
+		public MeshView getHalo() {
+			return halo;
+		}
+
+		public void setHalo(MeshView halo) {
+			this.halo = halo;
+		}
+
+		public MeshView getDisplay() {
+			return display;
+		}
+
+		public void setDisplay(MeshView display) {
+			this.display = display;
 		}
 	}
 
 	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
+	private PauseTransition edgeRebuildTimer;
+	private PauseTransition edgeWidthUpdateTimer;
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -145,7 +175,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private AnchorPane control3d;
 	public BowlerStudio3dEngine engine;
 	private LinkedHashSet<CSG> selected = new LinkedHashSet<>();
-	private ColorPicker colorPicker;
+	private AnchorPane colorPickerHolder;
+	private ColorPaletteController colorPaletteController;
 	private ComboBox<String> snapGrid;
 	private List<Button> buttons;
 	private Button ungroupButton;
@@ -153,7 +184,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private ImageView showHideImage;
 	private List<String> copySetinternal;
 	private Button alignButton;
-	private long timeSinceLastMove = System.currentTimeMillis();
+	private volatile long timeSinceLastMove = System.currentTimeMillis();
 	private double screenW;
 	private double screenH;
 	private double zoom;
@@ -182,7 +213,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// private HashMap<String, EventHandler<ActionEvent>> regenEvents = new
 	// HashMap<>();
 	private boolean showConstituants = false;
-	private MenuButton advancedGroupMenu;
+	private Button intersectButton;
+	private Button xorButton;
 	private TimelineManager timeline;
 	private RulerManager ruler;
 	private Button objectWorkplane;
@@ -207,8 +239,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private final LockableHandler lockableMouseMover = new LockableHandler(manipulation.getMouseEvents());
-	public Thread timeoutMoveThread = null;
-	private boolean applyingMoveOperation;
+	public volatile Thread timeoutMoveThread = null;
+	private volatile boolean applyingMoveOperation;
+	// Guards the manipulator mutation, the pending-apply bookkeeping and the
+	// session deltas so a queued arrow-key move can not run concurrently with
+	// the move-commit thread or with onUpdate's manipulator reset.
+	private final Object moveGate = new Object();
 	private Button renameBtn;
 	private Button filletButton;
 	private Button extrudeButton;
@@ -220,11 +256,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private TitledPane materialPanel;
 	private double sessionDeltaX = 0;
 	private double sessionDeltaY = 0;
-	private double sessionDeltaZ = 0;;
+	private double sessionDeltaZ = 0;
+	private Button hullButton;
+	private Button bendButton;
+	private TitledPane shapeConfiguration2;;
 
 	@SuppressWarnings("static-access")
 	public SelectionSession(BowlerStudio3dEngine e, ActiveProject ap, RulerManager ruler) {
 		this.engine = e;
+		engine.addListener(camera -> requestFeatureEdgeWidthUpdate());
+
 		this.ruler = ruler;
 		workplane = new WorkplaneManager(ap, engine, this);
 
@@ -373,6 +414,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private Thread myRegenerate(CaDoodleOperation source, IFileChangeListener l, File f) {
+		if (SplashManager.isVisibleSplash() || ap.get().isOperationRunning()) {
+			Log.error("Rejecting regeneration " + l + " spash: " + SplashManager.isVisibleSplash()
+					+ " operation running status " + ap.get().isOperationRunning());
+			return null;
+		}
 		if (regenerating)
 			return null;
 
@@ -625,12 +671,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView meshView = c.newMesh();
 			MeshView halo = c.newMesh(true);
+			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
+			if (ModifyLimb.class.isInstance(source)) {
+				source.getCaDoodleFile().getBoundsCache().clear();
+			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
 			BowlerStudio.runLater(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
@@ -646,6 +695,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				controls.resetManipulator(b);
 				for (CSG c : transport.keySet())
 					displayCSG(c, transport.get(c));
+
+				requestFeatureEdgeRebuild();
 				transport.clear();
 				ArrayList<CSG> toRemove = new ArrayList<>();
 				List<String> selectedSnapshot = selectedSnapshot();
@@ -687,50 +738,336 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		if (getMeshes() == null)
 			return;
-
-		for (CSG c : getMeshes().keySet()) {
-			MeshHolder meshHolder = getMeshes().get(c);
-			engine.removeUserNode(meshHolder.display);
-			try {
-				engine.removeUserNode(meshHolder.halo);
-			} catch (Exception ex) {
-				Log.error(ex);
+		BowlerStudio.runLater(() -> {
+			for (CSG c : getMeshes().keySet()) {
+				MeshHolder meshHolder = getMeshes().get(c);
+				engine.removeUserNode(meshHolder.getDisplay());
+				engine.removeUserNode(meshHolder.edges);
+				try {
+					engine.removeUserNode(meshHolder.getHalo());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
 			}
+			getMeshes().clear();
+		});
+	}
+
+	private static void addEdgePoint(List<Float> points, Point3D point) {
+		points.add((float) point.getX());
+		points.add((float) point.getY());
+		points.add((float) point.getZ());
+	}
+
+	private static void addEdgeFace(List<Integer> faces, int a, int b, int c) {
+		faces.add(a);
+		faces.add(0);
+		faces.add(b);
+		faces.add(0);
+		faces.add(c);
+		faces.add(0);
+	}
+
+	private static void addEdgePrism(List<Float> points, List<Integer> faces, FeatureEdgeExtractor.Edge edge,
+			Point3D cameraPosition, double radius) {
+
+		Point3D a = new Point3D(edge.a.x, edge.a.y, edge.a.z);
+		Point3D b = new Point3D(edge.b.x, edge.b.y, edge.b.z);
+		Point3D direction = b.subtract(a);
+
+		if (direction.magnitude() < 1e-9)
+			return;
+
+		direction = direction.normalize();
+
+		Point3D midpoint = a.midpoint(b);
+		Point3D toCamera = cameraPosition.subtract(midpoint);
+		Point3D u = direction.crossProduct(toCamera);
+
+		if (u.magnitude() < 1e-9) {
+			Point3D reference = Math.abs(direction.getY()) < 0.9 ? new Point3D(0, 1, 0) : new Point3D(1, 0, 0);
+			u = direction.crossProduct(reference);
 		}
 
-		getMeshes().clear();
+		u = u.normalize().multiply(radius);
+		Point3D v = direction.crossProduct(u).normalize().multiply(radius);
+
+		Point3D[] ringA = {a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v)};
+		Point3D[] ringB = {b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v)};
+
+		int base = points.size() / 3;
+
+		for (Point3D point : ringA)
+			addEdgePoint(points, point);
+
+		for (Point3D point : ringB)
+			addEdgePoint(points, point);
+
+		for (int i = 0; i < 4; i++) {
+			int j = (i + 1) % 4;
+			addEdgeFace(faces, base + i, base + j, base + 4 + j);
+			addEdgeFace(faces, base + i, base + 4 + j, base + 4 + i);
+		}
+
+		addEdgeFace(faces, base, base + 2, base + 1);
+		addEdgeFace(faces, base, base + 3, base + 2);
+		addEdgeFace(faces, base + 4, base + 5, base + 6);
+		addEdgeFace(faces, base + 4, base + 6, base + 7);
+	}
+
+	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges) {
+		javafx.scene.Group group = new javafx.scene.Group();
+		group.setMouseTransparent(true);
+		group.setDepthTest(DepthTest.ENABLE);
+
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return group;
+
+		if (visibleEdges == null || visibleEdges.isEmpty())
+			return group;
+
+		VirtualCameraMobileBase camera = engine.getVirtualcam();
+		TransformNR cameraPose = camera.getCamerFrame().times(new TransformNR(0, 0, camera.getZoomDepth()));
+		Point3D cameraPosition = new Point3D(cameraPose.getX(), cameraPose.getY(), cameraPose.getZ());
+
+		double[][] cameraRotation = cameraPose.getRotation().getRotationMatrix();
+		Point3D cameraForward = new Point3D(cameraRotation[0][2], cameraRotation[1][2], cameraRotation[2][2]);
+
+		String widthMode = SceneStyleConfig.getString("edges.widthMode", "screen");
+		boolean screenWidth = !"world".equalsIgnoreCase(widthMode);
+
+		double widthPx = Math.max(0.1, SceneStyleConfig.getDouble("edges.widthPx", 1.6));
+		double worldRadius = Math.max(0.001, SceneStyleConfig.getDouble("edges.radius", 0.15));
+		double screenRadiusPerDepth = 0.0;
+
+		if (screenWidth) {
+			double cx = 0;
+			double cy = 0;
+			double cz = 0;
+			int count = 0;
+
+			for (FeatureEdgeExtractor.Edge edge : visibleEdges) {
+				cx += edge.a.x + edge.b.x;
+				cy += edge.a.y + edge.b.y;
+				cz += edge.a.z + edge.b.z;
+				count += 2;
+			}
+
+			Point3D center = new Point3D(cx / count, cy / count, cz / count);
+			double centerDepth = Math.max(0.1, center.subtract(cameraPosition).dotProduct(cameraForward));
+			double centerRadius = Math.max(0.0001, engine.screenToSceneMMscale(center) * widthPx * 0.5);
+
+			screenRadiusPerDepth = centerRadius / centerDepth;
+		}
+
+		List<Float> points = new ArrayList<>();
+		List<Integer> faces = new ArrayList<>();
+
+		for (FeatureEdgeExtractor.Edge edge : visibleEdges) {
+			double radius = worldRadius;
+
+			if (screenWidth) {
+				Point3D midpoint = new Point3D((edge.a.x + edge.b.x) / 2.0, (edge.a.y + edge.b.y) / 2.0,
+						(edge.a.z + edge.b.z) / 2.0);
+				double depth = Math.max(0.1, midpoint.subtract(cameraPosition).dotProduct(cameraForward));
+				radius = Math.max(0.0001, screenRadiusPerDepth * depth);
+			}
+
+			addEdgePrism(points, faces, edge, cameraPosition, radius);
+		}
+
+		if (points.isEmpty())
+			return group;
+
+		TriangleMesh mesh = new TriangleMesh();
+
+		float[] pointArray = new float[points.size()];
+		for (int i = 0; i < points.size(); i++)
+			pointArray[i] = points.get(i);
+
+		int[] faceArray = new int[faces.size()];
+		for (int i = 0; i < faces.size(); i++)
+			faceArray[i] = faces.get(i);
+
+		mesh.getPoints().setAll(pointArray);
+		mesh.getTexCoords().setAll(0f, 0f);
+		mesh.getFaces().setAll(faceArray);
+
+		double brightness = SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0));
+		Color edgeColor = Color.color(brightness, brightness, brightness);
+		PhongMaterial material = new PhongMaterial(edgeColor);
+		material.setSpecularColor(Color.BLACK);
+
+		MeshView view = new MeshView(mesh);
+		view.setMaterial(material);
+		view.setCullFace(CullFace.NONE);
+		view.setMouseTransparent(true);
+		view.setDepthTest(DepthTest.ENABLE);
+
+		group.getChildren().add(view);
+		return group;
+	}
+
+	private void requestFeatureEdgeRebuild() {
+		if (!ap.get().isInitialized())
+			return;
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		BowlerStudio.runLater(() -> {
+			double delayMs = SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0);
+
+			if (edgeRebuildTimer == null) {
+				edgeRebuildTimer = new PauseTransition();
+				edgeRebuildTimer.setOnFinished(event -> rebuildFeatureEdges());
+			}
+
+			edgeRebuildTimer.setDuration(Duration.millis(Math.max(0.0, delayMs)));
+			edgeRebuildTimer.playFromStart();
+		});
+	}
+
+	private void requestFeatureEdgeWidthUpdate() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		BowlerStudio.runLater(() -> {
+			double delayMs = SceneStyleConfig.getDouble("edges.cameraSettleDelayMs", 120.0);
+
+			if (edgeWidthUpdateTimer == null) {
+				edgeWidthUpdateTimer = new PauseTransition();
+				edgeWidthUpdateTimer.setOnFinished(event -> {
+					if (engine.isMoving((long) delayMs)) {
+						requestFeatureEdgeWidthUpdate();
+					} else
+						refreshFeatureEdgeWidths();
+				});
+			}
+
+			edgeWidthUpdateTimer.setDuration(Duration.millis(Math.max(0.0, delayMs)));
+			edgeWidthUpdateTimer.playFromStart();
+		});
+	}
+
+	private void rebuildFeatureEdges() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true)) {
+			for (MeshHolder holder : getMeshes().values()) {
+				if (holder.edges != null)
+					holder.edges.getChildren().clear();
+			}
+			return;
+		}
+		if (!ap.get().isInitialized())
+			return;
+		List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+
+		submit(() -> {
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				CSG csg = entry.getKey();
+				MeshHolder holder = entry.getValue();
+
+				if (holder.edges == null)
+					continue;
+
+				entry.getValue().visibleEdges = FeatureEdgeExtractor.extract(csg,
+						SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
+						SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
+						SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
+			}
+			BowlerStudio.runLater(() -> {
+				for (Map.Entry<CSG, MeshHolder> entry : current) {
+					CSG csg = entry.getKey();
+					MeshHolder holder = entry.getValue();
+
+					if (holder.edges == null)
+						continue;
+					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges);
+					holder.edges.getChildren().setAll(rebuilt.getChildren());
+				}
+			});
+
+		});
+
+	}
+
+	private void refreshFeatureEdgeWidths() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		submit(() -> {
+			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+			List<Runnable> onUI = new ArrayList<Runnable>();
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				MeshHolder holder = entry.getValue();
+
+				if (holder.edges == null)
+					continue;
+
+				List<FeatureEdgeExtractor.Edge> visibleEdges = entry.getValue().visibleEdges;
+
+				if (visibleEdges == null)
+					continue;
+
+				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+				onUI.add(() -> holder.edges.getChildren().setAll(rebuilt.getChildren()));
+			}
+
+			for (Runnable r : onUI) {
+				Platform.runLater(() -> {
+					try {
+						r.run();
+					} catch (Throwable t) {
+						Log.error(t);
+					}
+				});
+			}
+			onUI.clear();
+
+		});
 	}
 
 	private void displayCSG(CSG c, MeshHolder holder) {
 
-		MeshView meshView = holder.display;
-		MeshView halo = holder.halo;
+		MeshView meshView = holder.getDisplay();
+		MeshView halo = holder.getHalo();
 		Bounds b = holder.bouds;
+
+		javafx.scene.Group edges = new javafx.scene.Group();
+		edges.setMouseTransparent(true);
+		edges.setDepthTest(javafx.scene.DepthTest.ENABLE);
+		holder.edges = edges;
 		double haloDistance = 1;
 
-		double scaleX = 1.02;
-		double scaleY = 1.02;
-		double scaleZ = 1.03;
 		TransformNR wp = getWorkplane();
 		TransformNR center = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
 		TransformNR wpCentered = wp.times(center);
 		double cx = wpCentered.getX();
 		double cy = wpCentered.getY();
 		double cz = wpCentered.getZ();
-		Scale haloScale = new Scale();
-		haloScale.setX(scaleX);
-		haloScale.setY(scaleY);
-		haloScale.setZ(scaleZ);
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		setStandardHaloScale(holder);
 
-		haloScale.setPivotX(cx);
-		haloScale.setPivotY(cy);
-		haloScale.setPivotZ(cz);
+		holder.haloScale.setPivotX(cx);
+		holder.haloScale.setPivotY(cy);
+		holder.haloScale.setPivotZ(cz);
 
-		halo.getTransforms().setAll(haloScale);
+		halo.getTransforms().setAll(holder.haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
-		haloMat.setDiffuseColor(new Color(0, 0.95, 0.95, 0.45));
-		haloMat.setSpecularColor(new Color(0.1, 0.5, 1, 0.));
+
+		Color value = new Color(0, 0.95, 0.95, 0.45);
+		if (c.isLock())
+			value = new Color(0, 0, 0.95, 0.45);
+		haloMat.setDiffuseColor(value);
+		haloMat.setSpecularColor(value);
 		halo.setCullFace(CullFace.BACK);
 		halo.setDrawMode(DrawMode.FILL);
 		halo.setDepthTest(DepthTest.ENABLE);
@@ -762,8 +1099,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.setDrawMode(DrawMode.LINE);
 		else
 			meshView.setDrawMode(DrawMode.FILL);
-		//meshView.setViewOrder(0);
+		// meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
+		engine.addUserNode(edges);
 		engine.addUserNode(halo);
 		getMeshes().put(c, holder);
 
@@ -772,6 +1110,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			meshView.addEventFilter(MouseEvent.ANY, lockableMouseMover);
 
 		setUpControls(meshView, c);
+	}
+
+	private void setStandardHaloScale(MeshHolder holder) {
+		holder.haloScale.setX(scaleX);
+		holder.haloScale.setY(scaleY);
+		holder.haloScale.setZ(scaleZ);
 	}
 
 	private void setUpControls(MeshView meshView, CSG name) {
@@ -808,8 +1152,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
-					screenPositionOfLatestMeshClick = new TransformNR(localPoint.getX(), localPoint.getY(),
-							localPoint.getZ());
+					TransformNR screenLocation = workplane.pickInteractionToPose(event);
+					screenPositionOfLatestMeshClick = screenLocation;// new TransformNR(localPoint.getX(),
+																		// localPoint.getY(),localPoint.getZ());
+					if (name.hasManipulator()) {
+						try {
+							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
+							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
+						} catch (MissingManipulatorException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
@@ -818,7 +1172,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 									manipulation.snapToGrid(startingPosition3D.getZ())));
 				} else {
 					Log.debug("NOT Setup Move Starting point because " + pickedNode + " is not " + meshView);
-
 				}
 
 				// Inform the controls about the total selected object(s) height
@@ -840,8 +1193,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		selected.add(name);
 		MeshHolder meshHolder = meshes.get(name);
-		if (meshHolder != null && meshHolder.halo != null)
-			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(true));
+		if (meshHolder != null && meshHolder.getHalo() != null)
+			BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
 	}
 
 	private boolean isSelected(CSG target) {
@@ -863,8 +1216,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				iterator.remove();
 		}
 		MeshHolder meshHolder = meshes.get(target);
-		if (meshHolder != null && meshHolder.halo != null)
-			BowlerStudio.runLater(() -> meshHolder.halo.setVisible(false));
+		if (meshHolder != null && meshHolder.getHalo() != null)
+			BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(false));
 	}
 
 	public void updateControlsDisplayOfSelected() {
@@ -885,10 +1238,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		int line = 0;
 		parametrics.getChildren().clear();
 		parametrics.getChildren().add(gp);
-		int width = 170;
+
+		parametrics.setDisable(false);
+		int width = 130;
 		int c1Width = 100;
 		gp.setPrefWidth(width + c1Width);
-		//gp.setMaxWidth(width+c1Width);
+		// gp.setMaxWidth(width+c1Width);
 
 		ColumnConstraints col0 = new ColumnConstraints();
 		col0.setHgrow(Priority.NEVER);
@@ -904,7 +1259,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			dropToWorkplane.setDisable(false);
 			if (objectWorkplane != null)
 				objectWorkplane.setDisable(getSelected().size() != 1);
-
+			shapeConfiguration2.setExpanded(true);
 			shapeConfigurationHolder.getChildren().clear();
 			shapeConfigurationHolder.getChildren().add(shapeConfigurationBox);
 			CSG set = ((CSG) getSelected().toArray()[0]);
@@ -913,12 +1268,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 
 			Color value = set.getColor();
-			colorPicker.setValue(value);
-			String hexColor = String.format(Locale.US, "#%02X%02X%02X", (int) (value.getRed() * 255),
-					(int) (value.getGreen() * 255), (int) (value.getBlue() * 255));
-
-			String style = String.format(" -fx-background-color: %s;", hexColor);
-			colorPicker.setStyle(style);
+			if (colorPaletteController != null) {
+				colorPaletteController.setCurrentColor(value);
+			}
 			showButtons();
 			updateShowHideButton();
 			updateLockButton();
@@ -927,9 +1279,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshHolder meshHolder = getMeshes().get(c);
 
 				if (meshHolder != null) {
-					MeshView meshView = meshHolder.display;
+					MeshView meshView = meshHolder.getDisplay();
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
+
+					if (meshHolder.edges != null) {
+						meshHolder.edges.getTransforms().remove(selection);
+						meshHolder.edges.getTransforms().remove(getControls().getViewRotation());
+					}
+
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
@@ -941,8 +1299,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (CSG c : getSelectedCSG(selectedSnapshot)) {
 				MeshHolder meshHolder = getMeshes().get(c);
 				if (meshHolder != null) {
-					MeshView meshView = meshHolder.display;
+					MeshView meshView = meshHolder.getDisplay();
 					meshView.getTransforms().addAll(getControls().getViewRotation(), selection);
+
+					if (meshHolder.edges != null)
+						meshHolder.edges.getTransforms().addAll(getControls().getViewRotation(), selection);
+
 					if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
 						meshView.addEventFilter(MouseEvent.ANY, mouseMover);
 				}
@@ -1001,31 +1363,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					line++;
 				}
 
-				// if (numCadParaams > 2) {
-				// useButton = true;
-				// // com.neuronrobotics.sdk.common.Log.error("Using button for regeneration " +
-				// // sel.getName());
-				// if (!parametrics.getChildren().contains(regenerate))
-				// parametrics.getChildren().add(regenerate);
-				//
-				// EventHandler<ActionEvent> value2 = regenEvents.get(sel.getName());
-				// if (value2 != null)
-				// regenerate.setOnAction(value2);
-				// else
-				// com.neuronrobotics.sdk.common.Log.error("ERROR regenerate event is null");
-				//
-				// } else {
-				// useButton = false;
-				// parametrics.getChildren().remove(regenerate);
-				// }
+				boolean nameInFrozenCache = ap.get().isNameInFrozenCache(selectedSnapshot.get(0));
+				Log.debug("Object in frozen cache: " + nameInFrozenCache);
+				parametrics.setDisable(nameInFrozenCache);
 			}
 		} else {
 			for (CSG c : cs) {
 				MeshHolder meshHolder = getMeshes().get(c);
 				if (meshHolder != null) {
-					MeshView meshView = meshHolder.display;
+					MeshView meshView = meshHolder.getDisplay();
 					meshView.getTransforms().remove(selection);
 					meshView.getTransforms().remove(getControls().getViewRotation());
+
+					if (meshHolder.edges != null) {
+						meshHolder.edges.getTransforms().remove(selection);
+						meshHolder.edges.getTransforms().remove(getControls().getViewRotation());
+					}
+
 					meshView.removeEventFilter(MouseEvent.ANY, mouseMover);
 				}
 			}
@@ -1041,7 +1395,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			sa += c.getSurfaceArea();
 			MeshHolder meshHolder = meshes.get(c);
 			if (meshHolder != null)
-				meshHolder.halo.setVisible(true);
+				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
 		}
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
@@ -1059,11 +1413,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			materialGrid.add(massDisp, 1, line);
 			line++;
 			// }
+
 			setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.volume"),
-					String.format(Locale.US, "%.4f cm^3", volume / 1000.0), width);
+					String.format(Locale.getDefault(), "%.4f cm^3", volume / 1000.0), width);
 			if (getSelected().size() == 1) {
 				setUpTextBox(materialGrid, line++, ap.getTranslation("mainwindow.area"),
-						String.format(Locale.US, "%.4f cm^2", sa / 100), width);
+						String.format(Locale.getDefault(), "%.4f cm^2", sa / 100), width);
 			}
 		}
 		updateControls();
@@ -1104,13 +1459,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		TextField options = new TextField();
 		options.setEditable(true);
-		options.setText(para.getMM() + "");
+		options.setText(String.format(Locale.getDefault(), "%.3f", para.getMM()));
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		options.setOnAction(event -> {
 			ArrayList<String> options2 = para.getOptions();
-			String string = options.getText().toString();
+			String string = options.getText().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (parseDouble > MAX_NUMBER_FILED) {
@@ -1145,19 +1500,29 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			limited = true;
 
 		ComboBox<String> options = new ComboBox<String>();
+		String toSelect = null;
 		for (String s : options2) {
-			options.getItems().add(s);
+			String t = s.replace(',', '.');
+			double val = Double.parseDouble(t);
+			String formatted3 = String.format(Locale.getDefault(), "%.3f", val);
+			if (Math.abs(para.getMM() - val) < 0.001) {
+				toSelect = formatted3;
+			}
+			options.getItems().add(formatted3);
+		}
+		if (toSelect == null) {
+			toSelect = String.format(Locale.getDefault(), "%.3f", para.getMM());
+			options.getItems().add(toSelect);
 		}
 
-		options.getItems().add(para.getMM() + "");
 		options.setEditable(true);
-		options.getSelectionModel().select(para.getMM() + "");
+		options.getSelectionModel().select(toSelect);
 		options.setMinWidth(width);
 		gp.add(options, 1, line);
 
 		boolean isLimit = limited;
 		options.setOnAction(event -> {
-			String string = options.getSelectionModel().getSelectedItem().toString();
+			String string = options.getSelectionModel().getSelectedItem().toString().replace(',', '.');
 			try {
 				double parseDouble = Double.parseDouble(string);
 				if (isLimit) {
@@ -1266,10 +1631,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				mass += (c.getVolume() * localDensity / 1000.0);
 			}
 			if (linkedHashSet.size() == 1)
-				button.setText(label + " \n " + String.format(Locale.US, "%.4f g/cm^3", localDensity));
+				button.setText(label + " \n " + String.format(Locale.getDefault(), "%.4f g/cm^3", localDensity));
 			else
 				button.setText(ap.getTranslation("mainwindow.asorted"));
-			String format = String.format(Locale.US, "%.4f g", mass);
+			String format = String.format(Locale.getDefault(), "%.4f g", mass);
 			massDisplay.setText(format);
 			materialPanel2.setText(ap.getTranslation("mainwindow.material") + "    ----   ( " + format + " )");
 		};
@@ -1535,7 +1900,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private void setUpTextBoxEnterData(GridPane gp, int line, String text, Parameter para, int width) {
 		TextField tf = new TextField(para.getStrValue());
 		tf.setOnAction(event -> {
-			para.setStrValue(tf.getText());
+			String text2 = tf.getText();
+			if (text2.length() > 0)
+				para.setStrValue(text2);
+			else {
+				tf.setText(para.getStrValue());
+			}
 			BowlerStudio.runLater(() -> setKeyBindingFocus());
 		});
 
@@ -1650,24 +2020,30 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return null;
 	}
 
-	public void set(Label shapeConfiguration, Accordion shapeConfigurationBox, AnchorPane shapeConfigurationHolder,
-			GridPane configurationGrid, AnchorPane control3d, BowlerStudio3dEngine engine, ColorPicker colorPicker,
-			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage,
-			MenuButton advancedGroupMenu, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
+	public void set(Label shapeConfiguration, TitledPane shapeConfiguration2, Accordion shapeConfigurationBox,
+			AnchorPane shapeConfigurationHolder, GridPane configurationGrid, AnchorPane control3d,
+			BowlerStudio3dEngine engine, AnchorPane colorPickerHolder, ColorPaletteController colorPaletteController,
+			ComboBox<String> snapGrid, VBox parametrics, Button lockButton, ImageView lockImage, Button intersectButton,
+			Button xorButton, TimelineManager tm, Button objectWorkplane, Button dropToWorkplane,
 			ProgressIndicator memUsage, Button renameBtn, GridPane MaterialGrid, TitledPane materialPanel) {
 		this.shapeConfiguration = shapeConfiguration;
+		this.shapeConfiguration2 = shapeConfiguration2;
 		this.shapeConfigurationBox = shapeConfigurationBox;
 		this.shapeConfigurationHolder = shapeConfigurationHolder;
 		this.configurationGrid = configurationGrid;
 		this.control3d = control3d;
 		this.engine = engine;
-		this.colorPicker = colorPicker;
+		this.colorPickerHolder = colorPickerHolder;
+		this.colorPaletteController = colorPaletteController;
 		this.snapGrid = snapGrid;
 		this.parametrics = parametrics;
 		this.lockButton = lockButton;
 		this.lockImage = lockImage;
-		this.advancedGroupMenu = advancedGroupMenu;
+		this.intersectButton = intersectButton;
+		this.xorButton = xorButton;
 		this.timeline = tm;
+		if (objectWorkplane == null)
+			throw new RuntimeException("Can not be null workplane button");
 		this.objectWorkplane = objectWorkplane;
 		this.dropToWorkplane = dropToWorkplane;
 		this.memUsage = memUsage;
@@ -1892,7 +2268,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					MeshHolder meshHolder = getMeshes().get(c);
 					if (meshHolder == null)
 						continue;
-					MeshView mesh = meshHolder.display;
+					MeshView mesh = meshHolder.getDisplay();
 
 					PhongMaterial phongMaterial = (PhongMaterial) mesh.getMaterial();
 					Color diffuseColor = phongMaterial.getDiffuseColor();
@@ -1991,8 +2367,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (alignButton != null)
 				alignButton.setDisable(true);
 
-			if (advancedGroupMenu != null)
-				advancedGroupMenu.setDisable(true);
+			if (intersectButton != null)
+				intersectButton.setDisable(true);
+
+			if (xorButton != null)
+				xorButton.setDisable(true);
 
 			if (dropToWorkplane != null)
 				dropToWorkplane.setDisable(true);
@@ -2001,12 +2380,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				objectWorkplane.setDisable(true);
 			if (hexDistributeButton != null)
 				hexDistributeButton.setDisable(true);
-			// if (filletButton != null)
-			// filletButton.setDisable(true);
-			// if (extrudeButton != null)
-			// extrudeButton.setDisable(true);
+			if (filletButton != null)
+				filletButton.setDisable(true);
+			if (extrudeButton != null)
+				extrudeButton.setDisable(true);
 			if (boltHoleButton != null)
 				boltHoleButton.setDisable(true);
+			if (bendButton != null)
+				bendButton.setDisable(true);
+			if (hullButton != null)
+				hullButton.setDisable(true);
 		});
 	}
 
@@ -2026,15 +2409,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (unlockedSelected > 1) {
 				groupButton.setDisable(false);
 				alignButton.setDisable(false);
+				intersectButton.setDisable(false);
+				xorButton.setDisable(false);
 			}
 
 			if ((getSelected().size() > 0) && advanced) {
-				advancedGroupMenu.setDisable(false);
 				robotLabDrawer.setDisable(false);
 				hexDistributeButton.setDisable(false);
-				// filletButton.setDisable(false);
-				// extrudeButton.setDisable(false);
+				filletButton.setDisable(false);
+				extrudeButton.setDisable(false);
 				boltHoleButton.setDisable(false);
+				bendButton.setDisable(false);
+				hullButton.setDisable(false);
 			}
 
 			if (isAGroupSelected())
@@ -2171,7 +2557,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 						if (meshHolder != null)
 							BowlerKernel.runLater(() -> {
-								MeshView meshView = meshHolder.display;
+								MeshView meshView = meshHolder.getDisplay();
 								if (!isResizeLiveMode())
 									meshView.setVisible(false);
 							});
@@ -2182,11 +2568,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					workplane.setOnSelectEvent(() -> {
 						controls.setMode(SpriteDisplayMode.Default);
 						for (CSG c : selectedCSG) {
-							MeshView meshView = getMeshes().get(c).display;
-
-							if (meshView != null)
-								BowlerKernel.runLater(() -> meshView.setVisible(true));
-
+							MeshHolder holder = getMeshes().get(c);
+							if (holder != null) {
+								MeshView meshView = holder.getDisplay();
+								if (meshView != null)
+									BowlerKernel.runLater(() -> meshView.setVisible(true));
+							}
 						}
 
 						if (workplane.isClicked()) {
@@ -2287,46 +2674,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (getSelected().size() > 1) {
 			submit(() -> {
 				try {
-					List<String> selectedSnapshot = selectedSnapshot();
-					Paste copy = new Paste().setNames(selectedSnapshot);
-					ap.addOp(copy).join();
-					ArrayList<String> n = new ArrayList<>(copy.getNamesAddedInThisOperation());
-					Group groups = new Group().setNames(selectedSnapshot);
-					groups.setHull(false);
-					groups.setIntersect(true);
-					ap.addOp(groups).join();
-					List<CSG> results = ap.get().getCurrentState();
-					String intersectName = groups.getGroupID();
-					ArrayList<String> names = new ArrayList<>();
-					names.add(intersectName);
-					ToHole th = new ToHole().setNames(names);
-					ap.addOp(th).join();
-
-					for (int i = 0; i < n.size(); i++) {
-						String e = n.get(i);
-						ap.get();
-						CSG g = null;
-
-						try {
-							g = CaDoodleFile.getByName(ap.get().getCurrentState(), e);
-						} catch (NameMissingException e1) {
-							continue;
-						}
-
-						if ((g == null) || g.isInGroup())
-							continue;
-
-						ArrayList<String> namesToDiff = new ArrayList<String>();
-						namesToDiff.add(intersectName);
-						namesToDiff.add(e);
-						Group cutIntersect = new Group().setNames(namesToDiff);
-						ap.addOp(cutIntersect).join();
-
-					}
-
+					Xor xor = new Xor().setNames(selectedSnapshot());
+					ap.addOp(xor).join();
 					clearInternalSelection();
-					for (CSG c : results)
-						addToSelected(c);
+					for (String c : xor.getNamesAddedInThisOperation())
+						try {
+							addToSelected(CaDoodleFile.getByName(ap.get().getCurrentState(), c));
+						} catch (NameMissingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					fireSelectionChanged();
 					BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
 					updateRobotLab.run();
@@ -2580,10 +2937,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public List<CSG> getCurrentState() {
-		CaDoodleFile caDoodleFile = ap.get();
-		if (caDoodleFile == null)
+		if (!ap.isOpen())
 			return new ArrayList<CSG>();
-
+		CaDoodleFile caDoodleFile = ap.get();
 		return caDoodleFile.getCurrentState();
 	}
 
@@ -2599,6 +2955,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public Bounds getSellectedBounds(List<CSG> incoming) throws BoundsComputFailure {
 		return ap.get().getBounds(incoming);
+	}
+
+	public Bounds getSellectedBounds(CSG incoming) throws BoundsComputFailure {
+		return ap.get().getBounds(Arrays.asList(incoming));
 	}
 
 	public Bounds getBounds(DHParameterKinematics limb) throws BoundsComputFailure {
@@ -2631,6 +2991,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (isObjectWorkplane) {
 				CSG c = getSelectedCSG(selectedSnapshot().get(0));
 				TransformNR nrToCSG = TransformFactory.csgToNR(MoveCenter.getTotalOffset(c));
+				nrToCSG.times(nrToCSG);// test teh transform validity
 				previousWP = ap.get().getWorkplane();
 				ap.get().setWorkplane(nrToCSG);
 				// workplane.placeWorkplaneVisualization();
@@ -2690,120 +3051,144 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		submit(() -> {
 			try {
-				if (moveLock())
-					return;
+				// The manipulator, the session deltas and the pending-apply
+				// bookkeeping are shared with the move-commit thread and with
+				// onUpdate's manipulator reset, so the whole request must be
+				// serialized against them.
+				synchronized (moveGate) {
+					if (applyingMoveOperation)
+						return;
+					if (moveLock())
+						return;
 
-				if (ap.get().isOperationRunning()) {
-					TickToc.tic("Process running, bailing on new update");
-					return;
-				}
+					if (ap.get().isOperationRunning()) {
+						TickToc.tic("Process running, bailing on new update");
+						return;
+					}
 
-				timeSinceLastMove = System.currentTimeMillis();
-				// TickToc.setEnabled(true);
-				TickToc.tic("Start");
-				TransformNR wp = ap.get().getWorkplane();
+					timeSinceLastMove = System.currentTimeMillis();
+					// TickToc.setEnabled(true);
+					TickToc.tic("Start");
+					TransformNR wp = ap.get().getWorkplane();
 
-				// Get camera orientation for screen-aligned movement
-				TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
-				double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians()
-						- wp.getRotation().getRotationAzimuthRadians());
-				Quadrant quad = Quadrant.getQuad(camAz);
-				double currentRotZ = Quadrant.QuadrantToAngle(quad);
+					// Get camera orientation for screen-aligned movement
+					TransformNR camerFrame = engine.getFlyingCamera().getCamerFrame();
+					double camAz = Math.toDegrees(camerFrame.getRotation().getRotationAzimuthRadians()
+							- wp.getRotation().getRotationAzimuthRadians());
+					Quadrant quad = Quadrant.getQuad(camAz);
+					double currentRotZ = Quadrant.QuadrantToAngle(quad);
 
-				// Rotate input vector by camera yaw (screen-space to world-space)
-				double yawRad = Math.toRadians(currentRotZ - 90);
-				double cos = Math.cos(yawRad);
-				double sin = Math.sin(yawRad);
-				//com.neuronrobotics.sdk.common.Log.error("\n\n\nKey   "+stateUnitVectorTmp.toSimpleString());
+					// Rotate input vector by camera yaw (screen-space to world-space)
+					double yawRad = Math.toRadians(currentRotZ - 90);
+					double cos = Math.cos(yawRad);
+					double sin = Math.sin(yawRad);
+					// com.neuronrobotics.sdk.common.Log.error("\n\n\nKey
+					// "+stateUnitVectorTmp.toSimpleString());
 
+					double inX = stateUnitVectorTmp.getX();
+					double inY = stateUnitVectorTmp.getY();
 
-				double inX = stateUnitVectorTmp.getX();
-				double inY = stateUnitVectorTmp.getY();
+					TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
+							stateUnitVectorTmp.getZ());
+					// com.neuronrobotics.sdk.common.Log.error("\nState
+					// "+stateUnitVector.toSimpleString());
+					double incement = getSnapGridValue();
 
-				TransformNR stateUnitVector = new TransformNR(inX * cos - inY * sin, inX * sin + inY * cos,
-						stateUnitVectorTmp.getZ());
-				//com.neuronrobotics.sdk.common.Log.error("\nState "+stateUnitVector.toSimpleString());
-				double incement = getSnapGridValue();
+					boolean updateTrig = false;
+					double bound = 0.5;
+					if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound
+							|| Math.abs(stateUnitVector.getZ()) > bound)
+						updateTrig = true;
 
-				boolean updateTrig = false;
-				double bound = 0.5;
-				if (Math.abs(stateUnitVector.getX()) > bound || Math.abs(stateUnitVector.getY()) > bound
-						|| Math.abs(stateUnitVector.getZ()) > bound)
-					updateTrig = true;
+					if (!updateTrig) {
+						TickToc.tic("No Update");
+						TickToc.toc();
+						TickToc.setEnabled(false);
+						return;
+					}
 
-				if (!updateTrig) {
-					TickToc.tic("No Update");
-					TickToc.toc();
-					TickToc.setEnabled(false);
-					return;
-				}
+					stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
+							roundToNearest(stateUnitVector.getY() * incement, incement),
+							roundToNearest(stateUnitVector.getZ() * incement, incement));
 
-				stateUnitVector = new TransformNR(roundToNearest(stateUnitVector.getX() * incement, incement),
-						roundToNearest(stateUnitVector.getY() * incement, incement),
-						roundToNearest(stateUnitVector.getZ() * incement, incement));
+					// Convert world delta to workplane-local delta
 
-				// Convert world delta to workplane-local delta
+					Quadrant wpQu = Quadrant.getQuad(wp.getRotation().getRotationAzimuthRadians());
+					double wpz = Quadrant.QuadrantToAngle(wpQu);
+					double rad = Math.toRadians(-wpz);
+					cos = Math.cos(rad);
+					sin = Math.sin(rad);
 
-				Quadrant wpQu = Quadrant.getQuad(wp.getRotation().getRotationAzimuthRadians());
-				double wpz = Quadrant.QuadrantToAngle(wpQu);
-				double rad = Math.toRadians(-wpz);
-				cos = Math.cos(rad);
-				sin = Math.sin(rad);
+					double deltaX = stateUnitVector.getX();
+					double deltaY = stateUnitVector.getY();
 
-				double deltaX = stateUnitVector.getX();
-				double deltaY = stateUnitVector.getY();
+					double localDeltaX = deltaX * cos - deltaY * sin;
+					double localDeltaY = deltaX * sin + deltaY * cos;
+					sessionDeltaX += localDeltaX;
+					sessionDeltaY += localDeltaY;
+					sessionDeltaZ += stateUnitVector.getZ();
+					TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
 
-				double localDeltaX = deltaX * cos - deltaY * sin;
-				double localDeltaY = deltaX * sin + deltaY * cos;
-				sessionDeltaX += localDeltaX;
-				sessionDeltaY += localDeltaY;
-				sessionDeltaZ += stateUnitVector.getZ();
-				TransformNR sessionDelta = new TransformNR(sessionDeltaX, sessionDeltaY, sessionDeltaZ);
+					List<String> selectedSnapshot = selectedSnapshot();
 
-				List<String> selectedSnapshot = selectedSnapshot();
+					CaDoodleOperation op = ap.get().getCurrentOperation();
 
-				CaDoodleOperation op = ap.get().getCurrentOperation();
-
-				if (timeoutMoveThread == null) {
-					timeoutMoveThread = new Thread(() -> {
-						try {
-							while ((System.currentTimeMillis() - timeSinceLastMove) < 800) {
+					if (timeoutMoveThread == null) {
+						timeoutMoveThread = new Thread(() -> {
+							try {
+								// Debounce outside the gate: new requests must keep
+								// refreshing timeSinceLastMove and the manipulator
+								// until the user stops pressing keys.
+								while ((System.currentTimeMillis() - timeSinceLastMove) < 800) {
+									try {
+										Thread.sleep(100);
+										// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
+									} catch (InterruptedException e) {
+										// keep waiting for the debounce window
+									}
+								}
+								// Snapshot the accumulated pose and hand it to the
+								// process thread while holding the gate, so a queued
+								// arrow-key request can not overwrite the manipulator
+								// or the deltas between the snapshot and the commit.
+								TransformNR commitLocation;
+								List<String> commitNames;
+								synchronized (moveGate) {
+									applyingMoveOperation = true;
+									sessionDeltaX = 0;
+									sessionDeltaY = 0;
+									sessionDeltaZ = 0;
+									commitLocation = manipulation.getInLocal().copy();
+									commitNames = selectedSnapshot();
+								}
 								try {
-									Thread.sleep(100);
-									// com.neuronrobotics.sdk.common.Log.debug("Waiting to apply move...");
+									ap.addOp(new MoveCenter().setLocation(commitLocation).setNames(commitNames,
+											ap.get())).join();
+									TickToc.tic("save");
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									com.neuronrobotics.sdk.common.Log.error(e);
+								} catch (InvalidLocationMove e) {
+									com.neuronrobotics.sdk.common.Log.error(e);
+								} catch (Throwable t) {
+									Log.error(t);
+								}
+								save();
+							} catch (Throwable t) {
+								Log.error(t);
+							} finally {
+								synchronized (moveGate) {
+									applyingMoveOperation = false;
+									timeoutMoveThread = null;
 								}
 							}
-							applyingMoveOperation = true;
-							try {
-								sessionDeltaX = 0;
-								sessionDeltaY = 0;
-								sessionDeltaZ = 0;
-								ap.addOp(new MoveCenter().setLocation(manipulation.getInLocal().copy())
-										.setNames(selectedSnapshot(), ap.get())).join();
-							} catch (InterruptedException e) {
-								com.neuronrobotics.sdk.common.Log.error(e);
-							} catch (InvalidLocationMove e) {
-								com.neuronrobotics.sdk.common.Log.error(e);
-							}
+						});
+						timeoutMoveThread.start();
+					}
+					manipulation.setInReferenceFrame(sessionDelta);
+					// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
 
-							// resetManipulator();
-							TickToc.tic("save");
-						} catch (Throwable t) {
-							Log.error(t);
-						}
-						save();
-						applyingMoveOperation = false;
-						timeoutMoveThread = null;
-					});
-					timeoutMoveThread.start();
+					TickToc.setEnabled(false);
 				}
-				manipulation.setInReferenceFrame(sessionDelta);
-				// Log.debug("New Manipulator pose update \n" + manipulation.getGlobalPose());
-
-				TickToc.setEnabled(false);
 			} catch (Throwable t) {
 				Log.error(t);
 			}
@@ -2811,7 +3196,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void resetManipulator() {
-		manipulation.reset();
+		// Log.error(new Exception("Manipulation reset here"));
+		synchronized (moveGate) {
+			manipulation.reset();
+		}
 	}
 
 	public void save() {
@@ -2875,7 +3263,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			this.y = y;
 			this.z = z;
 
-			if ((ap.get() == null) || (getControls() == null))
+			if ((!ap.isOpen()) || (getControls() == null))
 				return;
 
 			List<String> selectedSnapshot = selectedSnapshot();
@@ -2886,16 +3274,48 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (selectedCSG.size() == 0)
 				return;
 			Bounds sellectedBounds;
-			if (selectedCSG.size() > 0)
+			if (selectedCSG.size() > 0) {
 				try {
 					sellectedBounds = getSellectedBounds();
+					double zoomScale = 1.0 / engine.getFlyingCamera().getZoomScale();
+					double numberOffset = -zoom / 1600 * zoomScale / 1.5;
+					double value = (numberOffset);
+					value = 50 * Math.max(-0.1, Math.min(0.5, value));
+					// Log.debug("Halo scale " + value + " from " + numberOffset);
+					final double lineWidth = 0.25 * (1.0 + value);
+					final boolean wpNotOrigin = CaDoodleFile.isWorkplaneNotOrigin(getWorkplane());
+					// Compute the per-mesh halo scale off the UI thread (bounds
+					// recomputation is expensive), then apply it on the FX thread:
+					// haloScale is a live scene-graph transform and mutating it from a
+					// background thread corrupts JavaFX's parent bounds bookkeeping.
+					final List<Runnable> haloUpdates = new ArrayList<>();
+					for (CSG key : meshes.keySet()) {
+						MeshHolder holder = meshes.get(key);
+						Bounds b = getSellectedBounds(key);
+						if (wpNotOrigin) {
+							haloUpdates.add(() -> setStandardHaloScale(holder));
+						} else {
+							final double sx = 1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth));
+							final double sy = 1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth));
+							final double sz = 1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth));
+							haloUpdates.add(() -> {
+								holder.haloScale.setX(sx);
+								holder.haloScale.setY(sy);
+								holder.haloScale.setZ(sz);
+							});
+						}
+					}
 					BowlerStudio.runLater(() -> {
+						for (Runnable r : haloUpdates)
+							r.run();
+						haloUpdates.clear();
 						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
 								sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
 					});
 				} catch (BoundsComputFailure e) {
 					Log.error(e);
 				}
+			}
 		});
 	}
 
@@ -2946,6 +3366,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void onInitializationDone() {
 		TransformNR workplane2 = ap.get().getWorkplane();
 		ap.get().setWorkplane(workplane2);
+		requestFeatureEdgeRebuild();
+	}
+
+	@Override
+	public void onInitializationStart() {
+		// Auto-generated method stub
+	}
+
+	@Override
+	public void onRegenerateDone() {
+		// com.neuronrobotics.sdk.common.Log.debug("Enable parametrics ");
+		BowlerStudio.runLater(() -> parametrics.setDisable(false));
+	}
+
+	@Override
+	public void onRegenerateStart(CaDoodleOperation source) {
+		// com.neuronrobotics.sdk.common.Log.debug("Disable parametrics ");
+		BowlerStudio.runLater(() -> parametrics.setDisable(true));
 	}
 
 	public SpriteDisplayMode getMode() {
@@ -3013,23 +3451,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			e.printStackTrace();
 		}
 
-	}
-
-	@Override
-	public void onInitializationStart() {
-		// Auto-generated method stub
-	}
-
-	@Override
-	public void onRegenerateDone() {
-		// com.neuronrobotics.sdk.common.Log.debug("Enable parametrics ");
-		BowlerStudio.runLater(() -> parametrics.setDisable(false));
-	}
-
-	@Override
-	public void onRegenerateStart(CaDoodleOperation source) {
-		// com.neuronrobotics.sdk.common.Log.debug("Disable parametrics ");
-		BowlerStudio.runLater(() -> parametrics.setDisable(true));
 	}
 
 	public boolean isShowConstituants() {
@@ -3132,7 +3553,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-
 	public LinkedHashSet<CSG> getSelected() {
 		return selected;
 	}
@@ -3169,17 +3589,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void setAdvancedButtons(Button filletButton, Button extrudeButton, Button hexDistributeButton,
-			Button boltHoleButton) {
+			Button boltHoleButton, Button hullButton, Button bendButton) {
 		this.filletButton = filletButton;
 		this.extrudeButton = extrudeButton;
 		this.hexDistributeButton = hexDistributeButton;
 		this.boltHoleButton = boltHoleButton;
+		this.hullButton = hullButton;
+		this.bendButton = bendButton;
 	}
 
 	public void hideHalos() {
-		for (MeshHolder mh : meshes.values()) {
-			mh.halo.setVisible(false);
-		}
+		BowlerStudio.runLater(() -> {
+
+			for (MeshHolder mh : meshes.values()) {
+				mh.getHalo().setVisible(false);
+			}
+		});
+	}
+
+	public void showHalos() {
+		BowlerStudio.runLater(() -> {
+			for (CSG csg : meshes.keySet()) {
+				MeshHolder mh = meshes.get(csg);
+				mh.getHalo().setVisible(selected.contains(csg));
+			}
+		});
 	}
 
 	public double getSnapGridValue() {
@@ -3188,6 +3622,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void setSnapGridValue(double snapGridValue) {
 		ConfigurationDatabase.put("CaDoodle", "SnapGridSize", "" + snapGridValue);
+	}
+
+	public void runClear() {
+		controls.runClear();
 	}
 
 }

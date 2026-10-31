@@ -192,10 +192,11 @@ public class ProjectManager {
 					projectGrid.add(box, col, row);
 					GridPane.setHalignment(b, HPos.CENTER); // Horizontal center alignment
 					GridPane.setValignment(b, VPos.CENTER); //
-					if (c.getMyProjectName().contentEquals(ap.get().getMyProjectName())) {
-						b.requestFocus();
-						currentFileButton = b;
-					}
+					if (ap.isOpen())
+						if (c.getMyProjectName().contentEquals(ap.get().getMyProjectName())) {
+							b.requestFocus();
+							currentFileButton = b;
+						}
 
 				});
 
@@ -312,7 +313,8 @@ public class ProjectManager {
 			// Load the FXML file
 			FXMLLoader loader = new FXMLLoader(ProjectManager.class.getResource("ProjectManager.fxml"),
 					ActiveProject.getLangaugePack());
-			loader.setController(new ProjectManager());
+			ProjectManager controller = new ProjectManager();
+			loader.setController(controller);
 			Parent root = loader.load();
 
 			stage = new Stage();
@@ -320,6 +322,8 @@ public class ProjectManager {
 			// Set the window to always be on top
 			stage.setAlwaysOnTop(true);
 			stage.setOnCloseRequest(event -> {
+				if (!ap.isOpen())
+					controller.onNewProject(null);
 				onFinish.run();
 			});
 			// Set the scene

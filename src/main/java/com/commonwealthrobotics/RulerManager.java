@@ -67,7 +67,7 @@ public class RulerManager {
 		BowlerStudio.runLater(() -> TransformFactory
 				.nrToAffine(new TransformNR(-10, -30, 1, RotationNR.getRotationY(180)), buttonLoc));
 
-		TransformNR rulerLocation = ap.get().getRulerLocation();
+		TransformNR rulerLocation = new TransformNR();
 		BowlerStudio.runLater(() -> {
 			TransformFactory.nrToAffine(rulerLocation, rulerOffset);
 		});

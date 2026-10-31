@@ -11,6 +11,7 @@ import javafx.scene.transform.Scale;
 import javafx.geometry.Point3D;
 
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
+import com.neuronrobotics.sdk.common.Log;
 
 public class MoveUpArrow {
 	private MeshView meshview;
@@ -41,7 +42,7 @@ public class MoveUpArrow {
 		meshview = cylinder.getMesh();
 		meshview.setVisible(false);
 		// Keep up arrow in front of other objects
-		meshview.setViewOrder(-10);
+		meshview.setViewOrder(-5);
 		meshview.getTransforms().add(selection);
 		meshview.getTransforms().add(workplaneOffset);
 		meshview.getTransforms().add(moveUpLocation);
@@ -61,28 +62,33 @@ public class MoveUpArrow {
 		});
 
 		meshview.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			com.neuronrobotics.sdk.common.Log.debug("MoveUp selected " + event);
+			runPressed(zMoveManipulator, onSelect, onReset, event);
+		});
+	}
+
+	private void runPressed(Manipulation zMoveManipulator, Runnable onSelect, Runnable onReset, MouseEvent event) {
+		try {
 			onReset.run();
 			selected = true;
 			setSelectedColor();
 			onSelect.run();
-
 			// Get the current arrow position (includes zoom-dependent offset)
 			double arrowX = moveUpLocationTransform.getTx();
 			double arrowY = moveUpLocationTransform.getTy();
 			double arrowZ = moveUpLocationTransform.getTz();
-
-			// Calculate the zoom-dependent offset that was added for the arrow
-			double arrowOffset = ResizingHandle.getSize() * scaleTransform.getZ();
-
 			// Subtract to get back to the base position (top of bounds)
 			double baseX = arrowX;
 			double baseY = arrowY;
-			double baseZ = arrowZ - arrowOffset;
+			double baseZ = arrowZ;
 
-			this.startingPosition3D = new Point3D(baseX, baseY, baseZ);
+			this.startingPosition3D = new Point3D(baseX, baseY, zMoveManipulator.snapToGrid(baseZ));
+			//			Log.debug("Start z Move with init " + moveUpLocationTransform.getTz()
+			//					 + " arrow z " + arrowZ + " basez " + baseZ);
 			zMoveManipulator.setStartingWorkplanePosition(startingPosition3D);
-		});
+		} catch (Exception ex) {
+			Log.error(ex);
+		}
+		//com.neuronrobotics.sdk.common.Log.debug("Move Up Arrow selected " + event);
 	}
 
 	public Point3D getStartingPoint3D() {
@@ -92,8 +98,7 @@ public class MoveUpArrow {
 	public Point3D calculateWorldPosition() {
 		// Bounds in parent coordinate space (includes all transforms)
 		javafx.geometry.Bounds parentBounds = meshview.getBoundsInParent();
-		return new Point3D(parentBounds.getCenterX(), parentBounds.getCenterY(),
-				(parentBounds.getMinZ() + parentBounds.getMaxZ()) / 2);
+		return new Point3D(parentBounds.getCenterX(), parentBounds.getCenterY(), (parentBounds.getMinZ()));
 	}
 
 	private void setSelectedColor() {
@@ -130,8 +135,7 @@ public class MoveUpArrow {
 	}
 
 	/**
-	 * @param color
-	 *            the color to set
+	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
 		this.color = color;
