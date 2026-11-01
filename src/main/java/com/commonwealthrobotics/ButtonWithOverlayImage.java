@@ -54,7 +54,7 @@ public class ButtonWithOverlayImage extends Button {
 		stack.getChildren().add(value);
 		stack.getChildren().add(toolimage);
 
-		hbox=(new HBox(this, separator));
+		hbox = (new HBox(this, separator));
 		hbox.setAlignment(Pos.TOP_LEFT);
 		setMinSize(buttonSize, buttonSize);
 		setGraphic(stack);
