@@ -1146,7 +1146,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					engine.addObject(o, ap.get().getSelf());
 				}
 			});
-
 			engine.rebuild(true, hand);
 			ap.setEngine(engine);
 			try {
@@ -1200,6 +1199,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 					}
 				} catch (Exception e) {
 					com.neuronrobotics.sdk.common.Log.error(e);
+
 				}
 				try {
 					setCadoodleFile();

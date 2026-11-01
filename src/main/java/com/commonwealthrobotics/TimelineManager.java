@@ -116,7 +116,7 @@ public class TimelineManager {
 					for (int i = Math.max(0, opToIndex + 1); i < buttons.size(); i++) {
 						ButtonWithOverlayImage b = buttons.get(i);
 						toRem.add(b);
-						BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
+						BowlerStudio.runLater(() -> timeline.getChildren().remove(b.getHbox()));
 					}
 					buttons.removeAll(toRem);
 				} catch (IndexOutOfBoundsException ex) {
@@ -424,7 +424,7 @@ public class TimelineManager {
 				if (AddFromFile.class.isInstance(op)) {
 					AddFromFile af = (AddFromFile) op;
 					try {
-						text = (myIndex + 1) + "\n" + ActiveProject.getTranslation("AddFromFile") + " ";
+						text = (myIndex + 1) + ": " + ActiveProject.getTranslation("AddFromFile") + " ";
 						File file = af.getFile();
 						if (file != null) {
 							String name = file.getName();
@@ -467,7 +467,6 @@ public class TimelineManager {
 					setupCheckBox(timelineOtherShow, toAdd, op);
 				}
 				buttons.add(toAdd);
-
 				int my = myIndex;
 				ContextMenu contextMenu = new ContextMenu();
 				toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -543,7 +542,7 @@ public class TimelineManager {
 						return;
 					toAdd.setDisable(true);
 					buttons.remove(toAdd);
-					timeline.getChildren().remove(toAdd.hbox);
+					timeline.getChildren().remove(toAdd.getHbox());
 					try {
 						ap.get().deleteOperation(op);
 						for (CSG c : state)
@@ -629,7 +628,7 @@ public class TimelineManager {
 							}
 							BowlerKernel.runLater(() -> {
 								for (int j = 0; j < myIndex; j++) {
-									timeline.getChildren().remove(buttons.get(j).hbox);
+									timeline.getChildren().remove(buttons.get(j).getHbox());
 								}
 								contextMenu.getItems().remove(freeze);
 								contextMenu.getItems().add(unfreeze);
@@ -643,7 +642,7 @@ public class TimelineManager {
 
 				boolean value = ap.get().getFrozenIndex() > myIndex;
 				if (!value)
-					timeline.add(toAdd.hbox, myIndex, 0);
+					timeline.add(toAdd.getHbox(), myIndex, 0);
 				latch.countDown();
 			});
 			// synchronize the thred to the UI operation completion
