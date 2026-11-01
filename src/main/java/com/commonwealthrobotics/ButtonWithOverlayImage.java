@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Separator;
@@ -11,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
@@ -23,7 +25,8 @@ public class ButtonWithOverlayImage extends Button {
 	private Image image;
 	Separator separator = new Separator(Orientation.VERTICAL);
 	private ImageView value;
-	public HBox hbox;
+	private HBox hbox;
+	private VBox vertical = new VBox();
 
 	public ButtonWithOverlayImage(String text, Image image, int buttonSize, double overlaySize, int insetDistance) {
 		super(text);
@@ -51,10 +54,13 @@ public class ButtonWithOverlayImage extends Button {
 		stack.getChildren().add(value);
 		stack.getChildren().add(toolimage);
 
-		hbox = new HBox(this, separator);
-		hbox.setAlignment(Pos.CENTER);
+		hbox=(new HBox(this, separator));
+		hbox.setAlignment(Pos.TOP_LEFT);
+		
 		setMinSize(buttonSize, buttonSize);
 		setGraphic(stack);
+		vertical.getChildren().addAll(hbox);
+		vertical.setAlignment(Pos.TOP_LEFT);
 	}
 
 	public void setButtonImageType(ObservableList<String> styleClass) {
@@ -89,4 +95,9 @@ public class ButtonWithOverlayImage extends Button {
 	public void updatemainImage(Image resizeImage) {
 		value.setImage(resizeImage);
 	}
+
+	public Node getHbox() {
+		return hbox;
+	}
+
 }

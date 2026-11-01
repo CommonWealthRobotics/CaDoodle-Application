@@ -113,7 +113,7 @@ public class TimelineManager {
 					for (int i = Math.max(0, opToIndex + 1); i < buttons.size(); i++) {
 						ButtonWithOverlayImage b = buttons.get(i);
 						toRem.add(b);
-						BowlerStudio.runLater(() -> timeline.getChildren().remove(b.hbox));
+						BowlerStudio.runLater(() -> timeline.getChildren().remove(b.getHbox()));
 					}
 					buttons.removeAll(toRem);
 				} catch (IndexOutOfBoundsException ex) {
@@ -466,7 +466,7 @@ public class TimelineManager {
 				}
 				buttons.add(toAdd);
 
-				timeline.add(toAdd.hbox, myIndex, 0);
+				timeline.add(toAdd.getHbox(), myIndex, 0);
 				int my = myIndex;
 				ContextMenu contextMenu = new ContextMenu();
 				toAdd.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -542,7 +542,7 @@ public class TimelineManager {
 						return;
 					toAdd.setDisable(true);
 					buttons.remove(toAdd);
-					timeline.getChildren().remove(toAdd.hbox);
+					timeline.getChildren().remove(toAdd.getHbox());
 					try {
 						ap.get().deleteOperation(op);
 						for (CSG c : state)
