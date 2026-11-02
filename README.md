@@ -135,17 +135,14 @@ cd CaDoodle-Application
 git submodule update --init --recursive
 ```
 
-6. Download and extract the Java JDK. The JDK version comes from the single source of truth, jvm.json, via the getJdk scripts:
+6. Download, extract, and verify the Java JDK. The JDK version comes from the single source of truth, jvm.json, and lands in ```~/bin/CaDoodle-ApplicationInstall/<archive-name>/```:
 ```
 JVM_SCRIPTS=BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm
-JDK_NAME=$(bash $JVM_SCRIPTS/getJdkArchiveName.sh)
-mkdir -p /d/CaDoodle/java
-curl -L $(bash $JVM_SCRIPTS/getJdkUrl.sh) -o $JDK_NAME.zip
-unzip -q $JDK_NAME.zip -d /d/CaDoodle/java
-export JAVA_HOME=/d/CaDoodle/java/$JDK_NAME
+bash $JVM_SCRIPTS/installJdk.sh
+export JAVA_HOME=$HOME/bin/CaDoodle-ApplicationInstall/$(bash $JVM_SCRIPTS/getJdkArchiveName.sh)
 ```
 
-Verify the path with ```ls $JAVA_HOME```
+Verify the install with ```$JAVA_HOME/bin/java -version```; the installer itself runs this check and exits non-zero on failure.
 
 Optionally: Make JAVA_HOME persistent for the MSYS2 shell
 ```

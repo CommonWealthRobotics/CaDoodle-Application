@@ -1,5 +1,6 @@
 set -e
 JVM_SCRIPTS=$(pwd)/BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm
+bash $JVM_SCRIPTS/installJdk.sh
 export JAVA_HOME=$HOME/bin/CaDoodle-ApplicationInstall/$(bash $JVM_SCRIPTS/getJdkArchiveName.sh)/
 ./gradlew shadowJar
 
