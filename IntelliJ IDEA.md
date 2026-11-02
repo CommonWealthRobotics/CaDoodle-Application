@@ -9,7 +9,7 @@ If you haven't already, go back to the README [and do the instructions for your 
 	  ![](docs/images/CaDoodle-IDEA-3.png)
 
 ## Setting the Zulu JDK
-We're going to setup IDEA to use the Zulu JDK the build script added to our `/home/user/bin` folder/the JDK Windows folks extracted
+We're going to setup IDEA to use the Zulu JDK the install script added to `~/bin/CaDoodle-ApplicationInstall/<archive-name>/` (run `bash BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm/installJdk.sh` first if it is not there yet)
 
 1. Click the cog on the top left, open the project structure
 	![](docs/images/CaDoodle-IDEA-4.png)
