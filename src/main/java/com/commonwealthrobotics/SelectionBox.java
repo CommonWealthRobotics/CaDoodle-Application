@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import com.commonwealthrobotics.controls.SelectionSession;
 import com.commonwealthrobotics.controls.SelectionSession.MeshHolder;
+import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.bowlerstudio.threed.VirtualCameraMobileBase;
@@ -108,8 +109,11 @@ public class SelectionBox {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z) {
-		TransformFactory.nrToAffine(getCameraFrame(), wpPickPlacement);
-		TransformFactory.nrToAffine(getBoxFrame(), dottedLine);
+		// Scene-graph transforms must be written on the FX thread
+		BowlerStudio.runLater(() -> {
+			TransformFactory.nrToAffine(getCameraFrame(), wpPickPlacement);
+			TransformFactory.nrToAffine(getBoxFrame(), dottedLine);
+		});
 	}
 
 	public void dragged(MouseEvent event) {

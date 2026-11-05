@@ -89,19 +89,21 @@ public class ResizeSessionManager {
 	}
 
 	private void regenerateMesh(CSG key, CSG scaledCSG) {
-		MeshHolder meshHolder = meshes.get(key);
-		MeshView old = meshHolder.getDisplay(); // lookup with original key
-		if (old == null)
-			return;
+		BowlerStudio.runLater(() -> {
+			MeshHolder meshHolder = meshes.get(key);
+			MeshView old = meshHolder.getDisplay(); // lookup with original key
+			if (old == null)
+				return;
 
-		MeshView fresh = scaledCSG.newMesh();
-		fresh.setMaterial(old.getMaterial());
-		fresh.getTransforms().setAll(old.getTransforms());
-		fresh.setMouseTransparent(old.isMouseTransparent());
+			MeshView fresh = scaledCSG.newMesh();
+			fresh.setMaterial(old.getMaterial());
+			fresh.getTransforms().setAll(old.getTransforms());
+			fresh.setMouseTransparent(old.isMouseTransparent());
 
-		engine.removeUserNode(old);
-		engine.addUserNode(fresh);
-		meshHolder.setDisplay(fresh);
+			engine.removeUserNode(old);
+			engine.addUserNode(fresh);
+			meshHolder.setDisplay(fresh);
+		});
 	}
 
 	// Prevent 0-value for scaling

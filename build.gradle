@@ -204,6 +204,7 @@ dependencies {
 
 	// Use JUnit Jupiter for testing.
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// This dependency is used internally, and not exposed to consumers on their own compile classpath.
 	implementation 'com.google.guava:guava:33.2.1-jre'
