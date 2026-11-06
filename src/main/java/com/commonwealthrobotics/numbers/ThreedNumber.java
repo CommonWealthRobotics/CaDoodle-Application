@@ -21,7 +21,6 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.Locale;

@@ -372,8 +372,8 @@ public class ResizingHandle {
 	// Bounds identity of the position/orientation inputs; a plain == on the
 	// TransformNRs is not enough because they are fresh objects per call
 	private String orientationKey(TransformNR target, TransformNR cf) {
-		return target.getX() + "," + target.getY() + "," + target.getZ() + ","
-				+ workplaneKey(workplaneOffset) + "," + rotationKey(cf.getRotation());
+		return target.getX() + "," + target.getY() + "," + target.getZ() + "," + workplaneKey(workplaneOffset) + ","
+				+ rotationKey(cf.getRotation());
 	}
 
 	private static String workplaneKey(Affine wp) {

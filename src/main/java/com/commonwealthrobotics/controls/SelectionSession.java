@@ -3362,9 +3362,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String meshesId = meshIdentity();
 		if (screenW == lastSubmittedScreenW && screenH == lastSubmittedScreenH && zoom == lastSubmittedZoom
 				&& az == lastSubmittedAz && el == lastSubmittedEl && x == lastSubmittedX && y == lastSubmittedY
-				&& z == lastSubmittedZ && cameraFovDegrees == lastSubmittedFov
-				&& snapshot != null && snapshot.equals(lastSubmittedSnapshot)
-				&& meshesId != null && meshesId.equals(lastSubmittedMeshesId)) {
+				&& z == lastSubmittedZ && cameraFovDegrees == lastSubmittedFov && snapshot != null
+				&& snapshot.equals(lastSubmittedSnapshot) && meshesId != null
+				&& meshesId.equals(lastSubmittedMeshesId)) {
 			// The executor task would recompute the same bounds and resubmit
 			// the same FX updates; drop the duplicate
 			return;

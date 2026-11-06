@@ -590,14 +590,12 @@ public class ControlSprites {
 		SpriteDisplayMode m = mode;
 		List<String> sel = session.selectedSnapshot();
 		TransformNR currentManipPose = manipulation.getCurrentPose();
-		boolean poseMoved = lastAppliedPose == null
-				|| currentManipPose.getX() != lastAppliedPose.getX()
+		boolean poseMoved = lastAppliedPose == null || currentManipPose.getX() != lastAppliedPose.getX()
 				|| currentManipPose.getY() != lastAppliedPose.getY()
 				|| currentManipPose.getZ() != lastAppliedPose.getZ();
 		boolean allUnchanged = w.equals(lastAppliedW) && h.equals(lastAppliedH) && z.equals(lastAppliedZoom)
 				&& azv.equals(lastAppliedAz) && elv.equals(lastAppliedEl) && fovv.equals(lastAppliedFov)
-				&& m == lastAppliedMode && !forcedLineRun
-				&& sel.equals(lastAppliedSelection) && !poseMoved;
+				&& m == lastAppliedMode && !forcedLineRun && sel.equals(lastAppliedSelection) && !poseMoved;
 		if (allUnchanged) {
 			Log.debug("Skipping updateLines, no inputs changed");
 			return;
@@ -833,19 +831,18 @@ public class ControlSprites {
 	}
 
 	private TransformNR[] memoizedWorkplane() {
-		double mxx = workplaneOffset.getMxx(), mxy = workplaneOffset.getMxy(),
-				mxz = workplaneOffset.getMxz(), myx = workplaneOffset.getMyx(), myy = workplaneOffset.getMyy(),
-				myz = workplaneOffset.getMyz(), mzx = workplaneOffset.getMzx(), mzy = workplaneOffset.getMzy(),
-				mzz = workplaneOffset.getMzz(), tx = workplaneOffset.getTx(), ty = workplaneOffset.getTy(),
-				tz = workplaneOffset.getTz();
-		String key = mxx + "," + mxy + "," + mxz + "," + myx + "," + myy + "," + myz + "," + mzx + "," + mzy + ","
-				+ mzz + "," + tx + "," + ty + "," + tz;
+		double mxx = workplaneOffset.getMxx(), mxy = workplaneOffset.getMxy(), mxz = workplaneOffset.getMxz(),
+				myx = workplaneOffset.getMyx(), myy = workplaneOffset.getMyy(), myz = workplaneOffset.getMyz(),
+				mzx = workplaneOffset.getMzx(), mzy = workplaneOffset.getMzy(), mzz = workplaneOffset.getMzz(),
+				tx = workplaneOffset.getTx(), ty = workplaneOffset.getTy(), tz = workplaneOffset.getTz();
+		String key = mxx + "," + mxy + "," + mxz + "," + myx + "," + myy + "," + myz + "," + mzx + "," + mzy + "," + mzz
+				+ "," + tx + "," + ty + "," + tz;
 		if (!key.equals(memoWorkplaneKey)) {
 			memoWorkplaneKey = key;
 			memoWorkplane = TransformFactory.affineToNr(workplaneOffset);
 			memoWorkplaneInverse = memoWorkplane.inverse();
 		}
-		return new TransformNR[] { memoWorkplane, memoWorkplaneInverse };
+		return new TransformNR[]{memoWorkplane, memoWorkplaneInverse};
 	}
 
 	public Affine getViewRotation() {
