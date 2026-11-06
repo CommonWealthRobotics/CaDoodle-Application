@@ -597,7 +597,7 @@ public class ControlSprites {
 				&& azv.equals(lastAppliedAz) && elv.equals(lastAppliedEl) && fovv.equals(lastAppliedFov)
 				&& m == lastAppliedMode && !forcedLineRun && sel.equals(lastAppliedSelection) && !poseMoved;
 		if (allUnchanged) {
-			Log.debug("Skipping updateLines, no inputs changed");
+			// Log.debug("Skipping updateLines, no inputs changed");
 			return;
 		}
 		BowlerStudio.runLater(() -> {
