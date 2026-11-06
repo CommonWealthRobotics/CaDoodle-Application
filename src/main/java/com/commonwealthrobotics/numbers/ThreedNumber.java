@@ -64,6 +64,18 @@ public class ThreedNumber {
 	private PhongMaterial material;
 	private Affine alignLoc = new Affine();
 	private Vector3d vector3d;
+	// Coalesced TextField write: drags call setValue every mouse event and
+	// each write fires the text-invalidation cascade on the FX thread; one
+	// pending write applies the newest text per pulse
+	private String pendingText = null;
+	private boolean textWritePending = false;
+	// Test hook: number of times the TextField text was applied
+	long textWritesForTest = 0;
+	// Memoized workplane-derived values; the affine changes rarely but this
+	// method runs for every label on every drag event
+	private String memoWpKey = null;
+	private TransformNR memoWp = null;
+	private TransformNR memoWpRotInverseTimes = null;
 
 	// DISABLE TIMEOUT FOR NOW
 	/*
@@ -117,7 +129,7 @@ public class ThreedNumber {
 		// Select number at edit box select
 		textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal) {
-				Platform.runLater(() -> {
+				BowlerStudio.runLater(() -> {
 					textField.selectAll();
 					textField.requestFocus();
 				});
@@ -286,9 +298,27 @@ public class ThreedNumber {
 		v = Math.max(-maxValue, Math.min(maxValue, v));
 		v += 0.0; // Kill -0.000
 		double offset = getMyOffset();
-		com.neuronrobotics.sdk.common.Log.info(tfDimension + " to " + v + " offset by " + offset);
 		String formatted3 = String.format(Locale.getDefault(), "%.3f", v - offset);
-		BowlerStudio.runLater(() -> textField.setText(formatted3));
+		pendingText = formatted3;
+		if (!textWritePending) {
+			textWritePending = true;
+			textWritesForTest++;
+			// One deferred write per burst; the bare thread is the hop that
+			// escapes the current FX event (a plain runLater runs inline on
+			// the FX thread), matching Manipulation.setGlobal
+			new Thread(() -> {
+				BowlerStudio.runLater(() -> {
+					textWritePending = false;
+					// A cancelled edit or a field-focused user must not be
+					// clobbered by a coalesced programmatic write
+					if (canceled || textField.isFocused())
+						return;
+					String latest = pendingText;
+					if (latest != null)
+						textField.setText(latest);
+				});
+			}, "ThreedNumber text write").start();
+		}
 		setMostRecentValue(v);
 		lockout = false;
 		// validate();
@@ -325,7 +355,8 @@ public class ThreedNumber {
 		this.cameraFrame = c;
 		if (c == null)
 			return;
-		TransformNR wpnr = TransformFactory.affineToNr(workplaneOffset);
+		WpMemo wp = memoizedWorkplane(c);
+		TransformNR wpnr = wp.nr;
 		TransformNR abs = wpnr.times(pp);
 		TransformNR camAbs = cameraFrame;//cf.times(wpnr);
 		// Vector from camera to label
@@ -364,9 +395,7 @@ public class ThreedNumber {
 		//			com.neuronrobotics.sdk.common.Log.debug("depth=" + depth + " scale=" + scaleFactor+" My:"+abs.toSimpleString()+" Cam:"+camAbs.toSimpleString());
 
 		setScale(scaleFactor);
-		TransformNR pureRot = new TransformNR(cameraFrame.getRotation());
-		TransformNR wp = new TransformNR(wpnr.getRotation());
-		TransformNR pr = wp.inverse().times(pureRot);
+		TransformNR pr = wp.rotTimesCameraRot;
 
 		// com.neuronrobotics.sdk.common.Log.error("Point From Cam distaance "+vect+"
 		// scale "+scale);
@@ -407,6 +436,43 @@ public class ThreedNumber {
 		return ruler.getOffset(tfDimension);
 	}
 
+	// The workplane affine is fixed at construction; memoize the Jama-derived
+	// values so per-event label positioning does not re-decompose or re-copy
+	private final static class WpMemo {
+		final TransformNR nr;
+		final TransformNR rotTimesCameraRot;
+
+		WpMemo(TransformNR nr, TransformNR rotTimesCameraRot) {
+			this.nr = nr;
+			this.rotTimesCameraRot = rotTimesCameraRot;
+		}
+	}
+
+	private WpMemo memoizedWorkplane(TransformNR cameraFrame) {
+		RotationNR camRot = cameraFrame.getRotation();
+		StringBuilder sb = new StringBuilder(160);
+		sb.append(workplaneOffset.getMxx()).append(',').append(workplaneOffset.getMxy()).append(',')
+				.append(workplaneOffset.getMxz()).append(',').append(workplaneOffset.getMyx()).append(',')
+				.append(workplaneOffset.getMyy()).append(',').append(workplaneOffset.getMyz()).append(',')
+				.append(workplaneOffset.getMzx()).append(',').append(workplaneOffset.getMzy()).append(',')
+				.append(workplaneOffset.getMzz()).append(',').append(workplaneOffset.getTx()).append(',')
+				.append(workplaneOffset.getTy()).append(',').append(workplaneOffset.getTz()).append(',')
+				.append(camRot.getRotationMatrix2QuaturnionW()).append(',')
+				.append(camRot.getRotationMatrix2QuaturnionX()).append(',')
+				.append(camRot.getRotationMatrix2QuaturnionY()).append(',')
+				.append(camRot.getRotationMatrix2QuaturnionZ());
+		String key = sb.toString();
+		if (!key.equals(memoWpKey)) {
+			memoWpKey = key;
+			TransformNR wpnr = TransformFactory.affineToNr(workplaneOffset);
+			memoWp = wpnr;
+			TransformNR pureRot = new TransformNR(cameraFrame.getRotation());
+			TransformNR wpv = new TransformNR(wpnr.getRotation());
+			memoWpRotInverseTimes = wpv.inverse().times(pureRot);
+		}
+		return new WpMemo(memoWp, memoWpRotInverseTimes);
+	}
+
 	private boolean isZvector() {
 		return vector3d.z > 0;
 	}
@@ -428,7 +494,10 @@ public class ThreedNumber {
 	}
 
 	public double getMostRecentValue() {
-		validate();
+		// Do not re-parse the field while a coalesced write is pending; it
+		// would read back stale text and clobber the newest value
+		if (!textWritePending)
+			validate();
 		return mostRecentValue;
 	}
 

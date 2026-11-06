@@ -48,9 +48,25 @@ class ThreedNumberTest {
 		CountDownLatch done = new CountDownLatch(1);
 		Platform.runLater(done::countDown);
 		assertTrue(done.await(15, TimeUnit.SECONDS));
-		CountDownLatch done2 = new CountDownLatch(1);
-		Platform.runLater(done2::countDown);
-		assertTrue(done2.await(15, TimeUnit.SECONDS));
+	}
+
+	// Waits until the FX thread observes the expected field text, since the
+	// coalesced write may take a couple of hops to land
+	private static void awaitText(TextField box, String expected) throws Exception {
+		long deadline = System.currentTimeMillis() + 10_000;
+		while (System.currentTimeMillis() < deadline) {
+			String[] seen = new String[1];
+			CountDownLatch done = new CountDownLatch(1);
+			Platform.runLater(() -> {
+				seen[0] = box.getText();
+				done.countDown();
+			});
+			assertTrue(done.await(15, TimeUnit.SECONDS));
+			if (expected.equals(seen[0]))
+				return;
+			Thread.sleep(10);
+		}
+		assertEquals(expected, box.getText(), "coalesced write never landed");
 	}
 
 	private static void runOnFx(Runnable r) throws Exception {
@@ -116,27 +132,13 @@ class ThreedNumberTest {
 	@Test
 	@Timeout(30)
 	void finalTextMatchesLastValue() throws Exception {
-		runOnFx(() -> {
-			ThreedNumber n = newNumber();
-			for (int i = 1; i <= 50; i++) {
-				n.setValue(i);
-			}
-		});
-		awaitFxIdle();
-		runOnFx(() -> {
-			ThreedNumber n = newNumber();
-			n.setValue(7.5);
-		});
-		awaitFxIdle();
-		// verify text application using a live instance
 		TextField[] box = new TextField[1];
 		runOnFx(() -> {
 			ThreedNumber n = newNumber();
 			box[0] = fieldOf(n);
 			n.setValue(7.5);
 		});
-		awaitFxIdle();
-		assertEquals(fmt(7.5), box[0].getText());
+		awaitText(box[0], fmt(7.5));
 	}
 
 	@Test

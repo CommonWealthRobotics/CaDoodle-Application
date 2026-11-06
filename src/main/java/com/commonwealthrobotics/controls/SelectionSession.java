@@ -202,6 +202,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double x;
 	private double y;
 	private double z;
+	// Camera-change events arrive at high frequency while dragging; skip the
+	// executor round trip and halo/bounds rebuild when nothing it reads moved
+	private double lastSubmittedScreenW = Double.NaN;
+	private double lastSubmittedScreenH = Double.NaN;
+	private double lastSubmittedZoom = Double.NaN;
+	private double lastSubmittedAz = Double.NaN;
+	private double lastSubmittedEl = Double.NaN;
+	private double lastSubmittedX = Double.NaN;
+	private double lastSubmittedY = Double.NaN;
+	private double lastSubmittedZ = Double.NaN;
+	private double lastSubmittedFov = Double.NaN;
+	private int lastSubmittedSelectionCount = -1;
+	private List<String> lastSubmittedSnapshot = null;
+	// Identity hashes of the current mesh keys; a move or resize commit
+	// replaces every CSG object while leaving names and camera untouched,
+	// so names alone can not invalidate this gate
+	private String lastSubmittedMeshesId = null;
 
 	private Affine selection = new Affine();
 	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(),
@@ -3341,6 +3358,28 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, double cameraFovDegrees) {
+		List<String> snapshot = (getControls() != null) ? selectedSnapshot() : null;
+		String meshesId = meshIdentity();
+		if (screenW == lastSubmittedScreenW && screenH == lastSubmittedScreenH && zoom == lastSubmittedZoom
+				&& az == lastSubmittedAz && el == lastSubmittedEl && x == lastSubmittedX && y == lastSubmittedY
+				&& z == lastSubmittedZ && cameraFovDegrees == lastSubmittedFov
+				&& snapshot != null && snapshot.equals(lastSubmittedSnapshot)
+				&& meshesId != null && meshesId.equals(lastSubmittedMeshesId)) {
+			// The executor task would recompute the same bounds and resubmit
+			// the same FX updates; drop the duplicate
+			return;
+		}
+		lastSubmittedScreenW = screenW;
+		lastSubmittedScreenH = screenH;
+		lastSubmittedZoom = zoom;
+		lastSubmittedAz = az;
+		lastSubmittedEl = el;
+		lastSubmittedX = x;
+		lastSubmittedY = y;
+		lastSubmittedZ = z;
+		lastSubmittedFov = cameraFovDegrees;
+		lastSubmittedSnapshot = snapshot;
+		lastSubmittedMeshesId = meshesId;
 		submit(() -> {
 			this.screenW = screenW;
 			this.screenH = screenH;
@@ -3639,6 +3678,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Log.error(t);
 			}
 		});
+	}
+
+	// Identity fingerprint of the displayed mesh keys; changes whenever an
+	// operation replaces the CSG objects even if names stay the same
+	private String meshIdentity() {
+		if (getControls() == null)
+			return null;
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (CSG key : meshes.keySet())
+				sb.append(System.identityHashCode(key)).append(' ');
+			return sb.toString();
+		} catch (java.util.ConcurrentModificationException mutated) {
+			return null;
+		}
 	}
 
 	public LinkedHashSet<CSG> getSelected() {

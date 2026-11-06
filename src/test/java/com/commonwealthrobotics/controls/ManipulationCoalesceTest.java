@@ -43,6 +43,25 @@ class ManipulationCoalesceTest {
 		assertTrue(done.await(15, TimeUnit.SECONDS));
 	}
 
+	// Waits until the FX thread observes the expected affine translation,
+	// since the coalesced write may take a couple of hops to land
+	private static void awaitMatrix(Affine matrix, double expected) throws Exception {
+		long deadline = System.currentTimeMillis() + 10_000;
+		while (System.currentTimeMillis() < deadline) {
+			double[] tx = new double[1];
+			CountDownLatch done = new CountDownLatch(1);
+			Platform.runLater(() -> {
+				tx[0] = matrix.getTx();
+				done.countDown();
+			});
+			assertTrue(done.await(15, TimeUnit.SECONDS));
+			if (Math.abs(tx[0] - expected) < 1e-6)
+				return;
+			Thread.sleep(10);
+		}
+		assertEquals(expected, matrix.getTx(), 1e-6, "coalesced write never landed");
+	}
+
 	private static void runOnFx(Runnable r) throws Exception {
 		CountDownLatch done = new CountDownLatch(1);
 		Throwable[] err = new Throwable[1];
@@ -71,10 +90,11 @@ class ManipulationCoalesceTest {
 		for (int i = 1; i <= 100; i++) {
 			m.setGlobal(new TransformNR(i, i, i));
 		}
-		awaitFxIdle();
+		awaitMatrix(matrix, 100);
 		assertEquals(100, matrix.getTx(), 1e-6);
 		assertEquals(100, matrix.getTy(), 1e-6);
 		assertEquals(100, matrix.getTz(), 1e-6);
+		assertTrue(m.affineWritesForTest <= 2, "a storm must coalesce; got " + m.affineWritesForTest + " writes");
 	}
 
 	@Test
@@ -87,8 +107,9 @@ class ManipulationCoalesceTest {
 				m.setGlobal(new TransformNR(i, 0, 0));
 			}
 		});
-		awaitFxIdle();
+		awaitMatrix(matrix, 25);
 		assertEquals(25, matrix.getTx(), 1e-6);
+		assertTrue(m.affineWritesForTest <= 2, "a storm must coalesce; got " + m.affineWritesForTest + " writes");
 	}
 
 	@Test
@@ -101,11 +122,11 @@ class ManipulationCoalesceTest {
 		for (int i = 1; i <= 50; i++) {
 			m.setGlobal(new TransformNR(i, 0, 0));
 		}
-		awaitFxIdle();
+		awaitMatrix(matrix, 50);
 		for (int i = 51; i <= 100; i++) {
 			m.setGlobal(new TransformNR(i, 0, 0));
 		}
-		awaitFxIdle();
+		awaitMatrix(matrix, 100);
 		assertEquals(100, matrix.getTx(), 1e-6);
 	}
 
