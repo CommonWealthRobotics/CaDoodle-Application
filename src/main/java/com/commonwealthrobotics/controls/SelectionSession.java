@@ -137,7 +137,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
 		Scale haloScale = new Scale();
-		List<FeatureEdgeExtractor.Edge> visibleEdges = null;
+		// Written by the extraction worker, read by the FX apply; volatile so
+		// the list is safely published once extraction finishes
+		volatile List<FeatureEdgeExtractor.Edge> visibleEdges = null;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
 			if (display == null || halo == null || bouds == null)
@@ -969,19 +971,49 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (holder.edges == null)
 					continue;
 
-				entry.getValue().visibleEdges = FeatureEdgeExtractor.extract(csg,
-						SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
-						SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
-						SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
+				// Extract each object on its own so one failure can not kill
+				// the batch and leave every group empty until the next operation
+				try {
+					holder.visibleEdges = FeatureEdgeExtractor.extract(csg,
+							SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
+							SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
+							SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
+				} catch (Throwable t) {
+					Log.error(t);
+					holder.visibleEdges = null;
+				}
+			}
+			// Build the prism geometry off the UI thread as well; the attach
+			// below is the only part that runs on the FX thread
+			List<javafx.scene.Group> built = new ArrayList<>();
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				MeshHolder holder = entry.getValue();
+				if (holder.edges == null || holder.visibleEdges == null) {
+					built.add(null);
+					continue;
+				}
+				try {
+					built.add(buildFeatureEdgeGroup(holder.visibleEdges));
+				} catch (Throwable t) {
+					Log.error(t);
+					built.add(null);
+				}
 			}
 			BowlerStudio.runLater(() -> {
-				for (Map.Entry<CSG, MeshHolder> entry : current) {
-					CSG csg = entry.getKey();
-					MeshHolder holder = entry.getValue();
-
+				for (int i = 0; i < current.size(); i++) {
+					CSG csg = current.get(i).getKey();
+					MeshHolder holder = current.get(i).getValue();
+					// An operation that committed while extracting replaced the
+					// holders; writing into the old group would target a node
+					// already cleared from the scene while the new generation's
+					// own rebuild is pending, so skip superseded generations
+					if (getMeshes().get(csg) != holder)
+						continue;
 					if (holder.edges == null)
 						continue;
-					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges);
+					javafx.scene.Group rebuilt = built.get(i);
+					if (rebuilt == null)
+						continue;
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
 				}
 			});
@@ -994,35 +1026,39 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
 
-		submit(() -> {
+		// The meshes map is mutated by the FX thread (clearScreen, displayCSG);
+		// snapshot it here so the worker can not iterate a map being modified
+		BowlerStudio.runLater(() -> {
 			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
-			List<Runnable> onUI = new ArrayList<Runnable>();
-			for (Map.Entry<CSG, MeshHolder> entry : current) {
-				MeshHolder holder = entry.getValue();
+			for (Map.Entry<CSG, MeshHolder> entry : current)
+				requestEdgeWidthRebuild(entry.getKey(), entry.getValue());
+		});
+	}
 
+	private void requestEdgeWidthRebuild(CSG csg, MeshHolder holder) {
+		submit(() -> {
+			if (holder.edges == null)
+				return;
+
+			List<FeatureEdgeExtractor.Edge> visibleEdges = holder.visibleEdges;
+
+			if (visibleEdges == null)
+				return;
+
+			// Build the prism geometry off the UI thread from the extracted
+			// edges; only the attach below touches the live scene graph
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
+
+			BowlerStudio.runLater(() -> {
+				// Skip superseded generations the same way rebuildFeatureEdges
+				// does, so a commit during the build can not write into an
+				// orphaned group while the new generation stays empty
+				if (getMeshes().get(csg) != holder)
+					return;
 				if (holder.edges == null)
-					continue;
-
-				List<FeatureEdgeExtractor.Edge> visibleEdges = entry.getValue().visibleEdges;
-
-				if (visibleEdges == null)
-					continue;
-
-				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
-				onUI.add(() -> holder.edges.getChildren().setAll(rebuilt.getChildren()));
-			}
-
-			for (Runnable r : onUI) {
-				Platform.runLater(() -> {
-					try {
-						r.run();
-					} catch (Throwable t) {
-						Log.error(t);
-					}
-				});
-			}
-			onUI.clear();
-
+					return;
+				holder.edges.getChildren().setAll(rebuilt.getChildren());
+			});
 		});
 	}
 
