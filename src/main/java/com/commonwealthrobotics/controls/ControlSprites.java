@@ -806,6 +806,7 @@ public class ControlSprites {
 		lastAppliedSelection = sel2;
 		lastAppliedPose = new TransformNR(newestPose.getX(), newestPose.getY(), newestPose.getZ());
 		lastAppliedBounds = this.b;
+		forcedLineRun = false;
 
 	}
 
@@ -815,7 +816,7 @@ public class ControlSprites {
 	 * the lines/labels reflect may have moved.
 	 */
 	public void forceLineUpdate() {
-		lastAppliedSelection = null;
+		forcedLineRun = true;
 	}
 
 	/**
