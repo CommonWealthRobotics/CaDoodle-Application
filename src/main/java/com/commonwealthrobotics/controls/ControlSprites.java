@@ -905,7 +905,6 @@ public class ControlSprites {
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
-			session.hideHalos();
 			switch (this.mode) {
 
 				case Default :
@@ -921,7 +920,6 @@ public class ControlSprites {
 						zOffset.show();
 					}
 
-					session.showHalos();
 					return;
 
 				case MoveXY :
@@ -994,7 +992,6 @@ public class ControlSprites {
 		footprint.setVisible(false);
 		zOffset.hide();
 		scaleSession.hide();
-		session.hideHalos();
 	}
 
 	public boolean mirrorIsActive() {
