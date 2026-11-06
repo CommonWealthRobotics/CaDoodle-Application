@@ -166,9 +166,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
-	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
 	private PauseTransition edgeRebuildTimer;
 	private PauseTransition edgeWidthUpdateTimer;
+	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
+	// Feature edges are hidden while a mouse drag moves the selection: the
+	// drag re-transforms the mesh every frame and the per-edge prisms would
+	// re-tessellate behind it on the FX thread
+	private volatile boolean featureEdgesVisible = true;
+	// Set when a rebuild or width update was skipped because the edges were
+	// hidden, so the show path knows a refresh is owed
+	private volatile boolean edgeRebuildDeferredWhileHidden = false;
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -297,6 +304,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			getControls().setMode(SpriteDisplayMode.Default);
+			setFeatureEdgesVisible(true);
 
 		});
 
@@ -304,6 +312,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (intitialization)
 				return;
 
+			// null events come from programmatic moves (arrow keys, typed
+			// values); only real mouse drags hide the edge lines
+			if (ev != null)
+				setFeatureEdgesVisible(false);
 			getControls().setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(() -> updateControls());
 		});
@@ -391,7 +403,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void updateMemoryDisplay() {
 		double value = ((double) CaDoodleFile.getFreeMemory()) / 100.0;
 		Log.info("Mem=" + value);
-		BowlerStudio.runLater(() -> memUsage.setProgress(value));
+		if (memUsage != null)
+			BowlerStudio.runLater(() -> memUsage.setProgress(value));
 
 		// if (value > 0.5 && value < 0.75) { }
 	}
@@ -916,6 +929,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
 
+		// Re-extraction is expensive; while a drag has the edges hidden, defer
+		// the work and let the show path schedule one rebuild on release
+		if (!featureEdgesVisible) {
+			edgeRebuildDeferredWhileHidden = true;
+			return;
+		}
+
 		BowlerStudio.runLater(() -> {
 			double delayMs = SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0);
 
@@ -1035,10 +1055,42 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
+	// Shows or hides the per-object feature-edge meshes. Hiding runs on the FX
+	// thread; showing schedules a rebuild when extractions were skipped while
+	// the edges were hidden, so the move commit redraws the edges at the final
+	// position instead of stale ones
+	public void setFeatureEdgesVisible(boolean visible) {
+		if (visible == featureEdgesVisible)
+			return;
+		featureEdgesVisible = visible;
+		BowlerStudio.runLater(() -> {
+			// Snapshot on the FX thread; the show side runs on the commit
+			// thread while clearScreen may be mutating the map
+			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				MeshHolder holder = entry.getValue();
+				if (holder.edges == null)
+					continue;
+				holder.edges.setVisible(visible);
+			}
+			if (visible && edgeRebuildDeferredWhileHidden) {
+				edgeRebuildDeferredWhileHidden = false;
+				requestFeatureEdgeRebuild();
+			}
+		});
+	}
+
 	private void requestEdgeWidthRebuild(CSG csg, MeshHolder holder) {
 		submit(() -> {
 			if (holder.edges == null)
 				return;
+
+			// The width rebuild replaces the prism geometry; skip it while a
+			// drag has the edges hidden, the show path schedules the refresh
+			if (!featureEdgesVisible) {
+				edgeRebuildDeferredWhileHidden = true;
+				return;
+			}
 
 			List<FeatureEdgeExtractor.Edge> visibleEdges = holder.visibleEdges;
 

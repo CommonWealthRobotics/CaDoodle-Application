@@ -228,11 +228,16 @@ public class ControlSprites {
 				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
 			});
 			zmoving = false;
+			session.setFeatureEdgesVisible(true);
 			setMode(SpriteDisplayMode.Default);
 			updateLines();
 		});
 
 		zMoveManipulator.addEventListener(ev -> {
+			// null events come from programmatic moves; only real mouse drags
+			// hide the feature-edge lines
+			if (ev != null)
+				session.setFeatureEdgesVisible(false);
 			zmoving = true;
 			xymoving = false;
 			if (ev != null)
