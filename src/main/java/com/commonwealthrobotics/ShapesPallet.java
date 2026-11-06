@@ -373,7 +373,12 @@ public class ShapesPallet {
 			cl.countDown();
 		});
 		try {
-			cl.await(2500, TimeUnit.MILLISECONDS);
+			// The button is only added from the FX thread; if the FX thread is
+			// busy (or died inside the lambda) the latch never opens and the
+			// list is empty, so the timeout is not a success
+			boolean fxCompleted = cl.await(2500, TimeUnit.MILLISECONDS);
+			if (!fxCompleted || buttonHolder.isEmpty())
+				return null;
 		} catch (InterruptedException e) {
 			return null;
 		}
