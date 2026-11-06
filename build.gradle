@@ -288,6 +288,32 @@ tasks.withType(JavaCompile) {
 tasks.named('test') {
 	// Use JUnit Platform for unit tests.
 	useJUnitPlatform()
+	// Tests touch com.sun.javafx.application to start the FX toolkit
+	// without a Stage, same exports the application itself runs with
+	jvmArgs '--add-exports',
+			'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED',
+			'--add-exports',
+			'javafx.base/com.sun.javafx.event=ALL-UNNAMED',
+			'--add-opens',
+			'javafx.graphics/javafx.scene=ALL-UNNAMED',
+			'--add-opens',
+			'java.base/java.lang=ALL-UNNAMED',
+			'--add-opens',
+			'java.base/java.io=ALL-UNNAMED'
 }
 
 if (project == rootProject) {

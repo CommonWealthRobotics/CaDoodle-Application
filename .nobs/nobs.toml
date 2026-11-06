@@ -39,3 +39,15 @@ source = "/usr/bin/freecadcmd"
 dest = "/usr/bin/freecadcmd"
 read_only = false
 enabled = true
+
+[[sandbox.extra_binds]]
+source = "/tmp/.X11-unix"
+dest = "/tmp/.X11-unix"
+read_only = false
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/run/user/1000/.mutter-Xwaylandauth.77B3X3"
+dest = "/run/user/1000/.mutter-Xwaylandauth.77B3X3"
+read_only = false
+enabled = true
