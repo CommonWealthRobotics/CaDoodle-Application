@@ -2,13 +2,9 @@ package com.commonwealthrobotics.controls;
 
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.Node;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
@@ -36,11 +32,6 @@ public class DottedLine extends Group {
 	private Color dotColor = Color.BLACK;
 	private Affine workplaneOffset;
 	private Scale scale = new Scale(1, 1, 1);
-	// Pooled Sphere nodes with one shared material; updateLine() only
-	// repositions views instead of building a fresh sphere per dot per event
-	private PhongMaterial dotMaterial = null;
-	private final List<Node> dots = new ArrayList<>();
-	private final List<Node> placedDots = new ArrayList<>();
 
 	public DottedLine(double dotRadius, double dotSpacing, Affine workplaneOffset, Color dotColor) {
 		this(dotRadius, dotSpacing, workplaneOffset);
@@ -87,10 +78,7 @@ public class DottedLine extends Group {
 	}
 
 	public void updateLine() {
-		// Take all dots out of the group first so the scene graph is not
-		// notified once per removal
-		getChildren().removeAll(placedDots);
-		placedDots.clear();
+		getChildren().clear();
 
 		double dx = endX - startX;
 		double dy = endY - startY;
@@ -101,28 +89,23 @@ public class DottedLine extends Group {
 		if (numDots == 0)
 			return;
 
-		if (dotMaterial == null)
-			dotMaterial = new PhongMaterial(dotColor);
 		for (int i = 0; i <= numDots; i++) {
 			double t = i / (double) numDots;
 			double x = startX + t * dx;
 			double y = startY + t * dy;
 			double z = startZ + t * dz;
 
-			Sphere dot;
-			if (i < dots.size()) {
-				dot = (Sphere) dots.get(i);
-			} else {
-				dot = new Sphere(dotRadius, 10);
-				dot.setMaterial(dotMaterial);
-				dots.add(dot);
-			}
+			Sphere dot = new Sphere(dotRadius);
 			Affine loc = TransformFactory.newAffine(x, y, z);
-			// Per-dot location sits between the shared transforms
-			dot.getTransforms().setAll(workplaneOffset, loc, scale);
-			placedDots.add(dot);
+
+			dot.getTransforms().add(workplaneOffset);
+			dot.getTransforms().addAll(loc);
+			dot.getTransforms().add(scale);
+			PhongMaterial material = new PhongMaterial(dotColor);
+			dot.setMaterial(material);
+
+			getChildren().add(dot);
 		}
-		getChildren().addAll(placedDots);
 	}
 
 	public double getStartX() {

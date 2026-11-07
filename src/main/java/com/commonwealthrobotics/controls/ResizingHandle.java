@@ -63,12 +63,6 @@ public class ResizingHandle {
 	private Point3D startingPosition3D;
 	private boolean zMove = false; // Is the move a XY or a Z-move
 	private double snapGridValue = 0;
-	// Last scale factor applied to scaleTF; skips the Scale.set* write (and
-	// its transform-invalidation cascade) when the size did not change
-	private double lastAppliedScale = Double.NaN;
-	// Last orientation matrix applied via cameraOrient; skips the affine
-	// rewrite (and its bounds-invalidation cascade) when unchanged
-	private String lastAppliedCameraOrient = null;
 
 	private WorkplaneManager workplane;
 
@@ -331,9 +325,6 @@ public class ResizingHandle {
 			// scale can never lag the transform writes it was computed from
 			Point3D world3Dpos = getAbsolutePosition();
 			double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
-			if (calculatedScaleFactor == lastAppliedScale)
-				return;
-			lastAppliedScale = calculatedScaleFactor;
 			setScale(calculatedScaleFactor);
 			scaleTF.setX(calculatedScaleFactor);
 			scaleTF.setY(calculatedScaleFactor);
@@ -346,44 +337,17 @@ public class ResizingHandle {
 
 		updateCubeSize();
 
-		// Visibility is applied on every call: callers hide all controls for
-		// a drag via setMode and rely on this to bring them back afterwards,
-		// so it can never be part of the skip
-		String orientKey = orientationKey(target, cf);
-		boolean orientChanged = !orientKey.equals(lastAppliedCameraOrient);
-		if (locked)
-			lastAppliedCameraOrient = null; // force a full apply on unlock
-		if (orientChanged) {
-			lastAppliedCameraOrient = orientKey;
-			TransformNR cam = new TransformNR(cf.getRotation());
-			TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
-			RotationNR rot = wp.inverse().times(cam).getRotation();
+		TransformNR cam = new TransformNR(cf.getRotation());
+		TransformNR wp = TransformFactory.affineToNr(workplaneOffset);
+		RotationNR rot = wp.inverse().times(cam).getRotation();
 
-			BowlerStudio.runLater(() -> {
-				TransformNR orient = new TransformNR();
-				orient.setRotation(rot);
-				TransformFactory.nrToAffine(orient, cameraOrient);
-				TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
-			});
-		}
-		BowlerStudio.runLater(() -> setVisible(!locked));
-	}
-
-	// Bounds identity of the position/orientation inputs; a plain == on the
-	// TransformNRs is not enough because they are fresh objects per call
-	private String orientationKey(TransformNR target, TransformNR cf) {
-		return target.getX() + "," + target.getY() + "," + target.getZ() + "," + workplaneKey(workplaneOffset) + ","
-				+ rotationKey(cf.getRotation());
-	}
-
-	private static String workplaneKey(Affine wp) {
-		return wp.getMxx() + "," + wp.getMxy() + "," + wp.getMxz() + "," + wp.getMyx() + "," + wp.getMyy() + ","
-				+ wp.getMyz() + "," + wp.getMzx() + "," + wp.getMzy() + "," + wp.getMzz();
-	}
-
-	private static String rotationKey(RotationNR rot) {
-		return rot.getRotationMatrix2QuaturnionW() + "," + rot.getRotationMatrix2QuaturnionX() + ","
-				+ rot.getRotationMatrix2QuaturnionY() + "," + rot.getRotationMatrix2QuaturnionZ();
+		BowlerStudio.runLater(() -> {
+			setVisible(!locked);
+			TransformNR orient = new TransformNR();
+			orient.setRotation(rot);
+			TransformFactory.nrToAffine(orient, cameraOrient);
+			TransformFactory.nrToAffine(target.copy().setRotation(new RotationNR()), location);
+		});
 	}
 
 	public void updateOrientation(TransformNR cf) {
