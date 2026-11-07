@@ -443,7 +443,9 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 	public void setCurrentAbsolutePose(TransformNR currentAbsolutePose) {
 		this.currentAbsolutePose = currentAbsolutePose;
-		TransformFactory.nrToAffine(getCurrentAbsolutePose(), getWorkplaneLocation());
+		BowlerKernel.runLater(() -> {
+			TransformFactory.nrToAffine(getCurrentAbsolutePose(), getWorkplaneLocation());
+		});
 	}
 
 	public Runnable getOnSelectEvent() {

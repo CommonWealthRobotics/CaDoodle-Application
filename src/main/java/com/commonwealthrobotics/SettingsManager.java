@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+import com.commonwealthrobotics.controls.SelectionSession;
 import com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig;
 
 import javax.net.ssl.HostnameVerifier;
@@ -207,6 +208,8 @@ public class SettingsManager implements ICSGClientEvent {
 	@FXML
 	private CheckBox uiEdgesEnabled;
 	@FXML
+	private CheckBox uiHalosEnabled;
+	@FXML
 	private TextField uiEdgesAngleDegrees;
 	@FXML
 	private ComboBox<String> uiEdgesWidthMode;
@@ -216,6 +219,8 @@ public class SettingsManager implements ICSGClientEvent {
 	private TextField uiEdgesRadius;
 	@FXML
 	private TextField uiEdgesBrightness;
+	@FXML
+	private TextField uiEdgesHighlightWidthMultiplier;
 
 	@FXML
 	private TextField uiGridSmallVisibleZoomDepth;
@@ -793,6 +798,14 @@ public class SettingsManager implements ICSGClientEvent {
 			if (source == uiEdgesEnabled) {
 				ConfigurationDatabase.put(PARAMS_KEY, "edges.enabled", "" + uiEdgesEnabled.isSelected());
 				ConfigurationDatabase.save();
+				applyEdgesEnabled();
+				return;
+			}
+			if (source == uiHalosEnabled) {
+				boolean selected = uiHalosEnabled.isSelected();
+				ConfigurationDatabase.put(PARAMS_KEY, "halos.enabled", "" + selected);
+				ConfigurationDatabase.save();
+				applyHalosEnabled(selected);
 				return;
 			}
 			// Text fields are handled by installPendingEditCommit()
@@ -831,22 +844,43 @@ public class SettingsManager implements ICSGClientEvent {
 			new Thread(() -> {
 				ConfigurationDatabase.put(PARAMS_KEY, key, "" + value);
 				ConfigurationDatabase.save();
+				if ("edges.highlightWidthMultiplier".equals(key) && mc != null && mc.getSession() != null)
+					mc.getSession().refreshEdgeWidths();
 			}).start();
 		} catch (Throwable t) {
 			Log.error(t);
 		}
 	}
 
+	// Live-apply for the halos checkbox; the session re-displays its meshes
+	// on the next operation when generation is turned back on
+	private void applyHalosEnabled(boolean enable) {
+		if (mc == null || mc.getSession() == null)
+			return;
+		mc.getSession().setHalosEnabled(enable);
+	}
+
+	// Live-apply for the feature-edges checkbox, mirroring the halos switch
+	private void applyEdgesEnabled() {
+		if (mc == null || mc.getSession() == null)
+			return;
+		SelectionSession session = mc.getSession();
+		if (uiEdgesEnabled.isSelected())
+			session.requestFeatureEdgeRebuildPublic();
+		else
+			session.clearFeatureEdges();
+	}
+
 	private List<TextField> uiNumericFields() {
 		return Arrays.asList(uiLightingAmbient, uiLightingKeyIntensity, uiLightingKeyX, uiLightingKeyY, uiLightingKeyZ,
 				uiLightingFillIntensity, uiLightingFillX, uiLightingFillY, uiLightingFillZ, uiLightingRimIntensity,
 				uiLightingRimX, uiLightingRimY, uiLightingRimZ, uiEdgesAngleDegrees, uiEdgesWidthPx, uiEdgesRadius,
-				uiEdgesBrightness, uiGridSmallVisibleZoomDepth, uiGridSmallBrightnessMultiplier,
-				uiGridSmallOpacityMultiplier, uiGridSmallLineWidthPx, uiGridSmallZOffsetMm,
-				uiGridMajorBrightnessMultiplier, uiGridMajorOpacityMultiplier, uiGridMajorLineWidthPx,
-				uiGridGroundRenderOpacity, uiCameraOrbitMin, uiCameraOrbitMax, uiCameraOrbitHalf, uiCameraOrbitRiseMs,
-				uiCameraOrbitFallMs, uiEdgesSceneSettleDelayMs, uiEdgesCameraSettleDelayMs, uiEdgesTopologyPrecision,
-				uiEdgesStitchTolerance);
+				uiEdgesBrightness, uiEdgesHighlightWidthMultiplier, uiGridSmallVisibleZoomDepth,
+				uiGridSmallBrightnessMultiplier, uiGridSmallOpacityMultiplier, uiGridSmallLineWidthPx,
+				uiGridSmallZOffsetMm, uiGridMajorBrightnessMultiplier, uiGridMajorOpacityMultiplier,
+				uiGridMajorLineWidthPx, uiGridGroundRenderOpacity, uiCameraOrbitMin, uiCameraOrbitMax,
+				uiCameraOrbitHalf, uiCameraOrbitRiseMs, uiCameraOrbitFallMs, uiEdgesSceneSettleDelayMs,
+				uiEdgesCameraSettleDelayMs, uiEdgesTopologyPrecision, uiEdgesStitchTolerance);
 	}
 
 	/**
@@ -887,6 +921,8 @@ public class SettingsManager implements ICSGClientEvent {
 			return "edges.radius";
 		if (field == uiEdgesBrightness)
 			return "edges.brightness";
+		if (field == uiEdgesHighlightWidthMultiplier)
+			return "edges.highlightWidthMultiplier";
 		if (field == uiGridSmallVisibleZoomDepth)
 			return "grid.small.visibleZoomDepth";
 		if (field == uiGridSmallBrightnessMultiplier)
@@ -953,6 +989,8 @@ public class SettingsManager implements ICSGClientEvent {
 				return Math.max(0.0, Math.min(360.0, value));
 			case "edges.widthPx" :
 				return Math.max(0.1, Math.min(10.0, value));
+			case "edges.highlightWidthMultiplier" :
+				return Math.max(1.0, Math.min(4.0, value));
 			case "edges.radius" :
 				return Math.max(0.001, Math.min(100.0, value));
 			case "grid.small.visibleZoomDepth" :
@@ -1031,6 +1069,9 @@ public class SettingsManager implements ICSGClientEvent {
 		uiEdgesWidthPx.setText("" + bound("edges.widthPx", SceneStyleConfig.getDouble("edges.widthPx", 1.6)));
 		uiEdgesRadius.setText("" + bound("edges.radius", SceneStyleConfig.getDouble("edges.radius", 0.15)));
 		uiEdgesBrightness.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0)));
+		uiEdgesHighlightWidthMultiplier.setText("" + bound("edges.highlightWidthMultiplier",
+				SceneStyleConfig.getDouble("edges.highlightWidthMultiplier", 1.8)));
+		uiHalosEnabled.setSelected(SceneStyleConfig.getBoolean("halos.enabled", true));
 
 		// --- workplane grid small ---
 		uiGridSmallVisibleZoomDepth.setText("" + bound("grid.small.visibleZoomDepth",

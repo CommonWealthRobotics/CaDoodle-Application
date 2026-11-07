@@ -7,7 +7,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixExce
 
 import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
-import com.neuronrobotics.bowlerstudio.BowlerKernel;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -230,10 +229,9 @@ public class ResizingHandle {
 	}
 
 	public void setInReferenceFrame(double x, double y, double z) {
-		TransformNR wp = manipulator.getFrameOfReference().copy();
 		TransformNR tmp = new TransformNR(x, y, z);
 
-		TransformFactory.nrToAffine(tmp, location);
+		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(tmp, location));
 	}
 
 	public TransformNR getCurrentInGlobalFrame() {
@@ -322,14 +320,12 @@ public class ResizingHandle {
 	}
 
 	public void updateCubeSize() {
-
-		Point3D world3Dpos = getAbsolutePosition();
-
-		double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
-
-		setScale(calculatedScaleFactor);
-
 		BowlerStudio.runLater(() -> {
+			// Read the live pose and apply the scale on the FX thread so the
+			// scale can never lag the transform writes it was computed from
+			Point3D world3Dpos = getAbsolutePosition();
+			double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
+			setScale(calculatedScaleFactor);
 			scaleTF.setX(calculatedScaleFactor);
 			scaleTF.setY(calculatedScaleFactor);
 			scaleTF.setZ(calculatedScaleFactor);
@@ -368,7 +364,7 @@ public class ResizingHandle {
 
 		TransformNR orient = new TransformNR();
 		orient.setRotation(rot);
-		BowlerKernel.runLater(() -> TransformFactory.nrToAffine(orient, cameraOrient));
+		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(orient, cameraOrient));
 	}
 
 	public void hide() {

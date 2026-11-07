@@ -127,6 +127,14 @@ import javafx.util.Duration;
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	private ControlSprites controls;
+	// Halo meshes are opt-out from the settings screen; volatile because the
+	// settings checkbox flips it on the UI thread while display reads it on
+	// the operation threads
+	private volatile boolean halosEnabled = SceneStyleConfig.getBoolean("halos.enabled", true);
+	// Edge tints mark selection and lock: selected shapes get light blue
+	// edges, locked shapes purple, and lock wins when both apply
+	private static final Color SELECTED_EDGE_COLOR = Color.LIGHTBLUE;
+	private static final Color LOCKED_EDGE_COLOR = Color.MEDIUMPURPLE;
 	double scaleX = 1.02;
 	double scaleY = 1.02;
 	double scaleZ = 1.03;
@@ -138,9 +146,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		public Bounds bouds;
 		Scale haloScale = new Scale();
 		List<FeatureEdgeExtractor.Edge> visibleEdges = null;
+		// Whether the built prism geometry uses the highlighted width; written
+		// before the build is queued, read by the off-thread builds
+		volatile boolean edgeHighlighted = false;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
-			if (display == null || halo == null || bouds == null)
+			if (display == null || bouds == null)
 				throw new NullPointerException();
 			this.setDisplay(display);
 			this.setHalo(halo);
@@ -671,7 +682,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : process) {
 			if (c.isHide() || c.isInGroup())
 				continue;
-			MeshView halo = c.newMesh(true);
+			// Halos are opt-in from the settings; skip generating them
+			// entirely when unchecked
+			MeshView halo = halosEnabled ? c.newMesh(true) : null;
 			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
@@ -815,7 +828,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		addEdgeFace(faces, base + 4, base + 6, base + 7);
 	}
 
-	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges) {
+	// Takes the highlight flag instead of the CSG: builds run off the FX
+	// thread and the selected set is mutated from several threads, while the
+	// flag is a volatile written before the build is queued
+	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges,
+			boolean highlighted) {
 		javafx.scene.Group group = new javafx.scene.Group();
 		group.setMouseTransparent(true);
 		group.setDepthTest(DepthTest.ENABLE);
@@ -836,8 +853,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String widthMode = SceneStyleConfig.getString("edges.widthMode", "screen");
 		boolean screenWidth = !"world".equalsIgnoreCase(widthMode);
 
-		double widthPx = Math.max(0.1, SceneStyleConfig.getDouble("edges.widthPx", 1.6));
-		double worldRadius = Math.max(0.001, SceneStyleConfig.getDouble("edges.radius", 0.15));
+		// Selection/lock tints and a thicker line share one highlight flag so
+		// both swap atomically with the geometry rebuild
+		double widthMultiplier = highlighted ? highlightWidthMultiplier() : 1.0;
+		double widthPx = Math.max(0.1, SceneStyleConfig.getDouble("edges.widthPx", 1.6)) * widthMultiplier;
+		double worldRadius = Math.max(0.001, SceneStyleConfig.getDouble("edges.radius", 0.15)) * widthMultiplier;
 		double screenRadiusPerDepth = 0.0;
 
 		if (screenWidth) {
@@ -893,9 +913,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		mesh.getTexCoords().setAll(0f, 0f);
 		mesh.getFaces().setAll(faceArray);
 
-		double brightness = SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0));
-		Color edgeColor = Color.color(brightness, brightness, brightness);
-		PhongMaterial material = new PhongMaterial(edgeColor);
+		PhongMaterial material = new PhongMaterial(highlighted ? highlightEdgeColor() : defaultEdgeColor());
 		material.setSpecularColor(Color.BLACK);
 
 		MeshView view = new MeshView(mesh);
@@ -906,6 +924,72 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		group.getChildren().add(view);
 		return group;
+	}
+
+	private static Color defaultEdgeColor() {
+		double brightness = SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0));
+		return Color.color(brightness, brightness, brightness);
+	}
+
+	// Lock wins over selection so locked shapes stay recognizable
+	private static Color highlightEdgeColor() {
+		return LOCKED_EDGE_COLOR;
+	}
+
+	// Selection and lock tint overrides for the edge lines
+	private Color edgeColorFor(CSG csg) {
+		if (csg.isLock())
+			return LOCKED_EDGE_COLOR;
+		if (isSelected(csg))
+			return SELECTED_EDGE_COLOR;
+		return defaultEdgeColor();
+	}
+
+	private boolean isEdgeHighlighted(CSG csg) {
+		return csg.isLock() || isSelected(csg);
+	}
+
+	// Settings-driven highlight thickness; clamped like the settings field is
+	private double highlightWidthMultiplier() {
+		return Math.max(1.0, Math.min(4.0, SceneStyleConfig.getDouble("edges.highlightWidthMultiplier", 1.8)));
+	}
+
+	// FX-thread tint of the prism meshes inside the holder's edge group
+	private void applyEdgeColorNow(MeshHolder holder, CSG csg) {
+		if (holder.edges == null)
+			return;
+		Color color = edgeColorFor(csg);
+		for (javafx.scene.Node node : holder.edges.getChildren()) {
+			if (node instanceof MeshView) {
+				PhongMaterial material = (PhongMaterial) ((MeshView) node).getMaterial();
+				if (material != null)
+					material.setDiffuseColor(color);
+			}
+		}
+	}
+
+	// Applies the color for the new selection/lock state and rebuilds the
+	// prism geometry when the highlighted width differs from what is shown;
+	// no-ops when the state did not actually change so bulk reselections
+	// do not trigger a rebuild storm
+	private void styleEdgesForStateChange(MeshHolder holder, CSG csg) {
+		BowlerStudio.runLater(() -> {
+			boolean highlighted = isEdgeHighlighted(csg);
+			if (holder.edgeHighlighted == highlighted)
+				return;
+			holder.edgeHighlighted = highlighted;
+			applyEdgeColorNow(holder, csg);
+			requestEdgeWidthRebuild(csg, holder);
+		});
+	}
+
+	// Convergence sweep over every displayed shape: an operation can drop a
+	// shape from the selection without going through removeSelected, so the
+	// highlight has to be re-derived from the current state, not just toggled
+	// at the edges of a transition
+	private void restyleAllEdges() {
+		for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet())
+			styleEdgesForStateChange(entry.getValue(), entry.getKey());
 	}
 
 	private void requestFeatureEdgeRebuild() {
@@ -981,13 +1065,40 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 					if (holder.edges == null)
 						continue;
-					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges);
+					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges,
+							holder.edgeHighlighted);
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
+					applyEdgeColorNow(holder, csg);
 				}
 			});
 
 		});
 
+	}
+
+	private void requestEdgeWidthRebuild(CSG csg, MeshHolder holder) {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		submit(() -> {
+			if (holder.edges == null)
+				return;
+
+			List<FeatureEdgeExtractor.Edge> visibleEdges = holder.visibleEdges;
+
+			if (visibleEdges == null)
+				return;
+
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+			BowlerStudio.runLater(() -> {
+				if (getMeshes().get(csg) != holder)
+					return;
+				if (holder.edges == null)
+					return;
+				holder.edges.getChildren().setAll(rebuilt.getChildren());
+				applyEdgeColorNow(holder, csg);
+			});
+		});
 	}
 
 	private void refreshFeatureEdgeWidths() {
@@ -1008,8 +1119,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (visibleEdges == null)
 					continue;
 
-				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges);
-				onUI.add(() -> holder.edges.getChildren().setAll(rebuilt.getChildren()));
+				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+				onUI.add(() -> {
+					holder.edges.getChildren().setAll(rebuilt.getChildren());
+					applyEdgeColorNow(holder, entry.getKey());
+				});
 			}
 
 			for (Runnable r : onUI) {
@@ -1053,26 +1167,31 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				e.printStackTrace();
 			}
 		}
-		setStandardHaloScale(holder);
+		if (halo != null) {
+			setStandardHaloScale(holder);
 
-		holder.haloScale.setPivotX(cx);
-		holder.haloScale.setPivotY(cy);
-		holder.haloScale.setPivotZ(cz);
+			holder.haloScale.setPivotX(cx);
+			holder.haloScale.setPivotY(cy);
+			holder.haloScale.setPivotZ(cz);
 
-		halo.getTransforms().setAll(holder.haloScale, manip);
-		halo.setMouseTransparent(true);
-		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
+			halo.getTransforms().setAll(holder.haloScale, manip);
+			halo.setMouseTransparent(true);
+			PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 
-		Color value = new Color(0, 0.95, 0.95, 0.45);
-		if (c.isLock())
-			value = new Color(0, 0, 0.95, 0.45);
-		haloMat.setDiffuseColor(value);
-		haloMat.setSpecularColor(value);
-		halo.setCullFace(CullFace.BACK);
-		halo.setDrawMode(DrawMode.FILL);
-		halo.setDepthTest(DepthTest.ENABLE);
-		halo.setBlendMode(BlendMode.SRC_OVER);
-		halo.setVisible(false);
+			Color value = new Color(0, 0.95, 0.95, 0.45);
+			if (c.isLock())
+				value = new Color(0, 0, 0.95, 0.45);
+			haloMat.setDiffuseColor(value);
+			haloMat.setSpecularColor(value);
+			halo.setCullFace(CullFace.BACK);
+			halo.setDrawMode(DrawMode.FILL);
+			halo.setDepthTest(DepthTest.ENABLE);
+			halo.setBlendMode(BlendMode.SRC_OVER);
+			halo.setVisible(isSelected(c));
+		}
+		// Seed the highlight gate so the first edge build uses the highlighted
+		// width for already-selected or locked shapes
+		holder.edgeHighlighted = isEdgeHighlighted(c);
 
 		if (c.isHole()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
@@ -1102,7 +1221,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// meshView.setViewOrder(0);
 		engine.addUserNode(meshView);
 		engine.addUserNode(edges);
-		engine.addUserNode(halo);
+		if (halo != null)
+			engine.addUserNode(halo);
 		getMeshes().put(c, holder);
 
 		// Allow move on first click for unlocked meshes only
@@ -1116,6 +1236,42 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		holder.haloScale.setX(scaleX);
 		holder.haloScale.setY(scaleY);
 		holder.haloScale.setZ(scaleZ);
+	}
+
+	// Styles and attaches a lazily generated halo (settings re-enable path);
+	// mirrors the inline block in displayCSG
+	private void setUpHalo(MeshHolder holder, CSG c) {
+		MeshView halo = holder.getHalo();
+		Bounds b = holder.bouds;
+		TransformNR wp = getWorkplane();
+		TransformNR center = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
+		TransformNR wpCentered = wp.times(center);
+		setStandardHaloScale(holder);
+		holder.haloScale.setPivotX(wpCentered.getX());
+		holder.haloScale.setPivotY(wpCentered.getY());
+		holder.haloScale.setPivotZ(wpCentered.getZ());
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		halo.getTransforms().setAll(holder.haloScale, manip);
+		halo.setMouseTransparent(true);
+		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
+		Color value = new Color(0, 0.95, 0.95, 0.45);
+		if (c.isLock())
+			value = new Color(0, 0, 0.95, 0.45);
+		haloMat.setDiffuseColor(value);
+		haloMat.setSpecularColor(value);
+		halo.setCullFace(CullFace.BACK);
+		halo.setDrawMode(DrawMode.FILL);
+		halo.setDepthTest(DepthTest.ENABLE);
+		halo.setBlendMode(BlendMode.SRC_OVER);
+		halo.setVisible(isSelected(c));
 	}
 
 	private void setUpControls(MeshView meshView, CSG name) {
@@ -1193,8 +1349,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		selected.add(name);
 		MeshHolder meshHolder = meshes.get(name);
-		if (meshHolder != null && meshHolder.getHalo() != null)
-			BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
+		if (meshHolder != null) {
+			if (meshHolder.getHalo() != null)
+				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
+			styleEdgesForStateChange(meshHolder, name);
+		}
 	}
 
 	private boolean isSelected(CSG target) {
@@ -1216,8 +1375,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				iterator.remove();
 		}
 		MeshHolder meshHolder = meshes.get(target);
-		if (meshHolder != null && meshHolder.getHalo() != null)
-			BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(false));
+		if (meshHolder != null) {
+			if (meshHolder.getHalo() != null)
+				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(false));
+			styleEdgesForStateChange(meshHolder, target);
+		}
 	}
 
 	public void updateControlsDisplayOfSelected() {
@@ -1229,6 +1391,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	private void UpdateUIControls(List<CSG> cs) {
 		hideHalos();
+		restyleAllEdges();
 		resetSelectedCSGsFromCurrentState(cs);
 
 		timeline.updateSelected(getSelected());
@@ -1394,7 +1557,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
 			MeshHolder meshHolder = meshes.get(c);
-			if (meshHolder != null)
+			if (meshHolder != null && meshHolder.getHalo() != null)
 				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
 		}
 		if (ap.isAdvancedMode()) {
@@ -3289,20 +3452,24 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					// haloScale is a live scene-graph transform and mutating it from a
 					// background thread corrupts JavaFX's parent bounds bookkeeping.
 					final List<Runnable> haloUpdates = new ArrayList<>();
-					for (CSG key : meshes.keySet()) {
-						MeshHolder holder = meshes.get(key);
-						Bounds b = getSellectedBounds(key);
-						if (wpNotOrigin) {
-							haloUpdates.add(() -> setStandardHaloScale(holder));
-						} else {
-							final double sx = 1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth));
-							final double sy = 1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth));
-							final double sz = 1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth));
-							haloUpdates.add(() -> {
-								holder.haloScale.setX(sx);
-								holder.haloScale.setY(sy);
-								holder.haloScale.setZ(sz);
-							});
+					// Halos disabled: skip the rescale entirely, it would only
+					// touch detached shells and recompute bounds for nothing
+					if (halosEnabled) {
+						for (CSG key : meshes.keySet()) {
+							MeshHolder holder = meshes.get(key);
+							Bounds b = getSellectedBounds(key);
+							if (wpNotOrigin) {
+								haloUpdates.add(() -> setStandardHaloScale(holder));
+							} else {
+								final double sx = 1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth));
+								final double sy = 1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth));
+								final double sz = 1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth));
+								haloUpdates.add(() -> {
+									holder.haloScale.setX(sx);
+									holder.haloScale.setY(sy);
+									holder.haloScale.setZ(sz);
+								});
+							}
 						}
 					}
 					BowlerStudio.runLater(() -> {
@@ -3602,7 +3769,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		BowlerStudio.runLater(() -> {
 
 			for (MeshHolder mh : meshes.values()) {
-				mh.getHalo().setVisible(false);
+				if (mh.getHalo() != null)
+					mh.getHalo().setVisible(false);
 			}
 		});
 	}
@@ -3611,8 +3779,62 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		BowlerStudio.runLater(() -> {
 			for (CSG csg : meshes.keySet()) {
 				MeshHolder mh = meshes.get(csg);
-				mh.getHalo().setVisible(selected.contains(csg));
+				if (mh.getHalo() != null)
+					mh.getHalo().setVisible(selected.contains(csg));
 			}
+		});
+	}
+
+	// Settings checkbox flip: enable shows halos for the current selection
+	// (generating shells for shapes displayed while it was off), disable
+	// detaches every halo from the scene so none are rendered until re-enabled
+	public void setHalosEnabled(boolean enable) {
+		halosEnabled = enable;
+		BowlerStudio.runLater(() -> {
+			for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet()) {
+				MeshHolder holder = entry.getValue();
+				MeshView halo = holder.getHalo();
+				if (enable) {
+					if (halo == null) {
+						// Generated lazily: this shape was displayed while
+						// halos were disabled
+						halo = entry.getKey().newMesh(true);
+						holder.setHalo(halo);
+						setUpHalo(holder, entry.getKey());
+						engine.addUserNode(halo);
+					} else
+						halo.setVisible(isSelected(entry.getKey()));
+				} else if (halo != null) {
+					engine.removeUserNode(halo);
+					holder.setHalo(null);
+				}
+			}
+		});
+	}
+
+	// Settings numeric edit: rebuild highlighted prisms at the new width
+	public void refreshEdgeWidths() {
+		BowlerStudio.runLater(() -> {
+			for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet()) {
+				CSG csg = entry.getKey();
+				MeshHolder holder = entry.getValue();
+				if (holder.edgeHighlighted)
+					requestEdgeWidthRebuild(csg, holder);
+			}
+		});
+	}
+
+	// Settings screen hook: re-enable edges from the checkbox and rebuild
+	public void requestFeatureEdgeRebuildPublic() {
+		requestFeatureEdgeRebuild();
+	}
+
+	// Settings screen hook: detach every edge prism from the scene
+	public void clearFeatureEdges() {
+		BowlerStudio.runLater(() -> {
+			for (MeshHolder holder : getMeshes().values())
+				if (holder.edges != null)
+					holder.edges.getChildren().clear();
 		});
 	}
 

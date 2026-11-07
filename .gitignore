@@ -50,3 +50,5 @@ bin
 /fix_translations.py
 /check_json.py
 /.pylibs/
+/*.nps
+/temp/
