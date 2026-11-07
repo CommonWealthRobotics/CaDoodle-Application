@@ -108,33 +108,8 @@ public class ControlSprites {
 	private double cameraFovDegrees;
 	private Affine zMoveOffsetFootprint;
 	private double zoomScale;
-	// Last fully-accepted layout inputs; when none change, the line/label
-	// body can not produce different output, so skip it. Invalidated by
-	// forceLineUpdate() whenever anything else it reads may have moved
-	// (selection identity, workplane, modes, ruler).
-	private Double lastAppliedW = null;
-	private Double lastAppliedH = null;
-	private Double lastAppliedZoom = null;
-	private Double lastAppliedAz = null;
-	private Double lastAppliedEl = null;
-	private Double lastAppliedFov = null;
-	private SpriteDisplayMode lastAppliedMode = null;
-	private List<String> lastAppliedSelection = null;
-	private TransformNR lastAppliedPose = null;
-	private Bounds lastAppliedBounds = null;
-	// Set by forceLineUpdate; the next updateLines call must run its body
-	private boolean forcedLineRun = false;
-	// Identity of the last selection passed to the body; also doubles as
-	// the force-update flag (null = next call must run)
-	// Memoized inverse/rotation of the workplane affine; recomputed only
-	// when the affine's elements change. Each of the six labels used to
-	// pay a Jama decomposition per drag event to derive the same values.
-	private String memoWorkplaneKey = null;
-	private TransformNR memoWorkplane = null;
-	private TransformNR memoWorkplaneInverse = null;
 
 	public void setSnapGrid(double snapGridValue) {
-		forceLineUpdate();
 		zMoveManipulator.setIncrement(snapGridValue);
 		scaleSession.setSnapGrid(snapGridValue);
 	}
@@ -253,16 +228,11 @@ public class ControlSprites {
 				TransformFactory.nrToAffine(new TransformNR(), zMoveOffsetFootprint);
 			});
 			zmoving = false;
-			session.setFeatureEdgesVisible(true);
 			setMode(SpriteDisplayMode.Default);
 			updateLines();
 		});
 
 		zMoveManipulator.addEventListener(ev -> {
-			// null events come from programmatic moves; only real mouse drags
-			// hide the feature-edge lines
-			if (ev != null)
-				session.setFeatureEdgesVisible(false);
 			zmoving = true;
 			xymoving = false;
 			if (ev != null)
@@ -395,8 +365,6 @@ public class ControlSprites {
 	private void updateLinesAndCubes() {
 		List<CSG> cur = session.getCurrentStateSelected();
 		BowlerKernel.runLater(() -> {
-			// updateCubes drives handle visibility/lock state and must run on
-			// every call; only the line/label body deduplicates (updateLines)
 			updateCubes(session.getCurrentStateSelected(), cur);
 			updateLines();
 		});
@@ -465,10 +433,6 @@ public class ControlSprites {
 			double cameraFovDegrees) {
 
 		this.b = b;
-		// A new bounds object means an operation committed; the labels and
-		// footprint must redraw even if camera and names did not change
-		if (b != lastAppliedBounds)
-			forceLineUpdate();
 		this.cameraFovDegrees = cameraFovDegrees;
 		if (!selectionLive) {
 			// TickToc.tic("!selectionLive");
@@ -581,23 +545,6 @@ public class ControlSprites {
 
 		if (session.getSelected().size() == 0) {
 			Log.debug("Nothing selected, no line updates");
-			return;
-		}
-		// Re-entered by every drag event and timer tick; when the inputs it
-		// reads are unchanged, skip the whole body (bounds math, dotted-line
-		// rebuilds, label writes) instead of re-running it on the FX thread
-		Double w = screenW, h = screenH, z = zoom, azv = az, elv = el, fovv = cameraFovDegrees;
-		SpriteDisplayMode m = mode;
-		List<String> sel = session.selectedSnapshot();
-		TransformNR currentManipPose = manipulation.getCurrentPose();
-		boolean poseMoved = lastAppliedPose == null || currentManipPose.getX() != lastAppliedPose.getX()
-				|| currentManipPose.getY() != lastAppliedPose.getY()
-				|| currentManipPose.getZ() != lastAppliedPose.getZ();
-		boolean allUnchanged = w.equals(lastAppliedW) && h.equals(lastAppliedH) && z.equals(lastAppliedZoom)
-				&& azv.equals(lastAppliedAz) && elv.equals(lastAppliedEl) && fovv.equals(lastAppliedFov)
-				&& m == lastAppliedMode && !forcedLineRun && sel.equals(lastAppliedSelection) && !poseMoved;
-		if (allUnchanged) {
-			// Log.debug("Skipping updateLines, no inputs changed");
 			return;
 		}
 		BowlerStudio.runLater(() -> {
@@ -786,63 +733,7 @@ public class ControlSprites {
 			TransformFactory.nrToAffine(new TransformNR(RotationNR.getRotationZ(90 - az)), spriteFace);
 
 		});
-		// Record the newest values, not the ones captured above: queued
-		// bodies read the latest state when they run, so the key has to
-		// match what will actually be rendered or calls would reschedule
-		// forever
-		Double w2 = screenW, h2 = screenH, z2 = zoom, az2 = az, el2 = el, fov2 = cameraFovDegrees;
-		SpriteDisplayMode m2 = mode;
-		List<String> sel2 = session.selectedSnapshot();
-		TransformNR newestPose = manipulation.getCurrentPose();
-		lastAppliedW = w2;
-		lastAppliedH = h2;
-		lastAppliedZoom = z2;
-		lastAppliedAz = az2;
-		lastAppliedEl = el2;
-		lastAppliedFov = fov2;
-		lastAppliedMode = m2;
-		lastAppliedSelection = sel2;
-		lastAppliedPose = new TransformNR(newestPose.getX(), newestPose.getY(), newestPose.getZ());
-		lastAppliedBounds = this.b;
-		forcedLineRun = false;
 
-	}
-
-	/**
-	 * Forces the next updateLines() to run its body even if the tracked
-	 * inputs did not change; call whenever state outside those inputs that
-	 * the lines/labels reflect may have moved.
-	 */
-	public void forceLineUpdate() {
-		forcedLineRun = true;
-	}
-
-	/**
-	 * Cached rotation-only view of the current workplane affine plus its
-	 * inverse; both derive from the same Jama decomposition, which is
-	 * expensive enough to show up per drag event when done per label.
-	 */
-	public TransformNR getWorkplaneRotationNR() {
-		return memoizedWorkplane()[0];
-	}
-
-	public TransformNR getWorkplaneInverseNR() {
-		return memoizedWorkplane()[1];
-	}
-
-	private TransformNR[] memoizedWorkplane() {
-		double mxx = workplaneOffset.getMxx(), mxy = workplaneOffset.getMxy(), mxz = workplaneOffset.getMxz(),
-				myx = workplaneOffset.getMyx(), myy = workplaneOffset.getMyy(), myz = workplaneOffset.getMyz(),
-				mzx = workplaneOffset.getMzx(), mzy = workplaneOffset.getMzy(), mzz = workplaneOffset.getMzz(),
-				tx = workplaneOffset.getTx(), ty = workplaneOffset.getTy(), tz = workplaneOffset.getTz();
-		String key = mxx + "," + mxy + "," + mxz + "," + myx + "," + myy + "," + myz + "," + mzx + "," + mzy + "," + mzz
-				+ "," + tx + "," + ty + "," + tz;
-		if (!key.equals(memoWorkplaneKey)) {
-			memoWorkplaneKey = key;
-			memoWorkplane = TransformFactory.affineToNr(workplaneOffset);
-			memoWorkplaneInverse = memoWorkplane.inverse();
-		}
-		return new TransformNR[]{memoWorkplane, memoWorkplaneInverse};
 	}
 
 	public Affine getViewRotation() {
@@ -870,7 +761,6 @@ public class ControlSprites {
 
 	public void clearSelection() {
 
-		forceLineUpdate();
 		BowlerStudio.runLater(() -> {
 			for (Node r : allElems)
 				r.setVisible(false);
@@ -899,12 +789,12 @@ public class ControlSprites {
 		Log.debug("ControlSprites setMode: " + mode);
 
 		this.mode = mode;
-		forceLineUpdate();
 		BowlerStudio.runLater(() -> {
 
 			for (Node r : allElems)
 				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
+			session.hideHalos();
 			switch (this.mode) {
 
 				case Default :
@@ -920,6 +810,7 @@ public class ControlSprites {
 						zOffset.show();
 					}
 
+					session.showHalos();
 					return;
 
 				case MoveXY :
@@ -992,6 +883,7 @@ public class ControlSprites {
 		footprint.setVisible(false);
 		zOffset.hide();
 		scaleSession.hide();
+		session.hideHalos();
 	}
 
 	public boolean mirrorIsActive() {

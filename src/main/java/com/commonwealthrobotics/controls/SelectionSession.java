@@ -126,38 +126,32 @@ import javafx.util.Duration;
 @SuppressWarnings("unused")
 public class SelectionSession implements ICaDoodleStateUpdate {
 	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-	// Single-thread queue for edge geometry work: width now depends on the
-	// selection/lock state, so edge rebuilds must apply in submission order
-	// and each build must read the current state, not a snapshot of it
-	private final ExecutorService edgeBuildExecutor = Executors.newSingleThreadExecutor();
 	private ControlSprites controls;
 	// Halo meshes are opt-out from the settings screen; volatile because the
 	// settings checkbox flips it on the UI thread while display reads it on
 	// the operation threads
 	private volatile boolean halosEnabled = SceneStyleConfig.getBoolean("halos.enabled", true);
-	// Edge tints replace the old translucent halo meshes: selected shapes get
-	// light blue edges, locked shapes purple, and lock wins when both apply
+	// Edge tints mark selection and lock: selected shapes get light blue
+	// edges, locked shapes purple, and lock wins when both apply
 	private static final Color SELECTED_EDGE_COLOR = Color.LIGHTBLUE;
 	private static final Color LOCKED_EDGE_COLOR = Color.MEDIUMPURPLE;
+	double scaleX = 1.02;
+	double scaleY = 1.02;
+	double scaleZ = 1.03;
 
 	public class MeshHolder {
 		private MeshView display;
-		// Null when halos are disabled in the settings
 		private MeshView halo;
 		public javafx.scene.Group edges = new javafx.scene.Group();
 		public Bounds bouds;
-		// Inflates the halo shell off the surface to keep it from z-fighting
-		// with the display mesh; pivot is set at display time
 		Scale haloScale = new Scale();
-		// Written by the extraction worker, read by the FX apply; volatile so
-		// the list is safely published once extraction finishes
-		volatile List<FeatureEdgeExtractor.Edge> visibleEdges = null;
-		// Tracks whether the built prism geometry uses the highlighted width;
-		// written on whichever thread runs the state change, read for gating
+		List<FeatureEdgeExtractor.Edge> visibleEdges = null;
+		// Whether the built prism geometry uses the highlighted width; written
+		// before the build is queued, read by the off-thread builds
 		volatile boolean edgeHighlighted = false;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
-			if (display == null || bouds == null)
+			if (display == null || halo == null || bouds == null)
 				throw new NullPointerException();
 			this.setDisplay(display);
 			this.setHalo(halo);
@@ -181,16 +175,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 	}
 
+	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
 	private PauseTransition edgeRebuildTimer;
 	private PauseTransition edgeWidthUpdateTimer;
-	private final HashMap<CSG, MeshHolder> meshes = new HashMap<CSG, MeshHolder>();
-	// Feature edges are hidden while a mouse drag moves the selection: the
-	// drag re-transforms the mesh every frame and the per-edge prisms would
-	// re-tessellate behind it on the FX thread
-	private volatile boolean featureEdgesVisible = true;
-	// Set when a rebuild or width update was skipped because the edges were
-	// hidden, so the show path knows a refresh is owed
-	private volatile boolean edgeRebuildDeferredWhileHidden = false;
 	private final double MAX_NUMBER_FILED = 9999;
 	private Label shapeConfiguration;
 	private Accordion shapeConfigurationBox;
@@ -217,23 +204,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double x;
 	private double y;
 	private double z;
-	// Camera-change events arrive at high frequency while dragging; skip the
-	// executor round trip and bounds rebuild when nothing it reads moved
-	private double lastSubmittedScreenW = Double.NaN;
-	private double lastSubmittedScreenH = Double.NaN;
-	private double lastSubmittedZoom = Double.NaN;
-	private double lastSubmittedAz = Double.NaN;
-	private double lastSubmittedEl = Double.NaN;
-	private double lastSubmittedX = Double.NaN;
-	private double lastSubmittedY = Double.NaN;
-	private double lastSubmittedZ = Double.NaN;
-	private double lastSubmittedFov = Double.NaN;
-	private int lastSubmittedSelectionCount = -1;
-	private List<String> lastSubmittedSnapshot = null;
-	// Identity hashes of the current mesh keys; a move or resize commit
-	// replaces every CSG object while leaving names and camera untouched,
-	// so names alone can not invalidate this gate
-	private String lastSubmittedMeshesId = null;
 
 	private Affine selection = new Affine();
 	private Manipulation manipulation = new Manipulation(selection, new Vector3d(1, 1, 0), new TransformNR(),
@@ -336,7 +306,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			}
 
 			getControls().setMode(SpriteDisplayMode.Default);
-			setFeatureEdgesVisible(true);
 
 		});
 
@@ -344,10 +313,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (intitialization)
 				return;
 
-			// null events come from programmatic moves (arrow keys, typed
-			// values); only real mouse drags hide the edge lines
-			if (ev != null)
-				setFeatureEdgesVisible(false);
 			getControls().setMode(SpriteDisplayMode.MoveXY);
 			BowlerKernel.runLater(() -> updateControls());
 		});
@@ -435,8 +400,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	public void updateMemoryDisplay() {
 		double value = ((double) CaDoodleFile.getFreeMemory()) / 100.0;
 		Log.info("Mem=" + value);
-		if (memUsage != null)
-			BowlerStudio.runLater(() -> memUsage.setProgress(value));
+		BowlerStudio.runLater(() -> memUsage.setProgress(value));
 
 		// if (value > 0.5 && value < 0.75) { }
 	}
@@ -792,8 +756,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				MeshHolder meshHolder = getMeshes().get(c);
 				engine.removeUserNode(meshHolder.getDisplay());
 				engine.removeUserNode(meshHolder.edges);
-				if (meshHolder.getHalo() != null)
+				try {
 					engine.removeUserNode(meshHolder.getHalo());
+				} catch (Exception ex) {
+					Log.error(ex);
+				}
 			}
 			getMeshes().clear();
 		});
@@ -864,7 +831,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// Takes the highlight flag instead of the CSG: builds run off the FX
 	// thread and the selected set is mutated from several threads, while the
 	// flag is a volatile written before the build is queued
-	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges, CSG csg,
+	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges,
 			boolean highlighted) {
 		javafx.scene.Group group = new javafx.scene.Group();
 		group.setMouseTransparent(true);
@@ -886,6 +853,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		String widthMode = SceneStyleConfig.getString("edges.widthMode", "screen");
 		boolean screenWidth = !"world".equalsIgnoreCase(widthMode);
 
+		// Selection/lock tints and a thicker line share one highlight flag so
+		// both swap atomically with the geometry rebuild
 		double widthMultiplier = highlighted ? highlightWidthMultiplier() : 1.0;
 		double widthPx = Math.max(0.1, SceneStyleConfig.getDouble("edges.widthPx", 1.6)) * widthMultiplier;
 		double worldRadius = Math.max(0.001, SceneStyleConfig.getDouble("edges.radius", 0.15)) * widthMultiplier;
@@ -944,7 +913,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		mesh.getTexCoords().setAll(0f, 0f);
 		mesh.getFaces().setAll(faceArray);
 
-		PhongMaterial material = new PhongMaterial(highlighted ? highlightEdgeColor(csg) : defaultEdgeColor());
+		PhongMaterial material = new PhongMaterial(highlighted ? highlightEdgeColor() : defaultEdgeColor());
 		material.setSpecularColor(Color.BLACK);
 
 		MeshView view = new MeshView(mesh);
@@ -962,13 +931,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return Color.color(brightness, brightness, brightness);
 	}
 
-	// Selection and lock tint overrides for the edge lines; purple wins when a
-	// shape is both locked and selected so locked shapes stay recognizable
-	private boolean isEdgeHighlighted(CSG csg) {
-		return csg.isLock() || isSelected(csg);
+	// Lock wins over selection so locked shapes stay recognizable
+	private static Color highlightEdgeColor() {
+		return LOCKED_EDGE_COLOR;
 	}
 
-	// FX-thread tint only; the selected set is not safe to read elsewhere
+	// Selection and lock tint overrides for the edge lines
 	private Color edgeColorFor(CSG csg) {
 		if (csg.isLock())
 			return LOCKED_EDGE_COLOR;
@@ -977,9 +945,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return defaultEdgeColor();
 	}
 
-	// Off-FX-safe variant: lock state and the per-holder highlight gate only
-	private Color highlightEdgeColor(CSG csg) {
-		return csg.isLock() ? LOCKED_EDGE_COLOR : SELECTED_EDGE_COLOR;
+	private boolean isEdgeHighlighted(CSG csg) {
+		return csg.isLock() || isSelected(csg);
 	}
 
 	// Settings-driven highlight thickness; clamped like the settings field is
@@ -987,8 +954,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return Math.max(1.0, Math.min(4.0, SceneStyleConfig.getDouble("edges.highlightWidthMultiplier", 1.8)));
 	}
 
-	// FX-thread tint; the rebuild apply step calls this directly so the tint
-	// lands atomically with the replacement geometry
+	// FX-thread tint of the prism meshes inside the holder's edge group
 	private void applyEdgeColorNow(MeshHolder holder, CSG csg) {
 		if (holder.edges == null)
 			return;
@@ -1006,8 +972,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// prism geometry when the highlighted width differs from what is shown;
 	// no-ops when the state did not actually change so bulk reselections
 	// do not trigger a rebuild storm
-	// Runs the state read on the FX thread: callers include executor threads
-	// (selectAllFromCurrentState) and the selected set is FX-confined
 	private void styleEdgesForStateChange(MeshHolder holder, CSG csg) {
 		BowlerStudio.runLater(() -> {
 			boolean highlighted = isEdgeHighlighted(csg);
@@ -1028,58 +992,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			styleEdgesForStateChange(entry.getValue(), entry.getKey());
 	}
 
-	// Settings checkbox flip: enable shows halos for the current selection
-	// (generating shells for shapes displayed while it was off), disable
-	// detaches every halo from the scene so none are rendered until re-enabled
-	public void setHalosEnabled(boolean enable) {
-		halosEnabled = enable;
-		BowlerStudio.runLater(() -> {
-			for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet()) {
-				MeshHolder holder = entry.getValue();
-				MeshView halo = holder.getHalo();
-				if (enable) {
-					if (halo == null) {
-						// Generated lazily: this shape was displayed while
-						// halos were disabled
-						halo = entry.getKey().newMesh(true);
-						holder.setHalo(halo);
-						setUpHalo(holder, entry.getKey());
-						engine.addUserNode(halo);
-					} else
-						halo.setVisible(isSelected(entry.getKey()));
-				} else if (halo != null) {
-					engine.removeUserNode(halo);
-					holder.setHalo(null);
-				}
-			}
-		});
-	}
-
-	// Settings numeric edit: re-derive the highlight flag per shape (the flag
-	// itself is unchanged) and rebuild highlighted prisms at the new width
-	public void refreshEdgeWidths() {
-		BowlerStudio.runLater(() -> {
-			for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet()) {
-				CSG csg = entry.getKey();
-				MeshHolder holder = entry.getValue();
-				if (holder.edgeHighlighted)
-					requestEdgeWidthRebuild(csg, holder);
-			}
-		});
-	}
-
 	private void requestFeatureEdgeRebuild() {
 		if (!ap.get().isInitialized())
 			return;
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
-
-		// Re-extraction is expensive; while a drag has the edges hidden, defer
-		// the work and let the show path schedule one rebuild on release
-		if (!featureEdgesVisible) {
-			edgeRebuildDeferredWhileHidden = true;
-			return;
-		}
 
 		BowlerStudio.runLater(() -> {
 			double delayMs = SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0);
@@ -1091,20 +1008,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			edgeRebuildTimer.setDuration(Duration.millis(Math.max(0.0, delayMs)));
 			edgeRebuildTimer.playFromStart();
-		});
-	}
-
-	// Settings screen hook: re-enable edges from the checkbox and rebuild
-	public void requestFeatureEdgeRebuildPublic() {
-		requestFeatureEdgeRebuild();
-	}
-
-	// Settings screen hook: detach every edge prism from the scene
-	public void clearFeatureEdges() {
-		BowlerStudio.runLater(() -> {
-			for (MeshHolder holder : getMeshes().values())
-				if (holder.edges != null)
-					holder.edges.getChildren().clear();
 		});
 	}
 
@@ -1142,7 +1045,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			return;
 		List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
 
-		edgeBuild(() -> {
+		submit(() -> {
 			for (Map.Entry<CSG, MeshHolder> entry : current) {
 				CSG csg = entry.getKey();
 				MeshHolder holder = entry.getValue();
@@ -1150,50 +1053,20 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (holder.edges == null)
 					continue;
 
-				// Extract each object on its own so one failure can not kill
-				// the batch and leave every group empty until the next operation
-				try {
-					holder.visibleEdges = FeatureEdgeExtractor.extract(csg,
-							SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
-							SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
-							SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
-				} catch (Throwable t) {
-					Log.error(t);
-					holder.visibleEdges = null;
-				}
-			}
-			// Build the prism geometry off the UI thread as well; the attach
-			// below is the only part that runs on the FX thread
-			List<javafx.scene.Group> built = new ArrayList<>();
-			for (Map.Entry<CSG, MeshHolder> entry : current) {
-				MeshHolder holder = entry.getValue();
-				CSG csg = entry.getKey();
-				if (holder.edges == null || holder.visibleEdges == null) {
-					built.add(null);
-					continue;
-				}
-				try {
-					built.add(buildFeatureEdgeGroup(holder.visibleEdges, csg, holder.edgeHighlighted));
-				} catch (Throwable t) {
-					Log.error(t);
-					built.add(null);
-				}
+				entry.getValue().visibleEdges = FeatureEdgeExtractor.extract(csg,
+						SceneStyleConfig.getDouble("edges.angleDegrees", 35.0),
+						SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001),
+						SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002));
 			}
 			BowlerStudio.runLater(() -> {
-				for (int i = 0; i < current.size(); i++) {
-					CSG csg = current.get(i).getKey();
-					MeshHolder holder = current.get(i).getValue();
-					// An operation that committed while extracting replaced the
-					// holders; writing into the old group would target a node
-					// already cleared from the scene while the new generation's
-					// own rebuild is pending, so skip superseded generations
-					if (getMeshes().get(csg) != holder)
-						continue;
+				for (Map.Entry<CSG, MeshHolder> entry : current) {
+					CSG csg = entry.getKey();
+					MeshHolder holder = entry.getValue();
+
 					if (holder.edges == null)
 						continue;
-					javafx.scene.Group rebuilt = built.get(i);
-					if (rebuilt == null)
-						continue;
+					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges,
+							holder.edgeHighlighted);
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
 					applyEdgeColorNow(holder, csg);
 				}
@@ -1203,71 +1076,21 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	}
 
-	private void refreshFeatureEdgeWidths() {
+	private void requestEdgeWidthRebuild(CSG csg, MeshHolder holder) {
 		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
 			return;
 
-		// The meshes map is mutated by the FX thread (clearScreen, displayCSG);
-		// snapshot it here so the worker can not iterate a map being modified
-		BowlerStudio.runLater(() -> {
-			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
-			for (Map.Entry<CSG, MeshHolder> entry : current)
-				requestEdgeWidthRebuild(entry.getKey(), entry.getValue());
-		});
-	}
-
-	// Shows or hides the per-object feature-edge meshes. Hiding runs on the FX
-	// thread; showing schedules a rebuild when extractions were skipped while
-	// the edges were hidden, so the move commit redraws the edges at the final
-	// position instead of stale ones
-	public void setFeatureEdgesVisible(boolean visible) {
-		if (visible == featureEdgesVisible)
-			return;
-		featureEdgesVisible = visible;
-		BowlerStudio.runLater(() -> {
-			// Snapshot on the FX thread; the show side runs on the commit
-			// thread while clearScreen may be mutating the map
-			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
-			for (Map.Entry<CSG, MeshHolder> entry : current) {
-				MeshHolder holder = entry.getValue();
-				if (holder.edges == null)
-					continue;
-				holder.edges.setVisible(visible);
-			}
-			if (visible && edgeRebuildDeferredWhileHidden) {
-				edgeRebuildDeferredWhileHidden = false;
-				requestFeatureEdgeRebuild();
-			}
-		});
-	}
-
-	private void requestEdgeWidthRebuild(CSG csg, MeshHolder holder) {
-		// Serialized on the edge-build queue so a state-change rebuild can
-		// never apply after a newer one (the shared pool is multi-threaded)
-		edgeBuild(() -> {
+		submit(() -> {
 			if (holder.edges == null)
 				return;
-
-			// The width rebuild replaces the prism geometry; skip it while a
-			// drag has the edges hidden, the show path schedules the refresh
-			if (!featureEdgesVisible) {
-				edgeRebuildDeferredWhileHidden = true;
-				return;
-			}
 
 			List<FeatureEdgeExtractor.Edge> visibleEdges = holder.visibleEdges;
 
 			if (visibleEdges == null)
 				return;
 
-			// Build the prism geometry off the UI thread from the extracted
-			// edges; only the attach below touches the live scene graph
-			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, csg, holder.edgeHighlighted);
-
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
 			BowlerStudio.runLater(() -> {
-				// Skip superseded generations the same way rebuildFeatureEdges
-				// does, so a commit during the build can not write into an
-				// orphaned group while the new generation stays empty
 				if (getMeshes().get(csg) != holder)
 					return;
 				if (holder.edges == null)
@@ -1278,21 +1101,97 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
+	private void refreshFeatureEdgeWidths() {
+		if (!SceneStyleConfig.getBoolean("edges.enabled", true))
+			return;
+
+		submit(() -> {
+			List<Map.Entry<CSG, MeshHolder>> current = new ArrayList<>(getMeshes().entrySet());
+			List<Runnable> onUI = new ArrayList<Runnable>();
+			for (Map.Entry<CSG, MeshHolder> entry : current) {
+				MeshHolder holder = entry.getValue();
+
+				if (holder.edges == null)
+					continue;
+
+				List<FeatureEdgeExtractor.Edge> visibleEdges = entry.getValue().visibleEdges;
+
+				if (visibleEdges == null)
+					continue;
+
+				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+				onUI.add(() -> {
+					holder.edges.getChildren().setAll(rebuilt.getChildren());
+					applyEdgeColorNow(holder, entry.getKey());
+				});
+			}
+
+			for (Runnable r : onUI) {
+				Platform.runLater(() -> {
+					try {
+						r.run();
+					} catch (Throwable t) {
+						Log.error(t);
+					}
+				});
+			}
+			onUI.clear();
+
+		});
+	}
+
 	private void displayCSG(CSG c, MeshHolder holder) {
 
 		MeshView meshView = holder.getDisplay();
 		MeshView halo = holder.getHalo();
+		Bounds b = holder.bouds;
+
 		javafx.scene.Group edges = new javafx.scene.Group();
 		edges.setMouseTransparent(true);
 		edges.setDepthTest(javafx.scene.DepthTest.ENABLE);
 		holder.edges = edges;
-		// Seed the highlight gate so the first edge build after display uses
-		// the highlighted width for already-selected or locked shapes
-		holder.edgeHighlighted = isEdgeHighlighted(c);
+		double haloDistance = 1;
 
-		if (halo != null) {
-			setUpHalo(holder, c);
+		TransformNR wp = getWorkplane();
+		TransformNR center = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
+		TransformNR wpCentered = wp.times(center);
+		double cx = wpCentered.getX();
+		double cy = wpCentered.getY();
+		double cz = wpCentered.getZ();
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		if (halo != null) {
+			setStandardHaloScale(holder);
+
+			holder.haloScale.setPivotX(cx);
+			holder.haloScale.setPivotY(cy);
+			holder.haloScale.setPivotZ(cz);
+
+			halo.getTransforms().setAll(holder.haloScale, manip);
+			halo.setMouseTransparent(true);
+			PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
+
+			Color value = new Color(0, 0.95, 0.95, 0.45);
+			if (c.isLock())
+				value = new Color(0, 0, 0.95, 0.45);
+			haloMat.setDiffuseColor(value);
+			haloMat.setSpecularColor(value);
+			halo.setCullFace(CullFace.BACK);
+			halo.setDrawMode(DrawMode.FILL);
+			halo.setDepthTest(DepthTest.ENABLE);
+			halo.setBlendMode(BlendMode.SRC_OVER);
+			halo.setVisible(isSelected(c));
+		}
+		// Seed the highlight gate so the first edge build uses the highlighted
+		// width for already-selected or locked shapes
+		holder.edgeHighlighted = isEdgeHighlighted(c);
 
 		if (c.isHole()) {
 			PhongMaterial pm = (PhongMaterial) meshView.getMaterial();
@@ -1333,21 +1232,34 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		setUpControls(meshView, c);
 	}
 
-	// Styles the halo shell and offsets it from the surface with the scale
-	// transform so it can not z-fight with the display mesh
+	private void setStandardHaloScale(MeshHolder holder) {
+		holder.haloScale.setX(scaleX);
+		holder.haloScale.setY(scaleY);
+		holder.haloScale.setZ(scaleZ);
+	}
+
+	// Styles and attaches a lazily generated halo (settings re-enable path);
+	// mirrors the inline block in displayCSG
 	private void setUpHalo(MeshHolder holder, CSG c) {
 		MeshView halo = holder.getHalo();
 		Bounds b = holder.bouds;
 		TransformNR wp = getWorkplane();
 		TransformNR center = new TransformNR(b.getCenterX(), b.getCenterY(), b.getCenterZ());
 		TransformNR wpCentered = wp.times(center);
+		setStandardHaloScale(holder);
 		holder.haloScale.setPivotX(wpCentered.getX());
 		holder.haloScale.setPivotY(wpCentered.getY());
 		holder.haloScale.setPivotZ(wpCentered.getZ());
-		holder.haloScale.setX(1.02);
-		holder.haloScale.setY(1.02);
-		holder.haloScale.setZ(1.03);
-		halo.getTransforms().setAll(holder.haloScale);
+		Affine manip = new Affine();
+		if (c.hasManipulator()) {
+			try {
+				manip = c.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		halo.getTransforms().setAll(holder.haloScale, manip);
 		halo.setMouseTransparent(true);
 		PhongMaterial haloMat = (PhongMaterial) halo.getMaterial();
 		Color value = new Color(0, 0.95, 0.95, 0.45);
@@ -1438,9 +1350,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		selected.add(name);
 		MeshHolder meshHolder = meshes.get(name);
 		if (meshHolder != null) {
-			styleEdgesForStateChange(meshHolder, name);
 			if (meshHolder.getHalo() != null)
 				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
+			styleEdgesForStateChange(meshHolder, name);
 		}
 	}
 
@@ -1464,9 +1376,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		}
 		MeshHolder meshHolder = meshes.get(target);
 		if (meshHolder != null) {
-			styleEdgesForStateChange(meshHolder, target);
 			if (meshHolder.getHalo() != null)
 				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(false));
+			styleEdgesForStateChange(meshHolder, target);
 		}
 	}
 
@@ -1478,6 +1390,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void UpdateUIControls(List<CSG> cs) {
+		hideHalos();
 		restyleAllEdges();
 		resetSelectedCSGsFromCurrentState(cs);
 
@@ -1643,6 +1556,9 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		for (CSG c : getSelected()) {
 			volume += c.getVolume();
 			sa += c.getSurfaceArea();
+			MeshHolder meshHolder = meshes.get(c);
+			if (meshHolder != null && meshHolder.getHalo() != null)
+				BowlerStudio.runLater(() -> meshHolder.getHalo().setVisible(true));
 		}
 		if (ap.isAdvancedMode()) {
 			// if (getSelected().size() == 1) {
@@ -3053,20 +2969,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void clearInternalSelection() {
-		List<CSG> wasSelected = new ArrayList<>(getSelected());
 		screenPositionOfLatestMeshClick = null;
 		getSelected().clear();
-		// The highlight (light blue selection, purple lock, thicker prisms) is
-		// baked into the edge style; shapes leaving the selection must be
-		// restyled back to the plain black edges here
-		for (CSG csg : wasSelected) {
-			MeshHolder holder = getMeshes().get(csg);
-			if (holder != null) {
-				styleEdgesForStateChange(holder, csg);
-				if (holder.getHalo() != null)
-					BowlerStudio.runLater(() -> holder.getHalo().setVisible(false));
-			}
-		}
 	}
 
 	public void onHideShowOperation() {
@@ -3512,28 +3416,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, double cameraFovDegrees) {
-		List<String> snapshot = (getControls() != null) ? selectedSnapshot() : null;
-		String meshesId = meshIdentity();
-		if (screenW == lastSubmittedScreenW && screenH == lastSubmittedScreenH && zoom == lastSubmittedZoom
-				&& az == lastSubmittedAz && el == lastSubmittedEl && x == lastSubmittedX && y == lastSubmittedY
-				&& z == lastSubmittedZ && cameraFovDegrees == lastSubmittedFov && snapshot != null
-				&& snapshot.equals(lastSubmittedSnapshot) && meshesId != null
-				&& meshesId.equals(lastSubmittedMeshesId)) {
-			// The executor task would recompute the same bounds and resubmit
-			// the same FX updates; drop the duplicate
-			return;
-		}
-		lastSubmittedScreenW = screenW;
-		lastSubmittedScreenH = screenH;
-		lastSubmittedZoom = zoom;
-		lastSubmittedAz = az;
-		lastSubmittedEl = el;
-		lastSubmittedX = x;
-		lastSubmittedY = y;
-		lastSubmittedZ = z;
-		lastSubmittedFov = cameraFovDegrees;
-		lastSubmittedSnapshot = snapshot;
-		lastSubmittedMeshesId = meshesId;
 		submit(() -> {
 			this.screenW = screenW;
 			this.screenH = screenH;
@@ -3558,7 +3440,42 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (selectedCSG.size() > 0) {
 				try {
 					sellectedBounds = getSellectedBounds();
+					double zoomScale = 1.0 / engine.getFlyingCamera().getZoomScale();
+					double numberOffset = -zoom / 1600 * zoomScale / 1.5;
+					double value = (numberOffset);
+					value = 50 * Math.max(-0.1, Math.min(0.5, value));
+					// Log.debug("Halo scale " + value + " from " + numberOffset);
+					final double lineWidth = 0.25 * (1.0 + value);
+					final boolean wpNotOrigin = CaDoodleFile.isWorkplaneNotOrigin(getWorkplane());
+					// Compute the per-mesh halo scale off the UI thread (bounds
+					// recomputation is expensive), then apply it on the FX thread:
+					// haloScale is a live scene-graph transform and mutating it from a
+					// background thread corrupts JavaFX's parent bounds bookkeeping.
+					final List<Runnable> haloUpdates = new ArrayList<>();
+					// Halos disabled: skip the rescale entirely, it would only
+					// touch detached shells and recompute bounds for nothing
+					if (halosEnabled) {
+						for (CSG key : meshes.keySet()) {
+							MeshHolder holder = meshes.get(key);
+							Bounds b = getSellectedBounds(key);
+							if (wpNotOrigin) {
+								haloUpdates.add(() -> setStandardHaloScale(holder));
+							} else {
+								final double sx = 1.0 / (b.getTotalX() / (b.getTotalX() + lineWidth));
+								final double sy = 1.0 / (b.getTotalY() / (b.getTotalY() + lineWidth));
+								final double sz = 1.0 / (b.getTotalZ() / (b.getTotalZ() + lineWidth));
+								haloUpdates.add(() -> {
+									holder.haloScale.setX(sx);
+									holder.haloScale.setY(sy);
+									holder.haloScale.setZ(sz);
+								});
+							}
+						}
+					}
 					BowlerStudio.runLater(() -> {
+						for (Runnable r : haloUpdates)
+							r.run();
+						haloUpdates.clear();
 						getControls().updateControls(screenW, screenH, zoom, az, el, x, y, z, selectedSnapshot,
 								sellectedBounds, ap.get().getBoundsCache(), cameraFovDegrees);
 					});
@@ -3803,32 +3720,6 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		});
 	}
 
-	// Serialized edge-geometry work; see edgeBuildExecutor
-	private void edgeBuild(Runnable r) {
-		edgeBuildExecutor.submit(() -> {
-			try {
-				r.run();
-			} catch (Throwable t) {
-				Log.error(t);
-			}
-		});
-	}
-
-	// Identity fingerprint of the displayed mesh keys; changes whenever an
-	// operation replaces the CSG objects even if names stay the same
-	private String meshIdentity() {
-		if (getControls() == null)
-			return null;
-		StringBuilder sb = new StringBuilder();
-		try {
-			for (CSG key : meshes.keySet())
-				sb.append(System.identityHashCode(key)).append(' ');
-			return sb.toString();
-		} catch (java.util.ConcurrentModificationException mutated) {
-			return null;
-		}
-	}
-
 	public LinkedHashSet<CSG> getSelected() {
 		return selected;
 	}
@@ -3872,6 +3763,79 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.boltHoleButton = boltHoleButton;
 		this.hullButton = hullButton;
 		this.bendButton = bendButton;
+	}
+
+	public void hideHalos() {
+		BowlerStudio.runLater(() -> {
+
+			for (MeshHolder mh : meshes.values()) {
+				if (mh.getHalo() != null)
+					mh.getHalo().setVisible(false);
+			}
+		});
+	}
+
+	public void showHalos() {
+		BowlerStudio.runLater(() -> {
+			for (CSG csg : meshes.keySet()) {
+				MeshHolder mh = meshes.get(csg);
+				if (mh.getHalo() != null)
+					mh.getHalo().setVisible(selected.contains(csg));
+			}
+		});
+	}
+
+	// Settings checkbox flip: enable shows halos for the current selection
+	// (generating shells for shapes displayed while it was off), disable
+	// detaches every halo from the scene so none are rendered until re-enabled
+	public void setHalosEnabled(boolean enable) {
+		halosEnabled = enable;
+		BowlerStudio.runLater(() -> {
+			for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet()) {
+				MeshHolder holder = entry.getValue();
+				MeshView halo = holder.getHalo();
+				if (enable) {
+					if (halo == null) {
+						// Generated lazily: this shape was displayed while
+						// halos were disabled
+						halo = entry.getKey().newMesh(true);
+						holder.setHalo(halo);
+						setUpHalo(holder, entry.getKey());
+						engine.addUserNode(halo);
+					} else
+						halo.setVisible(isSelected(entry.getKey()));
+				} else if (halo != null) {
+					engine.removeUserNode(halo);
+					holder.setHalo(null);
+				}
+			}
+		});
+	}
+
+	// Settings numeric edit: rebuild highlighted prisms at the new width
+	public void refreshEdgeWidths() {
+		BowlerStudio.runLater(() -> {
+			for (Map.Entry<CSG, MeshHolder> entry : getMeshes().entrySet()) {
+				CSG csg = entry.getKey();
+				MeshHolder holder = entry.getValue();
+				if (holder.edgeHighlighted)
+					requestEdgeWidthRebuild(csg, holder);
+			}
+		});
+	}
+
+	// Settings screen hook: re-enable edges from the checkbox and rebuild
+	public void requestFeatureEdgeRebuildPublic() {
+		requestFeatureEdgeRebuild();
+	}
+
+	// Settings screen hook: detach every edge prism from the scene
+	public void clearFeatureEdges() {
+		BowlerStudio.runLater(() -> {
+			for (MeshHolder holder : getMeshes().values())
+				if (holder.edges != null)
+					holder.edges.getChildren().clear();
+		});
 	}
 
 	public double getSnapGridValue() {
