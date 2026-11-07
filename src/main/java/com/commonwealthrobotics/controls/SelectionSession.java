@@ -151,7 +151,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		volatile boolean edgeHighlighted = false;
 
 		public MeshHolder(MeshView display, MeshView halo, Bounds bouds) {
-			if (display == null || halo == null || bouds == null)
+			if (display == null || bouds == null)
 				throw new NullPointerException();
 			this.setDisplay(display);
 			this.setHalo(halo);
