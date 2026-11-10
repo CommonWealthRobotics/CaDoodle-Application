@@ -315,7 +315,7 @@ public class ControlSprites {
 			// com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x=" + xOff +
 			// y=" + yOff);
 			manipulation.set(xOff, yOff, 0);
-			manipulation.fireSave();
+			manipulation.fireSaveSynchronous();
 			updateLinesAndCubes();
 		};
 
@@ -329,7 +329,7 @@ public class ControlSprites {
 
 			// com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
 			zMoveManipulator.set(0, 0, manipDiff);
-			zMoveManipulator.fireSave();
+			zMoveManipulator.fireSaveSynchronous();
 			updateLinesAndCubes();
 		};
 

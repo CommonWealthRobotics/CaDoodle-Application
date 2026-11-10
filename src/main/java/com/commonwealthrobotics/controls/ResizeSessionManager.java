@@ -1077,16 +1077,16 @@ public class ResizeSessionManager {
 			c.setMyColor(Color.BLACK, Color.RED);
 		}
 		topCenter.setMyColor(new Color(0.5, 0.5, 0.5, 1), Color.RED);
-		for (ResizingHandle c : controls) {
-			meshControls.addAll(c.getMeshs());
-			c.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
-			c.manipulator.addSaveListener(() -> {
-				if (beingUpdated != c)
+		for (ResizingHandle handle : controls) {
+			meshControls.addAll(handle.getMeshs());
+			handle.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
+			ResizingHandle c = handle;
+			handle.manipulator.addSaveListener(() -> {
+				if (beingUpdated == null)
+					beingUpdated = c;
+				if (beingUpdated != c) {
+					Log.error("Attempted to update " + c + " but expected " + beingUpdated);
 					return;
-				try {
-					Thread.sleep(32);
-				} catch (InterruptedException e) {
-					com.neuronrobotics.sdk.common.Log.error(e);
 				}
 				TransformNR wp = ap.get().getWorkplane().copy();
 				TransformNR rrC = rightRear.getCurrentInReferenceFrame();
@@ -1349,223 +1349,222 @@ public class ResizeSessionManager {
 			throw new NowFXThreadException();
 		}
 		Bounds b = getBounds();
-		com.neuronrobotics.sdk.common.Log.debug("\n\nResizing to " + x + " " + y + " " + z);
-		// BowlerStudio.runLater(() -> {
-
-		if (topCenter.isSelected()) {
-			topCenter.manipulator.setInReferenceFrame(0, 0, z - b.getTotalZ());
-			if (topCenter.isUniform()) {
-				TransformNR tcC = topCenter.getCurrentInReferenceFrame();
-				uniformScalingZ(tcC);
+		com.neuronrobotics.sdk.common.Log.debug("\n\nResizing to \n\t" + x + " \n\t" + y + " \n\t" + z);
+		BowlerStudio.runLater(() -> {
+			if (topCenter.isSelected()) {
+				topCenter.manipulator.setInReferenceFrame(0, 0, z - b.getTotalZ());
+				if (topCenter.isUniform()) {
+					TransformNR tcC = topCenter.getCurrentInReferenceFrame();
+					uniformScalingZ(tcC);
+				}
+				topCenter.manipulator.fireSaveSynchronous();
+				return;
 			}
-			topCenter.manipulator.fireSave();
-			return;
-		}
-		boolean deltaX = Math.abs(b.getTotalX() - x) > Plane.getEPSILON();
-		boolean deltaY = Math.abs(b.getTotalY() - y) > Plane.getEPSILON();
-		boolean deltaZ = Math.abs(b.getTotalZ() - z) > Plane.getEPSILON();
-		boolean isAnyCornerUniform = leftFront.isUniform() || leftRear.isUniform() || rightFront.isUniform()
-				|| rightRear.isUniform();
-		boolean isUniformX = deltaX && (isAnyCornerUniform || frontMid.isUniform() || rearMid.isUniform());
-		boolean isUniformY = deltaY && (isAnyCornerUniform || leftMid.isUniform() || rightMid.isUniform());
+			boolean deltaX = Math.abs(b.getTotalX() - x) > Plane.getEPSILON();
+			boolean deltaY = Math.abs(b.getTotalY() - y) > Plane.getEPSILON();
+			boolean deltaZ = Math.abs(b.getTotalZ() - z) > Plane.getEPSILON();
+			boolean isAnyCornerUniform = leftFront.isUniform() || leftRear.isUniform() || rightFront.isUniform()
+					|| rightRear.isUniform();
+			boolean isUniformX = deltaX && (isAnyCornerUniform || frontMid.isUniform() || rearMid.isUniform());
+			boolean isUniformY = deltaY && (isAnyCornerUniform || leftMid.isUniform() || rightMid.isUniform());
 
-		boolean isFrontSelected = frontMid.isSelected() || leftFront.isSelected() || rightFront.isSelected();
-		boolean isRearSelected = rearMid.isSelected() || leftRear.isSelected() || rightRear.isSelected();
-		boolean isRightSelected = rightMid.isSelected() || rightFront.isSelected() || rightRear.isSelected();
-		boolean isLeftSelected = leftMid.isSelected() || leftFront.isSelected() || leftRear.isSelected();
-		if (isLeftSelected && isUniformY) {
-			double s = y / b.getTotalY();
-			double gs = s - 1.0;
-			if (Double.isFinite(gs)) {
-				double original_tx = b.getTotalX();
-				double original_ty = b.getTotalY();
-				scalingFlag = true;
-				// Anchor: right midpoint (midX, minY).
-				// rightFront (maxX, minY): rel=( tx/2,   0) → delta=( tx/2*gs,       0)
-				// rightRear  (minX, minY): rel=(-tx/2,   0) → delta=(-tx/2*gs,       0)
-				// leftFront  (maxX, maxY): rel=( tx/2,  ty) → delta=( tx/2*gs,  ty*gs)
-				// leftRear   (minX, maxY): rel=(-tx/2,  ty) → delta=(-tx/2*gs,  ty*gs)
-				rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
-				rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, original_ty * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, original_ty * gs, 0);
-				double gsFinal = gs + 1.0;
-				topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
-				if (leftFront.isSelected())
-					leftFront.manipulator.fireSaveSynchronous();
-				else if (leftRear.isSelected())
-					leftRear.manipulator.fireSaveSynchronous();
-				else if (leftMid.isSelected())
-					leftMid.manipulator.fireSaveSynchronous();
+			boolean isFrontSelected = frontMid.isSelected() || leftFront.isSelected() || rightFront.isSelected();
+			boolean isRearSelected = rearMid.isSelected() || leftRear.isSelected() || rightRear.isSelected();
+			boolean isRightSelected = rightMid.isSelected() || rightFront.isSelected() || rightRear.isSelected();
+			boolean isLeftSelected = leftMid.isSelected() || leftFront.isSelected() || leftRear.isSelected();
+			if (isLeftSelected && isUniformY) {
+				double s = y / b.getTotalY();
+				double gs = s - 1.0;
+				if (Double.isFinite(gs)) {
+					double original_tx = b.getTotalX();
+					double original_ty = b.getTotalY();
+					scalingFlag = true;
+					// Anchor: right midpoint (midX, minY).
+					// rightFront (maxX, minY): rel=( tx/2,   0) → delta=( tx/2*gs,       0)
+					// rightRear  (minX, minY): rel=(-tx/2,   0) → delta=(-tx/2*gs,       0)
+					// leftFront  (maxX, maxY): rel=( tx/2,  ty) → delta=( tx/2*gs,  ty*gs)
+					// leftRear   (minX, maxY): rel=(-tx/2,  ty) → delta=(-tx/2*gs,  ty*gs)
+					rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
+					rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
+					leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, original_ty * gs, 0);
+					leftRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, original_ty * gs, 0);
+					double gsFinal = gs + 1.0;
+					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
+					if (leftFront.isSelected())
+						leftFront.manipulator.fireSaveSynchronous();
+					else if (leftRear.isSelected())
+						leftRear.manipulator.fireSaveSynchronous();
+					else if (leftMid.isSelected())
+						leftMid.manipulator.fireSaveSynchronous();
+				}
+				return;
 			}
-			return;
-		}
-		if (isRightSelected && isUniformY) {
-			double s = y / b.getTotalY();
-			double gs = s - 1.0;
-			if (Double.isFinite(gs)) {
-				double original_tx = b.getTotalX();
-				double original_ty = b.getTotalY();
-				scalingFlag = true;
-				// Anchor: left midpoint (midX, maxY).
-				// rightFront (maxX, minY): rel=( tx/2, -ty) → delta=( tx/2*gs, -ty*gs)
-				// rightRear  (minX, minY): rel=(-tx/2, -ty) → delta=(-tx/2*gs, -ty*gs)
-				// leftFront  (maxX, maxY): rel=( tx/2,   0) → delta=( tx/2*gs,       0)
-				// leftRear   (minX, maxY): rel=(-tx/2,   0) → delta=(-tx/2*gs,       0)
-				rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, -original_ty * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, -original_ty * gs, 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
-				leftRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
-				double gsFinal = gs + 1.0;
-				topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
-				if (rightFront.isSelected())
-					rightFront.manipulator.fireSaveSynchronous();
-				else if (rightRear.isSelected())
-					rightRear.manipulator.fireSaveSynchronous();
-				else if (rightMid.isSelected())
-					rightMid.manipulator.fireSaveSynchronous();
+			if (isRightSelected && isUniformY) {
+				double s = y / b.getTotalY();
+				double gs = s - 1.0;
+				if (Double.isFinite(gs)) {
+					double original_tx = b.getTotalX();
+					double original_ty = b.getTotalY();
+					scalingFlag = true;
+					// Anchor: left midpoint (midX, maxY).
+					// rightFront (maxX, minY): rel=( tx/2, -ty) → delta=( tx/2*gs, -ty*gs)
+					// rightRear  (minX, minY): rel=(-tx/2, -ty) → delta=(-tx/2*gs, -ty*gs)
+					// leftFront  (maxX, maxY): rel=( tx/2,   0) → delta=( tx/2*gs,       0)
+					// leftRear   (minX, maxY): rel=(-tx/2,   0) → delta=(-tx/2*gs,       0)
+					rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, -original_ty * gs, 0);
+					rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, -original_ty * gs, 0);
+					leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
+					leftRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
+					double gsFinal = gs + 1.0;
+					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
+					if (rightFront.isSelected())
+						rightFront.manipulator.fireSaveSynchronous();
+					else if (rightRear.isSelected())
+						rightRear.manipulator.fireSaveSynchronous();
+					else if (rightMid.isSelected())
+						rightMid.manipulator.fireSaveSynchronous();
+				}
+				return;
 			}
-			return;
-		}
-		if (isRearSelected && isUniformX) {
-			double s = x / b.getTotalX();
-			double gs = s - 1.0;
-			if (Double.isFinite(gs)) {
-				double original_tx = b.getTotalX();
-				double original_ty = b.getTotalY();
-				scalingFlag = true;
-				rightFront.manipulator.setInReferenceFrame(0, -original_ty / 2.0 * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(-original_tx * gs, -original_ty / 2.0 * gs, 0);
-				leftFront.manipulator.setInReferenceFrame(0, original_ty / 2.0 * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(-original_tx * gs, original_ty / 2.0 * gs, 0);
-				double gsFinal = gs + 1.0;
-				topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
-				if (leftRear.isSelected())
-					leftRear.manipulator.fireSaveSynchronous();
-				else if (rightRear.isSelected())
-					rightRear.manipulator.fireSaveSynchronous();
-				else if (rearMid.isSelected())
-					rearMid.manipulator.fireSaveSynchronous();
+			if (isRearSelected && isUniformX) {
+				double s = x / b.getTotalX();
+				double gs = s - 1.0;
+				if (Double.isFinite(gs)) {
+					double original_tx = b.getTotalX();
+					double original_ty = b.getTotalY();
+					scalingFlag = true;
+					rightFront.manipulator.setInReferenceFrame(0, -original_ty / 2.0 * gs, 0);
+					rightRear.manipulator.setInReferenceFrame(-original_tx * gs, -original_ty / 2.0 * gs, 0);
+					leftFront.manipulator.setInReferenceFrame(0, original_ty / 2.0 * gs, 0);
+					leftRear.manipulator.setInReferenceFrame(-original_tx * gs, original_ty / 2.0 * gs, 0);
+					double gsFinal = gs + 1.0;
+					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
+					if (leftRear.isSelected())
+						leftRear.manipulator.fireSaveSynchronous();
+					else if (rightRear.isSelected())
+						rightRear.manipulator.fireSaveSynchronous();
+					else if (rearMid.isSelected())
+						rearMid.manipulator.fireSaveSynchronous();
 
+				}
+				return;
 			}
-			return;
-		}
-		if (isFrontSelected && isUniformX) {
-			double s = x / b.getTotalX();
-			double gs = s - 1.0;
-			if (Double.isFinite(gs)) {
-				double original_tx = b.getTotalX();
-				double original_ty = b.getTotalY();
-				scalingFlag = true;
-				rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty / 2.0 * gs, 0);
-				rightRear.manipulator.setInReferenceFrame(0, -original_ty / 2.0 * gs, 0);
-				leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty / 2.0 * gs, 0);
-				leftRear.manipulator.setInReferenceFrame(0, original_ty / 2.0 * gs, 0);
-				double gsFinal = gs + 1.0;
-				topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
-				if (leftFront.isSelected())
-					leftFront.manipulator.fireSaveSynchronous();
-				else if (rightFront.isSelected())
-					rightFront.manipulator.fireSaveSynchronous();
-				else if (frontMid.isSelected())
-					frontMid.manipulator.fireSaveSynchronous();
+			if (isFrontSelected && isUniformX) {
+				double s = x / b.getTotalX();
+				double gs = s - 1.0;
+				if (Double.isFinite(gs)) {
+					double original_tx = b.getTotalX();
+					double original_ty = b.getTotalY();
+					scalingFlag = true;
+					rightFront.manipulator.setInReferenceFrame(original_tx * gs, -original_ty / 2.0 * gs, 0);
+					rightRear.manipulator.setInReferenceFrame(0, -original_ty / 2.0 * gs, 0);
+					leftFront.manipulator.setInReferenceFrame(original_tx * gs, original_ty / 2.0 * gs, 0);
+					leftRear.manipulator.setInReferenceFrame(0, original_ty / 2.0 * gs, 0);
+					double gsFinal = gs + 1.0;
+					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * gsFinal);
+					if (leftFront.isSelected())
+						leftFront.manipulator.fireSaveSynchronous();
+					else if (rightFront.isSelected())
+						rightFront.manipulator.fireSaveSynchronous();
+					else if (frontMid.isSelected())
+						frontMid.manipulator.fireSaveSynchronous();
 
+				}
+				return;
 			}
-			return;
-		}
-		// if (isFrontSelected && isUniformX) {
-		//			double s = x / b.getTotalX();
-		//			double gs = s - 1.0;
-		//			if (Double.isFinite(gs)) {
-		//				BowlerStudio.runLater(() -> {
-		//					leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), y - b.getTotalY() * gs, 0);
-		//					rightFront.manipulator.setInReferenceFrame(x - b.getTotalX(), -(y - b.getTotalY() * gs), 0);
-		//					frontMid.setInReferenceFrame(x - b.getTotalX(), 0, 0);
-		//					// rightRear.manipulator.setInReferenceFrame(b.getTotalX() * gs, 0, 0);
-		//					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * s);
-		//					leftFront.manipulator.fireSave();
-		//				});
-		//			}
-		//			return;
-		//		}
+			// if (isFrontSelected && isUniformX) {
+			//			double s = x / b.getTotalX();
+			//			double gs = s - 1.0;
+			//			if (Double.isFinite(gs)) {
+			//				BowlerStudio.runLater(() -> {
+			//					leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), y - b.getTotalY() * gs, 0);
+			//					rightFront.manipulator.setInReferenceFrame(x - b.getTotalX(), -(y - b.getTotalY() * gs), 0);
+			//					frontMid.setInReferenceFrame(x - b.getTotalX(), 0, 0);
+			//					// rightRear.manipulator.setInReferenceFrame(b.getTotalX() * gs, 0, 0);
+			//					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * s);
+			//					leftFront.manipulator.fireSave();
+			//				});
+			//			}
+			//			return;
+			//		}
 
-		// original method continues below...
-		if (leftFront.isSelected()) {
-			beingUpdated = leftFront;
-			com.neuronrobotics.sdk.common.Log.error("leftFront resize");
-			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
-			leftFront.manipulator.fireSave();
-			return;
-		}
+			// original method continues below...
+			if (leftFront.isSelected()) {
+				beingUpdated = leftFront;
+				com.neuronrobotics.sdk.common.Log.error("leftFront resize");
+				leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
+				leftFront.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		if (leftRear.isSelected()) {
-			beingUpdated = leftRear;
-			double lr_x = -(x - b.getTotalX());
-			double lr_y = (y - b.getTotalY());
-			scalingFlag = false;
-			leftRear.manipulator.setInReferenceFrame(lr_x, lr_y, 0);
-			leftFront.manipulator.setInReferenceFrame(leftFront.manipulator.getCurrentPose().getX(), lr_y, 0);
-			rightRear.manipulator.setInReferenceFrame(lr_x, rightRear.manipulator.getCurrentPose().getY(), 0);
-			leftRear.manipulator.fireSave();
-			return;
-		}
+			if (leftRear.isSelected()) {
+				beingUpdated = leftRear;
+				double lr_x = -(x - b.getTotalX());
+				double lr_y = (y - b.getTotalY());
+				scalingFlag = false;
+				leftRear.manipulator.setInReferenceFrame(lr_x, lr_y, 0);
+				leftFront.manipulator.setInReferenceFrame(leftFront.manipulator.getCurrentPose().getX(), lr_y, 0);
+				rightRear.manipulator.setInReferenceFrame(lr_x, rightRear.manipulator.getCurrentPose().getY(), 0);
+				leftRear.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		if (rightFront.isSelected()) {
-			beingUpdated = rightFront;
-			double rf_x = x - b.getTotalX();
-			double rf_y = -(y - b.getTotalY());
-			scalingFlag = false;
-			rightFront.manipulator.setInReferenceFrame(rf_x, rf_y, 0);
-			rightRear.manipulator.setInReferenceFrame(rightRear.manipulator.getCurrentPose().getX(), rf_y, 0);
-			leftFront.manipulator.setInReferenceFrame(rf_x, leftFront.manipulator.getCurrentPose().getY(), 0);
-			rightFront.manipulator.fireSave();
-			return;
-		}
+			if (rightFront.isSelected()) {
+				beingUpdated = rightFront;
+				double rf_x = x - b.getTotalX();
+				double rf_y = -(y - b.getTotalY());
+				scalingFlag = false;
+				rightFront.manipulator.setInReferenceFrame(rf_x, rf_y, 0);
+				rightRear.manipulator.setInReferenceFrame(rightRear.manipulator.getCurrentPose().getX(), rf_y, 0);
+				leftFront.manipulator.setInReferenceFrame(rf_x, leftFront.manipulator.getCurrentPose().getY(), 0);
+				rightFront.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		if (rightRear.isSelected()) {
-			beingUpdated = rightRear;
-			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
-			rightRear.manipulator.fireSave();
-			return;
-		}
+			if (rightRear.isSelected()) {
+				beingUpdated = rightRear;
+				rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
+				rightRear.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		// Edge-midpoint programmatic resize
-		if (frontMid.isSelected()) {
-			beingUpdated = frontMid;
-			com.neuronrobotics.sdk.common.Log.error("frontMid resize (X only)");
-			frontMid.manipulator.setInReferenceFrame(x - b.getTotalX(), 0, 0);
-			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
-			frontMid.manipulator.fireSave();
-			return;
-		}
+			// Edge-midpoint programmatic resize
+			if (frontMid.isSelected()) {
+				beingUpdated = frontMid;
+				com.neuronrobotics.sdk.common.Log.error("frontMid resize (X only)");
+				frontMid.manipulator.setInReferenceFrame(x - b.getTotalX(), 0, 0);
+				leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
+				frontMid.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		if (rearMid.isSelected()) {
-			beingUpdated = rearMid;
-			com.neuronrobotics.sdk.common.Log.error("rearMid resize (X only)");
-			rearMid.manipulator.setInReferenceFrame(-(x - b.getTotalX()), 0, 0);
-			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
-			rearMid.manipulator.fireSave();
-			return;
-		}
+			if (rearMid.isSelected()) {
+				beingUpdated = rearMid;
+				com.neuronrobotics.sdk.common.Log.error("rearMid resize (X only)");
+				rearMid.manipulator.setInReferenceFrame(-(x - b.getTotalX()), 0, 0);
+				rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
+				rearMid.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		if (leftMid.isSelected()) {
-			beingUpdated = leftMid;
-			com.neuronrobotics.sdk.common.Log.error("leftMid resize (Y only)");
-			leftMid.manipulator.setInReferenceFrame(0, y - b.getTotalY(), 0);
-			leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
-			leftMid.manipulator.fireSave();
-			return;
-		}
+			if (leftMid.isSelected()) {
+				beingUpdated = leftMid;
+				com.neuronrobotics.sdk.common.Log.error("leftMid resize (Y only)");
+				leftMid.manipulator.setInReferenceFrame(0, y - b.getTotalY(), 0);
+				leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), (y - b.getTotalY()), 0);
+				leftMid.manipulator.fireSaveSynchronous();
+				return;
+			}
 
-		if (rightMid.isSelected()) {
-			beingUpdated = rightMid;
-			com.neuronrobotics.sdk.common.Log.error("rightMid resize (Y only)");
-			rightMid.manipulator.setInReferenceFrame(0, -(y - b.getTotalY()), 0);
-			rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
-			rightMid.manipulator.fireSave();
-			return;
-		}
-		// });
+			if (rightMid.isSelected()) {
+				beingUpdated = rightMid;
+				com.neuronrobotics.sdk.common.Log.error("rightMid resize (Y only)");
+				rightMid.manipulator.setInReferenceFrame(0, -(y - b.getTotalY()), 0);
+				rightRear.manipulator.setInReferenceFrame(-(x - b.getTotalX()), -(y - b.getTotalY()), 0);
+				rightMid.manipulator.fireSaveSynchronous();
+				return;
+			}
+		});
 	}
 
 	public void hide() {
