@@ -16,6 +16,13 @@ jobs:
       uses: actions/checkout@v1
       with:
          submodules: recursive 
+    - name: Install and verify pinned JDK from jvm.json
+      run: |
+        JVM_SCRIPTS=BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm
+        bash $JVM_SCRIPTS/installJdk.sh
+        JAVA_HOME=$HOME/bin/CaDoodle-ApplicationInstall/$(bash $JVM_SCRIPTS/getJdkArchiveName.sh)
+        echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+        echo "PATH=$JAVA_HOME/bin:$PATH" >> $GITHUB_ENV
     - name: Install libraries
       run: |
           sudo apt update
@@ -28,11 +35,6 @@ jobs:
         export DISPLAY=:0
     - name: Build
       run: bash build.sh
-    - name: Set Java
-      uses: actions/setup-java@v1
-      with:
-        java-version: 25
-        jdkFile: zulu25.36.15-ca-fx-jdk25.0.4-linux_x64.tar.gz
 
     - name: Run Unit Tests
       run: xvfb-run -s '-screen 0 1024x768x24' ./gradlew test

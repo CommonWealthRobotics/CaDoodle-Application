@@ -85,6 +85,8 @@ public class ExportManager {
 	private CheckBox svg; // Value injected by FXMLLoader
 	@FXML // fx:id="svg"
 	private CheckBox type3mf; // Value injected by FXMLLoader
+	@FXML // fx:id="step"
+	private CheckBox step; // Value injected by FXMLLoader
 	@FXML // fx:id="svg"
 	private CheckBox source;
 	@FXML // fx:id="svg"
@@ -168,6 +170,7 @@ public class ExportManager {
 		final boolean freecadSelected = freecad.isSelected();
 		final boolean objSelected = obj.isSelected();
 		final boolean type3mfSelected = type3mf.isSelected();
+		final boolean stepSelected = step.isSelected();
 		Thread t = new Thread(() -> {
 			File defaultLocation = new File(System.getProperty("user.home") + "/Desktop/");
 			if (exportDir == null) {
@@ -202,6 +205,9 @@ public class ExportManager {
 				}
 				if (type3mfSelected) {
 					c.addExportFormat("3mf");
+				}
+				if (stepSelected) {
+					c.addExportFormat("step");
 				}
 				String nameToSet = toValidFilename(caDoodleFile.getMyProjectName() + "_" + c.getUserDefinedName());
 				index = 0;

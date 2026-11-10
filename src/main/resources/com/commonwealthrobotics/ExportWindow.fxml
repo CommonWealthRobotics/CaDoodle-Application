@@ -80,6 +80,11 @@
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
             </CheckBox>
+            <CheckBox fx:id="step" contentDisplay="TOP" mnemonicParsing="false" text="STEP" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </CheckBox>
             <CheckBox fx:id="notesButton" contentDisplay="TOP" mnemonicParsing="false" selected="true" text="B.o.M CSV" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />

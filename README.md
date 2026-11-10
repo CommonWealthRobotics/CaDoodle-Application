@@ -116,39 +116,41 @@ bash buildMac.sh
 
 1. Create the CadDoodle project directory (use a path without spaces), e.a. ```D:\CaDoodle```
 
-2. Inside the project directory create a directory for the Java JDK, e.a. ```D:\CaDoodle\java```
+2. Install MSYS2 from https://www.msys2.org to get a Linux bash shell.
 
-3. Download the Windows Java JDK https://cdn.azul.com/zulu/bin/zulu25.36.15-ca-fx-jdk25.0.4-win_x64.zip
+3. Start the MSYS2 UCRT64 shell, all remaining commands will be executed in this shell.
 
-4. Extract the Zip-archive to the Java JDK directory, e.a. ```D:\CaDoodle\java\zulu25.36.15-ca-fx-jdk25.0.4-win_x64\``` 
+4. Navigate to the CaDoodle project directory, e.a. ```cd /d/CaDoodle/```
 
-5. Install MSYS2 from https://www.msys2.org to get a Linux bash shell.
-
-6. Start the MSYS2 UCRT64 shell, all remaining commands will be executed in this shell.
-
-7. Set the Java environment to point to the Java JDK, e.a. ```export JAVA_HOME=/d/CadDoodle/java/zulu25.36.15-ca-fx-jdk25.0.4-win_x64\```
-
-Verify the path with ```ls $JAVA_HOME```
-
-Optionally: Make JAVA_HOME persistent for the MSYS2 shell
-```
-echo 'export JAVA_HOME='$JAVA_HOME >> ~/.bash_profile
-```
-
-8. Navigate to the CaDoodle project directory, e.a. ```cd /d/CaDoodle/```
-
-9. Install the required updates, packages and build the application (UCRT64 bash shell):
+5. Install the required updates, packages and clone the application (UCRT64 bash shell):
 ```
 pacman -Syu --noconfirm
 
-pacman -S git --noconfirm
+pacman -S git unzip --noconfirm
 
 git clone https://github.com/CommonWealthRobotics/CaDoodle-Application.git
 
 cd CaDoodle-Application
 
 git submodule update --init --recursive
+```
 
+6. Download, extract, and verify the Java JDK. The JDK version comes from the single source of truth, jvm.json, and lands in ```~/bin/CaDoodle-ApplicationInstall/<archive-name>/```:
+```
+JVM_SCRIPTS=BowlerStudio/libraries/bowler-script-kernel/JCSG/jvm
+bash $JVM_SCRIPTS/installJdk.sh
+export JAVA_HOME=$HOME/bin/CaDoodle-ApplicationInstall/$(bash $JVM_SCRIPTS/getJdkArchiveName.sh)
+```
+
+Verify the install with ```$JAVA_HOME/bin/java -version```; the installer itself runs this check and exits non-zero on failure.
+
+Optionally: Make JAVA_HOME persistent for the MSYS2 shell
+```
+echo 'export JAVA_HOME='$JAVA_HOME >> ~/.bash_profile
+```
+
+7. Build the application (UCRT64 bash shell):
+```
 ./gradlew clean shadowJar
 ```
 

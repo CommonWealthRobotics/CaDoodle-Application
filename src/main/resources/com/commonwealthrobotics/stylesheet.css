@@ -53,6 +53,8 @@
 
 #obj .image-view                 { -fx-image: url("light/ObjImg.png"); }
 #type3mf .image-view             { -fx-image: url("light/3mf.png"); }
+#step .image-view                { -fx-image: url("light/step.png"); }
+.step-image-view                 { -fx-image: url("light/step.png"); }
 #exportButton .image-view        { -fx-image: url("light/export-button.png"); }
 #newDoodle .image-view           { -fx-image: url("light/newFile.png"); }
 #copyDoodle .image-view          { -fx-image: url("light/copy.png"); }

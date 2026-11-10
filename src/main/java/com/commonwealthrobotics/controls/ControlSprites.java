@@ -284,6 +284,8 @@ public class ControlSprites {
 				xdimen.hide();
 				ydimen.hide();
 				zdimen.hide();
+				Log.debug("\n\nDimention Change Rejected x=" + xdimen.canceled + " y=" + ydimen.canceled + " z="
+						+ zdimen.canceled);
 				return;
 			}
 
@@ -313,7 +315,7 @@ public class ControlSprites {
 			// com.neuronrobotics.sdk.common.Log.error("Typed XY offset update x=" + xOff +
 			// y=" + yOff);
 			manipulation.set(xOff, yOff, 0);
-			manipulation.fireSave();
+			manipulation.fireSaveSynchronous();
 			updateLinesAndCubes();
 		};
 
@@ -327,7 +329,7 @@ public class ControlSprites {
 
 			// com.neuronrobotics.sdk.common.Log.error("Typed Z offset ud "+manipDiff);
 			zMoveManipulator.set(0, 0, manipDiff);
-			zMoveManipulator.fireSave();
+			zMoveManipulator.fireSaveSynchronous();
 			updateLinesAndCubes();
 		};
 
