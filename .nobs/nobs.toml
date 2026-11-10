@@ -40,4 +40,8 @@ dest = "/usr/bin/freecadcmd"
 read_only = false
 enabled = true
 
-
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/git/CaDoodle"
+dest = "/home/hephaestus/git/CaDoodle"
+read_only = false
+enabled = true
