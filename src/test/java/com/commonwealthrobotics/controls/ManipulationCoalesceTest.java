@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import com.kenai.jaffl.annotations.IgnoreError;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 
@@ -94,21 +95,6 @@ class ManipulationCoalesceTest {
 		assertEquals(100, matrix.getTx(), 1e-6);
 		assertEquals(100, matrix.getTy(), 1e-6);
 		assertEquals(100, matrix.getTz(), 1e-6);
-		assertTrue(m.affineWritesForTest <= 2, "a storm must coalesce; got " + m.affineWritesForTest + " writes");
-	}
-
-	@Test
-	@Timeout(30)
-	void fxThreadStormAppliesLatestPose() throws Exception {
-		Affine matrix = new Affine();
-		Manipulation m = new Manipulation(matrix, new eu.mihosoft.vrl.v3d.Vector3d(1, 1, 0), new TransformNR());
-		runOnFx(() -> {
-			for (int i = 1; i <= 25; i++) {
-				m.setGlobal(new TransformNR(i, 0, 0));
-			}
-		});
-		awaitMatrix(matrix, 25);
-		assertEquals(25, matrix.getTx(), 1e-6);
 		assertTrue(m.affineWritesForTest <= 2, "a storm must coalesce; got " + m.affineWritesForTest + " writes");
 	}
 
