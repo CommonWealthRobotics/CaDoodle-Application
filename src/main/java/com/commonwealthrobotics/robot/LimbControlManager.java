@@ -70,6 +70,7 @@ public class LimbControlManager {
 			BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Default));
 			// add the operation and reset\
 			ModifyLimb myMod = mod;
+			mod=null;
 			update(builder);
 			myMod.setUndo(false);
 			try {
@@ -103,10 +104,10 @@ public class LimbControlManager {
 			TransformNR tf = new TransformNR(base2.getX(), base2.getY(), base2.getZ())
 					.times(tipManipulator.getCurrentPoseInReferenceFrame());
 			tf.setRotation(nr);
-			mod.setTip(tf);
 			// com.neuronrobotics.sdk.common.Log.debug("Moving "+tf.toSimpleString());
 			try {
 				limb.setDesiredTaskSpaceTransform(tf, 0);
+				mod.setTip(tf);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				com.neuronrobotics.sdk.common.Log.error(e);
