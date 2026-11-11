@@ -285,7 +285,7 @@ public class RobotLab {
 						if (mobileBaseName.isPresent()) {
 							if (mobileBaseName.get().contentEquals(s)) {
 								builder = robots.get(s);
-								break;
+								return;
 							}
 						}
 					}
