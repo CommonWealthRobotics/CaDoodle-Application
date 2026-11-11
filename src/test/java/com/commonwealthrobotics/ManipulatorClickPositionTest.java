@@ -87,7 +87,7 @@ class ManipulatorClickPositionTest {
 	void rotatedManipulatorAppliedExactlyOnce() throws Exception {
 		CSG csg = new Cube(10).toCSG();
 		setManip(csg, TransformFactory
-				.nrToAffine(new TransformNR(100, 0, 0, new RotationNR(0, 0, 90))));
+				.nrToAffine(new TransformNR(100, 0, 0, RotationNR.getRotationZ(90))));
 
 		// rotation by 90 deg about Z: (x, y) -> (-y, x) in the rotated frame
 		TransformNR local = new TransformNR(2, 5, 7);
