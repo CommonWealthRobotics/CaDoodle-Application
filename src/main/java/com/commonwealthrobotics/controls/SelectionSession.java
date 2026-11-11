@@ -270,6 +270,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private double sessionDeltaZ = 0;
 	private Button hullButton;
 	private Button bendButton;
+	private Button convertToBlenderButton;
+	private Button convertToFreeCADButton;
 	private TitledPane shapeConfiguration2;;
 
 	@SuppressWarnings("static-access")
@@ -2557,6 +2559,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				bendButton.setDisable(true);
 			if (hullButton != null)
 				hullButton.setDisable(true);
+			if (convertToBlenderButton != null)
+				convertToBlenderButton.setDisable(true);
+			if (convertToFreeCADButton != null)
+				convertToFreeCADButton.setDisable(true);
 		});
 	}
 
@@ -2589,6 +2595,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				bendButton.setDisable(false);
 				hullButton.setDisable(false);
 			}
+
+			// converting to a file the object already lives in is a no-op
+			if (convertToBlenderButton != null)
+				convertToBlenderButton.setDisable(allSelectedAreAlreadyInFile("blend"));
+			if (convertToFreeCADButton != null)
+				convertToFreeCADButton.setDisable(allSelectedAreAlreadyInFile("FCStd"));
 
 			if (isAGroupSelected())
 				ungroupButton.setDisable(false);
@@ -2653,6 +2665,32 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		LinearDistribution dist = new LinearDistribution().setWorkplane(getWorkplane()).setNames(selectedSnapshot());
 
 		submit(() -> performPaste(dist));
+	}
+
+	public void runConvertToBlender() {
+		ConvertToBlender op = new ConvertToBlender().setNames(selectedSnapshot());
+		submit(() -> performConvert(op));
+	}
+
+	public void runConvertToFreeCAD() {
+		ConvertToFreeCAD op = new ConvertToFreeCAD().setNames(selectedSnapshot());
+		submit(() -> performConvert(op));
+	}
+
+	private void performConvert(ConvertToFileOperation op) {
+		if (ap.get().isOperationRunning()) {
+			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
+			return;
+		}
+
+		try {
+			ap.addOp(op).join();
+			selectAll(op.getNamesAddedInThisOperation());
+			BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
+		} catch (CadoodleConcurrencyException | InterruptedException e) {
+			// Auto-generated catch block
+			com.neuronrobotics.sdk.common.Log.error(e);
+		}
 	}
 
 	private void performPaste(AbstractAddFrom op) {
@@ -3767,6 +3805,41 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.boltHoleButton = boltHoleButton;
 		this.hullButton = hullButton;
 		this.bendButton = bendButton;
+	}
+
+	public void setConvertButtons(Button convertToBlenderButton, Button convertToFreeCADButton) {
+		this.convertToBlenderButton = convertToBlenderButton;
+		this.convertToFreeCADButton = convertToFreeCADButton;
+	}
+
+	/**
+	 * True when every selected object already comes from a file with the given
+	 * extension, so converting it again would be a no-op.
+	 */
+	private boolean allSelectedAreAlreadyInFile(String extension) {
+		List<CSG> selectedCSGs = getSelectedCSG(selectedSnapshot());
+		if (selectedCSGs.isEmpty())
+			return false;
+		CSGDatabaseInstance db = ap.get().getCsgDBinstance();
+		for (CSG csg : selectedCSGs) {
+			if (!csgIsInFileOfExtension(csg, db, extension))
+				return false;
+		}
+		return true;
+	}
+
+	private static boolean csgIsInFileOfExtension(CSG csg, CSGDatabaseInstance db, String extension) {
+		for (String key : csg.getParameters(db)) {
+			if (!key.endsWith("_CaDoodle_File"))
+				continue;
+			Parameter parameter = db.get(key);
+			if (parameter == null)
+				continue;
+			String file = parameter.getStrValue();
+			if (file != null && file.toLowerCase().endsWith("." + extension.toLowerCase()))
+				return true;
+		}
+		return false;
 	}
 
 	public void hideHalos() {

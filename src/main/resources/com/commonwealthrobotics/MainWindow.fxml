@@ -832,6 +832,22 @@
                                     <Tooltip text="%mainwindow.pattern_copy_in_circle" />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="convertToBlenderButton" mnemonicParsing="false" onAction="#onConvertToBlender" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="blender-image-view" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.convert_to_blender" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="convertToFreeCADButton" mnemonicParsing="false" onAction="#onConvertToFreeCAD" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="freecad-image-view" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.convert_to_freecad" />
+                                 </tooltip>
+                              </Button>
                               <Separator orientation="VERTICAL" />
                               <Button fx:id="hullButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
                                  <graphic>

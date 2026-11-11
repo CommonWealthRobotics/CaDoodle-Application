@@ -210,6 +210,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	private Button copyButton; // Value injected by FXMLLoader
 	@FXML // fx:id="copyButton"
 	private Button hexDistributeButton;
+	@FXML // fx:id="convertToBlenderButton"
+	private Button convertToBlenderButton;
+	@FXML // fx:id="convertToFreeCADButton"
+	private Button convertToFreeCADButton;
 	@FXML // fx:id="cruiseButton"
 	private Button cruiseButton; // Value injected by FXMLLoader
 
@@ -500,6 +504,18 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onHexDistribute(ActionEvent ae) {
 		session.runHexDistribute();
+		session.setKeyBindingFocus();
+	}
+
+	@FXML
+	void onConvertToBlender(ActionEvent ae) {
+		session.runConvertToBlender();
+		session.setKeyBindingFocus();
+	}
+
+	@FXML
+	void onConvertToFreeCAD(ActionEvent ae) {
+		session.runConvertToFreeCAD();
 		session.setKeyBindingFocus();
 	}
 
@@ -1186,6 +1202,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 				session.setAlignButton(alignButton);
 				session.setAdvancedButtons(filletButton, extrudeButton, hexDistributeButton, boltHoleButton, hullButton,
 						bendButton);
+				session.setConvertButtons(convertToBlenderButton, convertToFreeCADButton);
 				// do this after setting up the session
 				setupEngineControls();
 				ComponentTreePanel componentTreePanel = new ComponentTreePanel(componentTreeHolder, session, ap);
