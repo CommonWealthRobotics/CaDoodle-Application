@@ -245,7 +245,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 
 		TransformNR screenLocation;
 		TransformNR pureRot = null;
-		Affine manipulator = new Affine();
 		CSG source = null;
 
 		if (intersectedNode instanceof MeshView) {
@@ -254,11 +253,6 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 			for (CSG csg : session.getMeshes().keySet()) {
 				if (meshView == session.getMeshes().get(csg).getDisplay()) {
 					source = csg;
-					try {
-						manipulator = source.getManipulator();
-					} catch (MissingManipulatorException e) {
-
-					}
 					break;
 				}
 			}
@@ -327,9 +321,8 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		}
 		if (pureRot == null)
 			pureRot = new TransformNR();
-		TransformNR manipulatorNR = TransformFactory.affineToNr(manipulator);
 		TransformNR t = new TransformNR(x, y, z);
-		screenLocation = manipulatorNR.times(t.times(pureRot));
+		screenLocation = applySourceManipulator(source, t.times(pureRot));
 
 		if ((intersectedNode == wpPick.getIntersectionNode())) {
 			if (updater != null)
@@ -339,6 +332,21 @@ public class WorkplaneManager implements EventHandler<MouseEvent> {
 		} else if (updater != null)
 			updater.setWorkplaneLocation(ap.get().getWorkplane().inverse().times(screenLocation));
 		return screenLocation;
+	}
+
+	// Applies the picked CSG's manipulator to a mesh-local pose exactly once,
+	// mapping the local pick point into world space. Identity when the source
+	// has no manipulator. Callers must not compose the manipulator again.
+	public static TransformNR applySourceManipulator(CSG source, TransformNR localPose) {
+		Affine manipulator = new Affine();
+		if (source != null) {
+			try {
+				manipulator = source.getManipulator();
+			} catch (MissingManipulatorException e) {
+				// no manipulator on this CSG; keep identity
+			}
+		}
+		return TransformFactory.affineToNr(manipulator).times(localPose);
 	}
 
 	public void doClickEvent(MouseEvent ev) {

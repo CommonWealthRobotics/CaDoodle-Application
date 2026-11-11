@@ -1315,21 +1315,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				javafx.scene.Node pickedNode = event.getPickResult().getIntersectedNode();
 				if (pickedNode == meshView) {
 					Log.debug("Setup Move Starting point");
-					Point3D localPoint = event.getPickResult().getIntersectedPoint();
 
 					TransformNR wp = ap.get().getWorkplane();
 					TransformNR screenLocation = workplane.pickInteractionToPose(event);
-					screenPositionOfLatestMeshClick = screenLocation;// new TransformNR(localPoint.getX(),
-																		// localPoint.getY(),localPoint.getZ());
-					if (name.hasManipulator()) {
-						try {
-							TransformNR namip = TransformFactory.affineToNr(name.getManipulator());
-							screenPositionOfLatestMeshClick = namip.times(screenPositionOfLatestMeshClick);
-						} catch (MissingManipulatorException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+					// pickInteractionToPose returns world space and applies the
+					// source CSG's manipulator exactly once; composing it again
+					// here would double the manipulator's offset
+					screenPositionOfLatestMeshClick = screenLocation;
 					TransformNR wpLocal = wp.inverse().times(screenPositionOfLatestMeshClick);
 					startingPosition3D = new Point3D(wpLocal.getX(), wpLocal.getY(), wpLocal.getZ());
 					manipulation.setStartingWorkplanePosition(
