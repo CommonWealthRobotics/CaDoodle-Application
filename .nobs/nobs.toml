@@ -45,3 +45,9 @@ source = "/home/hephaestus/git/CaDoodle"
 dest = "/home/hephaestus/git/CaDoodle"
 read_only = false
 enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/freecad-bowler-cli"
+dest = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/freecad-bowler-cli"
+read_only = false
+enabled = true
