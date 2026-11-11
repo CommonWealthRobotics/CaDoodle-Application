@@ -831,7 +831,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// Takes the highlight flag instead of the CSG: builds run off the FX
 	// thread and the selected set is mutated from several threads, while the
 	// flag is a volatile written before the build is queued
-	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges,
+	private javafx.scene.Group buildFeatureEdgeGroup(CSG csg, List<FeatureEdgeExtractor.Edge> visibleEdges,
 			boolean highlighted) {
 		javafx.scene.Group group = new javafx.scene.Group();
 		group.setMouseTransparent(true);
@@ -921,6 +921,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		view.setCullFace(CullFace.NONE);
 		view.setMouseTransparent(true);
 		view.setDepthTest(DepthTest.ENABLE);
+		// the prisms are baked from raw CSG coordinates, so like the mesh and
+		// halo, the view rides the live manipulator affine when one is present
+		if (csg.hasManipulator()) {
+			try {
+				view.getTransforms().add(csg.getManipulator());
+			} catch (MissingManipulatorException e) {
+				com.neuronrobotics.sdk.common.Log.error(e);
+			}
+		}
 
 		group.getChildren().add(view);
 		return group;
@@ -1065,7 +1074,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 					if (holder.edges == null)
 						continue;
-					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges,
+					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(csg, entry.getValue().visibleEdges,
 							holder.edgeHighlighted);
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
 					applyEdgeColorNow(holder, csg);
@@ -1089,7 +1098,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (visibleEdges == null)
 				return;
 
-			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(csg, visibleEdges, holder.edgeHighlighted);
 			BowlerStudio.runLater(() -> {
 				if (getMeshes().get(csg) != holder)
 					return;
@@ -1119,7 +1128,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (visibleEdges == null)
 					continue;
 
-				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getKey(), visibleEdges,
+						holder.edgeHighlighted);
 				onUI.add(() -> {
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
 					applyEdgeColorNow(holder, entry.getKey());
@@ -1331,12 +1341,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				}
 
 				// Inform the controls about the total selected object(s) height
-				if (getSelected().size() > 0)
-					try {
-						getControls().setObjectHeight(getSellectedBounds().getTotalZ());
-					} catch (Exception ex) {
-						Log.error(ex);
-					}
+				submit(() -> {
+					if (getSelected().size() > 0)
+						try {
+							getControls().setObjectHeight(getSellectedBounds().getTotalZ());
+						} catch (Exception ex) {
+							Log.error(ex);
+						}
+				});
 				event.consume();
 			}
 		});
