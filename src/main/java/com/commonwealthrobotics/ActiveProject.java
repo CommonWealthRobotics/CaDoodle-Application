@@ -691,7 +691,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 
 	public void save() {
 		if (fromFile == null) {
-			Log.error(new Exception("Can not save before loading"));
+			Log.error(("Can not save before loading"));
 			return;
 		}
 
