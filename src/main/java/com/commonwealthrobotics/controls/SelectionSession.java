@@ -272,6 +272,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button bendButton;
 	private Button convertToBlenderButton;
 	private Button convertToFreeCADButton;
+	private Button convertToOpenSCADButton;
 	private TitledPane shapeConfiguration2;;
 
 	@SuppressWarnings("static-access")
@@ -2563,6 +2564,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				convertToBlenderButton.setDisable(true);
 			if (convertToFreeCADButton != null)
 				convertToFreeCADButton.setDisable(true);
+			if (convertToOpenSCADButton != null)
+				convertToOpenSCADButton.setDisable(true);
 		});
 	}
 
@@ -2601,6 +2604,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				convertToBlenderButton.setDisable(allSelectedAreAlreadyInFile("blend"));
 			if (convertToFreeCADButton != null)
 				convertToFreeCADButton.setDisable(allSelectedAreAlreadyInFile("FCStd"));
+			if (convertToOpenSCADButton != null)
+				convertToOpenSCADButton.setDisable(allSelectedAreAlreadyInFile("scad"));
 
 			if (isAGroupSelected())
 				ungroupButton.setDisable(false);
@@ -2674,6 +2679,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void runConvertToFreeCAD() {
 		ConvertToFreeCAD op = new ConvertToFreeCAD().setNames(selectedSnapshot());
+		submit(() -> performConvert(op));
+	}
+
+	public void runConvertToOpenSCAD() {
+		ConvertToOpenSCAD op = new ConvertToOpenSCAD().setNames(selectedSnapshot());
 		submit(() -> performConvert(op));
 	}
 
@@ -3807,9 +3817,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.bendButton = bendButton;
 	}
 
-	public void setConvertButtons(Button convertToBlenderButton, Button convertToFreeCADButton) {
+	public void setConvertButtons(Button convertToBlenderButton, Button convertToFreeCADButton,
+			Button convertToOpenSCADButton) {
 		this.convertToBlenderButton = convertToBlenderButton;
 		this.convertToFreeCADButton = convertToFreeCADButton;
+		this.convertToOpenSCADButton = convertToOpenSCADButton;
 	}
 
 	/**

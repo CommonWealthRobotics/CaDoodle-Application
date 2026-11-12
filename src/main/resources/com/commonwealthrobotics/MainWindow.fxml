@@ -848,6 +848,14 @@
                                     <Tooltip text="%mainwindow.convert_to_freecad" />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="convertToOpenSCADButton" mnemonicParsing="false" onAction="#onConvertToOpenSCAD" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="openscad-image-view" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.convert_to_openscad" />
+                                 </tooltip>
+                              </Button>
                               <Separator orientation="VERTICAL" />
                               <Button fx:id="hullButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
                                  <graphic>
