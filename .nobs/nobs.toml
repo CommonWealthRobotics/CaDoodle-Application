@@ -47,6 +47,19 @@ read_only = false
 enabled = true
 
 [[sandbox.extra_binds]]
+source = "/home/hephaestus/git/cadoodlecad.github.io"
+dest = "/home/hephaestus/git/cadoodlecad.github.io"
+read_only = false
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio"
+dest = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/ExternalEditorsBowlerStudio"
+read_only = true
+enabled = true
+
+
+[[sandbox.extra_binds]]
 source = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/freecad-bowler-cli"
 dest = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/freecad-bowler-cli"
 read_only = false
