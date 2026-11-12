@@ -1097,24 +1097,25 @@ public class ResizeSessionManager {
 				for (ResizingHandle ctrl : controls)
 					ctrl.manipulator.set(0, 0, 0);
 				controlSprites.setMode(SpriteDisplayMode.Default);
-				try {
-					Resize setResize = new Resize().setNames(session.selectedSnapshot()).setWorkplane(wp).setResize(tcC,
-							lfC, rrC);
-
-					if (resizeAllowed) {
-						Thread t = ap.addOp(setResize);
-						try {
-							t.join();
-						} catch (InterruptedException e) {
-							com.neuronrobotics.sdk.common.Log.error(e);
+				session.submit(() -> {
+					try {
+						Resize setResize = new Resize().setNames(session.selectedSnapshot()).setWorkplane(wp)
+								.setResize(tcC, lfC, rrC);
+						if (resizeAllowed) {
+							Thread t = ap.addOp(setResize);
+							try {
+								t.join();
+							} catch (InterruptedException e) {
+								com.neuronrobotics.sdk.common.Log.error(e);
+							}
+							beingUpdated = null;
+							originalBounds = null;
 						}
+					} catch (Exception ex) {
+						Log.error(ex);
 					}
-					beingUpdated = null;
-					originalBounds = null;
-				} catch (Exception ex) {
-					Log.error(ex);
-				}
-				BowlerStudio.runLater(() -> threeDTarget());
+					BowlerStudio.runLater(() -> threeDTarget());
+				});
 			});
 		}
 	}
@@ -1380,10 +1381,10 @@ public class ResizeSessionManager {
 					double original_ty = b.getTotalY();
 					scalingFlag = true;
 					// Anchor: right midpoint (midX, minY).
-					// rightFront (maxX, minY): rel=( tx/2,   0) → delta=( tx/2*gs,       0)
-					// rightRear  (minX, minY): rel=(-tx/2,   0) → delta=(-tx/2*gs,       0)
-					// leftFront  (maxX, maxY): rel=( tx/2,  ty) → delta=( tx/2*gs,  ty*gs)
-					// leftRear   (minX, maxY): rel=(-tx/2,  ty) → delta=(-tx/2*gs,  ty*gs)
+					// rightFront (maxX, minY): rel=( tx/2, 0) → delta=( tx/2*gs, 0)
+					// rightRear (minX, minY): rel=(-tx/2, 0) → delta=(-tx/2*gs, 0)
+					// leftFront (maxX, maxY): rel=( tx/2, ty) → delta=( tx/2*gs, ty*gs)
+					// leftRear (minX, maxY): rel=(-tx/2, ty) → delta=(-tx/2*gs, ty*gs)
 					rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
 					rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, 0, 0);
 					leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, original_ty * gs, 0);
@@ -1408,9 +1409,9 @@ public class ResizeSessionManager {
 					scalingFlag = true;
 					// Anchor: left midpoint (midX, maxY).
 					// rightFront (maxX, minY): rel=( tx/2, -ty) → delta=( tx/2*gs, -ty*gs)
-					// rightRear  (minX, minY): rel=(-tx/2, -ty) → delta=(-tx/2*gs, -ty*gs)
-					// leftFront  (maxX, maxY): rel=( tx/2,   0) → delta=( tx/2*gs,       0)
-					// leftRear   (minX, maxY): rel=(-tx/2,   0) → delta=(-tx/2*gs,       0)
+					// rightRear (minX, minY): rel=(-tx/2, -ty) → delta=(-tx/2*gs, -ty*gs)
+					// leftFront (maxX, maxY): rel=( tx/2, 0) → delta=( tx/2*gs, 0)
+					// leftRear (minX, maxY): rel=(-tx/2, 0) → delta=(-tx/2*gs, 0)
 					rightFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, -original_ty * gs, 0);
 					rightRear.manipulator.setInReferenceFrame(-original_tx / 2.0 * gs, -original_ty * gs, 0);
 					leftFront.manipulator.setInReferenceFrame(original_tx / 2.0 * gs, 0, 0);
@@ -1473,20 +1474,22 @@ public class ResizeSessionManager {
 				return;
 			}
 			// if (isFrontSelected && isUniformX) {
-			//			double s = x / b.getTotalX();
-			//			double gs = s - 1.0;
-			//			if (Double.isFinite(gs)) {
-			//				BowlerStudio.runLater(() -> {
-			//					leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), y - b.getTotalY() * gs, 0);
-			//					rightFront.manipulator.setInReferenceFrame(x - b.getTotalX(), -(y - b.getTotalY() * gs), 0);
-			//					frontMid.setInReferenceFrame(x - b.getTotalX(), 0, 0);
-			//					// rightRear.manipulator.setInReferenceFrame(b.getTotalX() * gs, 0, 0);
-			//					topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * s);
-			//					leftFront.manipulator.fireSave();
-			//				});
-			//			}
-			//			return;
-			//		}
+			// double s = x / b.getTotalX();
+			// double gs = s - 1.0;
+			// if (Double.isFinite(gs)) {
+			// BowlerStudio.runLater(() -> {
+			// leftFront.manipulator.setInReferenceFrame(x - b.getTotalX(), y -
+			// b.getTotalY() * gs, 0);
+			// rightFront.manipulator.setInReferenceFrame(x - b.getTotalX(), -(y -
+			// b.getTotalY() * gs), 0);
+			// frontMid.setInReferenceFrame(x - b.getTotalX(), 0, 0);
+			// // rightRear.manipulator.setInReferenceFrame(b.getTotalX() * gs, 0, 0);
+			// topCenter.setInReferenceFrame(0, 0, b.getMinZ() + b.getTotalZ() * s);
+			// leftFront.manipulator.fireSave();
+			// });
+			// }
+			// return;
+			// }
 
 			// original method continues below...
 			if (leftFront.isSelected()) {
@@ -1568,7 +1571,7 @@ public class ResizeSessionManager {
 	}
 
 	public void hide() {
-		//Log.error(new Exception("Hide called here"));
+		// Log.error(new Exception("Hide called here"));
 		topCenter.hide();
 		leftFront.hide();
 		leftRear.hide();
