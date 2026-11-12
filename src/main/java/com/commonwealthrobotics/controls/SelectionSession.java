@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.commonwealthrobotics.ActiveProject;
+import com.commonwealthrobotics.PluginType;
 import com.commonwealthrobotics.RulerManager;
 import com.commonwealthrobotics.TimelineManager;
 import com.commonwealthrobotics.WorkplaneManager;
@@ -47,6 +48,7 @@ import com.neuronrobotics.bowlerstudio.creature.LimbOption;
 import com.neuronrobotics.bowlerstudio.creature.MobileBaseBuilder;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import com.neuronrobotics.bowlerstudio.scripting.CaDoodleLoader;
+import com.neuronrobotics.bowlerstudio.scripting.DownloadManager;
 import com.neuronrobotics.bowlerstudio.scripting.ScriptingEngine;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.*;
 import com.neuronrobotics.bowlerstudio.scripting.cadoodle.robot.AddRobotLimb;
@@ -94,6 +96,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -273,6 +276,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	private Button convertToBlenderButton;
 	private Button convertToFreeCADButton;
 	private Button convertToOpenSCADButton;
+	// cached on a background thread like the shapes pallet does, the FX thread
+	// must never block on plugin lookup
+	private volatile Boolean blenderPluginInstalled;
+	private volatile Boolean freecadPluginInstalled;
+	private volatile Boolean openscadPluginInstalled;
 	private TitledPane shapeConfiguration2;;
 
 	@SuppressWarnings("static-access")
@@ -2601,11 +2609,14 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 			// converting to a file the object already lives in is a no-op
 			if (convertToBlenderButton != null)
-				convertToBlenderButton.setDisable(allSelectedAreAlreadyInFile("blend"));
+				convertToBlenderButton
+						.setDisable(isPluginMissing(blenderPluginInstalled) || allSelectedAreAlreadyInFile("blend"));
 			if (convertToFreeCADButton != null)
-				convertToFreeCADButton.setDisable(allSelectedAreAlreadyInFile("FCStd"));
+				convertToFreeCADButton
+						.setDisable(isPluginMissing(freecadPluginInstalled) || allSelectedAreAlreadyInFile("FCStd"));
 			if (convertToOpenSCADButton != null)
-				convertToOpenSCADButton.setDisable(allSelectedAreAlreadyInFile("scad"));
+				convertToOpenSCADButton
+						.setDisable(isPluginMissing(openscadPluginInstalled) || allSelectedAreAlreadyInFile("scad"));
 
 			if (isAGroupSelected())
 				ungroupButton.setDisable(false);
@@ -3822,6 +3833,61 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.convertToBlenderButton = convertToBlenderButton;
 		this.convertToFreeCADButton = convertToFreeCADButton;
 		this.convertToOpenSCADButton = convertToOpenSCADButton;
+		// look up the plugins off the FX thread; the buttons start disabled and
+		// only unlock when the plugin is actually installed
+		BowlerStudio.runLater(() -> {
+			convertToBlenderButton.setDisable(true);
+			convertToFreeCADButton.setDisable(true);
+			convertToOpenSCADButton.setDisable(true);
+		});
+		submit(() -> {
+			blenderPluginInstalled = pluginInstalled(PluginType.BLENDER);
+			freecadPluginInstalled = pluginInstalled(PluginType.FREECAD);
+			openscadPluginInstalled = pluginInstalled(PluginType.OPENSCAD);
+			BowlerStudio.runLater(() -> {
+				updateConvertTooltip(convertToBlenderButton, blenderPluginInstalled);
+				updateConvertTooltip(convertToFreeCADButton, freecadPluginInstalled);
+				updateConvertTooltip(convertToOpenSCADButton, openscadPluginInstalled);
+				if (getSelected().size() > 0)
+					showButtons();
+			});
+		});
+	}
+
+	private void updateConvertTooltip(Button button, Boolean installed) {
+		if (button == null)
+			return;
+		Tooltip tooltip = button.getTooltip();
+		if (tooltip == null)
+			return;
+		if (isPluginMissing(installed))
+			updateConvertTooltipSuffix(tooltip);
+	}
+
+	private void updateConvertTooltipSuffix(Tooltip tooltip) {
+		String suffix = ActiveProject.getTranslation("mainwindow.plugin_not_installed");
+		if (!tooltip.getText().endsWith(suffix))
+			tooltip.setText(tooltip.getText() + " " + suffix);
+	}
+
+	/**
+	 * A failed lookup counts as missing so the button stays disabled.
+	 */
+	private static boolean pluginInstalled(PluginType type) {
+		try {
+			return DownloadManager.isDownloadedAlready(type.getKey());
+		} catch (Throwable t) {
+			Log.error(t);
+			return false;
+		}
+	}
+
+	/**
+	 * Null while the background lookup is still running, the shapes pallet
+	 * treats a not-yet-confirmed plugin the same way and shows a placeholder.
+	 */
+	private static boolean isPluginMissing(Boolean installed) {
+		return !Boolean.TRUE.equals(installed);
 	}
 
 	/**
