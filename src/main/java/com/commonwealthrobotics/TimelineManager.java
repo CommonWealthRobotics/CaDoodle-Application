@@ -421,8 +421,7 @@ public class TimelineManager {
 					text = (myIndex + 1) + ": " + ActiveProject.getTranslation("AddFromScript");
 
 				}
-				if (AddFromFile.class.isInstance(op)
-						&& !ConvertToFileOperation.class.isInstance(op)) {
+				if (AddFromFile.class.isInstance(op) && !ConvertToFileOperation.class.isInstance(op)) {
 					AddFromFile af = (AddFromFile) op;
 					try {
 						text = (myIndex + 1) + "\n" + ActiveProject.getTranslation("AddFromFile") + " ";

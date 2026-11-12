@@ -70,7 +70,7 @@ public class LimbControlManager {
 			BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Default));
 			// add the operation and reset\
 			ModifyLimb myMod = mod;
-			mod=null;
+			mod = null;
 			update(builder);
 			myMod.setUndo(false);
 			try {
