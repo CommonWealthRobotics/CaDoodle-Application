@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
@@ -348,12 +347,7 @@
                                                                               <RowConstraints minHeight="30.0" />
                                                                           </rowConstraints>
                                                                            <children>
-                                                                              <AnchorPane fx:id="colorPickerHolder"
-                                                                                          prefHeight="50.0"
-                                                                                          prefWidth="60.0"
-                                                                                          GridPane.columnIndex="1"
-                                                                                          GridPane.rowIndex="1"
-                                                                                          GridPane.vgrow="ALWAYS" />
+                                                                              <AnchorPane fx:id="colorPickerHolder" prefHeight="50.0" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
                                                                               <Button fx:id="holeButton" alignment="TOP_LEFT" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHoleButton" styleClass="image-button" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                                                                  <graphic>
                                                                                     <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
@@ -816,22 +810,6 @@
                      <children>
                         <HBox fx:id="advancedButtons">
                            <children>
-                              <Button fx:id="hexDistributeButton" mnemonicParsing="false" onAction="#onHexDistribute" styleClass="image-button">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hexDistributeButtonImage" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%mainwindow.pattern_copy_hexagon_or_linear" />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="boltHoleButtonImage-view" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%mainwindow.pattern_copy_in_circle" />
-                                 </tooltip>
-                              </Button>
                               <Button fx:id="convertToBlenderButton" mnemonicParsing="false" onAction="#onConvertToBlender" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="blender-image-view" />
@@ -854,6 +832,23 @@
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%mainwindow.convert_to_openscad" />
+                                 </tooltip>
+                              </Button>
+                              <Separator orientation="VERTICAL" />
+                              <Button fx:id="hexDistributeButton" mnemonicParsing="false" onAction="#onHexDistribute" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hexDistributeButtonImage" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.pattern_copy_hexagon_or_linear" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="boltHoleButtonImage-view" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%mainwindow.pattern_copy_in_circle" />
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
