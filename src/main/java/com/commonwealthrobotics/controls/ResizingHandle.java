@@ -9,6 +9,7 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import com.neuronrobotics.bowlerstudio.threed.SceneStyleConfig;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
 import com.neuronrobotics.sdk.addons.kinematics.math.RotationNR;
 import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
@@ -325,6 +326,9 @@ public class ResizingHandle {
 			// scale can never lag the transform writes it was computed from
 			Point3D world3Dpos = getAbsolutePosition();
 			double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
+			// User scaling of the control handles from the UI Elements settings tab
+			double handleScale = SceneStyleConfig.getDouble("handle.scale", 1.0);
+			calculatedScaleFactor *= handleScale;
 			setScale(calculatedScaleFactor);
 			scaleTF.setX(calculatedScaleFactor);
 			scaleTF.setY(calculatedScaleFactor);

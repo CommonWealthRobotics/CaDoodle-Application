@@ -11,8 +11,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -387,6 +387,8 @@
              <RowConstraints vgrow="SOMETIMES" />
              <RowConstraints vgrow="SOMETIMES" />
              <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints />
+                                    <RowConstraints />
                                     <RowConstraints />
              </rowConstraints>
              <children>
@@ -879,7 +881,21 @@
                 <Tooltip text="%settings.ui_edges_stitch_tolerance.description" />
              </tooltip>
              </TextField>
+             <!-- ============ CONTROL HANDLE ============ -->
+             <Label text="%settings.ui_handle_scale" GridPane.rowIndex="50">
+             <padding>
+             <Insets left="10.0" />
+             </padding>
+             </Label>
+             <TextField fx:id="uiHandleScale" onKeyTyped="#onUiElementChange" GridPane.columnIndex="1" GridPane.rowIndex="50">
+             <tooltip>
+                <Tooltip text="%settings.ui_handle_scale.description" />
+             </tooltip>
+             </TextField>
              </children>
+                                 <padding>
+                                    <Insets bottom="30.0" />
+                                 </padding>
              </GridPane>
              </children>
              </AnchorPane>
