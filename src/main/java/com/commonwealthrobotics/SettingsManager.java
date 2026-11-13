@@ -264,6 +264,8 @@ public class SettingsManager implements ICSGClientEvent {
 	private TextField uiEdgesTopologyPrecision;
 	@FXML
 	private TextField uiEdgesStitchTolerance;
+	@FXML
+	private TextField uiHandleScale;
 
 	private static final String PARAMS_KEY = "CaDoodle";
 	// Text edits stay pending (highlighted) until Enter commits them
@@ -846,6 +848,8 @@ public class SettingsManager implements ICSGClientEvent {
 				ConfigurationDatabase.save();
 				if ("edges.highlightWidthMultiplier".equals(key) && mc != null && mc.getSession() != null)
 					mc.getSession().refreshEdgeWidths();
+				if ("handle.scale".equals(key) && mc != null)
+					BowlerStudio.runLater(() -> mc.updateUIElements());
 			}).start();
 		} catch (Throwable t) {
 			Log.error(t);
@@ -880,7 +884,7 @@ public class SettingsManager implements ICSGClientEvent {
 				uiGridSmallZOffsetMm, uiGridMajorBrightnessMultiplier, uiGridMajorOpacityMultiplier,
 				uiGridMajorLineWidthPx, uiGridGroundRenderOpacity, uiCameraOrbitMin, uiCameraOrbitMax,
 				uiCameraOrbitHalf, uiCameraOrbitRiseMs, uiCameraOrbitFallMs, uiEdgesSceneSettleDelayMs,
-				uiEdgesCameraSettleDelayMs, uiEdgesTopologyPrecision, uiEdgesStitchTolerance);
+				uiEdgesCameraSettleDelayMs, uiEdgesTopologyPrecision, uiEdgesStitchTolerance, uiHandleScale);
 	}
 
 	/**
@@ -959,6 +963,8 @@ public class SettingsManager implements ICSGClientEvent {
 			return "edges.topologyPrecision";
 		if (field == uiEdgesStitchTolerance)
 			return "edges.stitchTolerance";
+		if (field == uiHandleScale)
+			return "handle.scale";
 		return null;
 	}
 
@@ -1017,6 +1023,8 @@ public class SettingsManager implements ICSGClientEvent {
 				return Math.max(0.0, Math.min(1.0, value));
 			case "edges.stitchTolerance" :
 				return Math.max(0.0, Math.min(1.0, value));
+			case "handle.scale" :
+				return Math.max(0.1, Math.min(5.0, value));
 			default :
 				return value;
 		}
@@ -1121,6 +1129,9 @@ public class SettingsManager implements ICSGClientEvent {
 				"" + bound("edges.topologyPrecision", SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001)));
 		uiEdgesStitchTolerance.setText(
 				"" + bound("edges.stitchTolerance", SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002)));
+
+		// --- control handle ---
+		uiHandleScale.setText("" + bound("handle.scale", SceneStyleConfig.getDouble("handle.scale", 1.0)));
 	}
 
 	/**

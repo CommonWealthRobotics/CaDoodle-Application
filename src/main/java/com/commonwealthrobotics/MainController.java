@@ -2055,6 +2055,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		return true;
 	}
 
+	public void updateUIElements() {
+		onChange(engine.getFlyingCamera());
+	}
+
 	@Override
 	public void onChange(VirtualCameraMobileBase camera) {
 		double zoom = camera.getZoomDepth();
