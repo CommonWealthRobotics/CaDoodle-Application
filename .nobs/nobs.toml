@@ -64,3 +64,15 @@ source = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/Comm
 dest = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/freecad-bowler-cli"
 read_only = false
 enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/git/manifold3d-java"
+dest = "/home/hephaestus/git/manifold3d-java"
+read_only = true
+enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/git/manifold3d-java"
+dest = "/home/hephaestus/git/manifold3d-java"
+read_only = false
+enabled = true
