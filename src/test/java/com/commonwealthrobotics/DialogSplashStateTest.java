@@ -18,8 +18,8 @@ class DialogSplashStateTest {
 				BooleanSupplier originalClose = SplashManager.getClosePreventer();
 				AtomicBoolean visible = new AtomicBoolean(initiallyVisible);
 				try {
-					try (DialogSplashState state = new DialogSplashState(initiallyVisible,
-							() -> visible.set(false), () -> visible.set(true))) {
+					try (DialogSplashState state = new DialogSplashState(initiallyVisible, () -> visible.set(false),
+							() -> visible.set(true))) {
 						assertFalse(visible.get());
 						assertTrue(SplashManager.getOpenPreventer().getAsBoolean());
 						assertTrue(SplashManager.getClosePreventer().getAsBoolean());

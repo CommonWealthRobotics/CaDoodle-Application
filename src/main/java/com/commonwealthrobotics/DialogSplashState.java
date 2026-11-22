@@ -16,7 +16,9 @@ final class DialogSplashState implements AutoCloseable {
 
 	static DialogSplashState suspend() {
 		if (!PsudoSplash.isVisibleSplash())
-			return new DialogSplashState(false, () -> {}, () -> {});
+			return new DialogSplashState(false, () -> {
+			}, () -> {
+			});
 		Stage splash = PsudoSplash.get().getPopupStage();
 		return new DialogSplashState(true, splash::hide, splash::show);
 	}
