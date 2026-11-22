@@ -511,19 +511,16 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onConvertToBlender(ActionEvent ae) {
 		session.runConvertToBlender();
-		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onConvertToFreeCAD(ActionEvent ae) {
 		session.runConvertToFreeCAD();
-		session.setKeyBindingFocus();
 	}
 
 	@FXML
 	void onConvertToOpenSCAD(ActionEvent ae) {
 		session.runConvertToOpenSCAD();
-		session.setKeyBindingFocus();
 	}
 
 	@FXML

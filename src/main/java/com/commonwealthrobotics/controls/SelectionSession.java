@@ -808,8 +808,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		u = u.normalize().multiply(radius);
 		Point3D v = direction.crossProduct(u).normalize().multiply(radius);
 
-		Point3D[] ringA = {a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v)};
-		Point3D[] ringB = {b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v)};
+		Point3D[] ringA = { a.add(u).add(v), a.add(u).subtract(v), a.subtract(u).subtract(v), a.subtract(u).add(v) };
+		Point3D[] ringB = { b.add(u).add(v), b.add(u).subtract(v), b.subtract(u).subtract(v), b.subtract(u).add(v) };
 
 		int base = points.size() / 3;
 
@@ -1750,7 +1750,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		// }
 
 		// Mutable holders so the lambda can write back
-		double[] density = {1.0};
+		double[] density = { 1.0 };
 
 		// --- Parse JSON with Gson ---
 		Gson gson = new Gson();
@@ -1764,7 +1764,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		// --- Helper to build button label ---
 		// Declared as an array so lambdas below can call it
-		Runnable[] updateLabel = {null};
+		Runnable[] updateLabel = { null };
 		// --- Label updater ---
 		updateLabel[0] = () -> {
 			double mass = 0;
@@ -2676,45 +2676,42 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void runConvertToBlender() {
-		BooleanSupplier cp = SplashManager.getClosePreventer();
-		BooleanSupplier opr = SplashManager.getOpenPreventer();
-		SplashManager.setOpenPreventer(() -> false);
-		SplashManager.setClosePreventer(() -> true);
 		ConvertToBlender op = new ConvertToBlender().setNames(selectedSnapshot());
-		submit(() -> performConvert(op, cp, opr));
+		performConvert(op);
 	}
 
 	public void runConvertToFreeCAD() {
-		BooleanSupplier cp = SplashManager.getClosePreventer();
-		BooleanSupplier opr = SplashManager.getOpenPreventer();
-		SplashManager.setOpenPreventer(() -> false);
-		SplashManager.setClosePreventer(() -> true);
+		
 
 		ConvertToFreeCAD op = new ConvertToFreeCAD().setNames(selectedSnapshot());
-		submit(() -> performConvert(op, cp, opr));
+		performConvert(op);
 	}
 
 	public void runConvertToOpenSCAD() {
+		
+		ConvertToOpenSCAD op = new ConvertToOpenSCAD().setNames(selectedSnapshot());
+		performConvert(op);
+	}
+
+	private void performConvert(ConvertToFileOperation op) {
 		BooleanSupplier cp = SplashManager.getClosePreventer();
 		BooleanSupplier opr = SplashManager.getOpenPreventer();
 		SplashManager.setOpenPreventer(() -> false);
 		SplashManager.setClosePreventer(() -> true);
-		ConvertToOpenSCAD op = new ConvertToOpenSCAD().setNames(selectedSnapshot());
-		submit(() -> performConvert(op, cp, opr));
-	}
-
-	private void performConvert(ConvertToFileOperation op, BooleanSupplier cp, BooleanSupplier opr) {
-
-		try {
-			ap.addOp(op).join();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			com.neuronrobotics.sdk.common.Log.error(e);
-		} catch (CadoodleConcurrencyException e) {
-			com.neuronrobotics.sdk.common.Log.error(e);
-		}
-		SplashManager.setClosePreventer(cp);
-		SplashManager.setOpenPreventer(opr);
+		SplashManager.renderSplashFrame(0, "Start convert to "+op.getName());
+		submit(() -> {
+			try {
+				ap.addOp(op).join();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				com.neuronrobotics.sdk.common.Log.error(e);
+			} catch (CadoodleConcurrencyException e) {
+				com.neuronrobotics.sdk.common.Log.error(e);
+			}
+			SplashManager.setClosePreventer(cp);
+			SplashManager.setOpenPreventer(opr);
+			setKeyBindingFocus();
+		});
 	}
 
 	private void performPaste(AbstractAddFrom op) {
@@ -3886,8 +3883,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	/**
-	 * Null while the background lookup is still running, the shapes pallet
-	 * treats a not-yet-confirmed plugin the same way and shows a placeholder.
+	 * Null while the background lookup is still running, the shapes pallet treats a
+	 * not-yet-confirmed plugin the same way and shows a placeholder.
 	 */
 	private static boolean isPluginMissing(Boolean installed) {
 		return !Boolean.TRUE.equals(installed);
