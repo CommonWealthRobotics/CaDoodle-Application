@@ -64,7 +64,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -1730,10 +1729,13 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		selectionBox.setPressEvent(event -> {
 			resetArmed = true;
 			timeOfClick = System.currentTimeMillis();
-			if (isEventACancel(event))
+			// A press that reaches the selection plane is a background click: the plane
+			// spans the viewport and sits behind every object, so an object click never
+			// lands here. Decided from the node that received the event, because on the
+			// capture phase the PickResult has not been populated yet (node == null) and
+			// isEventACancel() therefore always answered false.
+			if (isBackgroundCancelGesture(event))
 				cancel();
-
-			// com.neuronrobotics.sdk.common.Log.debug("Releses MainController");
 		});
 
 		// engine.getSubScene().addEventFilter(MouseEvent.MOUSE_PRESSED,event->{
@@ -2016,19 +2018,21 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 		});
 	}
 
-	public boolean isEventACancel(MouseEvent event) {
-		Node in = event.getPickResult().getIntersectedNode();
-		if (in != engine.getWorkplaneGroup().getIntersectionNode() && !engine.isSubScene(in)
-				&& in != session.workplane.getPlacementPlane().getIntersectionNode()
-				&& in != selectionBox.getSelectionPlane())
-			return false;
-		if (event.isControlDown())
-			return false;
-		if (!event.isPrimaryButtonDown())
-			return false;
-		if (event.isSecondaryButtonDown())
-			return false;
-		return true;
+	/**
+	 * Whether a press on the selection plane should clear the selection.
+	 *
+	 * <p>
+	 * A press that reaches the selection plane is a background click: the plane
+	 * spans the viewport and sits behind every object, so object presses land on
+	 * the object instead. This deliberately does not consult
+	 * {@code event.getPickResult()}, whose node is still null while the event is on
+	 * the capture phase.
+	 *
+	 * <p>
+	 * Modifier gestures are left alone so the camera controls can keep them.
+	 */
+	static boolean isBackgroundCancelGesture(MouseEvent event) {
+		return event.isPrimaryButtonDown() && !event.isControlDown() && !event.isShiftDown();
 	}
 
 	public void updateUIElements() {

@@ -15,7 +15,6 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.CSGClient;
-import eu.mihosoft.vrl.v3d.Cube;
 import eu.mihosoft.vrl.v3d.MissingManipulatorException;
 import eu.mihosoft.vrl.v3d.Transform;
 import eu.mihosoft.vrl.v3d.Vector3d;
@@ -69,7 +68,7 @@ public class SelectionBox {
 		this.overlayPane2D = paneOverlay2D; // keep reference to 2D pane
 		rect1.setVisible(false);
 		rect2.setVisible(false);
-		setSelectionPlane(new Cube(20000, 20000, 0.001).toCSG().newMesh());
+		setSelectionPlane(SelectionPlane.create());
 		PhongMaterial material = new PhongMaterial();
 
 		// material.setDiffuseMap(texture);
