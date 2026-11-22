@@ -1,7 +1,6 @@
 package com.commonwealthrobotics;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -586,30 +585,14 @@ public class TimelineManager {
 					timeline.getChildren().clear();
 					session.clearScreen();
 					new Thread(() -> {
-						ap.get().clearFrozenIndex(myIndex);
-
-						while (ap.get().isSaveing());
 						try {
-							ap.get().save();
-
-						} catch (IOException e) {
-							Log.error(e);
-
-						} catch (SaveOverwriteException e) {
-							Log.error(e);
-						}
-
-						try {
-							ap.loadActive();
-							SplashManager.renderSplashFrame(1, "Re-initializing");
-							ap.get().initialize();
-							SplashManager.closeSplash();
-						} catch (FailedToApplyOperation e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							ap.unfreezeTimeline(myIndex);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							Log.error(e);
+						} finally {
+							SplashManager.closeSplash();
 						}
 					}).start();
 
