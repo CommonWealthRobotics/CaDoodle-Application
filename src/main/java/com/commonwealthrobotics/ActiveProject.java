@@ -321,6 +321,13 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 		return loadActive();
 	}
 
+	public void unfreezeTimeline(int index) throws Exception {
+		CaDoodleFile file = get();
+		file.clearFrozenIndex(index);
+		file.saveWhenReady();
+		setActiveProject(file.getSelf()).initialize();
+	}
+
 	public File getActiveProject() throws Exception {
 		Object object = ConfigurationDatabase.get("CaDoodle", "CaDoodleActiveFile", null);
 		if (object == null) // Fix legacy typo, try again with corrected spelling
