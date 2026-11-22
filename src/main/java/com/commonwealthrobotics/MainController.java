@@ -1499,6 +1499,9 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			BowlerStudio.runLater(() -> {
 				// Add the 3d environment
 				engine.addTo(view3d);
+				// Camera controls on the container as well as the SubScene, so orbit and
+				// zoom still work where child picking does not reach the SubScene.
+				engine.reattachMouseHandlers();
 
 				// Overlay pane for 2D-lines
 				view3d.getChildren().add(paneOverlay2D);
