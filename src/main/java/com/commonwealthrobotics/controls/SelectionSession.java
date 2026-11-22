@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -699,13 +700,12 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			MeshView meshView = c.newMesh();
 			transport.put(c, new MeshHolder(meshView, halo, ap.get().getBoundsCache().get(c.getName())));
 		}
-		CountDownLatch latch = new CountDownLatch(1);
 		try {
 			if (ModifyLimb.class.isInstance(source)) {
 				source.getCaDoodleFile().getBoundsCache().clear();
 			}
 			Bounds b = (getSelected().size() > 0) ? getSellectedBounds() : null;
-			BowlerStudio.runLater(() -> {
+			OperationCompletion.onUiAndWait(() -> {
 				if (isAlignActive() && Align.class.isInstance(source))
 					getControls().setMode(SpriteDisplayMode.Align);
 				else if (isMirrorActive() && Mirror.class.isInstance(source)) {
@@ -742,15 +742,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				updateMemoryDisplay();
 				TickToc.tic("Finish On Update In Selected Session");
 				TickToc.toc();
-				latch.countDown();
 			});
-			// force the UI update to complete before moving on to other operations
-			try {
-				latch.await(500, TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} catch (BoundsComputFailure e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2684,34 +2676,45 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	public void runConvertToBlender() {
+		BooleanSupplier cp = SplashManager.getClosePreventer();
+		BooleanSupplier opr = SplashManager.getOpenPreventer();
+		SplashManager.setOpenPreventer(() -> false);
+		SplashManager.setClosePreventer(() -> true);
 		ConvertToBlender op = new ConvertToBlender().setNames(selectedSnapshot());
-		submit(() -> performConvert(op));
+		submit(() -> performConvert(op, cp, opr));
 	}
 
 	public void runConvertToFreeCAD() {
+		BooleanSupplier cp = SplashManager.getClosePreventer();
+		BooleanSupplier opr = SplashManager.getOpenPreventer();
+		SplashManager.setOpenPreventer(() -> false);
+		SplashManager.setClosePreventer(() -> true);
+
 		ConvertToFreeCAD op = new ConvertToFreeCAD().setNames(selectedSnapshot());
-		submit(() -> performConvert(op));
+		submit(() -> performConvert(op, cp, opr));
 	}
 
 	public void runConvertToOpenSCAD() {
+		BooleanSupplier cp = SplashManager.getClosePreventer();
+		BooleanSupplier opr = SplashManager.getOpenPreventer();
+		SplashManager.setOpenPreventer(() -> false);
+		SplashManager.setClosePreventer(() -> true);
 		ConvertToOpenSCAD op = new ConvertToOpenSCAD().setNames(selectedSnapshot());
-		submit(() -> performConvert(op));
+		submit(() -> performConvert(op, cp, opr));
 	}
 
-	private void performConvert(ConvertToFileOperation op) {
-		if (ap.get().isOperationRunning()) {
-			com.neuronrobotics.sdk.common.Log.error("Ignoring operation because previous had not finished!");
-			return;
-		}
+	private void performConvert(ConvertToFileOperation op, BooleanSupplier cp, BooleanSupplier opr) {
 
 		try {
 			ap.addOp(op).join();
-			selectAll(op.getNamesAddedInThisOperation());
-			BowlerStudio.runLater(() -> updateControlsDisplayOfSelected());
-		} catch (CadoodleConcurrencyException | InterruptedException e) {
-			// Auto-generated catch block
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			com.neuronrobotics.sdk.common.Log.error(e);
+		} catch (CadoodleConcurrencyException e) {
 			com.neuronrobotics.sdk.common.Log.error(e);
 		}
+		SplashManager.setClosePreventer(cp);
+		SplashManager.setOpenPreventer(opr);
 	}
 
 	private void performPaste(AbstractAddFrom op) {
