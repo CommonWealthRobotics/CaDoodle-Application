@@ -432,6 +432,14 @@ public class ControlSprites {
 			double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
 			double cameraFovDegrees) {
 
+		if (session.getSelected().isEmpty()) {
+			clearSelection();
+			return;
+		}
+		// Bounds are computed asynchronously; only apply them to the selection they describe
+		if (!selectedCSG.equals(session.selectedSnapshot()))
+			return;
+
 		this.b = b;
 		this.cameraFovDegrees = cameraFovDegrees;
 		if (!selectionLive) {
@@ -564,16 +572,12 @@ public class ControlSprites {
 
 	public void updateLines() {
 
-		if (session.getSelected().size() == 0) {
-			Log.debug("Nothing selected, no line updates");
-			return;
-		}
 		BowlerStudio.runLater(() -> {
-			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
-			if (session.getSelected().size() == 0) {
-				runClear();
+			if (session.getSelected().isEmpty()) {
+				clearSelection();
 				return;
 			}
+			TransformFactory.nrToAffine(ap.get().getWorkplane(), workplaneOffset);
 			this.bounds = scaleSession.getBounds();
 			Vector3d center = bounds.getCenter();
 			Vector3d min = bounds.getMin();
@@ -781,6 +785,8 @@ public class ControlSprites {
 	}
 
 	public void clearSelection() {
+		if (session.getSelected().isEmpty())
+			selectionChanged(session.getSelected());
 		if (getMode() == SpriteDisplayMode.Align) {
 			align.show();
 			return;
