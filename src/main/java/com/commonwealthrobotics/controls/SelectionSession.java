@@ -1400,6 +1400,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		hideHalos();
 		restyleAllEdges();
 		resetSelectedCSGsFromCurrentState(cs);
+		getControls().selectionChanged(getSelected());
 
 		timeline.updateSelected(getSelected());
 		TickToc.tic("Start UpdateUIControls");
@@ -2275,6 +2276,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void fireSelectionChanged() {
+		if (getControls() != null)
+			getControls().selectionChanged(getSelected());
 		for (Runnable r : selectionListeners)
 			r.run();
 	}
@@ -2576,15 +2579,11 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			for (Button b : buttons)
 				b.setDisable(false);
 
-			int unlockedSelected = 0;
-
-			for (CSG c : getSelected())
-				if (!c.isLock())
-					unlockedSelected++;
-
-			if (unlockedSelected > 1) {
+			boolean alignEnabled = canAlign(getSelected());
+			if (alignButton != null)
+				alignButton.setDisable(!alignEnabled);
+			if (alignEnabled) {
 				groupButton.setDisable(false);
-				alignButton.setDisable(false);
 				intersectButton.setDisable(false);
 				xorButton.setDisable(false);
 			}
@@ -3103,34 +3102,46 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		this.showHideImage = showHideImage;
 	}
 
+	static boolean canAlign(Iterable<CSG> selected) {
+		int unlocked = 0;
+		for (CSG object : selected) {
+			if (!object.isLock() && ++unlocked > 1)
+				return true;
+		}
+		return false;
+	}
+
 	public void onAlign() {
 		if (getControls() == null)
 			return;
 
+		List<String> selectedNames = selectedSnapshot();
+		List<CSG> selectedObjects = getSelectedCSG(selectedNames);
+		if (!canAlign(selectedObjects))
+			return;
+		if (isMirrorActive())
+			cancelOperationModes();
+		getControls().setMode(SpriteDisplayMode.Align);
 		submit(() -> {
-			getControls().setMode(SpriteDisplayMode.Align);
-			// List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
-			// Bounds b = getSellectedBounds(selectedCSG);
-			// getControls().initializeAlign(selectedCSG, b, getMeshes());
-			List<String> selectedSnapshot = selectedSnapshot();
-			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot);
 			HashMap<String, Bounds> cache = ap.get().getBoundsCache();
 			BowlerStudio.runLater(() -> {
+				if (getMode() != SpriteDisplayMode.Align)
+					return;
 				updateControlsDisplayOfSelected();
-				// initializeAlign mutates the scene graph (handle visibility and event
-				// filters) so it must run on the UI thread.
-				getControls().initializeAlign(selectedCSG, selectedSnapshot, getMeshes(), cache);
+				if (getMode() == SpriteDisplayMode.Align)
+					getControls().initializeAlign(selectedObjects, selectedNames, getMeshes(), cache);
 			});
 		});
-
 	}
 
 	public void onMirror() {
 		if (getControls() == null)
 			return;
 
+		if (getMode() == SpriteDisplayMode.Align)
+			cancelOperationModes();
+		getControls().setMode(SpriteDisplayMode.Mirror);
 		submit(() -> {
-			getControls().setMode(SpriteDisplayMode.Mirror);
 			List<CSG> selectedCSG = getSelectedCSG(selectedSnapshot());
 			Bounds b;
 			try {
@@ -3140,7 +3151,10 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				return;
 			}
 			// initializeMirror mutates the scene graph so it runs on the UI thread.
-			BowlerStudio.runLater(() -> getControls().initializeMirror(selectedCSG, b, getMeshes()));
+			BowlerStudio.runLater(() -> {
+				if (getMode() == SpriteDisplayMode.Mirror)
+					getControls().initializeMirror(selectedCSG, b, getMeshes());
+			});
 		});
 	}
 
