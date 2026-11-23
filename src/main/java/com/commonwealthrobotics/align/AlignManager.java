@@ -199,6 +199,15 @@ public class AlignManager {
 		hide();
 	}
 
+	public void show() {
+		BowlerStudio.runLater(() -> {
+			if (!isActive())
+				return;
+			for (Node node : getElements())
+				node.setVisible(true);
+		});
+	}
+
 	public void hide() {
 		for (AlignRadioSet r : AS_LIST) {
 			r.hide();

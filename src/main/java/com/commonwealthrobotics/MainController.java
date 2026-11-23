@@ -1802,6 +1802,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			if (session.isFocused()) {
 				return;
 			}
+			if (!Manipulation.isControlOrCommandPressed(event) && "l".equalsIgnoreCase(event.getCharacter())) {
+				session.onAlign();
+				event.consume();
+				return;
+			}
+
 			if (event.getCode() != KeyCode.ESCAPE) {
 				if (session.workplane.isActive()) {
 					event.consume();
@@ -1962,10 +1968,6 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 							case 'E' : // E - Object Workplane Toggle
 								com.neuronrobotics.sdk.common.Log.debug("Call Object WP toggle");
 								session.objectWorkplane();
-								break;
-							case 'L' : // L - Align
-								com.neuronrobotics.sdk.common.Log.debug("Allign");
-								session.onAlign();
 								break;
 							case 'C' : // C - Cruise
 								com.neuronrobotics.sdk.common.Log.debug("Cruse");

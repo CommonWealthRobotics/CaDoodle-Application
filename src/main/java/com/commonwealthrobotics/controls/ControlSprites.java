@@ -88,7 +88,7 @@ public class ControlSprites {
 	private Manipulation zMoveManipulator;
 	private Manipulation manipulation;
 	// private CaDoodleFile cadoodle;
-	private SpriteDisplayMode mode = SpriteDisplayMode.Default;
+	private final ControlSpriteState displayState = new ControlSpriteState();
 	private TransformNR cf;
 	private ThreedNumber xdimen;
 	private ThreedNumber ydimen;
@@ -466,7 +466,12 @@ public class ControlSprites {
 				1.0 / engine.getFlyingCamera().getZoomScale());
 		updateLinesAndCubes();
 
-		if (session.isLocked() || session.isInOperationMode()) {
+		if (getMode() == SpriteDisplayMode.Align) {
+			align.show();
+			upArrow.hide();
+			rotationManager.hide();
+			scaleSession.show();
+		} else if (session.isLocked() || session.isInOperationMode()) {
 			upArrow.hide();
 			rotationManager.hide();
 			if (session.isAlignActive())
@@ -511,8 +516,21 @@ public class ControlSprites {
 	}
 
 	public void cancelOperationMode() {
+		cancelOperationMode(displayState.disableAlign());
+	}
+
+	public void selectionChanged(Iterable<CSG> selected) {
+		if (displayState.selectionChanged(SelectionSession.canAlign(selected)))
+			cancelOperationMode(true);
+	}
+
+	private void cancelOperationMode(boolean alignDisabled) {
+		if (alignDisabled)
+			new Exception("ALIGN STATE DISABLED; cancellation caller stack trace").printStackTrace();
 		align.cancel();
 		mirror.cancel();
+		if (alignDisabled)
+			applyDisplayMode();
 	}
 
 	private void initialize() {
@@ -523,7 +541,10 @@ public class ControlSprites {
 
 		rotationManager.initialize(session.moveLock());
 		mirror.hide();
-		align.hide();
+		if (getMode() == SpriteDisplayMode.Align)
+			align.show();
+		else
+			align.hide();
 	}
 
 	private void resetSelected() {
@@ -673,7 +694,7 @@ public class ControlSprites {
 			xOffset.setValue(min.x + pose.getX());
 			yOffset.setValue(min.y + pose.getY());
 
-			if (mode == SpriteDisplayMode.Resize) {
+			if (getMode() == SpriteDisplayMode.Resize) {
 				if (scaleSession.zScaleSelected())
 					zdimen.show();
 				else
@@ -687,7 +708,7 @@ public class ControlSprites {
 				else
 					xdimen.hide();
 			}
-			boolean isDefault = mode == SpriteDisplayMode.Default;
+			boolean isDefault = getMode() == SpriteDisplayMode.Default;
 			if (isDefault) {
 				if (scaleSession.zScaleSelected())
 					zdimen.show();
@@ -704,8 +725,8 @@ public class ControlSprites {
 			}
 
 			CaDoodleOperation currentOperation = ap.get().getCurrentOperation();
-			boolean isMoveZ = mode == SpriteDisplayMode.MoveZ;
-			boolean isThisADisplayMode = isMoveZ || (mode == SpriteDisplayMode.MoveXY)
+			boolean isMoveZ = getMode() == SpriteDisplayMode.MoveZ;
+			boolean isThisADisplayMode = isMoveZ || (getMode() == SpriteDisplayMode.MoveXY)
 					|| (isDefault && MoveCenter.class.isInstance(currentOperation) && (currentOp != currentOperation));
 
 			if (!ruler.isActive()) {
@@ -760,8 +781,16 @@ public class ControlSprites {
 	}
 
 	public void clearSelection() {
+		if (getMode() == SpriteDisplayMode.Align) {
+			align.show();
+			return;
+		}
 
 		BowlerStudio.runLater(() -> {
+			if (getMode() == SpriteDisplayMode.Align) {
+				align.show();
+				return;
+			}
 			for (Node r : allElems)
 				r.setVisible(false);
 		});
@@ -777,25 +806,26 @@ public class ControlSprites {
 	}
 
 	public SpriteDisplayMode getMode() {
-		return mode;
+		return displayState.getMode();
 	}
 
 	public void setMode(SpriteDisplayMode mode) {
 
-		if (mode == this.mode)
+		if (!displayState.setMode(mode))
 			return;
-		//new Exception("Mode Set to " + mode).printStackTrace();
 
 		Log.debug("ControlSprites setMode: " + mode);
+		applyDisplayMode();
+	}
 
-		this.mode = mode;
+	private void applyDisplayMode() {
 		BowlerStudio.runLater(() -> {
-
+			SpriteDisplayMode currentMode = getMode();
 			for (Node r : allElems)
-				r.setVisible(mode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
+				r.setVisible(currentMode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
 
 			session.hideHalos();
-			switch (this.mode) {
+			switch (currentMode) {
 
 				case Default :
 					initialize();
@@ -843,6 +873,7 @@ public class ControlSprites {
 				case Rotating :
 					break;
 				case Align :
+					align.show();
 					for (DottedLine l : lines)
 						l.setVisible(true);
 
@@ -871,6 +902,10 @@ public class ControlSprites {
 	}
 
 	public void runClear() {
+		if (getMode() == SpriteDisplayMode.Align) {
+			align.show();
+			return;
+		}
 		for (ThreedNumber t : numbers)
 			t.hide();
 
