@@ -27,6 +27,11 @@ jobs:
       run: |
           sudo apt update
           sudo apt install libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev libgtk2.0-0 zip
+    - name: Install Inkscape for SVG integration tests
+      run: |
+        sudo apt-get update
+        sudo apt-get install --yes inkscape
+        inkscape --version
     - name: start xvfb
       run:
         Xvfb :0 &
