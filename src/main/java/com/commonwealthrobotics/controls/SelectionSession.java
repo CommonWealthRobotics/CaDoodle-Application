@@ -256,6 +256,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// session deltas so a queued arrow-key move can not run concurrently with
 	// the move-commit thread or with onUpdate's manipulator reset.
 	private final Object moveGate = new Object();
+	private final ManipulatorBoundsTracker manipulatorBounds = new ManipulatorBoundsTracker();
 	private Button renameBtn;
 	private Button filletButton;
 	private Button extrudeButton;
@@ -752,6 +753,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (getMeshes() == null)
 			return;
 		BowlerStudio.runLater(() -> {
+			manipulatorBounds.clear();
 			for (CSG c : getMeshes().keySet()) {
 				MeshHolder meshHolder = getMeshes().get(c);
 				engine.removeUserNode(meshHolder.getDisplay());
@@ -828,10 +830,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		addEdgeFace(faces, base + 4, base + 6, base + 7);
 	}
 
-	// Takes the highlight flag instead of the CSG: builds run off the FX
-	// thread and the selected set is mutated from several threads, while the
-	// flag is a volatile written before the build is queued
-	private javafx.scene.Group buildFeatureEdgeGroup(List<FeatureEdgeExtractor.Edge> visibleEdges,
+	// Snapshot highlighting before queuing; do not read the selected set during builds
+	private javafx.scene.Group buildFeatureEdgeGroup(CSG csg, List<FeatureEdgeExtractor.Edge> visibleEdges,
 			boolean highlighted) {
 		javafx.scene.Group group = new javafx.scene.Group();
 		group.setMouseTransparent(true);
@@ -916,7 +916,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		PhongMaterial material = new PhongMaterial(highlighted ? highlightEdgeColor() : defaultEdgeColor());
 		material.setSpecularColor(Color.BLACK);
 
-		MeshView view = new MeshView(mesh);
+		MeshView view = createFeatureEdgeView(csg, mesh);
 		view.setMaterial(material);
 		view.setCullFace(CullFace.NONE);
 		view.setMouseTransparent(true);
@@ -924,6 +924,18 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		group.getChildren().add(view);
 		return group;
+	}
+
+	static MeshView createFeatureEdgeView(CSG csg, TriangleMesh mesh) {
+		MeshView view = new MeshView(mesh);
+		if (csg.hasManipulator()) {
+			try {
+				view.getTransforms().add(csg.getManipulator());
+			} catch (MissingManipulatorException e) {
+				throw new IllegalStateException("Missing feature-edge manipulator for " + csg.getName(), e);
+			}
+		}
+		return view;
 	}
 
 	private static Color defaultEdgeColor() {
@@ -1065,7 +1077,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 					if (holder.edges == null)
 						continue;
-					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getValue().visibleEdges,
+					javafx.scene.Group rebuilt = buildFeatureEdgeGroup(csg, entry.getValue().visibleEdges,
 							holder.edgeHighlighted);
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
 					applyEdgeColorNow(holder, csg);
@@ -1089,7 +1101,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			if (visibleEdges == null)
 				return;
 
-			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+			javafx.scene.Group rebuilt = buildFeatureEdgeGroup(csg, visibleEdges, holder.edgeHighlighted);
 			BowlerStudio.runLater(() -> {
 				if (getMeshes().get(csg) != holder)
 					return;
@@ -1119,7 +1131,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				if (visibleEdges == null)
 					continue;
 
-				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(visibleEdges, holder.edgeHighlighted);
+				javafx.scene.Group rebuilt = buildFeatureEdgeGroup(entry.getKey(), visibleEdges,
+						holder.edgeHighlighted);
 				onUI.add(() -> {
 					holder.edges.getChildren().setAll(rebuilt.getChildren());
 					applyEdgeColorNow(holder, entry.getKey());
@@ -1224,6 +1237,15 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		if (halo != null)
 			engine.addUserNode(halo);
 		getMeshes().put(c, holder);
+		if (c.hasManipulator()) {
+			CaDoodleFile file = ap.get();
+			manipulatorBounds.track(manip, () -> submit(() -> {
+				if (!ap.isOpen() || ap.get() != file || getMeshes().get(c) != holder)
+					return;
+				file.getBoundsCache().remove(c.getName());
+				updateControls();
+			}));
+		}
 
 		// Allow move on first click for unlocked meshes only
 		if (!c.isLock() && !c.isMotionLock() && !c.isInGroup())
