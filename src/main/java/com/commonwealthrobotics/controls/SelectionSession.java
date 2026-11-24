@@ -2707,6 +2707,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		submit(() -> performPaste(dist));
 	}
 
+	public void runBreakUp() {
+		List<String> names = selectedSnapshot();
+		if (names.isEmpty())
+			return;
+		BreakUp operation = new BreakUp().setNames(names);
+		submit(() -> {
+			Thread worker = addOp(operation);
+			if (worker == null)
+				return;
+			OperationCompletion.await(worker);
+			selectAllFromCurrentState(operation.getNamesAddedInThisOperation());
+			setCopyListToCurrentSelected();
+			setKeyBindingFocus();
+		});
+	}
+
 	public void runSimplify() {
 		List<String> names = selectedSnapshot();
 		if (names.isEmpty())

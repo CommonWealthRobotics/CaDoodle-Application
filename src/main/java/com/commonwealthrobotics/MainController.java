@@ -210,6 +210,8 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML // fx:id="copyButton"
 	private Button hexDistributeButton;
 	@FXML
+	private Button breakUpButton;
+	@FXML
 	private Button simplifyButton;
 	@FXML // fx:id="convertToBlenderButton"
 	private Button convertToBlenderButton;
@@ -507,6 +509,12 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 	@FXML
 	void onHexDistribute(ActionEvent ae) {
 		session.runHexDistribute();
+		session.setKeyBindingFocus();
+	}
+
+	@FXML
+	void onBreakUp(ActionEvent ae) {
+		session.runBreakUp();
 		session.setKeyBindingFocus();
 	}
 
@@ -1207,7 +1215,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						parametrics, lockButton, lockImage, intersectButton, xorButton, timelineManager,
 						objectWorkplane, dropToWorkplane, memUsage, renameBtn, MaterialGrid, materialPanel);
 				session.setButtons(copyButton, deleteButton, pasteButton, hideSHow, mirronButton, cruiseButton,
-						simplifyButton);
+						breakUpButton, simplifyButton);
 				session.setRobotLabButton(RobotLabDrawer);
 				session.setGroup(groupButton);
 				session.setUngroup(ungroupButton);

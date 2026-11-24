@@ -810,6 +810,14 @@
                      <children>
                         <HBox fx:id="advancedButtons">
                            <children>
+                              <Button fx:id="breakUpButton" disable="true" mnemonicParsing="false" onAction="#onBreakUp" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" styleClass="break-up-image-view" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%BreakUp" />
+                                 </tooltip>
+                              </Button>
                               <Button fx:id="simplifyButton" disable="true" mnemonicParsing="false" onAction="#onSimplify" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" styleClass="simplify-image-view" />

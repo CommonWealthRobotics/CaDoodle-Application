@@ -45,6 +45,7 @@
 #manifoldSTL .image-view         { -fx-image: url("light/Script-Tab-Stl.png"); }
 
 .svg-image-view                 { -fx-image: url("light/Script-Tab-SVG.png"); }
+.break-up-image-view            { -fx-image: url("light/breakUp.png"); }
 .simplify-image-view            { -fx-image: url("light/simplify.png"); }
 .blender-image-view             { -fx-image: url("light/Script-Tab-Blender.png"); }
 .freecad-image-view             { -fx-image: url("light/Script-Tab-FreeCAD.png"); }
