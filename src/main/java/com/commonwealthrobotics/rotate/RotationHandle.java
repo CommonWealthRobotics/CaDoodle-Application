@@ -119,16 +119,14 @@ public class RotationHandle {
 		imageSet.addEventFilter(MouseEvent.MOUSE_EXITED, eventFilter);
 
 		EventHandler<? super MouseEvent> pressedEvent = ev -> {
+			if (moveLock)
+				return;
+
 			selected = true;
 			rotationStarted = true;
 			startAngleFound = false;
 			com.neuronrobotics.sdk.common.Log.info("Handle clicked");
 			rotationSessionManager.hideOthers(this);
-			if (cs.moveLock()) {
-				selected = false;
-				rotationStarted = false;
-				return;
-			}
 			flagSaveChange = false;
 			BowlerStudio.runLater(() -> {
 				session.setMode(SpriteDisplayMode.Rotating);
@@ -295,7 +293,6 @@ public class RotationHandle {
 		double pinLocx = 0, pinLocy = 0, pinLocz = 0;
 		TransformNR positionPin = new TransformNR();
 		// Quadrant q = Quadrant.getQuad(-az);
-		rotationStarted = false;
 		// com.neuronrobotics.sdk.common.Log.error("Az camera in Rotation Handle "+az);
 		RotationNR axisOrient = new RotationNR();
 		switch (axis) {
@@ -376,6 +373,8 @@ public class RotationHandle {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+		if (!selected)
+			rotationStarted = false;
 	}
 
 	public boolean isFocused() {
