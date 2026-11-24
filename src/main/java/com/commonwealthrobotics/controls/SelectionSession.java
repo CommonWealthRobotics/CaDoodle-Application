@@ -2727,7 +2727,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		List<String> names = selectedSnapshot();
 		if (names.isEmpty())
 			return;
-		addOp(new Simplify().setNames(names));
+		Simplify operation = new Simplify().setNames(names);
+		submit(() -> {
+			Thread worker = addOp(operation);
+			if (worker == null)
+				return;
+			OperationCompletion.await(worker);
+			selectAllFromCurrentState(operation.getNamesAddedInThisOperation());
+			setCopyListToCurrentSelected();
+			setKeyBindingFocus();
+		});
 	}
 
 	public void runConvertToBlender() {
