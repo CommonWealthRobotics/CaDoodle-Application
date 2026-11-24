@@ -1221,7 +1221,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 						return false;
 					return ap.get().getPercentInitialized() < 0.99;
 				});
-				setTimelineOpenState((boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", false));
+				setTimelineOpenState((boolean) ConfigurationDatabase.get("CaDoodle", "CaDoodleTimelineShow", true));
 				session.setRobotLabOpen((boolean) ConfigurationDatabase.get("CaDoodle", "robotLabOpen", false));
 				timeline.getChildren().clear();
 				// RobotLabDrawerImage

@@ -596,7 +596,7 @@ public class SettingsManager implements ICSGClientEvent {
 
 		} catch (NumberFormatException ex) {
 			Log.error(ex);
-			numberOfSides.setText("16");
+			numberOfSides.setText("64");
 		}
 	}
 
@@ -675,15 +675,15 @@ public class SettingsManager implements ICSGClientEvent {
 		if (server)
 			serverIPDisplay.setText("Server started " + getLocalIP());
 		serverStatusBox.getChildren().add(clientDisplay);
-		String string = ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", "16").toString();
+		String string = ConfigurationDatabase.get("CaDoodle", "DefaultNumberOfSides", "64").toString();
 
 		try {
 			int numberOfSidesInt = Integer.parseInt(string);
 			numberOfSides.setText(string);
 		} catch (Exception ex) {
 			Log.error(ex);
-			numberOfSides.setText("16");
-			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "16");
+			numberOfSides.setText("64");
+			ConfigurationDatabase.put("CaDoodle", "DefaultNumberOfSides", "64");
 		}
 		bindir = System.getProperty("user.home") + delim() + "bin" + delim() + "CaDoodle-ApplicationInstall" + delim();
 		myVersionFileString = bindir + "currentversion.txt";
@@ -733,7 +733,24 @@ public class SettingsManager implements ICSGClientEvent {
 	}
 
 	@FXML
+	private void onResetUiDefaults(ActionEvent event) {
+		SceneStyleConfig.resetToDefaults();
+		loadUiElements();
+		for (TextField field : uiNumericFields())
+			field.setStyle(null);
+		applyHalosEnabled(uiHalosEnabled.isSelected());
+		applyEdgesEnabled();
+		if (mc != null) {
+			if (mc.getSession() != null)
+				mc.getSession().refreshEdgeWidths();
+			mc.updateUIElements();
+		}
+	}
+
+	@FXML
 	private void onUiElementChange(Event event) {
+		if (loadingUiElements)
+			return;
 		Object source = event.getSource();
 		if (source == null)
 			return;
@@ -817,14 +834,12 @@ public class SettingsManager implements ICSGClientEvent {
 			double value = bound(key, parseDouble(field.getText()));
 			field.setText("" + value);
 			field.setStyle(null);
-			new Thread(() -> {
-				ConfigurationDatabase.put(PARAMS_KEY, key, "" + value);
-				ConfigurationDatabase.save();
-				if ("edges.highlightWidthMultiplier".equals(key) && mc != null && mc.getSession() != null)
-					mc.getSession().refreshEdgeWidths();
-				if ("handle.scale".equals(key) && mc != null)
-					BowlerStudio.runLater(() -> mc.updateUIElements());
-			}).start();
+			ConfigurationDatabase.put(PARAMS_KEY, key, "" + value);
+			ConfigurationDatabase.save();
+			if ("edges.highlightWidthMultiplier".equals(key) && mc != null && mc.getSession() != null)
+				mc.getSession().refreshEdgeWidths();
+			if ("handle.scale".equals(key) && mc != null)
+				mc.updateUIElements();
 		} catch (Throwable t) {
 			Log.error(t);
 		}
@@ -1004,108 +1019,121 @@ public class SettingsManager implements ICSGClientEvent {
 		}
 	}
 
+	private boolean loadingUiElements;
+
 	/**
 	 * Load the scene style values into the UI elements tab. Values are read with
 	 * the same access pattern used by SceneStyleConfig.
 	 */
 	private void loadUiElements() {
-		// --- lighting.mode ---
-		uiLightingMode.getItems().clear();
-		uiLightingMode.getItems().addAll("stable", "kevin");
-		uiLightingMode.getSelectionModel().select(SceneStyleConfig.getString("lighting.mode", "stable"));
+		loadingUiElements = true;
+		try {
+			// --- lighting.mode ---
+			uiLightingMode.getItems().clear();
+			uiLightingMode.getItems().addAll("stable", "kevin");
+			uiLightingMode.getSelectionModel().select(SceneStyleConfig.getString("lighting.mode", "stable"));
 
-		// --- lighting.ambient ---
-		uiLightingAmbient.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.ambient", 0.47)));
+			// --- lighting.ambient ---
+			uiLightingAmbient
+					.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.ambient", 0.47)));
 
-		// --- lighting.key ---
-		uiLightingKeyEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.key.enabled", true));
-		uiLightingKeyIntensity
-				.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.key.intensity", 0.52)));
-		uiLightingKeyX.setText("" + bound("lighting.key.x", SceneStyleConfig.getDouble("lighting.key.x", -0.80)));
-		uiLightingKeyY.setText("" + bound("lighting.key.y", SceneStyleConfig.getDouble("lighting.key.y", -1.00)));
-		uiLightingKeyZ.setText("" + bound("lighting.key.z", SceneStyleConfig.getDouble("lighting.key.z", -0.45)));
+			// --- lighting.key ---
+			uiLightingKeyEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.key.enabled", true));
+			uiLightingKeyIntensity
+					.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.key.intensity", 0.52)));
+			uiLightingKeyX.setText("" + bound("lighting.key.x", SceneStyleConfig.getDouble("lighting.key.x", -0.80)));
+			uiLightingKeyY.setText("" + bound("lighting.key.y", SceneStyleConfig.getDouble("lighting.key.y", -1.00)));
+			uiLightingKeyZ.setText("" + bound("lighting.key.z", SceneStyleConfig.getDouble("lighting.key.z", -0.45)));
 
-		// --- lighting.fill ---
-		uiLightingFillEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.fill.enabled", true));
-		uiLightingFillIntensity
-				.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.fill.intensity", 0.16)));
-		uiLightingFillX.setText("" + bound("lighting.fill.x", SceneStyleConfig.getDouble("lighting.fill.x", 0.65)));
-		uiLightingFillY.setText("" + bound("lighting.fill.y", SceneStyleConfig.getDouble("lighting.fill.y", -0.10)));
-		uiLightingFillZ.setText("" + bound("lighting.fill.z", SceneStyleConfig.getDouble("lighting.fill.z", -0.25)));
+			// --- lighting.fill ---
+			uiLightingFillEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.fill.enabled", true));
+			uiLightingFillIntensity.setText(
+					"" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.fill.intensity", 0.16)));
+			uiLightingFillX.setText("" + bound("lighting.fill.x", SceneStyleConfig.getDouble("lighting.fill.x", 0.65)));
+			uiLightingFillY
+					.setText("" + bound("lighting.fill.y", SceneStyleConfig.getDouble("lighting.fill.y", -0.10)));
+			uiLightingFillZ
+					.setText("" + bound("lighting.fill.z", SceneStyleConfig.getDouble("lighting.fill.z", -0.25)));
 
-		// --- lighting.rim ---
-		uiLightingRimEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.rim.enabled", true));
-		uiLightingRimIntensity
-				.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.rim.intensity", 0.08)));
-		uiLightingRimX.setText("" + bound("lighting.rim.x", SceneStyleConfig.getDouble("lighting.rim.x", 0.20)));
-		uiLightingRimY.setText("" + bound("lighting.rim.y", SceneStyleConfig.getDouble("lighting.rim.y", 0.90)));
-		uiLightingRimZ.setText("" + bound("lighting.rim.z", SceneStyleConfig.getDouble("lighting.rim.z", -0.15)));
+			// --- lighting.rim ---
+			uiLightingRimEnabled.setSelected(SceneStyleConfig.getBoolean("lighting.rim.enabled", true));
+			uiLightingRimIntensity
+					.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("lighting.rim.intensity", 0.08)));
+			uiLightingRimX.setText("" + bound("lighting.rim.x", SceneStyleConfig.getDouble("lighting.rim.x", 0.20)));
+			uiLightingRimY.setText("" + bound("lighting.rim.y", SceneStyleConfig.getDouble("lighting.rim.y", 0.90)));
+			uiLightingRimZ.setText("" + bound("lighting.rim.z", SceneStyleConfig.getDouble("lighting.rim.z", -0.15)));
 
-		// --- feature edges ---
-		uiEdgesEnabled.setSelected(SceneStyleConfig.getBoolean("edges.enabled", true));
-		uiEdgesAngleDegrees
-				.setText("" + bound("edges.angleDegrees", SceneStyleConfig.getDouble("edges.angleDegrees", 35.0)));
-		uiEdgesWidthMode.getItems().clear();
-		uiEdgesWidthMode.getItems().addAll("screen", "world");
-		uiEdgesWidthMode.getSelectionModel().select(SceneStyleConfig.getString("edges.widthMode", "screen"));
-		uiEdgesWidthPx.setText("" + bound("edges.widthPx", SceneStyleConfig.getDouble("edges.widthPx", 1.6)));
-		uiEdgesRadius.setText("" + bound("edges.radius", SceneStyleConfig.getDouble("edges.radius", 0.15)));
-		uiEdgesBrightness.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0)));
-		uiEdgesHighlightWidthMultiplier.setText("" + bound("edges.highlightWidthMultiplier",
-				SceneStyleConfig.getDouble("edges.highlightWidthMultiplier", 1.8)));
-		uiHalosEnabled.setSelected(SceneStyleConfig.getBoolean("halos.enabled", true));
+			// --- feature edges ---
+			uiEdgesEnabled.setSelected(SceneStyleConfig.getBoolean("edges.enabled", true));
+			uiEdgesAngleDegrees
+					.setText("" + bound("edges.angleDegrees", SceneStyleConfig.getDouble("edges.angleDegrees", 35.0)));
+			uiEdgesWidthMode.getItems().clear();
+			uiEdgesWidthMode.getItems().addAll("screen", "world");
+			uiEdgesWidthMode.getSelectionModel().select(SceneStyleConfig.getString("edges.widthMode", "screen"));
+			uiEdgesWidthPx.setText("" + bound("edges.widthPx", SceneStyleConfig.getDouble("edges.widthPx", 1.6)));
+			uiEdgesRadius.setText("" + bound("edges.radius", SceneStyleConfig.getDouble("edges.radius", 0.15)));
+			uiEdgesBrightness
+					.setText("" + SceneStyleConfig.clamp01(SceneStyleConfig.getDouble("edges.brightness", 0.0)));
+			uiEdgesHighlightWidthMultiplier.setText("" + bound("edges.highlightWidthMultiplier",
+					SceneStyleConfig.getDouble("edges.highlightWidthMultiplier", 1.8)));
+			uiHalosEnabled.setSelected(SceneStyleConfig.getBoolean("halos.enabled", true));
 
-		// --- workplane grid small ---
-		uiGridSmallVisibleZoomDepth.setText("" + bound("grid.small.visibleZoomDepth",
-				SceneStyleConfig.getDouble("grid.small.visibleZoomDepth", 350.0)));
-		uiGridSmallBrightnessMultiplier.setText("" + bound("grid.small.brightnessMultiplier",
-				SceneStyleConfig.getDouble("grid.small.brightnessMultiplier", 0.85)));
-		uiGridSmallOpacityMultiplier.setText("" + bound("grid.small.opacityMultiplier",
-				SceneStyleConfig.getDouble("grid.small.opacityMultiplier", 1.0)));
-		uiGridSmallLineWidthPx
-				.setText("" + bound("grid.small.lineWidthPx", SceneStyleConfig.getDouble("grid.small.lineWidthPx", 2)));
-		uiGridSmallZOffsetMm.setText(
-				"" + bound("grid.small.zOffsetMm", SceneStyleConfig.getDouble("grid.small.zOffsetMm", -0.005)));
+			// --- workplane grid small ---
+			uiGridSmallVisibleZoomDepth.setText("" + bound("grid.small.visibleZoomDepth",
+					SceneStyleConfig.getDouble("grid.small.visibleZoomDepth", 350.0)));
+			uiGridSmallBrightnessMultiplier.setText("" + bound("grid.small.brightnessMultiplier",
+					SceneStyleConfig.getDouble("grid.small.brightnessMultiplier", 0.85)));
+			uiGridSmallOpacityMultiplier.setText("" + bound("grid.small.opacityMultiplier",
+					SceneStyleConfig.getDouble("grid.small.opacityMultiplier", 1.0)));
+			uiGridSmallLineWidthPx.setText(
+					"" + bound("grid.small.lineWidthPx", SceneStyleConfig.getDouble("grid.small.lineWidthPx", 2)));
+			uiGridSmallZOffsetMm.setText(
+					"" + bound("grid.small.zOffsetMm", SceneStyleConfig.getDouble("grid.small.zOffsetMm", -0.05)));
 
-		// --- workplane grid major ---
-		uiGridMajorBrightnessMultiplier.setText("" + bound("grid.major.brightnessMultiplier",
-				SceneStyleConfig.getDouble("grid.major.brightnessMultiplier", 1.0)));
-		uiGridMajorOpacityMultiplier.setText("" + bound("grid.major.opacityMultiplier",
-				SceneStyleConfig.getDouble("grid.major.opacityMultiplier", 1.0)));
-		uiGridMajorLineWidthPx
-				.setText("" + bound("grid.major.lineWidthPx", SceneStyleConfig.getDouble("grid.major.lineWidthPx", 4)));
+			// --- workplane grid major ---
+			uiGridMajorBrightnessMultiplier.setText("" + bound("grid.major.brightnessMultiplier",
+					SceneStyleConfig.getDouble("grid.major.brightnessMultiplier", 1.0)));
+			uiGridMajorOpacityMultiplier.setText("" + bound("grid.major.opacityMultiplier",
+					SceneStyleConfig.getDouble("grid.major.opacityMultiplier", 1.0)));
+			uiGridMajorLineWidthPx.setText(
+					"" + bound("grid.major.lineWidthPx", SceneStyleConfig.getDouble("grid.major.lineWidthPx", 4)));
 
-		// --- grid motion mode ---
-		uiGridMotionMode.getItems().clear();
-		uiGridMotionMode.getItems().addAll("major", "all", "texture", "hidden");
-		uiGridMotionMode.getSelectionModel().select(SceneStyleConfig.getString("grid.motionMode", "texture"));
+			// --- grid motion mode ---
+			uiGridMotionMode.getItems().clear();
+			uiGridMotionMode.getItems().addAll("major", "all", "texture", "hidden");
+			uiGridMotionMode.getSelectionModel().select(SceneStyleConfig.getString("grid.motionMode", "texture"));
 
-		// --- grid ground ---
-		uiGridGroundRenderOpacity.setText(
-				"" + bound("grid.ground.renderOpacity", SceneStyleConfig.getDouble("grid.ground.renderOpacity", 1.0)));
+			// --- grid ground ---
+			uiGridGroundRenderOpacity.setText(""
+					+ bound("grid.ground.renderOpacity", SceneStyleConfig.getDouble("grid.ground.renderOpacity", 1.0)));
 
-		// --- camera orbit ---
-		uiCameraOrbitMin.setText("" + bound("camera.orbit.min", SceneStyleConfig.getDouble("camera.orbit.min", 0.012)));
-		uiCameraOrbitMax.setText("" + bound("camera.orbit.max", SceneStyleConfig.getDouble("camera.orbit.max", 0.080)));
-		uiCameraOrbitHalf
-				.setText("" + bound("camera.orbit.half", SceneStyleConfig.getDouble("camera.orbit.half", 500)));
-		uiCameraOrbitRiseMs
-				.setText("" + bound("camera.orbit.riseMs", SceneStyleConfig.getDouble("camera.orbit.riseMs", 250)));
-		uiCameraOrbitFallMs
-				.setText("" + bound("camera.orbit.fallMs", SceneStyleConfig.getDouble("camera.orbit.fallMs", 120)));
+			// --- camera orbit ---
+			uiCameraOrbitMin
+					.setText("" + bound("camera.orbit.min", SceneStyleConfig.getDouble("camera.orbit.min", 0.012)));
+			uiCameraOrbitMax
+					.setText("" + bound("camera.orbit.max", SceneStyleConfig.getDouble("camera.orbit.max", 0.080)));
+			uiCameraOrbitHalf
+					.setText("" + bound("camera.orbit.half", SceneStyleConfig.getDouble("camera.orbit.half", 700.0)));
+			uiCameraOrbitRiseMs
+					.setText("" + bound("camera.orbit.riseMs", SceneStyleConfig.getDouble("camera.orbit.riseMs", 250)));
+			uiCameraOrbitFallMs
+					.setText("" + bound("camera.orbit.fallMs", SceneStyleConfig.getDouble("camera.orbit.fallMs", 120)));
 
-		// --- feature edge timing ---
-		uiEdgesSceneSettleDelayMs.setText(
-				"" + bound("edges.sceneSettleDelayMs", SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0)));
-		uiEdgesCameraSettleDelayMs.setText(""
-				+ bound("edges.cameraSettleDelayMs", SceneStyleConfig.getDouble("edges.cameraSettleDelayMs", 120.0)));
-		uiEdgesTopologyPrecision.setText(
-				"" + bound("edges.topologyPrecision", SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001)));
-		uiEdgesStitchTolerance.setText(
-				"" + bound("edges.stitchTolerance", SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002)));
+			// --- feature edge timing ---
+			uiEdgesSceneSettleDelayMs.setText(""
+					+ bound("edges.sceneSettleDelayMs", SceneStyleConfig.getDouble("edges.sceneSettleDelayMs", 500.0)));
+			uiEdgesCameraSettleDelayMs.setText("" + bound("edges.cameraSettleDelayMs",
+					SceneStyleConfig.getDouble("edges.cameraSettleDelayMs", 120.0)));
+			uiEdgesTopologyPrecision.setText(""
+					+ bound("edges.topologyPrecision", SceneStyleConfig.getDouble("edges.topologyPrecision", 0.00001)));
+			uiEdgesStitchTolerance.setText(
+					"" + bound("edges.stitchTolerance", SceneStyleConfig.getDouble("edges.stitchTolerance", 0.002)));
 
-		// --- control handle ---
-		uiHandleScale.setText("" + bound("handle.scale", SceneStyleConfig.getDouble("handle.scale", 1.0)));
+			// --- control handle ---
+			uiHandleScale.setText("" + bound("handle.scale", SceneStyleConfig.getDouble("handle.scale", 0.75)));
+		} finally {
+			loadingUiElements = false;
+		}
 	}
 
 	/**
