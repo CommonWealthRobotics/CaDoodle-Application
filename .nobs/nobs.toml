@@ -88,3 +88,9 @@ source = "/home/hephaestus/Documents/CaDoodle-workspace/cadoodleLog.txt"
 dest = "/home/hephaestus/Documents/CaDoodle-workspace/cadoodleLog.txt"
 read_only = true
 enabled = true
+
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/Style-Cadoodle"
+dest = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/Style-Cadoodle"
+read_only = false
+enabled = true
