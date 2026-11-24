@@ -810,6 +810,15 @@
                      <children>
                         <HBox fx:id="advancedButtons">
                            <children>
+                              <Button fx:id="simplifyButton" disable="true" mnemonicParsing="false" onAction="#onSimplify" styleClass="image-button">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" styleClass="simplify-image-view" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%SimplifyMesh" />
+                                 </tooltip>
+                              </Button>
+                              <Separator orientation="VERTICAL" />
                               <Button fx:id="convertToBlenderButton" mnemonicParsing="false" onAction="#onConvertToBlender" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="blender-image-view" />

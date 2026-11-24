@@ -504,6 +504,26 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	}
 
 	private void setUpParametrics(List<CSG> currentState, CaDoodleOperation source) {
+		if (source instanceof Simplify) {
+			Simplify simplify = (Simplify) source;
+			CSGDatabaseInstance db = ap.get().getCsgDBinstance();
+			Set<String> keys = new HashSet<>();
+			for (CSG shape : currentState) {
+				for (String key : shape.getParameters(db)) {
+					if (simplify.ownsParameterKey(key))
+						keys.add(key);
+				}
+			}
+			for (String key : keys) {
+				db.clearParameterListeners(key);
+				db.addParameterListener(key, (name, parameter) -> {
+					CaDoodleFile file = ap.get();
+					if (!file.isRegenerating() && file.getPercentInitialized() >= 1)
+						submit(() -> myRegenerate(source, null, null));
+				});
+			}
+		}
+
 		if (AddRobotLimb.class.isInstance(source)) {
 			AddRobotLimb op = (AddRobotLimb) source;
 			MobileBaseBuilder builder = op.getMobilBaseBuilder();
@@ -1510,7 +1530,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 				Collections.sort(sortedList);
 				int numCadParaams = 0;
 				for (String key : sortedList) {
-					if (key.contains("CaDoodle") && (key.contains(sel.getName().split("_")[0]))) {
+					if (Simplify.isParameterKey(key)
+							|| (key.contains("CaDoodle") && key.contains(sel.getName().split("_")[0]))) {
 						numCadParaams++;
 						String[] parts = key.split("_");
 						String text = parts[parts.length - 1];
@@ -1676,7 +1697,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 		ArrayList<String> options2 = para.getOptions();
 		boolean limited = false;
-		if (options2.size() < 2) {
+		if (options2.size() <= 2) {
 			setUpNumberField(gp, line, text, para, width);
 			return;
 		} else
@@ -2684,6 +2705,13 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		LinearDistribution dist = new LinearDistribution().setWorkplane(getWorkplane()).setNames(selectedSnapshot());
 
 		submit(() -> performPaste(dist));
+	}
+
+	public void runSimplify() {
+		List<String> names = selectedSnapshot();
+		if (names.isEmpty())
+			return;
+		addOp(new Simplify().setNames(names));
 	}
 
 	public void runConvertToBlender() {
