@@ -815,7 +815,7 @@ public class ActiveProject implements ICaDoodleStateUpdate {
 	}
 
 	public static Locale getCurrentLocale() {
-		String stored = ConfigurationDatabase.get("CaDoodle", "CaDoodleLangauge", "").toString();
+		String stored = ConfigurationDatabase.get("CaDoodle", "CaDoodleLangauge", "en").toString();
 		Locale toUse = stored.length() == 0 ? null : Locale.of(stored);
 		return toUse;
 	}

@@ -64,6 +64,12 @@ dest = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/Common
 read_only = false
 enabled = true
 
+[[sandbox.extra_binds]]
+source = "/home/hephaestus/Documents/CaDoodle-workspace/ConfigurationDatabase.json"
+dest = "/home/hephaestus/Documents/CaDoodle-workspace/ConfigurationDatabase.json"
+read_only = true
+enabled = true
+
 
 [[sandbox.extra_binds]]
 source = "/home/hephaestus/Documents/CaDoodle-workspace/gitcache/github.com/CommonWealthRobotics/freecad-bowler-cli"

@@ -327,7 +327,7 @@ public class ResizingHandle {
 			Point3D world3Dpos = getAbsolutePosition();
 			double calculatedScaleFactor = engine.screenToSceneMMscale(world3Dpos);
 			// User scaling of the control handles from the UI Elements settings tab
-			double handleScale = SceneStyleConfig.getDouble("handle.scale", 1.0);
+			double handleScale = SceneStyleConfig.getDouble("handle.scale", 0.75);
 			calculatedScaleFactor *= handleScale;
 			setScale(calculatedScaleFactor);
 			scaleTF.setX(calculatedScaleFactor);
