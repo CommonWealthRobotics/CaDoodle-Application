@@ -165,10 +165,13 @@ public class LimbControlManager {
 		handles.addAll(rotationManager.getElements());
 		hide();
 		for (Node n : handles) {
-			if (!(n instanceof TextField))
-				n.setViewOrder(-2);
 			n.setDepthTest(DepthTest.DISABLE);
-			engine.addUserNode(n);
+			if (n instanceof TextField) {
+				engine.addControlNode(n);
+			} else {
+				n.setViewOrder(-2);
+				engine.addUserNode(n);
+			}
 			n.setVisible(false);
 		}
 
@@ -179,6 +182,10 @@ public class LimbControlManager {
 
 		baseManipulator.onReset();
 		tipManipulator.onReset();
+	}
+
+	public boolean isFocused() {
+		return rotationManager.isFocused();
 	}
 
 	public void show(DHParameterKinematics limb) {

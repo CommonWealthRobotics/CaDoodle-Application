@@ -31,12 +31,15 @@ import com.neuronrobotics.sdk.addons.kinematics.math.TransformNR;
 import com.neuronrobotics.sdk.common.Log;
 
 import eu.mihosoft.vrl.v3d.CSG;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -115,6 +118,29 @@ public class RobotLab {
 			builder = null;
 			getManager().hide();
 		}
+	}
+
+	public boolean isFocused() {
+		return manager.isFocused() || hasFocusedTextInput(robotLabTabPane);
+	}
+
+	private static boolean hasFocusedTextInput(Node node) {
+		if (node instanceof TextInputControl && node.isFocused())
+			return true;
+		// Tab contents belong to the lab even before their skins attach them as children;
+		if (node instanceof TabPane) {
+			for (Tab tab : ((TabPane) node).getTabs()) {
+				if (hasFocusedTextInput(tab.getContent()))
+					return true;
+			}
+		}
+		if (node instanceof Parent) {
+			for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+				if (hasFocusedTextInput(child))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public void onCancel() {

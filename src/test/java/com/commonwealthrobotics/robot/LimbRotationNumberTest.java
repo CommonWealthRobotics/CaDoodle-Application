@@ -50,30 +50,42 @@ class LimbRotationNumberTest {
 	void limbRotationNumbersRenderAndPickAboveOverlappingHandles() throws Exception {
 		onFx(() -> {
 			Fixture f = new Fixture();
-			assertEquals(3, f.numbers.size());
 			Rectangle handle = new Rectangle(300, 100, Color.RED);
 			handle.setTranslateZ(-100);
 			handle.setViewOrder(-2);
 			handle.setDepthTest(DepthTest.DISABLE);
-			f.userGroup.getChildren().add(handle);
-			Scene scene = new Scene(f.userGroup, 300, 100, true);
-			for (TextField field : f.numbers) {
-				field.setManaged(false);
-				field.resizeRelocate(20, 20, 120, 40);
-				field.setStyle(
-						"-fx-background-color: lime; -fx-background-radius: 0; -fx-border-width: 0; -fx-padding: 0;");
-				field.setVisible(true);
-				f.userGroup.applyCss();
-				f.userGroup.layout();
-				Node picked = pick(f.userGroup);
-				while (picked != null && picked != field)
-					picked = picked.getParent();
-				assertSame(field, picked, "The limb angle editor must receive the click instead of the handle");
-				assertEquals(Color.LIME, scene.snapshot(null).getPixelReader().getColor(30, 30));
-				field.setVisible(false);
-				assertSame(handle, pick(f.userGroup), "Hiding the angle editor must restore handle picking");
-			}
+			f.controlGroup.getChildren().add(handle);
+			assertNumbersOnTop(f, handle);
 		});
+	}
+
+	@Test
+	void limbRotationNumbersRenderAndPickAboveTheGroundBranch() throws Exception {
+		onFx(() -> {
+			Fixture f = new Fixture();
+			assertNumbersOnTop(f, f.ground);
+		});
+	}
+
+	private static void assertNumbersOnTop(Fixture f, Node underneath) {
+		assertEquals(3, f.numbers.size());
+		Scene scene = new Scene(f.world, 300, 100, true);
+		for (TextField field : f.numbers) {
+			field.setManaged(false);
+			field.resizeRelocate(20, 20, 120, 40);
+			field.setStyle(
+					"-fx-background-color: lime; -fx-background-radius: 0; -fx-border-width: 0; -fx-padding: 0;");
+			field.setVisible(true);
+			f.world.applyCss();
+			f.world.layout();
+			Node picked = pick(f.world);
+			while (picked != null && picked != field)
+				picked = picked.getParent();
+			assertSame(field, picked, "The limb angle editor must receive the click ahead of other viewport layers");
+			assertEquals(Color.LIME, scene.snapshot(null).getPixelReader().getColor(30, 30));
+			field.setVisible(false);
+			assertSame(underneath, pick(f.world), "Hiding the angle editor must restore underlying picking");
+		}
 	}
 
 	private static Node pick(Group root) {
@@ -92,6 +104,9 @@ class LimbRotationNumberTest {
 
 	private static final class Fixture {
 		final Group userGroup = new Group();
+		final Rectangle ground = new Rectangle(300, 100, Color.BLUE);
+		final Group controlGroup = new Group();
+		final Group world = new Group(userGroup, new Group(ground), controlGroup);
 		final List<TextField> numbers = new ArrayList<>();
 
 		Fixture() {
@@ -107,6 +122,13 @@ class LimbRotationNumberTest {
 					numbers.add((TextField) node);
 				return null;
 			}).when(engine).addUserNode(any(Node.class));
+			doAnswer(invocation -> {
+				Node node = (Node) invocation.getArguments()[0];
+				controlGroup.getChildren().add(node);
+				if (node instanceof TextField)
+					numbers.add((TextField) node);
+				return null;
+			}).when(engine).addControlNode(any(Node.class));
 			new LimbControlManager(engine, mock(SelectionSession.class), mock(ActiveProject.class),
 					mock(RulerManager.class), mock(WorkplaneManager.class), mock(ControlSprites.class));
 		}

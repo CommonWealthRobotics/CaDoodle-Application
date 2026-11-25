@@ -1790,11 +1790,10 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			heldKeys.remove(event.getCode());
 		});
 		engine.addKeyFilter(KeyEvent.KEY_PRESSED, event -> {
-			heldKeys.add(event.getCode());
-			if (session.isFocused()) {
-				// com.neuronrobotics.sdk.common.Log.error("Key ignonred, session in focus");
+			if (session.isFocused() || robotLab.isFocused()) {
 				return;
 			}
+			heldKeys.add(event.getCode());
 			if (event.getCode() == KeyCode.ESCAPE) {
 				session.workplane.cancel();
 				BowlerStudio.runLater(() -> {
@@ -1840,7 +1839,7 @@ public class MainController implements ICaDoodleStateUpdate, ICameraChangeListen
 			}
 		});
 		engine.addKeyFilter(KeyEvent.KEY_TYPED, event -> {
-			if (session.isFocused()) {
+			if (session.isFocused() || robotLab.isFocused()) {
 				return;
 			}
 			if (!Manipulation.isControlOrCommandPressed(event) && "l".equalsIgnoreCase(event.getCharacter())) {
