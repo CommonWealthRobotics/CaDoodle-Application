@@ -28,14 +28,15 @@ public class ArmPointManipulator {
 	public ArmPointManipulator(Runnable saveListener, EventHandler<MouseEvent> moveListener, ActiveProject ap,
 			BowlerStudio3dEngine engine, Affine workplaneOffset, Runnable onSelect, Runnable onReset,
 			WorkplaneManager workplane, ControlSprites controlSprites) {
-		tip = new ResizingHandle("Limb Base", workplane, engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset,
-				onSelect, onReset, new Cylinder(15, 1).toCSG(), controlSprites);
+		tip = new ResizingHandle("Limb Base", workplane, engine, new Affine(), new Vector3d(1, 1, 0), workplaneOffset,
+				onSelect, onReset, new Cylinder(15, 1).toCSG(), controlSprites, baseSelection);
 		tip.setMyColor(Color.PINK, Color.TEAL);
 		tip.setBaseScale(1.25);
 		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 		tip.manipulator.addEventListener(moveListener);
 		tip.manipulator.addSaveListener(saveListener);
-		up = new RobotZHandle(saveListener, moveListener, ap, engine, workplaneOffset, onSelect, onReset);
+		up = new RobotZHandle(saveListener, moveListener, ap, engine, baseSelection, workplaneOffset, onSelect,
+				onReset);
 	}
 
 	public TransformNR getCurrentPoseInReferenceFrame() {

@@ -48,7 +48,7 @@ public class ResizingHandle {
 	private Affine location = new Affine();
 	private Affine cameraOrient = new Affine();
 	private Scale scaleTF = new Scale();
-	private Affine resizeHandleLocation = new Affine();
+	private final Affine resizeHandleLocation;
 	private Affine baseMove;
 
 	public Manipulation manipulator;
@@ -79,6 +79,14 @@ public class ResizingHandle {
 	public ResizingHandle(String name, WorkplaneManager workplane, BowlerStudio3dEngine engine, Affine move,
 			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape,
 			ControlSprites controlSprites) {
+		this(name, workplane, engine, move, vector3d, workplaneOffset, onSelect, onReset, shape, controlSprites,
+				new Affine());
+	}
+
+	public ResizingHandle(String name, WorkplaneManager workplane, BowlerStudio3dEngine engine, Affine move,
+			Vector3d vector3d, Affine workplaneOffset, Runnable onSelect, Runnable onReset, CSG shape,
+			ControlSprites controlSprites, Affine dragTransform) {
+		this.resizeHandleLocation = dragTransform;
 		this.name = name;
 		this.workplane = workplane;
 		this.workplaneOffset = workplaneOffset;

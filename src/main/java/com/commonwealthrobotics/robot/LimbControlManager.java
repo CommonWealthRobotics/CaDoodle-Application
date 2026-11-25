@@ -28,6 +28,7 @@ import eu.mihosoft.vrl.v3d.Bounds;
 import eu.mihosoft.vrl.v3d.CSG;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
+import javafx.scene.control.TextField;
 import javafx.scene.transform.Affine;
 
 public class LimbControlManager {
@@ -164,7 +165,8 @@ public class LimbControlManager {
 		handles.addAll(rotationManager.getElements());
 		hide();
 		for (Node n : handles) {
-			n.setViewOrder(-2);
+			if (!(n instanceof TextField))
+				n.setViewOrder(-2);
 			n.setDepthTest(DepthTest.DISABLE);
 			engine.addUserNode(n);
 			n.setVisible(false);

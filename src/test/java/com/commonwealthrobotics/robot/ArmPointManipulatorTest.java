@@ -100,6 +100,32 @@ class ArmPointManipulatorTest {
 	}
 
 	@Test
+	void draggingEitherHandleMovesThePairByTheSameOffset() throws Exception {
+		onFx(() -> {
+			Fixture f = new Fixture();
+			f.arm.threeDTarget(800, 600, -400, new TransformNR(20, -30, 40), new TransformNR(), false);
+			MeshView xy = f.arm.tip.getMesh();
+			MeshView z = f.up.arrow.getMesh();
+			Point3D xyStart = xy.localToParent(Point3D.ZERO);
+			Point3D zStart = z.localToParent(Point3D.ZERO);
+			for (Point3D offset : new Point3D[]{new Point3D(12, -8, 0), new Point3D(-4, 9, 0)}) {
+				f.arm.tip.manipulator.set(offset.getX(), offset.getY(), offset.getZ());
+				assertEquals(offset, xy.localToParent(Point3D.ZERO).subtract(xyStart));
+				assertEquals(offset, z.localToParent(Point3D.ZERO).subtract(zStart));
+			}
+			for (double height : new double[]{15, -7, 0}) {
+				f.up.manipulator.set(0, 0, height);
+				Point3D offset = new Point3D(0, 0, height);
+				assertEquals(offset, xy.localToParent(Point3D.ZERO).subtract(xyStart));
+				assertEquals(offset, z.localToParent(Point3D.ZERO).subtract(zStart));
+			}
+			f.arm.onReset();
+			assertEquals(xyStart, xy.localToParent(Point3D.ZERO));
+			assertEquals(zStart, z.localToParent(Point3D.ZERO));
+		});
+	}
+
+	@Test
 	void draggingEitherAxisIsReportedRegardlessOfSelection() throws Exception {
 		onFx(() -> {
 			Fixture f = new Fixture();

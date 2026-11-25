@@ -26,10 +26,10 @@ final class RobotZHandle {
 	private final Affine workplaneOffset;
 
 	RobotZHandle(Runnable saveListener, EventHandler<MouseEvent> moveListener, ActiveProject ap,
-			BowlerStudio3dEngine engine, Affine workplaneOffset, Runnable onSelect, Runnable onReset) {
+			BowlerStudio3dEngine engine, Affine selection, Affine workplaneOffset, Runnable onSelect,
+			Runnable onReset) {
 		this.engine = engine;
 		this.workplaneOffset = workplaneOffset;
-		Affine selection = new Affine();
 		manipulator = new Manipulation(selection, new Vector3d(0, 0, 1), new TransformNR(), this::projectMouse, true,
 				false);
 		manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
