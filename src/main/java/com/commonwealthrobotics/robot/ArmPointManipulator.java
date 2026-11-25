@@ -6,7 +6,6 @@ import java.util.Arrays;
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.ControlSprites;
-import com.commonwealthrobotics.controls.MoveUpArrow;
 import com.commonwealthrobotics.controls.ResizingHandle;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation.DragState;
 import com.neuronrobotics.bowlerstudio.threed.BowlerStudio3dEngine;
@@ -22,16 +21,13 @@ import javafx.scene.transform.Affine;
 
 public class ArmPointManipulator {
 
-	private Runnable saveListener;
-	ResizingHandle tip = null;
-	private Affine baseSelection = new Affine();
-	private Affine moveUpLocation = new Affine();
+	final ResizingHandle tip;
+	private final Affine baseSelection = new Affine();
+	private final RobotZHandle up;
 
-	private MoveUpArrow up;
 	public ArmPointManipulator(Runnable saveListener, EventHandler<MouseEvent> moveListener, ActiveProject ap,
 			BowlerStudio3dEngine engine, Affine workplaneOffset, Runnable onSelect, Runnable onReset,
 			WorkplaneManager workplane, ControlSprites controlSprites) {
-		this.saveListener = saveListener;
 		tip = new ResizingHandle("Limb Base", workplane, engine, baseSelection, new Vector3d(1, 1, 0), workplaneOffset,
 				onSelect, onReset, new Cylinder(15, 1).toCSG(), controlSprites);
 		tip.setMyColor(Color.PINK, Color.TEAL);
@@ -39,41 +35,42 @@ public class ArmPointManipulator {
 		tip.manipulator.setFrameOfReference(() -> ap.get().getWorkplane());
 		tip.manipulator.addEventListener(moveListener);
 		tip.manipulator.addSaveListener(saveListener);
-		// up = new MoveUpArrow(selection, workplaneOffset, moveUpLocation, scaleTF,
-		// zMove.getMouseEvents(), () -> {
-		// updateCubes();
-		// updateLines();
-		// }, () -> scaleSession.resetSelected());
+		up = new RobotZHandle(saveListener, moveListener, ap, engine, workplaneOffset, onSelect, onReset);
 	}
 
 	public TransformNR getCurrentPoseInReferenceFrame() {
-		return tip.manipulator.getCurrentPoseInReferenceFrame();
+		return up.arrow.isSelected()
+				? up.manipulator.getCurrentPoseInReferenceFrame()
+				: tip.manipulator.getCurrentPoseInReferenceFrame();
 	}
 
 	public void onReset() {
 		tip.resetSelected();
 		tip.manipulator.reset();
+		up.reset();
 	}
 
 	public ArrayList<MeshView> getMesh() {
-
-		return new ArrayList<MeshView>(Arrays.asList(tip.getMesh()));
+		return new ArrayList<MeshView>(Arrays.asList(tip.getMesh(), up.arrow.getMesh()));
 	}
 
 	public void show() {
 		tip.show();
+		up.arrow.show();
 	}
 
 	public void hide() {
 		tip.hide();
+		up.arrow.hide();
 	}
 
 	public DragState getState() {
-		return tip.manipulator.getState();
+		return up.manipulator.getState() != DragState.IDLE ? up.manipulator.getState() : tip.manipulator.getState();
 	}
 
 	public void threeDTarget(double screenW, double screenH, double zoom, TransformNR target, TransformNR cf,
 			boolean locked) {
 		tip.threeDTarget(screenW, screenH, zoom, target, cf, locked);
+		up.update(target.copy(), locked);
 	}
 }
