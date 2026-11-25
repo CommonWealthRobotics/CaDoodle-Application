@@ -225,7 +225,7 @@ public class RotationHandle {
 		BowlerStudio.runLater(() -> TransformFactory.nrToAffine(new TransformNR(), viewRotation));
 
 		if (!moveLock)
-			done.toUpdate(toUpdate);
+			session.submit(() -> done.toUpdate(toUpdate));
 
 	}
 

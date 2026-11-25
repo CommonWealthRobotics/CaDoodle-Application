@@ -4,14 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.commonwealthrobotics.ActiveProject;
 import com.commonwealthrobotics.RulerManager;
@@ -48,6 +50,10 @@ class RotationHandleTest {
 	private static RotationHandle createHandle(boolean selectionLocked) {
 		SelectionSession session = mock(SelectionSession.class);
 		when(session.moveLock()).thenReturn(selectionLocked);
+		doAnswer(invocation -> {
+			fail("A click must not submit a rotation");
+			return null;
+		}).when(session).submit(any(Runnable.class));
 		return new RotationHandle(EulerAxis.azimuth, new Affine(), new Affine(), mock(RotationSessionManager.class),
 				mock(ActiveProject.class), session, new Affine(), mock(RulerManager.class),
 				tf -> fail("A click must not save a rotation"));
@@ -75,17 +81,28 @@ class RotationHandleTest {
 	}
 
 	@ParameterizedTest
-	@EnumSource(value = EulerAxis.class, names = {"azimuth", "elevation", "tilt"})
-	void ordinaryObjectDragSavesOnceAndEndsRotation(EulerAxis axis) throws Exception {
+	@CsvSource({"azimuth,false", "elevation,false", "tilt,false", "azimuth,true", "elevation,true", "tilt,true"})
+	void dragSubmitsFinishWithoutBlockingUi(EulerAxis axis, boolean limb) throws Exception {
+		BlockingQueue<Runnable> submitted = new LinkedBlockingQueue<>();
+		AtomicInteger saves = new AtomicInteger();
 		onFx(() -> {
 			ActiveProject project = mock(ActiveProject.class);
 			CaDoodleFile file = mock(CaDoodleFile.class);
 			when(project.get()).thenReturn(file);
 			when(file.getWorkplane()).thenReturn(new TransformNR());
-			AtomicInteger saves = new AtomicInteger();
+			SelectionSession session = mock(SelectionSession.class);
+			when(session.moveLock()).thenReturn(limb);
+			doAnswer(invocation -> {
+				submitted.add((Runnable) invocation.getArguments()[0]);
+				return null;
+			}).when(session).submit(any(Runnable.class));
 			RotationHandle handle = new RotationHandle(axis, new Affine(), new Affine(),
-					mock(RotationSessionManager.class), project, mock(SelectionSession.class), new Affine(),
-					mock(RulerManager.class), tf -> saves.incrementAndGet());
+					mock(RotationSessionManager.class), project, session, new Affine(), mock(RulerManager.class),
+					tf -> {
+						assertFalse(Platform.isFxApplicationThread(), "Finishing must not block the FX thread");
+						assertDoesNotThrow(() -> onFx(() -> saves.incrementAndGet()));
+					});
+			handle.setLock(false);
 			handle.updateControls(800, 600, -500, 0, 0, 0, 0, 0, Collections.emptyList(),
 					new Cube(20).toCSG().getBounds(), new TransformNR(0, 0, -500), 45, 1);
 			fire(handle.getImageSet(), MouseEvent.MOUSE_PRESSED);
@@ -96,11 +113,15 @@ class RotationHandleTest {
 			assertTrue(handle.arc.isVisible());
 			assertEquals(0, saves.get());
 			fire(handle.getImageSet(), MouseEvent.MOUSE_RELEASED);
-			assertEquals(1, saves.get());
+			assertEquals(0, saves.get());
+			verify(session).submit(any(Runnable.class));
 			assertFalse(handle.isSelected());
 			assertFalse(handle.controlCircle.isVisible());
 			assertFalse(handle.arc.isVisible());
 		});
+		assertEquals(1, submitted.size());
+		submitted.remove().run();
+		assertEquals(1, saves.get());
 	}
 
 	private static void drag(RotationHandle handle, double x, double y) {
