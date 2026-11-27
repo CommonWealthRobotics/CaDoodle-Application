@@ -362,9 +362,44 @@ public class ControlSprites {
 		});
 	}
 
+	void updateLimbCamera(double screenW, double screenH, double zoom) {
+		TransformNR cameraFrame = engine.getFlyingCamera().getCamerFrame().times(new TransformNR(0, 0, zoom));
+		session.getLimbs().threeDTarget(screenW, screenH, zoom, cameraFrame, session.isLocked(), engine.getFov());
+	}
+
+	public void hideForLimbMove() {
+		BowlerStudio.runLater(() -> {
+			if (session.isLimbMoveActive())
+				hideLimbBounds();
+		});
+	}
+
+	void hideLimbBounds() {
+		long revision = session.limbBoundsRevision();
+		BowlerStudio.runLater(() -> {
+			if (revision != session.limbBoundsRevision())
+				return;
+			for (Node element : allElems)
+				element.setVisible(false);
+			session.hideHalos();
+		});
+	}
+
+	private boolean suppressLimbBounds() {
+		if (!session.isLimbMoveActive())
+			return false;
+		hideForLimbMove();
+		return true;
+	}
+
 	private void updateLinesAndCubes() {
+		if (session.isLimbMoveActive())
+			return;
+		long revision = session.limbBoundsRevision();
 		List<CSG> cur = session.getCurrentStateSelected();
 		BowlerKernel.runLater(() -> {
+			if (suppressLimbBounds() || revision != session.limbBoundsRevision())
+				return;
 			updateCubes(session.getCurrentStateSelected(), cur);
 			updateLines();
 		});
@@ -432,6 +467,8 @@ public class ControlSprites {
 			double z, List<String> selectedCSG, Bounds b, HashMap<String, Bounds> inWorkplaneBounds,
 			double cameraFovDegrees) {
 
+		if (suppressLimbBounds())
+			return;
 		if (session.getSelected().isEmpty()) {
 			clearSelection();
 			return;
@@ -542,6 +579,8 @@ public class ControlSprites {
 	}
 
 	private void initialize() {
+		if (suppressLimbBounds())
+			return;
 
 		// Initialize as hidden to prevent visual glitches
 		for (Node r : allElems)
@@ -571,8 +610,10 @@ public class ControlSprites {
 	}
 
 	public void updateLines() {
-
+		long revision = session.limbBoundsRevision();
 		BowlerStudio.runLater(() -> {
+			if (suppressLimbBounds() || revision != session.limbBoundsRevision())
+				return;
 			if (session.getSelected().isEmpty()) {
 				clearSelection();
 				return;
@@ -785,6 +826,10 @@ public class ControlSprites {
 	}
 
 	public void clearSelection() {
+		if (suppressLimbBounds()) {
+			selectionLive = false;
+			return;
+		}
 		if (session.getSelected().isEmpty())
 			selectionChanged(session.getSelected());
 		if (getMode() == SpriteDisplayMode.Align) {
@@ -793,6 +838,8 @@ public class ControlSprites {
 		}
 
 		BowlerStudio.runLater(() -> {
+			if (suppressLimbBounds())
+				return;
 			if (getMode() == SpriteDisplayMode.Align) {
 				align.show();
 				return;
@@ -825,7 +872,10 @@ public class ControlSprites {
 	}
 
 	private void applyDisplayMode() {
+		long revision = session.limbBoundsRevision();
 		BowlerStudio.runLater(() -> {
+			if (suppressLimbBounds() || revision != session.limbBoundsRevision())
+				return;
 			SpriteDisplayMode currentMode = getMode();
 			for (Node r : allElems)
 				r.setVisible(currentMode == SpriteDisplayMode.Default && session.getSelected().size() > 0);
@@ -908,6 +958,8 @@ public class ControlSprites {
 	}
 
 	public void runClear() {
+		if (suppressLimbBounds())
+			return;
 		if (getMode() == SpriteDisplayMode.Align) {
 			align.show();
 			return;

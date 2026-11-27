@@ -9,7 +9,6 @@ import com.commonwealthrobotics.WorkplaneManager;
 import com.commonwealthrobotics.controls.ControlSprites;
 import com.commonwealthrobotics.controls.ResizingHandle;
 import com.commonwealthrobotics.controls.SelectionSession;
-import com.commonwealthrobotics.controls.SpriteDisplayMode;
 import com.commonwealthrobotics.rotate.RotationSessionManager;
 import com.neuronrobotics.bowlerkernel.Bezier3d.Manipulation.DragState;
 import com.neuronrobotics.bowlerstudio.BowlerStudio;
@@ -67,27 +66,7 @@ public class LimbControlManager {
 		this.session = session;
 		this.ap = ap;
 		sprites = session.getControls();
-		Runnable r = () -> {
-			BowlerStudio.runLater(() -> session.setMode(SpriteDisplayMode.Default));
-			// add the operation and reset\
-			ModifyLimb myMod = mod;
-			mod = null;
-			update(builder);
-			myMod.setUndo(false);
-			try {
-				ap.addOp(myMod).join();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				com.neuronrobotics.sdk.common.Log.error(e);
-			}
-			try {
-				session.getSellectedBounds(session.getLimbParts(limb));
-			} catch (BoundsComputFailure e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			BowlerStudio.runLater(() -> session.updateControls());
-		};
+		Runnable r = this::saveChanges;
 
 		Runnable onReset = () -> {
 			onReset();
@@ -96,9 +75,7 @@ public class LimbControlManager {
 			updateControls();
 		};
 		tipManipulator = new ArmPointManipulator(r, ev -> {
-			BowlerStudio.runLater(() -> {
-				session.setMode(SpriteDisplayMode.Clear);
-			});
+			session.beginLimbMove();
 			TransformNR base2 = mod.getTipTF().copy();
 			// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 			RotationNR nr = base2.getRotation();
@@ -117,9 +94,7 @@ public class LimbControlManager {
 		}, ap, engine, workplaneOffset, onSelect, onReset, workplane, controlSprites);
 
 		baseManipulator = new ArmPointManipulator(r, ev -> {
-			BowlerStudio.runLater(() -> {
-				session.setMode(SpriteDisplayMode.Clear);
-			});
+			session.beginLimbMove();
 			TransformNR baseAtStaartTF = mod.getBase().copy();
 			// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 			RotationNR nr = baseAtStaartTF.getRotation();
@@ -140,9 +115,7 @@ public class LimbControlManager {
 		rotationManager.setMoving(toUpdate -> {
 			try {
 
-				BowlerStudio.runLater(() -> {
-					session.setMode(SpriteDisplayMode.Clear);
-				});
+				session.beginLimbMove();
 				TransformNR baseAtStartTF = mod.getBase().copy();
 				// com.neuronrobotics.sdk.common.Log.debug("from "+base2.toSimpleString());
 				RotationNR nr = baseAtStartTF.getRotation();
@@ -175,6 +148,25 @@ public class LimbControlManager {
 			n.setVisible(false);
 		}
 
+	}
+
+	private void saveChanges() {
+		ModifyLimb completed = mod;
+		try {
+			completed.setUndo(false);
+			ap.addOp(completed).join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			Log.error(e);
+		} catch (Exception e) {
+			Log.error(e);
+		} finally {
+			try {
+				update(builder);
+			} finally {
+				session.finishLimbMove();
+			}
+		}
 	}
 
 	private void onReset() {
@@ -214,6 +206,8 @@ public class LimbControlManager {
 	}
 
 	public void hide() {
+		if (session.isLimbMoveActive())
+			session.finishLimbMove();
 		BowlerStudio.runLater(() -> {
 			baseManipulator.hide();
 			tipManipulator.hide();

@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.WatchEvent;
+import java.util.OptionalLong;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -261,6 +262,7 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 	// the move-commit thread or with onUpdate's manipulator reset.
 	private final Object moveGate = new Object();
 	private final ManipulatorBoundsTracker manipulatorBounds = new ManipulatorBoundsTracker();
+	private final LimbBoundsLifecycle limbBounds = new LimbBoundsLifecycle();
 	private Button renameBtn;
 	private Button filletButton;
 	private Button extrudeButton;
@@ -1262,12 +1264,16 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		getMeshes().put(c, holder);
 		if (c.hasManipulator()) {
 			CaDoodleFile file = ap.get();
-			manipulatorBounds.track(manip, () -> submit(() -> {
-				if (!ap.isOpen() || ap.get() != file || getMeshes().get(c) != holder)
-					return;
-				file.getBoundsCache().remove(c.getName());
-				updateControls();
-			}));
+			manipulatorBounds.track(manip, () -> {
+				final OptionalLong revision = limbBounds.preview();
+				submit(() -> {
+					if (!ap.isOpen() || ap.get() != file || getMeshes().get(c) != holder)
+						return;
+					file.getBoundsCache().remove(c.getName());
+					if (revision.isPresent() && limbBounds.accepts(revision.getAsLong(), false))
+						updateControls();
+				});
+			});
 		}
 
 		// Allow move on first click for unlocked meshes only
@@ -3540,6 +3546,40 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 		return modulo * (Math.round(incoming / modulo));
 	}
 
+	public void beginLimbMove() {
+		limbBounds.begin();
+		if (getControls() != null)
+			getControls().hideForLimbMove();
+	}
+
+	public boolean isLimbMoveActive() {
+		return limbBounds.active();
+	}
+
+	public long limbBoundsRevision() {
+		return limbBounds.revision();
+	}
+
+	public void finishLimbMove() {
+		OptionalLong refresh = limbBounds.finish();
+		if (!refresh.isPresent())
+			return;
+		long revision = refresh.getAsLong();
+		if (!ap.isOpen() || getSelected().isEmpty()) {
+			finishLimbMoveWithoutDisplay(revision);
+			return;
+		}
+		VirtualCameraMobileBase camera = engine.getFlyingCamera();
+		refreshControls(engine.getWidth(), engine.getHeight(), camera.getZoomDepth(), camera.getPanAngle(),
+				camera.getTiltAngle(), camera.getGlobalX(), camera.getGlobalY(), camera.getGlobalZ(),
+				camera.getCamera().getFieldOfView(), revision, true);
+	}
+
+	private void finishLimbMoveWithoutDisplay(long revision) {
+		if (limbBounds.abandon(revision) && getControls() != null)
+			getControls().hideLimbBounds();
+	}
+
 	public void updateControls() {
 		onCameraChange(engine.getFlyingCamera());
 	}
@@ -3558,7 +3598,22 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 
 	public void onCameraChange(double screenW, double screenH, double zoom, double az, double el, double x, double y,
 			double z, double cameraFovDegrees) {
+		OptionalLong preview = limbBounds.preview();
+		if (!preview.isPresent()) {
+			BowlerStudio.runLater(() -> {
+				if (ap.isOpen() && getControls() != null)
+					getControls().updateLimbCamera(screenW, screenH, zoom);
+			});
+			return;
+		}
+		refreshControls(screenW, screenH, zoom, az, el, x, y, z, cameraFovDegrees, preview.getAsLong(), false);
+	}
+
+	private void refreshControls(double screenW, double screenH, double zoom, double az, double el, double x, double y,
+			double z, double cameraFovDegrees, long revision, boolean finalRefresh) {
 		submit(() -> {
+			if (!limbBounds.accepts(revision, finalRefresh))
+				return;
 			this.screenW = screenW;
 			this.screenH = screenH;
 			this.zoom = zoom;
@@ -3568,19 +3623,30 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 			this.y = y;
 			this.z = z;
 
-			if ((!ap.isOpen()) || (getControls() == null))
+			if ((!ap.isOpen()) || (getControls() == null)) {
+				if (finalRefresh)
+					finishLimbMoveWithoutDisplay(revision);
 				return;
+			}
 
 			List<String> selectedSnapshot = selectedSnapshot();
 
 			// submit(() -> {
 			List<CSG> selectedCSG = new ArrayList<CSG>(getSelected());
 
-			if (selectedCSG.size() == 0)
+			if (selectedCSG.size() == 0) {
+				if (finalRefresh)
+					finishLimbMoveWithoutDisplay(revision);
 				return;
+			}
+			CaDoodleFile boundsFile = ap.get();
 			Bounds sellectedBounds;
 			if (selectedCSG.size() > 0) {
 				try {
+					if (finalRefresh) {
+						for (CSG selected : selectedCSG)
+							boundsFile.getBoundsCache().remove(selected.getName());
+					}
 					sellectedBounds = getSellectedBounds();
 					double zoomScale = 1.0 / engine.getFlyingCamera().getZoomScale();
 					double numberOffset = -zoom / 1600 * zoomScale / 1.5;
@@ -3615,6 +3681,23 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 						}
 					}
 					BowlerStudio.runLater(() -> {
+						if (!limbBounds.accepts(revision, finalRefresh))
+							return;
+						if (!ap.isOpen() || ap.get() != boundsFile || getSelected().isEmpty()) {
+							if (finalRefresh)
+								finishLimbMoveWithoutDisplay(revision);
+							return;
+						}
+						if (!selectedSnapshot.equals(selectedSnapshot())) {
+							if (finalRefresh)
+								refreshControls(screenW, screenH, zoom, az, el, x, y, z, cameraFovDegrees, revision,
+										true);
+							return;
+						}
+						if (finalRefresh) {
+							limbBounds.complete(revision);
+							getControls().setMode(SpriteDisplayMode.Default);
+						}
 						for (Runnable r : haloUpdates)
 							r.run();
 						haloUpdates.clear();
@@ -3623,6 +3706,8 @@ public class SelectionSession implements ICaDoodleStateUpdate {
 					});
 				} catch (BoundsComputFailure e) {
 					Log.error(e);
+					if (finalRefresh)
+						BowlerStudio.runLater(() -> finishLimbMoveWithoutDisplay(revision));
 				}
 			}
 		});
