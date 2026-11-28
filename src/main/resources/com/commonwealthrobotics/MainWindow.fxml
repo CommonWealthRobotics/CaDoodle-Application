@@ -804,9 +804,9 @@
             </VBox>
             <GridPane fx:id="controlBar" gridLinesVisible="false" style="-fx-border-color:#BBBBBB; -fx-border-width: 0 0 1 0;" GridPane.rowIndex="1">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" prefWidth="80.0" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="156.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="470.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="0.0" prefWidth="0.0" />
+                  <ColumnConstraints hgrow="NEVER" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints vgrow="NEVER" />
@@ -814,9 +814,9 @@
                <children>
                   <HBox GridPane.columnIndex="2">
                      <children>
-                        <HBox fx:id="advancedButtons">
+                        <HBox fx:id="advancedButtons" managed="${advancedButtons.visible}">
                            <children>
-                              <Button fx:id="hexDistributeButton" mnemonicParsing="false" onAction="#onHexDistribute" styleClass="image-button">
+                              <Button minWidth="10.0" fx:id="hexDistributeButton" mnemonicParsing="false" onAction="#onHexDistribute" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hexDistributeButtonImage" />
                                  </graphic>
@@ -824,7 +824,7 @@
                                     <Tooltip text="%mainwindow.pattern_copy_hexagon_or_linear" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
+                              <Button minWidth="10.0" fx:id="boltHoleButton" mnemonicParsing="false" onAction="#onBoltHole" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="boltHoleButtonImage-view" />
                                  </graphic>
@@ -833,7 +833,7 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
-                              <Button fx:id="hullButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
+                              <Button minWidth="10.0" fx:id="hullButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onHullOperation" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="hullImage" />
                                  </graphic>
@@ -841,7 +841,7 @@
                                     <Tooltip text="%mainwindow.hull" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="bendButton" mnemonicParsing="false" onAction="#onBend" styleClass="image-button">
+                              <Button minWidth="10.0" fx:id="bendButton" mnemonicParsing="false" onAction="#onBend" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="bendSurface" />
                                  </graphic>
@@ -849,7 +849,7 @@
                                     <Tooltip text="%mainwindow.bend_selected_surface" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
+                              <Button minWidth="10.0" fx:id="extrudeButton" mnemonicParsing="false" onAction="#onExtrude" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="extrudeButton-image-view" />
                                  </graphic>
@@ -857,7 +857,7 @@
                                     <Tooltip text="%mainwindow.extrude_selected_surface" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
+                              <Button minWidth="10.0" fx:id="filletButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onFillet" styleClass="image-button">
                                  <graphic>
                                     <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="filletButton-image-view" />
                                  </graphic>
@@ -866,26 +866,26 @@
                                  </tooltip>
                               </Button>
                               <Separator orientation="VERTICAL" />
+                              <Button managed="${intersectButton.visible}" minWidth="10.0" fx:id="intersectButton" mnemonicParsing="false" onAction="#onIntersectOperation" styleClass="image-button">
+                                  <graphic>
+                                      <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
+                                  </graphic>
+                                  <tooltip>
+                                      <Tooltip text="%mainwindow.intersect" />
+                                  </tooltip>
+                              </Button>
+                              <Button managed="${xorButton.visible}" minWidth="10.0" mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button" fx:id="xorButton">
+                                  <graphic>
+                                      <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" />
+                                  </graphic>
+                                  <tooltip>
+                                      <Tooltip text="%mainwindow.xor" />
+                                  </tooltip>
+                              </Button>
                            </children>
                         </HBox>
-                        <Button fx:id="intersectButton" mnemonicParsing="false" onAction="#onIntersectOperation" styleClass="image-button">
-                            <graphic>
-                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="intersectImage" />
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="%mainwindow.intersect" />
-                            </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onXorOperation" styleClass="image-button" fx:id="xorButton">
-                            <graphic>
-                                <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="xorImage" />
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="%mainwindow.xor" />
-                            </tooltip>
-                        </Button>
                         <Separator orientation="VERTICAL" />
-                        <Button fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="groupButton" mnemonicParsing="false" onAction="#onGroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="groupButton-image-view" />
                            </graphic>
@@ -893,7 +893,7 @@
                               <Tooltip text="%mainwindow.group_lt_ctrl_g_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="ungroupButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onUngroup" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="ungroupButton-image-view" />
                            </graphic>
@@ -901,7 +901,7 @@
                               <Tooltip text="%mainwindow.un_group_lt_ctrl_shift_g_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="showAllButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#showAll" styleClass="image-button">
                            <graphic>
                               <ImageView fx:id="showAllImage" fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" styleClass="lit-bulb-icon">
                                  <viewport>
@@ -912,7 +912,7 @@
                               <Tooltip text="%mainwindow.show_all_lt_ctrl_shift_h_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="alignButton" mnemonicParsing="false" onAction="#onAlign" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="alignButton-mage-view" />
                            </graphic>
@@ -920,7 +920,7 @@
                               <Tooltip text="%mainwindow.align_lt_l_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="mirronButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onMirror" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="mirronButton-image-view" />
                            </graphic>
@@ -928,7 +928,7 @@
                               <Tooltip text="%mainwindow.mirror_lt_m_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="cruiseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruise" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="cruiseButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onCruise" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
@@ -936,7 +936,7 @@
                               <Tooltip text="%mainwindow.cruise_lt_c_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="objectWorkplane" mnemonicParsing="false" onAction="#onObjectWorkplane" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="objectWorkplane" mnemonicParsing="false" onAction="#onObjectWorkplane" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
@@ -944,7 +944,7 @@
                               <Tooltip text="%mainwindow.object_workplane_lt_e_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="dropToWorkplane" mnemonicParsing="false" onAction="#onDropToWorkplane" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="dropToWorkplane" mnemonicParsing="false" onAction="#onDropToWorkplane" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
@@ -957,15 +957,15 @@
                   <padding>
                     <Insets bottom="0" left="4" right="4" top="0" />
                   </padding>
-                        <Button fx:id="importButton" maxWidth="102.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="%mainwindow.import" />
+                        <Button minWidth="-Infinity" fx:id="importButton" maxWidth="102.0" mnemonicParsing="false" onAction="#onImport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="%mainwindow.import" />
                   <Region maxWidth="5" minWidth="5" prefWidth="5" />
-                        <Button fx:id="export" maxWidth="102.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="%mainwindow.export" />
+                        <Button minWidth="-Infinity" fx:id="export" maxWidth="102.0" mnemonicParsing="false" onAction="#onExport" prefHeight="28.0" prefWidth="102.0" styleClass="normal-button" text="%mainwindow.export" />
                         </HBox>                       
                      </children>
                   </HBox>
                   <HBox fx:id="buttonBar" fillHeight="false" style="-fx-background-insets: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
                      <children>
-                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#onCopy" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="copyButton" mnemonicParsing="false" onAction="#onCopy" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
@@ -973,7 +973,7 @@
                               <Tooltip text="%mainwindow.copy_lt_ctrl_c_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="pasteButton" mnemonicParsing="false" onAction="#onPaste" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="pasteButton-mage-view" />
                            </graphic>
@@ -981,7 +981,7 @@
                               <Tooltip text="%mainwindow.paste_lt_ctrl_v_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" styleClass="deleteButton-image-view" />
                            </graphic>
@@ -989,7 +989,7 @@
                               <Tooltip text="%mainwindow.delete_lt_backspace_or_delete_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#onUndo" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="undoButton" mnemonicParsing="false" onAction="#onUndo" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
@@ -997,7 +997,7 @@
                               <Tooltip text="%mainwindow.undo_lt_ctrl_z_gt" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#onRedo" styleClass="image-button">
+                        <Button minWidth="-Infinity" fx:id="redoButton" mnemonicParsing="false" onAction="#onRedo" styleClass="image-button">
                            <graphic>
                               <ImageView fitHeight="24.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic>
